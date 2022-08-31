@@ -1,0 +1,74 @@
+on:
+  push:
+    branches:
+      - main
+name: release-please-submodule
+jobs:
+  changeFinder:
+    runs-on: ubuntu-latest
+    outputs:
+      nodePaths: ${{ steps.interrogate.outputs.nodePaths }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: interrogate
+        uses: actions/github-script@v4
+        with:
+            github-token: ${{secrets.GITHUB_TOKEN}}
+            script: |
+              const {execSync} = require('child_process');
+              const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+              const latestRelease = await github.repos.getLatestRelease({
+                owner,
+                repo
+              });
+              console.log(`latest release: ${JSON.stringify(latestRelease.data)}`);
+              execSync('git pull --tags');
+              execSync(`git reset --hard ${latestRelease.data.tag_name}`);
+              const status = execSync(`git diff --name-only origin/main`, { encoding: 'utf-8'});
+              console.log(status);
+              const changes = status.split('\n');
+              let nodePaths = new Set();
+              for (const change of changes) {
+                if (change.startsWith('modules/')) {
+                    const library = change.split('/')[1];
+                    nodePaths.add(library);
+                };
+              }
+              nodePaths = Array.from(nodePaths);
+              console.log(`::set-output name=nodePaths::${JSON.stringify(nodePaths)}`);
+  release-please-release:
+    runs-on: ubuntu-latest
+    needs: changeFinder
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{fromJson(needs.changeFinder.outputs.nodePaths)}}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: tag-release
+        with:
+          path: modules/${{ matrix.package }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: node
+          monorepo-tags: true
+          package-name: ${{ matrix.package }}
+          command: github-release
+  release-pr:
+    runs-on: ubuntu-latest
+    needs:
+      - changeFinder
+      - release-please-release
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{fromJson(needs.changeFinder.outputs.nodePaths)}}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release-please
+        with:
+           path: modules/${{ matrix.package }}
+           token: ${{ secrets.GITHUB_TOKEN }}
+           release-type: node
+           package-name: ${{ matrix.package }}
+           monorepo-tags: true
+           command: release-pr
