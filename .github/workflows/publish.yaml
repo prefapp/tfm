@@ -68,7 +68,7 @@ jobs:
         with:
            path: modules/${{ matrix.package }}
            token: ${{ secrets.GITHUB_TOKEN }}
-           release-type: node
+           release-type: terraform
            package-name: ${{ matrix.package }}
            monorepo-tags: true
            command: release-pr
