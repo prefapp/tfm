@@ -10,7 +10,7 @@ locals {
   
     for permission in local.yaml.permissions-sets: [
   
-    for custom-policy in permission.custom-policies: "${permission.name},${custom-policy.name},${lookup(custom-policy, 'path', '/')}"
+    for custom-policy in permission.custom-policies: "${permission.name},${custom-policy.name},${lookup(custom-policy, "path", "/")}"
   
     ]
   
