@@ -10,7 +10,7 @@ locals {
   
     for permission in local.yaml.permission-sets: [
   
-    for custom-policy in permission.custom-policies: "${permission.name},${custom-policy.name},${lookup(custom-policy, "path", "/")}"
+      for custom-policy in permission.custom-policies: "${permission.name},${custom-policy.name},${lookup(custom-policy, "path", "/")}"
   
     ]
   
@@ -20,7 +20,7 @@ locals {
   
     for permission in local.yaml.permission-sets: [
   
-    for managed-policy in permission.managed-policies: "${permission.name},${managed-policy}"
+      for managed-policy in permission.managed-policies: "${permission.name},${managed-policy}"
   
     ]
   
@@ -30,7 +30,7 @@ locals {
   
     for permission in local.yaml.permission-sets: [
   
-    for managed-policy in permission.managed-policies: "${permission.name},${managed-policy}"
+      for inline-policy in permission.inline-policies: "${permission.name},inline-policy.name, ${base64encode(inline-policy.policy)}"
   
     ]
   
@@ -77,6 +77,18 @@ resource "aws_ssoadmin_managed_policy_attachment" "permissions-managed-policies"
   permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]].arn
 
   managed_policy_arn = split(",", each.value)[1]
+
+}
+
+resource "aws_ssoadmin_managed_policy_attachment" "permissions-inline-policies" {
+
+  for_each = toset(local.permissions_managed_policies)
+  
+  inline_policy = split(",", each.value)[1]
+ 
+  permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]].arn
+
+  inline_policy = base64decode(split(",", each.value)[2])
 
 }
 
