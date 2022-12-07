@@ -76,7 +76,7 @@ resource "aws_ssoadmin_managed_policy_attachment" "permissions-managed-policies"
  
   permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]].arn
 
-  managed_policy_arn = split(",", each.value[1])
+  managed_policy_arn = split(",", each.value)[1]
 
 }
 
