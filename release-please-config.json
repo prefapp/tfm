@@ -5,7 +5,7 @@
 
     "packages": {
 
-       "modules/aws-paramter-store": {},
+       "modules/aws-parameter-store": {},
 
        "modules/aws-sso": {}
 
