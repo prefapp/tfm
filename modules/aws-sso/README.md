@@ -4,23 +4,26 @@ groups:
     description: "The Group A"
     users:
       - userA
+      - userB
 
 users:
-  - name: "UserA"
+  - name: "userA"
     email: "test@test.test"
-    fullname: "USer A"
+    fullname: "userA"
+  - name: "userB"
+    email: "test-2@test.test"
+    fullname: "userB"
 
 permission-sets:
   - name: "permission-set-foo"
-    description: "An example"
-    session_duration: "PT2H"
     custom-policies:
       - name: "custom-policy-foo"
     managed-policies:
       - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
       - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
     inline-policies:
-      - policy: |
+      - name: "inline-policy-foo"
+        policy: |
           {
             "Version": "2012-10-17",
             "Statement": [
@@ -33,15 +36,11 @@ permission-sets:
               }
             ]
           }
-attachaments:
-  account-0:
-      permission-set-foo:
-          groups:
-              - groupA
-          users:
-              - userA
-  account-1:
-      permission-set-foo-2:
-          groups:
-              - groupC
-          users:
+attachments:
+  "012345678910":
+    permission-set-foo:
+      groups:
+        - groupA
+      users:
+        - userA
+```
