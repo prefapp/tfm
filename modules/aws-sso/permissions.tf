@@ -37,7 +37,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions" {
   
   instance_arn = var.identity_store_arn
  
-  permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]]
+  permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]].arn
 
   customer_managed_policy_reference {
 
