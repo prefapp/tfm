@@ -20,8 +20,7 @@ permission-sets:
       - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
       - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
     inline-policy:
-      - name: "inline-policy-foo"
-        policy: |
+      - policy: |
           {
             "Version": "2012-10-17",
             "Statement": [
