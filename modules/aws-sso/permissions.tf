@@ -30,7 +30,7 @@ locals {
   
     for permission in local.yaml.permission-sets: [
   
-    for managed-policy in permission.mananed-policies: "${permission.name},${managed-policy}"
+    for managed-policy in permission.managed-policies: "${permission.name},${managed-policy}"
   
     ]
   
