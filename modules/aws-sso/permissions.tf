@@ -20,7 +20,7 @@ locals {
 
 resource "aws_ssoadmin_permission_set" "permissions" {
 
-  for_each = {local.permissions_by_name}
+  for_each = local.permissions_by_name
   
   instance_arn = var.identity_store_arn
   
