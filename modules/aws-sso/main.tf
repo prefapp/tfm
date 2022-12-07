@@ -1,20 +1,30 @@
 locals {
 
-  # let's read the info first
+  # let's read the data first
   yaml = yamldecode(file(var.data_file))
 
+  #
+  # We prefer to have a map with the name of the user as key
+  #
   users_by_name = {
 
     for user in local.yaml.users : user.name => user
 
   }
 
+  #
+  # We prefer to have a map with the name of the group as key
+  #
   groups_by_name = {
 
     for group in local.yaml.groups : group.name => group
 
   }
 
+  #
+  # Let's store every user-group as a string: user,group
+  # and arrange them in a list
+  #
   users_in_groups = flatten([
 
     for group in local.yaml.groups : [
@@ -69,6 +79,9 @@ resource "aws_identitystore_group" "groups" {
   ]
 }
 
+#
+# Groups's membership using users_in_groups (user,group)
+#
 resource "aws_identitystore_group_membership" "groups-users" {
 
   for_each = toset(local.users_in_groups)
