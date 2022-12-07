@@ -1,12 +1,14 @@
 {
-  "bump-minor-pre-major": true,
-    
-  "bump-patch-for-minor-pre-major": true,
-  
-  "modules": {
+    "bootstrap-sha": "43103cdd3c3ef3be433dcc772e305567d2cac0cc",
 
-    "modules/aws-parameter-store": {
-      
-     }
-  }
+    "release-type": "helm",
+
+    "packages": {
+
+       "modules/aws-paramter-store": {},
+
+       "modules/sso": {}
+
+    }
+
 }
