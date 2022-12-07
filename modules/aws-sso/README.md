@@ -12,6 +12,8 @@ users:
 
 permission-sets:
   - name: "permission-set-foo"
+    description: "An example"
+    session_duration: "PT2H"
     custom-policies:
       - name: "custom-policy-foo"
     managed-policies:
