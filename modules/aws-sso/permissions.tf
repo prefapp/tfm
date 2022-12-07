@@ -2,7 +2,7 @@ locals {
 
   permissions_by_name = {
   
-    for permission in local.yaml.permissions-sets: permission.name => permission
+    for permission in local.yaml.permission-sets: permission.name => permission
   
   }
   
