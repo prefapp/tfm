@@ -8,7 +8,7 @@ locals {
   
   permissions_custom_policies = flatten([
   
-    for permission in local.yaml.permissions-sets: [
+    for permission in local.yaml.permission-sets: [
   
     for custom-policy in permission.custom-policies: "${permission.name},${custom-policy.name},${lookup(custom-policy, "path", "/")}"
   
