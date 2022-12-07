@@ -39,7 +39,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions" {
  
   permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]]
 
-  custom_managed_policy_reference {
+  customer_managed_policy_reference {
 
     name = split(",", each.value)[1]
 
