@@ -16,6 +16,16 @@ locals {
   
   ])
 
+  permissions_managed_policies = flatten([
+  
+    for permission in local.yaml.permission-sets: [
+  
+    for managed-policy in permission.mananed-policies: "${permission.name},${managed-policy}"
+  
+    ]
+  
+  ])
+
 }
 
 resource "aws_ssoadmin_permission_set" "permissions" {
@@ -46,6 +56,18 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions" {
     path = split(",", each.value)[2]
 
   }
+}
+
+resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions" {
+
+  for_each = toset(local.permissions_managed_policies)
+  
+  instance_arn = var.identity_store_arn
+ 
+  permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]].arn
+
+  managed_policy_arn = split(",", each.value[1])
+
 }
 
 
