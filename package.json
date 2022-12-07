@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/prefapp/tfm/issues"
   },
-  "homepage": "https://github.com/prefapp/tfm#readme"
+  "homepage": "https://github.com/prefapp/tfm#readme",
+  "workspaces": [
+     "modules/*"
+   ]
 }
