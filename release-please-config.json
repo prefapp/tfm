@@ -1,5 +1,5 @@
 {
-    "bootstrap-sha": "43103cdd3c3ef3be433dcc772e305567d2cac0cc",
+    "bootstrap-sha": "9556d41030508368d1edec99335eafa34f52de05",
 
     "release-type": "helm",
 
@@ -7,7 +7,7 @@
 
        "modules/aws-paramter-store": {},
 
-       "modules/sso": {}
+       "modules/aws-sso": {}
 
     }
 
