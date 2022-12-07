@@ -26,6 +26,16 @@ locals {
   
   ])
 
+  permissions_inline_policies= flatten([
+  
+    for permission in local.yaml.permission-sets: [
+  
+    for managed-policy in permission.mananed-policies: "${permission.name},${managed-policy}"
+  
+    ]
+  
+  ])
+
 }
 
 resource "aws_ssoadmin_permission_set" "permissions" {
@@ -58,7 +68,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions-custom-p
   }
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions-managed-policies" {
+resource "aws_ssoadmin_managed_policy_attachment" "permissions-managed-policies" {
 
   for_each = toset(local.permissions_managed_policies)
   
