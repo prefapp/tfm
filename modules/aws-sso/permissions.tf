@@ -41,7 +41,7 @@ resource "aws_ssoadmin_permission_set" "permissions" {
   session_duration = lookup(each.value, "session_duration", null)
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions" {
+resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions-custom-policies" {
 
   for_each = toset(local.permissions_custom_policies)
   
@@ -58,7 +58,7 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions" {
   }
 }
 
-resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions" {
+resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions-managed-policies" {
 
   for_each = toset(local.permissions_managed_policies)
   
