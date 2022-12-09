@@ -6,7 +6,7 @@ locals {
 
       for permission_name, permission_set in permission_sets : [
 
-        for group in permission_set.groups : "${account},${permission_name},${group}"
+        for group in (permission_set.groups != null ? permission_set.groups : []) : "${account},${permission_name},${group}"
 
       ]
 
@@ -20,7 +20,7 @@ locals {
 
       for permission_name, permission_set in permission_sets : [
 
-        for user in permission_set.users : "${account},${permission_name},${user}"
+        for user in (permission_set.users != null ? permission_set.users : []) : "${account},${permission_name},${user}"
 
       ]
 
@@ -29,6 +29,7 @@ locals {
   ])
 
 }
+
 
 
 resource "aws_ssoadmin_account_assignment" "accounts-permissions-groups" {
@@ -45,7 +46,7 @@ resource "aws_ssoadmin_account_assignment" "accounts-permissions-groups" {
 
   principal_type = "GROUP"
 
-  principal_id = aws_identitystore_group.groups[split(",", each.value)[2]].id
+  principal_id = split("/", aws_identitystore_group.groups[split(",", each.value)[2]].id)[1]
 
 }
 
@@ -63,6 +64,5 @@ resource "aws_ssoadmin_account_assignment" "accounts-permissions-users" {
 
   principal_type = "USER"
 
-  principal_id = aws_identitystore_user.users[split(",", each.value)[2]].id
-
+  principal_id = split("/", aws_identitystore_user.users[split(",", each.value)[2]].id)[1]
 }

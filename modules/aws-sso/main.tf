@@ -29,7 +29,7 @@ locals {
 
     for group in local.yaml.groups : [
 
-      for user in group.users : "${user},${group.name}"
+      for user in (group.users != null ? group.users : []) : "${user},${group.name}"
 
     ]
 
@@ -42,7 +42,7 @@ resource "aws_identitystore_user" "users" {
 
   for_each = local.users_by_name
 
-  identity_store_id = var.identity_store_arn
+  identity_store_id = var.store_id
 
   user_name = each.value.email
 
@@ -59,7 +59,7 @@ resource "aws_identitystore_user" "users" {
   emails {
 
     value = each.value.email
-
+    primary = true
   }
 
 }
@@ -70,7 +70,7 @@ resource "aws_identitystore_group" "groups" {
 
   display_name = each.value.name
 
-  identity_store_id = var.identity_store_arn
+  identity_store_id = var.store_id
 
   depends_on = [
 
@@ -86,7 +86,7 @@ resource "aws_identitystore_group_membership" "groups-users" {
 
   for_each = toset(local.users_in_groups)
 
-  identity_store_id = var.identity_store_arn
+  identity_store_id = var.store_id
 
   group_id = aws_identitystore_group.groups[split(",", each.value)[1]].group_id
 

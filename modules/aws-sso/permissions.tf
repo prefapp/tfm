@@ -10,7 +10,7 @@ locals {
   
     for permission in local.yaml.permission-sets: [
   
-      for custom-policy in permission.custom-policies: "${permission.name},${custom-policy.name},${lookup(custom-policy, "path", "/")}"
+      for custom-policy in (permission.custom-policies != null ? permission.custom-policies : []): "${permission.name},${custom-policy.name},${lookup(custom-policy, "path", "/")}"
   
     ]
   
@@ -20,7 +20,7 @@ locals {
   
     for permission in local.yaml.permission-sets: [
   
-      for managed-policy in permission.managed-policies: "${permission.name},${managed-policy}"
+      for managed-policy in (permission.managed-policies != null ? permission.managed-policies: []): "${permission.name},${managed-policy}"
   
     ]
   
@@ -30,12 +30,17 @@ locals {
   
     for permission in local.yaml.permission-sets: [
   
-      for inline-policy in permission.inline-policies: "${permission.name},${base64encode(inline-policy.policy)}"
+      for inline-policy in (permission.inline-policies != null  ? permission.inline-policies : []): "${permission.name},${base64encode(inline-policy.policy)}"
   
     ]
   
   ])
 
+}
+
+resource "time_sleep" "wait_30seg" {
+
+  destroy_duration = "30s"
 }
 
 resource "aws_ssoadmin_permission_set" "permissions" {
@@ -49,6 +54,10 @@ resource "aws_ssoadmin_permission_set" "permissions" {
   description = lookup(each.value, "description", null)
   
   session_duration = lookup(each.value, "session_duration", null)
+
+  depends_on = [
+        time_sleep.wait_30seg
+  ]
 }
 
 resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions-custom-policies" {
