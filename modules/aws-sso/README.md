@@ -1,3 +1,8 @@
+# Module aws-sso
+
+SSO users management. 
+
+
 ```yaml
 groups:
   - name: "groupA"
