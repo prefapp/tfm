@@ -56,7 +56,11 @@ resource "aws_ssoadmin_permission_set" "permissions" {
   session_duration = lookup(each.value, "session_duration", null)
 
   depends_on = [
-        time_sleep.wait_30seg
+    
+    aws_identitystore_group.groups,
+
+    time_sleep.wait_30seg
+
   ]
 }
 
@@ -75,6 +79,12 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "permissions-custom-p
     path = split(",", each.value)[2]
 
   }
+
+  depends_on = [
+ 
+    aws_ssoadmin_permission_set.permissions
+
+  ]
 }
 
 resource "aws_ssoadmin_managed_policy_attachment" "permissions-managed-policies" {
@@ -87,6 +97,12 @@ resource "aws_ssoadmin_managed_policy_attachment" "permissions-managed-policies"
 
   managed_policy_arn = split(",", each.value)[1]
 
+  depends_on = [
+ 
+    aws_ssoadmin_permission_set.permissions
+
+  ]
+
 }
 
 resource "aws_ssoadmin_permission_set_inline_policy" "permissions-inline-policies" {
@@ -98,6 +114,12 @@ resource "aws_ssoadmin_permission_set_inline_policy" "permissions-inline-policie
   permission_set_arn = aws_ssoadmin_permission_set.permissions[split(",", each.value)[0]].arn
 
   inline_policy = base64decode(split(",", each.value)[1])
+
+  depends_on = [
+ 
+    aws_ssoadmin_permission_set.permissions
+
+  ]
 
 }
 
