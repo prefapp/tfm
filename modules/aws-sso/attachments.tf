@@ -48,6 +48,12 @@ resource "aws_ssoadmin_account_assignment" "accounts-permissions-groups" {
 
   principal_id = split("/", aws_identitystore_group.groups[split(",", each.value)[2]].id)[1]
 
+  depends_on = [
+ 
+    aws_ssoadmin_permission_set.permissions
+
+  ]
+
 }
 
 resource "aws_ssoadmin_account_assignment" "accounts-permissions-users" {
@@ -65,4 +71,10 @@ resource "aws_ssoadmin_account_assignment" "accounts-permissions-users" {
   principal_type = "USER"
 
   principal_id = split("/", aws_identitystore_user.users[split(",", each.value)[2]].id)[1]
+
+  depends_on = [
+ 
+    aws_ssoadmin_permission_set.permissions
+
+  ]
 }
