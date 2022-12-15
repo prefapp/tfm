@@ -57,7 +57,7 @@ resource "aws_ssoadmin_permission_set" "permissions" {
 
   depends_on = [
     
-    aws_identitystore_group.groups
+    aws_identitystore_group.groups,
 
     time_sleep.wait_30seg
 
