@@ -56,3 +56,5 @@ module "postgresql" {
 |administrator_password_secret_name|The name of the secret containing the PostgreSQL administrator password.|string|n/a|yes|
 |postgresql_disk_size|The size of disk in MiB|string|n/a|yes|
 |postgresql_sku_size|The SKU name|string|n/a|yes|
+|dns_private_zone_dns_name|The name of the Private DNS zone (without a terminating dot)|string|n/a|yes|
+|dns_private_zone_dns_rg|Specifies the resource group where the Private DNS Zone exists.|string|n/a|yes|
