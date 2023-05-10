@@ -86,3 +86,15 @@ variable "authentication_password_auth_enabled" {
   description = "Whether or not password authentication is allowed to access the PostgreSQL Flexible Server."
   default     = "true"
 }
+
+variable "dns_private_zone_dns_name" {
+  description = "The name of the Private DNS zone (without a terminating dot)."
+}
+
+variable "dns_private_zone_dns_rg" {
+  description = "Specifies the resource group where the Private DNS Zone exists."
+}
+
+variable "dns_private_zone_dns_link" {
+  description = "The name of the Private DNS Zone Virtual Network Link."
+}

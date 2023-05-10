@@ -36,12 +36,19 @@ data "azurerm_key_vault_secret" "password" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
+data "azurerm_private_dns_zone_virtual_network_link" "private_dns_zone_virtual_network_link" {
+  name                  = var.dns_private_zone_dns_link
+  resource_group_name   = var.dns_private_zone_dns_rg
+  private_dns_zone_name = var.dns_private_zone_dns_name
+}
+
 resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   name                  = "${var.env}-${var.postgresql_name}"
   resource_group_name   = azurerm_resource_group.resource_group.name
   location              = var.location
   version               = var.postgresql_version
   delegated_subnet_id   = "${data.azurerm_virtual_network.virtual_network.id}/subnets/${var.virtual_network_subnet_name}"
+  private_dns_zone_id   = data.azurerm_private_dns_zone_virtual_network_link.private_dns_zone_virtual_network_link.id
   backup_retention_days = var.backup_retention_days
   authentication {
     active_directory_auth_enabled = var.authentication_active_directory_auth_enabled
