@@ -94,7 +94,3 @@ variable "dns_private_zone_dns_name" {
 variable "dns_private_zone_dns_rg" {
   description = "Specifies the resource group where the Private DNS Zone exists."
 }
-
-variable "dns_private_zone_dns_link" {
-  description = "The name of the Private DNS Zone Virtual Network Link."
-}
