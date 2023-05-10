@@ -17,7 +17,7 @@ To use the module, include the following code in your Terraform configuration:
 
 ```hcl
 module "postgresql" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-flexible-server-postgresql?ref=f556b12fdb1dbf98e84c8aa56dbc052413147c3f"
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-flexible-server-postgresql"
   env                                  = "dev"
   cliente                              = "acme"
   producto                             = "my-product"
