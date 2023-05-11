@@ -17,7 +17,7 @@ To use the module, include the following code in your Terraform configuration:
 
 ```hcl
 module "postgresql" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-flexible-server-postgresql"
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-flexible-server-postgresql?ref=1.0.0"
   env                                  = "dev"
   cliente                              = "acme"
   producto                             = "my-product"
@@ -58,3 +58,7 @@ module "postgresql" {
 |postgresql_sku_size|The SKU name|string|n/a|yes|
 |dns_private_zone_dns_name|The name of the Private DNS zone (without a terminating dot)|string|n/a|yes|
 |dns_private_zone_dns_rg|Specifies the resource group where the Private DNS Zone exists.|string|n/a|yes|
+
+## Note
+
+Change de ref into source module `ref=1.0.0`
