@@ -1,23 +1,16 @@
 {
     "bootstrap-sha": "9556d41030508368d1edec99335eafa34f52de05",
-
     "release-type": "terraform-module",
-
     "separate-pull-requests": false,
-    
     "packages": {
-
-       "modules/aws-parameter-store": {
-       
-           "package-name": "aws-parameter-store"
-       
-       },
-
-       "modules/aws-sso": {
-           
-           "package-name": "aws-sso"
-           
-       }
-        
+        "modules/aws-parameter-store": {
+            "package-name": "aws-parameter-store"
+        },
+        "modules/aws-sso": {
+            "package-name": "aws-sso"
+        },
+        "modules/azure-flexible-server-postgresql": {
+            "package-name": "azure-flexible-server-postgresql"
+        }
     }
 }
