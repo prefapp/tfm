@@ -3,12 +3,21 @@
 
     "release-type": "terraform-module",
 
+    "separate-pull-requests": false,
+    
     "packages": {
 
-       "modules/aws-parameter-store": {},
+       "modules/aws-parameter-store": {
+       
+           "package-name": "aws-parameter-store"
+       
+       },
 
-       "modules/aws-sso": {}
-
+       "modules/aws-sso": {
+           
+           "package-name": "aws-sso"
+           
+       }
+        
     }
-
 }
