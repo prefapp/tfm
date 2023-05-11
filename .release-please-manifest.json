@@ -1,5 +1,5 @@
 {
-    "modules/aws-parameter-store": "0.1.1",
-    "modules/aws-sso": "0.2.0",
-    "modules/azure-flexible-server-postgresql": "0.1.0"
+    "modules/aws-parameter-store": "0.1.2",
+    "modules/aws-sso": "0.3.0",
+    "modules/azure-flexible-server-postgresql": "1.0.0"
 }
