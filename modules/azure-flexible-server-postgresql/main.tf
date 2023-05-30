@@ -101,8 +101,6 @@ resource "azurerm_subnet" "subnet_create" {
 
   address_prefixes = local.data.subnet.address_prefixes
 
-  tags = local.data.subnet.tags
-
   service_endpoints = ["Microsoft.Storage"]
 
   delegation {
