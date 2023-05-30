@@ -224,6 +224,16 @@ data "azurerm_resource_group" "resource_group" {
   ]
 }
 
+data "azurerm_postgresql_flexible_server" "postgresql_restore_original_server" {
+
+  count   = local.data.server_creation.mode == "PointInTimeRestore" ? 1 : 0
+
+  name    = local.data.server_creation.from_pitr.source_server_name
+
+  resource_group_name = server_creation.from_pitr.source_server_resource_group
+
+}
+
 resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   name                  = local.data.server.name
@@ -239,6 +249,12 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   private_dns_zone_id   = data.azurerm_private_dns_zone.private_dns_zone.id
 
   backup_retention_days = local.data.backup_retention_days
+
+  create_mode           = local.data.server_creation.mode
+
+  point_in_time_restore_time_in_utc = local.data.server_creation.mode == "PointInTimeRestore" ? local.data.server_creation.from_pitr.pitr : null
+
+  source_server_id      = local.data.server_creation.mode == "PointInTimeRestore" ? data.azurerm_postgresql_flexible_server.postgresql_restore_original_server.id : null
 
   authentication {
 
