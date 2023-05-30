@@ -280,3 +280,15 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   ]
 }
+
+resource "azurerm_postgresql_flexible_server_configuration" "postgresql_flexible_server_conf" {
+
+  count = length(local.data.server_parameters.azure_extensions) > 0 ? 1 : 0
+
+  name      = "azure.extensions"
+
+  server_id = azurerm_postgresql_flexible_server.postgresql_flexible_server.id
+
+  value = join(",", local.data.server_parameters.azure_extensions)
+
+}
