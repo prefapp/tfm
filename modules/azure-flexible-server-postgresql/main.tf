@@ -117,7 +117,9 @@ resource "azurerm_subnet" "subnet_create" {
 }
 
 data "azurerm_virtual_network" "virtual_network" {
+
   name                = local.data.virtual_network.name
+
   resource_group_name = local.data.virtual_network.resource_group
 
   depends_on = [
@@ -140,6 +142,59 @@ data "azurerm_subnet" "subnet" {
     azurerm_virtual_network.virtual_network_create,
 
     azurerm_subnet.subnet_create
+
+  ]
+}
+
+#---------------------------------------------------------
+#
+# DNS management
+#
+#---------------------------------------------------------
+resource "azurerm_private_dns_zone" "private_dns_zone_create" {
+
+  count		      = local.data.dns.private.create ? 1 : 0
+
+  name                = local.data.dns.private.name
+
+  resource_group_name = local.data.dns.private.resource_group
+
+  depends_on = [
+  
+    azurerm_virtual_network.virtual_network_create,
+
+  ]
+
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "private_dns_zone_link_create" {
+
+  count		      = local.data.dns.private.create ? 1 : 0
+
+  name                  = local.data.dns.private.name
+
+  private_dns_zone_name = local.data.dns.private.name
+
+  virtual_network_id    = data.azurerm_virtual_network.virtual_network.id
+
+  resource_group_name   = local.data.dns.private.resource_group
+
+  depends_on = [
+  
+    azurerm_private_dns_zone.private_dns_zone_create
+
+  ]
+}
+
+data "azurerm_private_dns_zone" "private_dns_zone" {
+
+  name                = local.data.dns.private.name
+
+  resource_group_name = local.data.dns.private.resource_group
+
+  depends_on =  [
+
+    azurerm_private_dns_zone.private_dns_zone_create
 
   ]
 }
@@ -168,15 +223,6 @@ data "azurerm_resource_group" "resource_group" {
 
   ]
 }
-
-
-
-
-data "azurerm_private_dns_zone" "private_dns_zone" {
-  name                = local.data.dns.private.name
-  resource_group_name = local.data.dns.private.resource_group
-}
-
 
 resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
