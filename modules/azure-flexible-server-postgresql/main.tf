@@ -230,7 +230,7 @@ data "azurerm_postgresql_flexible_server" "postgresql_restore_original_server" {
 
   name    = local.data.server_creation.from_pitr.source_server_name
 
-  resource_group_name = server_creation.from_pitr.source_server_resource_group
+  resource_group_name = local.data.server_creation.from_pitr.source_server_resource_group
 
 }
 
@@ -254,7 +254,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   point_in_time_restore_time_in_utc = local.data.server_creation.mode == "PointInTimeRestore" ? local.data.server_creation.from_pitr.pitr : null
 
-  source_server_id      = local.data.server_creation.mode == "PointInTimeRestore" ? data.azurerm_postgresql_flexible_server.postgresql_restore_original_server.id : null
+  source_server_id      = local.data.server_creation.mode == "PointInTimeRestore" ? data.azurerm_postgresql_flexible_server.postgresql_restore_original_server[0].id : null
 
   authentication {
 
