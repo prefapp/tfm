@@ -15,6 +15,9 @@ locals {
 
   # let's read the data first
   data = var.data
+
+  # ok let's calculate the subnet_id
+  subnet_id = lookup(local.data.subnet, "name", false) ? local.data.subnet.id : data.azurerm_subnet.subnet[0].id
 }
 
 #---------------------------------------------------------
@@ -51,10 +54,6 @@ data "azurerm_key_vault" "key_vault" {
   resource_group_name = local.data.password.key_vault_resource_group
 }
 
-data "azurerm_key_vault_secrets" "check_password" {
-  key_vault_id = data.azurerm_key_vault.key_vault.id
-}
-
 data "azurerm_key_vault_secret" "password" {
   name         = local.data.password.key_vault_secret_name
   key_vault_id = data.azurerm_key_vault.key_vault.id
@@ -73,70 +72,17 @@ data "azurerm_key_vault_secret" "password" {
 #
 #---------------------------------------------------------
 
-resource "azurerm_virtual_network" "virtual_network_create" {
-
-  count = local.data.virtual_network.create ? 1 : 0
-
-  name = local.data.virtual_network.name
-
-  resource_group_name = local.data.virtual_network.resource_group
-
-  address_space = local.data.virtual_network.address_space
-
-  location = var.location
-
-  tags = local.data.virtual_network.tags
-
-}
-
-resource "azurerm_subnet" "subnet_create" {
-
-  count = local.data.subnet.create ? 1 : 0
-
-  name = local.data.subnet.name
-
-  resource_group_name = data.azurerm_virtual_network.virtual_network.resource_group_name
-
-  virtual_network_name = data.azurerm_virtual_network.virtual_network.name
-
-  address_prefixes = local.data.subnet.address_prefixes
-
-  service_endpoints = ["Microsoft.Storage"]
-
-  delegation {
-
-    name = "fs"
-
-    service_delegation {
-
-      name = "Microsoft.DBforPostgreSQL/flexibleServers"
-
-      actions = [
-
-        "Microsoft.Network/virtualNetworks/subnets/join/action",
-
-      ]
-
-    }
-
-  }
-
-}
-
 data "azurerm_virtual_network" "virtual_network" {
 
   name = local.data.virtual_network.name
 
   resource_group_name = local.data.virtual_network.resource_group
 
-  depends_on = [
-
-    azurerm_virtual_network.virtual_network_create
-
-  ]
 }
 
 data "azurerm_subnet" "subnet" {
+
+  count = lookup(local.data.subnet, "name", "NOT_DEFINED") == "NOT_DEFINED" ? 0 : 1
 
   name = local.data.subnet.name
 
@@ -144,13 +90,6 @@ data "azurerm_subnet" "subnet" {
 
   resource_group_name = local.data.virtual_network.resource_group
 
-  depends_on = [
-
-    azurerm_virtual_network.virtual_network_create,
-
-    azurerm_subnet.subnet_create
-
-  ]
 }
 
 #---------------------------------------------------------
@@ -158,52 +97,12 @@ data "azurerm_subnet" "subnet" {
 # DNS management
 #
 #---------------------------------------------------------
-resource "azurerm_private_dns_zone" "private_dns_zone_create" {
-
-  count = local.data.dns.private.create ? 1 : 0
-
-  name = local.data.dns.private.name
-
-  resource_group_name = local.data.dns.private.resource_group
-
-  depends_on = [
-
-    azurerm_virtual_network.virtual_network_create,
-
-  ]
-
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "private_dns_zone_link_create" {
-
-  count = local.data.dns.private.create ? 1 : 0
-
-  name = local.data.dns.private.name
-
-  private_dns_zone_name = local.data.dns.private.name
-
-  virtual_network_id = data.azurerm_virtual_network.virtual_network.id
-
-  resource_group_name = local.data.dns.private.resource_group
-
-  depends_on = [
-
-    azurerm_private_dns_zone.private_dns_zone_create
-
-  ]
-}
-
 data "azurerm_private_dns_zone" "private_dns_zone" {
 
   name = local.data.dns.private.name
 
   resource_group_name = local.data.dns.private.resource_group
 
-  depends_on = [
-
-    azurerm_private_dns_zone.private_dns_zone_create
-
-  ]
 }
 
 
@@ -213,22 +112,10 @@ data "azurerm_private_dns_zone" "private_dns_zone" {
 #
 #---------------------------------------------------------
 
-resource "azurerm_resource_group" "resource_group_create" {
-  count    = local.data.resource_group.create ? 1 : 0
-  name     = local.data.resource_group.name
-  location = var.location
-  tags     = local.data.tags
-}
-
 data "azurerm_resource_group" "resource_group" {
 
   name = local.data.resource_group.name
 
-  depends_on = [
-
-    azurerm_resource_group.resource_group_create
-
-  ]
 }
 
 data "azurerm_postgresql_flexible_server" "postgresql_restore_original_server" {
@@ -294,10 +181,6 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   tags = local.data.server.tags
 
   depends_on = [
-
-    azurerm_resource_group.resource_group_create,
-
-    azurerm_virtual_network.virtual_network_create,
 
     azurerm_key_vault_secret.password_create
 
