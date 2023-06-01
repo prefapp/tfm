@@ -17,7 +17,7 @@ locals {
   data = var.data
 
   # ok let's calculate the subnet_id
-  subnet_id = lookup(local.data.subnet, "name", false) ? local.data.subnet.id : data.azurerm_subnet.subnet[0].id
+  subnet_id = lookup(local.data.subnet, "name", "NOT_DEFINED")  == "NOT_DEFINED" ? local.data.subnet.id : data.azurerm_subnet.subnet[0].id
 }
 
 #---------------------------------------------------------
@@ -71,24 +71,15 @@ data "azurerm_key_vault_secret" "password" {
 # Network management
 #
 #---------------------------------------------------------
-
-data "azurerm_virtual_network" "virtual_network" {
-
-  name = local.data.virtual_network.name
-
-  resource_group_name = local.data.virtual_network.resource_group
-
-}
-
 data "azurerm_subnet" "subnet" {
 
   count = lookup(local.data.subnet, "name", "NOT_DEFINED") == "NOT_DEFINED" ? 0 : 1
 
   name = local.data.subnet.name
 
-  virtual_network_name = local.data.virtual_network.name
+  virtual_network_name = local.data.subnet.vnet.name
 
-  resource_group_name = local.data.virtual_network.resource_group
+  resource_group_name = local.data.subnet.vnet.resource_group
 
 }
 
@@ -138,7 +129,8 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   version = local.data.server.version
 
-  delegated_subnet_id = "${data.azurerm_virtual_network.virtual_network.id}/subnets/${local.data.subnet.name}"
+  #delegated_subnet_id = "${data.azurerm_virtual_network.virtual_network.id}/subnets/${local.data.subnet.name}"
+  delegated_subnet_id = local.subnet_id
 
   private_dns_zone_id = data.azurerm_private_dns_zone.private_dns_zone.id
 
