@@ -129,7 +129,6 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   version = local.data.server.version
 
-  #delegated_subnet_id = "${data.azurerm_virtual_network.virtual_network.id}/subnets/${local.data.subnet.name}"
   delegated_subnet_id = local.subnet_id
 
   private_dns_zone_id = data.azurerm_private_dns_zone.private_dns_zone.id
@@ -164,7 +163,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   administrator_password = data.azurerm_key_vault_secret.password.value
 
-  zone = "1"
+  zone = lookup(local.data.server, "zone", null)
 
   storage_mb = local.data.server.disk_size
 
