@@ -169,6 +169,8 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   sku_name = local.data.server.sku_name
 
+  replication_role = lookup(local.data.server, "replication_role", "None")
+
   tags = local.data.server.tags
 
   depends_on = [
