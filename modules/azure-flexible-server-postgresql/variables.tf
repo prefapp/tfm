@@ -5,4 +5,3 @@ variable "location" {
 variable "data" {
   description = "Config to feed to the module"
 }
-

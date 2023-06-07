@@ -24,7 +24,6 @@ module "postgresql" {
 
 ```
 
-
 ## Requirements
 
 ### Inputs
@@ -124,6 +123,3 @@ password:
   key_vault_secret_name: pg-pass
   create: false
 ```
-
-
-
