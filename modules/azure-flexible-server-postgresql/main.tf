@@ -179,7 +179,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
 
   ]
 
-  lifecycle = {
+  lifecycle {
 
     ignore_changes = [
 
