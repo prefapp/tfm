@@ -178,6 +178,16 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
     azurerm_key_vault_secret.password_create
 
   ]
+
+  lifecycle = {
+
+    ignore_changes = [
+
+      version
+
+    ]
+
+  }
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "postgresql_flexible_server_conf" {
