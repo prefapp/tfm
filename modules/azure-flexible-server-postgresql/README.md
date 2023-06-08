@@ -12,18 +12,12 @@ This Terraform Module creates a [Azure PostgreSQL Flexible Server](https://learn
 Module usage:
 
 ```hcl
-
 module "postgresql" {
-
  source = "<module url>"
-
- location = "westeurope"
-
+ location = "<region>"
  data = yamldecode(file("<path to yaml file with the data>"))
 }
-
 ```
-
 
 ## Requirements
 
@@ -57,7 +51,6 @@ server_creation:
   #  source_server_resource_group: "mi-original-server-rg"
   #  pitr: "2018-03-13T13:59:00Z"
 
-
 server_parameters:
   azure_extensions:
     - PG_BUFFERCACHE
@@ -88,7 +81,6 @@ password:
 resource_group:
   name: test-modulo
 
-
 subnet:
   id: "/subscriptions/152234234/resourceGroups/test-modulo/providers/Microsoft.Network/virtualNetworks/test-modulo/subnets/default"
   #name: default
@@ -100,7 +92,6 @@ dns:
   private:
     name: test.tfm.postgres.database.azure.com
     resource_group: test-modulo
-
 ```
 
 ## Optional Password creation
@@ -124,6 +115,3 @@ password:
   key_vault_secret_name: pg-pass
   create: false
 ```
-
-
-
