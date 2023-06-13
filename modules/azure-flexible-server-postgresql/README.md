@@ -94,6 +94,12 @@ dns:
     resource_group: test-modulo
 ```
 
+## Get list of PiTRs backups
+
+```yaml
+az postgres flexible-server backup list --resource-group test-modulo --names mi-server
+```
+
 ## Optional Password creation
 
 Now it suffises to pass a key vault , a resource group and a key name to have a random password created, inserted as a secret in the KV and as the pass of the server. 
