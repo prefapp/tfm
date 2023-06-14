@@ -13,7 +13,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   private_dns_zone_id               = data.azurerm_private_dns_zone.private_dns_zone.id
   backup_retention_days             = local.data.backup_retention_days
   create_mode                       = local.data.server_creation.mode
-  point_in_time_restore_time_in_utc = local.data.server_creation.mode == "PointInTimeRestore" ? local.data.server_creation.from_pitr.pitr : null
+  point_in_time_restore_time_in_utc = local.pitr
   source_server_id                  = local.data.server_creation.mode == "PointInTimeRestore" ? data.azurerm_postgresql_flexible_server.postgresql_restore_original_server[0].id : null
   authentication {
     active_directory_auth_enabled = local.data.authentication.active_directory_auth_enabled
