@@ -24,7 +24,7 @@ locals {
 
     local.data.server_creation.mode == "PointInTimeRestore" ? 
 
-      local.data.server_creation.from_pitr.pitr == "NOW" ?  replace(timestamp(), "Z", ".00Z") : local.data.server_creation.from_pitr.pitr  : null
+      lower(local.data.server_creation.from_pitr.pitr) == "latest" ?  replace(timestamp(), "Z", ".00Z") : local.data.server_creation.from_pitr.pitr  : null
 
   )
 }
