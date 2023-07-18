@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.0.0...azure-flexible-server-postgresql-v2.1.0) (2023-07-18)
+
+
+### Features
+
+* Lifecicle pitr ([#27](https://github.com/prefapp/tfm/issues/27)) ([215b435](https://github.com/prefapp/tfm/commit/215b4352d8683b3ed1d69f8858e1091336394adc))
+
 ## [2.0.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v1.0.0...azure-flexible-server-postgresql-v2.0.0) (2023-06-08)
 
 
