@@ -36,7 +36,10 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   ]
   lifecycle {
     ignore_changes = [
-      version
+      version,
+      create_mode,
+      point_in_time_restore_time_in_utc,
+      source_server_id
     ]
   }
 }
