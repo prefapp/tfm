@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "3.55.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
 locals {
   # Let's read the data first
   data = var.data
