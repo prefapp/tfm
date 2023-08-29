@@ -43,16 +43,22 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 }
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each = {
-    for app in var.data.applications : app.name => app
-    for role in app.roles : "${app.name}_${role}" => {
-      app_name = app.name
-      role     = role
-      scopes   = app.scopes
-    }
-  }
+  for_each = flatten([
+    for app in var.data.applications :
+    [
+      for role in app.roles :
+      [
+        for scope in app.scopes :
+        {
+          app_name = app.name
+          role     = role
+          scope    = scope
+        }
+      ]
+    ]
+  ])
 
-  scope                = each.value.scopes[0]  # Usamos solo el primer scope, puedes ajustar según tus necesidades
+  scope                = each.value.scope
   role_definition_name = each.value.role
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].object_id
 }
