@@ -32,7 +32,8 @@ resource "azuread_service_principal" "gh_oidc_service_principal" {
 }
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  scope                = data.azurerm_subscription.primary.id
+  # scope is data.azurerm_subscription.primary.id + "/resourceGroups/foo"
+  scope                = data.azurerm_subscription.primary.id + "/resourceGroups/foo"
   role_definition_name = "${var.role_definition_name}"
   principal_id         = azuread_service_principal.gh_oidc_service_principal.object_id
 }
