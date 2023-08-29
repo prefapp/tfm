@@ -40,7 +40,7 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
 }
 
 resource "azuread_application_federated_identity_credential" "gh_oidc_identity_credential" {
-  for_each              = var.data.applications
+  for_each              = { for app in var.data.applications : app.name => app }
   application_object_id = azuread_application.gh_oidc_ad_app[each.value.name].object_id
   display_name          = "gh_oidc_identity_credential"
   description           = "Github OIDC Identity Credential"
