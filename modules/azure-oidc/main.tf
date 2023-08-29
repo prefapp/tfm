@@ -45,12 +45,15 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   for_each = {
     for app in var.data.applications :
-    "${app.name}-${join("-", app.roles)}" => app
+    "${app.name}-${role}-${scope}" => {
+      app_name = app.name
+      role     = app.role
+      scope    = app.scope
+      principal_id = azuread_service_principal.gh_oidc_service_principal[app.name].object_id
+    }
   }
 
-  scope                = each.value.scopes[count.index]
-  role_definition_name = each.value.roles[count.index]
-  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
-
-  count = length(each.value.scopes)  # Usamos la longitud de los scopes como contador
+  scope                = each.value.scope
+  role_definition_name = each.value.role
+  principal_id         = each.value.principal_id
 }
