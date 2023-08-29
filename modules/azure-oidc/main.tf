@@ -64,5 +64,5 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   }
   scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
   role_definition_name = each.value.role_name
-  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
+  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].id
 }
