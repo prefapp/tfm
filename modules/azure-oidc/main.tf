@@ -60,7 +60,7 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
           role_name = role
         }
       ]
-    ]) : item.role_name => item
+    ]) : item.role_name${item.app_name} => item
   }
   scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
   role_definition_name = each.value.role_name
