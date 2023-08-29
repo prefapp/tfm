@@ -43,16 +43,16 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 }
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each             = { for app in var.data.applications : app.name => app }
-  scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/arabiagov-onpremise/providers/Microsoft.ContainerRegistry/registries/arabiagovacr"
-  role_definition_name = "AcrPull"
-  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
-}
+  for_each = {
+    for app in var.data.applications : app.name => app
+    for role in app.roles : "${app.name}_${role}" => {
+      app_name = app.name
+      role     = role
+      scopes   = app.scopes
+    }
+  }
 
-# quiero la asignación del role de arriba pero que se hagan tantas como aplicaciones haya, como tantos roles haya por cada scope
-resource "azurerm_role_assignment" "name" {
-  for_each             = { for app in var.data.applications : app.name => app }
-  scope                = { for scope in var.data.scopes : scope.name => scope }
-  role_definition_name = { for role in var.data.roles : role.name => role}
-  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
+  scope                = each.value.scopes[0]  # Usamos solo el primer scope, puedes ajustar según tus necesidades
+  role_definition_name = each.value.role
+  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].object_id
 }
