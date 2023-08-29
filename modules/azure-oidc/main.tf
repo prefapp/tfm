@@ -44,14 +44,10 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 
 resource "azurerm_role_assignment" "app_role_assignments" {
   for_each = {
-    for app in var.data.applications :
-    app.name => {
-      roles  = app.roles
-      scopes = app.scopes
-    }
+    for app in var.data.applications : app.name => app
   }
 
-  role_definition_name = each.value.roles[count.index]
+  role_definition_name = each.value.roles[0]  # Selecciona el primer rol, podrías iterar si hay varios roles
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
 
   dynamic "scope" {
@@ -60,5 +56,4 @@ resource "azurerm_role_assignment" "app_role_assignments" {
       scope = scope.value
     }
   }
-
 }
