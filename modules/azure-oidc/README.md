@@ -11,6 +11,8 @@ module "azure-oidc" {
   ]
 }
 
+> At the moment custom subject claims are not included in the module, they need to be added externally.
+
 ```
 
 Initialize and plan:
