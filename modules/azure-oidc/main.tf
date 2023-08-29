@@ -32,13 +32,6 @@ resource "azuread_service_principal" "gh_oidc_service_principal" {
   application_id = each.value.application_id
 }
 
-resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each             = { for app in var.data.applications : app.name => app }
-  scope                = join("", [data.azurerm_subscription.primary.id, each.value.scopes[0]])
-  role_definition_name = "AcrPull"
-  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
-}
-
 resource "azuread_application_federated_identity_credential" "gh_oidc_identity_credential" {
   for_each              = { for app in var.data.applications : app.name => app }
   application_object_id = azuread_application.gh_oidc_ad_app[each.value.name].object_id
@@ -47,4 +40,11 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
   audiences             = ["api://AzureADTokenExchange"]
   issuer                = "https://token.actions.githubusercontent.com"
   subject               = each.value.name
+}
+
+resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
+  for_each             = { for app in var.data.applications : app.name => app }
+  scope                = [for scope in each.value.scopes : join("", [data.azurerm_subscription.primary.id, scope])]
+  role_definition_name = "AcrPull"
+  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
 }
