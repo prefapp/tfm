@@ -44,7 +44,7 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   for_each             = { for app in var.data.applications : app.name => app }
-  scope                = [for scope in each.value.scopes : join("", [data.azurerm_subscription.primary.id, scope])]
+  scope                = [for scope in each.value.scopes : join("", [data.azurerm_subscription.primary.id, tostring(scope)])]
   role_definition_name = "AcrPull"
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
 }
