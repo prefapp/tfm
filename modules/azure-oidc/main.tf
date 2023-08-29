@@ -42,32 +42,18 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
   subject               = each.value.name
 }
 
-
 # applications:
 #   - name: service_repositories
 #     roles:
 #       - AcrPush
 #       - AcrPull
-#     scopes:
-#       - "/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
-#       - "/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/arabiagovacr"
 #   - name: state_repositorie
 #     roles:
 #       - AcrPull
-#     scopes:
-#       - "/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/arabiagovacr"
-
-
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each             = { for application in var.data.applications : application.name => application }
+  for_each             = { for app in flatten ([for app in var.data.applications : [for role in app.roles : { app_name = app.name, role_name = role }] ]) : "${app.app_name}-${app.role_name}" => app }
   scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
-
-  dynamic "role" {
-    for_each = each.value.roles
-    content {
-      role_definition_name = role.value
-      principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
-    }
-  }
+  role_definition_name = each.value.role_name
+  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
 }
