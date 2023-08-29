@@ -44,7 +44,7 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   for_each             = { for app in var.data.applications : app.name => app }
-  scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/arabiagov-onpremise/providers/Microsoft.ContainerRegistry/registries/cbxacr"
+  scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
   role_definition_name = "AcrPull"
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
 }
