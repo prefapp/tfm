@@ -50,6 +50,7 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 #   - name: state_repositorie
 #     roles:
 #       - AcrPull
+#     scope: "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"      
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   for_each             = { 
@@ -58,11 +59,11 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
         for role in app.roles : {
           app_name = app.name
           role_name = role
+          scope = app.scope
         }
       ]
     ]) : format("%s-%s", item.app_name, item.role_name) => item
   }
-  # socpe lookup, o es un scope de la app o es "data.azurerm_subscription.primary.id"
   scope                = lookup(each.value, "scope", data.azurerm_subscription.primary.id)
   role_definition_name = each.value.role_name
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].id
