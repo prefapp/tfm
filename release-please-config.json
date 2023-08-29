@@ -11,6 +11,9 @@
         },
         "modules/azure-flexible-server-postgresql": {
             "package-name": "azure-flexible-server-postgresql"
+        },
+        "modules/azure-oidc": {
+            "package-name": "azure-oidc"
         }
     }
 }
