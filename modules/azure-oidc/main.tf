@@ -62,6 +62,12 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   for_each             = { for application in var.data.applications : application.name => application }
   scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
-  role_definition_name = each.value.roles[0]  # Asigna el primer rol de la lista de roles
-  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
+
+  dynamic "role" {
+    for_each = each.value.roles
+    content {
+      role_definition_name = role.value
+      principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
+    }
+  }
 }
