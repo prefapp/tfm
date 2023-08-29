@@ -33,7 +33,7 @@ resource "azuread_service_principal" "gh_oidc_service_principal" {
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   scope = join("", [data.azurerm_subscription.primary.id, "/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"])
-  role_definition_name = "${var.role_definition_name}"
+  role_definition_name = "AcrPull"
   principal_id         = azuread_service_principal.gh_oidc_service_principal.object_id
 }
 
