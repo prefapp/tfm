@@ -56,19 +56,17 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   for_each             = { 
     for item in flatten ([
       for app in var.data.applications : [
-        for role in app.roles : {
-          app_name = app.name
-          role_name = role
-          app_scope = lookup(app, "scope", data.azurerm_subscription.primary.id)
-        }
+        for role in app.roles : [
+          for scope in lookup(app, "scope", [data.azurerm_subscription.primary.id]) : {
+            app_name = app.name
+            role_name = role
+            app_scope = scope
+          }
+        ]
       ]
-    ]) : format("%s-%s", item.app_name, item.role_name) => item
+    ]) : format("%s-%s-%s", item.app_name, item.role_name, item.app_scope) => item
   }
-  scope = [
-    "/subscriptions/subscription_id/resourceGroups/resource_group_name",
-    "/subscriptions/subscription_id/resourceGroups/another_resource_group",
-    "/subscriptions/subscription_id/providers/Microsoft.Storage/storageAccounts/storage_account_name"
-  ]
+  scope                = each.value.app_scope
   role_definition_name = each.value.role_name
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].id
 }
