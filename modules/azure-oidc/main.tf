@@ -64,7 +64,11 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
       ]
     ]) : format("%s-%s", item.app_name, item.role_name) => item
   }
-  scope                = each.value.app_scope
+  scope = [
+    "/subscriptions/subscription_id/resourceGroups/resource_group_name",
+    "/subscriptions/subscription_id/resourceGroups/another_resource_group",
+    "/subscriptions/subscription_id/providers/Microsoft.Storage/storageAccounts/storage_account_name"
+  ]
   role_definition_name = each.value.role_name
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].id
 }
