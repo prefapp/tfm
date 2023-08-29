@@ -59,11 +59,13 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
         for role in app.roles : {
           app_name = app.name
           role_name = role
+          scope = app.scope
         }
       ]
     ]) : format("%s-%s", item.app_name, item.role_name) => item
   }
   # lookup: si exsite scope en la app, se usa ese, si no, se usa data.azurerm_subscription.primary.id
+  scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/ddd"     
   role_definition_name = each.value.role_name
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].id
 }
