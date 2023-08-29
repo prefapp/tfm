@@ -52,7 +52,16 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 #       - AcrPull
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each             = { for app in flatten ([for app in var.data.applications : [for role in app.roles : { app_name = app.name, role_name = role }] ]) : "${app.app_name}-${app.role_name}" => app }
+  for_each             = { 
+    for item in flatten ([
+      for app in var.data.applications : [
+        for role in app.roles : {
+          app_name = app.name
+          role_name = role
+        }
+      ]
+    ]) : "${item.app_name}-${item.role_name}" => item
+  }
   scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
   role_definition_name = each.value.role_name
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
