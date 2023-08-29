@@ -42,16 +42,6 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
   subject               = each.value.name
 }
 
-# applications:
-#   - name: service_repositories
-#     roles:
-#       - AcrPush
-#       - AcrPull
-#   - name: state_repositorie
-#     roles:
-#       - AcrPull
-#     scope: "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"      
-
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
   for_each             = { 
     for item in flatten ([
