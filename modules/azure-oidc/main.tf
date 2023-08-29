@@ -60,14 +60,9 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each             = { for app in var.data.applications : app.name => app }
+  # for each app and for each role in the app, create a role assignment
+  for_each             = { for application in var.data.applications : application.name => application }
   scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/cbx-acr/providers/Microsoft.ContainerRegistry/registries/cbxacr"
-
-  dynamic "role_assignment" {
-    for_each = each.value.roles
-    content {
-      role_definition_name = role_assignment.key
-      principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
-    }
-  }
+  role_definition_name = { for role in each.value.roles : role => role}
+  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
 }
