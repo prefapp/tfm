@@ -59,12 +59,12 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
         for role in app.roles : {
           app_name = app.name
           role_name = role
-          app_scope = app.scope
+          app_scope = lookup(app, "scope", data.azurerm_subscription.primary.id)
         }
       ]
     ]) : format("%s-%s", item.app_name, item.role_name) => item
   }
-  scope                = lookup(each.value, "app_scope", data.azurerm_subscription.primary.id)
+  scope                = each.value.app_scope
   role_definition_name = each.value.role_name
   principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].id
 }
