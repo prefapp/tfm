@@ -43,22 +43,8 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 }
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each = flatten([
-    for app in var.data.applications :
-    [
-      for role in app.roles :
-      [
-        for scope in app.scopes :
-        {
-          app_name = app.name
-          role     = role
-          scope    = scope
-        }
-      ]
-    ]
-  ])
-
-  scope                = each.value.scope
-  role_definition_name = each.value.role
-  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.value.app_name].object_id
+  for_each             = { for app in var.data.applications : app.name => app }
+  scope                = "/subscriptions/0ded1d7a-f274-44db-8e97-d56340081450/resourceGroups/arabiagov-onpremise/providers/Microsoft.ContainerRegistry/registries/arabiagovacr"
+  role_definition_name = "AcrPull"
+  principal_id         = azuread_service_principal.gh_oidc_service_principal[each.key].object_id
 }
