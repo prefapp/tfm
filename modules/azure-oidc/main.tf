@@ -23,7 +23,7 @@ data "azurerm_subscription" "primary" {}
 
 
 resource "azuread_application" "gh_oidc_ad_app" {
-  display_name = "GitHub OIDC Management"
+  display_name = "GitHub OIDC Management - ${var.application}"
   owners = [data.azuread_client_config.current.object_id]
 }
 

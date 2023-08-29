@@ -10,3 +10,8 @@ variable "role_definition_name" {
   type = string
   default = "Contributor"
 }
+
+variable "application" {
+  type = string
+  default = "foo"
+}
