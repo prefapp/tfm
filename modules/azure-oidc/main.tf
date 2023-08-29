@@ -59,7 +59,6 @@ resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
         for role in app.roles : {
           app_name = app.name
           role_name = role
-          scope = app.scope
         }
       ]
     ]) : format("%s-%s", item.app_name, item.role_name) => item
