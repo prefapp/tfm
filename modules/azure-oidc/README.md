@@ -1,3 +1,25 @@
+## Usage
+
+Below there is an example on how to use this module:
+
+```hcl
+module "azure-oidc" {
+  source = "github.com/prefapp/tfm/modules/azure-oidc"
+  role_definition_name = "custom-role"  # Name of the definition role to create
+  subs = [                              # The list of subject claims to accept, each will create a different federeated identity credential
+    "repository_owner:firestarter-test"
+  ]
+}
+
+```
+
+Initialize and plan:
+
+```bash
+terraform init
+terraform plan
+```
+
 ## Requirements
 
 | Name | Version |
@@ -31,7 +53,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_organization"></a> [organization](#input\_organization) | n/a | `string` | n/a | yes |
 | <a name="input_role_definition_name"></a> [role\_definition\_name](#input\_role\_definition\_name) | n/a | `string` | `"Contributor"` | no |
 | <a name="input_subs"></a> [subs](#input\_subs) | n/a | `list(string)` | n/a | yes |
 
