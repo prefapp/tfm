@@ -1,3 +1,11 @@
+# Azure OIDC
+
+## Overview
+
+This module creates an Azure AD application, service principal and role assignment for each application in the data file.
+
+> Note: not defining a scope in an application is equivalent to defining the scope of the subscription
+
 ## Requirements
 
 | Name | Version |
@@ -12,10 +20,6 @@
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 2.15.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >3.0.0 |
 
-## Modules
-
-No modules.
-
 ## Resources
 
 | Name | Type |
@@ -27,18 +31,62 @@ No modules.
 | [azuread_client_config.current](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/client_config) | data source |
 | [azurerm_subscription.primary](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 
-## Inputs
+## Usage
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_organization"></a> [organization](#input\_organization) | n/a | `string` | n/a | yes |
-| <a name="input_role_definition_name"></a> [role\_definition\_name](#input\_role\_definition\_name) | n/a | `string` | `"Contributor"` | no |
-| <a name="input_subs"></a> [subs](#input\_subs) | n/a | `list(string)` | n/a | yes |
+### Set a module
 
-## Outputs
+```terraform
+module "githuib-oidc" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-oidc?ref=<version>"
+  data   = yamldecode(file("<path_to_yaml_file>"
+}
+```
 
-| Name | Description |
-|------|-------------|
-| <a name="output_oidc_azure_client_id"></a> [oidc\_azure\_client\_id](#output\_oidc\_azure\_client\_id) | AZURE\_CLIENT\_ID |
-| <a name="output_oidc_azure_subscription_id"></a> [oidc\_azure\_subscription\_id](#output\_oidc\_azure\_subscription\_id) | AZURE\_SUBSCRIPTION\_ID |
-| <a name="output_oidc_azure_tenant_id"></a> [oidc\_azure\_tenant\_id](#output\_oidc\_azure\_tenant\_id) | AZURE\_TENAND\_ID |
+#### Example
+
+```terraform
+module "githuib-oidc" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-oidc?ref=v1.2.3"
+  data   = yamldecode(file("github_oidc.yaml")
+```
+
+### Set a data file
+
+```yaml
+organization: <organization_name> # In GitHub the organization is equivalent to a user account if it is not an organization
+applications:
+  - name: app
+    roles:
+      - role1
+      - role2
+    scope:
+      - scope1
+      - scope2
+  - name: app2
+    roles:
+      - role1
+```
+
+#### Example
+
+```yaml
+organization: prefapp
+applications:
+  - name: service_repositories
+    roles:
+      - AcrPush
+      - AcrPull
+    scope:
+      - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/foo/providers/Microsoft.ContainerRegistry/registries/foo-registries"
+      - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/bar/providers/Microsoft.ContainerRegistry/registries/bar-registries"
+  - name: state_repositorie
+    roles:
+      - AcrPush
+    scope:
+      - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/foo/providers/Microsoft.ContainerRegistry/registries/foo-registries"
+  - name: infra_repositorie
+    roles:
+      - Contributor
+    # scope:
+    #   - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" # This is similar to not putting scope
+```
