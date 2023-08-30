@@ -53,7 +53,6 @@ module "githuib-oidc" {
 ### Set a data file
 
 ```yaml
-organization: <organization_name> # In GitHub the organization is equivalent to a user account if it is not an organization
 applications:
   - name: app
     roles:
@@ -62,16 +61,23 @@ applications:
     scope:
       - scope1
       - scope2
+    federated_credentials:
+      - subject: "subject_claim_foo:my_repo_foo"
+        issuer: "issuer_foo"
+      - subject: "subject_claim_bar:my_repo_bar"
+        issuer: "issuer_bar"
   - name: app2
     roles:
       - role1
+    federated_credentials:
+      - subject: "my_repo_foo_foo"
+        issuer: "issuer_foo_foo"
 ```
 
 #### Example
 
 ```yaml
-organization: prefapp
-applications:
+app_registrations:
   - name: service_repositories
     roles:
       - AcrPush
@@ -79,14 +85,25 @@ applications:
     scope:
       - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/foo/providers/Microsoft.ContainerRegistry/registries/foo-registries"
       - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/bar/providers/Microsoft.ContainerRegistry/registries/bar-registries"
+    federated_credentials:
+      - subject: "repository_owner:prefapp"
+        issuer: "https://token.actions.githubusercontent.com"
   - name: state_repositorie
     roles:
       - AcrPush
     scope:
       - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/foo/providers/Microsoft.ContainerRegistry/registries/foo-registries"
+    federated_credentials:
+      - subject: "repository_owner:prefapp"
+        issuer: "https://token.actions.githubusercontent.com"
   - name: infra_repositorie
     roles:
       - Contributor
+    federated_credentials:
+      - subject: "my_repo_foo"
+        issuer: "issuer_foo"
+      - subject: "my_repo_bar"
+        issuer: "issuer_bar"
     # scope:
     #   - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" # This is similar to not putting scope
 ```

@@ -33,13 +33,22 @@ resource "azuread_service_principal" "gh_oidc_service_principal" {
 }
 
 resource "azuread_application_federated_identity_credential" "gh_oidc_identity_credential" {
-  for_each              = { for app in var.data.applications : app.name => app }
-  application_object_id = azuread_application.gh_oidc_ad_app[each.value.name].object_id
-  display_name          = "gh_oidc_identity_credential"
-  description           = "Github OIDC Identity Credential"
+  for_each = {
+    for item in flatten ([
+      for app in var.data.applications : [
+        for cred in lookup(app, "federated_credentials", []) : {
+          app_name = app.name
+          cred = cred
+        }
+      ]
+    ]) : format("%s-%s", item.app_name, item.cred.subject) => item
+  }
+  application_object_id = azuread_application.gh_oidc_ad_app[each.value.app_name].object_id
+  display_name          = "oidc_identity_credential-${each.value.cred.subject}"
+  description           = "oidc_identity_credential - ${each.value.cred.subject}"
   audiences             = ["api://AzureADTokenExchange"]
-  issuer                = "https://token.actions.githubusercontent.com"
-  subject               = "repository_owner:${var.data.organization}"
+  issuer                = each.value.cred.issuer
+  subject               = each.value.cred.subject
 }
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
