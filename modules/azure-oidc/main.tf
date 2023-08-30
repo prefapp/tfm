@@ -45,7 +45,7 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
   }
   application_object_id = azuread_application.gh_oidc_ad_app[each.value.app_name].object_id
   # displayname debe ser único y no contener caracter : reemplzar por espacio
-  display_name          = replace(format("oidc_identity_credential - %s", each.value.cred.subject), ":", " ")
+  display_name          = "oidc_identity_credential-${each.value.cred.subject}"
   description           = "oidc_identity_credential - ${each.value.cred.subject}"
   audiences             = ["api://AzureADTokenExchange"]
   issuer                = each.value.cred.issuer
