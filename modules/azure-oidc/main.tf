@@ -39,7 +39,7 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
   description           = "Github OIDC Identity Credential"
   audiences             = ["api://AzureADTokenExchange"]
   issuer                = "https://token.actions.githubusercontent.com"
-  subject               = each.value.name
+  subject               = "repository_owner:${var.data.organization}"
 }
 
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
