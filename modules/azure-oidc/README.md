@@ -53,6 +53,7 @@ module "githuib-oidc" {
 ### Set a data file
 
 ```yaml
+organization: <organization_name> # In GitHub the organization is equivalent to a user account if it is not an organization
 applications:
   - name: app
     roles:
@@ -69,6 +70,7 @@ applications:
 #### Example
 
 ```yaml
+organization: prefapp
 applications:
   - name: service_repositories
     roles:
