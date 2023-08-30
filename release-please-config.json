@@ -14,6 +14,9 @@
         },
         "modules/azure-oidc": {
             "package-name": "azure-oidc"
+        },
+        "modules/aws-oidc": {
+            "package-name": "aws-oidc"
         }
     }
 }
