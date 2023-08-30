@@ -1,7 +1,7 @@
 {
-    "modules/aws-parameter-store": "0.1.2",
-    "modules/aws-sso": "0.3.0",
-    "modules/azure-flexible-server-postgresql": "2.1.0",
-    "modules/azure-oidc": "1.1.0",
-    "modules/aws-oidc": "1.1.0"
+    "modules/aws-parameter-store": "0.2.0",
+    "modules/aws-sso": "0.4.0",
+    "modules/azure-flexible-server-postgresql": "2.2.0",
+    "modules/azure-oidc": "1.2.0",
+    "modules/aws-oidc": "1.2.0"
 }
