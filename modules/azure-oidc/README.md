@@ -62,9 +62,9 @@ applications:
       - scope1
       - scope2
     federated_credentials:
-      - subject: "my_repo_foo"
+      - subject: "subject_claim_foo:my_repo_foo"
         issuer: "issuer_foo"
-      - subject: "my_repo_bar"
+      - subject: "subject_claim_bar:my_repo_bar"
         issuer: "issuer_bar"
   - name: app2
     roles:
