@@ -48,7 +48,7 @@ module "githuib-oidc" {
 module "githuib-oidc" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-oidc?ref=v1.2.3"
   data   = yamldecode(file("github_oidc.yaml")
-```yaml
+```
 
 ### Set a data file
 
