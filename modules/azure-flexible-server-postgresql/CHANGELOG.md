@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.2.0...azure-flexible-server-postgresql-v2.3.0) (2023-08-31)
+
+
+### Features
+
+* remove provider in module ([8c58dd1](https://github.com/prefapp/tfm/commit/8c58dd1d97754ae9ae709e5cd7b79659e7998155))
+
 ## [2.2.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.1.0...azure-flexible-server-postgresql-v2.2.0) (2023-08-30)
 
 
