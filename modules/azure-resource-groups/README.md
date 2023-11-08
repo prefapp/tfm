@@ -31,27 +31,15 @@ module "githuib-oidc" {
 #### Example
 
 ```hcl
-resource_groups = {
-  group1 = {
-    location = "East US"
-    tags     = {
-      tag1 = "value1"
-      tag2 = "value2"
-    }
-  }
-  group2 = {
-    location = "West Europe"
-    tags     = {
-      tag3 = "value3"
-      tag4 = "value4"
-    }
-  }
-  group3 = {
-    location = "Central US"
-    tags     = {
-      tag5 = "value5"
-      tag6 = "value6"
-    }
-  }
+name     = "group_one"
+location = "westEurope"
+```
+
+```hcl
+name     = "group_two"
+location = "westEurope"
+tags     = {
+  foo: "bar"
+  bar: "foo"
 }
 ```
