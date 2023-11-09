@@ -5,5 +5,5 @@
     "modules/azure-oidc": "1.2.0",
     "modules/aws-oidc": "1.2.0",
     "modules/azure-resource-groups": "1.0.0",
-    "modules/resource-grouss": "0.1.0"
+    "modules/azure-resource-grouss": "0.1.0"
 }
