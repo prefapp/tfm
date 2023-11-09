@@ -18,8 +18,8 @@
         "modules/aws-oidc": {
             "package-name": "aws-oidc"
         },
-        "modules/resource-grouss": {
-            "package-name": "resource-groups"
+        "modules/azure-resource-groups": {
+            "package-name": "azure-resource-groups"
         }
     }
 }
