@@ -17,6 +17,9 @@
         },
         "modules/aws-oidc": {
             "package-name": "aws-oidc"
+        },
+        "modules/resource-grouss": {
+            "package-name": "resource-groups"
         }
     }
 }
