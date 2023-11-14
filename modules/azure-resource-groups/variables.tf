@@ -18,3 +18,9 @@ variable "tags" {
   default = {}
   description = "(Optional) A mapping of tags which should be assigned to the Resource Group."
 }
+
+variable "provider" {
+  type    = string
+  default = null
+  description = "(Optional) The provider to use. If not specified, the default provider will be used."
+}
