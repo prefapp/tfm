@@ -2,7 +2,6 @@
 
 
 resource "azurerm_resource_group" "resorce_group" {
-  provider = provider.azurerm
   name     = var.name
   location = var.location
   tags     = var.tags != null ? var.tags : {}
