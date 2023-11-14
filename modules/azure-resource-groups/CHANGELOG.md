@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/prefapp/tfm/compare/azure-resource-groups-v1.1.0...azure-resource-groups-v1.2.0) (2023-11-14)
+
+
+### Features
+
+* Remove block provider from main.tf ([#45](https://github.com/prefapp/tfm/issues/45)) ([5439ff8](https://github.com/prefapp/tfm/commit/5439ff8b8c5332d260c3f1cb3337d859557b59b9))
+
 ## [1.1.0](https://github.com/prefapp/tfm/compare/azure-resource-groups-v1.0.0...azure-resource-groups-v1.1.0) (2023-11-09)
 
 
