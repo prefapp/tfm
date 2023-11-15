@@ -14,7 +14,7 @@ This module creates only resource groups into Azure provicer.
 
 ```terraform
 module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/resource-groups?ref=<version>"
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-resource-group?ref=<version>"
 }
 ```
 
@@ -22,7 +22,7 @@ module "githuib-oidc" {
 
 ```terraform
 module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/resource-groups?ref=v1.2.3"
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-resource-group?ref=v1.2.3"
 }
 ```
 
