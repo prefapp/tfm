@@ -23,20 +23,22 @@ module "eks" {
 
   eks_managed_node_groups = {
 
-    worker = {
+    dynamic "node_group" {
 
-      name = var.node_groups[0].name
+      for_each = var.node_groups
 
-      instance_type = var.node_groups[0].instance_types[0]
+      content {
 
-      desired_capacity = var.node_groups[0].desired_capacity
+        name                    = node_group.value["name"]
+        instance_type           = lookup(node_group.value, "instance_types", null)
+        desired_capacity        = node_group.value["desired_capacity"]
+        min_capacity            = node_group.value["min_size"]
+        max_capacity            = node_group.value["max_size"]
+        labels                  = node_group.value["k8s_labels"]
+        additional_tags         = node_group.value["additional_tags"]
+        pre_bootstrap_user_data = node_group.value["pre_bootstrap_user_data"]
 
-      min_capacity = var.node_groups[0].min_size
-
-      max_capacity = var.node_groups[0].max_size
-
-      labels = var.node_groups[0].k8s_labels
-
+      }
     }
   }
 
@@ -86,17 +88,17 @@ module "eks" {
 
     coredns = {
 
-      version              = var.addon_coredns.version
+      version = var.addon_coredns.version
 
       configuration_values = var.addon_coredns.configuration_values
 
-      resolve_conflicts    = "OVERWRITE"
+      resolve_conflicts = "OVERWRITE"
 
     }
 
     kube-proxy = {
 
-      version              = var.addon_kube_proxy.version
+      version = var.addon_kube_proxy.version
 
       configuration_values = var.addon_kube_proxy.configuration_values
 
@@ -106,7 +108,7 @@ module "eks" {
 
     vpc-cni = {
 
-      version              = var.addon_vpc_cni.version
+      version = var.addon_vpc_cni.version
 
       configuration_values = var.addon_vpc_cni.configuration_values
 
@@ -117,5 +119,17 @@ module "eks" {
     extra_addons = var.extra_addons
 
   }
+
+  # fargate_profiles = {
+  #   default = {
+  #     name = "default"
+  #     selectors = [
+  #       {
+  #         namespace = var.fargate_profiles.namespace
+  #         labels = var.fargate_profiles.labels
+  #       }
+  #     ]
+  #   }
+  # }
 
 }

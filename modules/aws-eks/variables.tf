@@ -22,6 +22,7 @@ variable "cluster_tags" {
   }
 }
 
+
 # NODE GROUPS
 variable "node_groups" {
 
