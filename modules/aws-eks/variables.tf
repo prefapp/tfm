@@ -44,6 +44,7 @@ variable "node_groups" {
 }
 
 
+# AUTH
 variable "aws_auth_users" {
 
   description = "Additional IAM users to add to the aws-auth configmap."
@@ -79,6 +80,8 @@ variable "aws_auth_roles" {
 }
 
 
+# ADDONS
+# Addons required by the cluster
 variable "addon_vpc_cni" {
 
   description = "Enables the VPC CNI addon"
@@ -107,7 +110,6 @@ variable "addon_kube_proxy" {
 
 }
 
-
 variable "addon_core_dns" {
 
   description = "Enables the core-dns addon"
@@ -122,7 +124,7 @@ variable "addon_core_dns" {
 
 }
 
-
+# Addons optional
 variable "extra_addons" {
 
   description = "Enables the extra addons"
@@ -142,11 +144,86 @@ variable "extra_addons" {
 }
 
 
-
+# CLUSTER SECURITY GROUP
 variable "cluster_security_group_additional_rules" {
 
   description = "Additional rules to add to the cluster security group"
 
   type = any
 
+}
+
+
+# FARGATE
+variable "fargate_profiles" {
+
+  description = "Define dynamically the different fargate profiles"
+
+  type = list(object({
+
+    name = string
+
+    selectors = list(object({
+
+      namespace = string
+
+      labels = map(string)
+
+    }))
+
+    tags = map(string)
+
+  }))
+
+  default = []
+
+}
+
+
+# IAMs
+variable "create_alb_ingress_iam" {
+
+  description = "Create IAM resources for alb-ingress"
+
+  type = bool
+
+  default = false
+
+}
+
+variable "create_cloudwatch_iam" {
+
+  description = "Create IAM resources for cloudwatch"
+
+  type = bool
+
+  default = false
+
+}
+
+variable "create_efs_driver_iam" {
+
+  description = "Create IAM resources for efs-driver"
+
+  type = bool
+
+  default = false
+}
+
+variable "create_external_dns_iam" {
+
+  description = "Create IAM resources for external-dns"
+
+  type = bool
+
+  default = false
+}
+
+variable "create_parameter_store_iam" {
+
+  description = "Create IAM resources for parameter-store"
+
+  type = bool
+
+  default = false
 }

@@ -1,17 +1,25 @@
 terraform {
 
+  required_version = ">= 1.0"
+
   required_providers {
+
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = "~> 4.57"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.10"
+    }
+
   }
 
-  required_version = ">= 0.13.1"
 }
 
 provider "aws" {
-  region = "eu-west-1"
+  region = var.region
 }
 
 provider "kubernetes" {
