@@ -16,8 +16,13 @@ variable "cluster_name" {
 
 variable "cluster_tags" {
   type = map(any)
+  default = {
+    "project" = "k8s"
+    "env"     = "prod"
+  }
 }
 
+# NODE GROUPS
 variable "node_groups" {
 
   description = "Define dynamically the different k8s node groups"
@@ -45,6 +50,8 @@ variable "node_groups" {
 
 
 # AUTH
+
+# Users
 variable "aws_auth_users" {
 
   description = "Additional IAM users to add to the aws-auth configmap."
@@ -62,6 +69,7 @@ variable "aws_auth_users" {
   default = []
 }
 
+# Roles
 variable "aws_auth_roles" {
 
   description = "Additional IAM roles to add to the aws-auth configmap."
@@ -81,10 +89,11 @@ variable "aws_auth_roles" {
 
 
 # ADDONS
-# Addons required by the cluster
-variable "addon_vpc_cni" {
 
-  description = "Enables the VPC CNI addon"
+# Addons required by the cluster
+variable "addon_coredns" {
+
+  description = "Enables the core-dns addon"
 
   type = object({
 
@@ -110,9 +119,9 @@ variable "addon_kube_proxy" {
 
 }
 
-variable "addon_core_dns" {
+variable "addon_vpc_cni" {
 
-  description = "Enables the core-dns addon"
+  description = "Enables the VPC CNI addon"
 
   type = object({
 
@@ -150,32 +159,6 @@ variable "cluster_security_group_additional_rules" {
   description = "Additional rules to add to the cluster security group"
 
   type = any
-
-}
-
-
-# FARGATE
-variable "fargate_profiles" {
-
-  description = "Define dynamically the different fargate profiles"
-
-  type = list(object({
-
-    name = string
-
-    selectors = list(object({
-
-      namespace = string
-
-      labels = map(string)
-
-    }))
-
-    tags = map(string)
-
-  }))
-
-  default = []
 
 }
 
@@ -227,3 +210,51 @@ variable "create_parameter_store_iam" {
 
   default = false
 }
+
+
+# VPC
+variable "vpc_config" {
+
+  description = "Configuración de la VPC"
+
+  type = object({
+    # example: "10.0.0.0/16"
+    cidr = string
+
+    # example: 2
+    max_azs = string
+
+    # example: ["10.0.0.0/20", "10.0.16.0/20"]
+    private_subnets = list(string)
+
+    # example: ["10.0.32.0/20", "10.0.48.0/20"]
+    public_subnets = list(string)
+
+  })
+}
+
+
+# # FARGATE
+# variable "fargate_profiles" {
+
+#   description = "Define dynamically the different fargate profiles"
+
+#   type = list(object({
+
+#     name = string
+
+#     selectors = list(object({
+
+#       namespace = string
+
+#       labels = map(string)
+
+#     }))
+
+#     tags = map(string)
+
+#   }))
+
+#   default = []
+
+# }

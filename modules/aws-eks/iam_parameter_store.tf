@@ -13,7 +13,7 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
       "Effect" : "Allow",
       "Action" : ["ssm:GetParameter", "ssm:GetParameters"],
       "Resource" : [
-        "arn:aws:ssm:${var.region}:${var.aws_account}:parameter/*",
+        "arn:aws:ssm:${var.region}:${var.account_id}:parameter/*",
       ]
     }]
   })

@@ -26,7 +26,7 @@ resource "aws_iam_role" "iam_role_oidc_new" {
     ]
   })
 
-  tags = merge({ "Name" = format("k8s-%s-%s-oidc-role", var.tags["project"], var.tags["env"]) }, var.tags)
+  tags = merge({ "Name" = format("k8s-%s-%s-oidc-role", var.cluster_tags["project"], var.cluster_tags["env"]) }, var.cluster_tags)
 }
 
 # Policy for ALBIngressControllerIAMPolicy
@@ -279,7 +279,7 @@ resource "aws_iam_policy" "iam_policy_alb_new" {
     ]
   })
 
-  tags = merge({ "Name" = format("k8s-%s-%s-policy", var.tags["project"], var.tags["env"]) }, var.tags)
+  tags = merge({ "Name" = format("k8s-%s-%s-policy", var.cluster_tags["project"], var.cluster_tags["env"]) }, var.cluster_tags)
 }
 
 # Attach ALBIngressControllerIAMPolicy in ALBIngressController role

@@ -76,7 +76,7 @@ resource "aws_iam_role" "iam_role_EKS_EFS_CSI_DriverRole" {
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:demo:backstage-demo-sa"
+            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*:*"
           }
         }
       }
