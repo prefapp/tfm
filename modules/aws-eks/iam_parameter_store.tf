@@ -13,7 +13,7 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
       "Effect" : "Allow",
       "Action" : ["ssm:GetParameter", "ssm:GetParameters"],
       "Resource" : [
-        "arn:aws:ssm:${var.region}:${var.account_id}:parameter/*",
+        "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/*",
       ]
     }]
   })
@@ -27,6 +27,7 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
   name = "iam_role_parameter_store_all"
 
   description = "IAM role to access to the parameter store"
+
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -49,7 +50,7 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
 # Attach parameter store role and parameter store policy for parameter store
 resource "aws_iam_role_policy_attachment" "iam_role_parameter_store_all_attachment" {
 
-  count = var.create_parameter_store_iam 1 : 0
+  count = var.create_parameter_store_iam ? 1 : 0
 
   role       = aws_iam_role.iam_role_parameter_store_all[count.index].name
   policy_arn = aws_iam_policy.iam_policy_parameter_store[count.index].arn

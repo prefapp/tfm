@@ -28,7 +28,7 @@ variable "node_groups" {
   description = "Define dynamically the different k8s node groups"
 
   type = any
-  
+
 }
 
 
