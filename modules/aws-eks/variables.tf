@@ -28,22 +28,15 @@ variable "node_groups" {
 
   description = "Define dynamically the different k8s node groups"
 
-  type = list(object({
+  type = map(object({
 
     name = string
-
     instance_types = list(string)
-
-    desired_capacity = number
-
     min_size = number
-
     max_size = number
-
-    k8s_labels = map(string)
-
+    desired_capacity = number
+    labels = map(string)
     additional_tags = map(string)
-
     pre_bootstrap_user_data = string
 
   }))
@@ -60,9 +53,7 @@ variable "aws_auth_users" {
   type = list(object({
 
     userarn = string
-
     username = string
-
     groups = list(string)
 
   }))
@@ -78,9 +69,7 @@ variable "aws_auth_roles" {
   type = list(object({
 
     rolearn = string
-
     username = string
-
     groups = list(string)
 
   }))
@@ -99,7 +88,6 @@ variable "addon_coredns" {
   type = object({
 
     version = string
-
     configuration_values = map(any)
 
   })
@@ -113,7 +101,6 @@ variable "addon_kube_proxy" {
   type = object({
 
     version = string
-
     configuration_values = map(any)
 
   })
@@ -127,7 +114,6 @@ variable "addon_vpc_cni" {
   type = object({
 
     version = string
-
     configuration_values = map(any)
 
   })
@@ -142,9 +128,7 @@ variable "extra_addons" {
   type = list(object({
 
     name = string
-
     version = string
-
     configuration_values = map(any)
 
   }))
@@ -158,7 +142,6 @@ variable "extra_addons" {
 variable "cluster_security_group_additional_rules" {
 
   description = "Additional rules to add to the cluster security group"
-
   type = any
 
 }
@@ -168,9 +151,7 @@ variable "cluster_security_group_additional_rules" {
 variable "create_alb_ingress_iam" {
 
   description = "Create IAM resources for alb-ingress"
-
   type = bool
-
   default = false
 
 }
@@ -178,9 +159,7 @@ variable "create_alb_ingress_iam" {
 variable "create_cloudwatch_iam" {
 
   description = "Create IAM resources for cloudwatch"
-
   type = bool
-
   default = false
 
 }
@@ -188,27 +167,21 @@ variable "create_cloudwatch_iam" {
 variable "create_efs_driver_iam" {
 
   description = "Create IAM resources for efs-driver"
-
   type = bool
-
   default = false
 }
 
 variable "create_external_dns_iam" {
 
   description = "Create IAM resources for external-dns"
-
   type = bool
-
   default = false
 }
 
 variable "create_parameter_store_iam" {
 
   description = "Create IAM resources for parameter-store"
-
   type = bool
-
   default = false
 }
 
@@ -247,7 +220,6 @@ variable "vpc_config" {
 #     selectors = list(object({
 
 #       namespace = string
-
 #       labels = map(string)
 
 #     }))

@@ -29,13 +29,13 @@ module "eks" {
 
       content {
 
-        name                    = node_group.value["name"]
-        instance_type           = lookup(node_group.value, "instance_types", null)
-        desired_capacity        = node_group.value["desired_capacity"]
+        name                    = node_group.key
+        instance_types          = lookup(node_group.value, "instance_types", null)
         min_capacity            = node_group.value["min_size"]
         max_capacity            = node_group.value["max_size"]
-        labels                  = node_group.value["k8s_labels"]
-        additional_tags         = node_group.value["additional_tags"]
+        desired_capacity        = node_group.value["desired_capacity"]
+        labels                  = lookup(node_group.value, "labels", null)
+        additional_tags         = lookup(node_group.value, "additional_tags", null)
         pre_bootstrap_user_data = node_group.value["pre_bootstrap_user_data"]
 
       }
