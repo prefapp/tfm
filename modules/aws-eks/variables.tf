@@ -18,10 +18,7 @@ variable "cluster_name" {
 
 variable "cluster_tags" {
   type = map(any)
-  default = {
-    "project" = "k8s"
-    "env"     = "prod"
-  }
+
 }
 
 
@@ -31,25 +28,7 @@ variable "node_groups" {
   description = "Define dynamically the different k8s node groups"
 
   type = any
-  # type = list(object({
-
-  #   name = string
-
-  #   instance_types = list(string)
-
-  #   desired_capacity = number
-
-  #   min_size = number
-
-  #   max_size = number
-
-  #   k8s_labels = map(string)
-
-  #   additional_tags = map(string)
-
-  #   pre_bootstrap_user_data = string
-
-  # }))
+  
 }
 
 
@@ -105,14 +84,14 @@ variable "addons" {
 }
 
 
-# CLUSTER SECURITY GROUP
-variable "cluster_security_group_additional_rules" {
+# # CLUSTER SECURITY GROUP
+# variable "cluster_security_group_additional_rules" {
 
-  description = "Additional rules to add to the cluster security group"
+#   description = "Additional rules to add to the cluster security group"
 
-  type = any
+#   type = any
 
-}
+# }
 
 
 # IAMs
@@ -202,5 +181,34 @@ variable "fargate_profiles" {
   }))
 
   default = []
+
+}
+
+
+variable "node_security_group_additional_rules" {
+
+  description = "Additional rules to add to the node security group"
+
+  type = map(object({
+
+    description = string
+
+    protocol = string
+
+    source_cluster_security_group = optional(bool)
+
+    from_port = number
+
+    to_port = number
+
+    type = string
+
+    cidr_blocks = optional(list(string))
+
+    ipv6_cidr_blocks = optional(list(string))
+
+    self = optional(bool)
+
+  }))
 
 }
