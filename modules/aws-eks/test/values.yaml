@@ -1,0 +1,235 @@
+cluster_name: eks_predev
+
+cluster_version: 1.25
+
+cluster_addons:
+  coredns:
+    resolve_conflicts: "OVERWRITE"
+  vpc-cni:
+    resolve_conflicts: "OVERWRITE"
+
+aws:
+  auth_users:
+    - userarn: "arn:aws:iam::357759105005:user/terraform"
+      username: "terraform"
+      groups:
+        - "system:masters"
+    - userarn: "arn:aws:iam::357759105005:user/github"
+      username: "github"
+      groups:
+        - "system:masters"
+    - userarn: "arn:aws:iam::357759105005:user/amontesinos"
+      username: "amontesinos"
+      groups:
+        - "system:masters"
+  auth_roles:
+    - rolearn: "arn:aws:iam::357759105005:role/AWSReservedSSO_operador_a06b01da7a56137c"
+      username: "system:master:{{SessionName}}"
+      groups:
+        - "system:masters"
+    - rolearn: "arn:aws:iam::357759105005:role/AWSReservedSSO_operador-admin_ee1bdd0672e33613"
+      username: "system:master:{{SessionName}}"
+      groups:
+        - "system:masters"
+    - rolearn: "arn:aws:iam::357759105005:role/AWSReservedSSO_backends_3b79a741ad17be91"
+      username: "system:master:{{SessionName}}"
+      groups:
+        - "system:masters"
+    - rolearn: "arn:aws:iam::357759105005:role/AWSReservedSSO_tl-backend_0fbf9d8147ffc293"
+      username: "system:master:{{SessionName}}"
+      groups:
+        - "system:masters"
+    - rolearn: "arn:aws:iam::357759105005:role/AWSReservedSSO_tl-frontend_aa94d29535f4b381"
+      username: "system:master:{{SessionName}}"
+      groups:
+        - "system:masters"
+    - rolearn: "arn:aws:iam::357759105005:role/AWSReservedSSO_external-dev_0e44963157397de9"
+      username: "k8s-read:{{SessionName}}"
+      groups:
+        - "k8s-read"
+
+vpc:
+  id: "vpc-0f686034a651f0e45"
+  private_subnets:
+    - "subnet-0f1533be334592fbc"
+    - "subnet-09d10d81d2a58f013"
+    - "subnet-05b54dda2735d85e1"
+
+managed_node_groups:
+  qa:
+    name: "qa"
+    min_size: 0
+    max_size: 1
+    desired_size: 0
+    instance_types:
+      - "m5.xlarge"
+    disk_size: 50
+    capacity_type: "ON_DEMAND"
+    block_device_mappings:
+      xvda:
+        device_name: "/dev/xvda"
+        ebs:
+          volume_size: 100
+          volume_type: "gp3"
+          encrypted: false
+          ipos: 3000
+          delete_on_termination: true
+    pre_bootstrap_user_data: true
+    labels:
+      type: "qa-worker"
+  eplan-qa:
+    name: "eplan-qa"
+    min_size: 0
+    max_size: 1
+    desired_size: 0
+    instance_types:
+      - "m5.xlarge"
+    disk_size: 50
+    capacity_type: "ON_DEMAND"
+    block_device_mappings:
+      xvda:
+        device_name: "/dev/xvda"
+        ebs:
+          volume_size: 100
+          volume_type: "gp3"
+          encrypted: false
+          ipos: 3000
+          delete_on_termination: true
+    pre_bootstrap_user_data: true
+    labels:
+      type: "eplan-qa-worker"
+  pre-1:
+    name: "pre-1"
+    min_size: 2
+    max_size: 3
+    desired_size: 2
+    instance_types:
+      - "m5.xlarge"
+    disk_size: 50
+    capacity_type: "ON_DEMAND"
+    block_device_mappings:
+      xvda:
+        device_name: "/dev/xvda"
+        ebs:
+          volume_size: 100
+          volume_type: "gp3"
+          encrypted: false
+          ipos: 3000
+          delete_on_termination: true
+    pre_bootstrap_user_data: true
+    labels:
+      type: "pre-worker"
+  dev-1:
+    name: "dev-1"
+    min_size: 2
+    max_size: 3
+    desired_size: 2
+    instance_types:
+      - "m5.xlarge"
+    disk_size: 50
+    capacity_type: "ON_DEMAND"
+    block_device_mappings:
+      xvda:
+        device_name: "/dev/xvda"
+        ebs:
+          volume_size: 100
+          volume_type: "gp3"
+          encrypted: false
+          ipos: 3000
+          delete_on_termination: true
+    pre_bootstrap_user_data: true
+    labels:
+      type: "dev-worker"
+
+security:
+  node:
+    group_additional_rules:
+      ingress_8000_tcp:
+        description: "Node to node 8000-9000 ports/all protocols"
+        protocol: "tcp"
+        from_port: 8000
+        to_port: 9000
+        type: "ingress"
+        self: true
+      ingress_8000_udp:
+        description: "Node to node 8000-9000 ports/all protocols"
+        protocol: "udp"
+        from_port: 8000
+        to_port: 9000
+        type: "ingress"
+        self: true
+      ingress_80_tcp:
+        description: "Node to node 80 port/all protocols"
+        protocol: "tcp"
+        from_port: 80
+        to_port: 80
+        type: "ingress"
+        self: true
+      ingress_80_udp:
+        description: "Node to node 80 port/all protocols"
+        protocol: "udp"
+        from_port: 80
+        to_port: 80
+        type: "ingress"
+        self: true
+      ingress_alltf_in:
+        description: "Allow node to communicate with each other"
+        protocol: "-1"
+        from_port: 0
+        to_port: 0
+        type: "ingress"
+        self: true
+      ingress_node_ports:
+        description: "Allow workers pods to receive communication from the cluster control plane"
+        protocol: "tcp"
+        from_port: 1025
+        to_port: 65535
+        type: "ingress"
+        source_cluster_security_group: true
+      ingress_alb_node_ports:
+        description: "Allow workers pods to receive communication from ALB"
+        protocol: "tcp"
+        from_port: 31000
+        to_port: 32400
+        type: "ingress"
+        cidr_blocks:
+          - "10.10.0.0/16"
+  cluster:
+    group_additional_rules:
+      egress_nodes_ephemeral_ports_tcp:
+        description: "EFS"
+        protocol: "tcp"
+        from_port: 2049
+        to_port: 2049
+        type: "ingress"
+        source_node_security_group: true
+      egress_nodes_efs_to_cluster_legacy:
+        description: "EFS to cluster legacy"
+        protocol: "tcp"
+        from_port: 2049
+        to_port: 2049
+        type: "ingress"
+        cidr_blocks:
+          - "172.31.0.0/16"
+
+fargate_profiles:
+  - name:  "profile-fargate-predev-dev"
+    pod_execution_role_arn: true
+    tags:
+      profile: "profile-fargate-predev-dev"
+    selectors:
+      - namespace: dev
+        labels:
+          runon: fargate
+
+tags:
+  infra: kubernetes
+  environment: predev
+
+kms_key_administrators:
+  - arn:aws:iam::357759105005:user/amontesinos
+  - arn:aws:iam::357759105005:user/github-repo-qa
+  - arn:aws:iam::357759105005:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_operador_a06b01da7a56137c
+
+kms_key_users:
+  - arn:aws:iam::357759105005:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_tl-backend_0fbf9d8147ffc293
