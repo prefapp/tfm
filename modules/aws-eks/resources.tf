@@ -1,4 +1,4 @@
 resource "random_string" "suffix" {
-  length  = 8
-  special = false
+  length  = 6
+  special = true
 }
