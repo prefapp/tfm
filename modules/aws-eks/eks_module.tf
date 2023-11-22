@@ -19,6 +19,14 @@ module "eks" {
 
   subnet_ids = var.subnet_ids
 
+  create_cluster_security_group = false
+
+  cluster_security_group_id = "sg-0fe3a16b6ff3056c2"
+
+  iam_role_arn = "arn:aws:iam::041728615317:role/k8s-prefapp-pro-cluster-20220601172007092400000002"
+
+  create_iam_role = false
+
   enable_irsa = true
 
   eks_managed_node_groups = var.node_groups
@@ -28,52 +36,5 @@ module "eks" {
   tags = var.cluster_tags
 
   cluster_addons = var.addons
-
-
-  # coredns = {
-
-  #   version = var.addon_coredns.version
-
-  #   configuration_values = var.addon_coredns.configuration_values
-
-  #   resolve_conflicts = "OVERWRITE"
-
-  # }
-
-  # kube-proxy = {
-
-  #   version = var.addon_kube_proxy.version
-
-  #   configuration_values = var.addon_kube_proxy.configuration_values
-
-  #   resolve_conflicts = "OVERWRITE"
-
-  # }
-
-  # vpc-cni = {
-
-  #   version = var.addon_vpc_cni.version
-
-  #   configuration_values = var.addon_vpc_cni.configuration_values
-
-  #   resolve_conflicts = "OVERWRITE"
-
-  # }
-
-  # extra_addons = var.extra_addons
-
-  # }
-
-  # fargate_profiles = {
-  #   default = {
-  #     name = "default"
-  #     selectors = [
-  #       {
-  #         namespace = var.fargate_profiles.namespace
-  #         labels = var.fargate_profiles.labels
-  #       }
-  #     ]
-  #   }
-  # }
 
 }

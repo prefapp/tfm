@@ -1,7 +1,5 @@
+output "account_id" {
 
-output "debug" {
-
-  value = var.node_groups
+  value = data.aws_caller_identity.current.account_id
 
 }
-    

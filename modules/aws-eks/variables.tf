@@ -22,12 +22,27 @@ variable "cluster_tags" {
 }
 
 
+variable "iam_role_arn" {
+
+  type = string
+
+}
+
+
 # NODE GROUPS
 variable "node_groups" {
 
   description = "Define dynamically the different k8s node groups"
 
   type = any
+
+}
+
+variable "security_groups_ids" {
+
+  description = "Security group ids"
+
+  type = list(string)
 
 }
 
