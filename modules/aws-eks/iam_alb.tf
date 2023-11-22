@@ -284,7 +284,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
 }
 
 # Attach ALBIngressControllerIAMPolicy in ALBIngressController role
-resource "aws_iam_role_policy_attachment" "iam_role_scm_attachment_new" {
+resource "aws_iam_role_policy_attachment" "iam_role_scm_attachment" {
 
   count = var.create_alb_ingress_iam ? 1 : 0
 
