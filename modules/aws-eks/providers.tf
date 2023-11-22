@@ -2,18 +2,20 @@ provider "aws" {
   region = var.region
 }
 
-
-
-# data "aws_availability_zones" "available" {}
-
-# data "aws_eks_cluster" "cluster" {
+# data "aws_eks_cluster" "default" {
 #   name = module.eks.cluster_id
 # }
 
 
+data "aws_eks_cluster_auth" "default" {
+  name =  "k8s-prefapp-pro"
+}
+# data "aws_availability_zones" "available" {}
 
-# provider "kubernetes" {
-#   host                   = data.aws_eks_cluster.cluster.endpoint
-#   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-#   token                  = data.aws_eks_cluster.cluster.token
-# }
+
+
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.default.token
+}

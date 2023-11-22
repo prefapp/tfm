@@ -50,22 +50,22 @@ variable "security_groups_ids" {
 # AUTH
 
 # Users
-variable "aws_auth_users" {
+# variable "aws_auth_users" {
 
-  description = "Additional IAM users to add to the aws-auth configmap."
+#   description = "Additional IAM users to add to the aws-auth configmap."
 
-  type = list(object({
+#   type = list(object({
 
-    userarn = string
+#     userarn = string
 
-    username = string
+#     username = string
 
-    groups = list(string)
+#     groups = list(string)
 
-  }))
+#   }))
 
-  default = []
-}
+#   default = []
+# }
 
 
 # Roles
@@ -225,5 +225,12 @@ variable "node_security_group_additional_rules" {
     self = optional(bool)
 
   }))
+
+}
+
+
+variable "aws_auth_users" {
+
+  type = any
 
 }
