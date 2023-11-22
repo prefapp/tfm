@@ -81,6 +81,26 @@ variable "aks_default_node_pool_name" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#default_node_pool
+variable "aks_default_node_pool_enable_auto_scaling" {
+  type = bool
+  default = false
+  description = "(Optional) Should Auto Scaling be enabled for this Node Pool? Defaults to false."
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#default_node_pool
+variable "aks_default_node_pool_min_count" {
+  type = number
+  default = 1
+  description = "(Optional) The minimum number of nodes which should exist in this Node Pool. Defaults to 1."
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#default_node_pool
+variable "aks_default_node_pool_max_count" {
+  type = number
+  description = "(Optional) The maximum number of nodes which should exist in this Node Pool. Defaults to 3."
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#default_node_pool
 variable "aks_default_node_pool_node_count" {
   type = number
   default = 1
