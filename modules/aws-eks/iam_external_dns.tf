@@ -7,30 +7,32 @@ resource "aws_iam_policy" "external_dns_policy" {
 
   name = "external_dns_policy"
 
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "route53:ChangeResourceRecordSets"
-        ],
-        "Resource" : [
-          "arn:aws:route53:::hostedzone/*"
-        ]
-      },
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "route53:ListHostedZones",
-          "route53:ListResourceRecordSets"
-        ],
-        "Resource" : [
-          "*"
-        ]
-      }
-    ]
-  })
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:ChangeResourceRecordSets"
+      ],
+      "Resource": [
+        "arn:aws:route53:::hostedzone/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:ListHostedZones",
+        "route53:ListResourceRecordSets"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+POLICY
 }
 
 # Role for external dns
@@ -57,6 +59,10 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
       }
     ]
   })
+  tags = {
+    environment = "demo"
+    concern     = "Kubernetes"
+  }
 }
 
 # Attach external-dns-Kubernetes role and external_dns_policy for external dns

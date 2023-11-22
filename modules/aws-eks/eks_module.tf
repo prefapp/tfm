@@ -37,4 +37,8 @@ module "eks" {
 
   cluster_addons = var.addons
 
+  create_kms_key = false
+
+  cluster_encryption_config = {}
+
 }
