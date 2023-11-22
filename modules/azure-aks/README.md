@@ -28,13 +28,50 @@ module "githuib-oidc" {
 
 ```terraform
 module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/aws-eks?ref=v1.2.3"
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-aks?ref=v1.2.3"
 }
 ```
 
 ### Set a data .tfvars
 
-#### Example
+#### Example whitout additional node pools
+
+```hcl
+aks_cluster_name                        = "aks-cluster"
+aks_location                            = "westeurope"
+aks_resource_group_name                 = "test-aks-cluster-rg"
+aks_aks_dns_prefix                      = "foo-test"
+aks_kubernetes_version                  = "1.26.6"
+aks_azure_policy_enabled                = true
+aks_automatic_channel_upgrade           = "patch"
+aks_sku_tier                            = "Free"
+aks_workload_identity_enabled           = true
+aks_oidc_issuer_enabled                 = true
+aks_identity_type                       = "SystemAssigned"
+aks_default_node_pool_name              = "defaultnp"
+aks_default_node_pool_node_count        = 1
+aks_default_node_pool_vm_size           = "Standard_F8s_v2"
+aks_default_node_pool_os_disk_type      = "Managed"
+aks_default_node_pool_os_disk_size_gb   = 30
+aks_default_node_pool_max_pods          = 110
+aks_key_vault_secrets_provider_enabled  = true
+aks_key_vault_secrets_provider_interval = "2m"
+aks_network_plugin                      = "azure"
+aks_service_cidr                        = "10.110.0.0/16"
+aks_dns_service_ip                      = "10.110.0.10"
+tags = {
+  environment = "dev"
+  costcenter  = "it"
+  project     = "aks"
+  owner       = "me"
+}
+aks_node_pools = {}
+aks_subnet_name              = "test-subnet-module-aks"
+aks_vnet_name                = "test-test-aks-cluster"
+aks_vnet_name_resource_group = "test-aks-cluster-rg"
+```
+
+#### Example whit additional node pools
 
 ```hcl
 aks_cluster_name                        = "aks-cluster"
