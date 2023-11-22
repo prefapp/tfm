@@ -27,7 +27,7 @@ module "githuib-oidc" {
 #### Example
 
 ```terraform
-module "githuib-oidc" {
+module "azure-aks" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-aks?ref=v1.2.3"
 }
 ```
