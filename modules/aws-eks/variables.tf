@@ -67,41 +67,30 @@ variable "enable_irsa" {
 }
 
 # Users
-variable "aws_auth_users" {
+variable "aws_auth" {
 
-  description = "Additional IAM users to add to the aws-auth configmap."
+  description = "Additional authentication resources to add to the aws-auth configmap."
 
-  type = list(object({
+  type = object({
+    users = list(object({
+      userarn = string
+      username = string
+      groups = list(string)
+    }))
+    roles = list(object({
+      rolearn = string
+      username = string
+      groups = list(string)
+    }))
+  })
 
-    userarn = string
+  default = {
+    users = []
+    roles = []
+  }
 
-    username = string
-
-    groups = list(string)
-
-  }))
-
-  default = []
 }
 
-
-# Roles
-variable "aws_auth_roles" {
-
-  description = "Additional IAM roles to add to the aws-auth configmap."
-
-  type = list(object({
-
-    rolearn = string
-
-    username = string
-
-    groups = list(string)
-
-  }))
-
-  default = []
-}
 
 # IAMs
 variable "alb_ingress_enabled" {
