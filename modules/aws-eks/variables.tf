@@ -22,7 +22,7 @@ variable "cluster_tags" {
 }
 
 
-variable "iam_role_arn" {
+variable "cluster_iam_role_arn" {
 
   type = string
 
@@ -46,26 +46,46 @@ variable "security_groups_ids" {
 
 }
 
+variable "create_cluster_iam_role" {
+
+  description = "Create IAM role for cluster"
+
+  type = bool
+
+  default = false
+
+}
+
+variable "enable_irsa" {
+
+  description = "Enable IRSA"
+
+  type = bool
+
+  default = false
+
+}
+
 
 # AUTH
 
 # Users
-# variable "aws_auth_users" {
+variable "aws_auth_users" {
 
-#   description = "Additional IAM users to add to the aws-auth configmap."
+  description = "Additional IAM users to add to the aws-auth configmap."
 
-#   type = list(object({
+  type = list(object({
 
-#     userarn = string
+    userarn = string
 
-#     username = string
+    username = string
 
-#     groups = list(string)
+    groups = list(string)
 
-#   }))
+  }))
 
-#   default = []
-# }
+  default = []
+}
 
 
 # Roles
@@ -206,14 +226,79 @@ variable "node_security_group_additional_rules" {
 }
 
 
-variable "aws_auth_users" {
+variable "cluster_endpoint_public_access" {
 
-  type = any
+  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is false."
+
+  type = bool
+
+  default = false
+
+}
+
+variable "cluster_endpoint_private_access" {
+
+  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is true."
+
+  type = bool
+
+  default = true
 
 }
 
 variable "cluster_addons" {
 
   type = any
+
+}
+
+variable "create_kms_key" {
+
+  description = "Create KMS key for cluster"
+
+  type = bool
+
+  default = true
+
+}
+
+
+variable "cluster_encryption_config" {
+
+  description = "Cluster encryption config"
+
+  type = any
+
+  default = {}
+
+}
+
+
+variable "cluster_security_group_id"  {
+
+  type = string
+
+}
+
+
+variable "cloudwatch_log_group_retention_in_days" {
+
+  description = "Number of days to retain log events"
+
+  type = number
+
+  default = 14
+
+}
+
+
+variable "manage_aws_auth_configmap" {
+
+  description = "Whether to manage aws-auth configmap"
+
+  type = bool
+
+  default = false
+
 
 }

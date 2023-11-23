@@ -5,7 +5,7 @@
 resource "aws_iam_role" "iam_role_oidc" {
 
   count = var.create_alb_ingress_iam ? 1 : 0
-
+  
   name = format("k8s-%s-%s-oidc-role", var.cluster_tags["project"], var.cluster_tags["env"])
 
   assume_role_policy = jsonencode({
