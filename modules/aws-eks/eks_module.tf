@@ -35,50 +35,7 @@ module "eks" {
 
   tags = var.cluster_tags
 
-  cluster_addons =  {
-
-    aws-ebs-csi-driver = {
-
-      addon_version = "v1.16.0-eksbuild.1"
-
-      resolve_conflicts = "OVERWRITE"
-
-      service_account_role_arn = "arn:aws:iam::041728615317:role/AmazonEKS_EBS_CSI_DriverRole"
-
-    }
-    coredns = {
-
-      addon_version = "v1.9.3-eksbuild.6"
-
-      resolve_conflicts = "OVERWRITE"
-
-    }
-
-    kube-proxy = {
-
-      addon_version = "v1.25.11-eksbuild.2"
-
-      resolve_conflicts = "OVERWRITE"
-
-    }
-
-    vpc-cni = {
-
-      addon_version = "v1.14.0-eksbuild.3"
-
-      resolve_conflicts = "OVERWRITE"
-
-      configuration_values = jsonencode({
-        env = {
-          WARM_PREFIX_TARGET       = "1"
-          ENABLE_PREFIX_DELEGATION = "true"
-          WARM_IP_TARGET           = "4"
-        }
-      })
-
-    }
-
-  }
+  cluster_addons =  var.cluster_addons
 
   create_kms_key = false
 

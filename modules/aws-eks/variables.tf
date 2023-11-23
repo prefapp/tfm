@@ -86,29 +86,6 @@ variable "aws_auth_roles" {
   default = []
 }
 
-
-# ADDONS
-
-# Addons required by the cluster
-variable "addons" {
-
-  description = "Enables the core-dns addon"
-
-  type = any
-
-}
-
-
-# # CLUSTER SECURITY GROUP
-# variable "cluster_security_group_additional_rules" {
-
-#   description = "Additional rules to add to the cluster security group"
-
-#   type = any
-
-# }
-
-
 # IAMs
 variable "create_alb_ingress_iam" {
 
@@ -230,6 +207,12 @@ variable "node_security_group_additional_rules" {
 
 
 variable "aws_auth_users" {
+
+  type = any
+
+}
+
+variable "cluster_addons" {
 
   type = any
 
