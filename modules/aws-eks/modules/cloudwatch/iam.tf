@@ -5,7 +5,7 @@
 
 resource "aws_iam_policy" "policy_additional_cloudwatch" {
 
-  count = var.create_alb_iam ? 1 : 0
+  count = var.create_cloudwatch_iam ? 1 : 0
 
   name = "policy_additional_cloudwatch"
 
@@ -30,7 +30,7 @@ resource "aws_iam_policy" "policy_additional_cloudwatch" {
 
 resource "aws_iam_role" "iam_role_fluentd" {
 
-  count = var.create_alb_iam ? 1 : 0
+  count = var.create_cloudwatch_iam ? 1 : 0
 
   name = "eks-pro-fluentd-role"
 
@@ -60,7 +60,7 @@ resource "aws_iam_role" "iam_role_fluentd" {
 
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServerPolicy" {
 
-  count = var.create_alb_iam ? 1 : 0
+  count = var.create_cloudwatch_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_fluentd[count.index].name
 
@@ -74,7 +74,7 @@ resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServe
 
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAdditionalPolicy" {
 
-  count = var.create_alb_iam ? 1 : 0
+  count = var.create_cloudwatch_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_fluentd[count.index].name
 

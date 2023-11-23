@@ -6,6 +6,4 @@ variable "create_alb_ingress_iam" {
 
     type = bool
 
-    default = true
-
 }
