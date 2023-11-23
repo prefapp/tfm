@@ -27,7 +27,7 @@ module "githuib-oidc" {
 }
 ```
 
-### Set a data .tfvars
+### Set a data input.yaml
 
 #### Example with comments
 
