@@ -20,6 +20,9 @@
         },
         "modules/azure-resource-group": {
             "package-name": "azure-resource-group"
+        },
+        "modules/azure-vnets-subnets": {
+            "package-name": "azure-vnets-subnets"
         }
     }
 }

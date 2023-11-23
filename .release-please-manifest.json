@@ -5,4 +5,5 @@
     "modules/azure-oidc": "1.2.0",
     "modules/aws-oidc": "1.2.0",
     "modules/azure-resource-group": "1.1.0"
+    "modules/azure-vnets-subnets": "1.0.0"
 }
