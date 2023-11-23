@@ -89,7 +89,11 @@ module "eks" {
 
   aws_auth_users = var.aws_auth_users
 
+  aws_auth_roles = var.aws_auth_roles
+
   manage_aws_auth_configmap = var.manage_aws_auth_configmap
+
+  fargate_profiles = var.fargate_profiles
 
 }
 
