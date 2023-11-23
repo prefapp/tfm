@@ -66,9 +66,6 @@ variable "enable_irsa" {
 
 }
 
-
-# AUTH
-
 # Users
 variable "aws_auth_users" {
 
@@ -107,19 +104,9 @@ variable "aws_auth_roles" {
 }
 
 # IAMs
-variable "create_alb_ingress_iam" {
+variable "alb_ingress_enabled" {
 
-  description = "Create IAM resources for alb-ingress"
-
-  type = bool
-
-  default = false
-
-}
-
-variable "create_cloudwatch_iam" {
-
-  description = "Create IAM resources for cloudwatch"
+  description = "Create resources for alb-ingress"
 
   type = bool
 
@@ -127,27 +114,38 @@ variable "create_cloudwatch_iam" {
 
 }
 
-variable "create_efs_driver_iam" {
+variable "cloudwatch_enabled" {
 
-  description = "Create IAM resources for efs-driver"
+  description = "Create resources for cloudwatch"
+
+  type = bool
+
+  default = false
+
+}
+
+variable "efs_driver_enabled" {
+
+  description = "Create resources for efs-driver"
 
   type = bool
 
   default = false
 }
 
-variable "create_external_dns_iam" {
+variable "external_dns_enabled" {
 
-  description = "Create IAM resources for external-dns"
+  description = "Create resources for external-dns"
 
   type = bool
 
   default = false
+
 }
 
-variable "create_parameter_store_iam" {
+variable "parameter_store_enabled" {
 
-  description = "Create IAM resources for parameter-store"
+  description = "Create resources for parameter-store"
 
   type = bool
 

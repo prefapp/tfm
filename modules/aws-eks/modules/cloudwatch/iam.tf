@@ -1,9 +1,11 @@
-# IAM CLOUDWATCH AGENT
 
-# Policy for cloudwatch
+################################################################################
+# IAM Policy for CloudWatch
+################################################################################
+
 resource "aws_iam_policy" "policy_additional_cloudwatch" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = var.create_alb_iam ? 1 : 0
 
   name = "policy_additional_cloudwatch"
 
@@ -21,10 +23,14 @@ resource "aws_iam_policy" "policy_additional_cloudwatch" {
   })
 }
 
-# Role for FluentD
+
+################################################################################
+# IAM Role for CloudWatch
+################################################################################
+
 resource "aws_iam_role" "iam_role_fluentd" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = var.create_alb_iam ? 1 : 0
 
   name = "eks-pro-fluentd-role"
 
@@ -47,10 +53,14 @@ resource "aws_iam_role" "iam_role_fluentd" {
   })
 }
 
-# Attach Role Policy CloudWatchAgentServerPolicy in FluenD role
+
+################################################################################
+# IAM Role Policy Attachment for CloudWatch
+################################################################################
+
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServerPolicy" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = var.create_alb_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_fluentd[count.index].name
 
@@ -58,10 +68,13 @@ resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServe
 
 }
 
-# Attach Role Policy iam_role_Policy in FluenD role
+################################################################################
+# IAM Role Policy Attachment for CloudWatch
+################################################################################
+
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAdditionalPolicy" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = var.create_alb_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_fluentd[count.index].name
 

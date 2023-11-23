@@ -1,6 +1,7 @@
-# IAM EXTERNAL DNS
+################################################################################
+# IAM Policy for External DNS
+################################################################################
 
-# Policy for external DNS
 resource "aws_iam_policy" "external_dns_policy" {
 
   count = var.create_external_dns_iam ? 1 : 0
@@ -35,7 +36,10 @@ resource "aws_iam_policy" "external_dns_policy" {
 POLICY
 }
 
-# Role for external dns
+################################################################################
+# IAM Role for External DNS
+################################################################################
+
 resource "aws_iam_role" "external-dns-Kubernetes" {
 
   count = var.create_external_dns_iam ? 1 : 0
@@ -65,7 +69,10 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
   }
 }
 
-# Attach external-dns-Kubernetes role and external_dns_policy for external dns
+################################################################################
+# IAM Policy Attachment for External DNS
+################################################################################
+
 resource "aws_iam_role_policy_attachment" "external-dns-AmazonEKSClusterPolicy" {
 
   count = var.create_external_dns_iam ? 1 : 0

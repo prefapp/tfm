@@ -1,6 +1,8 @@
-# IAM EFS CSI DRIVER
 
-# Policy for EKS_EFS_CSI_DriverRole
+################################################################################
+# IAM Policy for EFS_CSI_DriverRole
+################################################################################
+
 resource "aws_iam_policy" "iam_policy_EFS_CSI_DriverRole" {
 
   count = var.create_efs_driver_iam ? 1 : 0
@@ -58,7 +60,10 @@ resource "aws_iam_policy" "iam_policy_EFS_CSI_DriverRole" {
   })
 }
 
-# Role for EKS_EFS_CSI_DriverRole
+################################################################################
+# IAM Role for EKS_EFS_CSI_DriverRole
+################################################################################
+
 resource "aws_iam_role" "iam_role_EKS_EFS_CSI_DriverRole" {
 
   count = var.create_efs_driver_iam ? 1 : 0
@@ -84,7 +89,11 @@ resource "aws_iam_role" "iam_role_EKS_EFS_CSI_DriverRole" {
   })
 }
 
-# Attach EKS_EFS_CSI_DriverRole Role Policy to EKS_EFS_CSI_DriverRole Policies
+
+################################################################################
+# IAM Role Policy Attachment for EKS_EFS_CSI_DriverRole
+################################################################################
+
 resource "aws_iam_role_policy_attachment" "iam_role_EKS_EFS_CSI_DriverRole_attachment" {
 
   count = var.create_efs_driver_iam ? 1 : 0

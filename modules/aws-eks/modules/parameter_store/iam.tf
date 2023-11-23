@@ -1,6 +1,8 @@
-# IAM PARAMETER STORE
 
-# Policy for parameter store
+################################################################################
+# IAM Policy for Parameter Store
+################################################################################
+
 resource "aws_iam_policy" "iam_policy_parameter_store" {
 
   count = var.create_parameter_store_iam ? 1 : 0
@@ -19,7 +21,9 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
   })
 }
 
-# Role for parameter store
+################################################################################
+# IAM Role for Parameter Store
+################################################################################
 resource "aws_iam_role" "iam_role_parameter_store_all" {
 
   count = var.create_parameter_store_iam ? 1 : 0
@@ -47,7 +51,11 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
   })
 }
 
-# Attach parameter store role and parameter store policy for parameter store
+
+################################################################################
+# IAM Role Policy Attachment for Parameter Store
+################################################################################
+
 resource "aws_iam_role_policy_attachment" "iam_role_parameter_store_all_attachment" {
 
   count = var.create_parameter_store_iam ? 1 : 0
