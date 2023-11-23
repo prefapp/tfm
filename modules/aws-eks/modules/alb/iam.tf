@@ -5,7 +5,7 @@
 resource "aws_iam_role" "iam_role_oidc" {
 
   count = var.create_alb_ingress_iam ? 1 : 0
-  
+
   name = format("k8s-%s-%s-oidc-role", var.cluster_tags["project"], var.cluster_tags["env"])
 
   assume_role_policy = jsonencode({
@@ -14,12 +14,12 @@ resource "aws_iam_role" "iam_role_oidc" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${module.eks.oidc_provider_arn}"
+          "Federated" : "${var.oidc_provider_arn}"
         },
         "Action" : ["sts:AssumeRoleWithWebIdentity", "sts:AssumeRole"],
         "Condition" : {
           "StringEquals" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:alb-ingress-controller"
+            "${split("oidc-provider/", var.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:alb-ingress-controller"
           }
         }
       }

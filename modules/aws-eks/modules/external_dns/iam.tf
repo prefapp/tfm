@@ -52,12 +52,12 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${module.eks.oidc_provider_arn}"
+          "Federated" : "${var.oidc_provider_arn}"
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:external-dns"
+            "${split("oidc-provider/", var.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:external-dns"
           }
         }
       }

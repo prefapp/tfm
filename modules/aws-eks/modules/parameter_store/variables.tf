@@ -1,16 +1,34 @@
 variable "create_parameter_store_iam" {
 
-    description = "Whether to create IAM policy for Parameter Store"
+  description = "Whether to create IAM policy for Parameter Store"
 
-    type = bool
+  type = bool
 
 }
 
 
 variable "region" {
 
-    description = "AWS region"
+  description = "AWS region"
 
-    type = string
+  type = string
+
+}
+
+
+variable "oidc_provider_arn" {
+
+  description = "OIDC Provider ARN"
+
+  type = string
+
+}
+
+
+variable "account_id" {
+
+  description = "AWS account ID"
+
+  type = string
   
 }

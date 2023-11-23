@@ -33,12 +33,21 @@ terraform {
 }
 
 ################################################################################
+# Local Variables
+################################################################################
+locals {
+
+  account_id = data.aws_caller_identity.current.account_id
+
+}
+
+################################################################################
 # EKS Cluster Configuration
 ################################################################################
 
 module "eks" {
 
-  version = locals.eks_module_version
+  version = "19.20.0"
 
   source = "terraform-aws-modules/eks/aws"
 
@@ -98,6 +107,9 @@ module "alb" {
 
   create_alb_ingress_iam = var.alb_ingress_enabled
 
+  oidc_provider_arn =  module.eks.oidc_provider_arn
+
+  cluster_tags = var.cluster_tags
 }
 
 ################################################################################
@@ -109,6 +121,8 @@ module "cloudwatch" {
   source = "./modules/cloudwatch"
 
   create_cloudwatch_iam = var.cloudwatch_enabled
+
+  oidc_provider_arn = module.eks.oidc_provider_arn
 
 }
 
@@ -122,6 +136,8 @@ module "efs_csi_driver" {
 
   create_efs_driver_iam = var.efs_driver_enabled
 
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
 }
 
 ################################################################################
@@ -133,6 +149,8 @@ module "external_dns" {
   source = "./modules/external_dns"
 
   create_external_dns_iam = var.external_dns_enabled
+
+  oidc_provider_arn = module.eks.oidc_provider_arn
 
 }
 
@@ -146,6 +164,10 @@ module "parameter_store" {
 
   create_parameter_store_iam = var.parameter_store_enabled
 
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
   region = var.region
+
+  account_id = local.account_id
 
 }

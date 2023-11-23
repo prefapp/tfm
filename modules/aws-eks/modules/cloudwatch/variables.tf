@@ -5,3 +5,13 @@ variable "create_cloudwatch_iam" {
     type = bool
 
 }
+
+
+variable "oidc_provider_arn" {
+
+    description = "OIDC Provider ARN"
+
+    type = string
+
+}
+
