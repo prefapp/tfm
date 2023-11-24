@@ -2,12 +2,6 @@ variable "region" {
   type = string
 }
 
-# Comprobar si podemos sacarlo programáticamente aws_caller_identity
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity
-# variable "account_id" {
-#   type = string
-# }
-
 variable "cluster_version" {
   type = string
 }
@@ -104,19 +98,9 @@ variable "aws_auth_roles" {
 }
 
 # IAMs
-variable "alb_ingress_enabled" {
+variable "create_alb_ingress_iam" {
 
-  description = "Create resources for alb-ingress"
-
-  type = bool
-
-  default = false
-
-}
-
-variable "cloudwatch_enabled" {
-
-  description = "Create resources for cloudwatch"
+  description = "Create IAM resources for alb-ingress"
 
   type = bool
 
@@ -124,18 +108,9 @@ variable "cloudwatch_enabled" {
 
 }
 
-variable "efs_driver_enabled" {
+variable "create_cloudwatch_iam" {
 
-  description = "Create resources for efs-driver"
-
-  type = bool
-
-  default = false
-}
-
-variable "external_dns_enabled" {
-
-  description = "Create resources for external-dns"
+  description = "Create IAM resources for cloudwatch"
 
   type = bool
 
@@ -143,9 +118,28 @@ variable "external_dns_enabled" {
 
 }
 
-variable "parameter_store_enabled" {
+variable "create_efs_driver_iam" {
 
-  description = "Create resources for parameter-store"
+  description = "Create IAM resources for efs-driver"
+
+  type = bool
+
+  default = false
+}
+
+variable "create_external_dns_iam" {
+
+  description = "Create IAM resources for external-dns"
+
+  type = bool
+
+  default = false
+
+}
+
+variable "create_parameter_store_iam" {
+
+  description = "Create IAM resources for parameter-store"
 
   type = bool
 

@@ -40,12 +40,12 @@ resource "aws_iam_role" "iam_role_fluentd" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${var.oidc_provider_arn}"
+          "Federated" : "${module.eks.oidc_provider_arn}"
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringEquals" : {
-            "${split("oidc-provider/", var.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:fluentd-sa"
+            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:fluentd-sa"
           }
         }
       }

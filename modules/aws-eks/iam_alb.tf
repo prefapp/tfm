@@ -14,12 +14,12 @@ resource "aws_iam_role" "iam_role_oidc" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${var.oidc_provider_arn}"
+          "Federated" : "${module.eks.oidc_provider_arn}"
         },
         "Action" : ["sts:AssumeRoleWithWebIdentity", "sts:AssumeRole"],
         "Condition" : {
           "StringEquals" : {
-            "${split("oidc-provider/", var.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:alb-ingress-controller"
+            "${split("oidc-provider/",  module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:alb-ingress-controller"
           }
         }
       }
