@@ -95,3 +95,24 @@ output "eks_summary" {
 
   SUMMARY
 }
+
+
+output "debug" {
+
+  value ="a" #(var.cluster_addons["vpc-cni"].configuration_values.env.ENABLE_PREFIX_DELEGATION == "false")  #== "false"
+        #can(
+
+        # lookup(var.cluster_addons["vpc-cni"].configuration_values.env, "ENABLE_PREFIX_DELEGATION", null) == null
+
+        # ||
+
+        # (
+
+          # var.cluster_addons["vpc-cni"].configuration_values.env.ENABLE_PREFIX_DELEGATION == "true"
+
+
+        # )
+
+      # )
+
+}

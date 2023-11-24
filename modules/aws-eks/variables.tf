@@ -240,7 +240,61 @@ variable "cluster_endpoint_private_access" {
 
 variable "cluster_addons" {
 
-  type = any
+
+  description = "Addons to deploy to the cluster"
+
+  type = map(object({
+
+    addon_version = string
+
+    resolve_conflicts = string
+
+    configuration_values = optional(object({
+
+      env = optional(map(string))
+
+    }))
+
+    service_account_role_arn = optional(string)
+
+  }))
+
+  validation {
+
+    condition = can(var.cluster_addons.vpc-cni)
+
+    error_message = "vpc-cni addon is required"
+  }
+
+  validation {
+
+    condition = (
+
+      // Allow null values on configuration_values.env.ENABLE_PREFIX_DELEGATION
+
+      lookup(var.cluster_addons.vpc-cni.configuration_values.env, "ENABLE_PREFIX_DELEGATION", null) == null
+
+      ||
+
+      // Allow "true" or "false" values on configuration_values.env.ENABLE_PREFIX_DELEGATION
+
+      lookup(var.cluster_addons.vpc-cni.configuration_values.env, "ENABLE_PREFIX_DELEGATION", null) == "true"
+
+      ||
+
+      lookup(var.cluster_addons.vpc-cni.configuration_values.env, "ENABLE_PREFIX_DELEGATION", null) == "false"
+
+    )
+
+    error_message = <<-ERROR_VALIDATION
+
+      INVALID VALUE: "${var.cluster_addons.vpc-cni.configuration_values.env.ENABLE_PREFIX_DELEGATION}" IN ENABLE_PREFIX_DELEGATION  in vpc-cni ADDON
+
+      VALID VALUES: "true", "false" (with quotes, not boolean values)
+
+    ERROR_VALIDATION
+
+  }
 
 }
 
@@ -266,7 +320,7 @@ variable "cluster_encryption_config" {
 }
 
 
-variable "cluster_security_group_id"  {
+variable "cluster_security_group_id" {
 
   type = string
 

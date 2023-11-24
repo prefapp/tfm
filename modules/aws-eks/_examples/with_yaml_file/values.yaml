@@ -27,14 +27,11 @@ cluster_addons:
   vpc-cni:
     addon_version: "v1.14.0-eksbuild.3"
     resolve_conflicts: "OVERWRITE"
-    configuration_values: |-
-      {
-        "env": {
-          "ENABLE_PREFIX_DELEGATION": "true",
-          "WARM_IP_TARGET": "4",
-          "WARM_PREFIX_TARGET": "1"
-        }
-      }
+    configuration_values:
+      env:
+        ENABLE_PREFIX_DELEGATION: "true"
+        WARM_IP_TARGET: "4"
+        WARM_PREFIX_TARGET: "1"
   coredns:
     resolve_conflicts: "OVERWRITE"
     addon_version: "v1.9.3-eksbuild.6"

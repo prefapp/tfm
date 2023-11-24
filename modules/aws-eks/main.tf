@@ -39,7 +39,7 @@ module "eks" {
 
   tags = var.cluster_tags
 
-  cluster_addons = var.cluster_addons
+  cluster_addons = local.cluster_addons
 
   create_kms_key = var.create_kms_key
 
