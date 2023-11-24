@@ -170,48 +170,72 @@ variable "aks_dns_service_ip" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#tags
-variable "tags" {
+variable "aks_tags" {
   type = map(string)
   default = {}
   description = "(Optional) A mapping of tags to assign to the resource."
 }
 
-################
-# NODE POOL(S) #
-################
-
-
-# aks_node_pools = [
-#     {
-#         name = "nodepool1"
-#         node_count = 1
-#         vm_size = "Standard_F8s_v2"
-#         os_disk_type = "Managed"
-#         os_disk_size_gb = 30
-#         max_pods = 110
-#         enable_auto_scaling = true
-#         min_count = 1
-#         max_count = 3
-#     },
-#     {
-#         name = "nodepool2"
-#         node_count = 1
-#         vm_size = "Standard_F8s_v2"
-#         os_disk_type = "Managed"
-#         os_disk_size_gb = 30
-#         max_pods = 110
-#         enable_auto_scaling = true
-#         min_count = 1
-#         max_count = 3
-#     }
-# ]
-
-
+#node_pool_additionals = {
+#  np1 = {
+#    name                = "np1"
+#    vm_size             = "Standard_F8s_v2"
+#    node_count          = 1
+#    min_count           = 1
+#    max_count           = 2
+#    os_disk_type        = "Managed"
+#    os_disk_size_gb     = 30
+#    max_pods            = 110
+#    enable_auto_scaling = false
+#    tags = {
+#      environment = "dev"
+#      costcenter  = "it"
+#      project     = "aks"
+#      owner       = "me"
+#    }
+#    node_labels = {
+#      "nodepool" = "np1"
+#    }
+#  },
+#  np2 = {
+#    name                = "np2"
+#    vm_size             = "Standard_F8s_v2"
+#    node_count          = 1
+#    min_count           = 1
+#    max_count           = 2
+#    os_disk_type        = "Managed"
+#    os_disk_size_gb     = 30
+#    max_pods            = 110
+#    enable_auto_scaling = true
+#    tags = {
+#      environment = "dev"
+#      costcenter  = "it"
+#      project     = "aks"
+#      owner       = "me"
+#    }
+#    node_labels = {
+#      "nodepool" = "np2"
+#    }
+#  }
+#}
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool
-variable "aks_node_pools" {
-  type = any
-  description = "values for node pools"
+variable "node_pool_additionals" {
+  type = map(object({
+    name                = string
+    vm_size             = string
+    node_count          = number
+    min_count           = number
+    max_count           = number
+    os_disk_type        = string
+    os_disk_size_gb     = number
+    max_pods            = number
+    enable_auto_scaling = bool
+    tags                = map(string)
+    node_labels         = map(string)
+  }))
+  default = {}
+  description = "(Optional) A mapping of additional Node Pools to create for the Kubernetes Cluster."
 }
 
 #################

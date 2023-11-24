@@ -34,14 +34,14 @@ output "unified_output" {
     AKS Key Vault Secrets Provider Enabled:  ${var.aks_key_vault_secrets_provider_enabled}
     AKS Key Vault Secrets Provider Interval: ${var.aks_key_vault_secrets_provider_interval}
     
-    Tags: ${jsonencode(var.tags)}
+    AKS Tags: ${jsonencode(var.aks_tags)}
 
     ######################
     #### Node Pool(s) ####
     ######################
     
     ${join("\n", [
-      for key, value in var.aks_node_pools : 
+      for key, value in var.node_pool_additionals : 
       "- Node Pool '${key}':\n  - ID: ${azurerm_kubernetes_cluster_node_pool.node_pool[key].id}\n  - VM Size: ${value.vm_size}\n  - Node Count: ${value.node_count}\n  - Min Count: ${value.min_count}\n  - Max Count: ${value.max_count}\n  - OS Disk Type: ${value.os_disk_type}\n  - OS Disk Size GB: ${value.os_disk_size_gb}\n  - Max Pods: ${value.max_pods}\n  - Auto Scaling Enabled: ${value.enable_auto_scaling}\n  - Tags: ${jsonencode(value.tags)}\n  - Node Labels: ${jsonencode(value.node_labels)}\n"
     ])}
 

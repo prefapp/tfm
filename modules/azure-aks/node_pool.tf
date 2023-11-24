@@ -1,6 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool
 resource "azurerm_kubernetes_cluster_node_pool" "node_pool" {
-  for_each              = var.aks_node_pools
+  for_each              = var.node_pool_additionals
   kubernetes_cluster_id = azurerm_kubernetes_cluster.kubernetes.id
   vnet_subnet_id        = data.azurerm_subnet.aks_subnet.id
   name                  = each.value.name
@@ -12,7 +12,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool" {
   min_count             = each.value.enable_auto_scaling ? each.value.min_count : null
   max_count             = each.value.enable_auto_scaling ? each.value.max_count : null
   node_count            = each.value.node_count
-  tags                  = var.tags
+  tags                  = each.value.tags
   depends_on = [
     azurerm_kubernetes_cluster.kubernetes
    ]

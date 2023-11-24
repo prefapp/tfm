@@ -35,7 +35,7 @@ resource "azurerm_kubernetes_cluster" "kubernetes" {
     service_cidr   = var.aks_service_cidr
     dns_service_ip = var.aks_dns_service_ip
   }
-  tags = var.tags
+  tags = var.aks_tags
   lifecycle {
     ignore_changes = [
       default_node_pool[0].node_count

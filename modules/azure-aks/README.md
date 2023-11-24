@@ -60,13 +60,13 @@ aks_key_vault_secrets_provider_interval = "2m"
 aks_network_plugin                      = "azure"
 aks_service_cidr                        = "10.110.0.0/16"
 aks_dns_service_ip                      = "10.110.0.10"
-tags = {
+aks_tags = {
   environment = "dev"
   costcenter  = "it"
   project     = "aks"
   owner       = "me"
 }
-aks_node_pools = {}
+node_pool_additionals = {}
 aks_subnet_name              = "test-subnet-module-aks"
 aks_vnet_name                = "test-test-aks-cluster"
 aks_vnet_name_resource_group = "test-aks-cluster-rg"
@@ -100,13 +100,13 @@ aks_key_vault_secrets_provider_interval = "2m"
 aks_network_plugin                      = "azure"
 aks_service_cidr                        = "10.110.0.0/16"
 aks_dns_service_ip                      = "10.110.0.10"
-tags = {
+aks_tags = {
   environment = "dev"
   costcenter  = "it"
   project     = "aks"
   owner       = "me"
 }
-aks_node_pools = {
+node_pool_additionals = {
   np1 = {
     name                = "np1"
     vm_size             = "Standard_F8s_v2"
@@ -155,7 +155,7 @@ aks_vnet_name_resource_group = "test-aks-cluster-rg"
 
 ## Output
 
-```text
+```output
 #######################
 ###       AKS       ###
 #######################
