@@ -15,7 +15,7 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
       "Effect" : "Allow",
       "Action" : ["ssm:GetParameter", "ssm:GetParameters"],
       "Resource" : [
-        "arn:aws:ssm:${var.region}:${var.account_id}:parameter/*",
+        "arn:aws:ssm:${var.region}:${local.account_id}:parameter/*",
       ]
     }]
   })
@@ -38,12 +38,12 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${var.oidc_provider_arn}"
+          "Federated" : "${module.eks.oidc_provider_arn}"
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "${split("oidc-provider/", var.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*:*"
+            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*:*"
           }
         }
       }
