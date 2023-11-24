@@ -47,10 +47,13 @@ output "eks_summary" {
     ${join("\n", [
       for addon_key, addon_value in var.cluster_addons :
       format(
-        " - %s\n \t- Addon Version: %s\n\t- Advanced configuration: %s",
+        " - %s\n \t- Addon Version: %s\n\t- Advanced configuration:\t%s",
         addon_key,
         addon_value.addon_version,
-        lookup(addon_value, "configuration_values", "None")
+        replace(
+          lookup(addon_value, "configuration_values", "None"), 
+          "\n", "\n\t\t\t\t\t"
+        )
       )
     ])}
 
