@@ -283,7 +283,6 @@ variable "cloudwatch_log_group_retention_in_days" {
 
 }
 
-
 variable "manage_aws_auth_configmap" {
 
   description = "Whether to manage aws-auth configmap"
@@ -292,5 +291,15 @@ variable "manage_aws_auth_configmap" {
 
   default = false
 
+
+}
+
+variable "create_cluster_security_group" {
+
+  description = "Create cluster security group"
+
+  type = bool
+
+  default = true
 
 }
