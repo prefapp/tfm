@@ -5,38 +5,6 @@ locals {
 
   account_id = data.aws_caller_identity.current.account_id
 
-#   addon_vpc-cni = merge({
-
-#     resolve_conflicts = "OVERWRITE"
-
-#     configuration_values = {
-
-#       env = {
-
-#         WARM_PREFIX_TARGET = "1"
-
-#         ENABLE_PREFIX_DELEGATION = "true"
-
-#         MINIMUM_IP_TARGET = "8"
-
-#         WARM_IP_TARGET = "4"
-
-#       }
-
-#     }
-#     },
-
-
-#     lookup(var.cluster_addons["vpc-cni"], null) != null ?
-
-#     var.cluster_addons["vpc-cni"]
-
-#     :
-
-#     {}
-
-#   )
-
   cluster_addons = merge(
     {},
 
