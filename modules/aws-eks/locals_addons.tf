@@ -76,8 +76,8 @@ locals {
       MINIMUM_IP_TARGET        = "8"
       WARM_IP_TARGET           = "4"
       WARM_PREFIX_TARGET       = "1"
+    }
   }
-}
 
   /*
     First, we merge the base_addons with the cluster_addons variable
@@ -114,7 +114,7 @@ locals {
             resolve_conflicts = "OVERWRITE"
 
           },
-          
+
           value,
 
           lookup(value, "configuration_values", null) != null ?
