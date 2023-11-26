@@ -1,8 +1,11 @@
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
 
 ################################################################################
 # EKS Cluster Configuration
 ################################################################################
-
 module "eks" {
 
   version = "19.20.0"

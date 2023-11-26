@@ -107,4 +107,3 @@ locals {
 
   ) : key => value if value.addon_disabled != true }
 }
-

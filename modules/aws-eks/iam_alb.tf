@@ -1,4 +1,3 @@
-
 # IAM ALB INGRESS CONTROLLER
 
 # Role K8s Service Account with secrets manager access
@@ -31,7 +30,6 @@ resource "aws_iam_role" "iam_role_oidc" {
 }
 
 # Policy for ALBIngressControllerIAMPolicy
-
 resource "aws_iam_policy" "iam_policy_alb" {
 
   count = var.create_alb_ingress_iam ? 1 : 0
