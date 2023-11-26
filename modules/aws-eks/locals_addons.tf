@@ -58,44 +58,71 @@
 
 locals {
 
+  /**
+   * Base addons that are always enabled by default
+   */
   base_addons = {
     vpc-cni    = {},
     kube-proxy = {},
     coredns    = {},
   }
 
+  /**
+   * Configuration values for the vpc-cni addon
+   */
+  vcp-cni_configuration_values = {
+    env = {
+      ENABLE_PREFIX_DELEGATION = "true"
+      MINIMUM_IP_TARGET        = "8"
+      WARM_IP_TARGET           = "4"
+      WARM_PREFIX_TARGET       = "1"
+  }
+}
+
+  /*
+    First, we merge the base_addons with the cluster_addons variable
+    that the user has set in the .tfvars file
+  */
   mixed_addons = merge(
     local.base_addons,
     var.cluster_addons
   )
 
-  cluster_addons = { for key, value in merge(
+  /*
+    Then, we merge the mixed_addons with the local variables for the addons
+    that the user has set in the .tfvars file
+  */
+  configured_addons = merge(
     {
       for key, value in local.mixed_addons : key => {
 
         for k, v in merge(
+
+          /*
+            We set the default values for the addons
+          */
           {
+
             addon_disabled = false,
 
-            configuration_values = (key == "vpc-cni" ? jsonencode({
-
-              env = {
-                ENABLE_PREFIX_DELEGATION = "true"
-                MINIMUM_IP_TARGET        = "8"
-                WARM_IP_TARGET           = "4"
-                WARM_PREFIX_TARGET       = "1"
-              }
-            }) : null)
+            /*
+              In case the addon is vpc-cni, we set the configuration_values
+              to the local.vcp-cni_configuration_values variable
+            */
+            configuration_values = (key == "vpc-cni" ? jsonencode(local.vcp-cni_configuration_values) : null)
 
             resolve_conflicts = "OVERWRITE"
-          },
 
+          },
+          
           value,
 
           lookup(value, "configuration_values", null) != null ?
+
           {
             configuration_values = jsonencode(value.configuration_values)
           }
+
           :
 
           {
@@ -105,5 +132,11 @@ locals {
       ) : k => v if v != null }
     }
 
-  ) : key => value if value.addon_disabled != true }
+  )
+
+  /*
+    Finally, we set the cluster_addons variable to the configured_addons
+    variable, and we get the addons that are not disabled
+  */
+  cluster_addons = { for key, value in merge(local.configured_addons) : key => value if value.addon_disabled == false }
 }
