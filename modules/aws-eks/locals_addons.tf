@@ -129,6 +129,10 @@ locals {
 
           }
 
+
+          /**
+           * Remove null properties from the configuration_values.
+           */
       ) : k => v if v != null }
     }
 
