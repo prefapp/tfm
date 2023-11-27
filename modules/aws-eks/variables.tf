@@ -137,6 +137,8 @@ variable "create_external_dns_iam" {
 variable "externaldns_tags" {
   type = map(any)
 
+  default = {}
+
 }
 
 variable "create_parameter_store_iam" {
