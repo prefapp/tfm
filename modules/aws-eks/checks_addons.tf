@@ -1,5 +1,5 @@
 # The checks are warnings, not errors. So the user will be able to continue with the apply.
-
+# docs: https://developer.hashicorp.com/terraform/tutorials/configuration-language/checks
 check "vpc-cni-addon-enabled" {
 
   assert {
@@ -22,7 +22,7 @@ check "vpc-cni-addon-configuration-values-will-be-overwritten" {
 
       lookup(local.configured_addons.vpc-cni, "configuration_values", null) != null &&
 
-      jsonencode(local.vcp-cni_configuration_values) != lookup(local.configured_addons.vpc-cni, "configuration_values", jsonencode(local.vcp-cni_configuration_values))
+      jsonencode(local.base_addons.vpc-cni.configuration_values) != lookup(local.configured_addons.vpc-cni, "configuration_values", jsonencode(local.base_addons.vpc-cni.configuration_values))
 
     )
 

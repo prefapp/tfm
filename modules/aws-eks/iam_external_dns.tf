@@ -1,6 +1,23 @@
-################################################################################
+
+
+/*
+
+  IAM Role for External DNS
+
+  This IAM Role is used by External DNS to manage Route53 records.
+
+  If you use the External DNS chart, you must create an IAM role for External DNS to use.
+
+  DOC: https://github.com/kubernetes-sigs/external-dns
+
+  RESOURCES:
+
+    - IAM Role -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
+    - IAM Policy -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
+    - IAM Role Policy Attachment -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
+
+*/
 # IAM Policy for External DNS
-################################################################################
 
 resource "aws_iam_policy" "external_dns_policy" {
 
@@ -36,9 +53,7 @@ resource "aws_iam_policy" "external_dns_policy" {
 POLICY
 }
 
-################################################################################
 # IAM Role for External DNS
-################################################################################
 
 resource "aws_iam_role" "external-dns-Kubernetes" {
 
@@ -66,9 +81,8 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
   tags = var.externaldns_tags
 }
 
-################################################################################
+
 # IAM Policy Attachment for External DNS
-################################################################################
 
 resource "aws_iam_role_policy_attachment" "external-dns-AmazonEKSClusterPolicy" {
 

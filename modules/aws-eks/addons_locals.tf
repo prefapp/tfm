@@ -1,5 +1,7 @@
 
-/*
+locals {
+
+  /*
   ##################################
   # LOCAL VARIABLES FOR THE ADDONS #
   ##################################
@@ -56,37 +58,50 @@
         }
 */
 
-locals {
+  /*
+    First, we get the addons properties that are not null
+  */
+  cluster_addons_without_null = {
+
+    for key, value in var.cluster_addons : key => {
+
+      for k, v in value : k => v if v != null
+
+    }
+  }
 
   /**
    * Base addons that are always enabled by default
    */
   base_addons = {
-    vpc-cni    = {},
-    kube-proxy = {},
-    coredns    = {},
-  }
-
-  /**
-   * Configuration values for the vpc-cni addon
-   */
-  vcp-cni_configuration_values = {
-    env = {
-      ENABLE_PREFIX_DELEGATION = "true"
-      MINIMUM_IP_TARGET        = "8"
-      WARM_IP_TARGET           = "4"
-      WARM_PREFIX_TARGET       = "1"
+    vpc-cni = {
+      addon_disabled = false
+      addon_version  = lookup(local.cluster_addons_without_null.vpc-cni, "addon_version", null)
+      configuration_values = lookup(local.cluster_addons_without_null.vpc-cni, "configuration_values", {
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          MINIMUM_IP_TARGET        = "8"
+          WARM_IP_TARGET           = "4"
+          WARM_PREFIX_TARGET       = "1"
+        }
+      }),
+    },
+    kube-proxy = {
+      addon_disabled = false
+      addon_version  = lookup(local.cluster_addons_without_null.kube-proxy, "addon_version", null)
+    },
+    coredns = {
+      addon_disabled = false
+      addon_version  = lookup(local.cluster_addons_without_null.coredns, "addon_version", null)
+    },
+    aws-ebs-csi-driver = {
+      addon_disabled           = false
+      addon_version            = lookup(local.cluster_addons_without_null.aws-ebs-csi-driver, "addon_version", null)
+      service_account_role_arn = local.ebs_arn_role
     }
   }
 
-  /*
-    First, we merge the base_addons with the cluster_addons variable
-    that the user has set in the .tfvars file
-  */
-  mixed_addons = merge(
-    local.base_addons,
-    var.cluster_addons
-  )
+  mixed_addons = merge(local.cluster_addons_without_null, local.base_addons)
 
   /*
     Then, we merge the mixed_addons with the local variables for the addons
@@ -98,38 +113,16 @@ locals {
 
         for k, v in merge(
 
-          /*
-            We set the default values for the addons
-          */
-          {
-
-            addon_disabled = false,
-
-            /*
-              In case the addon is vpc-cni, we set the configuration_values
-              to the local.vcp-cni_configuration_values variable
-            */
-            configuration_values = (key == "vpc-cni" ? jsonencode(local.vcp-cni_configuration_values) : null)
-
-            resolve_conflicts = "OVERWRITE"
-
-          },
-
-          value,
-
           lookup(value, "configuration_values", null) != null ?
 
+          { configuration_values = jsonencode(lookup(value, "configuration_values", null)) } : {}
+          ,
           {
-            configuration_values = jsonencode(value.configuration_values)
-          }
-
-          :
-
-          {
-
-          }
-
-
+            addon_disabled           = value.addon_disabled,
+            addon_version            = value.addon_version,
+            resolve_conflicts        = lookup(value, "resolve_conflicts", null),
+            service_account_role_arn = lookup(local.base_addons[key], "service_account_role_arn", null)
+          },
           /**
            * Remove null properties from the configuration_values.
            */
@@ -142,5 +135,6 @@ locals {
     Finally, we set the cluster_addons variable to the configured_addons
     variable, and we get the addons that are not disabled
   */
-  cluster_addons = { for key, value in merge(local.configured_addons) : key => value if value.addon_disabled == false }
+  cluster_addons = { for key, value in merge(local.configured_addons) : key => value if lookup(value, "addon_disabled", false) == false }
+
 }

@@ -51,11 +51,11 @@ output "summary" {
     Add-ons
     ----------------------------------------------------------------------------
     ${join("\n", [
-  for addon_key, addon_value in var.cluster_addons :
+  for addon_key, addon_value in local.cluster_addons :
   format(
     " - %s\n \t- Addon Version: %s\n\t- Advanced configuration:\t%s",
     addon_key,
-    addon_value.addon_version,
+    lookup(addon_value, "addon_version", "latest"),
     replace(
       jsonencode(lookup(addon_value, "configuration_values", {})),
       "\n", "\n\t\t\t\t\t"
@@ -104,21 +104,5 @@ output "summary" {
 
 
 output "debug" {
-
-  value = "a" #(var.cluster_addons["vpc-cni"].configuration_values.env.ENABLE_PREFIX_DELEGATION == "false")  #== "false"
-  #can(
-
-  # lookup(var.cluster_addons["vpc-cni"].configuration_values.env, "ENABLE_PREFIX_DELEGATION", null) == null
-
-  # ||
-
-  # (
-
-  # var.cluster_addons["vpc-cni"].configuration_values.env.ENABLE_PREFIX_DELEGATION == "true"
-
-
-  # )
-
-  # )
-
+  value = local.mixed_addons
 }

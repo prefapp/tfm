@@ -23,7 +23,6 @@ variable "cluster_iam_role_arn" {
 }
 
 
-# NODE GROUPS
 variable "node_groups" {
 
   description = "Define dynamically the different k8s node groups"
@@ -60,7 +59,6 @@ variable "enable_irsa" {
 
 }
 
-# Users
 variable "aws_auth_users" {
 
   description = "Additional IAM users to add to the aws-auth configmap."
@@ -79,7 +77,6 @@ variable "aws_auth_users" {
 }
 
 
-# Roles
 variable "aws_auth_roles" {
 
   description = "Additional IAM roles to add to the aws-auth configmap."
@@ -152,6 +149,15 @@ variable "create_parameter_store_iam" {
 
 }
 
+variable "create_ebs_driver_iam" {
+
+  description = "Create IAM resources for ebs-driver"
+
+  type = bool
+
+  default = true
+}
+
 variable "subnet_ids" {
 
   description = "Subnet ids"
@@ -168,7 +174,6 @@ variable "vpc_id" {
 
 }
 
-# # FARGATE
 variable "fargate_profiles" {
 
   description = "Define dynamically the different fargate profiles"
@@ -248,22 +253,24 @@ variable "cluster_addons" {
 
   description = "Addons to deploy to the cluster"
 
-  type = any 
-  # type = map(object({
+  # type = any
+  type = map(object({
 
-  #   addon_version = string
+    addon_version = optional(string)
 
-  #   resolve_conflicts = optional(string)
+    addon_disabled = optional(bool)
 
-  #   configuration_values = optional(object({
+    resolve_conflicts = optional(string)
 
-  #     env = optional(map(string))
+    configuration_values = optional(object({
 
-  #   }))
+      env = optional(map(string))
 
-  #   service_account_role_arn = optional(string)
+    }))
 
-  # }))
+    service_account_role_arn = optional(string)
+
+  }))
 
 }
 

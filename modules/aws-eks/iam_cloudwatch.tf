@@ -1,7 +1,20 @@
+/*
 
-################################################################################
-# IAM Policy for CloudWatch
-################################################################################
+  IAM CloudWatch
+
+  This IAM role is used by the CloudWatch Agent to manage AWS resources on your behalf.
+
+  If you use the fluentd chart, you must create an IAM role for the CloudWatch agent to use.
+
+  DOC: https://docs.aws.amazon.com/eks/latest/userguide/monitoring.html
+
+  RESOURCES:
+
+    - IAM Role -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
+    - IAM Policy -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
+    - IAM Role Policy Attachment -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
+
+*/
 
 resource "aws_iam_policy" "policy_additional_cloudwatch" {
 
@@ -24,9 +37,7 @@ resource "aws_iam_policy" "policy_additional_cloudwatch" {
 }
 
 
-################################################################################
 # IAM Role for CloudWatch
-################################################################################
 
 resource "aws_iam_role" "iam_role_fluentd" {
 
@@ -54,9 +65,7 @@ resource "aws_iam_role" "iam_role_fluentd" {
 }
 
 
-################################################################################
 # IAM Role Policy Attachment for CloudWatch
-################################################################################
 
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServerPolicy" {
 
@@ -68,9 +77,8 @@ resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServe
 
 }
 
-################################################################################
+
 # IAM Role Policy Attachment for CloudWatch
-################################################################################
 
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAdditionalPolicy" {
 

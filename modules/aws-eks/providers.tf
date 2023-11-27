@@ -1,12 +1,11 @@
 
 
-################################################################################
 # Providers: AWS, Kubernetes
-################################################################################
 
 provider "aws" {
   region = var.region
 }
+
 
 data "aws_eks_cluster_auth" "default" {
   name =  var.cluster_name

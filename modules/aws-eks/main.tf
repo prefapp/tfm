@@ -1,11 +1,19 @@
+
+/**
+ * This file is part of the "Terraform: Up & Running" code base.
+ * It is used in the "Deploying an EKS Cluster" chapter.
+ */
 locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
 
-################################################################################
+/*
+  This module is used to create the EKS cluster.
+  DOC: https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
+*/
+
 # EKS Cluster Configuration
-################################################################################
 module "eks" {
 
   version = "19.20.0"

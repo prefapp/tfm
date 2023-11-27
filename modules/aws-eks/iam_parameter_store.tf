@@ -1,8 +1,22 @@
 
-################################################################################
-# IAM Policy for Parameter Store
-################################################################################
+/*
 
+  IAM Role for Parameter Store
+
+  Parameters will be accessed by the EKS cluster to get the configuration values for the cluster addons.
+
+  You should attach role to the EKS cluster by using a service account, within the chart configuration.
+
+
+  RESOURCES:
+
+    - IAM Role -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
+    - IAM Policy -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
+    - IAM Role Policy Attachment -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
+*/
+
+
+# IAM Policy for Parameter Store
 resource "aws_iam_policy" "iam_policy_parameter_store" {
 
   count = var.create_parameter_store_iam ? 1 : 0
@@ -21,9 +35,8 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
   })
 }
 
-################################################################################
+
 # IAM Role for Parameter Store
-################################################################################
 resource "aws_iam_role" "iam_role_parameter_store_all" {
 
   count = var.create_parameter_store_iam ? 1 : 0
