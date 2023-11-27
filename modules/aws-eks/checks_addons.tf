@@ -4,7 +4,7 @@ check "vpc-cni-addon-enabled" {
 
   assert {
 
-    condition = !(lookup(local.configured_addons.vpc-cni, "addon_disabled", false) == true)
+    condition = !(lookup(local.cluster_addons.vpc-cni, "addon_disabled", false) == true)
 
     error_message = "vpc-cni is being disabled in cluster_addons"
 
@@ -18,9 +18,9 @@ check "vpc-cni-addon-configuration-values-will-be-overwritten" {
 
     condition = !(
 
-      lookup(local.configured_addons.vpc-cni, "addon_disabled", false) == false &&
+      lookup(local.cluster_addons.vpc-cni, "addon_disabled", false) == false &&
 
-      lookup(local.configured_addons.vpc-cni, "configuration_values", null) != null &&
+      lookup(local.cluster_addons.vpc-cni, "configuration_values", null) != null &&
 
       jsonencode(local.base_addons.vpc-cni.configuration_values) != lookup(local.configured_addons.vpc-cni, "configuration_values", jsonencode(local.base_addons.vpc-cni.configuration_values))
 

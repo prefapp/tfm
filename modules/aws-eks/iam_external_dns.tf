@@ -90,6 +90,6 @@ resource "aws_iam_role_policy_attachment" "external-dns-AmazonEKSClusterPolicy" 
 
   policy_arn = aws_iam_policy.external_dns_policy[count.index].arn
 
-  role       = aws_iam_role.external-dns-Kubernetes[count.index].name
+  role = aws_iam_role.external-dns-Kubernetes[count.index].name
 
 }
