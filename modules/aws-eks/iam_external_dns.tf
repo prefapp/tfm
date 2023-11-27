@@ -63,10 +63,7 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
       }
     ]
   })
-  tags = {
-    environment = "demo"
-    concern     = "Kubernetes"
-  }
+  tags = var.externaldns_tags
 }
 
 ################################################################################

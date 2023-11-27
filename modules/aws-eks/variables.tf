@@ -137,6 +137,11 @@ variable "create_external_dns_iam" {
 
 }
 
+variable "externaldns_tags" {
+  type = map(any)
+
+}
+
 variable "create_parameter_store_iam" {
 
   description = "Create IAM resources for parameter-store"
