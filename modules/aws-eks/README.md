@@ -78,7 +78,7 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.57 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.67 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.23 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.9 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 3.0 |
@@ -87,7 +87,7 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.57 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.67 |
 
 ## Modules
 
@@ -104,11 +104,13 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 | [aws_iam_policy.iam_policy_alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_parameter_store](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.policy_additional_cloudwatch](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_role.ebs_driver_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.external-dns-Kubernetes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.iam_role_EKS_EFS_CSI_DriverRole](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.iam_role_fluentd](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.iam_role_oidc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.iam_role_parameter_store_all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy_attachment.ebs_driver_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.external-dns-AmazonEKSClusterPolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam_role_EKS_EFS_CSI_DriverRole_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam_role_fluentd_CloudWatchAdditionalPolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
@@ -125,7 +127,7 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 | <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br><br>    rolearn = string<br><br>    username = string<br><br>    groups = list(string)<br><br>  }))</pre> | `[]` | no |
 | <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br><br>    userarn = string<br><br>    username = string<br><br>    groups = list(string)<br><br>  }))</pre> | `[]` | no |
 | <a name="input_cloudwatch_log_group_retention_in_days"></a> [cloudwatch\_log\_group\_retention\_in\_days](#input\_cloudwatch\_log\_group\_retention\_in\_days) | Number of days to retain log events | `number` | `14` | no |
-| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | n/a | `any` | n/a | yes |
+| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addons to deploy to the cluster | <pre>map(object({<br><br>    addon_version = optional(string)<br><br>    addon_disabled = optional(bool)<br><br>    resolve_conflicts = optional(string)<br><br>    configuration_values = optional(object({<br><br>      env = optional(map(string))<br><br>    }))<br><br>    service_account_role_arn = optional(string)<br><br>  }))</pre> | n/a | yes |
 | <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster encryption config | `any` | `{}` | no |
 | <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is true. | `bool` | `true` | no |
 | <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is false. | `bool` | `false` | no |
@@ -138,11 +140,13 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 | <a name="input_create_cloudwatch_iam"></a> [create\_cloudwatch\_iam](#input\_create\_cloudwatch\_iam) | Create IAM resources for cloudwatch | `bool` | `false` | no |
 | <a name="input_create_cluster_iam_role"></a> [create\_cluster\_iam\_role](#input\_create\_cluster\_iam\_role) | Create IAM role for cluster | `bool` | `false` | no |
 | <a name="input_create_cluster_security_group"></a> [create\_cluster\_security\_group](#input\_create\_cluster\_security\_group) | Create cluster security group | `bool` | `true` | no |
+| <a name="input_create_ebs_driver_iam"></a> [create\_ebs\_driver\_iam](#input\_create\_ebs\_driver\_iam) | Create IAM resources for ebs-driver | `bool` | `true` | no |
 | <a name="input_create_efs_driver_iam"></a> [create\_efs\_driver\_iam](#input\_create\_efs\_driver\_iam) | Create IAM resources for efs-driver | `bool` | `false` | no |
 | <a name="input_create_external_dns_iam"></a> [create\_external\_dns\_iam](#input\_create\_external\_dns\_iam) | Create IAM resources for external-dns | `bool` | `false` | no |
 | <a name="input_create_kms_key"></a> [create\_kms\_key](#input\_create\_kms\_key) | Create KMS key for cluster | `bool` | `true` | no |
 | <a name="input_create_parameter_store_iam"></a> [create\_parameter\_store\_iam](#input\_create\_parameter\_store\_iam) | Create IAM resources for parameter-store | `bool` | `false` | no |
 | <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Enable IRSA | `bool` | `false` | no |
+| <a name="input_externaldns_tags"></a> [externaldns\_tags](#input\_externaldns\_tags) | n/a | `map(any)` | `{}` | no |
 | <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br><br>    name = string<br><br>    selectors = list(object({<br><br>      namespace = string<br><br>      labels = map(string)<br><br>    }))<br><br>    tags = map(string)<br><br>  }))</pre> | `[]` | no |
 | <a name="input_manage_aws_auth_configmap"></a> [manage\_aws\_auth\_configmap](#input\_manage\_aws\_auth\_configmap) | Whether to manage aws-auth configmap | `bool` | `false` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | n/a | yes |
@@ -157,5 +161,7 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 | Name | Description |
 |------|-------------|
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | n/a |
-| <a name="output_eks_summary"></a> [eks\_summary](#output\_eks\_summary) | n/a |
+| <a name="output_debug"></a> [debug](#output\_debug) | n/a |
+| <a name="output_eks"></a> [eks](#output\_eks) | n/a |
+| <a name="output_summary"></a> [summary](#output\_summary) | n/a |
 <!-- END_TF_DOCS -->
