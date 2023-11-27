@@ -56,7 +56,7 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*:*"
+            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*"
           }
         }
       }
@@ -73,7 +73,7 @@ resource "aws_iam_role_policy_attachment" "iam_role_parameter_store_all_attachme
 
   count = var.create_parameter_store_iam ? 1 : 0
 
-  role       = aws_iam_role.iam_role_parameter_store_all[count.index].name
+  role = aws_iam_role.iam_role_parameter_store_all[count.index].name
 
   policy_arn = aws_iam_policy.iam_policy_parameter_store[count.index].arn
 
