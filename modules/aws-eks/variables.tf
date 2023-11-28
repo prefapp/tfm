@@ -10,7 +10,8 @@ variable "cluster_name" {
   type = string
 }
 
-variable "cluster_tags" {
+variable "tags" {
+
   type = map(any)
 
 }
@@ -334,4 +335,14 @@ variable "create_cluster_security_group" {
 
   default = true
 
+}
+
+
+variable "cluster_tags" {
+
+  description = "Tags to apply to the EKS cluster"
+
+  type = map(string)
+
+  default = {}
 }

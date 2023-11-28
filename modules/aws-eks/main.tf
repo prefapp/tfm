@@ -48,7 +48,9 @@ module "eks" {
 
   node_security_group_additional_rules = var.node_security_group_additional_rules
 
-  tags = var.cluster_tags
+  tags = var.tags
+
+  cluster_tags = merge(var.cluster_tags, var.tags)
 
   cluster_addons = local.cluster_addons
 

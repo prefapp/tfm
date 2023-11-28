@@ -26,7 +26,7 @@ output "summary" {
     - IAM Cluster Role: ${split("/", var.cluster_iam_role_arn)[1]}
     - Cluster Tags:
     ${join("\n", [
-  for tag_key, tag_value in var.cluster_tags :
+  for tag_key, tag_value in var.tags :
   format("\t - %s: %s", tag_key, tag_value)
   ])}
 
