@@ -13,11 +13,11 @@ cluster_encryption_config: {}
 enable_irsa: true
 
 # IAM Roles
-alb_ingress_enabled: true
-cloudwatch_enabled: true
-efs_driver_enabled: false
-external_dns_enabled: true
-parameter_store_enabled: true
+create_alb_ingress_iam: true
+create_cloudwatch_iam: false
+create_efs_driver_iam: false
+create_external_dns_iam: true
+create_parameter_store_iam: true
 
 # Security Group Ids
 security_groups_ids: ["sg-XXXXXXXXXXXXXXXXX"]
@@ -78,24 +78,6 @@ node_security_group_additional_rules:
     cidr_blocks:
       - 0.0.0.0/0
 
-  # ingress_self_coredns_udp:
-  #   description: "Node to node CoreDNS"
-  #   protocol: "udp"
-  #   from_port: 53
-  #   to_port: 53
-  #   type: "ingress"
-  #   self: false
-  #   source_cluster_security_group: false
-
-  # ingress_self_coredns_tcp:
-  #   description: "Node to node CoreDNS"
-  #   from_port: 53
-  #   to_port: 53
-  #   type: "ingress"
-  #   protocol: "tcp"
-  #   self: false
-  #   source_cluster_security_group: false
-
 # EKS Node groups
 node_groups:
   worker:
@@ -130,7 +112,7 @@ node_groups:
       Environment: "pro-worker"
 
 # EKS Cluster Tags
-cluster_tags:
+tags:
   project: "prefapp"
   env: "pro"
 
