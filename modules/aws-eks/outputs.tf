@@ -1,3 +1,17 @@
+/*
+  This Terraform script is used to output various details about the EKS cluster 
+  configuration. It outputs the AWS account ID, the EKS module, a detailed 
+  summary of the EKS configuration, and debug information.
+
+  - The summary includes details about the EKS cluster, node groups, add-ons, 
+  network details, users, and IAM roles. 
+
+  - The debug output is related to mixed addons in the EKS cluster.
+
+  This script is useful for getting a comprehensive overview of the EKS cluster 
+  configuration and for debugging purposes.
+*/
+
 output "account_id" {
 
   value = data.aws_caller_identity.current.account_id
