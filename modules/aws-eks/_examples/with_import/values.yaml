@@ -1,0 +1,149 @@
+# Eks module subnets
+subnet_ids: ["subnet-XXXXXXXXXXXXXXXXX", "subnet-XXXXXXXXXXXXXXXXX"]
+
+# Eks cluster config
+cluster_endpoint_private_access: true
+cluster_endpoint_public_access: true
+cluster_security_group_id: sg-XXXXXXXXXXXXXXXXX
+cluster_iam_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-pro-cluster-XXXXXXXXXXXXXXXXXXXXXXXX"
+create_cluster_iam_role: false
+create_kms_key: false
+manage_aws_auth_configmap: true
+cluster_encryption_config: {}
+enable_irsa: true
+
+# IAM Roles
+create_alb_ingress_iam: true
+create_cloudwatch_iam: false
+create_efs_driver_iam: false
+create_external_dns_iam: true
+create_parameter_store_iam: true
+
+# Security Group Ids
+security_groups_ids: ["sg-XXXXXXXXXXXXXXXXX"]
+
+# EKS Cluster addons
+cluster_addons:
+  vpc-cni:
+    addon_version: "v1.14.0-eksbuild.3"
+    resolve_conflicts: "OVERWRITE"
+    configuration_values:
+      env:
+        ENABLE_PREFIX_DELEGATION: "true"
+        WARM_IP_TARGET: "4"
+        WARM_PREFIX_TARGET: "1"
+  coredns:
+    resolve_conflicts: "OVERWRITE"
+    addon_version: "v1.9.3-eksbuild.6"
+
+  aws-ebs-csi-driver:
+    addon_version: "v1.16.0-eksbuild.1"
+    resolve_conflicts: "OVERWRITE"
+    service_account_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/AmazonEKS_EBS_CSI_DriverRole"
+
+  kube-proxy:
+    addon_version: "v1.25.11-eksbuild.2"
+    resolve_conflicts: "OVERWRITE"
+
+# Eks additional security groups
+node_security_group_additional_rules:
+  ingress_self_all:
+    description: Node to node all ports/protocols
+    protocol: "-1"
+    from_port: 0
+    to_port: 0
+    type: ingress
+    source_cluster_security_group: false
+    self: false
+
+  egress_all:
+    description: Node all egress
+    protocol: "-1"
+    from_port: 0
+    to_port: 0
+    type: egress
+    source_cluster_security_group: false
+    cidr_blocks:
+      - 0.0.0.0/0
+    ipv6_cidr_blocks:
+      - "::/0"
+
+  ingress_alb_node_ports:
+    description: Allow workers pods to receive communication from ALB
+    protocol: tcp
+    from_port: 30000
+    to_port: 32400
+    source_cluster_security_group: false
+    type: ingress
+    cidr_blocks:
+      - 0.0.0.0/0
+
+# EKS Node groups
+node_groups:
+  worker:
+    name: "worker"
+    create_launch_template: true
+    instance_types:
+      - "m5.large"
+    pre_bootstrap_user_data: |
+      #!/bin/bash
+      set -ex
+      cat <<-EOF > /etc/profile.d/bootstrap.sh
+      export CONTAINER_RUNTIME="containerd"
+      export USE_MAX_PODS=false
+      export KUBELET_EXTRA_ARGS="--max-pods=110"
+      EOF
+      # Source extra environment variables in bootstrap script
+      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+    desired_capacity: 2
+    min_size: 0
+    max_size: 3
+    create_iam_role: false
+    launch_template_id: "lt-XXXXXXXXXXXXXXXXX"
+    launch_template_version: 3
+    launch_template_name: worker-XXXXXXXXXXXXXXXXXXXXXXXX
+    use_custom_launch_template: true
+    create: true
+    create_launch_template: false
+    iam_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/worker-eks-node-group-XXXXXXXXXXXXXXXXXXXXXXXX"
+    labels:
+      GithubRepo: "infra"
+      GithubOrg: "prefapp"
+      Environment: "pro-worker"
+
+# EKS Cluster Tags
+tags:
+  project: "prefapp"
+  env: "pro"
+
+# aws-auth configmap
+manage_aws_auth_configmap: true
+
+# aws-auth configmap
+aws_auth_users:
+  - userarn: "arn:aws:iam::XXXXXXXXXXXX:user/prefapp.m.vergara"
+    username: "prefapp.m.vergara"
+    groups:
+      - "system:masters"
+  - userarn: "arn:aws:iam::XXXXXXXXXXXX:user/prefapp.a.rodriguez"
+    username: "prefapp.a.rodriguez"
+    groups:
+      - "system:masters"
+
+# Vpc config
+vpc_config: {}
+
+# Eks Cluster VPC Id
+vpc_id: "vpc-XXXXXXXXXXXXXXXXX"
+
+# Region
+region: eu-west-1
+
+# Vpc config
+cluster_name: kubernetes-my-org-pro
+cluster_version: 1.25
+
+# EKS IAM Role Arn
+iam_role_arn: arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-pro-cluster-XXXXXXXXXXXXXXXXXXXXXXXX
+
+create_cluster_security_group: false
