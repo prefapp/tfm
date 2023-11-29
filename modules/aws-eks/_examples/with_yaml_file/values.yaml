@@ -78,23 +78,23 @@ node_security_group_additional_rules:
     cidr_blocks:
       - 0.0.0.0/0
 
-  ingress_self_coredns_udp:
-    description: "Node to node CoreDNS"
-    protocol: "udp"
-    from_port: 53
-    to_port: 53
-    type: "ingress"
-    self: false
-    source_cluster_security_group: false
+  # ingress_self_coredns_udp:
+  #   description: "Node to node CoreDNS"
+  #   protocol: "udp"
+  #   from_port: 53
+  #   to_port: 53
+  #   type: "ingress"
+  #   self: false
+  #   source_cluster_security_group: false
 
-  ingress_self_coredns_tcp:
-    description: "Node to node CoreDNS"
-    from_port: 53
-    to_port: 53
-    type: "ingress"
-    protocol: "tcp"
-    self: false
-    source_cluster_security_group: false
+  # ingress_self_coredns_tcp:
+  #   description: "Node to node CoreDNS"
+  #   from_port: 53
+  #   to_port: 53
+  #   type: "ingress"
+  #   protocol: "tcp"
+  #   self: false
+  #   source_cluster_security_group: false
 
 # EKS Node groups
 node_groups:

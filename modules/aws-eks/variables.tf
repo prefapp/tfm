@@ -275,6 +275,8 @@ variable "cluster_addons" {
 
   }))
 
+  
+
 }
 
 variable "create_kms_key" {
