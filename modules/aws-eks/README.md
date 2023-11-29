@@ -2,7 +2,6 @@
 
 This Terraform module simplifies the creation and configuration of an **Amazon Elastic Kubernetes Service (EKS)** cluster on AWS. Below is a description of the main features and components of the module:
 
-- **VPC Configuration**: The module provides a pre-configured VPC with public and private subnets, facilitating the creation of secure and isolated environments.
 - **EKS Configuration**: Allows the creation of an EKS cluster with custom options such as the _Kubernetes_ version, API access, and efficient node management.
 - **Node Group Management**: Facilitates the creation and management of node groups with various configurations, such as instance types, desired, minimum, and maximum capacity, and tags.
 - **IAM Authentication and Authorization**: Offers flexibility in managing IAM users and roles for authentication in the EKS cluster, allowing the addition of additional IAM users and roles.
@@ -17,20 +16,24 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 - **Scalability and Maintenance**: Utilize Terraform's capabilities to scale and maintain the EKS cluster easily as environment requirements evolve.
 
 ## File Structure
+
+The module is organized with the following directory and file structure:
 ```
 .
+├── addons_locals.tf
+├── checks_addons.tf
 ├── data.tf
+├── eks_prefix_delegation.tf
 ├── _examples
+│   ├── with_import
 │   ├── with_vpc
 │   └── with_yaml_file
-│       ├── main.tf
-│       └── values.yaml
 ├── iam_alb.tf
 ├── iam_cloudwatch.tf
+├── iam_ebs_csi_driver.tf
 ├── iam_efs_csi_driver.tf
 ├── iam_external_dns.tf
 ├── iam_parameter_store.tf
-├── locals.tf
 ├── main.tf
 ├── outputs.tf
 ├── providers.tf
@@ -39,28 +42,45 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 └── versions.tf
 ```
 
-- **`data.tf`**: This file usually contains data source definitions that retrieve existing information from the infrastructure. It could include information about existing resources in the cloud provider (AWS in this case).
+- **`addons_locals.tf`**: Configuration file for local variables related to addons.
 
-- **`locals.tf`**: In this file, local variables are defined to store intermediate values or complex calculations. This helps keep the main code clean and readable.
+- **`checks_addons.tf`**: Configuration file for checking and validating addons.
 
-- **`main.tf`**: This is the main Terraform file where the primary configuration of resources and modules is defined. This is where infrastructure resources are instantiated and configured.
+- **`data.tf`**: Data source definitions for retrieving existing information from the infrastructure.
 
-- **`modules`**: This directory contains subdirectories for different reusable modules. Each subdirectory represents a specific module, such as `alb`, `cloudwatch`, `efs_csi_driver`, `external_dns`, and `parameter_store`. Each of these modules has its own `main.tf`, `variables.tf`, and `iam.tf` files containing specific configuration for that module.
+- **`eks_prefix_delegation.tf`**: Configuration file for prefix delegation in EKS.
 
-    - **`iam.tf`**: This file generally contains the configuration of IAM roles and policies necessary for the respective module.
+- **`_examples`**: Directory containing examples of module usage.
 
-    - **`main.tf`**: Here, the main configuration of the module is defined. It may include specific resources for the module and any related configuration.
+  - **`with_import`**: Example using module import.
+  
+  - **`with_vpc`**: Example integrating with an existing VPC.
 
-    - **`variables.tf`**: Contains the definition of module-specific variables that can be used to parameterize the configuration.
+  - **`with_yaml_file`**: Example utilizing a YAML file for configuration.
 
-- **`outputs.tf`**: In this file, Terraform outputs are defined. Outputs are values that can be useful for other components of the system or for users utilizing the Terraform code.
+- **`iam_alb.tf`**: Configuration file for IAM roles related to Application Load Balancer (ALB).
 
-- **`providers.tf`**: This file specifies the Terraform providers to be used in the project. For example, the AWS provider would be defined here along with any associated specific configurations.
+- **`iam_cloudwatch.tf`**: Configuration file for IAM roles related to CloudWatch.
 
-- **`README.md`**: Project documentation that may contain information on how to use the code, prerequisites, and any other relevant information.
+- **`iam_ebs_csi_driver.tf`**: Configuration file for IAM roles related to Elastic Block Store (EBS) CSI driver.
 
-- **`variables.tf`**: Contains variable definitions used in the `main.tf` file and in the modules. Variables are used to parameterize the configuration and make it more flexible.
+- **`iam_efs_csi_driver.tf`**: Configuration file for IAM roles related to Elastic File System (EFS) CSI driver.
 
+- **`iam_external_dns.tf`**: Configuration file for IAM roles related to ExternalDNS.
+
+- **`iam_parameter_store.tf`**: Configuration file for IAM roles related to Parameter Store.
+
+- **`main.tf`**: Main Terraform configuration file where the primary resources and modules are defined.
+
+- **`outputs.tf`**: Configuration file for defining Terraform outputs.
+
+- **`providers.tf`**: Configuration file specifying Terraform providers and associated configurations.
+
+- **`variables.tf`**: Configuration file containing variable definitions used in `main.tf` and modules.
+
+- **`versions.tf`**: Configuration file specifying required Terraform and provider versions.
+
+- **`README.md`**: Project documentation containing information on module usage, prerequisites, and a directory structure overview.
 
 ## Useful Links
 - Terraform: https://www.terraform.io/
