@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.1.0...azure-resource-group-v1.1.1) (2023-11-29)
+
+
+### Bug Fixes
+
+* Update source from example usage ([#49](https://github.com/prefapp/tfm/issues/49)) ([f0219b3](https://github.com/prefapp/tfm/commit/f0219b3d96effe1598cdcd38d040704238586f25))
+
 ## [1.1.0](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.0.0...azure-resource-group-v1.1.0) (2023-11-15)
 
 
