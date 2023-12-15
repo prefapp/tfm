@@ -23,6 +23,12 @@
         },
         "modules/azure-vnet-subnet": {
             "package-name": "azure-vnet-subnet"
+        },
+        "modules/azure-aks": {
+            "package-name": "azure-aks"
+        },
+        "modules/aws-eks": {
+            "package-name": "aws-eks"
         }
     }
 }
