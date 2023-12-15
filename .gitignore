@@ -11,7 +11,7 @@ kubeconfig_*
 .DS_Store
 
 # Local .terraform directories
-**/.terraform/*
+**/modules/**/.terraform**
 
 # Terraform lockfile
 .terraform.lock.hcl
