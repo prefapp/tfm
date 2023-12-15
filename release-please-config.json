@@ -23,6 +23,9 @@
         },
         "modules/azure-aks": {
             "package-name": "azure-aks"
+        },
+        "modules/aws-eks": {
+            "package-name": "aws-eks"
         }
     }
 }
