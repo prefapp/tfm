@@ -1,21 +1,23 @@
-output "unified_output" {
-  value = <<-EOT
+output "origin_virtual_network_name_output" {
+  value = var.origin_virtual_network_name
+}
 
-      #######################
-      #### PEERING ORIGIN ###
-      #######################
+output "origin_resource_group_name_output" {
+  value = var.origin_resource_group_name
+}
 
-      Origin Virtual Network Name:      ${var.origin_virtual_network_name}
-      Origin Resource Group Name:       ${var.origin_resource_group_name}
-      Origin Name Peering:              ${var.origin_name_peering}
+output "origin_name_peering_output" {
+  value = var.origin_name_peering
+}
 
-      #######################
-      # PEERING DESTINATION #
-      #######################
+output "destination_virtual_network_name_output" {
+  value = var.destination_virtual_network_name
+}
 
-      Destination Virtual Network Name: ${var.destination_virtual_network_name}
-      Destination Resource Group Name:  ${var.destination_resource_group_name}
-      Destination Name Peering:         ${var.destination_name_peering}
+output "destination_resource_group_name_output" {
+  value = var.destination_resource_group_name
+}
 
-  EOT
+output "destination_name_peering_output" {
+  value = var.destination_name_peering
 }

@@ -52,23 +52,3 @@ destination_virtual_network_name = "destino-vnet"
 destination_resource_group_name = "test-peering"
 destination_name_peering = "destino-vnet-to-origen-vnet"
 ```
-
-## Output
-
-```output
-#######################
-#### PEERING ORIGIN ###
-#######################
-
-Origin Virtual Network Name:      origen-vnet
-Origin Resource Group Name:       test-peering
-Origin Name Peering:              origen-vnet-to-destino-vnet
-
-#######################
-# PEERING DESTINATION #
-#######################
-
-Destination Virtual Network Name: destino-vnet
-Destination Resource Group Name:  test-peering
-Destination Name Peering:         destino-vnet-to-origen-vnet
-```
