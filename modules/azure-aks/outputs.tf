@@ -1,58 +1,115 @@
-output "unified_output" {
-  value = <<-EOT
+output "aks_cluster_name_output" {
+  value = var.aks_cluster_name
+}
 
-    ######################
-    ####      AKS     ####
-    ######################
-    
-    AKS Cluster Name:   ${var.aks_cluster_name}
-    AKS Location:       ${var.aks_location}
-    AKS Resource Group: ${var.aks_resource_group_name}
-    AKS Cluster ID:     ${azurerm_kubernetes_cluster.kubernetes.id}
-  
-    AKS Kubernetes Version:   ${var.aks_kubernetes_version}
-    AKS Azure Policy Enabled: ${var.aks_azure_policy_enabled}
-    AKS Auto Upgrade Channel: ${var.aks_automatic_channel_upgrade}
-    AKS SKU Tier:             ${var.aks_sku_tier}
-   
-    AKS Workload Identity Enabled: ${var.aks_workload_identity_enabled}
-    AKS OIDC Issuer Enabled:       ${var.aks_oidc_issuer_enabled}
-    AKS Identity Type:             ${var.aks_identity_type}
+output "aks_cluster_location_output" {
+  value = var.aks_location
+}
 
-    AKS DNS Prefix:     ${var.aks_aks_dns_prefix}
-    AKS Network Plugin: ${var.aks_network_plugin}
-    AKS Service CIDR:   ${var.aks_service_cidr}
-    AKS DNS Service IP: ${var.aks_dns_service_ip}
+output "aks_cluster_resource_group_name_output" {
+  value = var.aks_resource_group_name
+}
 
-    AKS Default Node Pool Name:            ${var.aks_default_node_pool_name}
-    AKS Default Node Pool Node Count:      ${var.aks_default_node_pool_node_count}
-    AKS Default Node Pool VM Size:         ${var.aks_default_node_pool_vm_size}
-    AKS Default Node Pool OS Disk Type:    ${var.aks_default_node_pool_os_disk_type}
-    AKS Default Node Pool OS Disk Size GB: ${var.aks_default_node_pool_os_disk_size_gb}
-    AKS Default Node Pool Max Pods:        ${var.aks_default_node_pool_max_pods}
+output "aks_cluster_id_output" {
+  value = azurerm_kubernetes_cluster.kubernetes.id
+}
 
-    AKS Key Vault Secrets Provider Enabled:  ${var.aks_key_vault_secrets_provider_enabled}
-    AKS Key Vault Secrets Provider Interval: ${var.aks_key_vault_secrets_provider_interval}
-    
-    AKS Tags: ${jsonencode(var.aks_tags)}
+output "aks_cluster_kubernetes_version_output" {
+  value = var.aks_kubernetes_version
+}
 
-    ######################
-    #### Node Pool(s) ####
-    ######################
-    
-    ${join("\n", [
-      for key, value in var.node_pool_additionals : 
-      "- Node Pool '${key}':\n  - ID: ${azurerm_kubernetes_cluster_node_pool.node_pool[key].id}\n  - VM Size: ${value.vm_size}\n  - Node Count: ${value.node_count}\n  - Min Count: ${value.min_count}\n  - Max Count: ${value.max_count}\n  - OS Disk Type: ${value.os_disk_type}\n  - OS Disk Size GB: ${value.os_disk_size_gb}\n  - Max Pods: ${value.max_pods}\n  - Auto Scaling Enabled: ${value.enable_auto_scaling}\n  - Tags: ${jsonencode(value.tags)}\n  - Node Labels: ${jsonencode(value.node_labels)}\n"
-    ])}
+output "aks_cluster_azure_policy_enabled_output" {
+  value = var.aks_azure_policy_enabled
+}
 
-    ######################
-    ####  VNET (DATA) ####
-    ######################
-    
-    AKS Subnet Name:         ${var.aks_subnet_name}
-    AKS VNET Name:           ${var.aks_vnet_name}
-    AKS VNET Resource Group: ${var.aks_vnet_name_resource_group}
-    AKS Subnet ID:           ${data.azurerm_subnet.aks_subnet.id}
+output "aks_cluster_automatic_channel_upgrade_output" {
+  value = var.aks_automatic_channel_upgrade
+}
 
-  EOT
+output "aks_cluster_sku_tier_output" {
+  value = var.aks_sku_tier
+}
+
+output "aks_cluster_workload_identity_enabled_output" {
+  value = var.aks_workload_identity_enabled
+}
+
+output "aks_cluster_oidc_issuer_enabled_output" {
+  value = var.aks_oidc_issuer_enabled
+}
+
+output "aks_cluster_identity_type_output" {
+  value = var.aks_identity_type
+}
+
+output "aks_cluster_dns_prefix_output" {
+  value = var.aks_aks_dns_prefix
+}
+
+output "aks_cluster_network_plugin_output" {
+  value = var.aks_network_plugin
+}
+
+output "aks_cluster_service_cidr_output" {
+  value = var.aks_service_cidr
+}
+
+output "aks_cluster_dns_service_ip_output" {
+  value = var.aks_dns_service_ip
+}
+
+output "aks_cluster_default_node_pool_name_output" {
+  value = var.aks_default_node_pool_name
+}
+
+output "aks_cluster_default_node_pool_node_count_output" {
+  value = var.aks_default_node_pool_node_count
+}
+
+output "aks_cluster_default_node_pool_vm_size_output" {
+  value = var.aks_default_node_pool_vm_size
+}
+
+output "aks_cluster_default_node_pool_os_disk_type_output" {
+  value = var.aks_default_node_pool_os_disk_type
+}
+
+output "aks_cluster_default_node_pool_os_disk_size_gb_output" {
+  value = var.aks_default_node_pool_os_disk_size_gb
+}
+
+output "aks_cluster_default_node_pool_max_pods_output" {
+  value = var.aks_default_node_pool_max_pods
+}
+
+output "aks_cluster_key_vault_secrets_provider_enabled_output" {
+  value = var.aks_key_vault_secrets_provider_enabled
+}
+
+output "aks_cluster_key_vault_secrets_provider_interval_output" {
+  value = var.aks_key_vault_secrets_provider_interval
+}
+
+output "aks_cluster_tags_output" {
+  value = var.aks_tags
+}
+
+output "aks_cluster_node_pool_additionals_output" {
+  value = var.node_pool_additionals
+}
+
+output "aks_cluster_subnet_name_output" {
+  value = var.aks_subnet_name
+}
+
+output "aks_cluster_vnet_name_output" {
+  value = var.aks_vnet_name
+}
+
+output "aks_cluster_vnet_name_resource_group_output" {
+  value = var.aks_vnet_name_resource_group
+}
+
+output "aks_cluster_subnet_id_output" {
+  value = data.azurerm_subnet.aks_subnet.id
 }
