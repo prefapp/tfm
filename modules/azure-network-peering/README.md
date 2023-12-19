@@ -20,7 +20,7 @@ This module creates a virtual network peering between two virtual networks.
 ### Set a module
 
 ```terraform
-module "githuib-oidc" {
+module "azure-vnet-peering" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-peering?ref=<version>"
 }
 ```
