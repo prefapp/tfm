@@ -1,12 +1,12 @@
 {
-    "modules/aws-eks": "0.1.0",
-    "modules/aws-parameter-store": "0.2.0",
-    "modules/aws-sso": "0.4.0",
-    "modules/azure-flexible-server-postgresql": "2.3.0",
-    "modules/azure-oidc": "1.2.0",
-    "modules/aws-oidc": "1.2.0",
-    "modules/azure-vnet-and-subnet": "1.1.0",
-    "modules/azure-resource-group": "1.1.1",
-    "modules/azure-aks": "1.1.0",
-    "modules/azure-vnet-peering": "1.1.0"
+    "modules/aws-eks": "0.2.0",
+    "modules/aws-parameter-store": "0.3.0",
+    "modules/aws-sso": "0.5.0",
+    "modules/azure-flexible-server-postgresql": "2.4.0",
+    "modules/azure-oidc": "1.3.0",
+    "modules/aws-oidc": "1.3.0",
+    "modules/azure-vnet-and-subnet": "1.2.0",
+    "modules/azure-resource-group": "1.2.0",
+    "modules/azure-aks": "1.2.0",
+    "modules/azure-vnet-peering": "1.2.0"
 }
