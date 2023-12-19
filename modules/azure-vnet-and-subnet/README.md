@@ -244,64 +244,60 @@ virtual_networks = {
 ## Output
 
 ```output
-###############################
-#### VNet(s) and Subnet(s) ####
-###############################
-
-Virtual Network Name: vnet1
-Virtual Network ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1
-Virtual Network Location: westeurope
-Virtual Network Address Space: ["192.20.0.0/16"]
-Virtual Network Tags: {"department":"finance","environment":"prod"}
-Subnets:
-         - subnet1
-                - Subnet Name: subnet1
-                - Subnet ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1
-                - Subnet Address Prefixes: ["192.20.1.0/24"]
-                - Subnet Network Policies Enabled: true
-                - Subnet Private Link Service Network Policies Enabled: false
-                - Subnet Service Endpoints: ["Microsoft.Sql","Microsoft.Storage"]
-         - subnet2
-                - Subnet Name: subnet2
-                - Subnet ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet2
-                - Subnet Address Prefixes: ["192.20.3.0/24"]
-                - Subnet Network Policies Enabled: true
-                - Subnet Private Link Service Network Policies Enabled: true
-                - Subnet Service Endpoints: []
-
-Virtual Network Name: vnet2
-Virtual Network ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet2
-Virtual Network Location: westeurope
-Virtual Network Address Space: ["192.30.0.0/16"]
-Virtual Network Tags: {"environment":"dev"}
-Subnets:
-         - subnet1
-                - Subnet Name: subnet1
-                - Subnet ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet2/subnets/subnet1
-                - Subnet Address Prefixes: ["192.30.1.0/24"]
-                - Subnet Network Policies Enabled: false
-                - Subnet Private Link Service Network Policies Enabled: true
-                - Subnet Service Endpoints: ["Microsoft.ContainerRegistry","Microsoft.KeyVault"]
-         - subnet2
-                - Subnet Name: subnet2
-                - Subnet ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet2/subnets/subnet2
-                - Subnet Address Prefixes: ["192.30.2.0/24"]
-                - Subnet Network Policies Enabled: true
-                - Subnet Private Link Service Network Policies Enabled: true
-                - Subnet Service Endpoints: []
-         - subnet3
-                - Subnet Name: subnet3
-                - Subnet ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet2/subnets/subnet3
-                - Subnet Address Prefixes: ["192.30.4.0/24"]
-                - Subnet Network Policies Enabled: true
-                - Subnet Private Link Service Network Policies Enabled: true
-                - Subnet Service Endpoints: []
-
-Virtual Network Name: vnet3
-Virtual Network ID: /subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet3
-Virtual Network Location: westeurope
-Virtual Network Address Space: ["192.40.0.0/16"]
-Virtual Network Tags: {"environment":"dev"}
-Subnets:
-        - No found any subnet in this virtual network.
+vnet = {
+  "vnet1" = {
+    "address_space" = tolist([
+      "192.20.0.0/16",
+    ])
+    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1"
+    "location" = "westeurope"
+    "tags" = tomap({
+      "department" = "finance"
+      "environment" = "prod"
+    })
+  }
+  "vnet2" = {
+    "address_space" = tolist([
+      "192.30.0.0/16",
+    ])
+    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet2"
+    "location" = "westeurope"
+    "tags" = tomap({
+      "environment" = "dev"
+    })
+  }
+  "vnet3" = {
+    "address_space" = tolist([
+      "192.40.0.0/16",
+    ])
+    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet3"
+    "location" = "westeurope"
+    "tags" = tomap({
+      "environment" = "dev"
+    })
+  }
+}
+subnet = {
+  "vnet1.subnet1" = {
+    "address_prefixes" = tolist([
+      "192.20.1.0/24",
+    ])
+    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"
+    "network_policies_enabled" = true
+    "private_link_service_network_policies_enabled" = false
+    "service_endpoints" = toset([
+      "Microsoft.Sql",
+      "Microsoft.Storage",
+    ])
+  }
+  "vnet1.subnet2" = {
+    "address_prefixes" = tolist([
+      "192.20.3.0/24",
+    ])
+    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet2"
+    "network_policies_enabled" = true
+    "private_link_service_network_policies_enabled" = true
+    "service_endpoints" = toset([])
+  }
+}
 ```
