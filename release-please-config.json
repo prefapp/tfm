@@ -21,7 +21,7 @@
         "modules/azure-resource-group": {
             "package-name": "azure-resource-group"
         },
-        "modules/azure-vnet-subnet": {
+        "modules/azure-vnet-and-subnet": {
             "package-name": "azure-vnet-subnet"
         },
         "modules/azure-aks": {
