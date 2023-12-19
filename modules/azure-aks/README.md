@@ -156,77 +156,79 @@ aks_vnet_name_resource_group = "test-aks-cluster-rg"
 ## Output
 
 ```output
-#######################
-###       AKS       ###
-#######################
-
-AKSClusterName:aks-cluster
-AKSLocation:westeurope
-AKSResourceGroup:test-aks-cluster-rg
-AKSClusterID:/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/test-aks-cluster-rg/providers/Microsoft.ContainerService/managedClusters/aks-cluster
-
-AKSKubernetesVersion:1.26.6
-AKSAzurePolicyEnabled:true
-AKSAutoUpgradeChannel:patch
-AKSSKUTier:Free
-AKSWorkloadIdentityEnabled:true
-AKSOIDCIssuerEnabled:true
-AKSIdentityType:SystemAssigned
-
-AKS DNS Prefix:     foo-test
-AKS Network Plugin: azure
-AKS Service CIDR:   10.110.0.0/16
-AKS DNS Service IP: 10.110.0.10
-
-AKS Default Node Pool Name:            defaultnp
-AKS Default Node Pool Node Count:      1
-AKS Default Node Pool VM Size:         Standard_F8s_v2
-AKS Default Node Pool OS Disk Type:    Managed
-AKS Default Node Pool OS Disk Size GB: 30
-AKS Default Node Pool Max Pods:        110
-
-AKS Key Vault Secrets Provider Enabled:  true
-AKS Key Vault Secrets Provider Interval: 2m
-
-Tags: {"costcenter":"it","environment":"dev","owner":"me","project":"aks"}
-
-######################
-#### Node Pool(s) ####
-######################
-
-- Node Pool 'np1':
-  - ID: /subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/test-aks-cluster-rg/providers/Microsoft.ContainerService/managedClusters/aks-cluster/agentPools/
-  - VM Size: Standard_F8s_v2
-  - Node Count: 1
-  - Min Count: 1
-  - Max Count: 2
-  - OS Disk Type: Managed
-  - OS Disk Size GB: 30
-  - Max Pods: 110
-  - Auto Scaling Enabled: false
-  - Tags: {"costcenter":"it","environment":"dev","owner":"me","project":"aks"}
-  - Node Labels: {"nodepool":"defaultnp"}
-
-- Node Pool 'np2':
-  - ID: /subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/test-aks-cluster-rg/providers/Microsoft.ContainerService/managedClusters/aks-cluster/agentPools/
-  - VM Size: Standard_F8s_v2
-  - Node Count: 1
-  - Min Count: 1
-  - Max Count: 2
-  - OS Disk Type: Managed
-  - OS Disk Size GB: 30
-  - Max Pods: 110
-  - Auto Scaling Enabled: true
-  - Tags: {"costcenter":"it","environment":"dev","owner":"me","project":"aks"}
-  - Node Labels: {"nodepool":"np1"}
-
-
-######################
-####      VNET    ####
-######################
-
-AKS Subnet Name:         test-subnet-module-aks
-AKS VNET Name:           test-test-aks-cluster
-AKS VNET Resource Group: test-aks-cluster-rg
-AKS Subnet ID:           /subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/test-aks-cluster-rg/providers/Microsoft.Network/virtualNetworks/test-test-aks-cluster/subnets/test-subnet-module-aks
+aks_cluster_automatic_channel_upgrade_output = "patch"
+aks_cluster_azure_policy_enabled_output = true
+aks_cluster_default_node_pool_max_pods_output = 110
+aks_cluster_default_node_pool_name_output = "defaultnp"
+aks_cluster_default_node_pool_node_count_output = 1
+aks_cluster_default_node_pool_os_disk_size_gb_output = 30
+aks_cluster_default_node_pool_os_disk_type_output = "Managed"
+aks_cluster_default_node_pool_vm_size_output = "Standard_F8s_v2"
+aks_cluster_dns_prefix_output = "foo-test"
+aks_cluster_dns_service_ip_output = "10.110.0.10"
+aks_cluster_id_output = "/subscriptions/xxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/resourceGroups/test-aks-cluster-rg/providers/Microsoft.ContainerService/managedClusters/aks-cluster"
+aks_cluster_identity_type_output = "SystemAssigned"
+aks_cluster_key_vault_secrets_provider_enabled_output = true
+aks_cluster_key_vault_secrets_provider_interval_output = "2m"
+aks_cluster_kubernetes_version_output = "1.26.6"
+aks_cluster_location_output = "westeurope"
+aks_cluster_name_output = "aks-cluster"
+aks_cluster_network_plugin_output = "azure"
+aks_cluster_node_pool_additionals_output = tomap({
+  "np1" = {
+    "enable_auto_scaling" = false
+    "max_count" = 2
+    "max_pods" = 110
+    "min_count" = 1
+    "name" = "np1"
+    "node_count" = 1
+    "node_labels" = tomap({
+      "nodepool" = "np1"
+    })
+    "os_disk_size_gb" = 30
+    "os_disk_type" = "Managed"
+    "tags" = tomap({
+      "costcenter" = "it"
+      "environment" = "dev"
+      "owner" = "me"
+      "project" = "aks"
+    })
+    "vm_size" = "Standard_F8s_v2"
+  }
+  "np2" = {
+    "enable_auto_scaling" = true
+    "max_count" = 2
+    "max_pods" = 110
+    "min_count" = 1
+    "name" = "np2"
+    "node_count" = 1
+    "node_labels" = tomap({
+      "nodepool" = "np2"
+    })
+    "os_disk_size_gb" = 30
+    "os_disk_type" = "Managed"
+    "tags" = tomap({
+      "costcenter" = "it"
+      "environment" = "dev"
+      "owner" = "me"
+      "project" = "aks"
+    })
+    "vm_size" = "Standard_F8s_v2"
+  }
+})
+aks_cluster_oidc_issuer_enabled_output = true
+aks_cluster_resource_group_name_output = "test-aks-cluster-rg"
+aks_cluster_service_cidr_output = "10.110.0.0/16"
+aks_cluster_sku_tier_output = "Free"
+aks_cluster_subnet_id_output = "/subscriptions/xxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/resourceGroups/test-aks-cluster-rg/providers/Microsoft.Network/virtualNetworks/test-test-aks-cluster/subnets/test-subnet-module-aks"
+aks_cluster_subnet_name_output = "test-subnet-module-aks"
+aks_cluster_tags_output = tomap({
+  "costcenter" = "it"
+  "environment" = "dev"
+  "owner" = "me"
+  "project" = "aks"
+})
+aks_cluster_vnet_name_output = "test-test-aks-cluster"
+aks_cluster_vnet_name_resource_group_output = "test-aks-cluster-rg"
+aks_cluster_workload_identity_enabled_output = true
 ```
