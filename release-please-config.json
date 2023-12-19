@@ -32,6 +32,6 @@
         },
         "modules/azure-vnet-peering": {
             "package-name": "azure-vnet-peering"
-        },
+        }
     }
 }
