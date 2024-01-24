@@ -14,5 +14,5 @@ output "subnet" {
     network_policies_enabled = subnet_value.private_endpoint_network_policies_enabled
     private_link_service_network_policies_enabled = subnet_value.private_link_service_network_policies_enabled
     service_endpoints = subnet_value.service_endpoints
-  } if subnet_value.virtual_network_name == element(keys(azurerm_virtual_network.vnet), 0)}
+  }}
 }
