@@ -159,13 +159,14 @@ variable "aks_network_plugin" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#network_profile
 variable "aks_service_cidr" {
   type = string
-  default = "patch"
+  default = null
   description = "(Optional) The Network Range used by the Kubernetes service. Changing this forces a new resource to be created."
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#network_profile
 variable "aks_dns_service_ip" {
   type = string
+  default = null
   description = "(Optional) The IP address within the Kubernetes service address range that will be used by cluster service discovery (kube-dns). Changing this forces a new resource to be created."
 }
 
