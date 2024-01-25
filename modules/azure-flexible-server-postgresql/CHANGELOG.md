@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.5.0...azure-flexible-server-postgresql-v2.5.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* Revert ([#74](https://github.com/prefapp/tfm/issues/74)) ([926f515](https://github.com/prefapp/tfm/commit/926f515986bbcfa7951a6aba2e92dd23900e4aac))
+
 ## [2.5.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.4.0...azure-flexible-server-postgresql-v2.5.0) (2024-01-25)
 
 
