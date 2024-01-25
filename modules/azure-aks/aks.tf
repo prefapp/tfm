@@ -24,7 +24,7 @@ resource "azurerm_kubernetes_cluster" "kubernetes" {
     os_disk_type        = var.aks_default_node_pool_os_disk_type
     os_disk_size_gb     = var.aks_default_node_pool_os_disk_size_gb
     max_pods            = var.aks_default_node_pool_max_pods
-    vnet_subnet_id      = data.azurerm_subnet.aks_subnet.id
+    vnet_subnet_id      = local.subnet_id
   }
   key_vault_secrets_provider {
     secret_rotation_enabled  = var.aks_key_vault_secrets_provider_enabled
