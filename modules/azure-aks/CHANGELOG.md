@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.3.0...azure-aks-v1.4.0) (2024-01-25)
+
+
+### Features
+
+* Skip certain tags via lifecycle on some modules ([#72](https://github.com/prefapp/tfm/issues/72)) ([0e7211b](https://github.com/prefapp/tfm/commit/0e7211b7a36efe9cdbdbf6a751c198c0f2216ae5))
+
 ## [1.3.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.2.0...azure-aks-v1.3.0) (2024-01-25)
 
 
