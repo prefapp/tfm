@@ -149,6 +149,12 @@ variable "aks_key_vault_secrets_provider_interval" {
   description = "(Optional) The interval to poll for secret rotation. This attribute is only set when secret_rotation is true. Defaults to 2m."
 }
 
+variable "create_network_profile" {
+  description = "Take control of the network_profile block creation"
+  type        = bool
+  default     = true
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster#network_profile
 variable "aks_network_plugin" {
   type = string
