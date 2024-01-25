@@ -8,6 +8,14 @@ This module creates only resource groups into Azure provicer.
 
 - [Resource terraform - resource-group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group).
 
+## Advertisement
+
+This module ignore some key tags for the resource group, this tags are:
+
+- cliente
+- producto
+- env
+
 ## Usage
 
 ### Set a module

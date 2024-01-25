@@ -16,4 +16,12 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool" {
   depends_on = [
     azurerm_kubernetes_cluster.kubernetes
    ]
+  lifecycle {
+    ignore_changes = [
+      default_node_pool[0].node_count,
+      tags["cliente"],
+      tags["producto"],
+      tags["env"]
+    ]
+  }
 }
