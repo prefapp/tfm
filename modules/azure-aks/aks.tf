@@ -31,9 +31,9 @@ resource "azurerm_kubernetes_cluster" "kubernetes" {
     secret_rotation_interval = var.aks_key_vault_secrets_provider_interval
   }
   network_profile {
-    network_plugin = lookup(var.aks_network_plugin, "aks_network_plugin", "azure")
-    service_cidr   = lookup(var.aks_service_cidr, var.aks_service_cidr, null)
-    dns_service_ip = lookup(var.aks_dns_service_ip, var.aks_dns_service_ip, null)
+    network_plugin = lookup(var.aks_network_plugin, "network_plugin", "azure")
+    service_cidr   = lookup(var.aks_service_cidr, "service_cidr", null)
+    dns_service_ip = lookup(var.aks_dns_service_ip, "dns_service_ip", null)
   }
   tags = var.aks_tags
   lifecycle {
