@@ -217,13 +217,3 @@ variable "aks_vnet_name_resource_group" {
   type = string
   description = "(Required) The name of the Resource Group in which the Virtual Network exists."
 }
-
-
-
-
-
-
-variable "ignored_tags" {
-  description = "Lista de etiquetas a ignorar"
-  type        = list(string)
-}

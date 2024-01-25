@@ -36,10 +36,12 @@ resource "azurerm_kubernetes_cluster" "kubernetes" {
     dns_service_ip = var.aks_dns_service_ip
   }
   tags = var.aks_tags
-lifecycle {
-  ignore_changes = [
-    "default_node_pool[0].node_count",
-    var.ignored_tags
-  ]
-}
+  lifecycle {
+    ignore_changes = [
+      "default_node_pool[0].node_count",
+      "tags.cliente",
+      "tags.producto",
+      "tags.env"
+    ]
+  }
 }
