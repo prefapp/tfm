@@ -14,14 +14,6 @@ This module creates a AKS cluster whit a default node pool and (optionally) othe
 - [Resource terraform - aks_cluster](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster).
 - [Resource terraform - aks_node_pool](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool).
 
-## Advertisement
-
-This module ignore some key tags for the cluster and node pools, this tags are:
-
-- cliente
-- producto
-- env
-
 ## Usage
 
 ### Set a module
