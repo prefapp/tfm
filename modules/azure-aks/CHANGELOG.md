@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.2.0...azure-aks-v1.3.0) (2024-01-25)
+
+
+### Features
+
+* Set a null some network_profile variables ([#69](https://github.com/prefapp/tfm/issues/69)) ([1bdb182](https://github.com/prefapp/tfm/commit/1bdb182fd2a41ba3ead37e1670c50e37846a2777))
+
 ## [1.2.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.1.0...azure-aks-v1.2.0) (2023-12-19)
 
 
