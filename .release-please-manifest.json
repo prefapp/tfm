@@ -7,6 +7,6 @@
     "modules/aws-oidc": "1.3.0",
     "modules/azure-vnet-and-subnet": "1.2.1",
     "modules/azure-resource-group": "1.2.0",
-    "modules/azure-aks": "1.2.0",
+    "modules/azure-aks": "1.3.0",
     "modules/azure-vnet-peering": "1.2.0"
 }
