@@ -39,9 +39,7 @@ resource "azurerm_kubernetes_cluster" "kubernetes" {
   lifecycle {
     ignore_changes = [
       "default_node_pool[0].node_count",
-      "tags.cliente",
-      "tags.producto",
-      "tags.env"
+      tags["cliente", "prodcuto", "env"]
     ]
   }
 }
