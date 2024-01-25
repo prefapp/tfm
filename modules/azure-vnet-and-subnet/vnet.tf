@@ -16,7 +16,11 @@ resource "azurerm_virtual_network" "vnet" {
   tags = each.value.tags
   lifecycle {
     ignore_changes = [
-      var.ignored_tags
+      tags[
+        "cliente",
+        "prodcuto",
+        "env"
       ]
+    ]
   }
 }
