@@ -32,8 +32,6 @@ resource "azurerm_kubernetes_cluster" "kubernetes" {
   }
   network_profile {
     network_plugin = var.aks_network_plugin
-    service_cidr   = var.aks_service_cidr
-    dns_service_ip = var.aks_dns_service_ip
   }
   tags = var.aks_tags
   lifecycle {
