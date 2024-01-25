@@ -21,3 +21,7 @@ variable "virtual_networks" {
   }))
   default = {}
 }
+
+variable "ignored_tags" {
+  description = "A list of tags to ignore"
+}

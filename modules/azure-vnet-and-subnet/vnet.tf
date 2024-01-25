@@ -14,4 +14,10 @@ resource "azurerm_virtual_network" "vnet" {
   
   # Tags are also derived from the value in the local.input map
   tags = each.value.tags
+  lifecycle {
+    ignore_changes = [
+      # iggnorar tags pasadas comon variable
+      var.ignored_tags
+      ]
+  }
 }
