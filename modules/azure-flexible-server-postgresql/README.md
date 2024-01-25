@@ -7,6 +7,14 @@ This Terraform Module creates a [Azure PostgreSQL Flexible Server](https://learn
 - It updates the admin password or takes if from an Azure KeyVault Secret
 - It can update and manage Server additional configurations
 
+## Advertisement
+
+This module ignore some key tags for the postgresql instance server, this tags are:
+
+- cliente
+- producto
+- env
+
 ## Usage
 
 Module usage:
