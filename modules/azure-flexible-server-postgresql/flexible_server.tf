@@ -39,10 +39,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
       version,
       create_mode,
       point_in_time_restore_time_in_utc,
-      source_server_id,
-      tags["cliente"],
-      tags["producto"],
-      tags["env"]
+      source_server_id
     ]
   }
 }
