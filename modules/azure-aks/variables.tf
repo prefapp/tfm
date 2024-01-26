@@ -199,21 +199,29 @@ variable "node_pool_additionals" {
 #################
 # SUBNET (DATA) #
 ################# 
+variable "aks_subnet_id" {
+  type = string
+  default = null
+  description = "(Optional) The ID of the Subnet in which the Kubernetes Cluster should exist."
+}
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet#virtual_network_name
 variable "aks_vnet_name" {
   type = string
-  description = "(Required) The name of the Virtual Network in which the Kubernetes Cluster should exist."
+  default = null
+  description = "(Optional) The name of the Virtual Network in which the Kubernetes Cluster should exist."
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet#name
 variable "aks_subnet_name" {
   type = string
-  description = "(Required) The name of the Subnet in which the Kubernetes Cluster should exist."
+  default = null
+  description = "(Optional) The name of the Subnet in which the Kubernetes Cluster should exist."
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet#resource_group_name
 variable "aks_vnet_name_resource_group" {
   type = string
-  description = "(Required) The name of the Resource Group in which the Virtual Network exists."
+  default = null
+  description = "(Optional) The name of the Resource Group in which the Virtual Network exists."
 }
