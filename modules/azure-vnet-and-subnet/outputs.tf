@@ -1,10 +1,8 @@
 output "vnet" {
-  value = { for vnet_key, vnet_value in azurerm_virtual_network.vnet : vnet_key => {
-    id = vnet_value.id
-    location = vnet_value.location
-    address_space = vnet_value.address_space
-    tags = vnet_value.tags
-  }}
+  id = vnet_value.id
+  location = vnet_value.location
+  address_space = vnet_value.address_space
+  tags = vnet_value.tags
 }
 
 output "subnet" {
