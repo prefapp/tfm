@@ -1,18 +1,24 @@
-output "vnet" {
-  value = { for vnet_key, vnet_value in azurerm_virtual_network.vnet : vnet_key => {
-    id = vnet_value.id
-    location = vnet_value.location
-    address_space = vnet_value.address_space
-    tags = vnet_value.tags
-  }}
+# VNET outputs
+output "virtual_network_name" {
+  value = azurerm_virtual_network.vnet.name
 }
 
-output "subnet" {
+output "virtual_network_id" {
+  value = azurerm_virtual_network.vnet.id
+}
+
+output "virtual_network_address_space" {
+  value = azurerm_virtual_network.vnet.address_space
+}
+
+# Subnets output
+output "subnets" {
   value = { for subnet_key, subnet_value in azurerm_subnet.subnet : subnet_key => {
-    id = subnet_value.id
-    address_prefixes = subnet_value.address_prefixes
-    network_policies_enabled = subnet_value.private_endpoint_network_policies_enabled
+    id                                            = subnet_value.id
+    address_prefixes                              = subnet_value.address_prefixes
+    network_policies_enabled                      = subnet_value.private_endpoint_network_policies_enabled
     private_link_service_network_policies_enabled = subnet_value.private_link_service_network_policies_enabled
-    service_endpoints = subnet_value.service_endpoints
-  }}
+    service_endpoints                             = subnet_value.service_endpoints
+    }
+  }
 }
