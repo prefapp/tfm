@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v1.2.1...azure-vnet-subnet-v1.2.2) (2024-02-19)
+
+
+### Bug Fixes
+
+* Update outputs.tf ([#78](https://github.com/prefapp/tfm/issues/78)) ([dc4cae1](https://github.com/prefapp/tfm/commit/dc4cae122b2a12f808a61bc7f65bdbf9f1ecde68))
+
 ## [1.2.1](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v1.2.0...azure-vnet-subnet-v1.2.1) (2024-01-24)
 
 

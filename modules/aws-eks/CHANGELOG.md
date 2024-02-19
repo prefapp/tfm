@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/aws-eks-v0.2.0...aws-eks-v0.3.0) (2024-02-19)
+
+
+### Features
+
+* Update alb policy to versions 2.7.0 aws-load-balancer-controller ([#81](https://github.com/prefapp/tfm/issues/81)) ([2d237e9](https://github.com/prefapp/tfm/commit/2d237e9c4d1d0dbbc03ed9bf08d153faf360147b))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/aws-eks-v0.1.0...aws-eks-v0.2.0) (2023-12-19)
 
 
