@@ -88,7 +88,8 @@ resource "aws_iam_policy" "iam_policy_alb" {
           "elasticloadbalancing:DescribeTargetGroups",
           "elasticloadbalancing:DescribeTargetGroupAttributes",
           "elasticloadbalancing:DescribeTargetHealth",
-          "elasticloadbalancing:DescribeTags"
+          "elasticloadbalancing:DescribeTags",
+	  "elasticloadbalancing:DescribeTrustStores"
         ],
         "Resource" : "*"
       },
