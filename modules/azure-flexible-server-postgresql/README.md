@@ -101,7 +101,7 @@ The creation of a server from a PITR will create a new server. If the source is 
 ## Get list of PiTRs backups
 
 ```yaml
-az postgres flexible-server backup list --resource-group test-modulo --names mi-server
+az postgres flexible-server backup list --resource-group test-modulo --name mi-server
 ```
 
 ## Optional Password creation
