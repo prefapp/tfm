@@ -32,6 +32,9 @@
         },
         "modules/azure-vnet-peering": {
             "package-name": "azure-vnet-peering"
+        },
+        "modules/azuread-group": {
+            "package-name": "azuread-group"
         }
     }
 }

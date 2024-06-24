@@ -40,3 +40,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+
+# @tonirvega dirs and files
+issue.yaml
