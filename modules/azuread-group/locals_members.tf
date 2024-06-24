@@ -11,21 +11,18 @@ locals {
         # Users:
         # - object_id
         # - user_principal_name
-        # - kind
         # - pim_expiration_hours
         # - pim_type
         
         # Groups:
         # - object_id
         # - display_name
-        # - kind
         # - pim_expiration_hours
         # - pim_type
 
         # Service Principals:
         # - object_id
         # - display_name
-        # - kind
         # - pim_expiration_hours
         # - pim_type
 
