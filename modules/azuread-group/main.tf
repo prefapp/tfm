@@ -1,9 +1,3 @@
-locals{
-
-  
-
-}
-
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group
 resource "azuread_group" "this" {
 
