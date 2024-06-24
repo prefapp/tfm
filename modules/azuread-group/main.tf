@@ -1,8 +1,8 @@
 locals{
 
-  active_owners = [for owner in local.owners : owner.object_id if lower(owner.pim_type) == "active" ]
+  direct_owners = [for owner in local.owners : owner.object_id if lower(owner.pim_type) == "disabled" ]
 
-  active_members = [for member in local.members : member.object_id if lower(member.pim_type) == "active" ]
+  direct_members = [for member in local.members : member.object_id if lower(member.pim_type) == "disabled" ]
 
 }
 
@@ -15,10 +15,10 @@ resource "azuread_group" "this" {
 
   security_enabled = true
 
-  members = local.members
+  members = local.direct_members
 
   # This is a conditional expression that checks if the owners_object_ids list is not empty.
   # The list should be populated, but a empty list is not a valid value for the azuread API
-  owners = length(local.active_owners) > 0 ? local.active_owners : null
+  owners = length(local.direct_owners) > 0 ? local.direct_owners : null
 
 }

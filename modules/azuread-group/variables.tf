@@ -52,9 +52,7 @@ variable "owners" {
 
         object_id           = optional(string)
 
-        pim = object({
-
-            enabled              = bool
+        pim = optional(object({
 
             type                 = optional(string)
 
@@ -62,6 +60,9 @@ variable "owners" {
 
             justification_needed = optional(bool)
 
+        }), 
+        {
+            type                = "disabled"
         })
     
     }))

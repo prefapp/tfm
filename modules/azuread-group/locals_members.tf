@@ -59,8 +59,6 @@ locals {
         
             pim_justification_needed = element([for member in var.members : member if member.email == user.user_principal_name], 0).pim.justification_needed
         
-            pim_enabled = element([for member in var.members : member if member.email == user.user_principal_name], 0).pim.enabled
-        
         }],
 
         # Next, we iterate over the users from the object_ids
@@ -86,8 +84,6 @@ locals {
         
             pim_justification_needed = element([for member in var.members : member if member.object_id == user.object_id], 0).pim.justification_needed
         
-            pim_enabled = element([for member in var.members : member if member.object_id == user.object_id], 0).pim.enabled
-        
         }],
     
         # Next, we iterate over the groups from the display names
@@ -110,8 +106,6 @@ locals {
             pim_type = element([for member in var.members : member if member.display_name == group], 0).pim.type
         
             pim_justification_needed = element([for member in var.members : member if member.display_name == group], 0).pim.justification_needed
-        
-            pim_enabled = element([for member in var.members : member if member.display_name == group], 0).pim.enabled
         
         }],
 
@@ -137,8 +131,6 @@ locals {
             pim_type = element([for member in var.members : member if member.object_id == group], 0).pim.type
         
             pim_justification_needed = element([for member in var.members : member if member.object_id == group], 0).pim.justification_needed
-        
-            pim_enabled = element([for member in var.members : member if member.object_id == group], 0).pim.enabled
         
         }],
 
@@ -166,8 +158,6 @@ locals {
         
             pim_justification_needed = element([for member in var.members : member if member.object_id == service_principal.object_id], 0).pim.justification_needed
         
-            pim_enabled = element([for member in var.members : member if member.object_id == service_principal.object_id], 0).pim.enabled
-        
         }],
 
         # Finally, we iterate over the service principals from the display names
@@ -192,8 +182,6 @@ locals {
             pim_type = element([for member in var.members : member if member.display_name == service_principal.display_name], 0).pim.type
         
             pim_justification_needed = element([for member in var.members : member if member.display_name == service_principal.display_name], 0).pim.justification_needed
-        
-            pim_enabled = element([for member in var.members : member if member.display_name == service_principal.display_name], 0).pim.enabled
         
         }]
     )
