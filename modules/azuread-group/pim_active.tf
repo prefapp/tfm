@@ -14,7 +14,6 @@ resource "azuread_privileged_access_group_assignment_schedule" "members" {
 
 }
 
-
 resource "azuread_privileged_access_group_assignment_schedule" "owners" {
 
     for_each = { for owner in local.owners : owner.object_id  => owner if lower(owner.pim_type) == "active"}

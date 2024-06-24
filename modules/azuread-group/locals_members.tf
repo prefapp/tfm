@@ -12,8 +12,6 @@ locals {
         # - kind
         # - pim_expiration_hours
         # - pim_type
-        # - pim_justification_needed
-        # - pim_enabled
         
         # Groups:
         # - object_id
@@ -21,17 +19,13 @@ locals {
         # - kind
         # - pim_expiration_hours
         # - pim_type
-        # - pim_justification_needed
-        # - pim_enabled
-        
+
         # Service Principals:
         # - object_id
         # - display_name
         # - kind
         # - pim_expiration_hours
         # - pim_type
-        # - pim_justification_needed
-        # - pim_enabled
 
         # This objects will be used in the azuread_privileged_access_group_eligibility_schedule resources and
         # in the azuread_group_member resources.
@@ -42,8 +36,6 @@ locals {
             object_id = user.object_id
         
             user_principal_name = user.user_principal_name
-
-            kind = "user"
         
             pim_expiration_hours = lookup(
                 
@@ -67,8 +59,6 @@ locals {
             object_id = user.object_id
         
             user_principal_name = user.user_principal_name
-
-            kind = "user"
         
             pim_expiration_hours = lookup(
                 
@@ -93,8 +83,6 @@ locals {
 
             display_name = group
         
-            kind = "group"
-        
             pim_expiration_hours = lookup(
                 
                 element([for member in var.members : member if member.display_name == group], 0).pim, "expiration_hours", 
@@ -105,16 +93,12 @@ locals {
         
             pim_type = element([for member in var.members : member if member.display_name == group], 0).pim.type
         
-            pim_justification_needed = element([for member in var.members : member if member.display_name == group], 0).pim.justification_needed
-        
         }],
 
         # Next, we iterate over the groups from the object_ids
         [for index, group in data.azuread_groups.members_from_object_ids.object_ids : {
         
             object_id = group
-
-            kind = "group"
 
             display_name = data.azuread_groups.members_from_object_ids.display_names[index]
         
@@ -130,8 +114,6 @@ locals {
         
             pim_type = element([for member in var.members : member if member.object_id == group], 0).pim.type
         
-            pim_justification_needed = element([for member in var.members : member if member.object_id == group], 0).pim.justification_needed
-        
         }],
 
 
@@ -139,8 +121,6 @@ locals {
         [for service_principal in data.azuread_service_principals.members_from_object_ids.service_principals : {
         
             object_id = service_principal.object_id
-
-            kind = "service_principal"
         
             display_name = service_principal.display_name
         
@@ -156,16 +136,12 @@ locals {
         
             pim_type = element([for member in var.members : member if member.object_id == service_principal.object_id], 0).pim.type
         
-            pim_justification_needed = element([for member in var.members : member if member.object_id == service_principal.object_id], 0).pim.justification_needed
-        
         }],
 
         # Finally, we iterate over the service principals from the display names
         [for service_principal in data.azuread_service_principals.members_from_display_name.service_principals : {
         
             object_id = service_principal.object_id
-
-            kind = "service_principal"
         
             display_name = service_principal.display_name
         
@@ -180,8 +156,6 @@ locals {
             )
         
             pim_type = element([for member in var.members : member if member.display_name == service_principal.display_name], 0).pim.type
-        
-            pim_justification_needed = element([for member in var.members : member if member.display_name == service_principal.display_name], 0).pim.justification_needed
         
         }]
     )

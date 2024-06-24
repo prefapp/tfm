@@ -34,7 +34,6 @@ variable "members" {
             justification_needed = optional(bool)
     
         }))
-    
     }))
 }
 
@@ -71,6 +70,7 @@ variable "owners" {
 }
 
 variable "subscription" {
+    
     description = "The subscription id"
     
     type        = string
@@ -79,15 +79,16 @@ variable "subscription" {
 }
 
 variable "subscription_roles" {
-    description = "The list of built-in roles to assign to the group"
     
-    type = list(object({
+  description = "The list of built-in roles to assign to the group"
     
-        scope            = string
+  type = list(object({
     
-        role_name        = string
+      role_name      = string
+        
+      resources_scopes = list(string)
     
-    }))
+  }))
 }
 
 variable "default_pim_duration" {

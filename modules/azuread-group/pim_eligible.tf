@@ -1,5 +1,3 @@
-
-
 resource "azuread_privileged_access_group_eligibility_schedule" "members" {
 
     for_each = { for member in local.members : member.object_id  => member if lower(member.pim_type) == "eligible"}

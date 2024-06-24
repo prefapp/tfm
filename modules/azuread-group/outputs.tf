@@ -2,7 +2,7 @@
 
 output "debug" {
 
-    value = local.members
+    value = local.flattened_role_assingments
 
 }
 
