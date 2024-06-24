@@ -2,6 +2,8 @@
 
 locals {
 
+    direct_members = [for member in local.members : member.object_id if lower(member.pim_type) == "disabled" ]
+
     members = concat( 
 
         # We build a single flat list of objects with the following attributes:
@@ -49,7 +51,7 @@ locals {
         
             pim_type = element([for member in var.members : member if member.email == user.user_principal_name], 0).pim.type
         
-            pim_justification_needed = element([for member in var.members : member if member.email == user.user_principal_name], 0).pim.justification_needed
+            permanent_assignment = element([for member in var.members : member if member.email == user.user_principal_name], 0).pim.permanent_assignment
         
         }],
 
@@ -71,8 +73,8 @@ locals {
             )
         
             pim_type = element([for member in var.members : member if member.object_id == user.object_id], 0).pim.type
-        
-            pim_justification_needed = element([for member in var.members : member if member.object_id == user.object_id], 0).pim.justification_needed
+
+            permanent_assignment = element([for member in var.members : member if member.object_id == user.object_id], 0).pim.permanent_assignment
         
         }],
     
@@ -92,6 +94,8 @@ locals {
             )
         
             pim_type = element([for member in var.members : member if member.display_name == group], 0).pim.type
+
+            permanent_assignment = element([for member in var.members : member if member.display_name == group], 0).pim.permanent_assignment
         
         }],
 
@@ -113,9 +117,10 @@ locals {
             )
         
             pim_type = element([for member in var.members : member if member.object_id == group], 0).pim.type
+
+            permanent_assignment = element([for member in var.members : member if member.object_id == group], 0).pim.permanent_assignment
         
         }],
-
 
         # Next, we iterate over the service principals from the object_ids
         [for service_principal in data.azuread_service_principals.members_from_object_ids.service_principals : {
@@ -135,6 +140,8 @@ locals {
             )
         
             pim_type = element([for member in var.members : member if member.object_id == service_principal.object_id], 0).pim.type
+
+            permanent_assignment = element([for member in var.members : member if member.object_id == service_principal.object_id], 0).pim.permanent_assignment
         
         }],
 
@@ -156,6 +163,8 @@ locals {
             )
         
             pim_type = element([for member in var.members : member if member.display_name == service_principal.display_name], 0).pim.type
+
+            permanent_assignment = element([for member in var.members : member if member.display_name == service_principal.display_name], 0).pim.permanent_assignment
         
         }]
     )

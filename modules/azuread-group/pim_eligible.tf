@@ -1,3 +1,4 @@
+# https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/privileged_access_group_eligibility_schedule
 resource "azuread_privileged_access_group_eligibility_schedule" "members" {
 
     for_each = { for member in local.members : member.object_id  => member if lower(member.pim_type) == "eligible"}
@@ -10,9 +11,10 @@ resource "azuread_privileged_access_group_eligibility_schedule" "members" {
 
     duration        = "PT${each.value.pim_expiration_hours != null ? each.value.pim_expiration_hours : var.default_pim_duration}H"
 
+    permanent_assignment = each.value.permanent_assignment != null ? each.value.permanent_assignment : false
 }
 
-
+# https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/privileged_access_group_eligibility_schedule
 resource "azuread_privileged_access_group_eligibility_schedule" "owners" {
 
     for_each = { for owner in local.owners : owner.object_id  => owner if lower(owner.pim_type) == "eligible"}
@@ -25,4 +27,5 @@ resource "azuread_privileged_access_group_eligibility_schedule" "owners" {
 
     duration        = "PT${each.value.pim_expiration_hours != null ? each.value.pim_expiration_hours : var.default_pim_duration}H"
 
+    permanent_assignment = each.value.permanent_assignment != null ? each.value.permanent_assignment : false
 }

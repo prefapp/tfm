@@ -1,3 +1,4 @@
+# https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/privileged_access_group_assignment_schedule
 resource "azuread_privileged_access_group_assignment_schedule" "members" {
 
     for_each = { for member in local.members : member.object_id  => member if lower(member.pim_type) == "active"}
@@ -14,6 +15,7 @@ resource "azuread_privileged_access_group_assignment_schedule" "members" {
 
 }
 
+# https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/privileged_access_group_assignment_schedule
 resource "azuread_privileged_access_group_assignment_schedule" "owners" {
 
     for_each = { for owner in local.owners : owner.object_id  => owner if lower(owner.pim_type) == "active"}

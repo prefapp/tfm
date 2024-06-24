@@ -11,6 +11,7 @@ variable "description" {
 }
 
 variable "members" {
+    
     description = "The list of Azure AD users, groups or service principals to assign to the group"
     
     type = list(object({
@@ -25,15 +26,17 @@ variable "members" {
 
         pim = optional(object({
     
-            enabled              = bool
-    
             type                 = optional(string)
     
             expiration_hours     = optional(string)
-    
-            justification_needed = optional(bool)
-    
-        }))
+
+            permanent_assignment = optional(bool)
+        }),
+        {
+            type                = "disabled"
+
+            permanent_assignment = false
+        })
     }))
 }
 
@@ -57,11 +60,14 @@ variable "owners" {
 
             expiration_hours     = optional(string)
 
-            justification_needed = optional(bool)
+            permanent_assignment = optional(bool)
 
         }), 
         {
             type                = "disabled"
+            
+            permanent_assignment = false
+
         })
     
     }))
@@ -70,7 +76,7 @@ variable "owners" {
 }
 
 variable "subscription" {
-    
+
     description = "The subscription id"
     
     type        = string
@@ -89,6 +95,17 @@ variable "subscription_roles" {
       resources_scopes = list(string)
     
   }))
+}
+
+variable "directory_roles" {
+    
+    description = "The list of directory roles to assign to the group"
+    
+    type = list(object({
+    
+        role_name = string
+    
+    }))
 }
 
 variable "default_pim_duration" {

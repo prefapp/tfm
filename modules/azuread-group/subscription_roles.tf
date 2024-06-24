@@ -18,7 +18,7 @@ locals {
 
 }
 
-
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
   
   for_each = { for role in local.flattened_role_assingments : role.name => role }

@@ -1,12 +1,10 @@
 locals{
 
-  direct_owners = [for owner in local.owners : owner.object_id if lower(owner.pim_type) == "disabled" ]
-
-  direct_members = [for member in local.members : member.object_id if lower(member.pim_type) == "disabled" ]
+  
 
 }
 
-
+# https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group
 resource "azuread_group" "this" {
 
   display_name     = var.name

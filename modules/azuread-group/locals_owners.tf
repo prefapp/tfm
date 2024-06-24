@@ -1,5 +1,7 @@
 locals {
 
+    direct_owners = [for owner in local.owners : owner.object_id if lower(owner.pim_type) == "disabled" ]
+
     owners = concat( 
 
         # We build a single flat list of objects with the following attributes:
@@ -42,6 +44,8 @@ locals {
         
             pim_type = element([for owner in var.owners : owner if owner.email == user.user_principal_name], 0).pim.type
 
+            permanent_assignment = element([for owner in var.owners : owner if owner.email == user.user_principal_name], 0).pim.permanent_assignment
+
         }],
 
         # Next, we iterate over the users from the object_ids
@@ -63,6 +67,7 @@ locals {
         
             pim_type = element([for owner in var.owners : owner if owner.object_id == user.object_id], 0).pim.type
 
+            permanent_assignment = element([for owner in var.owners : owner if owner.object_id == user.object_id], 0).pim.permanent_assignment
         }],
     
         # Next, we iterate over the groups from the display names
@@ -81,6 +86,8 @@ locals {
             )
         
             pim_type = element([for owner in var.owners : owner if owner.display_name == group], 0).pim.type
+
+            permanent_assignment = element([for owner in var.owners : owner if owner.display_name == group], 0).pim.permanent_assignment
 
         }],
 
@@ -102,6 +109,8 @@ locals {
             )
         
             pim_type = element([for owner in var.owners : owner if owner.object_id == group], 0).pim.type
+
+            permanent_assignment = element([for owner in var.owners : owner if owner.object_id == group], 0).pim.permanent_assignment
  
         }],
 
@@ -125,6 +134,8 @@ locals {
         
             pim_type = element([for owner in var.owners : owner if owner.object_id == service_principal.object_id], 0).pim.type
 
+            permanent_assignment = element([for owner in var.owners : owner if owner.object_id == service_principal.object_id], 0).pim.permanent_assignment
+
         }],
 
         # Next, we iterate over the service principals from the display names
@@ -145,6 +156,8 @@ locals {
             )
         
             pim_type = element([for owner in var.owners : owner if owner.display_name == service_principal.display_name], 0).pim.type
+
+            permanent_assignment = element([for owner in var.owners : owner if owner.display_name == service_principal.display_name], 0).pim.permanent_assignment
 
         }]
     )
