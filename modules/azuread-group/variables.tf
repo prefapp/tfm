@@ -119,3 +119,31 @@ variable "default_pim_duration" {
     default     = "12"
 }
 
+variable "expiration_required" {
+    
+    description = "Indicates if the expiration is required for the PIM eligible role assignments"
+    
+    type        = bool
+    
+    default     = false
+  
+}
+
+variable "pim_maximum_duration_hours" {
+    
+    description = "The maximum duration for PIM role assignments"
+    
+    type        = string
+    
+    default     = "8"
+}
+
+variable "pim_require_justification" {
+    
+    description = "Indicates if the justification is required for the eligible PIM role assignments"
+    
+    type        = bool
+    
+    default     = true
+}
+
