@@ -13,6 +13,14 @@ resource "azuread_privileged_access_group_assignment_schedule" "members" {
 
     justification =  "Managed by Terraform."
 
+    depends_on = [ 
+    
+        azuread_group_role_management_policy.members,
+    
+        azuread_group_role_management_policy.owners
+    
+    ]
+
 }
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/privileged_access_group_assignment_schedule
@@ -29,5 +37,13 @@ resource "azuread_privileged_access_group_assignment_schedule" "owners" {
     duration        = "PT${each.value.pim_expiration_hours != null ? each.value.pim_expiration_hours : var.default_pim_duration}H"
 
     justification =  "Managed by Terraform."
+
+    depends_on = [ 
+    
+        azuread_group_role_management_policy.members,
+    
+        azuread_group_role_management_policy.owners
+    
+    ]
 
 }
