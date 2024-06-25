@@ -3,7 +3,7 @@ resource "azuread_group" "this" {
 
   display_name     = var.name
 
-  assignable_to_role = true
+  assignable_to_role = var.assignable_to_role
 
   security_enabled = true
 

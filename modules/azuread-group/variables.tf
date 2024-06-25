@@ -147,3 +147,12 @@ variable "pim_require_justification" {
     default     = true
 }
 
+variable "assignable_to_role" {
+    
+    description = "Indicates if the group is assignable to a role"
+    
+    type        = bool
+    
+    default     = true
+}
+
