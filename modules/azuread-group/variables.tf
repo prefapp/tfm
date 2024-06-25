@@ -64,7 +64,9 @@ variable "owners" {
 
         }), 
         {
-            type                = "disabled"
+            expiration_hours     = null
+
+            type                 = "disabled"
             
             permanent_assignment = false
 
