@@ -11,6 +11,7 @@ subscription_roles:
       - /subscriptions/00000000-0000-0000-0000-000000000000
 
 pim_maximum_duration_hours: 12
+pim_require_justification: true
 
 owners:
   - type: user
