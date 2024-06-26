@@ -136,3 +136,13 @@ $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $Permiss
 | Name | Description |
 |------|-------------|
 | <a name="output_group_id"></a> [group\_id](#output\_group\_id) | n/a |
+
+## Troubleshooting
+
+### Known issues
+
+1. Sometimes, if you try to remove a `azuread_privileged_access_group_eligibility_schedule` resource, the provider crashes, we are waiting for a fix. Check the [issue](https://github.com/hashicorp/terraform-provider-azuread/issues/1399).
+2. If you edit a `azuread_privileged_access_group_eligibility_schedule`, the provider shows a wrong log error. You should remove from terraform the resource and then recreate it. But sometimes has conflicts with the previous point. Check the [issue](https://github.com/hashicorp/terraform-provider-azuread/issues/1412)
+
+
+
