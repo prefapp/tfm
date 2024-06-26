@@ -135,7 +135,7 @@ $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $Permiss
 
 | Name | Description |
 |------|-------------|
-| <a name="output_group_id"></a> [group\_id](#output\_group\_id) | n/a |
+| <a name="output_group_id"></a> [group\_id](#output\_group\_id) | group id |
 
 ## Troubleshooting
 
