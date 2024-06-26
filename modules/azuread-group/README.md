@@ -6,16 +6,86 @@
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 2.52.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.100.0 |
 
+### Provisioner actor and permissions
+
+The provisioner actor must be a Service Principal due to a bug in the provider. For more details, check this [issue](https://github.com/hashicorp/terraform-provider-azuread/issues/1386).
+
+To make it work, you need to grant permissions to the Service Principal using a PowerShell console. You can open a terminal in the Azure console panel.
+
+![image](https://github.com/prefapp/tfm/assets/91343444/5096b774-1cc9-4ab2-88c1-0d246d916955)
+
+To execute the following scripts, you should act as Global Administrator.
+
+Execute the following scripts in the powershell terminal.
+
+**1. PrivilegedAssignmentSchedule.ReadWrite.AzureADGroup**
+```powershell
+$TenantID="<your-tenant-id>"
+
+$GraphAppId = "00000003-0000-0000-c000-000000000000"
+
+$MSI="<your-service-principal-object-id>"
+
+$PermissionName = "PrivilegedAssignmentSchedule.ReadWrite.AzureADGroup"
+
+# Install the module
+
+Install-Module AzureAD
+
+Connect-AzureAD -TenantId $TenantID
+
+$GraphServicePrincipal = Get-AzureADServicePrincipal -Filter "appId eq '$GraphAppId'"
+
+$AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $PermissionName -and $_.AllowedMemberTypes -contains "Application"}; New-AzureAdServiceAppRoleAssignment -ObjectId $MSI -PrincipalId $MSI -ResourceId $GraphServicePrincipal.ObjectId -Id $AppRole.Id
+```
+**2. RoleManagementPolicy.ReadWrite.AzureADGroup**
+```powershell
+$TenantID="<your-tenant-id>"
+
+$GraphAppId = "00000003-0000-0000-c000-000000000000"
+
+$MSI="<your-service-principal-object-id>"
+
+$PermissionName = "RoleManagementPolicy.ReadWrite.AzureADGroup"
+
+# Install the module
+
+Install-Module AzureAD
+
+Connect-AzureAD -TenantId $TenantID
+
+$GraphServicePrincipal = Get-AzureADServicePrincipal -Filter "appId eq '$GraphAppId'"
+
+$AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $PermissionName -and $_.AllowedMemberTypes -contains "Application"}; New-AzureAdServiceAppRoleAssignment -ObjectId $MSI -PrincipalId $MSI -ResourceId $GraphServicePrincipal.ObjectId -Id $AppRole.Id
+```
+
+**3. PrivilegedEligibilitySchedule.ReadWrite.AzureADGroup**
+```powershell
+$TenantID="<your-tenant-id>"
+
+$GraphAppId = "00000003-0000-0000-c000-000000000000"
+
+$MSI="<your-service-principal-object-id>"
+
+$PermissionName = "PrivilegedEligibilitySchedule.ReadWrite.AzureADGroup"
+
+# Install the module
+
+Install-Module AzureAD
+
+Connect-AzureAD -TenantId $TenantID
+
+$GraphServicePrincipal = Get-AzureADServicePrincipal -Filter "appId eq '$GraphAppId'"
+
+$AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $PermissionName -and $_.AllowedMemberTypes -contains "Application"}; New-AzureAdServiceAppRoleAssignment -ObjectId $MSI -PrincipalId $MSI -ResourceId $GraphServicePrincipal.ObjectId -Id $AppRole.Id
+```
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 2.52.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.100.0 |
-
-## Modules
-
-No modules.
 
 ## Resources
 
@@ -65,5 +135,4 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_debug"></a> [debug](#output\_debug) | n/a |
 | <a name="output_group_id"></a> [group\_id](#output\_group\_id) | n/a |
