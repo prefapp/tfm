@@ -7,6 +7,12 @@ resource "azuread_group_role_management_policy" "members" {
     maximum_duration = "PT${var.pim_maximum_duration_hours}H"
     require_justification = var.pim_require_justification
     require_approval = false
+    approval_stage {
+      primary_approver {
+        object_id = data.azuread_directory_roles.current.id
+        type = "singleUser"
+      }
+    }
   }
   
   eligible_assignment_rules {
