@@ -34,7 +34,7 @@ resource "azuread_privileged_access_group_eligibility_schedule" "owners" {
 
     assignment_type = "owner"
 
-    #duration        = "PT${each.value.pim_expiration_hours != null ? each.value.pim_expiration_hours : var.default_pim_duration}H"
+    duration        = each.value.permanent_assignment != null ? null : ("PT${each.value.pim_expiration_hours != null  ? each.value.pim_expiration_hours : var.default_pim_duration}H")
 
     permanent_assignment = each.value.permanent_assignment != null ? each.value.permanent_assignment : false
 
