@@ -45,6 +45,8 @@ module "azuread-group"{
     owners = local.values.owners
 
     pim_maximum_duration_hours = local.values.pim_maximum_duration_hours
+
+    pim_require_justification = local.values.pim_require_justification
 }
 
 
