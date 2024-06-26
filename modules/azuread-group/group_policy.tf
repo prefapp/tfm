@@ -6,6 +6,7 @@ resource "azuread_group_role_management_policy" "members" {
   activation_rules {
     maximum_duration = "PT${var.pim_maximum_duration_hours}H"
     require_justification = var.pim_require_justification
+    require_approval = false
   }
   
   eligible_assignment_rules {
@@ -21,6 +22,7 @@ resource "azuread_group_role_management_policy" "owners" {
   activation_rules {
     maximum_duration = "PT${var.pim_maximum_duration_hours}H"
     require_justification = var.pim_require_justification
+    require_approval = false
   }
 
   eligible_assignment_rules {
