@@ -35,6 +35,9 @@
         },
         "modules/azuread-group": {
             "package-name": "azuread-group"
+        },
+        "modules/azure-kv": {
+            "package-name": "azure-kv"
         }
     }
 }
