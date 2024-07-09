@@ -16,7 +16,7 @@ locals {
 # EKS Cluster Configuration
 module "eks" {
 
-  version = "19.20.0"
+  version = "~> 20.0"
 
   source = "terraform-aws-modules/eks/aws"
 
@@ -58,12 +58,23 @@ module "eks" {
 
   cluster_encryption_config = var.cluster_encryption_config
 
-  aws_auth_users = var.aws_auth_users
+  # aws_auth_users = var.aws_auth_users
 
-  aws_auth_roles = var.aws_auth_roles
+  # aws_auth_roles = var.aws_auth_roles
 
-  manage_aws_auth_configmap = var.manage_aws_auth_configmap
+  # manage_aws_auth_configmap = var.manage_aws_auth_configmap
 
   fargate_profiles = var.fargate_profiles
 
+}
+
+module "aws-auth" {
+  source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
+  version = "~> 20.0"
+
+  manage_aws_auth_configmap = var.manage_aws_auth_configmap
+
+  aws_auth_roles = var.aws_auth_roles
+
+  aws_auth_users = var.aws_auth_users
 }
