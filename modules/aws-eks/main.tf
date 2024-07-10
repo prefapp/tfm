@@ -1,8 +1,8 @@
 
-/**
- * This file is part of the "Terraform: Up & Running" code base.
- * It is used in the "Deploying an EKS Cluster" chapter.
- */
+/*
+  This file is part of the "Terraform: Up & Running" code base.
+  It is used in the "Deploying an EKS Cluster" chapter.
+*/
 locals {
   account_id = data.aws_caller_identity.current.account_id
 }
@@ -16,7 +16,7 @@ locals {
 # EKS Cluster Configuration
 module "eks" {
 
-  version = "~> 20.0"
+  version = "20.17.2"
 
   source = "terraform-aws-modules/eks/aws"
 
@@ -58,23 +58,22 @@ module "eks" {
 
   cluster_encryption_config = var.cluster_encryption_config
 
-  # aws_auth_users = var.aws_auth_users
-
-  # aws_auth_roles = var.aws_auth_roles
-
-  # manage_aws_auth_configmap = var.manage_aws_auth_configmap
-
   fargate_profiles = var.fargate_profiles
 
 }
 
 module "aws-auth" {
+
   source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
-  version = "~> 20.0"
+
+  version = "20.17.2"
 
   manage_aws_auth_configmap = var.manage_aws_auth_configmap
 
-  aws_auth_roles = var.aws_auth_roles
+  aws_auth_accounts = [local.account_id]
+
+  # aws_auth_roles = var.aws_auth_roles
 
   aws_auth_users = var.aws_auth_users
+
 }

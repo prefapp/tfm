@@ -20,7 +20,7 @@ locals {
 
     - Yes, you can disable an addon by setting addon_disabled to true
 
-       · Example in your .tfvars:
+      · Example in your .tfvars:
 
         cluster_addons = {
           vpc-cni = {
@@ -32,7 +32,7 @@ locals {
 
     - Yes, you can set the addon version by setting addon_version
 
-       · Example in your .tfvars:
+      · Example in your .tfvars:
 
         cluster_addons = {
           vpc-cni = {
@@ -44,7 +44,7 @@ locals {
 
     - Yes, you can set the addon configuration_values, it will overwrite the default values
 
-       · Example in your .tfvars:
+      · Example in your .tfvars:
 
         cluster_addons = {
           vpc-cni = {
@@ -118,10 +118,9 @@ locals {
           { configuration_values = jsonencode(lookup(value, "configuration_values", null)) } : {}
           ,
           {
-            addon_disabled           = value.addon_disabled,
-            addon_version            = value.addon_version,
-            resolve_conflicts        = lookup(value, "resolve_conflicts", null),
-            service_account_role_arn = lookup(local.base_addons[key], "service_account_role_arn", null)
+            addon_disabled              = value.addon_disabled,
+            addon_version               = value.addon_version,
+            service_account_role_arn    = lookup(local.base_addons[key], "service_account_role_arn", null)
           },
           /**
            * Remove null properties from the configuration_values.
