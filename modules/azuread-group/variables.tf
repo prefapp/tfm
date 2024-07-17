@@ -38,6 +38,8 @@ variable "members" {
             permanent_assignment = false
         })
     }))
+
+    default = []
 }
 
 variable "owners" {
