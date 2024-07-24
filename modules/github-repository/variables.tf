@@ -1,7 +1,6 @@
 variable "name" {
   description = "The name of the repository"
   type        = string
-  default = "test-repo-rundagger-5"
 }
 
 variable "visibility" {
@@ -13,11 +12,10 @@ variable "visibility" {
 variable "org" {
   description = "The organization of the repository"
   type        = string
-  default = "prefapp"
 }
 
 variable "default_branch" {
   description = "The default branch of the repository"
   type        = string
-  default = "master"
+  default = "main"
 }
