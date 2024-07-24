@@ -1,23 +1,39 @@
 variable "name" {
-    type = string
+  type = string
 }
 
 variable "enabled_for_disk_encryption" {
-    type = bool 
+  type = bool
 }
 
 variable "soft_delete_retention_days" {
-    type = number 
+  type = number
 }
 
 variable "purge_protection_enabled" {
-    type = bool 
+  type = bool
 }
 
 variable "sku_name" {
-    type = string
+  type = string
 }
 
 variable "resource_group" {
-    type = string
+  type = string
+}
+
+variable "enable_rbac_authorization" {
+  type = bool
+}
+
+variable "access_policies" {
+  type = list(object({
+    type                    = optional(string)
+    name                    = optional(string)
+    object_id               = optional(string)
+    key_permissions         = optional(list(string))
+    secret_permissions      = optional(list(string))
+    certificate_permissions = optional(list(string))
+  }))
+  default = []
 }
