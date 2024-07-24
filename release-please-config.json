@@ -38,6 +38,9 @@
         },
         "modules/azure-kv": {
             "package-name": "azure-kv"
+        },
+        "modules/github-repository": {
+            "package-name": "github-repository"
         }
     }
 }
