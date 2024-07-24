@@ -9,11 +9,6 @@ variable "visibility" {
   default = "private"
 }
 
-variable "org" {
-  description = "The organization of the repository"
-  type        = string
-}
-
 variable "default_branch" {
   description = "The default branch of the repository"
   type        = string
