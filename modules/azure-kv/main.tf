@@ -40,6 +40,7 @@ locals {
   # Creating a map with entity names as keys and their object_ids as values
   entity_ids = {
     for entity in var.access_policies : entity.name => (
+      entity.object_id != "" ? entity.object_id :
       entity.type == "user" ? data.azuread_user.this[entity.name].id :
       entity.type == "group" ? data.azuread_group.this[entity.name].id :
       entity.type == "service_principal" ? data.azuread_service_principal.this[entity.name].object_id :
@@ -70,7 +71,7 @@ resource "azurerm_key_vault" "this" {
 resource "azurerm_key_vault_access_policy" "this" {
   for_each = {
     for entity in var.access_policies : entity.name => entity
-    if lookup(local.entity_ids, entity.name, null) != null
+    if lookup(local.entity_ids, entity.name, null) != null && var.enable_rbac_authorization == false
   }
 
   key_vault_id            = azurerm_key_vault.this.id
