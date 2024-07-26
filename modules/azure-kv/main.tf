@@ -50,7 +50,11 @@ locals {
 
   # Convert the map values to a list and filter out nulls
   object_ids = [for id in local.entity_ids : id if id != null]
+
+  # Check if access policies are defined when RBAC is enabled
+  has_access_policies = length(var.access_policies) > 0 && var.enable_rbac_authorization
 }
+
 
 # RESOURCES SECTION
 ## https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/resources/key_vault
@@ -65,21 +69,22 @@ resource "azurerm_key_vault" "this" {
   purge_protection_enabled    = var.purge_protection_enabled
   sku_name                    = var.sku_name
   tags                        = data.azurerm_resource_group.this.tags
-}
-
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/resources/key_vault_access_policy
-resource "azurerm_key_vault_access_policy" "this" {
-  for_each = {
-    for entity in var.access_policies : entity.name => entity
-    if lookup(local.entity_ids, entity.name, null) != null && var.enable_rbac_authorization == false
+  lifecycle {
+    precondition {
+      condition     = !local.has_access_policies
+      error_message = "Access policies cannot be defined when RBAC authorization is enabled."
+    }
   }
 
-  key_vault_id            = azurerm_key_vault.this.id
-  tenant_id               = data.azurerm_client_config.current.tenant_id
-  object_id               = local.entity_ids[each.key]
-  key_permissions         = each.value.key_permissions
-  secret_permissions      = each.value.secret_permissions
-  certificate_permissions = each.value.certificate_permissions
+  dynamic "access_policy" {
+    for_each = var.enable_rbac_authorization ? [] : [for entity in var.access_policies : entity if lookup(local.entity_ids, entity.name, null) != null]
+    content {
+      tenant_id               = data.azurerm_client_config.current.tenant_id
+      object_id               = lookup(local.entity_ids, access_policy.value.name, null)
+      key_permissions         = access_policy.value.key_permissions
+      secret_permissions      = access_policy.value.secret_permissions
+      certificate_permissions = access_policy.value.certificate_permissions
+      storage_permissions     = access_policy.value.certificate_permissions
+    }
+  }
 }
-
-

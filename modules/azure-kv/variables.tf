@@ -34,6 +34,7 @@ variable "access_policies" {
     key_permissions         = optional(list(string))
     secret_permissions      = optional(list(string))
     certificate_permissions = optional(list(string))
+    storage_permissions     = optional(list(string))
   }))
   default = []
 }
