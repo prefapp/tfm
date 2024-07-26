@@ -13,7 +13,6 @@
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.113.0 |
 | <a name="provider_azurerm"></a> [azuread](#provider\_azuread) | ~> 2.53.0 |
 
-
 ## Modules
 
 No modules.
@@ -48,14 +47,11 @@ No modules.
 | <a name="input_accesss_policies.name.certificate_permissions"></a> [access_policies.name.certificate_permissions](#input\_access\_policies.name.certificate_permissions) | [List of certificate permissions](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault#certificate_permissions) | `list(string)` | n/a | optional |
 | <a name="input_accesss_policies.name.storage_permissions"></a> [access_policies.name.storage_permissions](#input\_access\_policies.name.storage_permissions) | [List of storage permissions](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault#storage_permissions) | `list(string)` | n/a | optional |
 
-
-
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | <a name="output_id"></a> [id](#output\_id) | n/a |
-
 
 ## Example
 
