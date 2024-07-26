@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.6.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.5.1...azure-flexible-server-postgresql-v2.6.0) (2024-07-26)
+
+
+### Features
+
+* azure-kv module ([e366918](https://github.com/prefapp/tfm/commit/e366918e8989dc3739fec375d214b8c7fef806c4))
+* update readme ([b0ae8de](https://github.com/prefapp/tfm/commit/b0ae8de02eb8b844e2bfcfa325344bebd970a19d))
+* update README.md ([#101](https://github.com/prefapp/tfm/issues/101)) ([e366918](https://github.com/prefapp/tfm/commit/e366918e8989dc3739fec375d214b8c7fef806c4))
+* update README.md ([#99](https://github.com/prefapp/tfm/issues/99)) ([b0ae8de](https://github.com/prefapp/tfm/commit/b0ae8de02eb8b844e2bfcfa325344bebd970a19d))
+
 ## [2.5.1](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.5.0...azure-flexible-server-postgresql-v2.5.1) (2024-01-25)
 
 
