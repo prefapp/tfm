@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/prefapp/tfm/compare/azure-kv-v1.0.0...azure-kv-v1.1.0) (2024-07-26)
+
+
+### Features
+
+* update readme ([28240c6](https://github.com/prefapp/tfm/commit/28240c68637467d99696a1118bcf5984e266e7a8))
+* update README.md ([#103](https://github.com/prefapp/tfm/issues/103)) ([28240c6](https://github.com/prefapp/tfm/commit/28240c68637467d99696a1118bcf5984e266e7a8))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/azure-kv-v0.1.0...azure-kv-v1.0.0) (2024-06-27)
 
 
