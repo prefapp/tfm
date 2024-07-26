@@ -71,63 +71,63 @@ No modules.
       enable_rbac_authorization: false # If RBAC is set to true access policies will fail if there are any defined.
       access_policies:
       - name: "Name for the Object ID"
-          # There is no type definition if object_id is provided
-          object_id: "1a9590f4-27d3-4abf-9e30-5be7f46959bb"
-          key_permissions: 
-          - "Get"
-          - "List"
-          secret_permissions: 
-          - "Get"
-          - "List"
-          certificate_permissions: 
-          - "Get"
-          - "List"
-          storage_permissions: 
-          - "Get"
-          - "List"
+        # There is no type definition if object_id is provided
+        object_id: "1a9590f4-27d3-4abf-9e30-5be7f46959bb"
+        key_permissions: 
+        - "Get"
+        - "List"
+        secret_permissions: 
+        - "Get"
+        - "List"
+        certificate_permissions: 
+        - "Get"
+        - "List"
+        storage_permissions: 
+        - "Get"
+        - "List"
       - name: "Group display name"
-          type: "group"
-          object_id: ""  # Leave empty or delete if you want to look up the group ID
-          key_permissions: 
-          - "Get"
-          - "List"
-          secret_permissions: 
-          - "Get"
-          - "List"
-          certificate_permissions: 
-          - "Get"
-          - "List"
-          storage_permissions: 
-          - "Get"
-          - "List"
+        type: "group"
+        object_id: ""  # Leave empty or delete if you want to look up the group ID
+        key_permissions: 
+        - "Get"
+        - "List"
+        secret_permissions: 
+        - "Get"
+        - "List"
+        certificate_permissions: 
+        - "Get"
+        - "List"
+        storage_permissions: 
+        - "Get"
+        - "List"
       - name: "Service Principal display name"
-          type: "service_principal"
-          object_id: ""  # Leave empty or delete if you want to look up the service principal ID
-          key_permissions: 
-          - "Get"
-          - "List"
-          secret_permissions: 
-          - "Get"
-          - "List"
-          certificate_permissions: 
-          - "Get"
-          - "List"
-          storage_permissions: 
-          - "Get"
-          - "List"
+        type: "service_principal"
+        object_id: ""  # Leave empty or delete if you want to look up the service principal ID
+        key_permissions: 
+        - "Get"
+        - "List"
+        secret_permissions: 
+        - "Get"
+        - "List"
+        certificate_permissions: 
+        - "Get"
+        - "List"
+        storage_permissions: 
+        - "Get"
+        - "List"
       - name: "User principal name"
-          type: "user"
-          object_id: "" # Leave empty or delete if you want to look up the user ID
-          key_permissions: 
-          - "Get"
-          - "List"
-          secret_permissions: 
-          - "Get"
-          - "List"
-          certificate_permissions: 
-          - "Get"
-          - "List"
-          storage_permissions: 
-          - "Get"
-          - "List"
+        type: "user"
+        object_id: "" # Leave empty or delete if you want to look up the user ID
+        key_permissions: 
+        - "Get"
+        - "List"
+        secret_permissions: 
+        - "Get"
+        - "List"
+        certificate_permissions: 
+        - "Get"
+        - "List"
+        storage_permissions: 
+        - "Get"
+        - "List"
 ```
