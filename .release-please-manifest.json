@@ -10,5 +10,5 @@
     "modules/azure-aks": "1.4.1",
     "modules/azure-vnet-peering": "1.2.0",
     "modules/azuread-group": "1.0.1",
-    "modules/azure-kv": "1.2.0"
+    "modules/azure-kv": "1.2.1"
 }
