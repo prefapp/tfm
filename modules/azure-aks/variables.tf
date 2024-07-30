@@ -121,6 +121,7 @@ variable "extra_node_pools" {
     max_pod_per_node      = optional(number, 110)
     os_disk_type          = optional(string, "Ephemeral")
     mode                  = optional(string, "User")
+    custom_labels         = map(string)
     orchestrator_version  = optional(string, "")
   }))
 }
