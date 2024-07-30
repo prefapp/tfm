@@ -13,6 +13,7 @@ module "aks" {
   agents_labels                                        = var.aks_default_pool_custom_labels
   node_os_channel_upgrade                              = "None"
   temporary_name_for_rotation                          = "temppool"
+  attached_acr_id_map                                  = var.acr_map
   load_balancer_profile_outbound_ip_address_ids        = [data.azurerm_public_ip.aks_public_ip.id]
   network_plugin                                       = var.aks_network_plugin
   network_policy                                       = var.aks_network_policy
