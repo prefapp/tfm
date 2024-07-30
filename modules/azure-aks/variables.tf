@@ -102,6 +102,9 @@ variable "tags" {
   type        = map(string)
 }
 
+variable "load_balancer_profile_enabled" {}
+variable "load_balancer_sku" {}
+
 # Extra node pools variables
 variable "extra_node_pools" {
   description = "The extra node pools to create"

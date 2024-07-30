@@ -18,8 +18,8 @@ module "aks" {
   load_balancer_profile_outbound_ip_address_ids        = [data.azurerm_public_ip.aks_public_ip.id]
   network_plugin                                       = var.aks_network_plugin
   network_policy                                       = var.aks_network_policy
-  load_balancer_profile_enabled                        = "true"
-  load_balancer_sku                                    = "standard"
+  load_balancer_profile_enabled                        = var.load_balancer_profile_enabled
+  load_balancer_sku                                    = var.load_balancer_sku
   os_disk_size_gb                                      = var.aks_os_disk_size_gb
   agents_pool_max_surge                                = var.aks_agents_pool_max_surge
   sku_tier                                             = var.aks_sku_tier
