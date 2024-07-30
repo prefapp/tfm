@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.0...azuread-group-v1.0.1) (2024-07-17)
+
+
+### Bug Fixes
+
+* (azuread-group) set default values for group members ([#91](https://github.com/prefapp/tfm/issues/91)) ([cb8a34e](https://github.com/prefapp/tfm/commit/cb8a34eee89ad77ff493b13c7a98dad09fb8c81a))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/azuread-group-v0.1.0...azuread-group-v1.0.0) (2024-06-26)
 
 
