@@ -36,10 +36,6 @@ variable "aks_prefix" {
   description = "The prefix for all resources in this example"
 }
 
-variable "aks_network_profile" {
-  description = "The network profile to use for networking in the AKS cluster"
-}
-
 variable "aks_kubernetes_version" {
   description = "The version of Kubernetes to use for the AKS cluster"
 }
