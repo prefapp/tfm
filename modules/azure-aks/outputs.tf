@@ -16,7 +16,3 @@ output "aks_id" {
 output "aks_name" {
   value = module.aks.aks_name
 }
-
-output "foo" {
-  value = azurerm_kubernetes_cluster.main.network_profile
-}
