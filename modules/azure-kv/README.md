@@ -68,7 +68,7 @@ No modules.
       enable_rbac_authorization: false # If RBAC is set to true access policies will fail if there are any defined.
       access_policies:
       - name: "Name for the Object ID"
-        type: ""
+        type: "" # Leave empty value if you provide directly the object ID
         object_id: "1a9590f4-27d3-4abf-9e30-5be7f46959bb"
         key_permissions: ["Get", "List"]
         secret_permissions: ["Get", "List"]
