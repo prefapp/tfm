@@ -125,6 +125,7 @@ resource "azurerm_application_gateway" "application_gateway" {
       rule_type                   = lookup(request_routing_rule.value, "rule_type", null) 
       backend_address_pool_name   = lookup(request_routing_rule.value, "backend_address_pool_name", null) 
       backend_http_settings_name  = lookup(request_routing_rule.value, "backend_http_settings_name", null) 
+      url_path_map_name           = lookup(request_routing_rule.value, "url_path_map_name", null)
     }
   }
 
