@@ -16,3 +16,7 @@ output "aks_id" {
 output "aks_name" {
   value = module.aks.aks_name
 }
+
+output "outbound_ip_address" {
+  value = data.azurerm_public_ip.aks_public_ip.id
+}

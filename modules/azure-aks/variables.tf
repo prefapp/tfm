@@ -102,8 +102,17 @@ variable "tags" {
   type        = map(string)
 }
 
-variable "load_balancer_profile_enabled" {}
-variable "load_balancer_sku" {}
+variable "load_balancer_profile_enabled" {
+  description = "value to enable the load balancer profile"
+  type        = bool
+  default     = true
+}
+
+variable "load_balancer_sku" {
+  description = "Load balancer sku (basic or standard)"
+  type        = string
+  default     = "standard"
+}
 
 # Extra node pools variables
 variable "extra_node_pools" {
