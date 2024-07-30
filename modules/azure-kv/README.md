@@ -58,9 +58,9 @@ No modules.
 ```yaml
 # kv.yaml
     values:
-      name: "inss-common-pre-kv"
+      name: "keyvault_name"
       enabled_for_disk_encryption: true
-      resource_group: "inss-common-pre"
+      resource_group: "resource_group_name"
       soft_delete_retention_days: 7
       purge_protection_enabled: true
       sku_name: "standard"
