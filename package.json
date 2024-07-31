@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/prefapp/tfm#readme",
   "workspaces": [
-     "modules/*"
-   ]
+    "modules/*"
+  ],
+  "dependencies": {
+    "-": "^0.0.1"
+  }
 }

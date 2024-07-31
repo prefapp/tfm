@@ -457,3 +457,7 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+
+# Test files
+test.tf
+terraform.tfvars

@@ -10,7 +10,7 @@ import {
 
 import {
 
-  for_each = data.github_repository.this.id  != null ? [data.github_repository.this.name] : []
+  for_each = data.github_repository.this.default_branch  != var.default_branch ? [data.github_repository.this.name] : []
 
   to = github_branch_default.this
 
