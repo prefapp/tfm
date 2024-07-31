@@ -29,59 +29,6 @@ locals {
         features = var.features
     })
 
-    #    + "build_and_dispatch@0.3.1" = {
-    #       + files   = [
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/workflows/build_docker_pre-releases.yaml"
-    #               + repoPath    = ".github/workflows/build_docker_pre-releases.yaml"
-    #               + userManaged = false
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/workflows/build_docker_releases.yaml"
-    #               + repoPath    = ".github/workflows/build_docker_releases.yaml"
-    #               + userManaged = false
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/workflows/build_docker_snapshots.yaml"
-    #               + repoPath    = ".github/workflows/build_docker_snapshots.yaml"
-    #               + userManaged = false
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/workflows/make_dispatches.yaml"
-    #               + repoPath    = ".github/workflows/make_dispatches.yaml"
-    #               + userManaged = false
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/workflows/trigger_dispatch_on_pre-releases.yaml"
-    #               + repoPath    = ".github/workflows/trigger_dispatch_on_pre-releases.yaml"
-    #               + userManaged = false
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/workflows/trigger_dispatch_on_releases.yaml"
-    #               + repoPath    = ".github/workflows/trigger_dispatch_on_releases.yaml"
-    #               + userManaged = false
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/workflows/trigger_dispatch_on_snapshot.yaml"
-    #               + repoPath    = ".github/workflows/trigger_dispatch_on_snapshot.yaml"
-    #               + userManaged = false
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/make_dispatches.yaml"
-    #               + repoPath    = ".github/make_dispatches.yaml"
-    #               + userManaged = true
-    #             },
-    #           + {
-    #               + localPath   = "/tmp/rendered_features/build_and_dispatch/.github/build_images.yaml"
-    #               + repoPath    = ".github/build_images.yaml"
-    #               + userManaged = true
-    #             },
-    #         ]
-    #       + patches = {}
-    #     }
-    # }
-
-
     features = jsondecode(data.external.features.result.features)
 
     # // filter user managed files
