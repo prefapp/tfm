@@ -3,17 +3,6 @@ data "github_repository" "this" {
   name  = var.name
 }
 
-//  This is the data source that will be used to get the environment variables
-data "external" "env_vars" {
-    
-    program = [
-      
-      "./scripts/get-env-vars.js", 
-      
-    ]
-}
-
-
 # // This is the data source that will be used to get the repository data
 data "external" "features" {
   
