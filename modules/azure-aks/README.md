@@ -20,7 +20,7 @@ This module uses the official AKS module and allows you to create an AKS with so
 
 ```terraform
 module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-aks?ref=<version/tag/commit/branch>"
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-aks?ref=<version>"
 }
 ```
 
