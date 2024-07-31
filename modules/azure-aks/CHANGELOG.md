@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.4.1...azure-aks-v1.5.0) (2024-07-31)
+
+
+### Features
+
+* Change aks module to use official aks module ([#108](https://github.com/prefapp/tfm/issues/108)) ([93095a4](https://github.com/prefapp/tfm/commit/93095a48bc9f9220e2da8f993891a1d587795c1e))
+
 ## [1.4.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.4.0...azure-aks-v1.4.1) (2024-01-25)
 
 
