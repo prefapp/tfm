@@ -36,5 +36,4 @@ resource "github_branch_default" "this" {
   repository = github_repository.this.name
   branch     = var.default_branch
   rename = var.default_branch == data.github_repository.this.default_branch ? false : true
-
 }
