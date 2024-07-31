@@ -81,7 +81,7 @@ variable "aks_agents_pool_max_surge" {
 }
 
 variable "aks_sku_tier" {
-  description = "The SKU tier of the AKS cluster"
+  description = "The SKU Tier that should be used for this Kubernetes Cluster. Possible values are Free, Standard and Premium"
 }
 
 variable "aks_default_pool_custom_labels" {
@@ -90,11 +90,11 @@ variable "aks_default_pool_custom_labels" {
 }
 
 variable "oidc_issuer_enabled" {
-  description = "Whether to enable OIDC Issuer for Kubernetes"
+  description = "Whether to enable OIDC Issuer for the AKS cluster"
 }
 
 variable "workload_identity_enabled" {
-  description = "Whether to enable Workload Identity for Kubernetes"
+  description = "Whether to enable Workload Identity for the AKS cluster"
 }
 
 variable "tags" {
@@ -103,7 +103,7 @@ variable "tags" {
 }
 
 variable "load_balancer_profile_enabled" {
-  description = "value to enable the load balancer profile"
+  description = "Value to enable or not the load balancer profile"
   type        = bool
   default     = true
 }
@@ -116,7 +116,7 @@ variable "load_balancer_sku" {
 
 # Extra node pools variables
 variable "extra_node_pools" {
-  description = "The extra node pools to create"
+  description = "A list of extra node pools to create"
   type = list(object({
     name                  = string
     pool_name             = string
