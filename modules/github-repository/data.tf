@@ -6,7 +6,6 @@ data "github_repository" "this" {
 // Create a token for the GitHub App
 data "github_app_token" "this" {
 
-  # repository =  "features"
   app_id          = data.external.env_vars.result.GITHUB_APP_ID
 
   installation_id = data.external.env_vars.result.GITHUB_APP_INSTALLATION_ID_PREFAPP
