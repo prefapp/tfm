@@ -1,24 +1,20 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool
-resource "azurerm_kubernetes_cluster_node_pool" "node_pool" {
-  for_each              = var.node_pool_additionals
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.kubernetes.id
-  vnet_subnet_id        = data.azurerm_subnet.aks_subnet.id
-  name                  = each.value.name
-  vm_size               = each.value.vm_size
-  node_labels           = each.value.node_labels
-  os_disk_size_gb       = each.value.os_disk_size_gb
-  enable_auto_scaling   = each.value.enable_auto_scaling
-  # `max_count` and `min_count` must be set to `null` when enable_auto_scaling is set to `false`
-  min_count             = each.value.enable_auto_scaling ? each.value.min_count : null
-  max_count             = each.value.enable_auto_scaling ? each.value.max_count : null
-  node_count            = each.value.node_count
-  tags                  = each.value.tags
-  depends_on = [
-    azurerm_kubernetes_cluster.kubernetes
-   ]
-  lifecycle {
-    ignore_changes = [
-      default_node_pool[0].node_count
-    ]
+locals {
+  extra_pools = {
+    for pool in var.extra_node_pools :
+    pool.name => {
+      name                  = pool.pool_name
+      vm_size               = pool.vm_size
+      node_count            = pool.enable_auto_scaling ? null : pool.node_count
+      vnet_subnet_id        = data.azurerm_subnet.aks_subnet.id
+      create_before_destroy = pool.create_before_destroy
+      enable_auto_scaling   = pool.enable_auto_scaling
+      max_count             = pool.max_count
+      min_count             = pool.min_count
+      max_pods              = pool.max_pod_per_node
+      os_disk_type          = pool.os_disk_type
+      mode                  = pool.mode
+      node_labels           = pool.custom_labels
+      orchestrator_version  = pool.orchestrator_version == "" ? var.aks_orchestrator_version : pool.orchestrator_version
+    }
   }
 }
