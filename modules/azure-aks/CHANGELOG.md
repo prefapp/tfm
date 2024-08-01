@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.5.0...azure-aks-v1.5.1) (2024-08-01)
+
+
+### Bug Fixes
+
+* Set some variables ([#111](https://github.com/prefapp/tfm/issues/111)) ([f1613b0](https://github.com/prefapp/tfm/commit/f1613b086cb90df06f15bf2523ac155e8149777a))
+
 ## [1.5.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.4.1...azure-aks-v1.5.0) (2024-07-31)
 
 
