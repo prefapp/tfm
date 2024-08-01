@@ -29,6 +29,7 @@ variable "public_ip_name" {
 variable "acr_map" {
   description = "The map of Azure Container Registries to link to the AKS cluster"
   type        = map(string)
+  default = {}
 }
 
 # AKS section variables
@@ -87,6 +88,7 @@ variable "aks_sku_tier" {
 variable "aks_default_pool_custom_labels" {
   description = "Default pool custom labels to apply to all nodes"
   type        = map(any)
+  default = {}
 }
 
 variable "oidc_issuer_enabled" {
