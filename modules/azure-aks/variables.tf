@@ -127,7 +127,7 @@ variable "node_os_channel_upgrade" {
 # Extra node pools variables
 variable "extra_node_pools" {
   description = "A list of extra node pools to create"
-  type = optional(list(object({
+  type = list(object({
     name                  = string
     pool_name             = string
     vm_size               = string
@@ -141,7 +141,8 @@ variable "extra_node_pools" {
     mode                  = optional(string, "User")
     custom_labels         = map(string)
     orchestrator_version  = optional(string, "")
-  })))
+  }))
+  default = []
 }
 
 variable "key_vault_secrets_provider_enabled" {
