@@ -20,3 +20,7 @@ output "aks_name" {
 output "outbound_ip_address" {
   value = data.azurerm_public_ip.aks_public_ip.id
 }
+
+output "cluster_issuer" {
+  value = module.aks.oidc_issuer_url
+}
