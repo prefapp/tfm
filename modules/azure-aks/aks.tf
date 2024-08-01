@@ -12,8 +12,8 @@ module "aks" {
   agents_size                                          = var.aks_agents_size
   agents_pool_name                                     = var.aks_agents_pool_name
   agents_labels                                        = var.aks_default_pool_custom_labels
-  node_os_channel_upgrade                              = "None"
-  temporary_name_for_rotation                          = "temppool"
+  node_os_channel_upgrade                              = var.node_os_channel_upgrade
+  temporary_name_for_rotation                          = var.temporary_name_for_rotation
   attached_acr_id_map                                  = var.acr_map
   network_plugin                                       = var.aks_network_plugin
   network_policy                                       = var.aks_network_policy

@@ -29,6 +29,7 @@ variable "public_ip_name" {
 variable "acr_map" {
   description = "The map of Azure Container Registries to link to the AKS cluster"
   type        = map(string)
+  default = {}
 }
 
 # AKS section variables
@@ -87,6 +88,7 @@ variable "aks_sku_tier" {
 variable "aks_default_pool_custom_labels" {
   description = "Default pool custom labels to apply to all nodes"
   type        = map(any)
+  default = {}
 }
 
 variable "oidc_issuer_enabled" {
@@ -114,6 +116,16 @@ variable "load_balancer_sku" {
   default     = "standard"
 }
 
+variable "temporary_name_for_rotation" {
+  description = "Specifies the name of the temporary node pool used to cycle the default node pool for VM resizing"
+  default = "temppool"
+}
+
+variable "node_os_channel_upgrade" {
+  description = "value"
+  default = "None"
+}
+
 # Extra node pools variables
 variable "extra_node_pools" {
   description = "A list of extra node pools to create"
@@ -132,6 +144,7 @@ variable "extra_node_pools" {
     custom_labels         = map(string)
     orchestrator_version  = optional(string, "")
   }))
+  default = []
 }
 
 variable "key_vault_secrets_provider_enabled" {
