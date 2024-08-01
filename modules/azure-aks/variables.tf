@@ -114,10 +114,20 @@ variable "load_balancer_sku" {
   default     = "standard"
 }
 
+variable "temporary_name_for_rotation" {
+  description = "Specifies the name of the temporary node pool used to cycle the default node pool for VM resizing"
+  default = "temppool"
+}
+
+variable "node_os_channel_upgrade" {
+  description = "value"
+  default = "None"
+}
+
 # Extra node pools variables
 variable "extra_node_pools" {
   description = "A list of extra node pools to create"
-  type = list(object({
+  type = optional(list(object({
     name                  = string
     pool_name             = string
     vm_size               = string
@@ -131,7 +141,7 @@ variable "extra_node_pools" {
     mode                  = optional(string, "User")
     custom_labels         = map(string)
     orchestrator_version  = optional(string, "")
-  }))
+  })))
 }
 
 variable "key_vault_secrets_provider_enabled" {
