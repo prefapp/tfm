@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/prefapp/tfm/compare/azure-kv-v1.2.1...azure-kv-v1.2.2) (2024-08-02)
+
+
+### Bug Fixes
+
+* default value object_id ([3bc5c02](https://github.com/prefapp/tfm/commit/3bc5c025775c42adb95e5836e742974788a150ee))
+* default value object_id ([#116](https://github.com/prefapp/tfm/issues/116)) ([3bc5c02](https://github.com/prefapp/tfm/commit/3bc5c025775c42adb95e5836e742974788a150ee))
+
 ## [1.2.1](https://github.com/prefapp/tfm/compare/azure-kv-v1.2.0...azure-kv-v1.2.1) (2024-07-30)
 
 
