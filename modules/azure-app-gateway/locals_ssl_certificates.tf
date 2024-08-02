@@ -19,7 +19,8 @@ locals {
                             },
 
                             # This are the default values for the probes
-                            local.blocks_defaults.request_routing_rules[request_routing_rule_key],
+                            # local.blocks_defaults.request_routing_rules[request_routing_rule_key],
+                            contains(keys(local.blocks_defaults.request_routing_rules), request_routing_rule_key) ? local.blocks_defaults.request_routing_rules[request_routing_rule_key] : {},
 
                             # It will be overwritten by the values from the service/env
                             env_value.request_routing_rules[request_routing_rule_key]
