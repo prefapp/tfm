@@ -38,6 +38,9 @@
         },
         "modules/azure-kv": {
             "package-name": "azure-kv"
+        },
+        "modules/azure-app-gateway": {
+            "package-name": "azure-app-gateway"
         }
     }
 }
