@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.5.2](https://github.com/prefapp/tfm/compare/azure-aks-v1.5.1...azure-aks-v1.5.2) (2024-08-01)
+
+
+### Bug Fixes
+
+* add cluster_issuer output to the aks module ([#113](https://github.com/prefapp/tfm/issues/113)) ([848f3f4](https://github.com/prefapp/tfm/commit/848f3f4155584a28d56a19d2a3acacda7dc700f0))
+
+## [1.5.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.5.0...azure-aks-v1.5.1) (2024-08-01)
+
+
+### Bug Fixes
+
+* Set some variables ([#111](https://github.com/prefapp/tfm/issues/111)) ([f1613b0](https://github.com/prefapp/tfm/commit/f1613b086cb90df06f15bf2523ac155e8149777a))
+
+## [1.5.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.4.1...azure-aks-v1.5.0) (2024-07-31)
+
+
+### Features
+
+* Change aks module to use official aks module ([#108](https://github.com/prefapp/tfm/issues/108)) ([93095a4](https://github.com/prefapp/tfm/commit/93095a48bc9f9220e2da8f993891a1d587795c1e))
+
 ## [1.4.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.4.0...azure-aks-v1.4.1) (2024-01-25)
 
 
