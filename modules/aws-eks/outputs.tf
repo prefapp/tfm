@@ -55,7 +55,6 @@ output "summary" {
           - Desired capacity: ${node_group_value.desired_capacity}
           - Min size: ${node_group_value.min_size}
           - Max size: ${node_group_value.max_size}
-          - Launch template version: ${node_group_value.launch_template_version}
           - Labels:
         ${join("\n", [for k, v in node_group_value.labels : "\t- ${k}: ${v}"])}
       EOT
