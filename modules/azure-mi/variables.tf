@@ -48,7 +48,7 @@ variable "federated_credentials" {
     entity               = optional(string)
   }))
   validation {
-    condition     = contains(["K8s", "github"], var.federated_credentials[*].type)
+    condition     = alltrue([for cred in var.federated_credentials : contains(["K8s", "github"], cred.type)])
     error_message = "The type must be either 'K8s' or 'github'."
   }
   description = "A list of objects containing the federated credentials to assign to the User Assigned Identity."
