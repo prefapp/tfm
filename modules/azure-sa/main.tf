@@ -106,9 +106,9 @@ resource "azurerm_role_assignment" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
 resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
-  name               = var.backup_policy_blob_name
-  vault_id           = azurerm_data_protection_backup_vault.this.id
-  retention_duration = var.backup_policy_retention_duration
+  name                                   = var.backup_policy_blob_name
+  vault_id                               = azurerm_data_protection_backup_vault.this.id
+  operational_default_retention_duration = var.backup_policy_retention_duration
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_blob_storage
