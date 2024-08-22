@@ -80,9 +80,6 @@ resource "azurerm_backup_container_storage_account" "this" {
   resource_group_name = data.azurerm_resource_group.this.name
   recovery_vault_name = var.recovery_services_vault_name
   storage_account_id  = azurerm_storage_account.this.id
-  lifecycle {
-    ignore_changes = [tags]
-  }
 }
 
 ## BACKUPS BLOBS
@@ -107,9 +104,6 @@ resource "azurerm_role_assignment" "this" {
   role_definition_name = var.backup_role_assignment
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
   depends_on           = [azurerm_data_protection_backup_vault.this]
-  lifecycle {
-    ignore_changes = [tags]
-  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
