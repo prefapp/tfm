@@ -46,10 +46,11 @@ variable "storage_account_kind" {
 
 variable "storage_account_container_name" {
   description = "The Tier to use for this storage account"
-  type = optional(list(object({
+  type        = list(object({
     name         = string
     access_type  = string
-  })))
+  }))
+  default     = null
 }
 
 variable "storage_account_replication_type" {
@@ -150,13 +151,14 @@ variable "versioning_enabled" {
 
 variable "backup_policy" {
   description = "A map of backup policies to be created in the Recovery Services Vault."
-  type = optional(object({
+  type        = object({
     frequency         = string
     time              = string
     retention_daily   = number
     retention_monthly = number
     retention_yearly  = number
-  }))
+  })
+  default     = null
 }
 
 ## Backup blobs variables
@@ -209,7 +211,7 @@ variable "backup_instance_blob_name" {
 }
 
 variable "lifecycle_policy_rule" {
-  type = optional(list(object({
+  type = list(object({
     name     = string
     enabled  = bool
     filters  = object({
@@ -221,5 +223,6 @@ variable "lifecycle_policy_rule" {
       snapshot    = object({ delete_after_days_since_creation_greater_than = number })
       version     = object({ delete_after_days_since_creation              = number })
     })
-  })))
+  }))
+  default    = null
 }
