@@ -36,17 +36,17 @@ variable "storage_account_tier" {
   type        = string
 }
 
-variable "storage_account_container_name" {
-  description = "The Tier to use for this storage account"
-  type = list(object({
-    name         = string
-    access_type  = string
-  }))
-}
-
 variable "storage_account_kind" {
   description = "The Kind of account to create"
   type        = string
+}
+
+variable "storage_account_container_name" {
+  description = "The Tier to use for this storage account"
+  type = optional(list(object({
+    name         = string
+    access_type  = string
+  })))
 }
 
 variable "storage_account_replication_type" {
@@ -81,42 +81,42 @@ variable "threat_protection_enabled" {
 
 variable "quota" {
   description = "The maximum size of the share, in gigabytes."
-  type        = string
+  type        = optional(string)
 }
 
 ## Backup fileshares variables
 variable "blob_retention_soft_delete" {
   description = "Specifies the number of days that the blob should be retained"
-  type        = number
+  type        = optional(number)
 }
 
 variable "container_retention_soft_delete" {
   description = "Specifies the number of days that the container should be retained"
-  type        = number
+  type        = optional(number)
 }
 
 variable "recovery_services_vault_name" {
   description = "Recovery service vault name"
-  type        = string
+  type        = optional(string)
 }
 
 variable "policy_name" {
   description = "Name of the backup policy"
-  type        = string
+  type        = optional(string)
 }
 
 variable "timezone" {
   description = "Timezone"
-  type        = string
+  type        = optional(string)
 }
 
 variable "sku" {
-  type        = string
+  type        = optional(string)
   description = "The SKU (Stock Keeping Unit) of the resource."
 }
 
 variable "soft_delete_enabled" {
-  type        = bool
+  type        = optional(bool)
   description = "Enable soft delete"
 }
 
@@ -132,58 +132,58 @@ variable "versioning_enabled" {
 
 variable "backup_policy" {
   description = "A map of backup policies to be created in the Recovery Services Vault."
-  type = object({
+  type = optional(object({
     frequency         = string
     time              = string
     retention_daily   = number
     retention_monthly = number
     retention_yearly  = number
-  })
+  }))
 }
 
 ## Backup blobs variables
 variable "backup_vault_name" {
-  type        = string
+  type        = optional(string)
   description = "The name of the backup vault."
 }
 
 variable "backup_vault_datastore_type" {
-  type        = string
+  type        = optional(string)
   description = "The type of data store for the backup vault."
 }
 
 variable "backup_vault_redundancy" {
-  type        = string
+  type        = optional(string)
   description = "The redundancy setting for the backup vault."
 }
 
 variable "backup_vault_identity_type" {
-  type        = string
+  type        = optional(string)
   description = "The type of identity assigned to the backup vault."
 }
 
 variable "backup_role_assignment" {
-  type        = string
+  type        = optional(string)
   description = "The role assignment for managing backups."
 }
 
 variable "backup_policy_blob_name" {
-  type        = string
+  type        = optional(string)
   description = "The name of the blob storing backup policies."
 }
 
 variable "backup_policy_retention_duration" {
-  type        = string
+  type        = optional(string)
   description = "The retention duration for backups."
 }
 
 variable "backup_instance_blob_name" {
-  type        = string
+  type        = optional(string)
   description = "The name of the blob storing backup instances."
 }
 
 variable "lifecycle_policy_rule" {
-  type = list(object({
+  type = optional(list(object({
     name     = string
     enabled  = bool
     filters  = object({
@@ -195,5 +195,5 @@ variable "lifecycle_policy_rule" {
       snapshot    = object({ delete_after_days_since_creation_greater_than = number })
       version     = object({ delete_after_days_since_creation              = number })
     })
-  }))
+  })))
 }
