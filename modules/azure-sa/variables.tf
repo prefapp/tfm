@@ -38,10 +38,10 @@ variable "storage_account_tier" {
 
 variable "storage_account_container_name" {
   description = "The Tier to use for this storage account"
-  type = object({
+  type = list(object({
     name         = string
     access_type  = string
-  })
+  }))
 }
 
 variable "storage_account_kind" {
