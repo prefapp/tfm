@@ -1,10 +1,8 @@
 # DATA SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "this" {
-  for_each = {
-    for subnet in var.subnet_name : subnet.name => subnet
-  }
-  name = each.value.name
+  for_each = { for subnet in var.subnet_name : subnet => subnet }
+  name                 = each.value
   virtual_network_name = var.vnet_name
   resource_group_name  = var.vnet_resource_group_name
 }
