@@ -52,5 +52,4 @@ variable "federated_credentials" {
     error_message = "The type must be either 'K8s' or 'github'."
   }
   description = "A list of objects containing the federated credentials to assign to the User Assigned Identity."
-  default     = {}
 }
