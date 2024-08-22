@@ -22,7 +22,7 @@ resource "azurerm_storage_account" "this" {
   account_kind                     = var.storage_account_kind
   account_replication_type         = var.storage_account_replication_type
   min_tls_version                  = var.storage_account_min_tls_version
-  enable_https_traffic_only        = var.storage_account_enable_https_traffic_only
+  https_traffic_only_enabled        = var.storage_account_https_traffic_only_enabled
   cross_tenant_replication_enabled = var.storage_account_cross_tenant_replication_enabled
   allow_nested_items_to_be_public  = var.storage_account_allow_nested_items_to_be_public
 
