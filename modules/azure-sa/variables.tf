@@ -24,11 +24,13 @@ variable "storage_account_name" {
 variable "storage_account_network_rule_default_action" {
   description = "The default action of allow or deny when no other rules match"
   type        = string
+  default     = null
 }
 
 variable "storage_account_network_rule_bypass" {
   description = "Specifies whether traffic is bypassed for Logging/Metrics/AzureServices"
   type        = string
+  default     = null
 }
 
 variable "storage_account_tier" {
@@ -39,6 +41,7 @@ variable "storage_account_tier" {
 variable "storage_account_kind" {
   description = "The Kind of account to create"
   type        = string
+  default     = null
 }
 
 variable "storage_account_container_name" {
@@ -57,77 +60,92 @@ variable "storage_account_replication_type" {
 variable "storage_account_min_tls_version" {
   description = "The minimum supported TLS version for the storage account"
   type        = string
+  default     = null
 }
 
 variable "storage_account_enable_https_traffic_only" {
   description = "Allows https traffic only to storage service"
   type        = bool
+  default     = null
 }
 
 variable "storage_account_cross_tenant_replication_enabled" {
   description = "Allow or disallow public access to the nested files and directories"
   type        = bool
+  default     = null
 }
 
 variable "storage_account_allow_nested_items_to_be_public" {
   description = "Allow or disallow public access to the nested files and directories"
   type        = bool
+  default     = null
 }
 
 variable "threat_protection_enabled" {
   description = "Enable threat protection"
   type        = bool
+  default     = null
 }
 
 variable "quota" {
   description = "The maximum size of the share, in gigabytes."
-  type        = optional(string)
+  type        = string
+  default     = null
 }
 
 ## Backup fileshares variables
 variable "blob_retention_soft_delete" {
   description = "Specifies the number of days that the blob should be retained"
-  type        = optional(number)
+  type        = number
+  default     = null
 }
 
 variable "container_retention_soft_delete" {
   description = "Specifies the number of days that the container should be retained"
-  type        = optional(number)
+  type        = number
+  default     = null
 }
 
 variable "recovery_services_vault_name" {
   description = "Recovery service vault name"
-  type        = optional(string)
+  type        = string
+  default     = null
 }
 
 variable "policy_name" {
   description = "Name of the backup policy"
-  type        = optional(string)
+  type        = string
+  default     = null
 }
 
 variable "timezone" {
   description = "Timezone"
-  type        = optional(string)
+  type        = string
+  default     = null
 }
 
 variable "sku" {
-  type        = optional(string)
-  description = "The SKU (Stock Keeping Unit) of the resource."
+  type        = string
+  description = "The SKU (Stock Keeping Unit) of the resource"
+  default     = null
 }
 
 variable "soft_delete_enabled" {
-  type        = optional(bool)
+  type        = bool
   description = "Enable soft delete"
+  default     = null
 }
 
 variable "change_feed_enabled" {
   type        = bool
-  description = "Specifies whether the change feed is enabled for the storage account."
+  description = "Specifies whether the change feed is enabled for the storage account"
+  default     = null
 }
 
 variable "versioning_enabled" {
   type        = bool
-  description = "Specifies whether versioning is enabled for the blobs in the storage account."
+  description = "Specifies whether versioning is enabled for the blobs in the storage account"
+  default     = null
 }
 
 variable "backup_policy" {
@@ -143,43 +161,51 @@ variable "backup_policy" {
 
 ## Backup blobs variables
 variable "backup_vault_name" {
-  type        = optional(string)
-  description = "The name of the backup vault."
+  type        = string
+  description = "The name of the backup vault"
+  default     = null
 }
 
 variable "backup_vault_datastore_type" {
-  type        = optional(string)
-  description = "The type of data store for the backup vault."
+  type        = string
+  description = "The type of data store for the backup vault"
+  default     = null
 }
 
 variable "backup_vault_redundancy" {
-  type        = optional(string)
-  description = "The redundancy setting for the backup vault."
+  type        = string
+  description = "The redundancy setting for the backup vault"
+  default     = null
 }
 
 variable "backup_vault_identity_type" {
-  type        = optional(string)
-  description = "The type of identity assigned to the backup vault."
+  type        = string
+  description = "The type of identity assigned to the backup vault"
+  default     = null
 }
 
 variable "backup_role_assignment" {
-  type        = optional(string)
-  description = "The role assignment for managing backups."
+  type        = string
+  description = "The role assignment for managing backups"
+  default     = null
 }
 
 variable "backup_policy_blob_name" {
-  type        = optional(string)
-  description = "The name of the blob storing backup policies."
+  type        = string
+  description = "The name of the blob storing backup policies"
+  default     = null
 }
 
 variable "backup_policy_retention_duration" {
-  type        = optional(string)
-  description = "The retention duration for backups."
+  type        = string
+  description = "The retention duration for backups"
+  default     = null
 }
 
 variable "backup_instance_blob_name" {
-  type        = optional(string)
-  description = "The name of the blob storing backup instances."
+  type        = string
+  description = "The name of the blob storing backup instances"
+  default     = null
 }
 
 variable "lifecycle_policy_rule" {
