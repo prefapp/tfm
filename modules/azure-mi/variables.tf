@@ -53,11 +53,11 @@ variable "federated_credentials" {
     error_message = "The type must be either 'K8s', 'github' or 'other'."
   }
   description = "A list of objects containing the federated credentials to assign to the User Assigned Identity."
-  default = []
+  default     = []
 }
 
 variable "audience" {
   type        = list(string)
   description = "The audience for the federated identity credential."
-  default = ["api://AzureADTokenExchange"]
+  default     = ["api://AzureADTokenExchange"]
 }
