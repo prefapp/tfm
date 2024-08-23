@@ -27,13 +27,13 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| name | The name of the Key Vault | `string` | n/a | yes |
-| resource_group | The name of the resource group in which to create the Key Vault | `string` | n/a | yes |
-| location | The location of the resource group in which to create the Key Vault | `string` | n/a | yes |
+| name | The name of the Managed Identity | `string` | n/a | yes |
+| resource_group | The name of the resource group in which to create the Managed Identity | `string` | n/a | yes |
+| location | The location in which to create the Managed Identity | `string` | n/a | yes |
 | tags | A mapping of tags to assign to the resource | `map(string)` | n/a | no |
 | tags_from_rg | If true, the tags from the resource group will be inherited exclusively | `bool` | `false` | no |
-| rbac | A list of role-based access control (RBAC) policies to apply to the Key Vault | <pre>list(object({<br>    name  = string<br>    scope = string<br>    roles = list(string)<br>  }))</pre> | n/a | yes |
-| federated_credentials | A list of federated credentials to assign to the Key Vault | <pre>list(object({<br>    name                 = string<br>    type                 = string<br>    issuer               = string<br>    namespace            = optional(string)<br>    service_account_name = optional(string)<br>    organization         = optional(string)<br>    repository           = optional(string)<br>    entity               = optional(string)<br>  }))</pre> | `{}` | no |
+| rbac | A list of role-based access control (RBAC) policies to apply to the Managed Identity | <pre>list(object({<br>    name  = string<br>    scope = string<br>    roles = list(string)<br>  }))</pre> | n/a | yes |
+| federated_credentials | A list of federated credentials to assign to the Managed Identity | <pre>list(object({<br>    name                 = string<br>    type                 = string<br>    issuer               = string<br>    namespace            = optional(string)<br>    service_account_name = optional(string)<br>    organization         = optional(string)<br>    repository           = optional(string)<br>    entity               = optional(string)<br>  }))</pre> | `{}` | no |
 
 ## Outputs
 
