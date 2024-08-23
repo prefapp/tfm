@@ -41,9 +41,6 @@
         },
         "modules/azure-app-gateway": {
             "package-name": "azure-app-gateway"
-        },
-        "modules/azure-mi": {
-            "package-name": "azure-mi"
         }
     }
 }
