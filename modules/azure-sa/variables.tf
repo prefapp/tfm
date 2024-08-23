@@ -1,17 +1,27 @@
 # VARIABLES SECTION
+## General
+variable "tags" {
+  description = "The tags to associate with your resources"
+  type        = map(string)
+}
+
+variable "resource_group_name" {
+  description = "The name for the resource group"
+  type = string
+}
+
 ## Network variables
-variable "vnet_resource_group_name" {
-  description = "The name of the resource group in which the vnet is located"
-  type        = string
+variable "subnet" {
+  default = "Subnet values for data"
+  type = object({
+    name = string
+    vnet = string
+    resource_group = string 
+  })
 }
 
-variable "vnet_name" {
-  description = "The name of the virtual network"
-  type        = string
-}
-
-variable "subnet_name" {
-  description = "The name of the virtual subnet"
+variable "additional_subnet_ids" {
+  description = "Additional subnets id for storage account network rules"
   type        = list(string)
 }
 

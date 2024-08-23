@@ -1,15 +1,17 @@
 # DATA SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "this" {
-  for_each = { for subnet in var.subnet_name : subnet => subnet }
-  name                 = each.value
-  virtual_network_name = var.vnet_name
-  resource_group_name  = var.vnet_resource_group_name
+  for_each = {
+    for subnet in var.subnet : subnet.name => subnet
+  }
+  name = each.value.name
+  virtual_network_name = each.value.vnet
+  resource_group_name  = each.value.resource_group
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
-  name = var.resource_group_name
+  name = var.vnet_resource_group_name
 }
 
 # RESOURCES SECTION
@@ -22,9 +24,10 @@ resource "azurerm_storage_account" "this" {
   account_kind                     = var.storage_account_kind
   account_replication_type         = var.storage_account_replication_type
   min_tls_version                  = var.storage_account_min_tls_version
-  https_traffic_only_enabled        = var.storage_account_https_traffic_only_enabled
+  enable_https_traffic_only        = var.storage_account_enable_https_traffic_only
   cross_tenant_replication_enabled = var.storage_account_cross_tenant_replication_enabled
   allow_nested_items_to_be_public  = var.storage_account_allow_nested_items_to_be_public
+  tags = var.tags
 
   blob_properties {
     versioning_enabled  = var.versioning_enabled
@@ -45,7 +48,7 @@ resource "azurerm_storage_account" "this" {
 resource "azurerm_storage_account_network_rules" "this" {
   storage_account_id = azurerm_storage_account.this.id
   default_action     = var.storage_account_network_rule_default_action
-  virtual_network_subnet_ids = [ for subnet in data.azurerm_subnet.this : subnet.id ]
+  virtual_network_subnet_ids = concat([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids) # and values provided as string or list(string)
   bypass = [var.storage_account_network_rule_bypass]
 }
 
@@ -78,6 +81,9 @@ resource "azurerm_backup_container_storage_account" "this" {
   resource_group_name = data.azurerm_resource_group.this.name
   recovery_vault_name = var.recovery_services_vault_name
   storage_account_id  = azurerm_storage_account.this.id
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 ## BACKUPS BLOBS
@@ -102,6 +108,9 @@ resource "azurerm_role_assignment" "this" {
   role_definition_name = var.backup_role_assignment
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
   depends_on           = [azurerm_data_protection_backup_vault.this]
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
@@ -141,3 +150,18 @@ resource "azurerm_storage_management_policy" "this" {
     }
   }
 }
+
+
+# diferentes politicas de backups, diferentes containers, misma storage
+# queues and tables
+
+# claves:
+container
+shares
+queues
+tables
+
+backups_shares
+backups_blobs
+
+lifecycle_policies
