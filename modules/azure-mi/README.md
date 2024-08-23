@@ -105,30 +105,30 @@ tags:
 foo: bar
 # tags_from_rg: true # Will inherit the tags from the resource group exclusively
 rbac: # 1-n
-- name: foo
-scope: scope-foo
-roles:
-- xxx
-- name: bar
-scope: scope-bar
-roles: # 1-n
-- xxx
-- yyy
-- zzz
+  - name: foo
+    scope: scope-foo
+    roles:
+    - xxx
+  - name: bar
+    scope: scope-bar
+    roles: # 1-n
+    - xxx
+    - yyy
+    - zzz
 federated_credentials: # {} | 0-20
- - name: foo-kubernetes
- type: kubernetes # subject like: system:serviceaccount:<namespace>:<serviceaccount>
- issuer: xxx
- namespace: xxx
- service_account_name: xxx
- - name: bar-github
- type: github # subject like: repo:{Organization}/{Repository}:{Entity}
- issuer: xxx
- organization: xxx
- repository: xxx
- entity: xxx
- - name: other
- type: other # custom subject
- issuer: xxx
- subject: xxx
+  - name: foo-kubernetes
+    type: kubernetes # subject like: system:serviceaccount:<namespace>:<serviceaccount>
+    issuer: xxx
+    namespace: xxx
+    service_account_name: xxx
+  - name: bar-github
+    type: github # subject like: repo:{Organization}/{Repository}:{Entity}
+    issuer: xxx
+    organization: xxx
+    repository: xxx
+    entity: xxx
+  - name: other
+    type: other # custom subject
+    issuer: xxx
+    subject: xxx
 ```
