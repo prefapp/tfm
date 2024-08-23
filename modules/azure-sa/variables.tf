@@ -26,11 +26,6 @@ variable "additional_subnet_ids" {
 }
 
 ## Storage account variables
-variable "resource_group_name" {
-  description = "The name of the resource group in which the storage account is located"
-  type        = string
-}
-
 variable "storage_account_name" {
   description = "The name for this storage account"
   type        = string
