@@ -11,7 +11,7 @@ data "azurerm_subnet" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
-  name = var.vnet_resource_group_name
+  name = var.resource_group_name
 }
 
 # RESOURCES SECTION
@@ -156,12 +156,12 @@ resource "azurerm_storage_management_policy" "this" {
 # queues and tables
 
 # claves:
-container
-shares
-queues
-tables
+# container
+# shares
+# queues
+# tables
 
-backups_shares
-backups_blobs
+# backups_shares
+# backups_blobs
 
-lifecycle_policies
+# lifecycle_policies
