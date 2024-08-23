@@ -74,7 +74,7 @@ variable "storage_account_min_tls_version" {
   default     = null
 }
 
-variable "storage_account_https_traffic_only_enabled" {
+variable "storage_account_enable_https_traffic_only" {
   description = "Allows https traffic only to storage service"
   type        = bool
   default     = null
