@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.3.1...azure-resource-group-v1.4.0) (2024-08-23)
+
+
+### Features
+
+* azure-kv module ([b47ffd5](https://github.com/prefapp/tfm/commit/b47ffd51f59e5f5b15365440fe776f0b8a7e4402))
+* Deploy release ([#127](https://github.com/prefapp/tfm/issues/127)) ([2d5c56b](https://github.com/prefapp/tfm/commit/2d5c56bcd9f1443136a9a4c34e19a3874dcf7ea5))
+* update readme ([d85a475](https://github.com/prefapp/tfm/commit/d85a475ec579e4eefe9c16c2530597768b0e2bed))
+* update README.md ([#101](https://github.com/prefapp/tfm/issues/101)) ([b47ffd5](https://github.com/prefapp/tfm/commit/b47ffd51f59e5f5b15365440fe776f0b8a7e4402))
+* update README.md ([#99](https://github.com/prefapp/tfm/issues/99)) ([d85a475](https://github.com/prefapp/tfm/commit/d85a475ec579e4eefe9c16c2530597768b0e2bed))
+
 ## [1.3.1](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.3.0...azure-resource-group-v1.3.1) (2024-01-25)
 
 
