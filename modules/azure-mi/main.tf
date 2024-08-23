@@ -41,8 +41,8 @@ resource "azurerm_federated_identity_credential" "federated_identity_credential"
   for_each            = { for federated_credential in var.federated_credentials : federated_credential.name => federated_credential }
   name                = each.key
   resource_group_name = var.resource_group_name
-  audience            = ["api://AzureADTokenExchange"]
+  audience            = var.audience
   issuer              = each.value.issuer
   parent_id           = azurerm_user_assigned_identity.user_assigned_identity.id
-  subject = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}"
-}
+  subject = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : each.value.type == "K8s" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
+ }

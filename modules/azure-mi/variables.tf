@@ -46,10 +46,18 @@ variable "federated_credentials" {
     organization         = optional(string)
     repository           = optional(string)
     entity               = optional(string)
+    subject              = optional(string)
   }))
   validation {
-    condition     = alltrue([for cred in var.federated_credentials : contains(["K8s", "github"], cred.type)])
-    error_message = "The type must be either 'K8s' or 'github'."
+    condition     = alltrue([for cred in var.federated_credentials : contains(["K8s", "github", "other"], cred.type)])
+    error_message = "The type must be either 'K8s', 'github' or 'other'."
   }
   description = "A list of objects containing the federated credentials to assign to the User Assigned Identity."
+  default = []
+}
+
+variable "audience" {
+  type        = list(string)
+  description = "The audience for the federated identity credential."
+  default = ["api://AzureADTokenExchange"]
 }
