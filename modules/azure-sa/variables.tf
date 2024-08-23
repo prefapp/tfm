@@ -13,11 +13,11 @@ variable "resource_group_name" {
 ## Network variables
 variable "subnet" {
   default = "Subnet values for data"
-  type = object({
+  type = list(object({
     name = string
     vnet = string
     resource_group = string 
-  })
+  }))
 }
 
 variable "additional_subnet_ids" {
