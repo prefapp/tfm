@@ -3,7 +3,7 @@ variable "name" {
   description = "The name of the User Assigned Identity."
 }
 
-variable "resource_group_name" {
+variable "resource_group" {
   type        = string
   description = "The name of the Resource Group."
 }
@@ -40,7 +40,7 @@ variable "federated_credentials" {
   type = list(object({
     name                 = string
     type                 = string
-    issuer               = string
+    issuer               = optional(string)
     namespace            = optional(string)
     service_account_name = optional(string)
     organization         = optional(string)
