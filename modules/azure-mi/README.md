@@ -33,7 +33,7 @@ No modules.
 | tags | A mapping of tags to assign to the resource | `map(string)` | n/a | no |
 | tags_from_rg | If true, the tags from the resource group will be inherited exclusively | `bool` | `false` | no |
 | rbac | A list of role-based access control (RBAC) policies to apply to the Managed Identity | <pre>list(object({<br> name: string (required)<br> scope: string (required)<br> roles: list(string) (required)<br>}))</pre> | n/a | yes |
-| federated_credentials | A list of federated credentials to assign to the Managed Identity, posible types are:<br><br>**K8s**: `issuer`, `organization`, `repository`, `entity`<br>- `issuer`: The cluster issuer<br>- `namespace`: The namespace of the service account<br>- `service_account_name`: The name of the service account<br><br>**github**: `issuer`, `organization`, `repository` and `entity`<br>- `issuer`: The github issuer<br>- `organization`: The github organization<br>- `repository`: The github repository<br>- `entity`: The github entity \|Optional value, if not provided, the entity will be the repository. For other scenarios, the entity should be provided:<br>&nbsp;&nbsp;- environment: `environment:foo_enviroment`<br>&nbsp;&nbsp;- tags: `ref:refs/tags/foo_tag`<br>&nbsp;&nbsp;- branch: `ref:refs/heads/foo_branch`<br>&nbsp;&nbsp;- commit: `ref:refs/commits/foo_commit`<br><br>**other**: `issuer` and `subject`<br>- `issuer`: The issuer<br>- `subject`: The subject | <pre>list(object({<br> name: string (required)<br> type: string (required) - **K8s** \|\| **github** \|\| **other**<br> issuer: string (required)<br> namespace: string (required only when the type is **K8s**)<br> service_account_name: string (required only when the type is **K8s**)<br> organization: string (required only when the type is **github**)<br> repository: string (required only when the type is **github**)<br> entity: string (required only when the type is **github** and the entity is not the repository)<br> subject: string (required only when the type is **other**)<br>}))</pre> | `[]` | no |
+| federated_credentials | A list of federated credentials to assign to the Managed Identity, posible types are:<br><br>**kubernetes**: `issuer`, `organization`, `repository`, `entity`<br>- `issuer`: The cluster issuer<br>- `namespace`: The namespace of the service account<br>- `service_account_name`: The name of the service account<br><br>**github**: `issuer`, `organization`, `repository` and `entity`<br>- `issuer`: The github issuer<br>- `organization`: The github organization<br>- `repository`: The github repository<br>- `entity`: The github entity \|Optional value, if not provided, the entity will be the repository. For other scenarios, the entity should be provided:<br>&nbsp;&nbsp;- environment: `environment:foo_enviroment`<br>&nbsp;&nbsp;- tags: `ref:refs/tags/foo_tag`<br>&nbsp;&nbsp;- branch: `ref:refs/heads/foo_branch`<br>&nbsp;&nbsp;- commit: `ref:refs/commits/foo_commit`<br><br>**other**: `issuer` and `subject`<br>- `issuer`: The issuer<br>- `subject`: The subject | <pre>list(object({<br> name: string (required)<br> type: string (required) - **kubernetes** \|\| **github** \|\| **other**<br> issuer: string (required)<br> namespace: string (required only when the type is **kubernetes**)<br> service_account_name: string (required only when the type is **kubernetes**)<br> organization: string (required only when the type is **github**)<br> repository: string (required only when the type is **github**)<br> entity: string (required only when the type is **github** and the entity is not the repository)<br> subject: string (required only when the type is **other**)<br>}))</pre> | `[]` | no |
 | audience | The audience of the federated identity credential | `list(string)` | `["api://AzureADTokenExchange"]` | no |
 
 ## Outputs
@@ -73,8 +73,8 @@ rbac = [
 ]
 federated_credentials = [
   {
-    name = "foo-K8s"
-    type = "K8s"
+    name = "foo-kubernetes"
+    type = "kubernetes"
     issuer = "xxx"
     namespace = "xxx"
     service_account_name = "xxx"
@@ -116,8 +116,8 @@ roles: # 1-n
 - yyy
 - zzz
 federated_credentials: # {} | 0-20
- - name: foo-K8s
- type: K8s # subject like: system:serviceaccount:<namespace>:<serviceaccount>
+ - name: foo-kubernetes
+ type: kubernetes # subject like: system:serviceaccount:<namespace>:<serviceaccount>
  issuer: xxx
  namespace: xxx
  service_account_name: xxx

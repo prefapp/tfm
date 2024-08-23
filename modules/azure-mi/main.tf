@@ -44,5 +44,5 @@ resource "azurerm_federated_identity_credential" "federated_identity_credential"
   audience            = var.audience
   issuer              = each.value.issuer
   parent_id           = azurerm_user_assigned_identity.user_assigned_identity.id
-  subject             = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : each.value.type == "K8s" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
+  subject             = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : each.value.type == "kubernetes" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
 }

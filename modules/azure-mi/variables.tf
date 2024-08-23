@@ -49,8 +49,8 @@ variable "federated_credentials" {
     subject              = optional(string)
   }))
   validation {
-    condition     = alltrue([for cred in var.federated_credentials : contains(["K8s", "github", "other"], cred.type)])
-    error_message = "The type must be either 'K8s', 'github' or 'other'."
+    condition     = alltrue([for cred in var.federated_credentials : contains(["kubernetes", "github", "other"], cred.type)])
+    error_message = "The type must be either 'kubernetes', 'github' or 'other'."
   }
   description = "A list of objects containing the federated credentials to assign to the User Assigned Identity."
   default     = []
