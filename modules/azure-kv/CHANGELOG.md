@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/prefapp/tfm/compare/azure-kv-v1.2.2...azure-kv-v1.3.0) (2024-08-26)
+
+
+### Features
+
+* Deploy release ([#127](https://github.com/prefapp/tfm/issues/127)) ([2d5c56b](https://github.com/prefapp/tfm/commit/2d5c56bcd9f1443136a9a4c34e19a3874dcf7ea5))
+
 ## [1.2.2](https://github.com/prefapp/tfm/compare/azure-kv-v1.2.1...azure-kv-v1.2.2) (2024-08-02)
 
 
