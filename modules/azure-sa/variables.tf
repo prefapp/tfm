@@ -58,7 +58,6 @@ variable "storage_share" {
   description = "Specifies the storage shaares"
   type = list(object({
     name             = string
-    quota            = number
     access_tier      = string
     enabled_protocol = string
     quota            = number
