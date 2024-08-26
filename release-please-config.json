@@ -1,7 +1,7 @@
 {
     "bootstrap-sha": "9556d41030508368d1edec99335eafa34f52de05",
     "release-type": "terraform-module",
-    "separate-pull-requests": false,
+    "separate-pull-requests": true,
     "packages": {
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
