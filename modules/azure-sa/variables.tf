@@ -7,16 +7,16 @@ variable "tags" {
 
 variable "resource_group_name" {
   description = "The name for the resource group"
-  type = string
+  type        = string
 }
 
 ## Network variables
 variable "subnet" {
   description = "Subnet values for data"
   type = list(object({
-    name = string
-    vnet = string
-    resource_group = string 
+    name           = string
+    vnet           = string
+    resource_group = string
   }))
 }
 
@@ -54,13 +54,82 @@ variable "storage_account_kind" {
   default     = null
 }
 
-variable "storage_account_container_name" {
-  description = "The Tier to use for this storage account"
-  type        = list(object({
-    name         = string
-    access_type  = string
+variable "storage_share" {
+  description = "Specifies the storage shaares"
+  type = list(object({
+    name             = string
+    quota            = number
+    access_tier      = string
+    enabled_protocol = string
+    quota            = number
+    metadata         = string
+    acl = list(object({
+      id = string
+      access_policy = object({
+        permissions = string
+        start       = string
+        expiry      = string
+      })
+    }))
   }))
-  default     = null
+  default = null
+}
+
+variable "storage_container" {
+  description = "Specifies the storage containers"
+  type = list(object({
+    name                              = string
+    container_access_type             = string
+    default_encryption_scope          = string
+    encryption_scope_override_enabled = bool
+    metadata                          = string
+  }))
+  default = null
+}
+
+variable "storage_blob" {
+  description = "Specifies the storage blobs"
+  type = list(object({
+    name                   = string
+    storage_container_name = string
+    type                   = string
+    source                 = string
+    size                   = number
+    cache_control          = string
+    content_type           = string
+    content_md5            = string
+    access_tier            = string
+    encryption_scope       = string
+    source_content         = string
+    source_uri             = string
+    parallelism            = number
+  }))
+  default = null
+}
+
+variable "storage_queue" {
+  description = "Specifies the storage queues"
+  type = list(object({
+    name     = string
+    metadata = string
+  }))
+  default = null
+}
+
+variable "storage_table" {
+  description = "Specifies the storage tables"
+  type = list(object({
+    name = string
+    acl = list(object({
+      id = string
+      access_policy = object({
+        permissions = string
+        start       = string
+        expiry      = string
+      })
+    }))
+  }))
+  default = null
 }
 
 variable "storage_account_replication_type" {
@@ -161,14 +230,14 @@ variable "versioning_enabled" {
 
 variable "backup_policy" {
   description = "A map of backup policies to be created in the Recovery Services Vault."
-  type        = object({
+  type = object({
     frequency         = string
     time              = string
     retention_daily   = number
     retention_monthly = number
     retention_yearly  = number
   })
-  default     = null
+  default = null
 }
 
 ## Backup blobs variables
@@ -222,17 +291,17 @@ variable "backup_instance_blob_name" {
 
 variable "lifecycle_policy_rule" {
   type = list(object({
-    name     = string
-    enabled  = bool
-    filters  = object({
+    name    = string
+    enabled = bool
+    filters = object({
       prefix_match = list(string)
       blob_types   = list(string)
     })
     actions = object({
-      base_blob   = object({ delete_after_days_since_creation_greater_than = number })
-      snapshot    = object({ delete_after_days_since_creation_greater_than = number })
-      version     = object({ delete_after_days_since_creation              = number })
+      base_blob = object({ delete_after_days_since_creation_greater_than = number })
+      snapshot  = object({ delete_after_days_since_creation_greater_than = number })
+      version   = object({ delete_after_days_since_creation = number })
     })
   }))
-  default    = null
+  default = null
 }
