@@ -216,26 +216,3 @@ resource "azurerm_storage_management_policy" "this" {
     }
   }
 }
-
-
-# diferentes politicas de backups, diferentes containers, misma storage
-# queues and tables
-
-# claves:
-# container
-# shares
-# queues
-# tables
-
-# backups_shares
-# backups_blobs
-
-# lifecycle_policies
-acl {
-  id = each.value.acl.id
-  access_policy {
-    permissions = each.value.acl.access_policy.permissions
-    start       = each.value.acl.access_policy.start
-    expiry      = each.value.acl.access_policy.expiry
-  }
-}
