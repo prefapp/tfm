@@ -89,7 +89,7 @@ resource "azurerm_storage_blob" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue
 resource "azurerm_storage_queue" "this" {
   for_each = {
-    for queue in var.storage_queue : queue.name => queue
+    var.storage_queue != null ? { for queue in var.storage_queue : queue.name => queue } : {}
   }
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.this.name
@@ -98,9 +98,7 @@ resource "azurerm_storage_queue" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share
 resource "azurerm_storage_share" "this" {
-  for_each = {
-    for share in var.storage_share : share.name => share
-  }
+  for_each = var.storage_queue != null ? { for queue in var.storage_queue : queue.name => queue } : {}
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.this.name
   access_tier          = each.value.access_tier
