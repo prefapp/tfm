@@ -58,18 +58,18 @@ variable "storage_share" {
   description = "Specifies the storage shaares"
   type = list(object({
     name             = string
-    access_tier      = string
-    enabled_protocol = string
+    access_tier      = optional(string)
+    enabled_protocol = optional(string)
     quota            = number
-    metadata         = string
-    acl = list(object({
+    metadata         = optional(string)
+    acl = optional(list(object({
       id = string
-      access_policy = object({
+      access_policy = optional(object({
         permissions = string
-        start       = string
-        expiry      = string
-      })
-    }))
+        start       = optional(string)
+        expiry      = optional(string)
+      }))
+    })))
   }))
   default = null
 }
@@ -78,10 +78,10 @@ variable "storage_container" {
   description = "Specifies the storage containers"
   type = list(object({
     name                              = string
-    container_access_type             = string
-    default_encryption_scope          = string
-    encryption_scope_override_enabled = bool
-    metadata                          = string
+    container_access_type             = optional(string)
+    default_encryption_scope          = optional(string)
+    encryption_scope_override_enabled = optional(bool)
+    metadata                          = optional(string)
   }))
   default = null
 }
@@ -92,16 +92,16 @@ variable "storage_blob" {
     name                   = string
     storage_container_name = string
     type                   = string
-    source                 = string
-    size                   = number
-    cache_control          = string
-    content_type           = string
-    content_md5            = string
-    access_tier            = string
-    encryption_scope       = string
-    source_content         = string
-    source_uri             = string
-    parallelism            = number
+    source                 = optional(string)
+    size                   = optional(number)
+    cache_control          = optional(string)
+    content_type           = optional(string)
+    content_md5            = optional(string)
+    access_tier            = optional(string)
+    encryption_scope       = optional(string)
+    source_content         = optional(string)
+    source_uri             = optional(string)
+    parallelism            = optional(number)
   }))
   default = null
 }
@@ -110,7 +110,7 @@ variable "storage_queue" {
   description = "Specifies the storage queues"
   type = list(object({
     name     = string
-    metadata = string
+    metadata = optional(string)
   }))
   default = null
 }
@@ -119,14 +119,14 @@ variable "storage_table" {
   description = "Specifies the storage tables"
   type = list(object({
     name = string
-    acl = list(object({
+    acl = optional(list(object({
       id = string
-      access_policy = object({
+      access_policy = optional(object({
         permissions = string
-        start       = string
-        expiry      = string
-      })
-    }))
+        start       = optional(string)
+        expiry      = optional(string)
+      }))
+    })))
   }))
   default = null
 }
