@@ -57,7 +57,7 @@ resource "azurerm_storage_container" "this" {
   for_each                          = var.storage_container != null ? { for container in var.storage_container : container.name => container } : {}
   name                              = each.value.name
   storage_account_name              = azurerm_storage_account.this.name
-  container_access_type             = each.value.access_type
+  container_access_type             = each.value.container_access_type
   default_encryption_scope          = each.value.default_encryption_scope
   encryption_scope_override_enabled = each.value.encryption_scope_override_enabled
   metadata                          = each.value.metadata
