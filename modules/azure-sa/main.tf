@@ -66,7 +66,7 @@ resource "azurerm_storage_container" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob
 resource "azurerm_storage_blob" "this" {
   for_each = {
-    for blob in var.storage_blob : "${blob.storage_container_name}-${azurerm_storage_account.this.name}-${blob.name}" => blob }
+    for blob in var.storage_blob : "${blob.storage_container_name}-${blob.name}" => blob }
   name                   = each.value.name
   storage_account_name   = azurerm_storage_account.this.name
   storage_container_name = each.value.storage_container_name
