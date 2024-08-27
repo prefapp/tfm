@@ -61,7 +61,7 @@ variable "storage_share" {
     access_tier      = optional(string)
     enabled_protocol = optional(string)
     quota            = number
-    metadata         = optional(string)
+    metadata         = optional(map(string))
     acl = optional(list(object({
       id = string
       access_policy = optional(object({
@@ -81,7 +81,7 @@ variable "storage_container" {
     container_access_type             = optional(string)
     default_encryption_scope          = optional(string)
     encryption_scope_override_enabled = optional(bool)
-    metadata                          = optional(string)
+    metadata                          = optional(map(string))
   }))
   default = null
 }
@@ -110,7 +110,7 @@ variable "storage_queue" {
   description = "Specifies the storage queues"
   type = list(object({
     name     = string
-    metadata = optional(string)
+    metadata = optional(map(string))
   }))
   default = null
 }
