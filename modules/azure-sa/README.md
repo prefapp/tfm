@@ -85,31 +85,47 @@ No modules.
     values:
       # data values
       resource_group_name: "rg_name"
-      vnet_resource_group_name: "vnet_rg_name"
-      vnet_name: "vnet_name"
-      subnet_name:
-        - "subnet0"
-        - "subnet1"
+      subnet:
+        - name: "subnet0"
+          vnet: "vnet1"
+          resource_group: "rg_test0"
+        - name: "subnet1"
+          vnet: "vnet0"
+          resource_group: "rgtest1"
+
+      additional_subnet_ids:
+        - "/subscriptions/xXx/resourceGroups/xXx/providers/Microsoft.Network/virtualNetworks/xXx/subnets/xXx0"
+        - "/subscriptions/xXx/resourceGroups/xXx/providers/Microsoft.Network/virtualNetworks/xXx/subnets/xXx1"
 
       # storage account values
-      storage_account_name: "sa_name"
-      storage_account_network_rule_default_action: "Deny"
-      storage_account_network_rule_bypass: "AzureServices"
-      storage_account_tier: "Standard"
-      storage_account_kind: "StorageV2"
-      storage_account_replication_type: "GRS"
-      storage_account_min_tls_version: "TLS1_2"
-      storage_account_enable_https_traffic_only: true
-      storage_account_cross_tenant_replication_enabled: false
-      storage_account_allow_nested_items_to_be_public: false
-      quota: 5120
-      blob_retention_soft_delete: 30
-      container_retention_soft_delete: 15
-      versioning_enabled: true
-      change_feed_enabled: true
-      threat_protection_enabled: true
-      policy_name: "Default"
-      timezone: "UTC"
+      storage_account:
+        name: "sa_name"
+        account_tier: "Standard"
+        account_kind: "StorageV2"
+        account_replication_type: "LRS"
+        min_tls_version: "TLS1_2"
+        https_traffic_only_enabled: true
+        cross_tenant_replication_enabled: false
+        allow_nested_items_to_be_public: false
+        versioning_enabled: false
+        change_feed_enabled: false
+        blob_retention_soft_delete: 7
+        container_retention_soft_delete: 7
+        default_action: "Deny"
+        bypass: "AzureServices"
+        tags: {}
+
+      # storage container
+      storage_container:
+        - name: "test"
+          container_access_type: "private"
+        - name: "test2"
+          container_access_type: "private"
+
+      # storage blob
+      storage_blob:
+        - name: "test"
+          storage_container_name: "test"
 
       # storage account lifecycle policy values
       lifecycle_policy_rule:
@@ -149,4 +165,12 @@ No modules.
         retention_daily: 15
         retention_monthly: 2
         retention_yearly: 1
+
+      # tags
+      tags:
+        cliente: "inss"
+        tenant: "inss"
+        Producto: "ovac"
+        application: "ovac"
+        env: "pre"
 ```
