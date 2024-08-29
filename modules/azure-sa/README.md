@@ -168,9 +168,9 @@ No modules.
 
       # tags
       tags:
-        cliente: "inss"
-        tenant: "inss"
-        Producto: "ovac"
-        application: "ovac"
-        env: "pre"
+        cliente: "test"
+        tenant: "test"
+        Producto: "test"
+        application: "test"
+        env: "test"
 ```
