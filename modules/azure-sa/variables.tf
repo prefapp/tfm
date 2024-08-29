@@ -98,6 +98,26 @@ variable "storage_container" {
   default = null
 }
 
+variable "storage_blob" {
+  description = "Specifies the storage blobs"
+  type = list(object({
+    name                   = string
+    storage_container_name = string
+    type                   = string
+    source                 = optional(string)
+    size                   = optional(number)
+    cache_control          = optional(string)
+    content_type           = optional(string)
+    content_md5            = optional(string)
+    access_tier            = optional(string)
+    encryption_scope       = optional(string)
+    source_content         = optional(string)
+    source_uri             = optional(string)
+    parallelism            = optional(number)
+  }))
+  default = null
+}
+
 variable "storage_queue" {
   description = "Specifies the storage queues"
   type = list(object({
