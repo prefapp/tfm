@@ -8,7 +8,7 @@ variable "tags" {
 
 variable "resource_group_name" {
   description = "The name for the resource group"
-  type        = string
+  type        = object()
 }
 
 ## Network variables
@@ -86,6 +86,7 @@ variable "storage_share" {
   default = null
 }
 
+## Storage container variables
 variable "storage_container" {
   description = "Specifies the storage containers"
   type = list(object({
@@ -98,6 +99,7 @@ variable "storage_container" {
   default = null
 }
 
+## Storage blob variables
 variable "storage_blob" {
   description = "Specifies the storage blobs"
   type = list(object({
