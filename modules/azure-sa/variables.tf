@@ -8,7 +8,7 @@ variable "tags" {
 
 variable "resource_group_name" {
   description = "The name for the resource group"
-  type        = object()
+  type        = string
 }
 
 ## Network variables
