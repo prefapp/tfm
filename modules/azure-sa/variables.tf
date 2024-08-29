@@ -26,34 +26,45 @@ variable "additional_subnet_ids" {
 }
 
 ## Storage account variables
-variable "storage_account_name" {
-  description = "The name for this storage account"
-  type        = string
+variable "storage_account" {
+  description = "Configuration for the Azure Storage Account."
+  type = object({
+    name                             = string
+    account_tier                     = string
+    account_kind                     = string
+    account_replication_type         = string
+    min_tls_version                  = string
+    https_traffic_only_enabled       = bool
+    cross_tenant_replication_enabled = bool
+    allow_nested_items_to_be_public  = bool
+    versioning_enabled               = bool
+    change_feed_enabled              = bool
+    blob_retention_soft_delete       = number
+    container_retention_soft_delete  = number
+    default_action                   = string
+    bypass                           = string
+    tags                             = map(string)
+  })
+  default = {
+    name                             = ""
+    account_tier                     = "Standard"
+    account_kind                     = "StorageV2"
+    account_replication_type         = "LRS"
+    min_tls_version                  = "TLS1_2"
+    https_traffic_only_enabled       = true
+    cross_tenant_replication_enabled = false
+    allow_nested_items_to_be_public  = false
+    versioning_enabled               = false
+    change_feed_enabled              = false
+    blob_retention_soft_delete       = 7
+    container_retention_soft_delete  = 7
+    default_action                   = "Deny"
+    bypass                           = "AzureServices"
+    tags                             = {}
+  }
 }
 
-variable "storage_account_network_rule_default_action" {
-  description = "The default action of allow or deny when no other rules match"
-  type        = string
-  default     = null
-}
-
-variable "storage_account_network_rule_bypass" {
-  description = "Specifies whether traffic is bypassed for Logging/Metrics/AzureServices"
-  type        = string
-  default     = null
-}
-
-variable "storage_account_tier" {
-  description = "The Tier to use for this storage account"
-  type        = string
-}
-
-variable "storage_account_kind" {
-  description = "The Kind of account to create"
-  type        = string
-  default     = null
-}
-
+## Storage share variables
 variable "storage_share" {
   description = "Specifies the storage shaares"
   type = list(object({
@@ -86,26 +97,6 @@ variable "storage_container" {
   default = null
 }
 
-variable "storage_blob" {
-  description = "Specifies the storage blobs"
-  type = list(object({
-    name                   = string
-    storage_container_name = string
-    type                   = string
-    source                 = optional(string)
-    size                   = optional(number)
-    cache_control          = optional(string)
-    content_type           = optional(string)
-    content_md5            = optional(string)
-    access_tier            = optional(string)
-    encryption_scope       = optional(string)
-    source_content         = optional(string)
-    source_uri             = optional(string)
-    parallelism            = optional(number)
-  }))
-  default = null
-}
-
 variable "storage_queue" {
   description = "Specifies the storage queues"
   type = list(object({
@@ -129,47 +120,6 @@ variable "storage_table" {
     })))
   }))
   default = null
-}
-
-variable "storage_account_replication_type" {
-  description = "The type of replication to use for this storage account"
-  type        = string
-}
-
-variable "storage_account_min_tls_version" {
-  description = "The minimum supported TLS version for the storage account"
-  type        = string
-  default     = null
-}
-
-variable "storage_account_https_traffic_only_enabled" {
-  description = "Allows https traffic only to storage service"
-  type        = bool
-  default     = null
-}
-
-variable "storage_account_cross_tenant_replication_enabled" {
-  description = "Allow or disallow public access to the nested files and directories"
-  type        = bool
-  default     = null
-}
-
-variable "storage_account_allow_nested_items_to_be_public" {
-  description = "Allow or disallow public access to the nested files and directories"
-  type        = bool
-  default     = null
-}
-
-variable "threat_protection_enabled" {
-  description = "Enable threat protection"
-  type        = bool
-  default     = null
-}
-
-variable "quota" {
-  description = "The maximum size of the share, in gigabytes."
-  type        = string
-  default     = null
 }
 
 ## Backup fileshares variables
