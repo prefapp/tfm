@@ -14,7 +14,7 @@ variable "resource_group_name" {
 ## Network variables
 variable "subnet" {
   description = "Subnet values for data"
-  type = map(object({
+  type = list(object({
     name           = string
     vnet           = string
     resource_group = string
