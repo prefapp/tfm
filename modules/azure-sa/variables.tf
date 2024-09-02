@@ -40,10 +40,9 @@ variable "storage_account" {
     min_tls_version                  = optional(string, "TLS1_2")
 
     blob_properties = optional(object({
-      versioning_enabled      = optional(string, "StorageV2")
-      change_feed_enabled     = optional(string, "StorageV2")
-      default_service_version = optional(string, "StorageV2")
-      cors_rule               = optional(string, "StorageV2")
+      versioning_enabled      = optional(bool, false)
+      change_feed_enabled     = optional(bool, false)
+      default_service_version = optional(string, "2020-06-12")
       delete_retention_policy = optional(object({
         days = optional(number, 7)
       }))

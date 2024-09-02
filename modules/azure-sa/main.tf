@@ -39,7 +39,7 @@ resource "azurerm_storage_account" "this" {
 
   share_properties {
     retention_policy {
-      days = var.storage_account.share_properties.delete_retention_policy.days
+      days = var.storage_account.share_properties.retention_policy.days
     }
   }
 
