@@ -66,6 +66,17 @@ variable "storage_account" {
   })
 }
 
+
+## Storage account network rules
+variable "storage_account_network_rules" {
+  description = "Network rules for the storage account"
+  type = map(object({
+    default_action = string
+    bypass         = optional(string, "AzureServices")
+    ip_rules       = optional(string)
+  }))
+}
+
 ## Storage share variables
 variable "storage_share" {
   description = "Specifies the storage shaares"

@@ -58,9 +58,9 @@ resource "azurerm_storage_account" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules
 resource "azurerm_storage_account_network_rules" "this" {
   storage_account_id         = azurerm_storage_account.this.id
-  default_action             = var.storage_account.default_action
+  default_action             = var.storage_account_network_rules.default_action
   virtual_network_subnet_ids = concat([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids) # and values provided as string or list(string)
-  bypass                     = [var.storage_account.bypass]
+  bypass                     = [var.storage_account_network_rules.bypass]
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container.html
