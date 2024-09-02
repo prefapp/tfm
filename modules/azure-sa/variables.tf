@@ -134,7 +134,7 @@ variable "storage_blob" {
 
 variable "storage_queue" {
   description = "Specifies the storage queues"
-  type = list(object({
+  type = map(object({
     name     = string
     metadata = optional(map(string))
   }))
