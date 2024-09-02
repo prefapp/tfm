@@ -14,7 +14,7 @@ variable "resource_group_name" {
 ## Network variables
 variable "subnet" {
   description = "Subnet values for data"
-  type = list(object({
+  type = map(object({
     name           = string
     vnet           = string
     resource_group = string
@@ -28,41 +28,43 @@ variable "additional_subnet_ids" {
 
 ## Storage account variables
 variable "storage_account" {
-  description = "Configuration for the Azure Storage Account."
+  description = "Configuration for the Azure Storage Account"
   type = object({
     name                             = string
-    account_tier                     = string
-    account_kind                     = string
-    account_replication_type         = string
-    min_tls_version                  = string
-    https_traffic_only_enabled       = bool
-    cross_tenant_replication_enabled = bool
-    allow_nested_items_to_be_public  = bool
-    versioning_enabled               = bool
-    change_feed_enabled              = bool
-    blob_retention_soft_delete       = number
-    container_retention_soft_delete  = number
-    default_action                   = string
-    bypass                           = string
-    tags                             = map(string)
+    account_tier                     = optional(string, "Standard")
+    account_replication_type         = optional(string, "LRS")
+    account_kind                     = optional(string, "StorageV2")
+    access_tier                      = optional(string, "Hot")
+    cross_tenant_replication_enabled = optional(bool, false)
+    https_traffic_only_enabled       = optional(bool, true)
+    min_tls_version                  = optional(string, "TLS1_2")
+
+    blob_properties = optional(object({
+      versioning_enabled      = optional(string, "StorageV2")
+      change_feed_enabled     = optional(string, "StorageV2")
+      default_service_version = optional(string, "StorageV2")
+      cors_rule               = optional(string, "StorageV2")
+      delete_retention_policy = optional(object({
+        days = optional(number, 7)
+      }))
+      container_delete_retention_policy = optional(object({
+        days = optional(number, 7)
+      }))
+    }))
+
+    share_properties = optional(object({
+      retention_policy = optional(object({
+        days = optional(number, 7)
+      }))
+    }))
+
+    identity = optional(object({
+      type         = optional(string, "SystemAssigned")
+      identity_ids = optional(list(string), [])
+    }))
+
+    tags = optional(map(string), {})
   })
-  default = {
-    name                             = ""
-    account_tier                     = "Standard"
-    account_kind                     = "StorageV2"
-    account_replication_type         = "LRS"
-    min_tls_version                  = "TLS1_2"
-    https_traffic_only_enabled       = true
-    cross_tenant_replication_enabled = false
-    allow_nested_items_to_be_public  = false
-    versioning_enabled               = false
-    change_feed_enabled              = false
-    blob_retention_soft_delete       = 7
-    container_retention_soft_delete  = 7
-    default_action                   = "Deny"
-    bypass                           = "AzureServices"
-    tags                             = {}
-  }
 }
 
 ## Storage share variables

@@ -17,17 +17,14 @@ data "azurerm_resource_group" "this" {
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
 resource "azurerm_storage_account" "this" {
-  name                             = var.storage_account.name
-  resource_group_name              = data.azurerm_resource_group.this.name
-  location                         = data.azurerm_resource_group.this.location
-  account_tier                     = var.storage_account.account_tier
-  account_kind                     = var.storage_account.account_kind
-  account_replication_type         = var.storage_account.account_replication_type
-  min_tls_version                  = var.storage_account.min_tls_version
-  https_traffic_only_enabled       = var.storage_account.https_traffic_only_enabled
-  cross_tenant_replication_enabled = var.storage_account.cross_tenant_replication_enabled
-  allow_nested_items_to_be_public  = var.storage_account.allow_nested_items_to_be_public
-  tags                             = var.tags
+  name                       = var.storage_account.name
+  resource_group_name        = data.azurerm_resource_group.this.name
+  location                   = data.azurerm_resource_group.this.location
+  account_kind               = var.storage_account.account_kind
+  account_tier               = var.storage_account.account_tier
+  account_replication_type   = var.storage_account.account_replication_type
+  https_traffic_only_enabled = var.storage_account.https_traffic_only_enabled
+  min_tls_version            = var.storage_account.min_tls_version
 
   blob_properties {
     versioning_enabled  = var.versioning_enabled
@@ -39,6 +36,20 @@ resource "azurerm_storage_account" "this" {
       days = var.container_retention_soft_delete
     }
   }
+
+  share_properties {
+    retention_policy {
+      days = var.storage_account.share_properties.delete_retention_policy.days
+    }
+  }
+
+  identity {
+    type         = var.storage_account.identity.type
+    identity_ids = var.storage_account.identity.identity_ids
+  }
+
+  tags = var.tags
+
   lifecycle {
     ignore_changes = [tags]
   }
