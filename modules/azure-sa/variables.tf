@@ -70,7 +70,7 @@ variable "storage_account" {
 ## Storage account network rules
 variable "storage_account_network_rules" {
   description = "Network rules for the storage account"
-  type = map(object({
+  type = list(object({
     default_action = string
     bypass         = optional(string, "AzureServices")
     ip_rules       = optional(string)
