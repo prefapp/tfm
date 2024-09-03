@@ -136,7 +136,7 @@ variable "storage_queue" {
   description = "Specifies the storage queues"
   type = list(object({
     name     = string
-    metadata = optional(object)
+    metadata = optional(map(string))
   }))
   default = null
 }
