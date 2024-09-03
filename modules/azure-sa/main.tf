@@ -143,11 +143,11 @@ resource "azurerm_storage_table" "this" {
 ## BACKUPS FILE SHARES
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/recovery_services_vault
 resource "azurerm_recovery_services_vault" "this" {
-  name                = var.recovery_services_vault_name
+  name                = var.backup_share.recovery_services_vault_name
   resource_group_name = data.azurerm_resource_group.this.name
   location            = data.azurerm_resource_group.this.location
-  sku                 = var.sku
-  soft_delete_enabled = var.soft_delete_enabled
+  sku                 = var.backup_share.sku
+  soft_delete_enabled = var.backup_share.soft_delete_enabled
   lifecycle {
     ignore_changes = [tags]
   }
@@ -156,8 +156,33 @@ resource "azurerm_recovery_services_vault" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_container_storage_account
 resource "azurerm_backup_container_storage_account" "this" {
   resource_group_name = data.azurerm_resource_group.this.name
-  recovery_vault_name = var.recovery_services_vault_name
+  recovery_vault_name = var.backup_share.recovery_services_vault_name
   storage_account_id  = azurerm_storage_account.this.id
+}
+
+resource "azurerm_backup_policy_file_share" "this" {
+  name                = var.backup_share.policy_name
+  resource_group_name = data.azurerm_resource_group.this.name
+  recovery_vault_name = var.backup_share.recovery_services_vault_name
+
+  backup {
+    frequency = "Daily"
+    time      = "23:00"
+  }
+
+  retention_daily {
+    count = 10
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_protected_file_share
+resource "azurerm_backup_protected_file_share" "this" {
+  for_each = var.backup_share != null ? { for name in var.backup_share.source_file_share_name : name => name } : {}
+  resource_group_name       = data.azurerm_resource_group.this.name
+  recovery_vault_name       = var.backup_share.recovery_services_vault_name
+  source_storage_account_id = azurerm_storage_account.this.id
+  source_file_share_name    = each.value
+  backup_policy_id          = azurerm_backup_policy_file_share.this.id
 }
 
 ## BACKUPS BLOBS
