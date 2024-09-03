@@ -134,7 +134,7 @@ variable "storage_blob" {
 
 variable "storage_queue" {
   description = "Specifies the storage queues"
-  type = map(object({
+  type = list(object({
     name     = string
     metadata = optional(map(string))
   }))
@@ -145,14 +145,14 @@ variable "storage_table" {
   description = "Specifies the storage tables"
   type = list(object({
     name = string
-    acl = optional(list(object({
+    acl = optional(object({
       id = string
       access_policy = optional(object({
         permissions = string
         start       = optional(string)
         expiry      = optional(string)
       }))
-    })))
+    }))
   }))
   default = null
 }
