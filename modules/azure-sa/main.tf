@@ -111,12 +111,15 @@ resource "azurerm_storage_share" "this" {
   enabled_protocol     = each.value.enabled_protocol
   quota                = each.value.quota
   metadata             = each.value.metadata
-  acl {
-    id = each.value.acl.id
-    access_policy {
-      permissions = each.value.acl.access_policy.permissions
-      start       = each.value.acl.access_policy.start
-      expiry      = each.value.acl.access_policy.expiry
+  dynamic "acl" {
+    for_each = each.value.acl != null ? each.value.acl : []
+    content {
+      id = acl.value.id
+      access_policy {
+        permissions = acl.value.access_policy.permissions
+        start       = acl.value.access_policy.start
+        expiry      = acl.value.access_policy.expiry
+      }
     }
   }
 }
