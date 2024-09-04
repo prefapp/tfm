@@ -174,9 +174,9 @@ variable "backup_share" {
       identity_ids = optional(list(string), [])
     }))
     encryption = optional(object({
-      key_id                            = optional(string, "")
+      key_id                            = optional(string, null)
       infrastructure_encryption_enabled = optional(bool, false)
-      user_assigned_identity_id         = optional(string, "")
+      user_assigned_identity_id         = optional(string, null)
       use_system_assigned_identity      = optional(bool, false)
     }))
     

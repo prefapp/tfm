@@ -146,8 +146,8 @@ resource "azurerm_recovery_services_vault" "this" {
   storage_mode_type            = var.backup_share.storage_mode_type
   cross_region_restore_enabled = var.backup_share.cross_region_restore_enabled
   identity {
-    type         = var.storage_account.identity.type
-    identity_ids = var.storage_account.identity.identity_ids
+    type         = var.backup_share.identity.type
+    identity_ids = var.backup_share.identity.identity_ids
   }
   encryption {
     key_id                            = var.backup_share.encryption.key_id
