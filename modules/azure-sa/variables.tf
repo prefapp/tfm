@@ -179,6 +179,7 @@ variable "backup_share" {
       user_assigned_identity_id         = optional(string, null)
       use_system_assigned_identity      = optional(bool, false)
     }))
+    
     timezone = optional(string)
     backup = object({
       frequency = string
