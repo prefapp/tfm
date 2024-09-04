@@ -5,7 +5,6 @@ variable "tags" {
   type        = map(string)
 }
 
-
 variable "resource_group_name" {
   description = "The name for the resource group"
   type        = string
