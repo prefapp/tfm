@@ -178,18 +178,18 @@ variable "backup_share" {
     retention_weekly = optional(object({
       count    = number
       weekdays = list(string)
-    }), [])
+    }))
     retention_monthly = optional(object({
       count    = number
       weekdays = list(string)
       weeks    = list(string)
-    }), [])
+    }))
     retention_yearly = optional(object({
       count    = number
       weekdays = list(string)
       weeks    = list(string)
       months   = list(string)
-    }), [])
+    }))
   })
   default = null
 }
