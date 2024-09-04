@@ -165,8 +165,20 @@ variable "backup_share" {
     policy_name                  = string
     recovery_services_vault_name = string
     sku                          = string
-    soft_delete_enabled          = bool
+    soft_delete_enabled          = optional(bool)
+    storage_mode_type            = optional(string, "GeoRedundant")
+    cross_region_restore_enabled = optional(bool)
     source_file_share_name       = list(string)
+    identity = optional(object({
+      type         = optional(string, "SystemAssigned")
+      identity_ids = optional(list(string), [])
+    }))
+    encryption = optional(object({
+      key_id                            = string
+      infrastructure_encryption_enabled = bool
+      user_assigned_identity_id         = optional(string)
+      use_system_assigned_identity      = optional(string)
+    }))
     timezone = optional(string)
     backup = object({
       frequency = string

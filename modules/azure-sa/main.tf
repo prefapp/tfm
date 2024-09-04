@@ -143,11 +143,23 @@ resource "azurerm_storage_table" "this" {
 ## BACKUPS FILE SHARES
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/recovery_services_vault
 resource "azurerm_recovery_services_vault" "this" {
-  name                = var.backup_share.recovery_services_vault_name
-  resource_group_name = data.azurerm_resource_group.this.name
-  location            = data.azurerm_resource_group.this.location
-  sku                 = var.backup_share.sku
-  soft_delete_enabled = var.backup_share.soft_delete_enabled
+  name                         = var.backup_share.recovery_services_vault_name
+  resource_group_name          = data.azurerm_resource_group.this.name
+  location                     = data.azurerm_resource_group.this.location
+  sku                          = var.backup_share.sku
+  soft_delete_enabled          = var.backup_share.soft_delete_enabled
+  storage_mode_type            = var.backup_share.storage_mode_type
+  cross_region_restore_enabled = var.backup_share.cross_region_restore_enabled
+  identity {
+    type         = var.storage_account.identity.type
+    identity_ids = var.storage_account.identity.identity_ids
+  }
+  encryption {
+    key_id                            = var.backup_share.encryption.key_id
+    infrastructure_encryption_enabled = var.backup_share.encryption.infrastructure_encryption_enabled
+    user_assigned_identity_id         = var.backup_share.encryption.user_assigned_identity_id
+    use_system_assigned_identity      = var.backup_share.encryption.use_system_assigned_identity
+  }
   lifecycle {
     ignore_changes = [tags]
   }
@@ -165,7 +177,7 @@ resource "azurerm_backup_policy_file_share" "this" {
   name                = var.backup_share.policy_name
   resource_group_name = data.azurerm_resource_group.this.name
   recovery_vault_name = var.backup_share.recovery_services_vault_name
-  timezone = var.backup_share.timezone
+  timezone            = var.backup_share.timezone
   backup {
     frequency = var.backup_share.backup.frequency
     time      = var.backup_share.backup.time
