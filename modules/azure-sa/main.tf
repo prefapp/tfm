@@ -25,7 +25,7 @@ resource "azurerm_storage_account" "this" {
   account_replication_type   = var.storage_account.account_replication_type
   https_traffic_only_enabled = var.storage_account.https_traffic_only_enabled
   min_tls_version            = var.storage_account.min_tls_version
-
+  tags = var.tags
   blob_properties {
     versioning_enabled  = var.versioning_enabled
     change_feed_enabled = var.change_feed_enabled
@@ -36,20 +36,15 @@ resource "azurerm_storage_account" "this" {
       days = var.container_retention_soft_delete
     }
   }
-
   share_properties {
     retention_policy {
       days = var.storage_account.share_properties.retention_policy.days
     }
   }
-
   identity {
     type         = var.storage_account.identity.type
     identity_ids = var.storage_account.identity.identity_ids
   }
-
-  tags = var.tags
-
   lifecycle {
     ignore_changes = [tags]
   }
@@ -182,22 +177,18 @@ resource "azurerm_backup_policy_file_share" "this" {
     frequency = var.backup_share.backup.frequency
     time      = var.backup_share.backup.time
   }
-
   retention_daily {
     count = var.backup_share.retention_daily.count
   }
-
   retention_weekly {
     count    = var.backup_share.retention_weekly.count
     weekdays = var.backup_share.retention_weekly.weekdays
   }
-
   retention_monthly {
     count    = var.backup_share.retention_monthly.count
     weekdays = var.backup_share.retention_monthly.weekdays
     weeks    = var.backup_share.retention_monthly.weeks
   }
-
   retention_yearly {
     count    = var.backup_share.retention_yearly.count
     weekdays = var.backup_share.retention_yearly.weekdays
