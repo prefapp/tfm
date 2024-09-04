@@ -175,31 +175,22 @@ resource "azurerm_backup_policy_file_share" "this" {
     count = var.backup_share.retention_daily.count
   }
 
-  dynamic "retention_weekly" {
-    for_each = lookup(var.backup_share, "retention_weekly", [])
-    content {
-      count    = retention_weekly.value.count
-      weekdays = retention_weekly.value.weekdays
-    }
+  retention_weekly {
+    count    = var.backup_share.retention_weekly.count
+    weekdays = var.backup_share.retention_weekly.weekdays
   }
 
-  dynamic "retention_monthly" {
-    for_each = lookup(var.backup_share, "retention_monthly", [])
-    content {
-      count    = retention_monthly.value.count
-      weekdays = retention_monthly.value.weekdays
-      weeks    = retention_monthly.value.weeks
-    }
+  retention_monthly {
+    count    = var.backup_share.retention_monthly.count
+    weekdays = var.backup_share.retention_monthly.weekdays
+    weeks    = var.backup_share.retention_monthly.weeks
   }
 
-  dynamic "retention_yearly" {
-    for_each = lookup(var.backup_share, "retention_yearly", [])
-    content {
-      count    = retention_yearly.value.count
-      weekdays = retention_yearly.value.weekdays
-      weeks    = retention_yearly.value.weeks
-      months   = retention_yearly.value.months
-    }
+  retention_yearly {
+    count    = var.backup_share.retention_yearly.count
+    weekdays = var.backup_share.retention_yearly.weekdays
+    weeks    = var.backup_share.retention_yearly.weeks
+    months   = var.backup_share.retention_yearly.months
   }
 }
 
