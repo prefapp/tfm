@@ -166,18 +166,18 @@ resource "azurerm_backup_policy_file_share" "this" {
   recovery_vault_name = var.backup_share.recovery_services_vault_name
 
   backup {
-    frequency = "Daily"
-    time      = "23:00"
+    frequency = var.backup_share.backup_frequency
+    time      = var.backup_share.backup_time
   }
 
   retention_daily {
-    count = 10
+    count = var.backup_share.retention_daily
   }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_protected_file_share
 resource "azurerm_backup_protected_file_share" "this" {
-  for_each = var.backup_share != null ? { for name in var.backup_share.source_file_share_name : name => name } : {}
+  for_each                  = var.backup_share != null ? { for name in var.backup_share.source_file_share_name : name => name } : {}
   resource_group_name       = data.azurerm_resource_group.this.name
   recovery_vault_name       = var.backup_share.recovery_services_vault_name
   source_storage_account_id = azurerm_storage_account.this.id

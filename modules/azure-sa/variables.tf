@@ -162,11 +162,14 @@ variable "storage_table" {
 variable "backup_share" {
   description = "Specifies the backup configuration for the storage share"
   type = object({
-    policy_name                 = string
+    policy_name                  = string
     recovery_services_vault_name = string
-    sku                         = string
-    soft_delete_enabled         = bool
-    source_file_share_name      = list(string)
+    sku                          = string
+    soft_delete_enabled          = bool
+    source_file_share_name       = list(string)
+    backup_frequency             = string
+    backup_time                  = string
+    retention_daily              = number
   })
   default = null
 }
