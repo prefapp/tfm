@@ -160,18 +160,46 @@ resource "azurerm_backup_container_storage_account" "this" {
   storage_account_id  = azurerm_storage_account.this.id
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_policy_file_share
 resource "azurerm_backup_policy_file_share" "this" {
   name                = var.backup_share.policy_name
   resource_group_name = data.azurerm_resource_group.this.name
   recovery_vault_name = var.backup_share.recovery_services_vault_name
-
+  timezone = var.backup_share.timezone
   backup {
-    frequency = var.backup_share.backup_frequency
-    time      = var.backup_share.backup_time
+    frequency = var.backup_share.backup.frequency
+    time      = var.backup_share.backup.time
   }
 
   retention_daily {
-    count = var.backup_share.retention_daily
+    count = var.backup_share.retention_daily.count
+  }
+
+  dynamic "retention_weekly" {
+    for_each = lookup(var.backup_share, "retention_weekly", [])
+    content {
+      count    = retention_weekly.value.count
+      weekdays = retention_weekly.value.weekdays
+    }
+  }
+
+  dynamic "retention_monthly" {
+    for_each = lookup(var.backup_share, "retention_monthly", [])
+    content {
+      count    = retention_monthly.value.count
+      weekdays = retention_monthly.value.weekdays
+      weeks    = retention_monthly.value.weeks
+    }
+  }
+
+  dynamic "retention_yearly" {
+    for_each = lookup(var.backup_share, "retention_yearly", [])
+    content {
+      count    = retention_yearly.value.count
+      weekdays = retention_yearly.value.weekdays
+      weeks    = retention_yearly.value.weeks
+      months   = retention_yearly.value.months
+    }
   }
 }
 

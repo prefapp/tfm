@@ -167,9 +167,29 @@ variable "backup_share" {
     sku                          = string
     soft_delete_enabled          = bool
     source_file_share_name       = list(string)
-    backup_frequency             = string
-    backup_time                  = string
-    retention_daily              = number
+    timezone = optional(string)
+    backup = object({
+      frequency = string
+      time      = string
+    })
+    retention_daily = object({
+      count = number
+    })
+    retention_weekly = optional(object({
+      count    = number
+      weekdays = list(string)
+    }))
+    retention_monthly = optional(object({
+      count    = number
+      weekdays = list(string)
+      weeks    = list(string)
+    }))
+    retention_yearly = optional(object({
+      count    = number
+      weekdays = list(string)
+      weeks    = list(string)
+      months   = list(string)
+    }))
   })
   default = null
 }
