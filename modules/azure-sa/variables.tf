@@ -30,39 +30,57 @@ variable "storage_account" {
   description = "Configuration for the Azure Storage Account"
   type = object({
     name                             = string
-    account_tier                     = optional(string, "Standard")
-    account_replication_type         = optional(string, "LRS")
+    account_tier                     = string
+    account_replication_type         = string
     account_kind                     = optional(string, "StorageV2")
     access_tier                      = optional(string, "Hot")
     cross_tenant_replication_enabled = optional(bool, false)
+    edge_zone                        = optional(string)
+    allow_nested_items_to_be_public  = optional(bool, true)
     https_traffic_only_enabled       = optional(bool, true)
     min_tls_version                  = optional(string, "TLS1_2")
-
-    blob_properties = optional(object({
-      versioning_enabled      = optional(bool, false)
-      change_feed_enabled     = optional(bool, false)
-      default_service_version = optional(string, "2020-06-12")
-      delete_retention_policy = optional(object({
-        days = optional(number, 7)
-      }))
-      container_delete_retention_policy = optional(object({
-        days = optional(number, 7)
-      }))
-    }))
-
-    share_properties = optional(object({
-      retention_policy = optional(object({
-        days = optional(number, 7)
-      }))
-    }))
+    public_network_access_enabled    = optional(bool, true)
 
     identity = optional(object({
       type         = optional(string, "SystemAssigned")
       identity_ids = optional(list(string), [])
     }))
-
     tags = optional(map(string), {})
   })
+
+  # Validation block for `account_kind`
+  validation {
+    condition     = contains(["BlobStorage", "BlockBlobStorage", "FileStorage", "Storage", "StorageV2"], var.storage_account["account_kind"])
+    error_message = "account_kind must be one of: BlobStorage, BlockBlobStorage, FileStorage, Storage, or StorageV2."
+  }
+
+  # Validation block for `account_tier` with conditional logic
+  validation {
+    condition = (
+      (var.storage_account["account_kind"] == "BlockBlobStorage" || var.storage_account["account_kind"] == "FileStorage") && var.storage_account["account_tier"] == "Premium"
+    ) || (
+      contains(["Storage", "StorageV2", "BlobStorage"], var.storage_account["account_kind"]) && contains(["Standard", "Premium"], var.storage_account["account_tier"])
+    )
+    error_message = "account_tier must be 'Premium' when account_kind is 'BlockBlobStorage' or 'FileStorage'. Otherwise, it must be either 'Standard' or 'Premium'."
+  }
+
+  # Validation block for `account_replication_type`
+  validation {
+    condition     = contains(["LRS", "GRS", "RAGRS", "ZRS", "GZRS", "RAGZRS"], var.storage_account["account_replication_type"])
+    error_message = "account_replication_type must be one of: LRS, GRS, RAGRS, ZRS, GZRS, or RAGZRS."
+  }
+
+  # Validation block for `access_tier`
+  validation {
+    condition     = contains(["Hot", "Cool"], var.storage_account["access_tier"])
+    error_message = "access_tier must be one of: Hot or Cool. Defaults to Hot if not specified."
+  }
+
+  # Validation block for `min_tls_version`
+  validation {
+    condition     = contains(["TLS1_0", "TLS1_1", "TLS1_2"], var.storage_account["min_tls_version"])
+    error_message = "min_tls_version must be one of: TLS1_0, TLS1_1, or TLS1_2."
+  }
 }
 
 
