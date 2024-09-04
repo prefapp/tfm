@@ -145,15 +145,21 @@ resource "azurerm_recovery_services_vault" "this" {
   soft_delete_enabled          = var.backup_share.soft_delete_enabled
   storage_mode_type            = var.backup_share.storage_mode_type
   cross_region_restore_enabled = var.backup_share.cross_region_restore_enabled
-  identity {
-    type         = var.backup_share.identity.type
-    identity_ids = var.backup_share.identity.identity_ids
+  dynamic "identity" {
+    for_each = var.backup_share.identity != null ? [1] : []
+    content {
+      type         = var.backup_share.identity.type
+      identity_ids = var.backup_share.identity.identity_ids
+    }
   }
-  encryption {
-    key_id                            = var.backup_share.encryption.key_id
-    infrastructure_encryption_enabled = var.backup_share.encryption.infrastructure_encryption_enabled
-    user_assigned_identity_id         = var.backup_share.encryption.user_assigned_identity_id
-    use_system_assigned_identity      = var.backup_share.encryption.use_system_assigned_identity
+  dynamic "encryption" {
+    for_each = var.backup_share.encryption != null ? [1] : []
+    content {
+      key_id                            = var.backup_share.encryption.key_id
+      infrastructure_encryption_enabled = var.backup_share.encryption.infrastructure_encryption_enabled
+      user_assigned_identity_id         = var.backup_share.encryption.user_assigned_identity_id
+      use_system_assigned_identity      = var.backup_share.encryption.use_system_assigned_identity
+    }
   }
   lifecycle {
     ignore_changes = [tags]
