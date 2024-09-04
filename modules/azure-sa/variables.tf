@@ -158,6 +158,19 @@ variable "storage_table" {
 }
 
 ## Backup fileshares variables
+
+variable "backup_share" {
+  description = "Specifies the backup configuration for the storage share"
+  type = object({
+    policy_name                 = string
+    recovery_services_vault_name = string
+    sku                         = string
+    soft_delete_enabled         = bool
+    source_file_share_name      = list(string)
+  })
+  default = null
+}
+
 variable "blob_retention_soft_delete" {
   description = "Specifies the number of days that the blob should be retained"
   type        = number
