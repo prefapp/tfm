@@ -26,21 +26,6 @@ resource "azurerm_storage_account" "this" {
   https_traffic_only_enabled = var.storage_account.https_traffic_only_enabled
   min_tls_version            = var.storage_account.min_tls_version
   tags = var.tags
-  blob_properties {
-    versioning_enabled  = var.versioning_enabled
-    change_feed_enabled = var.change_feed_enabled
-    delete_retention_policy {
-      days = var.blob_retention_soft_delete
-    }
-    container_delete_retention_policy {
-      days = var.container_retention_soft_delete
-    }
-  }
-  share_properties {
-    retention_policy {
-      days = var.storage_account.share_properties.retention_policy.days
-    }
-  }
 
   ## always from data outside
   identity {
