@@ -101,7 +101,7 @@ variable "storage_account_network_rules" {
     ip_rules       = optional(list(string))
     private_link_access = optional(object({
       endpoint_resource_id = string
-      endpoint_tenant_id = optional(string)
+      endpoint_tenant_id   = optional(string)
     }))
   })
 }
@@ -187,3 +187,52 @@ variable "storage_table" {
   }))
   default = null
 }
+
+
+variable "lifecycle_policy_rule" {
+  description = "List of lifecycle management rules for the Azure Storage Account"
+  type = list(object({
+    name    = string
+    enabled = bool
+    filters = object({
+      blob_types   = list(string)
+      prefix_match = optional(list(string))
+
+      match_blob_index_tag = optional(list(object({
+        name      = string
+        operation = optional(string, "==")
+        value     = string
+      })), [])
+    })
+    actions = object({
+      base_blob = optional(object({
+        tier_to_cool_after_days_since_modification_greater_than     = optional(number)
+        tier_to_cool_after_days_since_last_access_time_greater_than = optional(number)
+        tier_to_cool_after_days_since_creation_greater_than         = optional(number)
+        auto_tier_to_hot_from_cool_enabled                          = optional(bool, false)
+
+        tier_to_archive_after_days_since_modification_greater_than     = optional(number)
+        tier_to_archive_after_days_since_last_access_time_greater_than = optional(number)
+        tier_to_archive_after_days_since_creation_greater_than         = optional(number)
+
+        delete_after_days_since_modification_greater_than     = optional(number)
+        delete_after_days_since_last_access_time_greater_than = optional(number)
+        delete_after_days_since_creation_greater_than         = optional(number)
+      }), {})
+
+      snapshot = optional(object({
+        change_tier_to_archive_after_days_since_creation = optional(number)
+        change_tier_to_cool_after_days_since_creation    = optional(number)
+        delete_after_days_since_creation_greater_than    = optional(number)
+      }), {})
+
+      version = optional(object({
+        change_tier_to_archive_after_days_since_creation = optional(number)
+        change_tier_to_cool_after_days_since_creation    = optional(number)
+        delete_after_days_since_creation                 = optional(number)
+      }), {})
+    })
+  }))
+  default = []
+}
+

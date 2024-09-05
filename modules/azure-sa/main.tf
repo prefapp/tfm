@@ -44,7 +44,7 @@ resource "azurerm_storage_account_network_rules" "this" {
   storage_account_id         = azurerm_storage_account.this.id
   default_action             = var.storage_account_network_rules.default_action
   virtual_network_subnet_ids = concat([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids)
-  ip_rules = concat (var.additional_subnet_ids)
+  ip_rules                   = concat(var.additional_subnet_ids)
   bypass                     = [var.storage_account_network_rules.bypass]
 }
 
@@ -128,20 +128,38 @@ resource "azurerm_storage_table" "this" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
-resource "azurerm_storage_management_policy" "this" {
-  storage_account_id = azurerm_storage_account.this.id
-  for_each           = var.lifecycle_policy_rule != null ? { for rule in var.lifecycle_policy_rule : rule.name => rule } : {}
-  rule {
-    name    = each.value.name
-    enabled = each.value.enabled
-    filters {
-      prefix_match = each.value.filters.prefix_match
-      blob_types   = each.value.filters.blob_types
-    }
-    actions {
-      base_blob { delete_after_days_since_creation_greater_than = each.value.actions.base_blob.delete_after_days_since_creation_greater_than }
-      snapshot { delete_after_days_since_creation_greater_than = each.value.actions.snapshot.delete_after_days_since_creation_greater_than }
-      version { delete_after_days_since_creation = each.value.actions.version.delete_after_days_since_creation }
+resource "azurerm_storage_management_policy" "example" {
+  storage_account_id = azurerm_storage_account.example.id
+  dynamic "rule" {
+    for_each = var.lifecycle_policy_rule
+    content {
+      name    = rule.value.name
+      enabled = rule.value.enabled
+      filters {
+        blob_types   = rule.value.filters.blob_types
+        prefix_match = try(rule.value.filters.prefix_match, [])
+        dynamic "match_blob_index_tag" {
+          for_each = try(rule.value.filters.match_blob_index_tag, [])
+          content {
+            name      = match_blob_index_tag.value.name
+            operation = match_blob_index_tag.value.operation
+            value     = match_blob_index_tag.value.value
+          }
+        }
+      }
+      actions {
+        base_blob {
+          tier_to_cool_after_days_since_modification_greater_than = try(rule.value.actions.base_blob.tier_to_cool_after_days_since_modification_greater_than, null)
+          delete_after_days_since_creation_greater_than           = try(rule.value.actions.base_blob.delete_after_days_since_creation_greater_than, null)
+          # Other base_blob settings...
+        }
+        snapshot {
+          delete_after_days_since_creation_greater_than = try(rule.value.actions.snapshot.delete_after_days_since_creation_greater_than, null)
+        }
+        version {
+          delete_after_days_since_creation = try(rule.value.actions.version.delete_after_days_since_creation, null)
+        }
+      }
     }
   }
 }
