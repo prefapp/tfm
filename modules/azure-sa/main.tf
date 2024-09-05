@@ -44,7 +44,7 @@ resource "azurerm_storage_account_network_rules" "this" {
   storage_account_id         = azurerm_storage_account.this.id
   default_action             = var.storage_account_network_rules.default_action
   virtual_network_subnet_ids = concat([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids)
-  ip_rules                   = concat(var.additional_subnet_ids)
+  ip_rules                   = concat(var.storage_account_network_rules.ip_rules)
   bypass                     = [var.storage_account_network_rules.bypass]
 }
 
