@@ -81,6 +81,16 @@ variable "storage_account" {
     condition     = contains(["TLS1_0", "TLS1_1", "TLS1_2"], var.storage_account["min_tls_version"])
     error_message = "min_tls_version must be one of: TLS1_0, TLS1_1, or TLS1_2."
   }
+
+  # Validation for identity type and identity_ids
+  validation {
+    condition = (
+      var.storage_account.identity == null ||
+      (var.storage_account.identity.type != "UserAssigned" && var.storage_account.identity.type != "SystemAssigned, UserAssigned") ||
+      (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") && length(var.storage_account.identity.identity_ids) > 0
+    )
+    error_message = "identity_ids must be provided when identity.type is set to 'UserAssigned' or 'SystemAssigned, UserAssigned'."
+  }
 }
 
 
