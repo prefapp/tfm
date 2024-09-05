@@ -40,7 +40,6 @@ variable "storage_account" {
     https_traffic_only_enabled       = optional(bool, true)
     min_tls_version                  = optional(string, "TLS1_2")
     public_network_access_enabled    = optional(bool, true)
-
     identity = optional(object({
       type         = optional(string, "SystemAssigned")
       identity_ids = optional(list(string), [])
@@ -58,7 +57,7 @@ variable "storage_account" {
   validation {
     condition = (
       (var.storage_account["account_kind"] == "BlockBlobStorage" || var.storage_account["account_kind"] == "FileStorage") && var.storage_account["account_tier"] == "Premium"
-    ) || (
+      ) || (
       contains(["Storage", "StorageV2", "BlobStorage"], var.storage_account["account_kind"]) && contains(["Standard", "Premium"], var.storage_account["account_tier"])
     )
     error_message = "account_tier must be 'Premium' when account_kind is 'BlockBlobStorage' or 'FileStorage'. Otherwise, it must be either 'Standard' or 'Premium'."
@@ -92,7 +91,6 @@ variable "storage_account" {
     error_message = "identity_ids must be provided when identity.type is set to 'UserAssigned' or 'SystemAssigned, UserAssigned'."
   }
 }
-
 
 ## Storage account network rules
 variable "storage_account_network_rules" {

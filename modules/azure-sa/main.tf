@@ -25,7 +25,7 @@ resource "azurerm_storage_account" "this" {
   account_replication_type   = var.storage_account.account_replication_type
   https_traffic_only_enabled = var.storage_account.https_traffic_only_enabled
   min_tls_version            = var.storage_account.min_tls_version
-  tags = var.tags
+  tags                       = var.tags
 
   ## always from data outside
   dynamic "identity" {
@@ -124,5 +124,3 @@ resource "azurerm_storage_table" "this" {
     }
   }
 }
-
-# IAM **identity user managed outside**
