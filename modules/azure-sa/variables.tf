@@ -42,8 +42,8 @@ variable "storage_account" {
     public_network_access_enabled    = optional(bool, true)
 
     identity = optional(object({
-      type         = lookup(var.storage_account.identity, "type", "SystemAssigned")
-      identity_ids = lookup(var.storage_account.identity, "identity_ids", [])
+      type         = optional(string, "SystemAssigned")
+      identity_ids = optional(list(string), [])
     }))
     tags = optional(map(string), {})
   })

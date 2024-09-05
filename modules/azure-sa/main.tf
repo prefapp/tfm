@@ -28,10 +28,14 @@ resource "azurerm_storage_account" "this" {
   tags = var.tags
 
   ## always from data outside
-  identity {
-    type         = var.storage_account.identity.type
-    identity_ids = var.storage_account.identity.identity_ids
+  dynamic "identity" {
+    for_each = var.storage_account.identity != null ? [var.storage_account.identity] : []
+    content {
+      type         = identity.value.type
+      identity_ids = identity.value.identity_ids
+    }
   }
+
   lifecycle {
     ignore_changes = [tags]
   }
