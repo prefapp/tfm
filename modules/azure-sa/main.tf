@@ -26,8 +26,6 @@ resource "azurerm_storage_account" "this" {
   https_traffic_only_enabled = var.storage_account.https_traffic_only_enabled
   min_tls_version            = var.storage_account.min_tls_version
   tags                       = var.tags
-
-  ## always from data outside
   dynamic "identity" {
     for_each = var.storage_account.identity != null ? [var.storage_account.identity] : []
     content {
@@ -45,7 +43,8 @@ resource "azurerm_storage_account" "this" {
 resource "azurerm_storage_account_network_rules" "this" {
   storage_account_id         = azurerm_storage_account.this.id
   default_action             = var.storage_account_network_rules.default_action
-  virtual_network_subnet_ids = concat([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids) # and values provided as string or list(string)
+  virtual_network_subnet_ids = concat([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids)
+  ip_rules = concat (var.additional_subnet_ids)
   bypass                     = [var.storage_account_network_rules.bypass]
 }
 
@@ -115,12 +114,34 @@ resource "azurerm_storage_table" "this" {
   for_each             = var.storage_table != null ? { for table in var.storage_table : table.name => table } : {}
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.this.name
-  acl {
-    id = each.value.acl.id
-    access_policy {
-      permissions = each.value.acl.access_policy.permissions
-      start       = each.value.acl.access_policy.start
-      expiry      = each.value.acl.access_policy.expiry
+  dynamic "acl" {
+    for_each = each.value.acl != null ? each.value.acl : []
+    content {
+      id = acl.value.id
+      access_policy {
+        permissions = acl.value.access_policy.permissions
+        start       = acl.value.access_policy.start
+        expiry      = acl.value.access_policy.expiry
+      }
+    }
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
+resource "azurerm_storage_management_policy" "this" {
+  storage_account_id = azurerm_storage_account.this.id
+  for_each           = var.lifecycle_policy_rule != null ? { for rule in var.lifecycle_policy_rule : rule.name => rule } : {}
+  rule {
+    name    = each.value.name
+    enabled = each.value.enabled
+    filters {
+      prefix_match = each.value.filters.prefix_match
+      blob_types   = each.value.filters.blob_types
+    }
+    actions {
+      base_blob { delete_after_days_since_creation_greater_than = each.value.actions.base_blob.delete_after_days_since_creation_greater_than }
+      snapshot { delete_after_days_since_creation_greater_than = each.value.actions.snapshot.delete_after_days_since_creation_greater_than }
+      version { delete_after_days_since_creation = each.value.actions.version.delete_after_days_since_creation }
     }
   }
 }

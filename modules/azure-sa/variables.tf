@@ -98,13 +98,17 @@ variable "storage_account_network_rules" {
   type = object({
     default_action = string
     bypass         = optional(string, "AzureServices")
-    ip_rules       = optional(string)
+    ip_rules       = optional(list(string))
+    private_link_access = optional(object({
+      endpoint_resource_id = string
+      endpoint_tenant_id = optional(string)
+    }))
   })
 }
 
 ## Storage share variables
 variable "storage_share" {
-  description = "Specifies the storage shaares"
+  description = "Specifies the storage shares"
   type = list(object({
     name             = string
     access_tier      = optional(string)
