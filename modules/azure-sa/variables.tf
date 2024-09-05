@@ -42,8 +42,8 @@ variable "storage_account" {
     public_network_access_enabled    = optional(bool, true)
 
     identity = optional(object({
-      type         = optional(string, "SystemAssigned")
-      identity_ids = optional(list(string), [])
+      type         = lookup(var.storage_account.identity, "type", "SystemAssigned")
+      identity_ids = lookup(var.storage_account.identity, "identity_ids", [])
     }))
     tags = optional(map(string), {})
   })
@@ -149,6 +149,7 @@ variable "storage_blob" {
   default = null
 }
 
+## Storage queue variables
 variable "storage_queue" {
   description = "Specifies the storage queues"
   type = list(object({
@@ -158,6 +159,7 @@ variable "storage_queue" {
   default = null
 }
 
+## Storage table variables
 variable "storage_table" {
   description = "Specifies the storage tables"
   type = list(object({
