@@ -100,10 +100,13 @@ resource "azurerm_storage_share" "this" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
       id = acl.value.id
-      access_policy {
-        permissions = acl.access_policy != null ? lookup(acl.access_policy, "permissions", null) : null
-        start  = acl.access_policy != null ? lookup(acl.access_policy, "start", null) : null
-        expiry = acl.access_policy != null ? lookup(acl.access_policy, "expiry", null) : null
+      dynamic "access_policy" {
+        for_each = acl.access_policy != null ? [acl.access_policy] : []
+        content {
+          permissions = lookup(access_policy.value, "permissions", null)
+          start       = lookup(access_policy.value, "start", null)
+          expiry      = lookup(access_policy.value, "expiry", null)
+        }
       }
     }
   }
