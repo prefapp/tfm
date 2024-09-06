@@ -188,7 +188,7 @@ variable "storage_table" {
   default = null
 }
 
-
+## Lifecycle policy rules variable
 variable "lifecycle_policy_rule" {
   description = "List of lifecycle management rules for the Azure Storage Account"
   type = list(object({
@@ -235,4 +235,3 @@ variable "lifecycle_policy_rule" {
   }))
   default = []
 }
-
