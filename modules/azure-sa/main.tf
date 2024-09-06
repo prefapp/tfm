@@ -101,9 +101,9 @@ resource "azurerm_storage_share" "this" {
     content {
       id = acl.value.id
       access_policy {
-        permissions = lookup(acl.value.access_policy, "permissions", null)
-        start       = lookup(acl.value.access_policy, "start", null)
-        expiry      = lookup(acl.value.access_policy, "expiry", null)
+        permissions = acl.access_policy != null ? lookup(acl.access_policy, "permissions", null) : null
+        start  = acl.access_policy != null ? lookup(acl.access_policy, "start", null) : null
+        expiry = acl.access_policy != null ? lookup(acl.access_policy, "expiry", null) : null
       }
     }
   }
