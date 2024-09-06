@@ -61,8 +61,7 @@ resource "azurerm_storage_container" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob
 resource "azurerm_storage_blob" "this" {
-  for_each = {
-  for blob in var.storage_blob : "${blob.storage_container_name}-${blob.name}" => blob }
+  for_each = { for blob in var.storage_blob : "${blob.storage_container_name}-${blob.name}" => blob }
   name                   = each.value.name
   storage_account_name   = azurerm_storage_account.this.name
   storage_container_name = each.value.storage_container_name
@@ -98,13 +97,13 @@ resource "azurerm_storage_share" "this" {
   quota                = each.value.quota
   metadata             = each.value.metadata
   dynamic "acl" {
-    for_each = each.value.acl != null ? [each.value.acl] : []
+    for_each = each.value.acl != null ? each.value.acl : []
     content {
       id = acl.value.id
       access_policy {
-        permissions = lookup(acl.value.access_policy, "permissions", "")
-        start       = lookup(acl.value.access_policy, "start", "")
-        expiry      = lookup(acl.value.access_policy, "expiry", "")
+        permissions = lookup(acl.value.access_policy, "permissions", null)
+        start       = lookup(acl.value.access_policy, "start", null)
+        expiry      = lookup(acl.value.access_policy, "expiry", null)
       }
     }
   }
@@ -120,9 +119,9 @@ resource "azurerm_storage_table" "this" {
     content {
       id = acl.value.id
       access_policy {
-        permissions = lookup(acl.value.access_policy, "permissions", "")
-        start       = lookup(acl.value.access_policy, "start", "")
-        expiry      = lookup(acl.value.access_policy, "expiry", "")
+        permissions = lookup(acl.value.access_policy, "permissions", null)
+        start       = lookup(acl.value.access_policy, "start", null)
+        expiry      = lookup(acl.value.access_policy, "expiry", null)
       }
     }
   }
