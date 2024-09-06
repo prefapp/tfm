@@ -96,12 +96,14 @@ resource "azurerm_storage_share" "this" {
   enabled_protocol     = each.value.enabled_protocol
   quota                = each.value.quota
   metadata             = each.value.metadata
+
   dynamic "acl" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
       id = acl.value.id
+
       dynamic "access_policy" {
-        for_each = acl.access_policy != null ? [acl.access_policy] : []
+        for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
         content {
           permissions = lookup(access_policy.value, "permissions", null)
           start       = lookup(access_policy.value, "start", null)
