@@ -102,9 +102,9 @@ resource "azurerm_storage_share" "this" {
     content {
       id = acl.value.id
       access_policy {
-        permissions = lookup(acl.value.access_policy, "permissions", null)
-        start       = lookup(acl.value.access_policy, "start", null)
-        expiry      = lookup(acl.value.access_policy, "expiry", null)
+        permissions = lookup(acl.value.access_policy, "permissions", "")
+        start       = lookup(acl.value.access_policy, "start", "")
+        expiry      = lookup(acl.value.access_policy, "expiry", "")
       }
     }
   }
@@ -120,9 +120,9 @@ resource "azurerm_storage_table" "this" {
     content {
       id = acl.value.id
       access_policy {
-        permissions = lookup(acl.value.access_policy, "permissions", null)
-        start       = lookup(acl.value.access_policy, "start", null)
-        expiry      = lookup(acl.value.access_policy, "expiry", null)
+        permissions = lookup(acl.value.access_policy, "permissions", "")
+        start       = lookup(acl.value.access_policy, "start", "")
+        expiry      = lookup(acl.value.access_policy, "expiry", "")
       }
     }
   }
