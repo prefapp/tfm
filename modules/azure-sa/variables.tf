@@ -157,6 +157,7 @@ variable "storage_blob" {
     source_content         = optional(string)
     source_uri             = optional(string)
     parallelism            = optional(number)
+    metadata               = optional(map(string))
   }))
   default = null
 }

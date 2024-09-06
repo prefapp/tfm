@@ -77,6 +77,7 @@ resource "azurerm_storage_blob" "this" {
   source_content         = each.value.source_content
   source_uri             = each.value.source_uri
   parallelism            = each.value.parallelism
+  metadata               = each.value.metadata
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue
@@ -97,13 +98,13 @@ resource "azurerm_storage_share" "this" {
   quota                = each.value.quota
   metadata             = each.value.metadata
   dynamic "acl" {
-    for_each = each.value.acl != null ? each.value.acl : []
+    for_each = each.value.acl != null ? [each.value.acl] : []
     content {
       id = acl.value.id
       access_policy {
-        permissions = acl.value.access_policy.permissions
-        start       = acl.value.access_policy.start
-        expiry      = acl.value.access_policy.expiry
+        permissions = lookup(acl.value.access_policy, "permissions", null)
+        start       = lookup(acl.value.access_policy, "start", null)
+        expiry      = lookup(acl.value.access_policy, "expiry", null)
       }
     }
   }
@@ -119,9 +120,9 @@ resource "azurerm_storage_table" "this" {
     content {
       id = acl.value.id
       access_policy {
-        permissions = acl.value.access_policy.permissions
-        start       = acl.value.access_policy.start
-        expiry      = acl.value.access_policy.expiry
+        permissions = lookup(acl.value.access_policy, "permissions", null)
+        start       = lookup(acl.value.access_policy, "start", null)
+        expiry      = lookup(acl.value.access_policy, "expiry", null)
       }
     }
   }
