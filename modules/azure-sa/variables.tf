@@ -84,7 +84,7 @@ variable "storage_account" {
   # Validation for identity type and identity_ids
   validation {
     condition = (
-      var.storage_account.identity == null || (
+      var.storage_account.identity == null ? false : (
         (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") && length(var.storage_account.identity.identity_ids) > 0
       ) || (
         var.storage_account.identity.type != "UserAssigned" && var.storage_account.identity.type != "SystemAssigned, UserAssigned"
