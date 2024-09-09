@@ -40,11 +40,11 @@ variable "storage_account" {
     https_traffic_only_enabled       = optional(bool, true)
     min_tls_version                  = optional(string, "TLS1_2")
     public_network_access_enabled    = optional(bool, true)
+    tags = optional(map(string), {})
     identity = optional(object({
       type         = optional(string, "SystemAssigned")
       identity_ids = optional(list(string), [])
     }))
-    tags = optional(map(string), {})
   })
 
   # Validation block for `account_kind`

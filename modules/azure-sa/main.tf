@@ -17,15 +17,20 @@ data "azurerm_resource_group" "this" {
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
 resource "azurerm_storage_account" "this" {
-  name                       = var.storage_account.name
-  resource_group_name        = data.azurerm_resource_group.this.name
-  location                   = data.azurerm_resource_group.this.location
-  account_kind               = var.storage_account.account_kind
-  account_tier               = var.storage_account.account_tier
-  account_replication_type   = var.storage_account.account_replication_type
-  https_traffic_only_enabled = var.storage_account.https_traffic_only_enabled
-  min_tls_version            = var.storage_account.min_tls_version
-  tags                       = var.tags
+  name                             = var.storage_account.name
+  resource_group_name              = data.azurerm_resource_group.this.name
+  location                         = data.azurerm_resource_group.this.location
+  account_tier                     = var.storage_account.account_tier
+  account_replication_type         = var.storage_account.account_replication_type
+  account_kind                     = var.storage_account.account_kind
+  access_tier                      = var.storage_account.access_tier
+  cross_tenant_replication_enabled = var.storage_account.cross_tenant_replication_enabled
+  edge_zone                        = var.storage_account.edge_zone
+  allow_nested_items_to_be_public  = var.storage_account.allow_nested_items_to_be_public
+  https_traffic_only_enabled       = var.storage_account.https_traffic_only_enabled
+  min_tls_version                  = var.storage_account.min_tls_version
+  public_network_access_enabled    = var.storage_account.public_network_access_enabled
+  tags                             = var.tags
   dynamic "identity" {
     for_each = var.storage_account.identity != null ? [var.storage_account.identity] : []
     content {
