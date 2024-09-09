@@ -11,7 +11,7 @@ variable "resource_group_name" {
 }
 
 ## Network variables
-variable "subnet" {
+variable "allowed_subnets" {
   description = "Subnet values for data"
   type = list(object({
     name           = string
@@ -20,7 +20,7 @@ variable "subnet" {
   }))
 }
 
-variable "additional_subnet_ids" {
+variable "additional_allowed_subnet_ids" {
   description = "Additional subnets id for storage account network rules"
   type        = list(string)
 }
@@ -93,7 +93,7 @@ variable "storage_account" {
 }
 
 ## Storage account network rules
-variable "storage_account_network_rules" {
+variable "network_rules" {
   description = "Network rules for the storage account"
   type = object({
     default_action = string
@@ -107,7 +107,7 @@ variable "storage_account_network_rules" {
 }
 
 ## Storage container variables
-variable "storage_container" {
+variable "containers" {
   description = "Specifies the storage containers"
   type = list(object({
     name                              = string
@@ -120,7 +120,7 @@ variable "storage_container" {
 }
 
 ## Storage share variables
-variable "storage_share" {
+variable "shares" {
   description = "Specifies the storage shares"
   type = list(object({
     name             = string
@@ -140,31 +140,8 @@ variable "storage_share" {
   default = null
 }
 
-
-## Storage blob variables
-variable "storage_blob" {
-  description = "Specifies the storage blobs"
-  type = list(object({
-    name                   = string
-    storage_container_name = string
-    type                   = string
-    source                 = optional(string)
-    size                   = optional(number)
-    cache_control          = optional(string)
-    content_type           = optional(string)
-    content_md5            = optional(string)
-    access_tier            = optional(string)
-    encryption_scope       = optional(string)
-    source_content         = optional(string)
-    source_uri             = optional(string)
-    parallelism            = optional(number)
-    metadata               = optional(map(string))
-  }))
-  default = null
-}
-
 ## Storage queue variables
-variable "storage_queue" {
+variable "queues" {
   description = "Specifies the storage queues"
   type = list(object({
     name     = string
@@ -174,7 +151,7 @@ variable "storage_queue" {
 }
 
 ## Storage table variables
-variable "storage_table" {
+variable "tables" {
   description = "Specifies the storage tables"
   type = list(object({
     name = string
@@ -191,7 +168,7 @@ variable "storage_table" {
 }
 
 ## Lifecycle policy rules variable
-variable "lifecycle_policy_rule" {
+variable "lifecycle_policy_rules" {
   description = "List of lifecycle management rules for the Azure Storage Account"
   type = list(object({
     name    = string

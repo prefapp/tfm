@@ -2,7 +2,7 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "this" {
   for_each = {
-    for subnet in var.subnet : subnet.name => subnet
+    for subnet in var.allowed_subnets : subnet.name => subnet
   }
   name                 = each.value.name
   virtual_network_name = each.value.vnet
@@ -41,12 +41,12 @@ resource "azurerm_storage_account" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules
 resource "azurerm_storage_account_network_rules" "this" {
   storage_account_id         = azurerm_storage_account.this.id
-  default_action             = var.storage_account_network_rules.default_action
-  virtual_network_subnet_ids = concat(coalesce([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids, []))
-  ip_rules                   = concat(coalesce(var.storage_account_network_rules.ip_rules, []))
-  bypass                     = [var.storage_account_network_rules.bypass]
+  default_action             = var.network_rules.default_action
+  virtual_network_subnet_ids = concat(coalesce([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_allowed_subnet_ids, []))
+  ip_rules                   = concat(coalesce(var.network_rules.ip_rules, []))
+  bypass                     = [var.network_rules.bypass]
   dynamic "private_link_access" {
-    for_each = var.storage_account_network_rules.private_link_access != null ? var.storage_account_network_rules.private_link_access : []
+    for_each = var.network_rules.private_link_access != null ? var.network_rules.private_link_access : []
     content {
       endpoint_resource_id = private_link_access.value.endpoint_resource_id
       endpoint_tenant_id   = lookup(private_link_access.value, "endpoint_tenant_id", null)
@@ -56,7 +56,7 @@ resource "azurerm_storage_account_network_rules" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container.html
 resource "azurerm_storage_container" "this" {
-  for_each                          = var.storage_container != null ? { for container in var.storage_container : container.name => container } : {}
+  for_each                          = var.containers != null ? { for container in var.containers : container.name => container } : {}
   name                              = each.value.name
   storage_account_name              = azurerm_storage_account.this.name
   container_access_type             = each.value.container_access_type
@@ -65,29 +65,9 @@ resource "azurerm_storage_container" "this" {
   metadata                          = each.value.metadata
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob
-resource "azurerm_storage_blob" "this" {
-  for_each               = { for blob in var.storage_blob : "${blob.storage_container_name}-${blob.name}" => blob }
-  name                   = each.value.name
-  storage_account_name   = azurerm_storage_account.this.name
-  storage_container_name = each.value.storage_container_name
-  type                   = each.value.type
-  source                 = each.value.source
-  size                   = each.value.size
-  cache_control          = each.value.cache_control
-  content_type           = each.value.content_type
-  content_md5            = each.value.content_md5
-  access_tier            = each.value.access_tier
-  encryption_scope       = each.value.encryption_scope
-  source_content         = each.value.source_content
-  source_uri             = each.value.source_uri
-  parallelism            = each.value.parallelism
-  metadata               = each.value.metadata
-}
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share
 resource "azurerm_storage_share" "this" {
-  for_each             = var.storage_share != null ? { for share in var.storage_share : share.name => share } : {}
+  for_each             = var.shares != null ? { for share in var.shares : share.name => share } : {}
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.this.name
   access_tier          = each.value.access_tier
@@ -112,7 +92,7 @@ resource "azurerm_storage_share" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue
 resource "azurerm_storage_queue" "this" {
-  for_each             = var.storage_queue != null ? { for queue in var.storage_queue : queue.name => queue } : {}
+  for_each             = var.queues != null ? { for queue in var.queues : queue.name => queue } : {}
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.this.name
   metadata             = each.value.metadata
@@ -120,7 +100,7 @@ resource "azurerm_storage_queue" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_table
 resource "azurerm_storage_table" "this" {
-  for_each             = var.storage_table != null ? { for table in var.storage_table : table.name => table } : {}
+  for_each             = var.tables != null ? { for table in var.tables : table.name => table } : {}
   name                 = each.value.name
   storage_account_name = azurerm_storage_account.this.name
   dynamic "acl" {
@@ -140,7 +120,7 @@ resource "azurerm_storage_table" "this" {
 resource "azurerm_storage_management_policy" "this" {
   storage_account_id = azurerm_storage_account.this.id
   dynamic "rule" {
-    for_each = var.lifecycle_policy_rule
+    for_each = var.lifecycle_policy_rules
     content {
       name    = rule.value.name
       enabled = rule.value.enabled
