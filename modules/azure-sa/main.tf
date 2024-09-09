@@ -33,7 +33,6 @@ resource "azurerm_storage_account" "this" {
       identity_ids = identity.value.identity_ids
     }
   }
-
   lifecycle {
     ignore_changes = [tags]
   }
@@ -86,14 +85,6 @@ resource "azurerm_storage_blob" "this" {
   metadata               = each.value.metadata
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue
-resource "azurerm_storage_queue" "this" {
-  for_each             = var.storage_queue != null ? { for queue in var.storage_queue : queue.name => queue } : {}
-  name                 = each.value.name
-  storage_account_name = azurerm_storage_account.this.name
-  metadata             = each.value.metadata
-}
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share
 resource "azurerm_storage_share" "this" {
   for_each             = var.storage_share != null ? { for share in var.storage_share : share.name => share } : {}
@@ -103,7 +94,6 @@ resource "azurerm_storage_share" "this" {
   enabled_protocol     = each.value.enabled_protocol
   quota                = each.value.quota
   metadata             = each.value.metadata
-
   dynamic "acl" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
@@ -118,6 +108,14 @@ resource "azurerm_storage_share" "this" {
       }
     }
   }
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue
+resource "azurerm_storage_queue" "this" {
+  for_each             = var.storage_queue != null ? { for queue in var.storage_queue : queue.name => queue } : {}
+  name                 = each.value.name
+  storage_account_name = azurerm_storage_account.this.name
+  metadata             = each.value.metadata
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_table
@@ -198,4 +196,3 @@ resource "azurerm_storage_management_policy" "this" {
     }
   }
 }
-

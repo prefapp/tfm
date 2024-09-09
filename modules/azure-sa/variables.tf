@@ -106,6 +106,19 @@ variable "storage_account_network_rules" {
   })
 }
 
+## Storage container variables
+variable "storage_container" {
+  description = "Specifies the storage containers"
+  type = list(object({
+    name                              = string
+    container_access_type             = optional(string)
+    default_encryption_scope          = optional(string)
+    encryption_scope_override_enabled = optional(bool)
+    metadata                          = optional(map(string))
+  }))
+  default = null
+}
+
 ## Storage share variables
 variable "storage_share" {
   description = "Specifies the storage shares"
@@ -127,18 +140,6 @@ variable "storage_share" {
   default = null
 }
 
-## Storage container variables
-variable "storage_container" {
-  description = "Specifies the storage containers"
-  type = list(object({
-    name                              = string
-    container_access_type             = optional(string)
-    default_encryption_scope          = optional(string)
-    encryption_scope_override_enabled = optional(bool)
-    metadata                          = optional(map(string))
-  }))
-  default = null
-}
 
 ## Storage blob variables
 variable "storage_blob" {
