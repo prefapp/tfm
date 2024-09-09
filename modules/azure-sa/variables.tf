@@ -40,7 +40,7 @@ variable "storage_account" {
     https_traffic_only_enabled       = optional(bool, true)
     min_tls_version                  = optional(string, "TLS1_2")
     public_network_access_enabled    = optional(bool, true)
-    tags = optional(map(string), {})
+    tags                             = optional(map(string), {})
     identity = optional(object({
       type         = optional(string, "SystemAssigned")
       identity_ids = optional(list(string), [])
@@ -85,8 +85,11 @@ variable "storage_account" {
   validation {
     condition = (
       var.storage_account.identity == null ||
-      (var.storage_account.identity.type != "UserAssigned" && var.storage_account.identity.type != "SystemAssigned, UserAssigned") ||
-      (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") && length(var.storage_account.identity.identity_ids) > 0
+      (
+        var.storage_account.identity.type == null ||
+        (var.storage_account.identity.type != "UserAssigned" && var.storage_account.identity.type != "SystemAssigned, UserAssigned") ||
+        (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") && length(var.storage_account.identity.identity_ids) > 0
+      )
     )
     error_message = "identity_ids must be provided when identity.type is set to 'UserAssigned' or 'SystemAssigned, UserAssigned'."
   }
