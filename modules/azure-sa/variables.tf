@@ -85,11 +85,8 @@ variable "storage_account" {
   validation {
     condition = (
       var.storage_account.identity == null ||
-      (
-        var.storage_account.identity.type == null ||
-        (var.storage_account.identity.type != "UserAssigned" && var.storage_account.identity.type != "SystemAssigned, UserAssigned") ||
-        (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") && length(var.storage_account.identity.identity_ids) > 0
-      )
+      (var.storage_account.identity.type != "UserAssigned" && var.storage_account.identity.type != "SystemAssigned, UserAssigned") ||
+      (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") && length(var.storage_account.identity.identity_ids) > 0
     )
     error_message = "identity_ids must be provided when identity.type is set to 'UserAssigned' or 'SystemAssigned, UserAssigned'."
   }

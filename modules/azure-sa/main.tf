@@ -34,8 +34,8 @@ resource "azurerm_storage_account" "this" {
   dynamic "identity" {
     for_each = var.storage_account.identity != null ? [var.storage_account.identity] : []
     content {
-      type         = identity.value.type
-      identity_ids = identity.value.identity_ids
+      type         = lookup(identity.value, "type", null)
+      identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
   lifecycle {
