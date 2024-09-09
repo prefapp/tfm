@@ -46,9 +46,12 @@ resource "azurerm_storage_account_network_rules" "this" {
   virtual_network_subnet_ids = concat(coalesce([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids, []))
   ip_rules                   = concat(coalesce(var.storage_account_network_rules.ip_rules, []))
   bypass                     = [var.storage_account_network_rules.bypass]
-  private_link_access {
-    endpoint_resource_id = var.storage_account_network_rules.private_link_access.endpoint_resource_id
-    endpoint_tenant_id   = var.storage_account_network_rules.private_link_access.endpoint_tenant_id
+  dynamic "private_link_access" {
+    for_each = var.storage_account_network_rules.private_link_access != null ? var.storage_account_network_rules.private_link_access : []
+    content {
+      endpoint_resource_id = private_link_access.value.endpoint_resource_id
+      endpoint_tenant_id   = lookup(private_link_access.value, "endpoint_tenant_id", null)
+    }
   }
 }
 
@@ -105,7 +108,6 @@ resource "azurerm_storage_share" "this" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
       id = acl.value.id
-
       dynamic "access_policy" {
         for_each = acl.value.access_policy != null ? [acl.value.access_policy] : []
         content {
