@@ -46,6 +46,10 @@ resource "azurerm_storage_account_network_rules" "this" {
   virtual_network_subnet_ids = concat(coalesce([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_subnet_ids, []))
   ip_rules                   = concat(coalesce(var.storage_account_network_rules.ip_rules, []))
   bypass                     = [var.storage_account_network_rules.bypass]
+  private_link_access {
+    endpoint_resource_id = var.storage_account_network_rules.private_link_access.endpoint_resource_id
+    endpoint_tenant_id   = var.storage_account_network_rules.private_link_access.endpoint_tenant_id
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container.html
@@ -61,7 +65,7 @@ resource "azurerm_storage_container" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob
 resource "azurerm_storage_blob" "this" {
-  for_each = { for blob in var.storage_blob : "${blob.storage_container_name}-${blob.name}" => blob }
+  for_each               = { for blob in var.storage_blob : "${blob.storage_container_name}-${blob.name}" => blob }
   name                   = each.value.name
   storage_account_name   = azurerm_storage_account.this.name
   storage_container_name = each.value.storage_container_name

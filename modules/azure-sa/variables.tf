@@ -99,10 +99,10 @@ variable "storage_account_network_rules" {
     default_action = string
     bypass         = optional(string, "AzureServices")
     ip_rules       = optional(list(string))
-    private_link_access = optional(object({
+    private_link_access = optional(list(object({
       endpoint_resource_id = string
       endpoint_tenant_id   = optional(string)
-    }))
+    })))
   })
 }
 
