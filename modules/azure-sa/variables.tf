@@ -215,5 +215,5 @@ variable "lifecycle_policy_rules" {
       }), {})
     })
   }))
-  default = []
+  default = null
 }
