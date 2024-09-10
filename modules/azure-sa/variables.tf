@@ -84,15 +84,16 @@ variable "storage_account" {
   # Validation for identity type and identity_ids
   validation {
     condition = (
-      var.storage_account.identity == null ? false : (
-        (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") 
-          ? length(var.storage_account.identity.identity_ids) > 0 
-          : true
+      var.storage_account.identity == null ? true : (
+        var.storage_account.identity.type == "SystemAssigned" ||
+        (var.storage_account.identity.type == "UserAssigned" || var.storage_account.identity.type == "SystemAssigned, UserAssigned") &&
+        length(var.storage_account.identity.identity_ids) > 0
       )
     )
-    error_message = "identity_ids must be provided when identity.type is set to 'UserAssigned' or 'SystemAssigned, UserAssigned'."
+    error_message = "When identity.type is set to 'UserAssigned' or 'SystemAssigned, UserAssigned', identity_ids must be provided."
   }
 }
+
 
 ## Storage account network rules
 variable "network_rules" {
