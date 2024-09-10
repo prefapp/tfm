@@ -47,7 +47,7 @@ resource "azurerm_storage_account" "this" {
 resource "azurerm_storage_account_network_rules" "this" {
   storage_account_id         = azurerm_storage_account.this.id
   default_action             = var.network_rules.default_action
-  virtual_network_subnet_ids = concat(coalesce([for subnet in data.azurerm_subnet.this : subnet.id], var.additional_allowed_subnet_ids, []))
+  virtual_network_subnet_ids = concat([for subnet in data.azurerm_subnet.this : subnet.id], coalesce(var.additional_allowed_subnet_ids, []))
   ip_rules                   = concat(coalesce(var.network_rules.ip_rules, []))
   bypass                     = [var.network_rules.bypass]
   dynamic "private_link_access" {
