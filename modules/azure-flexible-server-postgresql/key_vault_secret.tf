@@ -1,5 +1,6 @@
 # We only generate the password if necessary
 resource "random_password" "password" {
+  count   = local.data.password.create ? 1 : 0
   length  = 20
   special = true
 }
