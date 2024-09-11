@@ -26,7 +26,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
     start_minute = local.data.maintainance_window.start_minute
   }
   administrator_login    = local.data.administrator_login
-  administrator_password = data.azurerm_key_vault_secret.password.value
+  administrator_password = local.data.password.create ? random_password.password[0].result : null
   zone                   = lookup(local.data.server, "zone", null)
   storage_mb             = local.data.server.disk_size
   sku_name               = local.data.server.sku_name
