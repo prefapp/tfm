@@ -72,6 +72,16 @@ variable "enable_irsa" {
 
 }
 
+variable "aws_auth_accounts" {
+
+  description = "Additional AWS account numbers to add to the aws-auth configmap."
+
+  type = list(string)
+
+  default = []
+
+}
+
 variable "aws_auth_users" {
 
   description = "Additional IAM users to add to the aws-auth configmap."
@@ -90,22 +100,22 @@ variable "aws_auth_users" {
 }
 
 
-variable "aws_auth_roles" {
+# variable "aws_auth_roles" {
 
-  description = "Additional IAM roles to add to the aws-auth configmap."
+#   description = "Additional IAM roles to add to the aws-auth configmap."
 
-  type = list(object({
+#   type = list(object({
 
-    rolearn = string
+#     rolearn = string
 
-    username = string
+#     username = string
 
-    groups = list(string)
+#     groups = list(string)
 
-  }))
+#   }))
 
-  default = []
-}
+#   default = []
+# }
 
 # IAMs
 variable "create_alb_ingress_iam" {
@@ -274,8 +284,6 @@ variable "cluster_addons" {
     addon_version = optional(string)
 
     addon_disabled = optional(bool)
-
-    resolve_conflicts = optional(string)
 
     configuration_values = optional(object({
 
