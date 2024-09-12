@@ -11,6 +11,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
   version                           = local.data.server.version
   delegated_subnet_id               = local.subnet_id
   private_dns_zone_id               = data.azurerm_private_dns_zone.private_dns_zone.id
+  public_network_access_enabled     = lookup(local.data.server, "public_network_access_enabled", false)
   backup_retention_days             = local.data.backup_retention_days
   create_mode                       = local.data.server_creation.mode
   point_in_time_restore_time_in_utc = local.data.server_creation.mode == "PointInTimeRestore" ? local.data.server_creation.from_pitr.pitr : null
@@ -25,7 +26,7 @@ resource "azurerm_postgresql_flexible_server" "postgresql_flexible_server" {
     start_minute = local.data.maintainance_window.start_minute
   }
   administrator_login    = local.data.administrator_login
-  administrator_password = data.azurerm_key_vault_secret.password.value
+  administrator_password = local.data.password.create ? random_password.password[0].result : null
   zone                   = lookup(local.data.server, "zone", null)
   storage_mb             = local.data.server.disk_size
   sku_name               = local.data.server.sku_name

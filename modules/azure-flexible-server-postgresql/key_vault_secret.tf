@@ -1,5 +1,6 @@
 # We only generate the password if necessary
 resource "random_password" "password" {
+  count   = local.data.password.create ? 1 : 0
   length  = 20
   special = true
 }
@@ -10,7 +11,7 @@ resource "azurerm_key_vault_secret" "password_create" {
   count        = local.data.password.create ? 1 : 0
   key_vault_id = data.azurerm_key_vault.key_vault.id
   name         = local.data.password.key_vault_secret_name
-  value        = random_password.password.result
+  value        = random_password.password[0].result ? random_password.password[0].result : null
   lifecycle {
     ignore_changes = [value]
   }

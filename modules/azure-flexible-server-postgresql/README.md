@@ -41,6 +41,7 @@ server:
   sku_name: "GP_Standard_D2ds_v4"
   tags: {}
   zone: "1"
+  public_network_access_enabled: false
   replication_role:
 
 server_creation:
