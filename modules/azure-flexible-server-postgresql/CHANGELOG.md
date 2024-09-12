@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.6.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.5.1...azure-flexible-server-postgresql-v2.6.0) (2024-09-12)
+
+
+### Features
+
+* azure-kv module ([b47ffd5](https://github.com/prefapp/tfm/commit/b47ffd51f59e5f5b15365440fe776f0b8a7e4402))
+* Deploy release ([#127](https://github.com/prefapp/tfm/issues/127)) ([2d5c56b](https://github.com/prefapp/tfm/commit/2d5c56bcd9f1443136a9a4c34e19a3874dcf7ea5))
+* update readme ([d85a475](https://github.com/prefapp/tfm/commit/d85a475ec579e4eefe9c16c2530597768b0e2bed))
+* update README.md ([#101](https://github.com/prefapp/tfm/issues/101)) ([b47ffd5](https://github.com/prefapp/tfm/commit/b47ffd51f59e5f5b15365440fe776f0b8a7e4402))
+* update README.md ([#99](https://github.com/prefapp/tfm/issues/99)) ([d85a475](https://github.com/prefapp/tfm/commit/d85a475ec579e4eefe9c16c2530597768b0e2bed))
+
+
+### Bug Fixes
+
+* add vars to upgrade provider, versions.tf, fix secrets logic ([#143](https://github.com/prefapp/tfm/issues/143)) ([366a231](https://github.com/prefapp/tfm/commit/366a2310dd4ecdda376a360fb51825d813950620))
+
 ## [2.5.1](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.5.0...azure-flexible-server-postgresql-v2.5.1) (2024-01-25)
 
 
