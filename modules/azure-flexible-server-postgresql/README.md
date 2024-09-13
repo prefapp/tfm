@@ -77,7 +77,6 @@ password:
   key_vault_name: test-tfm-prefapp2
   key_vault_resource_group: test-modulo
   key_vault_secret_name: pg-pass2
-  create: true
 
 resource_group:
   name: test-modulo
@@ -105,7 +104,7 @@ The creation of a server from a PITR will create a new server. If the source is 
 az postgres flexible-server backup list --resource-group test-modulo --name mi-server
 ```
 
-## Optional Password creation
+## Password creation
 
 Now it suffises to pass a key vault , a resource group and a key name to have a random password created, inserted as a secret in the KV and as the pass of the server. 
 
@@ -114,15 +113,6 @@ password:
   key_vault_name: test-tfm-prefapp
   key_vault_resource_group: test-modulo
   key_vault_secret_name: pg-pass
-  create: true
 ```
 
-If the password is to be supplied not created by the module:
-
-```yaml
-password:
-  key_vault_name: test-tfm-prefapp
-  key_vault_resource_group: test-modulo
-  key_vault_secret_name: pg-pass
-  create: false
-```
+If the password exists it will no produce any changes, because it's vinculated to the `random_password` resource
