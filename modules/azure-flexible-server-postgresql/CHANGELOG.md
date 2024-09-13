@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.6.0...azure-flexible-server-postgresql-v2.6.1) (2024-09-13)
+
+
+### Bug Fixes
+
+* avoid validations ([#158](https://github.com/prefapp/tfm/issues/158)) ([62080fd](https://github.com/prefapp/tfm/commit/62080fd0e7b42a5490da5e141da85e7906d61e5f))
+
 ## [2.6.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.5.1...azure-flexible-server-postgresql-v2.6.0) (2024-09-12)
 
 
