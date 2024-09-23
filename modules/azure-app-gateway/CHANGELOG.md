@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.1.0...azure-app-gateway-v0.2.0) (2024-09-23)
+
+
+### Features
+
+* Deploy release ([#127](https://github.com/prefapp/tfm/issues/127)) ([2d5c56b](https://github.com/prefapp/tfm/commit/2d5c56bcd9f1443136a9a4c34e19a3874dcf7ea5))
+
 ## 0.1.0 (2024-08-02)
 
 
