@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.5.2...azure-aks-v1.6.0) (2024-09-23)
+
+
+### Features
+
+* Add upgrade_settings into AKS module ([#161](https://github.com/prefapp/tfm/issues/161)) ([f9692c7](https://github.com/prefapp/tfm/commit/f9692c7a3f3cec83a7695b6db914451da689ae8f))
+* Deploy release ([#127](https://github.com/prefapp/tfm/issues/127)) ([2d5c56b](https://github.com/prefapp/tfm/commit/2d5c56bcd9f1443136a9a4c34e19a3874dcf7ea5))
+
 ## [1.5.2](https://github.com/prefapp/tfm/compare/azure-aks-v1.5.1...azure-aks-v1.5.2) (2024-08-01)
 
 
