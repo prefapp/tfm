@@ -51,5 +51,6 @@ module "aks" {
   auto_scaler_profile_scan_interval                    = var.auto_scaler_profile_scan_interval
   auto_scaler_profile_skip_nodes_with_local_storage    = var.auto_scaler_profile_skip_nodes_with_local_storage
   auto_scaler_profile_skip_nodes_with_system_pods      = var.auto_scaler_profile_skip_nodes_with_system_pods
-  tags                                                 = var.tags
+  tags                                                 = var.tags  
+  private_cluster_enabled = true
 }
