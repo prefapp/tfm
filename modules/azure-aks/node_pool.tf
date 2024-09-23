@@ -15,6 +15,7 @@ locals {
       mode                  = pool.mode
       node_labels           = pool.custom_labels
       orchestrator_version  = pool.orchestrator_version == "" ? var.aks_orchestrator_version : pool.orchestrator_version
+      upgrade_settings      = pool.upgrade_settings
     }
   }
 }
