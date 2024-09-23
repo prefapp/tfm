@@ -22,6 +22,7 @@ module "aks" {
   load_balancer_profile_outbound_ip_address_ids        = [data.azurerm_public_ip.aks_public_ip.id]
   os_disk_size_gb                                      = var.aks_os_disk_size_gb
   agents_pool_max_surge                                = var.aks_agents_pool_max_surge
+  agents_pool_drain_timeout_in_minutes                 = var.aks_agents_pool_drain_timeout_in_minutes
   sku_tier                                             = var.aks_sku_tier
   rbac_aad_azure_rbac_enabled                          = true
   rbac_aad_managed                                     = true

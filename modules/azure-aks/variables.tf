@@ -126,6 +126,11 @@ variable "node_os_channel_upgrade" {
   default     = "None"
 }
 
+variable "agents_pool_drain_timeout_in_minutes" {
+  description = "The maximum time in minutes to wait for a node to drain during a node pool upgrade"
+  default     = 30
+}
+
 # Extra node pools variables
 variable "extra_node_pools" {
   description = "A list of extra node pools to create"
@@ -237,13 +242,11 @@ variable "auto_scaler_profile_scale_down_unready" {
   default     = 0
 }
 
-
 variable "auto_scaler_profile_scale_down_utilization_threshold" {
   description = "The scale down utilization threshold for the auto scaler profile"
   type        = number
   default     = 0.5
 }
-
 
 variable "auto_scaler_profile_scan_interval" {
   description = "The scan interval for the auto scaler profile"
