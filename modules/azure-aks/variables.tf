@@ -126,7 +126,7 @@ variable "node_os_channel_upgrade" {
   default     = "None"
 }
 
-variable "agents_pool_drain_timeout_in_minutes" {
+variable "aks_agents_pool_drain_timeout_in_minutes" {
   description = "The maximum time in minutes to wait for a node to drain during a node pool upgrade"
   default     = 30
 }
