@@ -142,7 +142,8 @@ variable "extra_node_pools" {
     os_disk_type          = optional(string, "Ephemeral")
     mode                  = optional(string, "User")
     custom_labels         = map(string)
-    orchestrator_version  = optional(string)
+    orchestrator_version  = optional(string, "")
+    upgrade_settings = optional(object)
   }))
   default = []
 }
