@@ -146,6 +146,7 @@ variable "extra_node_pools" {
     upgrade_settings = optional(object({
       drain_timeout_in_minutes      = number
       node_soak_duration_in_minutes = number
+      max_surge                     = string
     }))
   }))
   default = []
