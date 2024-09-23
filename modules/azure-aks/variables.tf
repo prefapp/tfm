@@ -142,12 +142,7 @@ variable "extra_node_pools" {
     os_disk_type          = optional(string, "Ephemeral")
     mode                  = optional(string, "User")
     custom_labels         = map(string)
-    orchestrator_version  = optional(string, "")
-    upgrade_settings = optional(object, {
-      max_surge = optional(string, "25%")
-      drain_timeout_in_minutes = optional(number, 10)
-      node_soak_duration_in_minutes = optional(number, 10)
-    })
+    orchestrator_version  = optional(string)
   }))
   default = []
 }
