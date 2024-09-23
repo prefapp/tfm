@@ -143,7 +143,11 @@ variable "extra_node_pools" {
     mode                  = optional(string, "User")
     custom_labels         = map(string)
     orchestrator_version  = optional(string, "")
-    upgrade_settings = optional(object)
+    upgrade_settings = optional(object({
+      drain_timeout_in_minutes      = number
+      node_soak_duration_in_minutes = number
+      max_surge                     = string
+    }))
   }))
   default = []
 }
