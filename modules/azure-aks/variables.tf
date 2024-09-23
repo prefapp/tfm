@@ -29,7 +29,7 @@ variable "public_ip_name" {
 variable "acr_map" {
   description = "The map of Azure Container Registries to link to the AKS cluster"
   type        = map(string)
-  default = {}
+  default     = {}
 }
 
 # AKS section variables
@@ -88,7 +88,7 @@ variable "aks_sku_tier" {
 variable "aks_default_pool_custom_labels" {
   description = "Default pool custom labels to apply to all nodes"
   type        = map(any)
-  default = {}
+  default     = {}
 }
 
 variable "oidc_issuer_enabled" {
@@ -118,12 +118,17 @@ variable "load_balancer_sku" {
 
 variable "temporary_name_for_rotation" {
   description = "Specifies the name of the temporary node pool used to cycle the default node pool for VM resizing"
-  default = "temppool"
+  default     = "temppool"
 }
 
 variable "node_os_channel_upgrade" {
-  description = "value"
-  default = "None"
+  description = "The automatic node channel upgrade setting for the AKS cluster"
+  default     = "None"
+}
+
+variable "aks_agents_pool_drain_timeout_in_minutes" {
+  description = "The maximum time in minutes to wait for a node to drain during a node pool upgrade"
+  default     = 30
 }
 
 # Extra node pools variables
@@ -143,6 +148,11 @@ variable "extra_node_pools" {
     mode                  = optional(string, "User")
     custom_labels         = map(string)
     orchestrator_version  = optional(string, "")
+    upgrade_settings = optional(object({
+      drain_timeout_in_minutes      = number
+      node_soak_duration_in_minutes = number
+      max_surge                     = string
+    }))
   }))
   default = []
 }
@@ -232,13 +242,11 @@ variable "auto_scaler_profile_scale_down_unready" {
   default     = 0
 }
 
-
 variable "auto_scaler_profile_scale_down_utilization_threshold" {
   description = "The scale down utilization threshold for the auto scaler profile"
   type        = number
   default     = 0.5
 }
-
 
 variable "auto_scaler_profile_scan_interval" {
   description = "The scan interval for the auto scaler profile"
