@@ -30,3 +30,7 @@ release-please maintains Release PRs:
 
 These Release PRs are kept up-to-date as additional work is merged. When you're
 ready to tag a release, simply merge the release PR.
+
+### Troubleshooting
+
+If you merge accidentaly a conventional commit, you can move the commits starting analysis to another commit following this guide https://github.com/googleapis/release-please/blob/288949797c6bfd95e08d74a6222e7d26e0020a7c/docs/manifest-releaser.md?plain=1#L140-L153
