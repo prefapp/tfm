@@ -44,6 +44,9 @@
         },
         "modules/azure-mi": {
             "package-name": "azure-mi"
+        },
+        "modules/azure-sa": {
+            "package-name": "azure-sa"
         }
     }
 }
