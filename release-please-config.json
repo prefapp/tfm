@@ -1,5 +1,5 @@
 {
-    "bootstrap-sha": "eebacdd6011d0bd95bb3a6abe5cf63ec34647df0",
+    "bootstrap-sha": "029e2a017e642654aa25e18f609ec3bb85badfb1",
     "release-type": "terraform-module",
     "separate-pull-requests": true,
     "packages": {
