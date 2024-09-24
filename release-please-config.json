@@ -1,6 +1,7 @@
 {
     "last-release-sha": "eebacdd6011d0bd95bb3a6abe5cf63ec34647df0",
     "separate-pull-requests": true,
+    "release-type": "terraform-module",
     "packages": {
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
