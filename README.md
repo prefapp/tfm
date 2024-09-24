@@ -1,5 +1,7 @@
 # 🚀 Release Please Versioning Management
 
+Check action doc https://github.com/googleapis/release-please-action
+
 This repo is managed by Release Please. This is an automated Semver control System.
 
 ## How release please works
