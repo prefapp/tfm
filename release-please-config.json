@@ -1,5 +1,5 @@
 {
-    "bootstrap-sha": "5b496064dbc77fffd9b38553090a35e9d511dcb0",
+    "bootstrap-sha": "3003a487c369faf9ae024c872e049973a8bd67e4",
     "separate-pull-requests": true,
     "packages": {
         "modules/aws-parameter-store": {
