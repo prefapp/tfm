@@ -3,59 +3,46 @@
     "separate-pull-requests": true,
     "packages": {
         "modules/aws-parameter-store": {
-            "package-name": "aws-parameter-store",
-            "release-type": "terraform-module"
+            "package-name": "aws-parameter-store"
         },
         "modules/aws-sso": {
             "package-name": "aws-sso"
         },
         "modules/azure-flexible-server-postgresql": {
-            "package-name": "azure-flexible-server-postgresql",
-            "release-type": "terraform-module"
+            "package-name": "azure-flexible-server-postgresql"
         },
         "modules/azure-oidc": {
-            "package-name": "azure-oidc",
-            "release-type": "terraform-module"
+            "package-name": "azure-oidc"
         },
         "modules/aws-oidc": {
-            "package-name": "aws-oidc",
-            "release-type": "terraform-module"
+            "package-name": "aws-oidc"
         },
         "modules/azure-resource-group": {
-            "package-name": "azure-resource-group",
-            "release-type": "terraform-module"
+            "package-name": "azure-resource-group"
         },
         "modules/azure-vnet-and-subnet": {
-            "package-name": "azure-vnet-subnet",
-            "release-type": "terraform-module"
+            "package-name": "azure-vnet-subnet"
         },
         "modules/azure-aks": {
-            "package-name": "azure-aks",
-            "release-type": "terraform-module"
+            "package-name": "azure-aks"
         },
         "modules/aws-eks": {
-            "package-name": "aws-eks",
-            "release-type": "terraform-module"
+            "package-name": "aws-eks"
         },
         "modules/azure-vnet-peering": {
-            "package-name": "azure-vnet-peering",
-            "release-type": "terraform-module"
+            "package-name": "azure-vnet-peering"
         },
         "modules/azuread-group": {
-            "package-name": "azuread-group",
-            "release-type": "terraform-module"
+            "package-name": "azuread-group"
         },
         "modules/azure-kv": {
-            "package-name": "azure-kv",
-            "release-type": "terraform-module"
+            "package-name": "azure-kv"
         },
         "modules/azure-app-gateway": {
-            "package-name": "azure-app-gateway",
-            "release-type": "terraform-module"
+            "package-name": "azure-app-gateway"
         },
         "modules/azure-mi": {
-            "package-name": "azure-mi",
-            "release-type": "terraform-module"
+            "package-name": "azure-mi"
         }
     }
 }
