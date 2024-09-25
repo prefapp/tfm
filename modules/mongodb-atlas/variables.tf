@@ -4,16 +4,6 @@ variable "mongo_region" {
   type        = string
 }
 
-variable "provider_name" {
-  description = "The provider name"
-  type        = string
-}
-
-variable "global_resource_group_name" {
-  description = "The global resource group name"
-  type        = string
-}
-
 # Project seccion variables
 variable "org_id" {
   description = "The organization ID"
@@ -71,16 +61,6 @@ variable "cluster_mongo_db_major_version" {
   type        = string
 }
 
-variable "cluster_provider_disk_type_name" {
-  description = "Provider disk type name"
-  type        = string
-}
-
-variable "cluster_provider_instance_size_name" {
-  description = "Provider instance size name"
-  type        = string
-}
-
 variable "cluster_num_shards" {
   description = "The number of shards"
   type        = number
@@ -135,49 +115,27 @@ variable "prefix_pass_name" {
   type        = string
 }
 
+# Provider seccion variables
+variable "provider" {
+  type = object({
+    provider_name                       = string
+    global_resource_group_name          = string
+    cluster_provider_disk_type_name     = string
+    cluster_provider_instance_size_name = string
+    network = object({
+      subnet_name                              = string
+      vnet_name                                = string
+      vnet_resource_group_name                 = string
+      endpoint_name                            = string
+      endpoint_location                        = string
+      endpoint_resource_group_name             = string
+      endpoint_connection_is_manual_connection = bool
+      endpoint_connection_request_message      = string
+    })
+  })
+}
+
 # Endpoint seccion variables
-variable "subnet_name" {
-  description = "Name of the Azure subnet"
-  type        = string
-}
-
-variable "vnet_name" {
-  description = "Name of the Azure vnet"
-  type        = string
-}
-
-variable "vnet_resource_group_name" {
-  description = "Name of the Azure vnet resource group"
-  type        = string
-  default     = ""
-}
-
-variable "endpoint_name" {
-  description = "Name of the Azure endpoint"
-  type        = string
-}
-
-variable "endpoint_location" {
-  description = "Location of the Azure endpoint"
-  type        = string
-}
-
-variable "endpoint_resource_group_name" {
-  description = "Name of the Azure endpoint resource group"
-  type        = string
-  default     = ""
-}
-
-variable "endpoint_connection_is_manual_connection" {
-  description = "Whether or not the endpoint's private service connection is manual"
-  type        = bool
-}
-
-variable "endpoint_connection_request_message" {
-  description = "Request message of the endpoint's private service connection"
-  type        = string
-}
-
 variable "whitelist_ips" {
   description = "The whitelist IPs"
   type = list(object({

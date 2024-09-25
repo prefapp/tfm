@@ -1,5 +1,4 @@
 # Azure MongoDB Atlas
-
 ## Overview
 
 This module creates a MongoDB Atlas resource in Azure with the following features:
@@ -20,7 +19,7 @@ This module creates a MongoDB Atlas resource in Azure with the following feature
 - Subnet created (VNet).
 - Azure Key Vault created.
 - MongoDB Atlas organization (ID).
-- Set the MongoDB Atlas `Require IP Access List for the Atlas Administration API` into Organization Settings on ` disabled` eventuality. When you aprovision the cluster, the module will create the IP access list. Afterward, you can enable it again.
+- Set the MongoDB Atlas `Require IP Access List for the Atlas Administration API` into Organization Settings on `disabled` eventuality. When you provision the cluster, the module will create the IP access list. Afterward, you can enable it again.
 
 ## DOC
 
@@ -70,18 +69,18 @@ module "mongodb-atlas" {
 
 ```hcl
 provider "mongodbatlas" {
-  public_key  = "your_public_key" # Or use a own varible
-  private_key = "your_private_key" # Or use a own varible
+  public_key  = "your_public_key" # Or use a own variable
+  private_key = "your_private_key" # Or use a own variable
 }
 
 provider "azurerm" {
   features {}
-  subscription_id = "your_subscription_id" # Or use a own varible
+  subscription_id = "your_subscription_id" # Or use a own variable
 }
 
 provider "datadog" {
-  api_key = "your_api_key" # Or use a own varible
-  app_key = "your_app_key" # Or use a own varible
+  api_key = "your_api_key" # Or use a own variable
+  app_key = "your_app_key" # Or use a own variable
   api_url = "https://api.datadoghq.com" # Optional if you use the default URL || "https://api.datadoghq.eu"
 }
 ```
@@ -91,8 +90,7 @@ provider "datadog" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | mongo_region | The mongo region | `string` | n/a | yes |
-| provider_name | The provider name | `string` | n/a | yes |
-| global_resource_group_name | The global resource group name | `string` | n/a | yes |
+| provider | The provider configuration | `object({ provider_name = string, global_resource_group_name = string, cluster_provider_disk_type_name = string, cluster_provider_instance_size_name = string, network = object({ subnet_name = string, vnet_name = string, vnet_resource_group_name = string, endpoint_name = string, endpoint_location = string, endpoint_resource_group_name = string, endpoint_connection_is_manual_connection = bool, endpoint_connection_request_message = string }) })` | n/a | yes |
 | org_id | The organization ID | `string` | n/a | yes |
 | project_name | The name of the project | `string` | n/a | yes |
 | cluster_name | The name of the cluster | `string` | n/a | yes |
@@ -131,8 +129,6 @@ provider "datadog" {
 ```hcl
 # Global variables
 mongo_region               = "EUROPE_WEST"
-provider_name              = "AZURE"
-global_resource_group_name = "example"
 
 # Project section variables
 org_id       = "example-org-id"
@@ -148,8 +144,6 @@ cluster_replication_specs_config_read_only_nodes = 0
 cluster_cloud_backup                             = true
 cluster_auto_scaling_disk_gb_enabled             = true
 cluster_mongo_db_major_version                   = "6.0"
-cluster_provider_disk_type_name                  = "P6"
-cluster_provider_instance_size_name              = "M10"
 cluster_num_shards                               = 1
 cluster_zone                                     = "Zone 1"
 
@@ -210,15 +204,23 @@ users = [
   }
 ]
 
-# Endpoint section variables
-subnet_name                              = "example-subnet"
-vnet_name                                = "example-vnet"
-vnet_resource_group_name                 = "example-vnet-rg"
-endpoint_name                            = "example-endpoint"
-endpoint_location                        = "westeurope"
-endpoint_resource_group_name             = "example-endpoint-rg"
-endpoint_connection_is_manual_connection = true
-endpoint_connection_request_message      = "Example request message"
+# Private variables
+provider = {
+  provider_name                              = "AZURE"
+  global_resource_group_name                 = "example"
+  cluster_provider_disk_type_name            = "P6"
+  cluster_provider_instance_size_name        = "M10"
+  network = {
+    subnet_name                                = "example-subnet"
+    vnet_name                                  = "example-vnet"
+    vnet_resource_group_name                   = "example-vnet-rg"
+    endpoint_name                              = "example-endpoint"
+    endpoint_location                          = "westeurope"
+    endpoint_resource_group_name               = "example-endpoint-rg"
+    endpoint_connection_is_manual_connection   = true
+    endpoint_connection_request_message        = "Example request message"
+  }
+}
 
 # Datadog API key section variables
 enabled_datadog_integration = true

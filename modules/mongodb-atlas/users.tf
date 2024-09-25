@@ -14,7 +14,7 @@ resource "random_password" "db_passwords" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
 data "azurerm_key_vault" "key_vault" {
   name                = var.key_vault_name
-  resource_group_name = var.key_vault_resource_group_name != "" ? var.key_vault_resource_group_name : var.global_resource_group_name
+  resource_group_name = var.provider.global_resource_group_name
 }
 # Data source to fetch all secrets from the specified Azure Key Vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets

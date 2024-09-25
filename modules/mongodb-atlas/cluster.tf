@@ -25,9 +25,9 @@ resource "mongodbatlas_cluster" "cluster" {
   mongo_db_major_version       = var.cluster_mongo_db_major_version
 
   # Provider settings
-  provider_name               = var.provider_name
-  provider_disk_type_name     = var.cluster_provider_disk_type_name
-  provider_instance_size_name = var.cluster_provider_instance_size_name
+  provider_name               = var.provider.provider_name
+  provider_disk_type_name     = var.provider.cluster_provider_disk_type_name
+  provider_instance_size_name = var.provider.cluster_provider_instance_size_name
 
   # Lifecycle settings to ignore changes
   lifecycle {
