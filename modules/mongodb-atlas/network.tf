@@ -36,11 +36,11 @@ data "azurerm_subnet" "subnet" {
 # Azure Private Endpoint resource
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
 resource "azurerm_private_endpoint" "private_endpoint" {
-  count              = var.provider.provider_name == "AZURE" ? 1 : 0
-  name               = var.provider.network.endpoint_name
-  location           = var.provider.network.endpoint_location
+  count               = var.provider.provider_name == "AZURE" ? 1 : 0
+  name                = var.provider.network.endpoint_name
+  location            = var.provider.network.endpoint_location
   resource_group_name = var.provider.network.endpoint_resource_group_name != "" ? var.provider.network.endpoint_resource_group_name : var.provider.global_resource_group_name
-  subnet_id          = data.azurerm_subnet.subnet.id
+  subnet_id           = data.azurerm_subnet.subnet.id
 
   # Private service connection block
   private_service_connection {

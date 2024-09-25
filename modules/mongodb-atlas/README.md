@@ -106,20 +106,20 @@ provider "datadog" {
 | cluster_provider_instance_size_name | Provider instance size name | `string` | n/a | yes |
 | cluster_num_shards | The number of shards | `number` | n/a | yes |
 | cluster_zone | The zones of the cluster | `string` | n/a | yes |
-| key_vault_name | The key vault name | `string` | n/a | yes |
-| key_vault_resource_group_name | The key vault resource group name | `string` | `""` | no |
+| key_vault_name | The key vault name (only if provider is AZURE) | `string` | n/a | yes |
+| key_vault_resource_group_name | The key vault resource group name (only if provider is AZURE) | `string` | `""` | no |
 | users | List of users with their roles and scopes | `list(object({ username = string, auth_db_name = string, roles = optional(list(object({ role_name = string, database_name = string }))), scopes = optional(list(object({ name = string, type = string }))) }))` | n/a | yes |
 | password_length | The password length | `number` | n/a | yes |
 | password_special | Whether or not the password has special characters | `bool` | n/a | yes |
 | prefix_pass_name | The prefix of the password name | `string` | n/a | yes |
-| subnet_name | Name of the Azure subnet | `string` | n/a | yes |
-| vnet_name | Name of the Azure vnet | `string` | n/a | yes |
-| vnet_resource_group_name | Name of the Azure vnet resource group | `string` | `""` | no |
-| endpoint_name | Name of the Azure endpoint | `string` | n/a | yes |
-| endpoint_location | Location of the Azure endpoint | `string` | n/a | yes |
-| endpoint_resource_group_name | Name of the Azure endpoint resource group | `string` | `""` | no |
-| endpoint_connection_is_manual_connection | Whether or not the endpoint's private service connection is manual | `bool` | n/a | yes |
-| endpoint_connection_request_message | Request message of the endpoint's private service connection | `string` | n/a | yes |
+| subnet_name | Name of the Azure subnet (only if provider is AZURE) | `string` | n/a | yes |
+| vnet_name | Name of the Azure vnet (only if provider is AZURE) | `string` | n/a | yes |
+| vnet_resource_group_name | Name of the Azure vnet resource group (only if provider is AZURE) | `string` | `""` | no |
+| endpoint_name | Name of the Azure endpoint (only if provider is AZURE) | `string` | n/a | yes |
+| endpoint_location | Location of the Azure endpoint (only if provider is AZURE) | `string` | n/a | yes |
+| endpoint_resource_group_name | Name of the Azure endpoint resource group (only if provider is AZURE) | `string` | `""` | no |
+| endpoint_connection_is_manual_connection | Whether or not the endpoint's private service connection is manual (only if provider is AZURE) | `bool` | n/a | yes |
+| endpoint_connection_request_message | Request message of the endpoint's private service connection (only if provider is AZURE) | `string` | n/a | yes |
 | whitelist_ips | The whitelist IPs | `list(object({ ip = string, name = string }))` | n/a | yes |
 | enabled_datadog_integration | Whether or not the Datadog integration is enabled | `bool` | `false` | no |
 | datadog_api_key_name | The Datadog API key name | `string` | `""` | no |

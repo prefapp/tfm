@@ -119,10 +119,10 @@ variable "prefix_pass_name" {
 variable "provider" {
   type = object({
     provider_name                       = string
-    global_resource_group_name          = string
+    global_resource_group_name          = optional(string)
     cluster_provider_disk_type_name     = string
     cluster_provider_instance_size_name = string
-    network = object({
+    network = optional(object({
       subnet_name                              = string
       vnet_name                                = string
       vnet_resource_group_name                 = string
@@ -131,7 +131,7 @@ variable "provider" {
       endpoint_resource_group_name             = string
       endpoint_connection_is_manual_connection = bool
       endpoint_connection_request_message      = string
-    })
+    }))
   })
 }
 
