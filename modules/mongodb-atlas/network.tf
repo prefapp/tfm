@@ -27,6 +27,7 @@ resource "mongodbatlas_privatelink_endpoint" "privatelink_endpoint" {
 # Azure Subnet data source
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "subnet" {
+  count                = var.provider.provider_name == "AZURE" ? 1 : 0
   name                 = var.provider.network.subnet_name
   virtual_network_name = var.provider.network.vnet_name
   resource_group_name  = var.provider.network.vnet_resource_group_name != "" ? var.provider.network.vnet_resource_group_name : var.provider.global_resource_group_name
@@ -35,10 +36,11 @@ data "azurerm_subnet" "subnet" {
 # Azure Private Endpoint resource
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
 resource "azurerm_private_endpoint" "private_endpoint" {
-  name                = var.provider.network.endpoint_name
-  location            = var.provider.network.endpoint_location
+  count              = var.provider.provider_name == "AZURE" ? 1 : 0
+  name               = var.provider.network.endpoint_name
+  location           = var.provider.network.endpoint_location
   resource_group_name = var.provider.network.endpoint_resource_group_name != "" ? var.provider.network.endpoint_resource_group_name : var.provider.global_resource_group_name
-  subnet_id           = data.azurerm_subnet.subnet.id
+  subnet_id          = data.azurerm_subnet.subnet.id
 
   # Private service connection block
   private_service_connection {

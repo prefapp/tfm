@@ -13,22 +13,26 @@ resource "random_password" "db_passwords" {
 # Azure Key Vault data source
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
 data "azurerm_key_vault" "key_vault" {
+  count               = var.provider == "azure" ? 1 : 0
   name                = var.key_vault_name
   resource_group_name = var.provider.global_resource_group_name
 }
+
 # Data source to fetch all secrets from the specified Azure Key Vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
 data "azurerm_key_vault_secrets" "key_vault_secrets" {
-  key_vault_id = data.azurerm_key_vault.key_vault.id
+  count        = var.provider == "azure" ? 1 : 0
+  key_vault_id = data.azurerm_key_vault.key_vault[0].id
 }
 
 # Store the generated passwords in Azure Key Vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret
 resource "azurerm_key_vault_secret" "db_password_secrets" {
+  count        = var.provider == "azure" ? 1 : 0
   for_each     = { for user in var.users : user.username => user }
   name         = "test-${var.prefix_pass_name}-${replace(each.key, "_", "-")}"
   value        = random_password.db_passwords[each.key].result
-  key_vault_id = data.azurerm_key_vault.key_vault.id
+  key_vault_id = data.azurerm_key_vault.key_vault[0].id
 
   # Ensure secrets are created after passwords
   depends_on = [random_password.db_passwords]
