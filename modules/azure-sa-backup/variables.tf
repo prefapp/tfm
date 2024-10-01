@@ -1,0 +1,115 @@
+# VARIABLES SECTION
+## General
+variable "resource_group_name" {
+  description = "The name for the resource group"
+  type        = string
+}
+
+variable "storage_account_id" {
+  description = "The ID of the storage account"
+  type        = string
+}
+
+## Backup fileshares variables
+variable "backup_share" {
+  description = "Specifies the backup configuration for the storage share"
+  type = object({
+    policy_name                  = string
+    recovery_services_vault_name = string
+    sku                          = string
+    soft_delete_enabled          = optional(bool)
+    storage_mode_type            = optional(string, "GeoRedundant")
+    cross_region_restore_enabled = optional(bool)
+    source_file_share_name       = list(string)
+    identity = optional(object({
+      type         = optional(string, "SystemAssigned")
+      identity_ids = optional(list(string), [])
+    }))
+    encryption = optional(object({
+      key_id                            = optional(string, null)
+      infrastructure_encryption_enabled = optional(bool, false)
+      user_assigned_identity_id         = optional(string, null)
+      use_system_assigned_identity      = optional(bool, false)
+    }))
+    timezone = optional(string)
+    backup = object({
+      frequency = string
+      time      = string
+    })
+    retention_daily = object({
+      count = number
+    })
+    retention_weekly = optional(object({
+      count    = number
+      weekdays = list(string)
+    }))
+    retention_monthly = optional(object({
+      count    = number
+      weekdays = list(string)
+      weeks    = list(string)
+    }))
+    retention_yearly = optional(object({
+      count    = number
+      weekdays = list(string)
+      weeks    = list(string)
+      months   = list(string)
+    }))
+  })
+  default = null
+}
+
+## Backup blobs variables
+variable "backup_blob" {
+  description = "Specifies the backup configuration for the storage blob"
+  type = object({
+    vault_name      = string
+    datastore_type  = string
+    redundancy      = string
+    identity_type   = string
+    role_assignment = string
+    policy = object({
+      name                                   = string
+      vault_id                               = string
+      backup_repeating_time_intervals        = optional(list(string))
+      operational_default_retention_duration = optional(string)
+      retention_rule = optional(list(object({
+        name     = string
+        duration = string
+        criteria = object({
+          absolute_criteria      = optional(string)
+          days_of_month          = optional(list(number))
+          days_of_week           = optional(list(string))
+          months_of_year         = optional(list(string))
+          scheduled_backup_times = optional(list(string))
+          weeks_of_month         = optional(list(string))
+        })
+        life_cycle = object({
+          data_store_type = string
+          duration        = string
+        })
+        priority = number
+      })))
+      time_zone                        = optional(string)
+      vault_default_retention_duration = optional(string)
+      retention_duration               = optional(string)
+      instance_blob_name               = string
+    })
+  })
+}
+
+variable "lifecycle_policy_rule" {
+  type = list(object({
+    name    = string
+    enabled = bool
+    filters = object({
+      prefix_match = list(string)
+      blob_types   = list(string)
+    })
+    actions = object({
+      base_blob = object({ delete_after_days_since_creation_greater_than = number })
+      snapshot  = object({ delete_after_days_since_creation_greater_than = number })
+      version   = object({ delete_after_days_since_creation = number })
+    })
+  }))
+  default = null
+}
