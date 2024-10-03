@@ -152,18 +152,27 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
 resource "azurerm_storage_management_policy" "this" {
   count              = var.lifecycle_policy_rule != null ? 1 : 0
   storage_account_id = var.storage_account_id
-  for_each           = var.lifecycle_policy_rule != null ? { for rule in var.lifecycle_policy_rule : rule.name => rule } : {}
-  rule {
-    name    = each.value.name
-    enabled = each.value.enabled
-    filters {
-      prefix_match = each.value.filters.prefix_match
-      blob_types   = each.value.filters.blob_types
-    }
-    actions {
-      base_blob { delete_after_days_since_creation_greater_than = each.value.actions.base_blob.delete_after_days_since_creation_greater_than }
-      snapshot { delete_after_days_since_creation_greater_than = each.value.actions.snapshot.delete_after_days_since_creation_greater_than }
-      version { delete_after_days_since_creation = each.value.actions.version.delete_after_days_since_creation }
+
+  dynamic "rule" {
+    for_each = var.lifecycle_policy_rule != null ? var.lifecycle_policy_rule : []
+    content {
+      name    = rule.value.name
+      enabled = rule.value.enabled
+      filters {
+        prefix_match = rule.value.filters.prefix_match
+        blob_types   = rule.value.filters.blob_types
+      }
+      actions {
+        base_blob {
+          delete_after_days_since_creation_greater_than = rule.value.actions.base_blob.delete_after_days_since_creation_greater_than
+        }
+        snapshot {
+          delete_after_days_since_creation_greater_than = rule.value.actions.snapshot.delete_after_days_since_creation_greater_than
+        }
+        version {
+          delete_after_days_since_creation = rule.value.actions.version.delete_after_days_since_creation
+        }
+      }
     }
   }
 }
