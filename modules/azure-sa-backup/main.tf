@@ -94,7 +94,7 @@ resource "azurerm_data_protection_backup_vault" "this" {
   redundancy          = var.backup_blob.redundancy
   tags                = data.azurerm_resource_group.this.tags
   identity {
-    type = var.backup_blob.identity.type
+    type = var.backup_blob.identity_type
   }
   lifecycle {
     ignore_changes = [tags]
