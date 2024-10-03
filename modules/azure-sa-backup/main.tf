@@ -87,6 +87,7 @@ resource "azurerm_backup_protected_file_share" "this" {
 ## BACKUPS BLOBS
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault
 resource "azurerm_data_protection_backup_vault" "this" {
+  count               = var.backup_blob != null ? 1 : 0
   name                = var.backup_blob.vault_name
   resource_group_name = data.azurerm_resource_group.this.name
   location            = data.azurerm_resource_group.this.location
@@ -101,19 +102,19 @@ resource "azurerm_data_protection_backup_vault" "this" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
-  scope                = var.storage_account_id
+  count               = var.backup_blob != null ? 1 : 0
+  scope               = var.storage_account_id
   role_definition_name = var.backup_blob.role_assignment
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-  depends_on           = [azurerm_data_protection_backup_vault.this]
+  principal_id        = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
+  depends_on          = [azurerm_data_protection_backup_vault.this]
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
 resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
-  name                            = var.backup_blob.policy.name
-  vault_id                        = azurerm_data_protection_backup_vault.this.id
-  backup_repeating_time_intervals = var.backup_blob.policy.backup_repeating_time_intervals
+  count                            = var.backup_blob != null ? 1 : 0
+  name                             = var.backup_blob.policy.name
+  vault_id                         = azurerm_data_protection_backup_vault.this[0].id
+  backup_repeating_time_intervals  = var.backup_blob.policy.backup_repeating_time_intervals
   dynamic "retention_rule" {
     for_each = var.backup_blob.policy.retention_rule
     content {
@@ -138,14 +139,13 @@ resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
   operational_default_retention_duration = var.backup_blob.policy.operational_default_retention_duration
 }
 
-
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_blob_storage
 resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
-  name               = var.backup_blob.instance_blob_name
-  vault_id           = azurerm_data_protection_backup_vault.this.id
-  location           = data.azurerm_resource_group.this.location
-  storage_account_id = var.storage_account_id
-  backup_policy_id   = azurerm_data_protection_backup_policy_blob_storage.this.id
+  count               = var.backup_blob != null ? 1 : 0
+  name                = var.backup_blob.instance_blob_name
+  vault_id            = azurerm_data_protection_backup_vault.this[0].id
+  location            = data.azurerm_resource_group.this.location
+  storage_account_id  = var.storage_account_id
+  backup_policy_id    = azurerm_data_protection_backup_policy_blob_storage.this[0].id
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
