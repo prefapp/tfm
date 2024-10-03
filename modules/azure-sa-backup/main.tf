@@ -81,7 +81,7 @@ resource "azurerm_backup_protected_file_share" "this" {
   recovery_vault_name       = var.backup_share.recovery_services_vault_name
   source_storage_account_id = var.storage_account_id
   source_file_share_name    = element(var.backup_share.source_file_share_name, count.index)
-  backup_policy_id          = azurerm_backup_policy_file_share.this.id
+  backup_policy_id          = azurerm_backup_policy_file_share.this[count.index].id
 }
 
 ## BACKUPS BLOBS
