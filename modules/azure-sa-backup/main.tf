@@ -150,6 +150,7 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
+  count              = var.lifecycle_policy_rule != null ? 1 : 0
   storage_account_id = var.storage_account_id
   for_each           = var.lifecycle_policy_rule != null ? { for rule in var.lifecycle_policy_rule : rule.name => rule } : {}
   rule {
