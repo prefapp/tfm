@@ -62,11 +62,12 @@ variable "backup_share" {
 variable "backup_blob" {
   description = "Specifies the backup configuration for the storage blob"
   type = object({
-    vault_name      = string
-    datastore_type  = string
-    redundancy      = string
-    identity_type   = string
-    role_assignment = string
+    vault_name         = string
+    datastore_type     = string
+    redundancy         = string
+    identity_type      = string
+    role_assignment    = string
+    instance_blob_name = string
     policy = object({
       name                                   = string
       vault_id                               = string
@@ -92,7 +93,6 @@ variable "backup_blob" {
       time_zone                        = optional(string)
       vault_default_retention_duration = optional(string)
       retention_duration               = optional(string)
-      instance_blob_name               = string
     })
   })
 }
