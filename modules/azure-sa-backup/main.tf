@@ -8,6 +8,7 @@ data "azurerm_resource_group" "this" {
 ## BACKUPS FILE SHARES
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/recovery_services_vault
 resource "azurerm_recovery_services_vault" "this" {
+  count                        = var.backup_share != null ? 1 : 0
   name                         = var.backup_share.recovery_services_vault_name
   resource_group_name          = data.azurerm_resource_group.this.name
   location                     = data.azurerm_resource_group.this.location
@@ -37,15 +38,15 @@ resource "azurerm_recovery_services_vault" "this" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_container_storage_account
 resource "azurerm_backup_container_storage_account" "this" {
+  count               = var.backup_share != null ? 1 : 0
   resource_group_name = data.azurerm_resource_group.this.name
   recovery_vault_name = var.backup_share.recovery_services_vault_name
   storage_account_id  = var.storage_account_id
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_policy_file_share
 resource "azurerm_backup_policy_file_share" "this" {
+  count               = var.backup_share != null ? 1 : 0
   name                = var.backup_share.policy_name
   resource_group_name = data.azurerm_resource_group.this.name
   recovery_vault_name = var.backup_share.recovery_services_vault_name
@@ -74,13 +75,12 @@ resource "azurerm_backup_policy_file_share" "this" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_protected_file_share
 resource "azurerm_backup_protected_file_share" "this" {
-  for_each                  = var.backup_share != null ? { for name in var.backup_share.source_file_share_name : name => name } : {}
+  count                    = var.backup_share != null ? length(var.backup_share.source_file_share_name) : 0
   resource_group_name       = data.azurerm_resource_group.this.name
   recovery_vault_name       = var.backup_share.recovery_services_vault_name
   source_storage_account_id = var.storage_account_id
-  source_file_share_name    = each.value
+  source_file_share_name    = element(var.backup_share.source_file_share_name, count.index)
   backup_policy_id          = azurerm_backup_policy_file_share.this.id
 }
 
