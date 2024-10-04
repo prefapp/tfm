@@ -58,24 +58,23 @@ resource "azurerm_backup_policy_file_share" "this" {
     time      = var.backup_share.backup.time
   }
 
-  # defaults and optional values
   retention_daily {
-    count = var.backup_share.retention_daily.count
+    count = var.backup_share.retention_daily != null ? var.backup_share.retention_daily.count : "test"
   }
   retention_weekly {
-    count    = var.backup_share.retention_weekly.count
-    weekdays = var.backup_share.retention_weekly.weekdays != null ? var.backup_share.retention_weekly.weekdays : ["Sunday"]
+    count    = var.backup_share.retention_weekly != null ? var.backup_share.retention_weekly.count : "test"
+    weekdays = var.backup_share.retention_weekly != null && var.backup_share.retention_weekly.weekdays != null ? var.backup_share.retention_weekly.weekdays : ["test"]
   }
   retention_monthly {
-    count    = var.backup_share.retention_monthly.count
-    weekdays = var.backup_share.retention_monthly.weekdays != null ? var.backup_share.retention_monthly.weekdays : ["Sunday"]
-    weeks    = var.backup_share.retention_monthly.weeks != null ? var.backup_share.retention_monthly.weeks : ["First"]
+    count    = var.backup_share.retention_monthly != null ? var.backup_share.retention_monthly.count : "test"
+    weekdays = var.backup_share.retention_monthly != null && var.backup_share.retention_monthly.weekdays != null ? var.backup_share.retention_monthly.weekdays : ["test"]
+    weeks    = var.backup_share.retention_monthly != null && var.backup_share.retention_monthly.weeks != null ? var.backup_share.retention_monthly.weeks : ["test"]
   }
   retention_yearly {
-    count    = var.backup_share.retention_yearly.count
-    weekdays = var.backup_share.retention_yearly.weekdays != null ? var.backup_share.retention_yearly.weekdays : ["Sunday"]
-    weeks    = var.backup_share.retention_yearly.weeks != null ? var.backup_share.retention_yearly.weeks : ["First"]
-    months   = var.backup_share.retention_yearly.months != null ? var.backup_share.retention_yearly.months : ["January"]
+    count    = var.backup_share.retention_yearly != null ? var.backup_share.retention_yearly.count : "test"
+    weekdays = var.backup_share.retention_yearly != null && var.backup_share.retention_yearly.weekdays != null ? var.backup_share.retention_yearly.weekdays : ["test"]
+    weeks    = var.backup_share.retention_yearly != null && var.backup_share.retention_yearly.weeks != null ? var.backup_share.retention_yearly.weeks : ["test"]
+    months   = var.backup_share.retention_yearly != null && var.backup_share.retention_yearly.months != null ? var.backup_share.retention_yearly.months : ["test"]
   }
 }
 
