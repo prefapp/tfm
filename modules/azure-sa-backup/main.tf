@@ -60,18 +60,18 @@ resource "azurerm_backup_policy_file_share" "this" {
   }
   retention_weekly {
     count    = var.backup_share.retention_weekly.count
-    weekdays = var.backup_share.retention_weekly.weekdays
+    weekdays = var.backup_share.retention_weekly.weekdays != null ? var.backup_share.retention_weekly.weekdays : ["Sunday"]
   }
   retention_monthly {
     count    = var.backup_share.retention_monthly.count
-    weekdays = var.backup_share.retention_monthly.weekdays
-    weeks    = var.backup_share.retention_monthly.weeks
+    weekdays = var.backup_share.retention_monthly.weekdays != null ? var.backup_share.retention_monthly.weekdays : ["Sunday"]
+    weeks    = var.backup_share.retention_monthly.weeks != null ? var.backup_share.retention_monthly.weeks : ["First"]
   }
   retention_yearly {
     count    = var.backup_share.retention_yearly.count
-    weekdays = var.backup_share.retention_yearly.weekdays
-    weeks    = var.backup_share.retention_yearly.weeks
-    months   = var.backup_share.retention_yearly.months
+    weekdays = var.backup_share.retention_yearly.weekdays != null ? var.backup_share.retention_yearly.weekdays : ["Sunday"]
+    weeks    = var.backup_share.retention_yearly.weeks != null ? var.backup_share.retention_yearly.weeks : ["First"]
+    months   = var.backup_share.retention_yearly.months != null ? var.backup_share.retention_yearly.months : ["January"]
   }
 }
 
