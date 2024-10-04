@@ -61,31 +61,31 @@ resource "azurerm_backup_policy_file_share" "this" {
   dynamic "retention_daily" {
     for_each = var.backup_share.retention_daily != null ? [1] : []
     content {
-      count = optional(lookup(var.backup_share.retention_daily, "count", []))
+      count = var.backup_share.retention_daily.count
     }
   }
   dynamic "retention_weekly" {
     for_each = var.backup_share.retention_weekly != null ? [1] : []
     content {
-      count    = optional(lookup(var.backup_share.retention_weekly, "count", []))
-      weekdays = optional(lookup(var.backup_share.retention_weekly, "weekdays", []))
+      count    = var.backup_share.retention_weekly.count
+      weekdays = var.backup_share.retention_weekly.weekdays
     }
   }
   dynamic "retention_monthly" {
     for_each = var.backup_share.retention_monthly != null ? [1] : []
     content {
-      count    = optional(lookup(var.backup_share.retention_monthly, "count", []))
-      weekdays = optional(lookup(var.backup_share.retention_monthly, "weekdays", []))
-      weeks    = optional(lookup(var.backup_share.retention_monthly, "weeks", []))
+      count    = var.backup_share.retention_monthly.count
+      weekdays = var.backup_share.retention_monthly.weekdays
+      weeks    = var.backup_share.retention_monthly.weeks
     }
   }
   dynamic "retention_yearly" {
     for_each = var.backup_share.retention_yearly != null ? [1] : []
     content {
-      count    = optional(lookup(var.backup_share.retention_yearly, "count", []))
-      weekdays = optional(lookup(var.backup_share.retention_yearly, "weekdays", []))
-      weeks    = optional(lookup(var.backup_share.retention_yearly, "weeks", []))
-      months   = optional(lookup(var.backup_share.retention_yearly, "months", []))
+      count    = var.backup_share.retention_yearly.count
+      weekdays = var.backup_share.retention_yearly.weekdays
+      weeks    = var.backup_share.retention_yearly.weeks
+      months   = var.backup_share.retention_yearly.months
     }
   }
 }
