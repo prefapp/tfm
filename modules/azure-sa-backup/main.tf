@@ -136,7 +136,7 @@ resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
   vault_id                         = azurerm_data_protection_backup_vault.this[0].id
   backup_repeating_time_intervals  = var.backup_blob.policy.backup_repeating_time_intervals
   dynamic "retention_rule" {
-    for_each = var.backup_blob.policy.retention_rule
+    for_each = var.backup_blob.policy.retention_rule != null ? var.backup_blob.policy.retention_rule : []
     content {
       name = retention_rule.value.name
       criteria {
