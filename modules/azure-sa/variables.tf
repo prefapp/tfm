@@ -45,6 +45,16 @@ variable "storage_account" {
       type         = optional(string, "SystemAssigned")
       identity_ids = optional(list(string), [])
     }))
+    blob_properties = optional(object({
+      versioning_enabled = optional(bool)
+      change_feed_enabled = optional(bool)
+      delete_retention_policy = optional(object({
+        days = optional(number)
+      }))
+      container_delete_retention_policy = optional(object({
+        days = optional(number)
+      }))
+    }))
   })
 
   # Validation block for `account_kind`

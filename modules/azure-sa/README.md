@@ -37,7 +37,7 @@ No modules.
 | [resource_group_name](#input_resource_group_name) | The name for the resource group | string | n/a | yes |
 | [allowed_subnets](#input_allowed_subnets) | Allowed subnets values for data | list( object({ <br>name=string, <br>vnet=string, <br>resource_group=string<br>})) | n/a | yes |
 | [additional_allowed_subnet_ids](#input_additional_allowed_subnet_ids) | Additional allowedsubnets id for storage account network rules | list( string ) | n/a | no |
-| [storage_account](#input_storage_account) | Configuration for the Azure Storage Account | object({<br>name=string, <br>account_tier=string, <br>account_replication_type=string, <br>account_kind=optional(string, "StorageV2"), <br>access_tier=optional(string, "Hot"), <br>cross_tenant_replication_enabled=optional(bool, false), <br>edge_zone=optional(string), <br>allow_nested_items_to_be_public=optional(bool, true), <br>https_traffic_only_enabled=optional(bool, true), <br>min_tls_version=optional(string, "TLS1_2"), <br>public_network_access_enabled=optional(bool, true), <br>identity=optional(object({<br>&nbsp;&nbsp;type=optional(string, "SystemAssigned"), <br>&nbsp;&nbsp;identity_ids=optional(list(string),[])})), <br>tags=optional(map(string),{}) <br>}) | n/a | yes |
+| [storage_account](#input_storage_account) | Configuration for the Azure Storage Account | object({<br>name=string, <br>account_tier=string, <br>account_replication_type=string, <br>account_kind=optional(string, "StorageV2"), <br>access_tier=optional(string, "Hot"), <br>cross_tenant_replication_enabled=optional(bool, false), <br>edge_zone=optional(string), <br>allow_nested_items_to_be_public=optional(bool, true), <br>https_traffic_only_enabled=optional(bool, true), <br>min_tls_version=optional(string, "TLS1_2"), <br>public_network_access_enabled=optional(bool, true), <br>identity=optional(object({<br>&nbsp;&nbsp;type=optional(string, "SystemAssigned"), <br>&nbsp;&nbsp;identity_ids=optional(list(string),[])})), <br>blob_properties=optional(object({<br>&nbsp;&nbsp;versioning_enabled=optional(bool), <br>&nbsp;&nbsp;change_feed_enabled=optional(bool), <br>&nbsp;&nbsp;delete_retention_policy=optional(object({<br>&nbsp;&nbsp;&nbsp;&nbsp;days=optional(number)})), <br>&nbsp;&nbsp;container_delete_retention_policy=optional(object({<br>&nbsp;&nbsp;&nbsp;&nbsp;days=optional(number)}))})), <br>tags=optional(map(string),{}) <br>}) | n/a | yes |
 | [network_rules](#input_network_rules) | Network rules for the storage account | object({<br>default_action=string, <br>bypass=optional(string, "AzureServices"), <br>ip_rules=optional(list(string)), <br>private_link_access=optional(list(object({<br>&nbsp;&nbsp;endpoint_resource_id=string, <br>&nbsp;&nbsp;endpoint_tenant_id=optional(string)}))) <br>}) | n/a | yes |
 | [containers](#input_containers) | Specifies the storage containers | list( object({ <br>name=string, <br>container_access_type=optional(string), <br>default_encryption_scope=optional(string), <br>encryption_scope_override_enabled=optional(bool), <br>metadata=optional(map(string)) <br>})) | n/a | no |
 | [shares](#input_shares) | Specifies the storage shares | list( object({<br>name=string, <br>access_tier=optional(string), <br>enabled_protocol=optional(string), <br>quota=number, <br>metadata=optional(map(string)), <br>acl=optional(list(object({<br>&nbsp;&nbsp;id=string, <br>&nbsp;&nbsp;access_policy=optional(object({<br>&nbsp;&nbsp;&nbsp;&nbsp;permissions=string, <br>&nbsp;&nbsp;&nbsp;&nbsp;start=optional(string), <br>&nbsp;&nbsp;&nbsp;&nbsp;expiry=optional(string)}))}))) <br>})) | n/a | no |
@@ -78,8 +78,16 @@ No modules.
         cross_tenant_replication_enabled: false
         https_traffic_only_enabled: true
         min_tls_version: "TLS1_2"
+        public_network_access_enabled: true
         identity:
           type: "SystemAssigned"
+        blob_properties:
+          versioning_enabled: true
+          change_feed_enabled: true
+          delete_retention_policy:
+            days: 30
+          container_delete_retention_policy:
+            days: 15
 
       # storage account network rules
       network_rules:
