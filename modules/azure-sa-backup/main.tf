@@ -61,31 +61,31 @@ resource "azurerm_backup_policy_file_share" "this" {
   dynamic "retention_daily" {
     for_each = var.backup_share.retention_daily != null ? [1] : []
     content {
-      count = optional(lookup(var.backup_share.retention_daily, "count", null))
+      count = optional(lookup(var.backup_share.retention_daily, "count", []))
     }
   }
   dynamic "retention_weekly" {
     for_each = var.backup_share.retention_weekly != null ? [1] : []
     content {
-      count    = optional(lookup(var.backup_share.retention_weekly, "count", null))
-      weekdays = optional(lookup(var.backup_share.retention_weekly, "weekdays", null))
+      count    = optional(lookup(var.backup_share.retention_weekly, "count", []))
+      weekdays = optional(lookup(var.backup_share.retention_weekly, "weekdays", []))
     }
   }
   dynamic "retention_monthly" {
     for_each = var.backup_share.retention_monthly != null ? [1] : []
     content {
-      count    = optional(lookup(var.backup_share.retention_monthly, "count", null))
-      weekdays = optional(lookup(var.backup_share.retention_monthly, "weekdays", null))
-      weeks    = optional(lookup(var.backup_share.retention_monthly, "weeks", null))
+      count    = optional(lookup(var.backup_share.retention_monthly, "count", []))
+      weekdays = optional(lookup(var.backup_share.retention_monthly, "weekdays", []))
+      weeks    = optional(lookup(var.backup_share.retention_monthly, "weeks", []))
     }
   }
   dynamic "retention_yearly" {
     for_each = var.backup_share.retention_yearly != null ? [1] : []
     content {
-      count    = optional(lookup(var.backup_share.retention_yearly, "count", null))
-      weekdays = optional(lookup(var.backup_share.retention_yearly, "weekdays", null))
-      weeks    = optional(lookup(var.backup_share.retention_yearly, "weeks", null))
-      months   = optional(lookup(var.backup_share.retention_yearly, "months", null))
+      count    = optional(lookup(var.backup_share.retention_yearly, "count", []))
+      weekdays = optional(lookup(var.backup_share.retention_yearly, "weekdays", []))
+      weeks    = optional(lookup(var.backup_share.retention_yearly, "weeks", []))
+      months   = optional(lookup(var.backup_share.retention_yearly, "months", []))
     }
   }
 }
