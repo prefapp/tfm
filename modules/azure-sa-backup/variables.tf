@@ -41,18 +41,20 @@ variable "backup_share" {
     })
     retention_weekly = optional(object({
       count    = number
-      weekdays = list(string)
+      weekdays = optional(string,"Sunday")
     }))
     retention_monthly = optional(object({
       count    = number
-      weekdays = list(string)
-      weeks    = list(string)
+      weekdays = optional(string,"Sunday")
+      weeks    = optional(string, "First")
+      days     = optional(number)
     }))
     retention_yearly = optional(object({
       count    = number
-      weekdays = list(string)
-      weeks    = list(string)
-      months   = list(string)
+      months   = optional(string,"January")
+      weekdays = optional(string,"Sunday")
+      weeks    = optional(string, "First")
+      days     = optional(number)
     }))
   })
   default = null

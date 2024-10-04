@@ -46,7 +46,7 @@ resource "azurerm_backup_container_storage_account" "this" {
   storage_account_id  = var.storage_account_id
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/backup_policy_file_share
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_policy_file_share
 resource "azurerm_backup_policy_file_share" "this" {
   count               = var.backup_share != null ? 1 : 0
   name                = var.backup_share.policy_name
