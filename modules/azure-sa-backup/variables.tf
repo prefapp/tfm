@@ -72,7 +72,6 @@ variable "backup_blob" {
     instance_blob_name = string
     policy = object({
       name                                   = string
-      vault_id                               = string
       backup_repeating_time_intervals        = optional(list(string))
       operational_default_retention_duration = optional(string)
       retention_rule = optional(list(object({
