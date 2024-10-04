@@ -77,6 +77,7 @@ resource "azurerm_backup_policy_file_share" "this" {
       count    = var.backup_share.retention_monthly.count
       weekdays = var.backup_share.retention_monthly.weekdays
       weeks    = var.backup_share.retention_monthly.weeks
+      days = var.backup_share.retention_monthly.days
     }
   }
   dynamic "retention_yearly" {
@@ -86,6 +87,7 @@ resource "azurerm_backup_policy_file_share" "this" {
       weekdays = var.backup_share.retention_yearly.weekdays
       weeks    = var.backup_share.retention_yearly.weeks
       months   = var.backup_share.retention_yearly.months
+
     }
   }
 }
