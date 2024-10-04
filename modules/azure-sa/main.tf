@@ -92,15 +92,6 @@ resource "azurerm_storage_share" "this" {
   enabled_protocol     = each.value.enabled_protocol
   quota                = each.value.quota
   metadata             = each.value.metadata
-
-  dynamic "blob_properties" {
-    for_each = each.value.blob_properties != null ? [each.value.blob_properties] : []
-    content {
-      versioning_enabled = lookup(blob_properties.value, "versioning_enabled", null)
-      change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
-      }
-  }
-
   dynamic "acl" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
