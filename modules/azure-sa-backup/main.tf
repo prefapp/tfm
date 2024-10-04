@@ -59,22 +59,22 @@ resource "azurerm_backup_policy_file_share" "this" {
   }
 
   retention_daily {
-    count = lookup(var.backup_share.retention_daily, "count", null)
+    count = optional(lookup(var.backup_share.retention_daily, "count", null))
   }
   retention_weekly {
-    count    = lookup(var.backup_share.retention_weekly, "count", null)
-    weekdays = lookup(var.backup_share.retention_weekly, "weekdays", null)
+    count    = optional(lookup(var.backup_share.retention_weekly, "count", null))
+    weekdays = optional(lookup(var.backup_share.retention_weekly, "weekdays", null))
   }
   retention_monthly {
-    count    = lookup(var.backup_share.retention_monthly, "count", null)
-    weekdays = lookup(var.backup_share.retention_monthly, "weekdays", null)
-    weeks    = lookup(var.backup_share.retention_monthly, "weeks", null)
+    count    = optional(lookup(var.backup_share.retention_monthly, "count", null))
+    weekdays = optional(lookup(var.backup_share.retention_monthly, "weekdays", null))
+    weeks    = optional(lookup(var.backup_share.retention_monthly, "weeks", null))
   }
   retention_yearly {
-    count    = lookup(var.backup_share.retention_yearly, "count", null)
-    weekdays = lookup(var.backup_share.retention_yearly, "weekdays", null)
-    weeks    = lookup(var.backup_share.retention_yearly, "weeks", null)
-    months   = lookup(var.backup_share.retention_yearly, "months", null)
+    count    = optional(lookup(var.backup_share.retention_yearly, "count", null))
+    weekdays = optional(lookup(var.backup_share.retention_yearly, "weekdays", null))
+    weeks    = optional(lookup(var.backup_share.retention_yearly, "weeks", null))
+    months   = optional(lookup(var.backup_share.retention_yearly, "months", null))
   }
 }
 
