@@ -47,6 +47,9 @@
         },
         "modules/azure-sa": {
             "package-name": "azure-sa"
+        },
+        "modules/azure-sa-backup": {
+            "package-name": "azure-sa-backup"
         }
     }
 }
