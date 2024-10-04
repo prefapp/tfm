@@ -14,5 +14,5 @@
     "modules/azure-app-gateway": "0.1.0",
     "modules/azure-mi": "1.1.0",
     "modules/azure-sa": "0.1.1",
-    "modules/azure-sa-backup": "0.1.0"
+    "modules/azure-sa-backup": "0.2.0"
 }
