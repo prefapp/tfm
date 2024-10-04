@@ -38,6 +38,7 @@ resource "azurerm_recovery_services_vault" "this" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_container_storage_account
 resource "azurerm_backup_container_storage_account" "this" {
   count               = var.backup_share != null ? 1 : 0
   resource_group_name = data.azurerm_resource_group.this.name
@@ -45,6 +46,7 @@ resource "azurerm_backup_container_storage_account" "this" {
   storage_account_id  = var.storage_account_id
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/backup_policy_file_share
 resource "azurerm_backup_policy_file_share" "this" {
   count               = var.backup_share != null ? 1 : 0
   name                = var.backup_share.policy_name
@@ -55,6 +57,8 @@ resource "azurerm_backup_policy_file_share" "this" {
     frequency = var.backup_share.backup.frequency
     time      = var.backup_share.backup.time
   }
+
+  # defaults and optional values
   retention_daily {
     count = var.backup_share.retention_daily.count
   }
@@ -75,6 +79,7 @@ resource "azurerm_backup_policy_file_share" "this" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_protected_file_share
 resource "azurerm_backup_protected_file_share" "this" {
   count                    = var.backup_share != null ? length(var.backup_share.source_file_share_name) : 0
   resource_group_name       = data.azurerm_resource_group.this.name
@@ -102,6 +107,7 @@ resource "azurerm_data_protection_backup_vault" "this" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
   count               = var.backup_blob != null ? 1 : 0
   scope               = var.storage_account_id
@@ -110,6 +116,7 @@ resource "azurerm_role_assignment" "this" {
   depends_on          = [azurerm_data_protection_backup_vault.this]
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
 resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
   count                            = var.backup_blob != null ? 1 : 0
   name                             = var.backup_blob.policy.name
@@ -139,6 +146,7 @@ resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
   operational_default_retention_duration = var.backup_blob.policy.operational_default_retention_duration
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_blob_storage
 resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   count               = var.backup_blob != null ? 1 : 0
   name                = var.backup_blob.instance_blob_name
@@ -146,33 +154,4 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   location            = data.azurerm_resource_group.this.location
   storage_account_id  = var.storage_account_id
   backup_policy_id    = azurerm_data_protection_backup_policy_blob_storage.this[0].id
-}
-
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
-resource "azurerm_storage_management_policy" "this" {
-  count              = var.lifecycle_policy_rule != null ? 1 : 0
-  storage_account_id = var.storage_account_id
-
-  dynamic "rule" {
-    for_each = var.lifecycle_policy_rule != null ? var.lifecycle_policy_rule : []
-    content {
-      name    = rule.value.name
-      enabled = rule.value.enabled
-      filters {
-        prefix_match = rule.value.filters.prefix_match
-        blob_types   = rule.value.filters.blob_types
-      }
-      actions {
-        base_blob {
-          delete_after_days_since_creation_greater_than = rule.value.actions.base_blob.delete_after_days_since_creation_greater_than
-        }
-        snapshot {
-          delete_after_days_since_creation_greater_than = rule.value.actions.snapshot.delete_after_days_since_creation_greater_than
-        }
-        version {
-          delete_after_days_since_creation = rule.value.actions.version.delete_after_days_since_creation
-        }
-      }
-    }
-  }
 }
