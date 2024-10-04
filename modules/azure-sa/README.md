@@ -78,8 +78,16 @@ No modules.
         cross_tenant_replication_enabled: false
         https_traffic_only_enabled: true
         min_tls_version: "TLS1_2"
+        public_network_access_enabled: true
         identity:
           type: "SystemAssigned"
+        blob_properties:
+          versioning_enabled: true
+          change_feed_enabled: true
+          delete_retention_policy:
+            days: 30
+          container_delete_retention_policy:
+            days: 15
 
       # storage account network rules
       network_rules:

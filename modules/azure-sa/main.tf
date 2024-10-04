@@ -31,6 +31,19 @@ resource "azurerm_storage_account" "this" {
   min_tls_version                  = var.storage_account.min_tls_version
   public_network_access_enabled    = var.storage_account.public_network_access_enabled
   tags                             = var.tags
+  dynamic "blob_properties" {
+    for_each = var.storage_account.blob_properties != null ? [var.storage_account.blob_properties] : []
+    content {
+      versioning_enabled = lookup(blob_properties.value, "versioning_enabled", null)
+      change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
+      delete_retention_policy {
+        days = lookup(blob_properties.value.delete_retention_policy, "days", null)
+      }
+      container_delete_retention_policy {
+        days = lookup(blob_properties.value.container_delete_retention_policy, "days", null)
+      }
+    }
+  }
   dynamic "identity" {
     for_each = var.storage_account.identity != null ? [var.storage_account.identity] : []
     content {
@@ -79,6 +92,15 @@ resource "azurerm_storage_share" "this" {
   enabled_protocol     = each.value.enabled_protocol
   quota                = each.value.quota
   metadata             = each.value.metadata
+
+  dynamic "blob_properties" {
+    for_each = each.value.blob_properties != null ? [each.value.blob_properties] : []
+    content {
+      versioning_enabled = lookup(blob_properties.value, "versioning_enabled", null)
+      change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
+      }
+  }
+
   dynamic "acl" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
