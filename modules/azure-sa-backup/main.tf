@@ -112,8 +112,11 @@ resource "azurerm_data_protection_backup_vault" "this" {
   datastore_type      = var.backup_blob.datastore_type
   redundancy          = var.backup_blob.redundancy
   tags                = data.azurerm_resource_group.this.tags
-  identity {
-    type = var.backup_blob.identity_type
+  dynamic "identity" {
+    for_each = var.backup_blob.identity_type != null ? [1] : []
+    content {
+      type = var.backup_blob.identity_type
+    }
   }
   lifecycle {
     ignore_changes = [tags]
