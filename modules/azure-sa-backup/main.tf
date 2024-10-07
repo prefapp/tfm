@@ -112,8 +112,11 @@ resource "azurerm_data_protection_backup_vault" "this" {
   datastore_type      = var.backup_blob.datastore_type
   redundancy          = var.backup_blob.redundancy
   tags                = data.azurerm_resource_group.this.tags
-  identity {
-    type = var.backup_blob.identity_type
+  dynamic "identity" {
+    for_each = var.backup_blob.identity_type != null ? [1] : []
+    content {
+      type = var.backup_blob.identity_type
+    }
   }
   lifecycle {
     ignore_changes = [tags]
@@ -122,7 +125,7 @@ resource "azurerm_data_protection_backup_vault" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
-  count               = var.backup_blob != null ? 1 : 0
+  count               = var.backup_blob != null && var.backup_blob.identity_type != null ? 1 : 0
   scope               = var.storage_account_id
   role_definition_name = var.backup_blob.role_assignment
   principal_id        = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id

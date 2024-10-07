@@ -67,7 +67,7 @@ variable "backup_blob" {
     vault_name         = string
     datastore_type     = string
     redundancy         = string
-    identity_type      = string
+    identity_type      = optional(string)
     role_assignment    = string
     instance_blob_name = string
     policy = object({
