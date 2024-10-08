@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.1...azure-sa-v0.1.2) (2024-10-08)
+
+
+### Bug Fixes
+
+* add threat_protection and upgrade version ([#294](https://github.com/prefapp/tfm/issues/294)) ([4b8867b](https://github.com/prefapp/tfm/commit/4b8867b7268153de19905a74dae1bda846ad33e8))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.0...azure-sa-v0.1.1) (2024-10-04)
 
 
