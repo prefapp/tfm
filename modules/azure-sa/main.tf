@@ -134,6 +134,13 @@ resource "azurerm_storage_table" "this" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/advanced_threat_protection
+resource "azurerm_advanced_threat_protection" "this" {
+  count              = var.storage_account.threat_protection_enabled ? 1 : 0
+  target_resource_id = azurerm_storage_account.this.id
+  enabled            = var.storage_account.threat_protection_enabled
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
   for_each             = var.lifecycle_policy_rules != null ? { for rule in var.lifecycle_policy_rules : rule.name => rule } : {}
