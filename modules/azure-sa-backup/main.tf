@@ -48,7 +48,7 @@ resource "azurerm_backup_container_storage_account" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_policy_file_share
 resource "azurerm_backup_policy_file_share" "this" {
-  count               = var.backup_share != null ? 1 : 0
+  count               = var.backup_share.policy_name != null ? 1 : 0
   name                = var.backup_share.policy_name
   resource_group_name = data.azurerm_resource_group.this.name
   recovery_vault_name = var.backup_share.recovery_services_vault_name
@@ -134,7 +134,7 @@ resource "azurerm_role_assignment" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
 resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
-  count                            = var.backup_blob != null ? 1 : 0
+  count                            = var.backup_blob.policy.name != null ? 1 : 0
   name                             = var.backup_blob.policy.name
   vault_id                         = azurerm_data_protection_backup_vault.this[0].id
   backup_repeating_time_intervals  = var.backup_blob.policy.backup_repeating_time_intervals

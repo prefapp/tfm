@@ -14,7 +14,7 @@ variable "storage_account_id" {
 variable "backup_share" {
   description = "Specifies the backup configuration for the storage share"
   type = object({
-    policy_name                  = string
+    policy_name                  = optional(string)
     recovery_services_vault_name = string
     sku                          = string
     soft_delete_enabled          = optional(bool)
@@ -70,7 +70,7 @@ variable "backup_blob" {
     identity_type      = optional(string)
     role_assignment    = string
     instance_blob_name = string
-    policy = object({
+    policy = optional(object({
       name                                   = string
       backup_repeating_time_intervals        = optional(list(string))
       operational_default_retention_duration = optional(string)
@@ -94,7 +94,7 @@ variable "backup_blob" {
       time_zone                        = optional(string)
       vault_default_retention_duration = optional(string)
       retention_duration               = optional(string)
-    })
+    }))
   })
 }
 
