@@ -32,13 +32,13 @@ variable "backup_share" {
       use_system_assigned_identity      = optional(bool, false)
     }))
     timezone = optional(string)
-    backup = object({
+    backup = optional(object({
       frequency = string
       time      = string
-    })
-    retention_daily = object({
+    }))
+    retention_daily = optional(object({
       count = number
-    })
+    }))
     retention_weekly = optional(object({
       count    = number
       weekdays = optional(list(string), ["Sunday"])
