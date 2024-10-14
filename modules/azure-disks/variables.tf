@@ -12,3 +12,13 @@ variable "resource_group_name" {
 variable "disks" {
   description = "A map of managed disk configurations."
 }
+
+variable "role_definition_name" {
+  description = "The name of the role definition to assign to the managed disk."
+  type = string
+}
+
+variable "principal_id" {
+  description = "The ID of the principal to assign the role definition to."
+  type = string
+}
