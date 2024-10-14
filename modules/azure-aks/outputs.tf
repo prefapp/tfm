@@ -41,10 +41,6 @@ output "kubelet_identity" {
   value = module.aks.kubelet_identity
 }
 
-output "host" {
-  value = module.aks.host
-}
-
 output "cluster_identity" {
   value = module.aks.cluster_identity
 }
