@@ -14,8 +14,6 @@ variable "resource_group_name" {
 variable "disks" {
   description = "A map of managed disk configurations."
   type = map(object({
-    name_prefix          = optional(string)
-    custom_name          = optional(string)
     storage_account_type = string
   }))
 }
