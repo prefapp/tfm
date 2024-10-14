@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.7.0...azure-aks-v1.7.1) (2024-10-14)
+
+
+### Bug Fixes
+
+* Fix (remove) host AKS output ([#299](https://github.com/prefapp/tfm/issues/299)) ([3cf162d](https://github.com/prefapp/tfm/commit/3cf162da7f75dffc5a860a75f5ac00d74ec7afc7))
+
 ## [1.7.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.6.0...azure-aks-v1.7.0) (2024-10-14)
 
 
