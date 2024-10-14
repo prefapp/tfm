@@ -1,8 +1,8 @@
 # Output section
-output "name" {
-  value = azurerm_managed_disk.disks[*].name
+output "disk_names" {
+  value = [for disk in azurerm_managed_disk.example : disk.name]
 }
 
-output "id" {
-  value = azurerm_managed_disk.disks[*].id
+output "disk_ids" {
+  value = [for disk in azurerm_managed_disk.example : disk.id]
 }
