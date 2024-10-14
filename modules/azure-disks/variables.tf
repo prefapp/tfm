@@ -15,7 +15,6 @@ variable "disks" {
 
 variable "role_definition_name" {
   description = "The name of the role definition to assign to the managed disk."
-  type = string
 }
 
 variable "principal_id" {
