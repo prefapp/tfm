@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.6.0...azure-aks-v1.7.0) (2024-10-14)
+
+
+### Features
+
+* Add more AKS module outputs ([#297](https://github.com/prefapp/tfm/issues/297)) ([5e634d4](https://github.com/prefapp/tfm/commit/5e634d4f368f97e246a23735cd257dd763db41c6))
+
 ## [1.6.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.5.2...azure-aks-v1.6.0) (2024-09-23)
 
 
