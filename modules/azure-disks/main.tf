@@ -19,8 +19,7 @@ resource "azurerm_managed_disk" "disks" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "role_assignment_over_managed_disk" {
-  count                = var.assign_role ? length(azurerm_managed_disk.disks) : 0
-  for_each             = azurerm_managed_disk.disks
+  for_each             = var.assign_role ? azurerm_managed_disk.disks : {}
   scope                = each.value.id
   role_definition_name = lookup(each.value, "role_definition_name", "Contributor")
   principal_id         = var.principal_id
