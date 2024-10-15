@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module creates azure disks with role into Azure provider.
+This module creates azure disks and assign a role to manage them, to a service principal.
 
 ## DOC
 
