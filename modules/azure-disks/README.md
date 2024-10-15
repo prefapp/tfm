@@ -27,6 +27,11 @@ module "githuib-oidc" {
 }
 ```
 
+## Notes
+
+- Empty disks or disks based on another disk can be created.
+- It is not necessary to assign a role to a disk.
+
 ### Set a data .tfvars
 
 ## Inputs
