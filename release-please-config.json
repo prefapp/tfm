@@ -50,6 +50,9 @@
         },
         "modules/azure-sa-backup": {
             "package-name": "azure-sa-backup"
+        },
+        "modules/azure-disks": {
+            "package-name": "azure-disks"
         }
     }
 }
