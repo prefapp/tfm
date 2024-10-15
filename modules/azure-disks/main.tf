@@ -9,9 +9,9 @@ resource "azurerm_managed_disk" "disks" {
   disk_size_gb         = lookup(each.value, "disk_size_gb", 4)
 
   dynamic "source_resource_id" {
-    for_each = lookup(each.value, "create_option", "Empty") == "Copy" ? [1] : []
+    for_each = each.value.create_option == "Copy" ? [1] : []
     content {
-      source_resource_id = lookup(each.value, "source_resource_id", null)
+      source_resource_id = each.value.source_resource_id
     }
   }
 
