@@ -13,6 +13,12 @@ variable "disks" {
   description = "A map of managed disk configurations."
 }
 
+variable "assign_role" {
+  description = "Whether to assign a role definition to the managed disk."
+  type = bool
+  default = false
+}
+
 variable "role_definition_name" {
   description = "The name of the role definition to assign to the managed disk."
   default = "Contributor"
@@ -21,4 +27,5 @@ variable "role_definition_name" {
 variable "principal_id" {
   description = "The ID of the principal to assign the role definition to."
   type = string
+  default = ""
 }

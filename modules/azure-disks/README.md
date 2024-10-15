@@ -37,7 +37,8 @@ module "githuib-oidc" {
 | resource_group_name | The name of the resource group in which the managed disk should be created. | string | n/a | yes |
 | disks | A map of managed disk configurations. | map(object({<br> name: string (required)<br> disk_size_gb: number (required)<br> sku: string (required)<br> })) | n/a | yes |
 | role_definition_name | The name of the role definition to assign to the managed disk. | string | `Contributor` | no |
-| principal_id | The ID of the principal to assign the role definition to. | string | n/a | yes |
+| principal_id | The ID of the principal to assign the role definition to. | string | n/a | no |
+| assign_role | Whether to assign the role definition to the principal. | bool | `false` | no |
 
 ## Outputs
 
