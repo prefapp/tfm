@@ -6,13 +6,14 @@ resource "azurerm_managed_disk" "disks" {
   resource_group_name  = var.resource_group_name
   storage_account_type = lookup(each.value, "storage_account_type", "StandardSSD_LRS")
   create_option        = lookup(each.value, "create_option", "Empty")
-  dynamic "source" {
-    for_each = each.value.create_option == "Copy" ? [each.value] : []
+  disk_size_gb         = lookup(each.value, "disk_size_gb", 4)
+
+  dynamic "source_resource_id" {
+    for_each = lookup(each.value, "create_option", "Empty") == "Copy" ? [1] : []
     content {
-      source_resource_id = source.value.source_resource_id
+      source_resource_id = lookup(each.value, "source_resource_id", null)
     }
   }
-  disk_size_gb         = lookup(each.value, "disk_size_gb", 4)
 
   lifecycle {
     ignore_changes = [
@@ -21,6 +22,7 @@ resource "azurerm_managed_disk" "disks" {
     ]
   }
 }
+
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "role_assignment_over_managed_disk" {
