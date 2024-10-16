@@ -131,6 +131,18 @@ variable "aks_agents_pool_drain_timeout_in_minutes" {
   default     = 30
 }
 
+variable "api_server_authorized_ip_ranges" {
+  description = "The authorized IP ranges for the API server"
+  type        = list(string)
+  default     = null
+}
+
+variable "create_role_assignment_public_ip" {
+  description = "Boolean value to create a role assignment for the public IP"
+  type        = bool
+  default     = false
+}
+
 # Extra node pools variables
 variable "extra_node_pools" {
   description = "A list of extra node pools to create"

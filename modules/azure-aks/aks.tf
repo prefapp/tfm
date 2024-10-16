@@ -27,6 +27,7 @@ module "aks" {
   rbac_aad_azure_rbac_enabled                          = true
   rbac_aad_managed                                     = true
   role_based_access_control_enabled                    = true
+  api_server_authorized_ip_ranges                      = var.api_server_authorized_ip_ranges
   vnet_subnet_id                                       = data.azurerm_subnet.aks_subnet.id
   oidc_issuer_enabled                                  = var.oidc_issuer_enabled
   workload_identity_enabled                            = var.workload_identity_enabled
