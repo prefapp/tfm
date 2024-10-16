@@ -97,6 +97,12 @@ variable "aks_sku_tier" {
   description = "The SKU Tier that should be used for this Kubernetes Cluster. Possible values are Free, Standard and Premium"
 }
 
+variable "api_server_authorized_ip_ranges" {
+  description = "The IP ranges authorized to access the AKS API server"
+  type        = list(string)
+  default     = null
+}
+
 variable "create_role_assignment_public_ip" {
   description = "Boolean value to create a role assignment for the public IP"
   type        = bool
