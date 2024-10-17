@@ -268,10 +268,3 @@ variable "api_server_authorized_ip_ranges" {
   type        = list(string)
   default     = null
 }
-
-# Role assignment for public IP
-variable "create_role_assignment_public_ip" {
-  description = "Boolean value to create a role assignment for the public IP"
-  type        = bool
-  default     = false
-}
