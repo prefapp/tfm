@@ -7,6 +7,16 @@ variable "resource_group_name" {
   description = "The name of the resource group in which to create the resources"
 }
 
+variable "tags" {
+  description = "The tags to associate with your resources"
+  type        = map(string)
+}
+
+# Data section public IP variables
+variable "public_ip_name" {
+  description = "The name of the public IP address to use for the AKS cluster"
+}
+
 # Data section subnet variables
 variable "subnet_name" {
   description = "The name of the subnet to use for the AKS cluster"
@@ -20,11 +30,6 @@ variable "vnet_resource_group_name" {
   description = "The name of the resource group in which the virtual network is located"
 }
 
-# Data section public IP variables
-variable "public_ip_name" {
-  description = "The name of the public IP address to use for the AKS cluster"
-}
-
 # ACRs to link to AKS
 variable "acr_map" {
   description = "The map of Azure Container Registries to link to the AKS cluster"
@@ -33,36 +38,39 @@ variable "acr_map" {
 }
 
 # AKS section variables
-variable "aks_prefix" {
-  description = "The prefix for all resources in this example"
-}
-
-variable "aks_kubernetes_version" {
-  description = "The version of Kubernetes to use for the AKS cluster"
-}
-
-variable "aks_orchestrator_version" {
-  description = "The version of Kubernetes to use for the AKS cluster"
-}
-
-variable "aks_node_os_channel_upgrade" {
-  description = "The automatic node channel upgrade setting for the AKS cluster"
+variable "aks_agents_count" {
+  description = "The number of agents in the AKS cluster"
 }
 
 variable "aks_agents_max_pods" {
   description = "The maximum number of pods that can run on an agent"
 }
 
-variable "aks_agents_count" {
-  description = "The number of agents in the AKS cluster"
+variable "aks_agents_pool_drain_timeout_in_minutes" {
+  description = "The maximum time in minutes to wait for a node to drain during a node pool upgrade"
+  default     = 30
+}
+
+variable "aks_agents_pool_max_surge" {
+  description = "The maximum number of agents that can be added to the agent pool during an upgrade"
+}
+
+variable "aks_agents_pool_name" {
+  description = "The name of the agent pool"
 }
 
 variable "aks_agents_size" {
   description = "The size of the agents in the AKS cluster"
 }
 
-variable "aks_agents_pool_name" {
-  description = "The name of the agent pool"
+variable "aks_default_pool_custom_labels" {
+  description = "Default pool custom labels to apply to all nodes"
+  type        = map(any)
+  default     = {}
+}
+
+variable "aks_kubernetes_version" {
+  description = "The version of Kubernetes to use for the AKS cluster"
 }
 
 variable "aks_network_plugin" {
@@ -73,35 +81,24 @@ variable "aks_network_policy" {
   description = "The network policy to use for networking in the AKS cluster"
 }
 
+variable "aks_orchestrator_version" {
+  description = "The version of Kubernetes to use for the AKS cluster"
+}
+
 variable "aks_os_disk_size_gb" {
   description = "The size of the OS disk in GB"
 }
 
-variable "aks_agents_pool_max_surge" {
-  description = "The maximum number of agents that can be added to the agent pool during an upgrade"
+variable "aks_prefix" {
+  description = "The prefix for all resources in this example"
 }
 
 variable "aks_sku_tier" {
   description = "The SKU Tier that should be used for this Kubernetes Cluster. Possible values are Free, Standard and Premium"
 }
 
-variable "aks_default_pool_custom_labels" {
-  description = "Default pool custom labels to apply to all nodes"
-  type        = map(any)
-  default     = {}
-}
-
-variable "oidc_issuer_enabled" {
-  description = "Whether to enable OIDC Issuer for the AKS cluster"
-}
-
-variable "workload_identity_enabled" {
-  description = "Whether to enable Workload Identity for the AKS cluster"
-}
-
-variable "tags" {
-  description = "The tags to associate with your resources"
-  type        = map(string)
+variable "key_vault_secrets_provider_enabled" {
+  description = "Boolean value to activate the csi-secrets-store-driver"
 }
 
 variable "load_balancer_profile_enabled" {
@@ -116,49 +113,13 @@ variable "load_balancer_sku" {
   default     = "standard"
 }
 
-variable "temporary_name_for_rotation" {
-  description = "Specifies the name of the temporary node pool used to cycle the default node pool for VM resizing"
-  default     = "temppool"
-}
-
 variable "node_os_channel_upgrade" {
   description = "The automatic node channel upgrade setting for the AKS cluster"
   default     = "None"
 }
 
-variable "aks_agents_pool_drain_timeout_in_minutes" {
-  description = "The maximum time in minutes to wait for a node to drain during a node pool upgrade"
-  default     = 30
-}
-
-# Extra node pools variables
-variable "extra_node_pools" {
-  description = "A list of extra node pools to create"
-  type = list(object({
-    name                  = string
-    pool_name             = string
-    vm_size               = string
-    node_count            = optional(number, 1)
-    create_before_destroy = optional(bool, true)
-    enable_auto_scaling   = optional(bool, false)
-    min_count             = optional(number, null)
-    max_count             = optional(number, null)
-    max_pod_per_node      = optional(number, 110)
-    os_disk_type          = optional(string, "Ephemeral")
-    mode                  = optional(string, "User")
-    custom_labels         = map(string)
-    orchestrator_version  = optional(string, "")
-    upgrade_settings = optional(object({
-      drain_timeout_in_minutes      = number
-      node_soak_duration_in_minutes = number
-      max_surge                     = string
-    }))
-  }))
-  default = []
-}
-
-variable "key_vault_secrets_provider_enabled" {
-  description = "Boolean value to activate the csi-secrets-store-driver"
+variable "oidc_issuer_enabled" {
+  description = "Whether to enable OIDC Issuer for the AKS cluster"
 }
 
 variable "secret_rotation_enabled" {
@@ -167,6 +128,15 @@ variable "secret_rotation_enabled" {
 
 variable "secret_rotation_interval" {
   description = "String value to activate the secrets rotation interval csi-secrets-store-driver"
+}
+
+variable "temporary_name_for_rotation" {
+  description = "Specifies the name of the temporary node pool used to cycle the default node pool for VM resizing"
+  default     = "temppool"
+}
+
+variable "workload_identity_enabled" {
+  description = "Whether to enable Workload Identity for the AKS cluster"
 }
 
 # Auto Scaler Profile
@@ -266,14 +236,42 @@ variable "auto_scaler_profile_skip_nodes_with_system_pods" {
   default     = false
 }
 
-variable "create_role_assignment_public_ip" {
-  description = "Boolean value to create a role assignment for the public IP"
-  type        = bool
-  default     = false
+# Extra node pools variables
+variable "extra_node_pools" {
+  description = "A list of extra node pools to create"
+  type = list(object({
+    name                  = string
+    pool_name             = string
+    vm_size               = string
+    node_count            = optional(number, 1)
+    create_before_destroy = optional(bool, true)
+    enable_auto_scaling   = optional(bool, false)
+    min_count             = optional(number, null)
+    max_count             = optional(number, null)
+    max_pod_per_node      = optional(number, 110)
+    os_disk_type          = optional(string, "Ephemeral")
+    mode                  = optional(string, "User")
+    custom_labels         = map(string)
+    orchestrator_version  = optional(string, "")
+    upgrade_settings = optional(object({
+      drain_timeout_in_minutes      = number
+      node_soak_duration_in_minutes = number
+      max_surge                     = string
+    }))
+  }))
+  default = []
 }
 
+# API server authorized IP ranges
 variable "api_server_authorized_ip_ranges" {
   description = "The IP ranges authorized to access the AKS API server"
   type        = list(string)
   default     = null
+}
+
+# Role assignment for public IP
+variable "create_role_assignment_public_ip" {
+  description = "Boolean value to create a role assignment for the public IP"
+  type        = bool
+  default     = false
 }
