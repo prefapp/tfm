@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.7.1...azure-aks-v1.8.0) (2024-10-17)
+
+
+### Features
+
+* Only stetic changes ([#308](https://github.com/prefapp/tfm/issues/308)) ([4044b0d](https://github.com/prefapp/tfm/commit/4044b0dd4d9334b9aa97a30dd8f8d0ebd627335a))
+
 ## [1.7.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.7.0...azure-aks-v1.7.1) (2024-10-14)
 
 
