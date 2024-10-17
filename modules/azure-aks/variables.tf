@@ -265,3 +265,15 @@ variable "auto_scaler_profile_skip_nodes_with_system_pods" {
   type        = bool
   default     = false
 }
+
+variable "create_role_assignment_public_ip" {
+  description = "Boolean value to create a role assignment for the public IP"
+  type        = bool
+  default     = false
+}
+
+variable "api_server_authorized_ip_ranges" {
+  description = "The IP ranges authorized to access the AKS API server"
+  type        = list(string)
+  default     = null
+}

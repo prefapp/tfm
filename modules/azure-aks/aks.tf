@@ -17,6 +17,7 @@ module "aks" {
   attached_acr_id_map                                  = var.acr_map
   network_plugin                                       = var.aks_network_plugin
   network_policy                                       = var.aks_network_policy
+  api_server_authorized_ip_ranges                      = var.api_server_authorized_ip_ranges
   load_balancer_profile_enabled                        = var.load_balancer_profile_enabled
   load_balancer_sku                                    = var.load_balancer_sku
   load_balancer_profile_outbound_ip_address_ids        = [data.azurerm_public_ip.aks_public_ip.id]
