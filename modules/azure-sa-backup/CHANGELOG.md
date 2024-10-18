@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.1...azure-sa-backup-v0.2.2) (2024-10-18)
+
+
+### Bug Fixes
+
+* backup_shares and backup_blobs optional vars ([#312](https://github.com/prefapp/tfm/issues/312)) ([dbe95a1](https://github.com/prefapp/tfm/commit/dbe95a1808dd27296885f3524fdf94a4fb704de2))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.0...azure-sa-backup-v0.2.1) (2024-10-07)
 
 
