@@ -52,6 +52,9 @@ redundancy          = "LocallyRedundant"
 # Whether soft delete is enabled or disabled for the vault
 soft_delete         = "Off"
 
+# Default retention duration for backups in days before they are deleted (14 days free)
+retention_duration_in_days = 30
+
 # List of backup policies to be created
 backup_policies = [
   {
@@ -153,6 +156,7 @@ backup_instances = [
 | <a name="input_datastore_type"></a> [datastore_type](#input_datastore_type) | The type of datastore. | `string` | `"VaultStore"` | no |
 | <a name="input_redundancy"></a> [redundancy](#input_redundancy) | The redundancy type. | `string` | `"LocallyRedundant"` | no |
 | <a name="input_soft_delete"></a> [soft_delete](#input_soft_delete) | Enable soft delete. | `string` | `"Off"` | no |
+| <a name="input_retention_duration_in_days"></a> [retention_duration_in_days](#input_retention_duration_in_days) | Default retention duration in days. | `number` | `14` | no |
 | <a name="input_backup_policies"></a> [backup_policies](#input_backup_policies) | List of backup policies. | `list(object({ name = string, backup_repeating_time_intervals = list(string), default_retention_duration = string, time_zone = string, retention_rules = list(object({ name = string, duration = string, priority = number, criteria = object({ absolute_criteria = string }) })) }))` | n/a | yes |
 | <a name="input_backup_instances"></a> [backup_instances](#input_backup_instances) | List of backup instances. | `list(object({ disk_name = string, disk_resource_group = string, snapshot_resource_group_name = string, backup_policy_name = string }))` | n/a | yes |
 

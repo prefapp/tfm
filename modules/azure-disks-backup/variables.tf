@@ -31,6 +31,12 @@ variable "soft_delete" {
   default     = "Off"
 }
 
+variable "retention_duration_in_days" {
+  description = "The retention duration in days before the backup is purged. 14 days free."
+  type        = number
+  default     = 14
+}
+
 variable "backup_policies" {
   description = "List of backup policies."
   type = list(object({
