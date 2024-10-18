@@ -13,7 +13,7 @@ variable "storage_account_id" {
 ## Backup fileshares variables
 variable "backup_share" {
   description = "Specifies the backup configuration for the storage share"
-  type = optional(object({
+  type = object({
     policy_name                  = string
     recovery_services_vault_name = string
     sku                          = string
@@ -56,14 +56,14 @@ variable "backup_share" {
       weeks    = optional(list(string), ["First"])
       days     = optional(list(number))
     }))
-  }))
+    })
   default = null
 }
 
 ## Backup blobs variables
 variable "backup_blob" {
   description = "Specifies the backup configuration for the storage blob"
-  type = optional(object({
+  type = object({
     vault_name         = string
     datastore_type     = string
     redundancy         = string
@@ -95,12 +95,12 @@ variable "backup_blob" {
       vault_default_retention_duration = optional(string)
       retention_duration               = optional(string)
     })
-  }))
+  })
   default = null
 }
 
 variable "lifecycle_policy_rule" {
-  type = optional(list(object({
+  type = list(object({
     name    = string
     enabled = bool
     filters = object({
@@ -112,6 +112,6 @@ variable "lifecycle_policy_rule" {
       snapshot  = object({ delete_after_days_since_creation_greater_than = number })
       version   = object({ delete_after_days_since_creation = number })
     })
-  })))
+  }))
   default = null
 }
