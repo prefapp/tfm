@@ -16,7 +16,7 @@ This module creates and configures Azure Backup for managed disks. It sets up a 
 ### Set a module
 
 ```terraform
-module "githuib-oidc" {
+module "disks-backup" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-disks-backup?ref=<version>"
 }
 ```
@@ -24,7 +24,7 @@ module "githuib-oidc" {
 #### Example
 
 ```terraform
-module "githuib-oidc" {
+module "disks-backup" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-disks-backup?ref=v1.2.3"
 }
 ```
@@ -37,13 +37,10 @@ module "githuib-oidc" {
 # The name of the resource group where the backup vault and related resources will be created
 resource_group_name = "bk-disks"
 
-# The Azure region where the resources will be deployed
-location            = "West Europe"
-
 # The name of the Recovery Services vault
 vault_name          = "bk-disks"
 
-# The type of datastore to use for backups
+# The type of datastore to use for backups (Possible values are ArchiveStore, OperationalStore, SnapshotStore and VaultStore)
 datastore_type      = "VaultStore"
 
 # The redundancy option for the backup vault (LocallyRedundant or GeoRedundant)
@@ -151,9 +148,8 @@ backup_instances = [
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_resource_group_name"></a> [resource_group_name](#input_resource_group_name) | The name of the resource group. | `string` | n/a | yes |
-| <a name="input_location"></a> [location](#input_location) | The location of the resources. | `string` | n/a | yes |
 | <a name="input_vault_name"></a> [vault_name](#input_vault_name) | The name of the backup vault. | `string` | n/a | yes |
-| <a name="input_datastore_type"></a> [datastore_type](#input_datastore_type) | The type of datastore. | `string` | `"VaultStore"` | no |
+| <a name="input_datastore_type"></a> [datastore_type](#input_datastore_type) | The type of datastore. Possible values are ArchiveStore, OperationalStore, SnapshotStore and VaultStore. | `string` | `"VaultStore"` | no |
 | <a name="input_redundancy"></a> [redundancy](#input_redundancy) | The redundancy type. | `string` | `"LocallyRedundant"` | no |
 | <a name="input_soft_delete"></a> [soft_delete](#input_soft_delete) | Enable soft delete. | `string` | `"Off"` | no |
 | <a name="input_retention_duration_in_days"></a> [retention_duration_in_days](#input_retention_duration_in_days) | Default retention duration in days. | `number` | `14` | no |

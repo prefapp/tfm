@@ -3,13 +3,13 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "location" {
-  description = "The location of the resources."
+variable "vault_name" {
+  description = "The name of the backup vault."
   type        = string
 }
 
-variable "vault_name" {
-  description = "The name of the backup vault."
+variable "vault_resource_group_name" {
+  description = "The name of the resource group where the backup vault is located."
   type        = string
 }
 
@@ -17,18 +17,33 @@ variable "datastore_type" {
   description = "The type of datastore."
   type        = string
   default     = "VaultStore"
+
+  validation {
+    condition = contains(["ArchiveStore", "OperationalStore", "SnapshotStore", "VaultStore"], var.datastore_type)
+    error_message = "Valid values for datastore_type are (ArchiveStore, OperationalStore, SnapshotStore, VaultStore)"
+  }
 }
 
 variable "redundancy" {
   description = "The redundancy type."
   type        = string
   default     = "LocallyRedundant"
+
+  validation {
+    condition = contains(["GeoRedundant", "LocallyRedundant", "ZoneRedundant"], var.redundancy)
+    error_message = "Valid values for redundancy are (GeoRedundant, LocallyRedundant, ZoneRedundant)"
+  }
 }
 
 variable "soft_delete" {
   description = "Enable soft delete."
   type        = string
   default     = "Off"
+
+  validation {
+    condition = contains(["AlwaysOn", "Off", "On"], var.soft_delete)
+    error_message = "Valid values for soft_delete are (AlwaysOn, Off, On)"
+  }
 }
 
 variable "retention_duration_in_days" {
