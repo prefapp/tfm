@@ -1,15 +1,10 @@
 variable "resource_group_name" {
-  description = "The name of the resource group."
+  description = "The name of the resource group used for the backup vault and backup instances."
   type        = string
 }
 
 variable "vault_name" {
   description = "The name of the backup vault."
-  type        = string
-}
-
-variable "vault_resource_group_name" {
-  description = "The name of the resource group where the backup vault is located."
   type        = string
 }
 
