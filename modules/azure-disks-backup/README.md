@@ -28,14 +28,6 @@ module "disks-backup" {
 }
 ```
 
-#### Example
-
-```terraform
-module "disks-backup" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-disks-backup?ref=v1.2.3"
-}
-```
-
 ### Set a data .tfvars
 
 #### Example
