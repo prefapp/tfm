@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.6.1...azure-flexible-server-postgresql-v2.7.0) (2024-10-21)
+
+
+### Features
+
+* feature/azure-disks-backup ([#318](https://github.com/prefapp/tfm/issues/318)) ([0373a52](https://github.com/prefapp/tfm/commit/0373a52cce175f587ae692e836a920bf815eb3bb))
+
 ## [2.6.1](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.6.0...azure-flexible-server-postgresql-v2.6.1) (2024-09-13)
 
 
