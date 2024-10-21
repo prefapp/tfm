@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/prefapp/tfm/compare/aws-sso-v0.5.0...aws-sso-v0.6.0) (2024-10-21)
+
+
+### Features
+
+* feature/azure-disks-backup ([#318](https://github.com/prefapp/tfm/issues/318)) ([0373a52](https://github.com/prefapp/tfm/commit/0373a52cce175f587ae692e836a920bf815eb3bb))
+
 ## [0.5.0](https://github.com/prefapp/tfm/compare/aws-sso-v0.4.0...aws-sso-v0.5.0) (2023-12-19)
 
 
