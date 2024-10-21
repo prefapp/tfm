@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.8.0...azure-aks-v1.9.0) (2024-10-21)
+
+
+### Features
+
+* feature/azure-disks-backup ([#318](https://github.com/prefapp/tfm/issues/318)) ([0373a52](https://github.com/prefapp/tfm/commit/0373a52cce175f587ae692e836a920bf815eb3bb))
+
 ## [1.8.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.7.1...azure-aks-v1.8.0) (2024-10-17)
 
 
