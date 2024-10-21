@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.3...azure-sa-v0.2.0) (2024-10-21)
+
+
+### Features
+
+* feature/azure-disks-backup ([#318](https://github.com/prefapp/tfm/issues/318)) ([0373a52](https://github.com/prefapp/tfm/commit/0373a52cce175f587ae692e836a920bf815eb3bb))
+
 ## [0.1.3](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.2...azure-sa-v0.1.3) (2024-10-21)
 
 
