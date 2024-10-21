@@ -14,9 +14,9 @@ This module creates and configures Azure Backup for managed disks. It sets up a 
 ## Notes
 
 - This module presupposes that:
-- The `resource_group_name` was used to create the Recovery Services vault and backuo instances.
-- The resource group where the snapshot will be stored is the same as the vault.
-- The disk/s resource groups/s are diferent from the vault resource group, otherwise, the module raises an error.
+  - The `resource_group_name` was used to create the Recovery Services vault and backuo instances.
+  - The resource group where the snapshot will be stored is the same as the vault.
+  - The disk/s resource groups/s are diferent from the vault resource group, otherwise, the module raises an error.
 
 ## Usage
 
