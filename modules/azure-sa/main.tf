@@ -36,11 +36,17 @@ resource "azurerm_storage_account" "this" {
     content {
       versioning_enabled = lookup(blob_properties.value, "versioning_enabled", null)
       change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
-      delete_retention_policy {
-        days = lookup(blob_properties.value.delete_retention_policy, "days", null)
+      dynamic "delete_retention_policy" {
+        for_each = blob_properties.value.delete_retention_policy != null ? [blob_properties.value.delete_retention_policy] : []
+        content {
+          days = lookup(delete_retention_policy.value, "days", null)
+        }
       }
-      container_delete_retention_policy {
-        days = lookup(blob_properties.value.container_delete_retention_policy, "days", null)
+      dynamic "container_delete_retention_policy" {
+        for_each = blob_properties.value.container_delete_retention_policy != null ? [blob_properties.value.container_delete_retention_policy] : []
+        content {
+          days = lookup(container_delete_retention_policy.value, "days", null)
+        }
       }
     }
   }
