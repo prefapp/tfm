@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.2...azure-sa-v0.1.3) (2024-10-21)
+
+
+### Bug Fixes
+
+* blobs optional vars ([#316](https://github.com/prefapp/tfm/issues/316)) ([cd8a2dc](https://github.com/prefapp/tfm/commit/cd8a2dce100b71fc42fef013fb6263ca868aa658))
+
 ## [0.1.2](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.1...azure-sa-v0.1.2) (2024-10-08)
 
 
