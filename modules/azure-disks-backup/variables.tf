@@ -70,7 +70,6 @@ variable "backup_instances" {
   type = list(object({
     disk_name                    = string
     disk_resource_group          = string
-    snapshot_resource_group_name = string
     backup_policy_name           = string
   }))
 }
