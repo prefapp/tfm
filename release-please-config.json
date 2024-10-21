@@ -53,6 +53,9 @@
         },
         "modules/azure-disks": {
             "package-name": "azure-disks"
+        },
+        "modules/azure-disks-backup": {
+            "package-name": "azure-disks-backup"
         }
     }
 }
