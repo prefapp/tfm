@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.1...azuread-group-v1.1.0) (2024-10-21)
+
+
+### Features
+
+* feature/azure-disks-backup ([#318](https://github.com/prefapp/tfm/issues/318)) ([0373a52](https://github.com/prefapp/tfm/commit/0373a52cce175f587ae692e836a920bf815eb3bb))
+
 ## [1.0.1](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.0...azuread-group-v1.0.1) (2024-07-17)
 
 
