@@ -1,8 +1,9 @@
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_disk
 resource "azurerm_data_protection_backup_instance_disk" "this" {
     for_each                     = { for instance in var.backup_instances : instance.disk_name => instance }
     name                         = each.key
-    location                     = azurerm_data_protection_backup_vault.this.location
+    location                     = data.azurerm_resource_group.this.location
     vault_id                     = azurerm_data_protection_backup_vault.this.id
     disk_id                      = data.azurerm_managed_disk.this[each.key].id
     snapshot_resource_group_name = var.resource_group_name
