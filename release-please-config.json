@@ -1,5 +1,5 @@
 {
-    "last-release-sha": "eebacdd6011d0bd95bb3a6abe5cf63ec34647df0",
+    "last-release-sha": "0c59cf381e3e9d5332c7bc017b41be5b3194e671",
     "separate-pull-requests": true,
     "release-type": "terraform-module",
     "packages": {
