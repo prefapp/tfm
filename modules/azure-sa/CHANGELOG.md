@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.3...azure-sa-v0.1.4) (2024-10-22)
+
+
+### Bug Fixes
+
+* add restore_policy argument for storage accounts ([#357](https://github.com/prefapp/tfm/issues/357)) ([9d772a2](https://github.com/prefapp/tfm/commit/9d772a2ef15df811868c48997ebdfee49a89ed59))
+
 ## [0.1.3](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.2...azure-sa-v0.1.3) (2024-10-21)
 
 
