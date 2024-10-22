@@ -34,7 +34,7 @@ resource "azurerm_storage_account" "this" {
   dynamic "blob_properties" {
     for_each = var.storage_account.blob_properties != null ? [var.storage_account.blob_properties] : []
     content {
-      versioning_enabled = lookup(blob_properties.value, "versioning_enabled", null)
+      versioning_enabled  = lookup(blob_properties.value, "versioning_enabled", null)
       change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
       dynamic "delete_retention_policy" {
         for_each = blob_properties.value.delete_retention_policy != null ? [blob_properties.value.delete_retention_policy] : []
@@ -46,6 +46,12 @@ resource "azurerm_storage_account" "this" {
         for_each = blob_properties.value.container_delete_retention_policy != null ? [blob_properties.value.container_delete_retention_policy] : []
         content {
           days = lookup(container_delete_retention_policy.value, "days", null)
+        }
+      }
+      dynamic "restore_policy" {
+        for_each = blob_properties.value.restore_policy != null ? [blob_properties.value.restore_policy] : []
+        content {
+          days = lookup(restore_policy.value, "days", null)
         }
       }
     }
@@ -149,7 +155,7 @@ resource "azurerm_advanced_threat_protection" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
-  for_each             = var.lifecycle_policy_rules != null ? { for rule in var.lifecycle_policy_rules : rule.name => rule } : {}
+  for_each           = var.lifecycle_policy_rules != null ? { for rule in var.lifecycle_policy_rules : rule.name => rule } : {}
   storage_account_id = azurerm_storage_account.this.id
   dynamic "rule" {
     for_each = var.lifecycle_policy_rules
