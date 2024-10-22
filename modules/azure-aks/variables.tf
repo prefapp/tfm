@@ -113,6 +113,12 @@ variable "load_balancer_sku" {
   default     = "standard"
 }
 
+variable "load_balancer_profile_outbound_ip_address_enabled" {
+  description = "Boolean value to enable or not the load balancer profile outbound ip address"
+  type        = bool
+  default     = false
+}
+
 variable "node_os_channel_upgrade" {
   description = "The automatic node channel upgrade setting for the AKS cluster"
   default     = "None"
@@ -267,11 +273,4 @@ variable "api_server_authorized_ip_ranges" {
   description = "The IP ranges authorized to access the AKS API server"
   type        = list(string)
   default     = null
-}
-
-# Role assignment for public IP
-variable "create_role_assignment_public_ip" {
-  description = "Boolean value to create a role assignment for the public IP"
-  type        = bool
-  default     = false
 }
