@@ -31,7 +31,7 @@ module "aks" {
   key_vault_secrets_provider_enabled                   = var.key_vault_secrets_provider_enabled
   kubernetes_version                                   = var.aks_kubernetes_version
   load_balancer_profile_enabled                        = var.load_balancer_profile_enabled
-  load_balancer_profile_outbound_ip_address_ids        = var.load_balancer_profile_outbound_ip_address_enabled ? [data.azurerm_public_ip.aks_public_ip[count.index].id] : null
+  load_balancer_profile_outbound_ip_address_ids        = var.load_balancer_profile_outbound_ip_address_enabled ? [for ip in data.azurerm_public_ip.aks_public_ip : ip.id] : null
   load_balancer_sku                                    = var.load_balancer_sku
   log_analytics_workspace_enabled                      = false
   network_contributor_role_assigned_subnet_ids         = { aks_subnet = data.azurerm_subnet.aks_subnet.id }
