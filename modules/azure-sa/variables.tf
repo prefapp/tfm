@@ -111,8 +111,8 @@ variable "storage_account" {
   validation {
     condition = (
       var.storage_account.blob_properties == null || var.storage_account.blob_properties.restore_policy == null || (
-        var.storage_account.blob_properties.restore_policy.days >= 1 &&
-        var.storage_account.blob_properties.restore_policy.days <= 365 &&
+        var.storage_account.blob_properties == null || var.storage_account.blob_properties.restore_policy.days >= 1 &&
+        var.storage_account.blob_properties == null || var.storage_account.blob_properties.restore_policy.days <= 365 &&
         var.storage_account.blob_properties.delete_retention_policy != null &&
         var.storage_account.blob_properties.versioning_enabled == true &&
         var.storage_account.blob_properties.change_feed_enabled == true &&
