@@ -110,7 +110,7 @@ variable "storage_account" {
   # Validation block for `restore_policy`
   validation {
     condition = (
-      var.storage_account.blob_properties == null || var.storage_account.blob_properties.restore_policy == null || (
+      var.storage_account.blob_properties != null && var.storage_account.blob_properties.restore_policy != null ? (
         var.storage_account.blob_properties.restore_policy.days != null &&
         var.storage_account.blob_properties.restore_policy.days >= 1 &&
         var.storage_account.blob_properties.restore_policy.days <= 365 &&
@@ -118,7 +118,7 @@ variable "storage_account" {
         var.storage_account.blob_properties.versioning_enabled == true &&
         var.storage_account.blob_properties.change_feed_enabled == true &&
         (var.storage_account.blob_properties.delete_retention_policy == null || var.storage_account.blob_properties.restore_policy.days < var.storage_account.blob_properties.delete_retention_policy.days)
-      )
+      ) : true
     )
     error_message = "restore_policy.days must be between 1 and 365, and less than delete_retention_policy.days. Additionally, delete_retention_policy must be set, and versioning_enabled and change_feed_enabled must be true."
   }
