@@ -38,7 +38,7 @@ output "oidc_issuer_url" {
 }
 
 output "outbound_ip_address" {
-  value = data.azurerm_public_ip.aks_public_ip.id
+  value = data.azurerm_public_ip.aks_public_ip[count.index].id
 }
 
 # Data section
