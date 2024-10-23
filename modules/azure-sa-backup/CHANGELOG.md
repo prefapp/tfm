@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.3...azure-sa-backup-v0.2.4) (2024-10-23)
+
+
+### Bug Fixes
+
+* add container names backup vaults ([#359](https://github.com/prefapp/tfm/issues/359)) ([f8886a0](https://github.com/prefapp/tfm/commit/f8886a042307a198532676615df17755cd89a53a))
+
 ## [0.2.3](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.2...azure-sa-backup-v0.2.3) (2024-10-18)
 
 
