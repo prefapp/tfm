@@ -77,7 +77,7 @@ resource "azurerm_backup_policy_file_share" "this" {
       count    = var.backup_share.retention_monthly.count
       weekdays = var.backup_share.retention_monthly.weekdays
       weeks    = var.backup_share.retention_monthly.weeks
-      days = var.backup_share.retention_monthly.days
+      days     = var.backup_share.retention_monthly.days
     }
   }
   dynamic "retention_yearly" {
@@ -94,7 +94,7 @@ resource "azurerm_backup_policy_file_share" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_protected_file_share
 resource "azurerm_backup_protected_file_share" "this" {
-  count                    = var.backup_share != null ? length(var.backup_share.source_file_share_name) : 0
+  count                     = var.backup_share != null ? length(var.backup_share.source_file_share_name) : 0
   resource_group_name       = data.azurerm_resource_group.this.name
   recovery_vault_name       = var.backup_share.recovery_services_vault_name
   source_storage_account_id = var.storage_account_id
@@ -125,19 +125,19 @@ resource "azurerm_data_protection_backup_vault" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
-  count               = var.backup_blob != null && can(var.backup_blob.identity_type) ? 1 : 0
-  scope               = var.storage_account_id
+  count                = var.backup_blob != null && can(var.backup_blob.identity_type) ? 1 : 0
+  scope                = var.storage_account_id
   role_definition_name = var.backup_blob.role_assignment
-  principal_id        = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
-  depends_on          = [azurerm_data_protection_backup_vault.this]
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
+  depends_on           = [azurerm_data_protection_backup_vault.this]
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
 resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
-  count                            = var.backup_blob != null ? 1 : 0
-  name                             = var.backup_blob.policy.name
-  vault_id                         = azurerm_data_protection_backup_vault.this[0].id
-  backup_repeating_time_intervals  = var.backup_blob.policy.backup_repeating_time_intervals
+  count                           = var.backup_blob != null ? 1 : 0
+  name                            = var.backup_blob.policy.name
+  vault_id                        = azurerm_data_protection_backup_vault.this[0].id
+  backup_repeating_time_intervals = var.backup_blob.policy.backup_repeating_time_intervals
   dynamic "retention_rule" {
     for_each = var.backup_blob.policy.retention_rule != null ? var.backup_blob.policy.retention_rule : []
     content {
@@ -164,10 +164,11 @@ resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_blob_storage
 resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
-  count               = var.backup_blob != null ? 1 : 0
-  name                = var.backup_blob.instance_blob_name
-  vault_id            = azurerm_data_protection_backup_vault.this[0].id
-  location            = data.azurerm_resource_group.this.location
-  storage_account_id  = var.storage_account_id
-  backup_policy_id    = azurerm_data_protection_backup_policy_blob_storage.this[0].id
+  count                           = var.backup_blob != null ? 1 : 0
+  name                            = var.backup_blob.instance_blob_name
+  vault_id                        = azurerm_data_protection_backup_vault.this[0].id
+  location                        = data.azurerm_resource_group.this.location
+  storage_account_id              = var.storage_account_id
+  backup_policy_id                = azurerm_data_protection_backup_policy_blob_storage.this[0].id
+  storage_account_container_names = var.backup_blob.storage_account_container_names
 }
