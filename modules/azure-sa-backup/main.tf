@@ -170,5 +170,5 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   location            = data.azurerm_resource_group.this.location
   storage_account_id  = var.storage_account_id
   backup_policy_id    = azurerm_data_protection_backup_policy_blob_storage.this[0].id
-  storage_account_container_names = var.backup_blob.instance_blob_container_names
+  storage_account_container_names = var.backup_blob.storage_account_container_names
 }
