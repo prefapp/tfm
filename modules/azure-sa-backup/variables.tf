@@ -56,7 +56,7 @@ variable "backup_share" {
       weeks    = optional(list(string), ["First"])
       days     = optional(list(number))
     }))
-    })
+  })
   default = null
 }
 
@@ -64,12 +64,12 @@ variable "backup_share" {
 variable "backup_blob" {
   description = "Specifies the backup configuration for the storage blob"
   type = object({
-    vault_name         = string
-    datastore_type     = string
-    redundancy         = string
-    identity_type      = optional(string)
-    role_assignment    = string
-    instance_blob_name = string
+    vault_name                      = string
+    datastore_type                  = string
+    redundancy                      = string
+    identity_type                   = optional(string)
+    role_assignment                 = string
+    instance_blob_name              = string
     storage_account_container_names = optional(list(string))
     policy = object({
       name                                   = string
