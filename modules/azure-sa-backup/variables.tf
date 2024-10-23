@@ -70,6 +70,7 @@ variable "backup_blob" {
     identity_type      = optional(string)
     role_assignment    = string
     instance_blob_name = string
+    instance_blob_container_names = optional(list(string))
     policy = object({
       name                                   = string
       backup_repeating_time_intervals        = optional(list(string))
