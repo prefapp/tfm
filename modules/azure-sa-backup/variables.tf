@@ -1,7 +1,12 @@
 # VARIABLES SECTION
 ## General
-variable "resource_group_name" {
-  description = "The name for the resource group"
+variable "storage_account_resource_group_name" {
+  description = "The name for the resource group for the storage account"
+  type        = string
+}
+
+variable "backup_resource_group_name" {
+  description = "The name for the resource group for the backups"
   type        = string
 }
 
