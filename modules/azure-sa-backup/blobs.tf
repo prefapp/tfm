@@ -3,11 +3,11 @@
 resource "azurerm_data_protection_backup_vault" "this" {
   count               = var.backup_blob != null ? 1 : 0
   name                = var.backup_blob.vault_name
-  resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
+  resource_group_name = var.backup_resource_group_name
+  location            = data.azurerm_resource_group.this.location
   datastore_type      = var.backup_blob.datastore_type
   redundancy          = var.backup_blob.redundancy
-  tags                = azurerm_resource_group.this.tags
+  tags                = data.azurerm_resource_group.this.tags
   dynamic "identity" {
     for_each = var.backup_blob.identity_type != null ? [1] : []
     content {
@@ -63,7 +63,7 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   count                           = var.backup_blob != null ? 1 : 0
   name                            = var.backup_blob.instance_blob_name
   vault_id                        = azurerm_data_protection_backup_vault.this[0].id
-  location                        = azurerm_resource_group.this.location
+  location                        = data.azurerm_resource_group.this.location
   storage_account_id              = var.storage_account_id
   backup_policy_id                = azurerm_data_protection_backup_policy_blob_storage.this[0].id
   storage_account_container_names = var.backup_blob.storage_account_container_names
