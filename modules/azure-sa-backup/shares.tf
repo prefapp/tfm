@@ -4,12 +4,12 @@ resource "azurerm_recovery_services_vault" "this" {
   count                        = var.backup_share != null ? 1 : 0
   name                         = var.backup_share.recovery_services_vault_name
   resource_group_name          = var.backup_resource_group_name
-  location                     = azurerm_resource_group.this.location
+  location                     = data.azurerm_resource_group.this.location
   sku                          = var.backup_share.sku
   soft_delete_enabled          = var.backup_share.soft_delete_enabled
   storage_mode_type            = var.backup_share.storage_mode_type
   cross_region_restore_enabled = var.backup_share.cross_region_restore_enabled
-  tags                         = azurerm_resource_group.this.tags
+  tags                         = data.azurerm_resource_group.this.tags
   dynamic "identity" {
     for_each = var.backup_share.identity != null ? [1] : []
     content {
