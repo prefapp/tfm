@@ -8,6 +8,7 @@ data "azurerm_subnet" "aks_subnet" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip
 data "azurerm_public_ip" "aks_public_ip" {
+  count               = var.load_balancer_profile_outbound_ip_address_enabled ? 1 : 0
   name                = var.public_ip_name
   resource_group_name = var.resource_group_name
 }
