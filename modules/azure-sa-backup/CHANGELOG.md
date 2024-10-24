@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.5...azure-sa-backup-v0.2.6) (2024-10-24)
+
+
+### Bug Fixes
+
+* remove sa rg control, only rg backup data ([#363](https://github.com/prefapp/tfm/issues/363)) ([9ee8dd1](https://github.com/prefapp/tfm/commit/9ee8dd192df77e354a354d67b83f448a6ef54595))
+
 ## [0.2.5](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.4...azure-sa-backup-v0.2.5) (2024-10-24)
 
 
