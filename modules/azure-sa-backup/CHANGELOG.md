@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.4...azure-sa-backup-v0.2.5) (2024-10-24)
+
+
+### Bug Fixes
+
+* add backups separate rg control ([#361](https://github.com/prefapp/tfm/issues/361)) ([2fd3e1e](https://github.com/prefapp/tfm/commit/2fd3e1ebe01478787ca373aff57ba75cb75ceb00))
+
 ## [0.2.4](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.2.3...azure-sa-backup-v0.2.4) (2024-10-23)
 
 
