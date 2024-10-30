@@ -54,7 +54,7 @@ resource "azurerm_key_vault_access_policy" "access_policy" {
   for_each           = { for policy in var.access_policies : policy.key_vault_id => policy }
   key_vault_id       = each.value.key_vault_id
   tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = azurerm_user_assigned_identity.user_assigned_identity.id
+  object_id          = azurerm_user_assigned_identity.user_assigned_identity.principal_id
   key_permissions    = each.value.key_permissions
   secret_permissions = each.value.secret_permissions
   certificate_permissions = each.value.certificate_permissions
