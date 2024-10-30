@@ -4,6 +4,8 @@ data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
+data "azurerm_client_config" "current" {}
+
 ## LOCALS SECTION
 locals {
   rbac = [
@@ -49,10 +51,10 @@ resource "azurerm_federated_identity_credential" "federated_identity_credential"
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy
 resource "azurerm_key_vault_access_policy" "access_policy" {
-  for_each           = { for policy in var.access_policies : "${policy.tenant_id}-${policy.object_id}" => policy }
-  key_vault_id       = azurerm_key_vault.example.id
-  tenant_id          = each.value.tenant_id
-  object_id          = each.value.object_id
+  for_each           = { for policy in var.access_policies : policy.key_vault_id => policy }
+  key_vault_id       = each.value.key_vault_id
+  tenant_id          = data.azurerm_client_config.current.tenant_id
+  object_id          = azurerm_user_assigned_identity.user_assigned_identity.object_id
   key_permissions    = each.value.key_permissions
   secret_permissions = each.value.secret_permissions
   certificate_permissions = each.value.certificate_permissions
