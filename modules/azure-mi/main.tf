@@ -4,6 +4,8 @@ data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
+data "azurerm_client_config" "current" {}
+
 ## LOCALS SECTION
 locals {
   rbac = [
@@ -45,4 +47,16 @@ resource "azurerm_federated_identity_credential" "federated_identity_credential"
   issuer              = each.value.type == "github" ? coalesce(each.value.issuer, "https://token.actions.githubusercontent.com") : each.value.issuer
   parent_id           = azurerm_user_assigned_identity.user_assigned_identity.id
   subject             = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : each.value.type == "kubernetes" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
+}
+
+## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy
+resource "azurerm_key_vault_access_policy" "access_policy" {
+  for_each           = { for policy in var.access_policies : policy.key_vault_id => policy }
+  key_vault_id       = each.value.key_vault_id
+  tenant_id          = data.azurerm_client_config.current.tenant_id
+  object_id          = azurerm_user_assigned_identity.user_assigned_identity.principal_id
+  key_permissions    = each.value.key_permissions
+  secret_permissions = each.value.secret_permissions
+  certificate_permissions = each.value.certificate_permissions
+  storage_permissions = each.value.storage_permissions
 }
