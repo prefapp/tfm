@@ -36,6 +36,19 @@ variable "rbac" {
   description = "A list of objects containing the RBAC roles to assign to the User Assigned Identity."
 }
 
+variable "access_policies" {
+  description = "List of access policies for the Key Vault"
+  type = list(object({
+    tenant_id = string
+    object_id = string
+    key_permissions = optional(list(string), [])
+    secret_permissions = optional(list(string), [])
+    certificate_permissions = optional(list(string), [])
+    storage_permissions = optional(list(string), [])
+  }))
+  default = []
+}
+
 variable "federated_credentials" {
   type = list(object({
     name                 = string

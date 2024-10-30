@@ -46,3 +46,15 @@ resource "azurerm_federated_identity_credential" "federated_identity_credential"
   parent_id           = azurerm_user_assigned_identity.user_assigned_identity.id
   subject             = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : each.value.type == "kubernetes" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
 }
+
+## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy
+resource "azurerm_key_vault_access_policy" "access_policy" {
+  for_each           = { for policy in var.access_policies : "${policy.tenant_id}-${policy.object_id}" => policy }
+  key_vault_id       = azurerm_key_vault.example.id
+  tenant_id          = each.value.tenant_id
+  object_id          = each.value.object_id
+  key_permissions    = each.value.key_permissions
+  secret_permissions = each.value.secret_permissions
+  certificate_permissions = each.value.certificate_permissions
+  storage_permissions = each.value.storage_permissions
+}
