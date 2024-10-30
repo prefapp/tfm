@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/prefapp/tfm/compare/azure-mi-v1.1.0...azure-mi-v1.2.0) (2024-10-30)
+
+
+### Features
+
+* Add vault access policies support in azure-mi ([#365](https://github.com/prefapp/tfm/issues/365)) ([59eeb65](https://github.com/prefapp/tfm/commit/59eeb65ed47d890f5cb023de9b7ac8a456b489ba))
+
 ## [1.1.0](https://github.com/prefapp/tfm/compare/azure-mi-v1.0.0...azure-mi-v1.1.0) (2024-08-26)
 
 
