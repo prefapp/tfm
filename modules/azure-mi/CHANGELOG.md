@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/prefapp/tfm/compare/azure-mi-v1.2.0...azure-mi-v1.2.1) (2024-11-15)
+
+
+### Bug Fixes
+
+* naming resources ([#367](https://github.com/prefapp/tfm/issues/367)) ([d2cd83f](https://github.com/prefapp/tfm/commit/d2cd83f7ab229dc566deaa7d9471194b643585ad))
+
 ## [1.2.0](https://github.com/prefapp/tfm/compare/azure-mi-v1.1.0...azure-mi-v1.2.0) (2024-10-30)
 
 
