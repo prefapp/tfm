@@ -23,7 +23,7 @@ locals {
 
 ## RESOURCES SECTION
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
-resource "azurerm_user_assigned_identity" "user_assigned_identity" {
+resource "azurerm_user_assigned_identity" "this" {
   name                = var.name
   location            = var.location
   resource_group_name = var.resource_group
@@ -31,21 +31,21 @@ resource "azurerm_user_assigned_identity" "user_assigned_identity" {
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/role_assignment
-resource "azurerm_role_assignment" "role_assignment" {
+resource "azurerm_role_assignment" "that" {
   for_each             = { for r in local.flattened_rbac : "${r.name}-${r.role}" => r }
   role_definition_name = each.value.role
   scope                = each.value.scope
-  principal_id         = azurerm_user_assigned_identity.user_assigned_identity.principal_id
+  principal_id         = azurerm_user_assigned_identity.this.principal_id
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential
-resource "azurerm_federated_identity_credential" "federated_identity_credential" {
+resource "azurerm_federated_identity_credential" "that" {
   for_each            = { for federated_credential in var.federated_credentials : federated_credential.name => federated_credential }
   name                = each.key
   resource_group_name = var.resource_group
   audience            = var.audience
   issuer              = each.value.type == "github" ? coalesce(each.value.issuer, "https://token.actions.githubusercontent.com") : each.value.issuer
-  parent_id           = azurerm_user_assigned_identity.user_assigned_identity.id
+  parent_id           = azurerm_user_assigned_identity.this.id
   subject             = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : each.value.type == "kubernetes" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
 }
 
@@ -54,7 +54,7 @@ resource "azurerm_key_vault_access_policy" "access_policy" {
   for_each           = { for policy in var.access_policies : policy.key_vault_id => policy }
   key_vault_id       = each.value.key_vault_id
   tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = azurerm_user_assigned_identity.user_assigned_identity.principal_id
+  object_id          = azurerm_user_assigned_identity.this.principal_id
   key_permissions    = each.value.key_permissions
   secret_permissions = each.value.secret_permissions
   certificate_permissions = each.value.certificate_permissions
