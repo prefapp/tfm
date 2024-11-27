@@ -12,6 +12,7 @@ resource "azuread_group_role_management_policy" "members" {
   eligible_assignment_rules {
     expiration_required = var.expiration_required
   }
+
   lifecycle {
     ignore_changes = [
       activation_rules[0].approval_stage,
@@ -33,7 +34,6 @@ resource "azuread_group_role_management_policy" "owners" {
   eligible_assignment_rules {
     expiration_required = var.expiration_required
   }
-
 
   lifecycle {
     ignore_changes = [
