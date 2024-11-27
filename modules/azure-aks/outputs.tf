@@ -37,9 +37,9 @@ output "oidc_issuer_url" {
   value = module.aks.oidc_issuer_url
 }
 
-output "outbound_ip_address" {
-  value = data.azurerm_public_ip.aks_public_ip[0].id
-}
+# output "outbound_ip_address" {
+#   value = data.azurerm_public_ip.aks_public_ip[0].id
+# }
 
 # Data section
 output "subnet_id" {
