@@ -14,7 +14,7 @@ resource "azuread_group_role_management_policy" "members" {
   }
   lifecycle {
     ignore_changes = [
-      activation_rules.approval_stage,
+      activation_rules[0].approval_stage,
     ]
   }
 }
@@ -37,7 +37,7 @@ resource "azuread_group_role_management_policy" "owners" {
 
   lifecycle {
     ignore_changes = [
-      activation_rules.approval_stage,
+      activation_rules[0].approval_stage,
     ]
   }
 }
