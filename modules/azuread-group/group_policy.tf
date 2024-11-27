@@ -12,6 +12,12 @@ resource "azuread_group_role_management_policy" "members" {
   eligible_assignment_rules {
     expiration_required = var.expiration_required
   }
+
+  lifecycle {
+    ignore_changes = [
+      activation_rules[0].approval_stage,
+    ]
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group_role_management_policy#require_justification
@@ -27,5 +33,11 @@ resource "azuread_group_role_management_policy" "owners" {
 
   eligible_assignment_rules {
     expiration_required = var.expiration_required
+  }
+
+  lifecycle {
+    ignore_changes = [
+      activation_rules[0].approval_stage,
+    ]
   }
 }
