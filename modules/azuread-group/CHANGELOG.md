@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.1...azuread-group-v1.0.2) (2024-11-27)
+
+
+### Bug Fixes
+
+* ignore activation rules on approval_stage ([#371](https://github.com/prefapp/tfm/issues/371)) ([fc264f1](https://github.com/prefapp/tfm/commit/fc264f146e5b21490556d89cb3a7f8cce103d833))
+
 ## [1.0.1](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.0...azuread-group-v1.0.1) (2024-07-17)
 
 
