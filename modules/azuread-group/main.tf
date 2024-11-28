@@ -7,10 +7,10 @@ resource "azuread_group" "this" {
 
   security_enabled = true
 
-  members = local.direct_members
+  members = sort(local.direct_members)
 
   # This is a conditional expression that checks if the owners_object_ids list is not empty.
   # The list should be populated, but a empty list is not a valid value for the azuread API
-  owners = length(local.direct_owners) > 0 ? local.direct_owners : null
+  owners = length(local.direct_owners) > 0 ? sort(local.direct_owners) : null
 
 }
