@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.2...azuread-group-v1.0.3) (2024-11-29)
+
+
+### Bug Fixes
+
+* azuread-group members order ([#373](https://github.com/prefapp/tfm/issues/373)) ([858b204](https://github.com/prefapp/tfm/commit/858b2049f2ee69bd245ab6e05fb40318afc8054d))
+
 ## [1.0.2](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.1...azuread-group-v1.0.2) (2024-11-27)
 
 
