@@ -20,15 +20,15 @@ resource "azuread_group" "this" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group_member
-# resource "azuread_group_member" "this" {
+resource "azuread_group_member" "this" {
 
-#   for_each = local.direct_members
+  for_each = { for member in local.direct_members : member => member }
 
-#   group_object_id  = azuread_group.this.id
+  group_object_id  = azuread_group.this.id
 
-#   member_object_id = each.value
+  member_object_id = each.value
 
-# }
+}
 
 output "Debug" {
   value = local.direct_members
