@@ -7,10 +7,25 @@ resource "azuread_group" "this" {
 
   security_enabled = true
 
-  members = sort(local.direct_members)
-
   # This is a conditional expression that checks if the owners_object_ids list is not empty.
   # The list should be populated, but a empty list is not a valid value for the azuread API
   owners = length(local.direct_owners) > 0 ? sort(local.direct_owners) : null
+
+  lifecycle {
+    ignore_changes = [
+      members,
+    ]
+  }
+
+}
+
+# https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group_member
+resource "azuread_group_member" "this" {
+
+  for_each = { for member in local.direct_members : member => member }
+
+  group_object_id  = azuread_group.this.id
+
+  member_object_id = each.value
 
 }
