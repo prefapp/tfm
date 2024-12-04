@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.3...azuread-group-v1.0.4) (2024-12-04)
+
+
+### Bug Fixes
+
+* azuread group members ([#375](https://github.com/prefapp/tfm/issues/375)) ([eb2fcd4](https://github.com/prefapp/tfm/commit/eb2fcd4baedcde7df47670be2db1c454274c74ff))
+
 ## [1.0.3](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.2...azuread-group-v1.0.3) (2024-11-29)
 
 
