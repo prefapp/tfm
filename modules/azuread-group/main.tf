@@ -29,7 +29,3 @@ resource "azuread_group_member" "this" {
   member_object_id = each.value
 
 }
-
-output "Debug" {
-  value = local.direct_members
-}
