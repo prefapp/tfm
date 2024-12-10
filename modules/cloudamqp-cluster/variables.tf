@@ -1,35 +1,35 @@
-variable  "cloudamqp_api_key" {
-  type        = string
+variable  "api_key" {
+  type = string
   description = "API key for cloudAMQP"
 }
 
 # Instance
-variable "cloudamqp_instance_name" {
+variable "instance_name" {
     description = "Name of the CloudAMQP instance"
     type = string
 }
 
-variable "cloudamqp_instance_plan" {
+variable "instance_plan" {
     description = "Plan for the CloudAMQP instance"
     type = string
 }
 
-variable "cloudamqp_instance_region" {
+variable "instance_region" {
     description = "Region for the CloudAMQP instance"
     type = string
 }
 
-variable "cloudamqp_instance_nodes" {
+variable "instance_nodes" {
     description = "Nodes for the CloudAMQP instance"
     type = number
 }
 
-variable "cloudamqp_instance_rqm_version" {
+variable "instance_rqm_version" {
     description = "RabbitMQ version for the CloudAMQP instance"
     type = string
 }
 
-variable "cloudamqp_instance_tags" {
+variable "instance_tags" {
     description = "Tags for the CloudAMQP instance"
     type = list(string)
 }
@@ -65,6 +65,18 @@ variable "vpc_tags" {
     default = []
 }
 
+variable "enable_vpc_connect" {
+    description = "Enable VPC connection"
+    type = bool
+    default = false
+}
+
+variable "vpc_connect_approved_subscriptions" {
+    description = "List of approved subscriptions for VPC connection"
+    type = list(string)
+    default = []
+}
+
 # Firewall
 variable "enable_firewall" {
     description = "Enable firewall configuration"
@@ -84,28 +96,30 @@ variable "firewall_rules" {
 
 # Notifications
 variable "notifications" {
-    description = "List of notifications"
-    type = list(object({
+    description = "Map of notifications"
+    type = map(object({
         type = string
         value = string
         name = string
     }))
-    default = []
+    default = {}
 }
 
 # Alarms
+
 variable "alarms" {
-    description = "List of alarms"
-    type = list(object({
-        type = string
-        enabled = bool
-        reminder_interval = number
-        value_threshold = number
-        time_threshold = number
-        recipients = list(string)
-    }))
-    default = []
+  description = "Map of alarms"
+  type = map(object({
+    type = string
+    enabled = bool
+    reminder_interval = number
+    value_threshold = number
+    time_threshold = number
+    recipients = list(string)
+  }))
+  default = {}
 }
+
 
 # Metrics integration
 variable "enable_metrics" {
