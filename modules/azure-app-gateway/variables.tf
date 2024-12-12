@@ -40,19 +40,17 @@ variable "web_application_firewall_policy" {
       file_upload_limit_in_mb     = optional(number)
       max_request_body_size_in_kb = optional(number)
     }))
-    managed_rules = list(object({
-      managed_rule_set = object({
-        type                = optional(string)
-        version             = string
-        rule_group_override = optional(list(object({
-          rule_group_name = string
-          rule = optional(list(object({
-            id      = number
-            enabled = optional(bool)
-            action  = optional(string)
-          })))
+    managed_rule_set = list(object({
+      type                = optional(string)
+      version             = string
+      rule_group_override = optional(list(object({
+        rule_group_name = string
+        rule = optional(list(object({
+          id      = number
+          enabled = optional(bool)
+          action  = optional(string)
         })))
-      })
+      })))
     }))
   })
 }
