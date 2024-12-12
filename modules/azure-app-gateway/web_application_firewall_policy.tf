@@ -19,11 +19,11 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
         type    = managed_rule_set.value.type
         version = managed_rule_set.value.version
         dynamic "rule_group_override" {
-          for_each = managed_rule_set.value.rule_group_override
+          for_each = lookup(managed_rule_set.value.rule_group_override, [])
           content {
             rule_group_name = rule_group_override.value.rule_group_name
             dynamic "rule" {
-              for_each = rule_group_override.value.rule
+              for_each = lookup(rule_group_override.value.rule, [])
               content {
                 id      = rule.value.id
                 enabled = rule.value.enabled
