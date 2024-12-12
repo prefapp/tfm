@@ -14,14 +14,27 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
 
   managed_rules {
     dynamic "managed_rule_set" {
-        for_each = var.web_application_firewall_policy.managed_rule_sets
-        content {
-            type    = managed_rule_set.value.type
-            version = managed_rule_set.value.version
+      for_each = var.web_application_firewall_policy.managed_rules
+      content {
+        type    = managed_rule_set.value.managed_rule_set.type
+        version = managed_rule_set.value.managed_rule_set.version
+        dynamic "rule_group_override" {
+          for_each = managed_rule_set.value.managed_rule_set.rule_group_override
+          content {
+            rule_group_name = rule_group_override.value.rule_group_name
+            dynamic "rule" {
+              for_each = rule_group_override.value.rule
+              content {
+                id      = rule.value.id
+                enabled = rule.value.enabled
+                action  = rule.value.action
+              }
+            }
+          }
         }
+      }
     }
   }
-
   lifecycle {
     ignore_changes = [tags]
   }
