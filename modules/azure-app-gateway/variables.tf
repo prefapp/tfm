@@ -30,6 +30,27 @@ variable "subnet" {
 }
 
 variable "web_application_firewall_policy" {
-  description = "The Web Application Firewall Policy object."
-  type        = any
+  description = "Configuration for the web application firewall policy"
+  type = object({
+    name = string
+    policy_settings = optional(object({
+      enabled                     = optional(bool)
+      mode                        = optional(string)
+      request_body_check          = optional(bool)
+      file_upload_limit_in_mb     = optional(number)
+      max_request_body_size_in_kb = optional(number)
+    }))
+    managed_rule_set = list(object({
+      type                = optional(string)
+      version             = string
+      rule_group_override = optional(list(object({
+        rule_group_name = string
+        rule = optional(list(object({
+          id      = number
+          enabled = optional(bool)
+          action  = optional(string)
+        })))
+      })))
+    }))
+  })
 }
