@@ -1,25 +1,14 @@
 # API Key
-api_key = "my-api-key"
+api_key = "xxxxxxx-xxxx-xxx-xxxxxxx" #Your api-key
 
 # Instance
 instance_name       = "my-cloudamqp-instance"
-instance_plan       = "lemming"
+instance_plan       = "your-plan"
 instance_region     = "azure-arm::westeurope"
 instance_nodes      = 3
-instance_rqm_version = "3.11.0"
+instance_rqm_version = "4.0.4"
 instance_tags       = ["production", "backend"]
 
-# VPC
-enable_vpc   = true
-vpc_name     = "my-cloudamqp-vpc"
-vpc_region   = "azure-arm::westeurope"
-vpc_subnet   = ["10.0.0.0/24", "10.0.1.0/24"]
-vpc_tags     = ["environment:production", "service:messaging"]
-vpc_connect_approved_subscriptions = [
-  "sub1-azure-region-east",
-  "sub2-azure-region-west",
-  "sub3-azure-region-south"
-]
 
 # Firewall
 enable_firewall = true
@@ -38,50 +27,60 @@ firewall_rules = {
   }
 }
 
-# Notifications
-notifications = {
-  "email_alert" = {
-    type  = "email"
-    value = "alerts@example.com"
-    name  = "Email Alert"
-  }
-  "sms_alert" = {
-    type  = "sms"
-    value = "+1234567890"
-    name  = "SMS Alert"
-  }
-}
-
 # Alarms
 alarms = {
   "high_cpu" = {
     type               = "cpu"
     enabled            = true
-    reminder_interval  = 5
-    value_threshold    = 80
+    reminder_interval  = 30
+    value_threshold    = 100
     time_threshold     = 60
-    recipients         = ["admin@example.com"]
+    recipient_key = "admin_alert"
   }
   "low_memory" = {
     type               = "memory"
     enabled            = true
-    reminder_interval  = 10
-    value_threshold    = 20
+    reminder_interval  = 30
+    value_threshold    = 10
     time_threshold     = 60
-    recipients         = ["admin@example.com"]
+    recipient_key       = "admin2_alert"
   }
 }
 
+#Recipients
+recipients = {
+  "admin_alert" = {
+    name = "admin alert 1"
+    value = "admin1@example.com"
+    type = "email"
+  }
+  "admin2_alert" = {
+    name = "admin alert 2"
+    value = "admin2@example.com"
+    type = "email"
+  }
+}
+
+
 # Metrics integration
 enable_metrics = true
-metrics_name   = "my-metrics"
+metrics_name   = "cloudwatch"
 metrics_api_key = "metrics-api-key"
-metrics_region  = "us-west"
-metrics_tags    = ["monitoring", "metrics"]
+metrics_region  = "us-west-1"
+metrics_tags    = {
+  environment = "production"
+  role = "monitoring"
+}
 
 # Logs integration
 enable_logs   = true
-logs_name     = "my-logs"
+logs_name     = "azure_monitor"
 logs_api_key  = "logs-api-key"
 logs_region   = ["us-west-1", "us-east-1"]
 logs_tags     = ["logging", "debug"]
+tenant_id        = "xxxxxxx-xxxx-xxxxx-xxxxxxxx"
+application_id   = "xxxxxxx-xxxx-xxxxx-xxxxxxxx"
+application_secret = "your-application-secret"
+dce_uri          = "https://example.com/dce"
+table            = "example_table_CL"
+dcr_id           = "dcr-abc123xyz"

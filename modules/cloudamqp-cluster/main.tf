@@ -1,6 +1,6 @@
 # Configure the CloudAMQP Provider
 provider "cloudamqp" {
-  apikey          = "your-api-key"
+  apikey          = var.api_key
 }
 
 terraform {
@@ -13,10 +13,11 @@ terraform {
 }
 
 # Create a new cloudamqp instance
-resource "cloudamqp_instance" "this" {
+resource "cloudamqp_instance" "instance" {
   name          = var.instance_name
   plan          = var.instance_plan
   region        = var.instance_region
   tags          = var.instance_tags
   nodes         = var.instance_nodes
+  rmq_version   = var.instance_rqm_version
 }

@@ -10,7 +10,7 @@ resource "cloudamqp_vpc" "vpc" {
 # Optional VPC connect
 resource "cloudamqp_vpc_connect" "this" {
   count = var.enable_vpc_connect ? 1 : 0
-  instance_id = cloudamqp_instance.this.id
+  instance_id = cloudamqp_instance.instance.id
   region = var.instance_region
   approved_subscriptions = var.vpc_connect_approved_subscriptions
   depends_on = [cloudamqp_vpc.vpc]

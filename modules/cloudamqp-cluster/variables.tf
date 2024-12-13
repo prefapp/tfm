@@ -34,48 +34,7 @@ variable "instance_tags" {
     type = list(string)
 }
 
-# VPC
-variable "enable_vpc" {
-    description = "Enable VPC creation"
-    type = bool
-    default = false
-}
 
-variable "vpc_name" {
-    description = "Name for the CloudAMQP VPC"
-    type = string
-    default = null
-}
-
-variable "vpc_region" {
-    description = "Region for the CloudAMQP VPC"
-    type = string
-    default = null
-}
-
-variable "vpc_subnet" {
-    description = "Subnet for the CloudAMQP VPC"
-    type = list(string)
-    default = []
-}
-
-variable "vpc_tags" {
-    description = "Tags for the CloudAMQP VPC"
-    type = list(string)
-    default = []
-}
-
-variable "enable_vpc_connect" {
-    description = "Enable VPC connection"
-    type = bool
-    default = false
-}
-
-variable "vpc_connect_approved_subscriptions" {
-    description = "List of approved subscriptions for VPC connection"
-    type = list(string)
-    default = []
-}
 
 # Firewall
 variable "enable_firewall" {
@@ -94,19 +53,16 @@ variable "firewall_rules" {
     default = {}
 }
 
-# Notifications
-variable "notifications" {
-    description = "Map of notifications"
+# Recipients
+variable "recipients" {
     type = map(object({
-        type = string
         value = string
         name = string
+        type = string
     }))
-    default = {}
 }
 
 # Alarms
-
 variable "alarms" {
   description = "Map of alarms"
   type = map(object({
@@ -115,9 +71,10 @@ variable "alarms" {
     reminder_interval = number
     value_threshold = number
     time_threshold = number
-    recipients = list(string)
+    recipient_key = string
+
   }))
-  default = {}
+    default = {}
 }
 
 
@@ -148,8 +105,8 @@ variable "metrics_region" {
 
 variable "metrics_tags" {
     description = "Tags for metrics integration"
-    type = list(string)
-    default = []
+    type = map(string)
+    default = {}
 }
 
 # Logs integration
@@ -181,4 +138,40 @@ variable "logs_tags" {
     description = "Tags for logs integration"
     type = list(string)
     default = []
+}
+
+variable "tenant_id" {
+    description = "Tenant ID for the logs integration"
+    type = string
+    default = null
+}
+
+variable "application_id" {
+    description = "Application ID for the logs integration"
+    type = string
+    default = null
+}
+
+variable "application_secret" {
+    description = "Aplication secret for the logs integration"
+    type = string
+    default = null
+}
+
+variable "dce_uri" {
+    description = "URI for the logs integration"
+    type = string
+    default = null
+}
+
+variable "table" {
+    description = "Table name for the logs integration (needs to end with _CL)"
+    type = string
+    default = null
+}
+
+variable "dcr_id" {
+    description = "DCR ID for the logs integration"
+    type = string
+    default = null
 }

@@ -1,9 +1,9 @@
-# Notifications
-resource "cloudamqp_notification" "this" {
-  for_each = var.notifications
+# New Recipient
+resource "cloudamqp_notification" "recipient" {
+  for_each = var.recipients
+  instance_id = cloudamqp_instance.instance.id
 
-  instance_id = cloudamqp_instance.this.id
-  type = each.value.type
   value = each.value.value
   name = each.value.name
+  type = each.value.type
 }

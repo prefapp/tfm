@@ -1,7 +1,7 @@
 # Firewall rules
 resource "cloudamqp_security_firewall" "this" {
   count = var.enable_firewall ? 1 : 0
-  instance_id = cloudamqp_instance.this.id
+  instance_id = cloudamqp_instance.instance.id
 
   dynamic "rules" {
     for_each = var.firewall_rules
