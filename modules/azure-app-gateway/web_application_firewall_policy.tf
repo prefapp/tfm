@@ -14,7 +14,7 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
 
   managed_rules {
     dynamic "managed_rule_set" {
-      for_each = var.web_application_firewall_policy.managed_rule_set
+      for_each = var.web_application_firewall_policy.managed_rule_sets
       content {
         type    = managed_rule_set.value.type
         version = managed_rule_set.value.version

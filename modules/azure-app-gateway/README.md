@@ -33,7 +33,7 @@
 | <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | The Azure Public IP object. | `any` | n/a | yes |
 | <a name="input_user_assigned_identity"></a> [user\_assigned\_identity](#input\_user\_assigned\_identity) | The name of the User Assigned Identity. | `string` | n/a | yes |
 | <a name="input_subnet"></a> [subnet](#input\_subnet) | The subnet object. | `any` | n/a | yes |
-| <a name="input_web_application_firewall_policy"></a> [web\_application\_firewall\_policy](#input\_web\_application\_firewall\_policy) | Configuration for the web application firewall policy. | `object({ name = string, policy_settings = optional(object({ enabled = optional(bool), mode = optional(string), request_body_check = optional(bool), file_upload_limit_in_mb = optional(number), max_request_body_size_in_kb = optional(number) })), managed_rule_set = list(object({ type = optional(string), version = string, rule_group_override = optional(list(object({ rule_group_name = string, rule = optional(list(object({ id = number, enabled = optional(bool), action = optional(string) }))) }))) })) })` | n/a | yes |
+| <a name="input_web_application_firewall_policy"></a> [web\_application\_firewall\_policy](#input\_web\_application\_firewall\_policy) | Configuration for the web application firewall policy. | `object({ name = string, policy_settings = optional(object({ enabled = optional(bool), mode = optional(string), request_body_check = optional(bool), file_upload_limit_in_mb = optional(number), max_request_body_size_in_kb = optional(number) })), managed_rule_sets = list(object({ type = optional(string), version = string, rule_group_override = optional(list(object({ rule_group_name = string, rule = optional(list(object({ id = number, enabled = optional(bool), action = optional(string) }))) }))) })) })` | n/a | yes |
 | <a name="input_user_assigned_identity_name"></a> [user\_assigned\_identity\_name](#input\_user\_assigned\_identity\_name) | The name of the User Assigned Identity. | `string` | n/a | yes |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | The name of the subnet. | `string` | n/a | yes |
 | <a name="input_virtual_network_name"></a> [virtual\_network\_name](#input\_virtual\_network\_name) | The name of the virtual network. | `string` | n/a | yes |
@@ -72,7 +72,7 @@
           request_body_check: true
           file_upload_limit_in_mb: 100
           max_request_body_size_in_kb: 128
-        managed_rule_set:
+        managed_rule_sets:
           - type: "OWASP"
             version: "3.2"
             rule_group_override:
