@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.1.0...azure-app-gateway-v0.2.0) (2024-12-13)
+
+
+### Features
+
+* add logic to managed-rule-set in waf ([#380](https://github.com/prefapp/tfm/issues/380)) ([943ab6f](https://github.com/prefapp/tfm/commit/943ab6fc8be545f3cc23dd022d0f6b3e42ec36a8))
+
 ## 0.1.0 (2024-08-02)
 
 
