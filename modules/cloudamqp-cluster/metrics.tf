@@ -1,9 +1,9 @@
 # Metrics integration
 resource "cloudamqp_integration_metric" "this" {
-  count = var.enable_metrics ? 1 : 0
+  for_each    = var.metrics_integrations
   instance_id = cloudamqp_instance.instance.id
-  name = var.metrics_name
-  api_key = var.metrics_api_key
-  region = var.metrics_region
-  tags = join(",", [for k, v in var.metrics_tags : "${k}=${v}"])
+  name        = each.value.name
+  api_key     = each.value.api_key
+  region      = each.value.region
+  tags        = join(",", [for k, v in each.value.tags : "${k}=${v}"])
 }
