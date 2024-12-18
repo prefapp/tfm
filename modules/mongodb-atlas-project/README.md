@@ -20,7 +20,7 @@ This module creates a MongoDB Atlas project with database users and network proj
 ### Set a module
 
 ```terraform
-module "disks-backup" {
+module "mongodb-atlas-project" {
   source = "git::https://github.com/prefapp/tfm.git//modules/mongodb-atlas-project?ref=<version>"
 }
 ```
