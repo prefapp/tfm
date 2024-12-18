@@ -106,6 +106,7 @@ whitelist_ips = [
   {
     ip = "5.6.7.8"
     name = "my-ip2"
+  }
 ]
 ```
 
