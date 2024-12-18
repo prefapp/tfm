@@ -85,45 +85,45 @@ variable "create_cluster_from_snapshot" {
   description = "Whether or not to create a cluster from a snapshot"
   type        = bool
   default     = false
-  # validation {
-  #   condition     = var.create_cluster_from_pitr == true
-  #   error_message = "If create_cluster_from_snapshot is true, create_cluster_from_pitr must be false"
-  # }
-  # validation {
-  #   condition     = var.origin_project_id == null
-  #   error_message = "If create_cluster_from_snapshot is true, origin_project_id must be set"
-  # }
-  # validation {
-  #   condition     = var.origin_cluster_name == null
-  #   error_message = "If create_cluster_from_snapshot is true, origin_cluster_name must be set"
-  # }
+  validation {
+    condition     = var.create_cluster_from_pitr == true
+    error_message = "If create_cluster_from_snapshot is true, create_cluster_from_pitr must be false"
+  }
+  validation {
+    condition     = var.origin_project_id == null && var.create_cluster_from_snapshot == true
+    error_message = "If create_cluster_from_snapshot is true, origin_project_id must be set"
+  }
+  validation {
+    condition     = var.origin_cluster_name == null && var.create_cluster_from_snapshot == true
+    error_message = "If create_cluster_from_snapshot is true, origin_cluster_name must be set"
+  }
 }
 
 variable "origin_project_id" {
   description = "The origin project ID"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "origin_cluster_name" {
   description = "The origin cluster name"
   type        = string
-  default     = ""
+  default     = null
 }
 
 # Restore from pitr variables
 variable "create_cluster_from_pitr" {
   description = "Whether or not to create a cluster from a point in time restore"
   type        = bool
-  default     = false
-  # validation {
-  #   condition     = var.create_cluster_from_snapshot == true
-  #   error_message = "If create_cluster_from_pi is true, create_cluster_from_snapshot must be false"
-  # }
-  # validation {
-  #   condition     = var.point_in_time_utc_seconds == null
-  #   error_message = "If create_cluster_from_pi is true, point_in_time_utc_seconds must be set"
-  # }
+  default     = null
+  validation {
+    condition     = var.create_cluster_from_snapshot == true
+    error_message = "If create_cluster_from_pi is true, create_cluster_from_snapshot must be false"
+  }
+  validation {
+    condition     = var.point_in_time_utc_seconds == null && var.create_cluster_from_pitr == true
+    error_message = "If create_cluster_from_pi is true, point_in_time_utc_seconds must be set"
+  }
 }
 
 variable "point_in_time_utc_seconds" {
