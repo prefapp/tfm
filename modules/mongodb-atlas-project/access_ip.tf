@@ -7,5 +7,4 @@ resource "mongodbatlas_project_ip_access_list" "this" {
   project_id = mongodbatlas_project.project_corpme_predev.id
   ip_address = each.value.ip
   comment    = each.value.name
-  depends_on = [mongodbatlas_cluster.cluster_corpme_predev]
 }
