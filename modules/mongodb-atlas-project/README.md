@@ -34,42 +34,6 @@ mongo_region = "westeurope"
 provider_name = "azure"
 org_id = "XXXXXXXXXXXXXXXXXXXXXXXX"
 project_name = "my-project"
-clusters = {
-  cluster1 = {
-    name = "cluster1"
-    cluster_type = "REPLICASET"
-    num_shards = 1
-    zone_name = "Zone 1"
-    region_name = "Region 1"
-    analytics_nodes = 3
-    electable_nodes = 3
-    priority = 7
-    read_only_nodes = 3
-    cloud_backup = true
-    auto_scaling_disk_gb_enabled = true
-    mongo_db_major_version = "4.4"
-    provider_name = "AZURE"
-    provider_disk_type_name = "STANDARD"
-    provider_instance_size_name = "M10"
-  }
-  cluster2 = {
-    name = "cluster2"
-    cluster_type = "REPLICASET"
-    num_shards = 1
-    zone_name = "Zone 2"
-    region_name = "Region 2"
-    analytics_nodes = 3
-    electable_nodes = 3
-    priority = 7
-    read_only_nodes = 3
-    cloud_backup = true
-    auto_scaling_disk_gb_enabled = true
-    mongo_db_major_version = "4.4"
-    provider_name = "AZURE"
-    provider_disk_type_name = "STANDARD"
-    provider_instance_size_name = "M10"
-  }
-}
 database_users = {
   user1 = {
     username = "user1"
@@ -118,6 +82,5 @@ whitelist_ips = [
 | <a name="input_provider_name"></a> [provider_name](#input_provider_name) | The provider name. | `string` | n/a | yes |
 | <a name="input_org_id"></a> [org_id](#input_org_id) | The organization ID. | `string` | n/a | yes |
 | <a name="input_project_name"></a> [project_name](#input_project_name) | The name of the project. | `string` | n/a | yes |
-| <a name="input_clusters"></a> [clusters](#input_clusters) | A map of clusters to create. | `map(object({ name = string, cluster_type = string, num_shards = number, zone_name = string, region_name = string, analytics_nodes = number, electable_nodes = number, priority = number, read_only_nodes = number, cloud_backup = bool, auto_scaling_disk_gb_enabled = bool, mongo_db_major_version = string, provider_name = string, provider_disk_type_name = string, provider_instance_size_name = string }))` | n/a | yes |
 | <a name="input_database_users"></a> [database_users](#input_database_users) | A map of database users. | `map(object({ username = string, password = string, auth_database_name = string, roles = object({ role_name = string, database_name = string }), scopes = object({ name = string, type = string }) }))` | n/a | yes |
 | <a name="input_whitelist_ips"></a> [whitelist_ips](#input_whitelist_ips) | The whitelist IPs. | `list(object({ ip = string, name = string }))` | n/a | yes |
