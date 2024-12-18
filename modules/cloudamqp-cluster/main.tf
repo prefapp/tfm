@@ -1,4 +1,4 @@
-# Configure the CloudAMQP Provider
+# https://registry.terraform.io/providers/cloudamqp/cloudamqp/latest/docs
 provider "cloudamqp" {
   apikey = var.api_key
 }
@@ -12,13 +12,13 @@ terraform {
   }
 }
 
-# Create a new cloudamqp instance
-resource "cloudamqp_instance" "instance" {
-  name              = var.instance_name
-  plan              = var.instance_plan
-  region            = var.instance_region
-  tags              = var.instance_tags
-  nodes             = var.instance_nodes
-  rmq_version       = var.instance_rqm_version
+# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.1/docs/resources/instance
+resource "cloudamqp_instance" "this" {
+  name              = var.cloudamqp_instance.name
+  plan              = var.cloudamqp_instance.plan
+  region            = var.cloudamqp_instance.region
+  tags              = var.cloudamqp_instance.tags
+  nodes             = var.cloudamqp_instance.nodes
+  rmq_version       = var.cloudamqp_instance.rmq_version
   no_default_alarms = true
 }

@@ -4,36 +4,25 @@ variable "api_key" {
 }
 
 # Instance
-variable "instance_name" {
-  description = "Name of the CloudAMQP instance"
-  type        = string
+variable "cloudamqp_instance" {
+  description = "Map of CloudAMQP instance configurations"
+  type = object({
+    name        = string
+    plan        = string
+    region      = string
+    tags        = optional(list(string), [])
+    nodes       = number
+    rmq_version = string
+  })
+  default = {
+    name        = "default_instance"
+    plan        = "lemming"
+    region      = "azure-arm::westeurope"
+    tags        = ["default", "development"]
+    nodes       = 1
+    rmq_version = "4.0.4"
+  }
 }
-
-variable "instance_plan" {
-  description = "Plan for the CloudAMQP instance"
-  type        = string
-}
-
-variable "instance_region" {
-  description = "Region for the CloudAMQP instance"
-  type        = string
-}
-
-variable "instance_nodes" {
-  description = "Nodes for the CloudAMQP instance"
-  type        = number
-}
-
-variable "instance_rqm_version" {
-  description = "RabbitMQ version for the CloudAMQP instance"
-  type        = string
-}
-
-variable "instance_tags" {
-  description = "Tags for the CloudAMQP instance"
-  type        = list(string)
-}
-
 
 
 # Firewall

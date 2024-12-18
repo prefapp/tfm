@@ -1,29 +1,24 @@
 # API Key
-api_key = "Your-cloudamqp-api-key"
+api_key = "your-api-key"
 
 # Instance
-instance_name        = "my-cloudamqp-instance"
-instance_plan        = "your-plan"
-instance_region      = "azure-arm::westeurope"
-instance_nodes       = 3
-instance_rqm_version = "4.0.4"
-instance_tags        = ["production", "backend"]
-
+cloudamqp_instance = {
+  name        = "my-cloudamqp-instance"
+  plan        = "your-plan"
+  region      = "azure-arm::westeurope"
+  tags        = ["production", "backend"]
+  nodes       = 1
+  rmq_version = "4.0.4"
+}
 
 # Firewall
 enable_firewall = true
 firewall_rules = {
-  "allow_ssh" = {
-    description = "Allow SSH access"
-    ip          = "192.168.1.0/24"
-    ports       = ["22"]
-    services    = []
-  }
   "allow_rabbitmq" = {
     description = "Allow RabbitMQ traffic"
     ip          = "192.168.1.0/24"
-    ports       = ["5672", "15672"]
-    services    = []
+    ports       = ["15672"]
+    services    = ["AMQP"]
   }
 }
 
@@ -85,8 +80,8 @@ logs_integrations = {
       environment = "production"
       role        = "logging"
     }
-    tenant_id          = "xxxxxxxx-xxxxx-xxxxx-xxxxxxx"
-    application_id     = "xxxxxxxx-xxxxx-xxxxx-xxxxxx"
+    tenant_id          = "xxxxxxxxx-xxxxx-xxxxx-xxxxxxxxx"
+    application_id     = "xxxxxxxxx-xxx-xxxx-xxxxxxxxx"
     application_secret = "secret-azure"
     dce_uri            = "https://valid.endpoint.com"
     table              = "logs_CL"

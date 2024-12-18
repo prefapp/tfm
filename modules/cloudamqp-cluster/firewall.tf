@@ -1,7 +1,7 @@
-# Firewall rules
+# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.1/docs/resources/security_firewall
 resource "cloudamqp_security_firewall" "this" {
   count       = var.enable_firewall ? 1 : 0
-  instance_id = cloudamqp_instance.instance.id
+  instance_id = cloudamqp_instance.this.id
 
   dynamic "rules" {
     for_each = var.firewall_rules

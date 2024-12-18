@@ -1,7 +1,7 @@
-# New Recipient
-resource "cloudamqp_notification" "recipient" {
+# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.1/docs/resources/notification
+resource "cloudamqp_notification" "this" {
   for_each    = var.recipients
-  instance_id = cloudamqp_instance.instance.id
+  instance_id = cloudamqp_instance.this.id
 
   value = each.value.value
   name  = each.value.name
