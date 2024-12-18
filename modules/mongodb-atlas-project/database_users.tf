@@ -3,7 +3,7 @@ resource "mongodbatlas_database_user" "this" {
   for_each           = var.database_users
   username           = each.value.username
   password           = each.value.password
-  project_id         = mongodbatlas_project.project_corpme_predev.id
+  project_id         = mongodbatlas_project.this.id
   auth_database_name = each.value.auth_database_name
   roles {
     role_name     = each.value.roles.role_name

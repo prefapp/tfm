@@ -4,7 +4,7 @@ resource "mongodbatlas_project_ip_access_list" "this" {
     for index, ip in var.whitelist_ips :
     ip.ip => ip
   }
-  project_id = mongodbatlas_project.project_corpme_predev.id
+  project_id = mongodbatlas_project.this.id
   ip_address = each.value.ip
   comment    = each.value.name
 }
