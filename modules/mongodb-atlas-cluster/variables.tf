@@ -102,11 +102,13 @@ variable "create_cluster_from_snapshot" {
 variable "origin_project_id" {
   description = "The origin project ID"
   type        = string
+  default     = null
 }
 
 variable "origin_cluster_name" {
   description = "The origin cluster name"
   type        = string
+  default     = null
 }
 
 # Restore from pitr variables
