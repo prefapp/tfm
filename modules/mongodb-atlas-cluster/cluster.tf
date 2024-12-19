@@ -31,7 +31,55 @@ resource "mongodbatlas_cluster" "this" {
   }
 }
 
-# https://registry.terraform.io/providers/mongodb/mongodbatlas/1.23.0/docs/resources/cloud_backup_snapshot_restore_job
+# # https://registry.terraform.io/providers/mongodb/mongodbatlas/1.23.0/docs/resources/cloud_backup_snapshot_restore_job
+# resource "mongodbatlas_cloud_backup_snapshot_restore_job" "this_snapshot" {
+#   count        = var.create_cluster_from_snapshot ? 1 : 0
+#   project_id   = var.origin_project_id
+#   cluster_name = var.origin_cluster_name
+#   delivery_type_config {
+#     automated           = true
+#     target_cluster_name = mongodbatlas_cluster.this.name
+#     target_project_id   = mongodbatlas_cluster.this.project_id
+#   }
+#   lifecycle {
+#     precondition {
+#       condition     = var.create_cluster_from_snapshot == true && var.create_cluster_from_pitr == true
+#       error_message = "If create_cluster_from_snapshot is true, create_cluster_from_pitr must be false"
+#     }
+#     precondition {
+#       condition     = var.create_cluster_from_snapshot == true && var.origin_project_id == null
+#       error_message = "If create_cluster_from_snapshot is true, origin_project_id must be set"
+#     }
+#     precondition {
+#       condition     = var.create_cluster_from_snapshot == true && var.origin_cluster_name == null
+#       error_message = "If create_cluster_from_snapshot is true, origin_cluster_name must be set"
+#     }
+#   }
+# }
+
+# # https://registry.terraform.io/providers/mongodb/mongodbatlas/1.23.0/docs/resources/cloud_backup_snapshot_restore_job
+# resource "mongodbatlas_cloud_backup_snapshot_restore_job" "this_pitr" {
+#   count        = var.create_cluster_from_pitr ? 1 : 0
+#   project_id   = mongodbatlas_cluster.this.project_id
+#   cluster_name = mongodbatlas_cluster.this.name
+
+#   delivery_type_config {
+#     point_in_time             = true
+#     target_cluster_name       = mongodbatlas_cluster.this.name
+#     target_project_id         = mongodbatlas_cluster.this.project_id
+#     point_in_time_utc_seconds = var.point_in_time_utc_seconds
+#   }
+#   lifecycle {
+#     precondition {
+#       condition     = var.create_cluster_from_pitr == true && var.create_cluster_from_snapshot == true
+#       error_message = "If create_cluster_from_pitr is true, create_cluster_from_snapshot must be false"
+#     }
+#     precondition {
+#       condition     = var.create_cluster_from_pitr == true && var.point_in_time_utc_seconds == null
+#       error_message = "If create_cluster_from_pitr is true, point_in_time_utc_seconds must be set"
+#     }
+#   }
+# }
 resource "mongodbatlas_cloud_backup_snapshot_restore_job" "this_snapshot" {
   count        = var.create_cluster_from_snapshot ? 1 : 0
   project_id   = var.origin_project_id
@@ -43,21 +91,20 @@ resource "mongodbatlas_cloud_backup_snapshot_restore_job" "this_snapshot" {
   }
   lifecycle {
     precondition {
-      condition     = var.create_cluster_from_snapshot == true && var.create_cluster_from_pitr ==true
-      error_message = "If create_cluster_from_snapshot is true, create_cluster_from_pitr must be false"
+      condition     = !(var.create_cluster_from_snapshot == true && var.create_cluster_from_pitr == true)
+      error_message = "create_cluster_from_snapshot and create_cluster_from_pitr cannot both be true"
     }
     precondition {
-      condition     = var.create_cluster_from_snapshot == true && var.origin_project_id == null
+      condition     = var.create_cluster_from_snapshot == false || var.origin_project_id != null
       error_message = "If create_cluster_from_snapshot is true, origin_project_id must be set"
     }
     precondition {
-      condition     = var.create_cluster_from_snapshot == true && var.origin_cluster_name == null
+      condition     = var.create_cluster_from_snapshot == false || var.origin_cluster_name != null
       error_message = "If create_cluster_from_snapshot is true, origin_cluster_name must be set"
     }
   }
 }
 
-# https://registry.terraform.io/providers/mongodb/mongodbatlas/1.23.0/docs/resources/cloud_backup_snapshot_restore_job
 resource "mongodbatlas_cloud_backup_snapshot_restore_job" "this_pitr" {
   count        = var.create_cluster_from_pitr ? 1 : 0
   project_id   = mongodbatlas_cluster.this.project_id
@@ -71,12 +118,13 @@ resource "mongodbatlas_cloud_backup_snapshot_restore_job" "this_pitr" {
   }
   lifecycle {
     precondition {
-      condition     = var.create_cluster_from_pitr == true && var.create_cluster_from_snapshot == true
-      error_message = "If create_cluster_from_pitr is true, create_cluster_from_snapshot must be false"
+      condition     = !(var.create_cluster_from_pitr == true && var.create_cluster_from_snapshot == true)
+      error_message = "create_cluster_from_pitr and create_cluster_from_snapshot cannot both be true"
     }
     precondition {
-      condition     = var.create_cluster_from_pitr == true && var.point_in_time_utc_seconds == null
+      condition     = var.create_cluster_from_pitr == false || var.point_in_time_utc_seconds != null
       error_message = "If create_cluster_from_pitr is true, point_in_time_utc_seconds must be set"
     }
   }
 }
+
