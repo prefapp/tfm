@@ -59,6 +59,9 @@
         },
         "modules/mongodb-atlas-project": {
             "package-name": "mongodb-atlas-project"
+        },
+        "modules/mongodb-atlas-cluster": {
+            "package-name": "mongodb-atlas-cluster"
         }
     }
 }
