@@ -32,7 +32,7 @@ resource "mongodbatlas_cluster" "this" {
 }
        
 # https://registry.terraform.io/providers/mongodb/mongodbatlas/1.23.0/docs/resources/cloud_backup_snapshot_restore_job
-resource "mongodbatlas_clou d_backup_snapshot_restore_job" "this_snapshot" {
+resource "mongodbatlas_cloud_backup_snapshot_restore_job" "this_snapshot" {
   count        = var.create_cluster_from_snapshot ? 1 : 0
   project_id   = var.origin_project_id
   cluster_name = var.origin_cluster_name
