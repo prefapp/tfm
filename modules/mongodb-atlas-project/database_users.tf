@@ -10,7 +10,7 @@ resource "mongodbatlas_database_user" "this" {
     database_name = each.value.roles.database_name
   }
   dynamic "scopes" {
-    for_each = each.value.scopes != null ? [each.value.scopes] : []
+    for_each = length(each.value.scopes) > 0 ? [each.value.scopes] : []
     content {
       name = scopes.value.name
       type = scopes.value.type
