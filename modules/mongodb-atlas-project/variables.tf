@@ -29,7 +29,7 @@ variable "database_users" {
     password           = string
     auth_database_name = string
     roles = object({
-      role_name     = stringfeature/mongodb-atlas-project-module
+      role_name     = string
       database_name = string
     })
     scopes = object({
