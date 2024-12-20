@@ -1,4 +1,4 @@
-# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.1/docs/resources/alarm
+# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/alarm
 resource "cloudamqp_alarm" "this" {
   for_each = var.alarms
 
@@ -9,4 +9,7 @@ resource "cloudamqp_alarm" "this" {
   value_threshold   = each.value.value_threshold
   time_threshold    = each.value.time_threshold
   recipients        = [cloudamqp_notification.this[each.value.recipient_key].id]
+  message_type      = each.value.message_type
+  queue_regex       = each.value.queue_regex
+  vhost_regex       = each.value.vhost_regex
 }

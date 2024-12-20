@@ -7,12 +7,12 @@ terraform {
   required_providers {
     cloudamqp = {
       source  = "cloudamqp/cloudamqp"
-      version = "1.32.1"
+      version = "1.32.2"
     }
   }
 }
 
-# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.1/docs/resources/instance
+# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/instance
 resource "cloudamqp_instance" "this" {
   name              = var.cloudamqp_instance.name
   plan              = var.cloudamqp_instance.plan

@@ -1,4 +1,4 @@
-# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.1/docs/resources/security_firewall
+# https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/security_firewall
 resource "cloudamqp_security_firewall" "this" {
   count       = var.enable_firewall ? 1 : 0
   instance_id = cloudamqp_instance.this.id
