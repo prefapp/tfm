@@ -1,8 +1,3 @@
-variable "api_key" {
-  type        = string
-  description = "API key for cloudAMQP"
-}
-
 # Instance
 variable "cloudamqp_instance" {
   description = "Map of CloudAMQP instance configurations"
