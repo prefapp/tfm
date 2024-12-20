@@ -44,6 +44,7 @@ variable "recipients" {
     name  = string
     type  = string
   }))
+  default = {}
 }
 
 # Alarms
