@@ -7,4 +7,7 @@ resource "cloudamqp_instance" "this" {
   nodes             = var.cloudamqp_instance.nodes
   rmq_version       = var.cloudamqp_instance.rmq_version
   no_default_alarms = true
+  lifecycle {
+    ignore_changes = [rmq_version]
+  }
 }
