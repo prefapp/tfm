@@ -2,12 +2,16 @@
 variable "cloudamqp_instance" {
   description = "Map of CloudAMQP instance configurations"
   type = object({
-    name        = string
-    plan        = string
-    region      = string
-    tags        = optional(list(string), [])
-    nodes       = number
-    rmq_version = string
+    name                = string
+    plan                = string
+    region              = string
+    tags                = optional(list(string), [])
+    nodes               = number
+    rmq_version         = string
+    no_default_alarms   = false
+    keep_associated_vpc = false
+
+
   })
   default = {
     name        = "default_instance"
