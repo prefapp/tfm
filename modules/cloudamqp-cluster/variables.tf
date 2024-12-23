@@ -32,9 +32,9 @@ variable "enable_firewall" {
 
 variable "firewall_rules" {
   type = map(object({
-    description = string
+    description = optional(string)
     ip          = string
-    ports       = list(string)
+    ports       = optional(list(string))
     services    = list(string)
   }))
   default = {}
