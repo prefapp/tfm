@@ -53,6 +53,7 @@ variable "recipients" {
   default = {}
 }
 
+
 # Alarms
 variable "alarms" {
   description = "Map of alarms"

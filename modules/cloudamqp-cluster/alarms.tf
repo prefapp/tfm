@@ -12,7 +12,7 @@ resource "cloudamqp_alarm" "this" {
   message_type      = each.value.message_type
   queue_regex       = each.value.queue_regex
   vhost_regex       = each.value.vhost_regex
-  depends_on =[
+  depends_on = [
     cloudamqp_notification.this
   ]
 }
