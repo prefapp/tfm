@@ -62,6 +62,9 @@
         },
         "modules/mongodb-atlas-cluster": {
             "package-name": "mongodb-atlas-cluster"
+        },
+        "modules/mongodb-atlas-azure-privatelink": {
+            "package-name": "mongodb-atlas-azure-privatelink"
         }
     }
 }
