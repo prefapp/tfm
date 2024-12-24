@@ -6,12 +6,5 @@ resource "cloudamqp_notification" "this" {
   value = each.value.value
   name  = each.value.name
   type  = each.value.type
-
-  dynamic "responders" {
-    for_each = each.value.responders
-    content {
-      type = responders.value.type
-    }
-  }
 }
 
