@@ -46,9 +46,9 @@ variable "recipients" {
     value = string
     name  = string
     type  = string
-    responders = optional(list(object)
+    responders = optional(list(object({
       type = string
-    )
+    })))
   }))
   default = {}
 }
