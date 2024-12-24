@@ -46,6 +46,7 @@ variable "recipients" {
     value = string
     name  = string
     type  = string
+    responders = optional(string)
   }))
   default = {}
 }
@@ -59,7 +60,7 @@ variable "alarms" {
     reminder_interval = optional(number)
     value_threshold   = optional(number)
     time_threshold    = optional(number)
-    recipient_key     = optional(string)
+    recipient_key     = optional(list(string))
     message_type      = optional(string)
     queue_regex       = optional(string)
     vhost_regex       = optional(string)

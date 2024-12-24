@@ -6,4 +6,5 @@ resource "cloudamqp_notification" "this" {
   value = each.value.value
   name  = each.value.name
   type  = each.value.type
+  responders = each.value.responders
 }
