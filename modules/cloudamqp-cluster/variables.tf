@@ -46,7 +46,7 @@ variable "recipients" {
     value = string
     name  = string
     type  = string
-    responders = optional(lsit(object)
+    responders = optional(list(object)
       type = string
     )
   }))
