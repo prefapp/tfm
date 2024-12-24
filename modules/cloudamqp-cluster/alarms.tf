@@ -8,7 +8,9 @@ resource "cloudamqp_alarm" "this" {
   reminder_interval = each.value.reminder_interval
   value_threshold   = each.value.value_threshold
   time_threshold    = each.value.time_threshold
-  recipients        = [cloudamqp_notification.this[each.value.recipient_key].id]
+  recipients        = [
+    for key in each.value.recipient_key : cloudamqp_notification.this[key].id
+  ]
   message_type      = each.value.message_type
   queue_regex       = each.value.queue_regex
   vhost_regex       = each.value.vhost_regex
