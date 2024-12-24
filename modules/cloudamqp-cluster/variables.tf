@@ -46,7 +46,9 @@ variable "recipients" {
     value = string
     name  = string
     type  = string
-    responders = optional(string)
+    responders = optional(lsit(object)
+      type = string
+    )
   }))
   default = {}
 }
