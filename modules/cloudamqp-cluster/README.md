@@ -39,6 +39,11 @@
 | <a name="input_metrics_integrations"></a> [metrics\_integrations](#input\_metrics\_integrations) | Map of metrics integrations | `map(object({ name = string, api_key = string, region = string, tags = map(string) }))` | `{}` | no |
 | <a name="input_logs_integrations"></a> [logs\_integrations](#input\_logs\_integrations) | Map of logs integrations | `map(object({ name = string, api_key = string, region = list(string), tags = map(string), tenant_id = string, application_id = string, application_secret = string, dce_uri = string, table = string, dcr_id = string }))` | `{}` | no |
 
+## Validations
+
+- **Metrics Integrations:** The `metrics_integrations` map includes validation to ensure all required fields (e.g., `name`, `api_key`, `region`) are correctly configured. Invalid or missing data will result in a validation error during plan or apply stages.
+- **Logs Integrations:** The `logs_integrations` map also enforces validation of variables, such as `name`, `api_key`, `region`, and Azure-specific fields (`tenant_id`, `application_id`, etc.), to guarantee proper integration with external log systems.
+
 ## Outputs
 
 | Name | Description |
@@ -54,6 +59,7 @@
 | <a name="output_instance_vhost_dedicated"></a> [instance\_vhost\_dedicated](#output\_instance\_vhost\_dedicated) | Dedicated virtual host of the CloudAMQP instance |
 | <a name="output_instance_dedicated"></a> [instance\_dedicated](#output\_instance\_dedicated) | Whether the instance is dedicated or shared |
 | <a name="output_instance_backend"></a> [instance\_backend](#output\_instance\_backend) | Backend type of the CloudAMQP instance |
+
 
 
 ## Example
@@ -228,4 +234,7 @@ logs_integrations = {
     client_email = "example@exaple.es"
   }
 }
+
+
+
 ```
