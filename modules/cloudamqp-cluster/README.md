@@ -145,7 +145,7 @@ metrics_integrations = {
     api_key = "ddapikey1234567890abcdef1234567890"
     region  = "eu1"
     tags = {
-    enviroment = "production" }
+      enviroment = "production" }
   }
 
   datadog_v2 = {
@@ -153,7 +153,7 @@ metrics_integrations = {
     api_key = "ddapikey1234567890abcdef1234567890"
     region  = "eu1"
     tags = {
-    enviroment = "staging" }
+      enviroment = "staging" }
   }
 
   newrelic_v2 = {
