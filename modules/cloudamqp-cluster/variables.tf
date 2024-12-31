@@ -1,8 +1,4 @@
 # Instance
-variable "tags" {
-  type = map(string)
-}
-
 variable "cloudamqp_instance" {
   description = "Map of CloudAMQP instance configurations"
   type = object({
