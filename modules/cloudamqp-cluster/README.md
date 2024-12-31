@@ -63,11 +63,9 @@
 | <a name="output_instance_backend"></a> [instance\_backend](#output\_instance\_backend) | Backend type of the CloudAMQP instance |
 
 
-
 ## Examples
 
 ```yaml
-
 #tfvars
 terraform {
   required_providers {
@@ -85,10 +83,10 @@ provider "cloudamqp" {
 cloudamqp_instance = {
 
   api_key   = var.api_key
-  plan      = "lemur"
+  plan      = "your-plan"
   region    = "your-region"
-  nodes     = 3
-  rmq_version = "your-plan"
+  nodes     = 1
+  rmq_version = "4.0.4"
   tags      = ["production", "messaging"]
   }
 
@@ -151,7 +149,8 @@ cloudamqp_instance = {
     }
   }
 }
-
+```
+```yaml
 #Claim
 kind: YourKind
 lifecycle: production
@@ -168,7 +167,7 @@ providers:
         key: "${var.api_key}"
         plan: "your-plan"
         region: "your-region"
-        nodes: 3
+        nodes: 1
         rmq_version: "4.0.4"
         tags:
           - "production"
@@ -234,7 +233,4 @@ providers:
         - name: your-provider
       backend:
         name: azure-backend-terraform
-
-
-
 ```
