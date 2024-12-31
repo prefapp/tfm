@@ -31,7 +31,7 @@
 | <a name="input_instance_region"></a> [instance\_region](#input_instance_region) | Region for the CloudAMQP instance | `string` | n/a | yes |
 | <a name="input_instance_nodes"></a> [instance\_nodes](#input_instance_nodes) | Number of nodes for the CloudAMQP instance | `number` | n/a | yes |
 | <a name="input_instance_rmq_version"></a> [instance\_rmq\_version](#input_instance_rmq_version) | RabbitMQ version for the CloudAMQP instance | `string` | n/a | yes |
-| <a name="input_instance_tags"></a> [instance\_tags](#input_instance_tags) | Tags for the CloudAMQP instance | `list(string)` | `[]` | no |
+| <a name="input_instance_tags"></a> [instance\_tags](#input_instance_tags) | Tags for the CloudAMQP instance | `map(string)` | `[]` | no |
 | <a name="input_enable_firewall"></a> [enable\_firewall](#input\_enable\_firewall) | Enable firewall configuration | `bool` | `false` | no |
 | <a name="input_firewall_rules"></a> [firewall\_rules](#input\_firewall\_rules) | Firewall rules for the instance | `map(object({ description = string, ip = string, ports = list(string), services = list(string) }))` | `{}` | no |
 | <a name="input_recipients"></a> [recipients](#input\_recipients) | Map of notification recipients | `map(object({ value = string, name = string, type = string }))` | `{}` | no |
@@ -65,176 +65,169 @@
 ## Example
 
 ```yaml
-# API Key
-api_key = "your-api-key"
+kind: TFWorkspaceClaim
+lifecycle: production
+name: corpme-common-dev-cloudamq-instance
+system: 'system:corpme'
+version: '1.0'
+providers:
+  terraform:
+    tfStateKey: xxxxxxxx-xxxxxxx-xxxxxx-xxxxxxxx
+    name: corpme-common-dev-cloudamqp-instance
+    source: remote
+    module: git::https://reference.url.com
+    values:
+      cloudamqp_instance:
+        name: "corpme-dev"
+        plan: "squirrel-1"
+        region: "azure-arm::westeurope"
+        nodes: 1
+        rmq_version: "3.12.10"
+        keep_associated_vpc: true
+        no_default_alarms: true
+        tags:
+          client: "corpme"
+          value: "dev"
 
-# Instance
-cloudamqp_instance = {
-  name        = "my-cloudamqp-instance"
-  plan        = "your-plan"
-  region      = "azure-arm::westeurope"
-  tags        = ["production", "backend"]
-  nodes       = 1
-  rmq_version = "4.0.4"
-}
+      recipients:
+        Slack:
+          name: "Slack - Corpme Dev"
+          value:  "https://hooks.slack.com/services/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\t"
+          type: "slack"
+        Recipient1:
+          name: "Email - TEAM - RECIPIENT1"
+          value: "email.recipient1@mail.com"
+          type: "email"
+        Recipient2:
+          name: "Email - TEAM - RECIPIENT2"
+          value: "email.recipient2@mail.com"
+          type: "email"
 
-# Firewall
-enable_firewall = true
-firewall_rules = {
-  "allow_rabbitmq" = {
-    description = "Allow RabbitMQ traffic"
-    ip          = "192.168.1.0/24"
-    ports       = ["15672"]
-    services    = ["AMQP"]
-  }
-}
+      alarms:
+        cpu:
+          type: "cpu"
+          enabled: true
+          reminder_interval: 600
+          value_threshold: 90
+          time_threshold: 600
+          recipient_key:
+            - "Slack"
+            - "Recipient1"
+            - "Recipient2"
+        memory:
+          type: "memory"
+          enabled: true
+          reminder_interval: 600
+          value_threshold: 80
+          time_threshold: 600
+          recipient_key:
+            - "Slack"
+            - "Recipient1"
+            - "Recipient2"
+        disk:
+          type: "disk"
+          enabled: true
+          reminder_interval: 600
+          value_threshold: 5
+          time_threshold: 600
+          recipient_key:
+            - "Slack"
+            - "Recipient1"
+            - "Recipient2"
 
-# Alarms
-alarms = {
-  "high_cpu" = {
-    type              = "cpu"
-    enabled           = true
-    reminder_interval = 30
-    value_threshold   = 100
-    time_threshold    = 60
-    recipient_key     = "admin_alert"
-  }
-  "low_memory" = {
-    type              = "memory"
-    enabled           = true
-    reminder_interval = 30
-    value_threshold   = 10
-    time_threshold    = 60
-    recipient_key     = "admin2_alert"
-  }
-}
+      enable_firewall: true
 
-#Recipients
-recipients = {
-  "admin_alert" = {
-    name  = "admin alert 1"
-    value = "admin1@example.com"
-    type  = "email"
-  }
-  "admin2_alert" = {
-    name  = "admin alert 2"
-    value = "admin2@example.com"
-    type  = "email"
-  }
-}
+      firewall_rules:
+        subnet:
+          description: "INTERNAL - SUBNET"
+          ip: "xx.xx.x.x.x/xx"
+          ports: ["xxxxx"]
+          services:
+            - "AMQP"
+            - "AMQPS"
+            - "HTTPS"
+            - "STREAM"
+            - "STREAM_SSL"
+            - "STOMP"
+            - "STOMPS"
+            - "MQTT"
+            - "MQTTS"
+        VPN:
+          description: "CENTRAL - VPN"
+          ip: "xx.xx.x.x.x/xx"
+          ports: []
+          services:
+            - "AMQP"
+            - "AMQPS"
+            - "HTTPS"
+            - "STREAM"
+            - "STREAM_SSL"
+            - "STOMP"
+            - "STOMPS"
+            - "MQTT"
+            - "MQTTS"
+        NAME1:
+          description: "TEAM - NAME1"
+          ip: "xx.xx.x.x.x/xx"
+          ports: []
+          services:
+            - "AMQP"
+            - "AMQPS"
+            - "HTTPS"
+            - "STREAM"
+            - "STREAM_SSL"
+            - "STOMP"
+            - "STOMPS"
+            - "MQTT"
+            - "MQTTS"
+        NAME2:
+          description: "TEAM - NAME2"
+          ip: "xx.xx.x.x.x/xx"
+          ports: ["xxxxxx"]
+          services:
+            - "AMQP"
+            - "AMQPS"
+            - "HTTPS"
+            - "STREAM"
+            - "STREAM_SSL"
+            - "STOMP"
+            - "STOMPS"
+            - "MQTT"
+            - "MQTTS"
+
+      metrics_integrations:
+        datadog:
+          name: "datadog"
+          region: "eu1"
+          tags:
+            datacenter: azurewesteurope
+            tenant: corpme
+            application: horus-rivulet
+            env: pre
+            service: rabbitmq
+            version: RabbitMQ3.12.12-Erlang25.3.2.7
+            source: cloudamqp
+
+      logs_integrations:
+        datadog:
+          name: "datadog"
+          region:
+            - "eu"
+          tags:
+            datacenter: azurewesteurope
+            tenant: corpme
+            application: horus-rivulet
+            env: pre
+            service: rabbitmq
+            version: RabbitMQ3.12.12-Erlang25.3.2.7
+            source: cloudamqp
 
 
-# Metrics integration
-metrics_integrations = {
-  cloudwatch = {
-    name    = "cloudwatch"
-    api_key = "metrics-api-key-cloudwatch"
-    region  = "eu-west-1"
-    tags = {
-      environment = "production"
-      role        = "monitoring"
-    }
-    access_key_id     = "AKIAIOSFODNN7EXAMPLE"
-    secret_access_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-    iam_role          = "arn:aws:iam::123456789012:role/example-role"
-    iam_external_id   = "external-id-placeholder-123"
-  }
-
-  datadog = {
-    name    = "datadog"
-    api_key = "ddapikey1234567890abcdef1234567890"
-    region  = "eu1"
-    tags = {
-      enviroment = "production" }
-  }
-
-  datadog_v2 = {
-    name    = "datadog_v2"
-    api_key = "ddapikey1234567890abcdef1234567890"
-    region  = "eu1"
-    tags = {
-      enviroment = "staging" }
-  }
-
-  newrelic_v2 = {
-    name    = "newrelic_v2"
-    api_key = "NRAK-1234567890abcdef1234567890abcdef"
-    region  = "us1"
-    tags = {
-      enviroment = "dev"
-    license_key = "valid_license_key" }
-  }
-
-}
-
-
-# Logs integration
-logs_integrations = {
-  azure_monitor_logs = {
-    name    = "azure_monitor"
-    api_key = "logs-api-key-azure"
-    region  = ["us1", "eu"]
-    tags = {
-      environment = "production"
-      role        = "logging"
-    }
-    tenant_id          = "11111111-1111-1111-1111-111111111111"
-    application_id     = "abcdef12-3456-7890-abcd-ef1234567890"
-    application_secret = "secret-azure"
-    dce_uri            = "https://valid.endpoint.com"
-    table              = "logs_CL"
-    dcr_id             = "dcr-123abc"
-  }
-  datadog_logs = {
-    name    = "datadog"
-    api_key = "ddapikey1234567890abcdef1234567890"
-    region  = ["us1"]
-    tags = {
-      environment = "production"
-      role        = "monitoring"
-    }
-    tenant_id          = "datadog-tenant-id"
-    application_id     = "datadog-app-id"
-    application_secret = "secret-datadog"
-    dce_uri            = "https://api.datadoghq.com"
-    table              = "datadog_logs"
-    dcr_id             = "dcr-123abc"
-  }
-
-  cloudwatch_logs = {
-    name    = "cloudwatchlog"
-    api_key = "logs-api-key-cloudwatch"
-    region  = ["eu-west-1"]
-    tags = {
-      environment = "test"
-      role        = "cloud-monitoring"
-    }
-    tenant_id          = "cloudwatch-tenant-id"
-    application_id     = "cloudwatch-app-id"
-    application_secret = "secret-cloudwatch"
-    dce_uri            = "https://logs.us-west-2.amazonaws.com"
-    table              = "cloudwatch_log_table"
-    dcr_id             = "dcr-789ghi"
-    access_key_id      = "AKIAIOSFODNN7EXAMPLE"
-    secret_access_key  = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-    iam_role           = "arn:aws:iam::123456789012:role/example-role"
-    iam_external_id    = "external-id-placeholder-123"
-  }
-
-  stackdriver_logs = {
-    name    = "stackdriver"
-    api_key = "logs-api-key-stackdriver"
-    region  = ["eu", "eu1"]
-    tags = {
-      environment = "development"
-      role        = "logging"
-    }
-    project_id   = "your-gcp-project-id"
-    private_key  = "your-private-key-content"
-    client_email = "example@exaple.es"
-  }
-}
-
+    context:
+      providers:
+        - name: cloudamqp-corpme
+      backend:
+        name: azure-backend-terraform
 
 
 ```
