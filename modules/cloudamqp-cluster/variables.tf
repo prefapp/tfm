@@ -12,13 +12,13 @@ variable "cloudamqp_instance" {
     keep_associated_vpc = optional(string)
 
   }))
-  default = {
-    name        = "default_instance"
-    plan        = "lemming"
-    region      = "azure-arm::westeurope"
-    nodes       = 1
-    rmq_version = "4.0.4"
-  }
+  # default = {
+  #   name        = "default_instance"
+  #   plan        = "lemming"
+  #   region      = "azure-arm::westeurope"
+  #   nodes       = 1
+  #   rmq_version = "4.0.4"
+  # }
 }
 
 
