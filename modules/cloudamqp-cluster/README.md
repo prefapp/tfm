@@ -63,7 +63,7 @@
 | <a name="output_instance_backend"></a> [instance\_backend](#output\_instance\_backend) | Backend type of the CloudAMQP instance |
 
 
-## Examples
+## Example 1: tfvars
 
 ```yaml
 #tfvars
@@ -150,6 +150,8 @@ cloudamqp_instance = {
   }
 }
 ```
+## Example 2: yaml
+
 ```yaml
 #Claim
 kind: YourKind
