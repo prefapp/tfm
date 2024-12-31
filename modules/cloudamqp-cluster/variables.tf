@@ -16,7 +16,6 @@ variable "cloudamqp_instance" {
     name        = "default_instance"
     plan        = "lemming"
     region      = "azure-arm::westeurope"
-    tags        = {}
     nodes       = 1
     rmq_version = "4.0.4"
   }
