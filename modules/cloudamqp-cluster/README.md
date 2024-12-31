@@ -39,7 +39,7 @@
 | <a name="input_recipients"></a> [recipients](#input\_recipients) | Map of notification recipients | `map(object({ value = string, name = string, type = string }))` | `{}` | no |
 | <a name="input_alarms"></a> [alarms](#input\_alarms) | Map of alarms for monitoring | `map(object({ type = string, enabled = bool, reminder_interval = number, value_threshold = number, time_threshold = number, recipient_key = string }))` | `{}` | no |
 | <a name="input_metrics_integrations"></a> [metrics\_integrations](#input\_metrics\_integrations) | Map of metrics integrations | `map(object({ name = string, api_key = string, region = string, tags = map(string) }))` | `{}` | no |
-| <a name="input_logs_integrations"></a> [logs\_integrations](#input\_logs\_integrations) | Map of logs integrations | `map(object({ name = string, api_key = string, region = list(string), tags = map(string), tenant_id = string, application_id = string, application_secret = string, dce_uri = string, table = string, dcr_id = string }))` | `{}` | no |
+| <a name="input_logs_integrations"></a> [logs\_integrations](#input\_logs\_integrations) | Map of logs integrations | `map(object({ name = string, api_key = string, region = string, tags = map(string), tenant_id = string, application_id = string, application_secret = string, dce_uri = string, table = string, dcr_id = string }))` | `{}` | no |
 
 ## Validations
 
@@ -82,9 +82,7 @@ terraform {
 provider "cloudamqp" {
   api_key = var.api_key
 }
-
-module "cloudamqp_instance" {
-  source = "./path-to-your-module"
+cloudamqp_instance = {
 
   api_key   = var.api_key
   plan      = "lemur"
@@ -92,8 +90,9 @@ module "cloudamqp_instance" {
   nodes     = 3
   rmq_version = "your-plan"
   tags      = ["production", "messaging"]
+  }
 
-  enable_firewall    = true
+  enable_firewall  = true
   firewall_rules = {
     rule1 = {
       description = "Allow access from office network"
@@ -141,7 +140,7 @@ module "cloudamqp_instance" {
     azure = {
       name              = "azure-log-analytics"
       api_key           = "your-azure-api-key"
-      region            = ["us-east-1"]
+      region            = "us-east-1"
       tags              = { environment = "production" }
       tenant_id         = "your-tenant-id"
       application_id    = "your-application-id"
@@ -166,7 +165,6 @@ providers:
     module: git::https://this.module.ref.com
     values:
       cloudamqp_instance:
-        source: "./path-to-your-module"
         key: "${var.api_key}"
         plan: "your-plan"
         region: "your-region"
@@ -221,8 +219,7 @@ providers:
         azure:
           name: "azure-log-analytics"
           api_key: "your-azure-api-key"
-          region:
-            - "us-east-1"
+          region: "us-east-1"
           tags:
             environment: "production"
           tenant_id: "your-tenant-id"

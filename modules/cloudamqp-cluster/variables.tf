@@ -208,7 +208,7 @@ variable "logs_integrations" {
   type = map(object({
     name               = string
     api_key            = optional(string)
-    region             = optional(list(string))
+    region             = optional(string)
     tags               = optional(map(string))
     tenant_id          = optional(string)
     application_id     = optional(string)
@@ -254,7 +254,7 @@ variable "logs_integrations" {
       for key, val in var.logs_integrations : (
         key != "cloudwatch_logs" || (
           lookup(val, "access_key_id", "") != "" &&
-          length(lookup(val, "region", [])) > 0 &&
+          lookup(val, "region", "") != "" &&
           lookup(val, "secret_access_key", "") != ""
         )
       )
@@ -280,7 +280,7 @@ variable "logs_integrations" {
       for key, val in var.logs_integrations : (
         key != "datadog_logs" || (
           lookup(val, "api_key", "") != "" &&
-          length(lookup(val, "region", [])) > 0 &&
+          lookup(val, "region", "") != "" &&
           lookup(val, "tags", "") != ""
         )
       )
