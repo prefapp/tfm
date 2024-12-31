@@ -92,7 +92,7 @@ providers:
       recipients:
         Slack:
           name: "Slack - Corpme Dev"
-          value:  "https://hooks.slack.com/services/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\t"
+          value:  "slack-key"
           type: "slack"
         Recipient1:
           name: "Email - TEAM - RECIPIENT1"
