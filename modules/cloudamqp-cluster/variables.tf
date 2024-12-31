@@ -1,17 +1,16 @@
 # Instance
 variable "cloudamqp_instance" {
   description = "Map of CloudAMQP instance configurations"
-  type = map(object({
+  type = object({
     name                = string
     plan                = string
     region              = string
     tags                = optional(map(string))
     nodes               = number
     rmq_version         = string
-    no_default_alarms   = optional(string)
-    keep_associated_vpc = optional(string)
-
-  }))
+    no_default_alarms   = optional(bool)
+    keep_associated_vpc = optional(bool)
+  })
   # default = {
   #   name        = "default_instance"
   #   plan        = "lemming"
