@@ -9,19 +9,20 @@ variable "cloudamqp_instance" {
     name                = string
     plan                = string
     region              = string
-    tags                = optional(map(string))
+    tags                = optional(list(string))
     nodes               = number
     rmq_version         = string
     no_default_alarms   = optional(bool)
     keep_associated_vpc = optional(bool)
   })
-  # default = {
-  #   name        = "default_instance"
-  #   plan        = "lemming"
-  #   region      = "azure-arm::westeurope"
-  #   nodes       = 1
-  #   rmq_version = "4.0.4"
-  # }
+   default = {
+     name        = "default_instance"
+     plan        = "lemming"
+     region      = "azure-arm::westeurope"
+     tags        = []
+     nodes       = 1
+     rmq_version = "4.0.4"
+   }
 }
 
 
