@@ -9,7 +9,7 @@ variable "cloudamqp_instance" {
     name                = string
     plan                = string
     region              = string
-    tags                = optional(list(string))
+    tags                = optional(list(string), [])
     nodes               = number
     rmq_version         = string
     no_default_alarms   = optional(bool)
