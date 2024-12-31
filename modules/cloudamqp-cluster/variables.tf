@@ -1,7 +1,7 @@
 # Instance
 variable "cloudamqp_instance" {
   description = "Map of CloudAMQP instance configurations"
-  type = object({
+  type = map(object({
     name                = string
     plan                = string
     region              = string
@@ -11,11 +11,12 @@ variable "cloudamqp_instance" {
     no_default_alarms   = optional(string)
     keep_associated_vpc = optional(string)
 
-  })
+  }))
   default = {
     name        = "default_instance"
     plan        = "lemming"
     region      = "azure-arm::westeurope"
+    tags        = {}
     nodes       = 1
     rmq_version = "4.0.4"
   }
