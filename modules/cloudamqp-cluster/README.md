@@ -88,9 +88,9 @@ module "cloudamqp_instance" {
 
   api_key   = var.api_key
   plan      = "lemur"
-  region    = "us-east-1"
+  region    = "your-region"
   nodes     = 3
-  rmq_version = "3.10.0"
+  rmq_version = "your-plan"
   tags      = ["production", "messaging"]
 
   enable_firewall    = true
