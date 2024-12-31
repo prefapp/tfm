@@ -86,7 +86,7 @@ provider "cloudamqp" {
 module "cloudamqp_instance" {
   source = "./path-to-your-module"
 
-  api_key            = var.api_key
+  api_key   = var.api_key
   plan      = "lemur"
   region    = "us-east-1"
   nodes     = 3
