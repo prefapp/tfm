@@ -87,11 +87,11 @@ module "cloudamqp_instance" {
   source = "./path-to-your-module"
 
   api_key            = var.api_key
-  instance_plan      = "lemur"
-  instance_region    = "us-east-1"
-  instance_nodes     = 3
-  instance_rmq_version = "3.10.0"
-  instance_tags      = ["production", "messaging"]
+  plan      = "lemur"
+  region    = "us-east-1"
+  nodes     = 3
+  rmq_version = "3.10.0"
+  tags      = ["production", "messaging"]
 
   enable_firewall    = true
   firewall_rules = {
@@ -167,12 +167,12 @@ providers:
     values:
       cloudamqp_instance:
         source: "./path-to-your-module"
-        api_key: "${var.api_key}"
-        instance_plan: "your-plan"
-        instance_region: "your-region"
-        instance_nodes: 3
-        instance_rmq_version: "4.0.4"
-        instance_tags:
+        key: "${var.api_key}"
+        plan: "your-plan"
+        region: "your-region"
+        nodes: 3
+        rmq_version: "4.0.4"
+        tags:
           - "production"
           - "messaging"
 
