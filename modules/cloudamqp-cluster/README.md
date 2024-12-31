@@ -64,87 +64,180 @@
 
 
 
-## Example
+## Examples
 
 ```yaml
 
-terraform:
-  required_providers:
-    cloudamqp:
-      source: cloudamqp/cloudamqp
-      version: ">= 1.32.2"
-  required_version: ">= 1.7.0"
+#tfvars
+terraform {
+  required_providers {
+    cloudamqp = {
+      source  = "cloudamqp/cloudamqp"
+      version = ">= 1.32.2"
+    }
+  }
+  required_version = ">= 1.7.0"
+}
 
-provider:
-  cloudamqp:
-    api_key: "${var.api_key}"
+provider "cloudamqp" {
+  api_key = var.api_key
+}
 
-module:
-  cloudamqp_instance:
-    source: "./path-to-your-module"
-    api_key: "${var.api_key}"
-    plan: "lemur"
-    region: "us-east-1"
-    nodes: 3
-    rmq_version: "3.10.0"
-    tags:
-      - "production"
-      - "messaging"
+module "cloudamqp_instance" {
+  source = "./path-to-your-module"
 
-    enable_firewall: true
-    firewall_rules:
-      rule1:
-        description: "Allow access from office network"
-        ip: "203.0.113.0"
-        ports:
-          - "5672"
-          - "15672"
-        services:
-          - "rabbitmq"
-      rule2:
-        description: "Allow monitoring tools"
-        ip: "198.51.100.0"
-        ports:
-          - "443"
-        services:
-          - "monitoring"
+  api_key            = var.api_key
+  instance_plan      = "lemur"
+  instance_region    = "us-east-1"
+  instance_nodes     = 3
+  instance_rmq_version = "3.10.0"
+  instance_tags      = ["production", "messaging"]
 
-    recipients:
-      admin:
-        value: "admin@example.com"
-        name: "Admin"
-        type: "email"
+  enable_firewall    = true
+  firewall_rules = {
+    rule1 = {
+      description = "Allow access from office network"
+      ip          = "203.0.113.0"
+      ports       = ["5672", "15672"]
+      services    = ["rabbitmq"]
+    },
+    rule2 = {
+      description = "Allow monitoring tools"
+      ip          = "198.51.100.0"
+      ports       = ["443"]
+      services    = ["monitoring"]
+    }
+  }
 
-    alarms:
-      high_memory_usage:
-        type: "memory"
-        enabled: true
-        reminder_interval: 30
-        value_threshold: 80
-        time_threshold: 5
-        recipient_key: "admin"
+  recipients = {
+    admin = {
+      value = "admin@example.com"
+      name  = "Admin"
+      type  = "email"
+    }
+  }
 
-    metrics_integrations:
-      datadog:
-        name: "datadog"
-        api_key: "your-datadog-api-key"
-        region: "us-east-1"
-        tags:
-          environment: "production"
+  alarms = {
+    high_memory_usage = {
+      type             = "memory"
+      enabled          = true
+      reminder_interval = 30
+      value_threshold   = 80
+      time_threshold    = 5
+      recipient_key     = "admin"
+    }
+  }
 
-    logs_integrations:
-      azure:
-        name: "azure-log-analytics"
-        api_key: "your-azure-api-key"
-        region:
-          - "us-east-1"
-        tags:
-          environment: "production"
-        tenant_id: "your-tenant-id"
-        application_id: "your-application-id"
-        application_secret: "your-application-secret"
-        dce_uri: "https://example.com"
-        table: "logs"
-        dcr_id: "your-dcr-id"
+  metrics_integrations = {
+    datadog = {
+      name    = "datadog"
+      api_key = "your-datadog-api-key"
+      region  = "us-east-1"
+      tags    = { environment = "production" }
+    }
+  }
+
+  logs_integrations = {
+    azure = {
+      name              = "azure-log-analytics"
+      api_key           = "your-azure-api-key"
+      region            = ["us-east-1"]
+      tags              = { environment = "production" }
+      tenant_id         = "your-tenant-id"
+      application_id    = "your-application-id"
+      application_secret = "your-application-secret"
+      dce_uri           = "https://example.com"
+      table             = "logs"
+      dcr_id            = "your-dcr-id"
+    }
+  }
+}
+
+#Claim
+kind: YourKind
+lifecycle: production
+name: name-of-your-instance
+system: 'your-system'
+version: '1.0'
+providers:
+  terraform:
+    tfStateKey: xxxxxx-xxxx-xxxx-xxxxxx
+    source: remote
+    module: git::https://this.module.ref.com
+    values:
+      cloudamqp_instance:
+        source: "./path-to-your-module"
+        api_key: "${var.api_key}"
+        instance_plan: "your-plan"
+        instance_region: "your-region"
+        instance_nodes: 3
+        instance_rmq_version: "4.0.4"
+        instance_tags:
+          - "production"
+          - "messaging"
+
+      enable_firewall: true
+      firewall_rules:
+        rule1:
+          description: "Allow access from office network"
+          ip: "203.0.113.0"
+          ports:
+            - "5672"
+            - "15672"
+          services:
+            - "rabbitmq"
+        rule2:
+          description: "Allow monitoring tools"
+          ip: "198.51.100.0"
+          ports:
+            - "443"
+          services:
+            - "monitoring"
+
+      recipients:
+        admin:
+          value: "admin@example.com"
+          name: "Admin"
+          type: "email"
+
+      alarms:
+        high_memory_usage:
+          type: "memory"
+          enabled: true
+          reminder_interval: 30
+          value_threshold: 80
+          time_threshold: 5
+          recipient_key: "admin"
+
+      metrics_integrations:
+        datadog:
+          name: "datadog"
+          api_key: "your-datadog-api-key"
+          region: "us-east-1"
+          tags:
+            environment: "production"
+
+      logs_integrations:
+        azure:
+          name: "azure-log-analytics"
+          api_key: "your-azure-api-key"
+          region:
+            - "us-east-1"
+          tags:
+            environment: "production"
+          tenant_id: "your-tenant-id"
+          application_id: "your-application-id"
+          application_secret: "your-application-secret"
+          dce_uri: "https://example.com"
+          table: "logs"
+          dcr_id: "your-dcr-id"
+
+    context:
+      providers:
+        - name: your-provider
+      backend:
+        name: azure-backend-terraform
+
+
 
 ```
