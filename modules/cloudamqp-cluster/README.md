@@ -26,7 +26,6 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_api_key"></a> [api\_key](#input\_api\_key) | API key for CloudAMQP | `string` | n/a | yes |
 | <a name="input_plan"></a> [plan](#input_plan) | Plan for the CloudAMQP instance ([List of plans](https://registry.terraform.io/providers/cloudamqp/cloudamqp/latest/docs/guides/info_plan)) | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input_region) | Region for the CloudAMQP instance | `string` | n/a | yes |
 | <a name="input_nodes"></a> [nodes](#input_nodes) | Number of nodes for the CloudAMQP instance | `number` | n/a | yes |
@@ -67,6 +66,7 @@
 
 ```yaml
 #tfvars
+
 cloudamqp_instance = {
 
   plan      = "your-plan"
@@ -144,11 +144,11 @@ version: '1.0'
 providers:
   terraform:
     tfStateKey: xxxxxx-xxxx-xxxx-xxxxxx
+    name: name-of-your-instace
     source: remote
     module: git::https://this.module.ref.com
     values:
       cloudamqp_instance:
-        key: "${var.api_key}"
         plan: "your-plan"
         region: "your-region"
         nodes: 1
