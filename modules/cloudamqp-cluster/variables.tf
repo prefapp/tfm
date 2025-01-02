@@ -12,6 +12,7 @@ variable "cloudamqp_instance" {
     keep_associated_vpc = optional(bool)
   })
    default = {
+     api_key     = "your-api_key"
      name        = "default_instance"
      plan        = "lemming"
      region      = "azure-arm::westeurope"
