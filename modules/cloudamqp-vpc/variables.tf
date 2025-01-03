@@ -4,7 +4,7 @@ variable "cloudamqp_vpc" {
     name   = string
     region = string
     subnet = string
-    tags   = optional(map(string))
+    tags   = optional(list(string))
   }))
 }
 
