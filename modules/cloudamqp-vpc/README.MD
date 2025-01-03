@@ -28,6 +28,8 @@
 
 ## Outputs
 
+| Name | Description |
+|------|-------------|
 | <a name="output_vpc_id"></a> [vpc_id](#output\_vpc\_id) | ID of the created VPC. |
 | <a name="output_vpc_name"></a> [vpc_name](#output\_vpc\_name) | Name of the created VPC. |
 | <a name="output_id"></a> [id](#output\_id) | The identifier for this resource. Will be the same as `instance_id`. |
