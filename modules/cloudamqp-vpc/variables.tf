@@ -1,4 +1,4 @@
-variable "cloudamqp_vpc" {
+variable "vpc" {
   description = "Map of cloudAMQP vpc configurations"
   type = map(object({
     name   = string
@@ -8,7 +8,7 @@ variable "cloudamqp_vpc" {
   }))
 }
 
-variable "cloudamqp_vpc_connect" {
+variable "vpc_connect" {
   description = "Map of cloudAMQP vpc_connect configurations"
   type = map(object({
     instance_id            = string
