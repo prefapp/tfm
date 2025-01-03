@@ -23,8 +23,8 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cloudamqp_vpc"></a> [cloudamqp_vpc](#input\_cloudamqp\_vpc) | Map of CloudAMQP VPC configurations. | <pre>object({<br>  name   = string<br>  region = string<br>  subnet = string<br>  tags   = optional(list(string))<br>})</pre> | n/a | yes |
-| <a name="input_cloudamqp_vpc_connect"></a> [cloudamqp_vpc_connect](#input\_cloudamqp\_vpc\_connect) | Map of CloudAMQP VPC Connect configurations. | <pre>object({<br>  instance_id            = number<br>  region                 = string<br>  approved_subscriptions = optional(list(string))<br>  sleep                  = optional(number)<br>  timeout                = optional(number)<br>})</pre> | n/a | yes |
+| <a name="input_cloudamqp_vpc"></a> [cloudamqp_vpc](#input\_cloudamqp\_vpc) | CloudAMQP VPC configurations. | <pre>object({<br>  name   = string<br>  region = string<br>  subnet = string<br>  tags   = optional(list(string))<br>})</pre> | n/a | yes |
+| <a name="input_cloudamqp_vpc_connect"></a> [cloudamqp_vpc_connect](#input\_cloudamqp\_vpc\_connect) | CloudAMQP VPC Connect configurations. | <pre>object({<br>  instance_id            = number<br>  region                 = string<br>  approved_subscriptions = optional(list(string))<br>  sleep                  = optional(number)<br>  timeout                = optional(number)<br>})</pre> | n/a | yes |
 
 ## Outputs
 

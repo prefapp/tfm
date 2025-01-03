@@ -1,5 +1,5 @@
 variable "cloudamqp_vpc" {
-  description = "Map of cloudAMQP vpc configurations"
+  description = "CloudAMQP vpc configurations"
   type = object({
     name   = string
     region = string
@@ -9,7 +9,7 @@ variable "cloudamqp_vpc" {
 }
 
 variable "cloudamqp_vpc_connect" {
-  description = "Map of cloudAMQP vpc_connect configurations"
+  description = "CloudAMQP vpc_connect configurations"
   type = object({
     instance_id            = number
     region                 = string
