@@ -17,8 +17,3 @@ output "status" {
   description = "Private Service Connect status [enable, pending, disable]."
   value       = cloudamqp_vpc_connect.this.status
 }
-
-output "service_name" {
-  description = "Service name (alias for Azure) of the PrivateLink."
-  value       = cloudamqp_vpc_connect.service_name
-}
