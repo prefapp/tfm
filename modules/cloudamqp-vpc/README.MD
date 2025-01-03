@@ -15,8 +15,8 @@
 
 | Name | Type |
 |------|------|
-| <a name="resource_cloudamqp_vpc"></a> [cloudamqp_vpc](#resource\_cloudamqp\_vpc) | [cloudamqp_vpc](https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/vpc) |
-| <a name="resource_cloudamqp_vpc_connect"></a> [cloudamqp_vpc_connect](#resource\_cloudamqp\_vpc\_connect) | [cloudamqp_vpc_connect](https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/vpc_connect) |
+| <a name="resource_cloudamqp_vpc"></a> [cloudamqp_vpc.this](https://registry.terraform.io/providers/cloudamqp/cloudamqp/latest/docs/resources/vpc) | resource |
+| <a name="resource_cloudamqp_vpc_connect"></a> [cloudamqp_vpc_connect.this](https://registry.terraform.io/providers/cloudamqp/cloudamqp/latest/docs/resources/vpc_connect) | resource |
 
 
 ## Inputs
