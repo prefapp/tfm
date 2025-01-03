@@ -34,3 +34,41 @@
 | <a name="output_vpc_name"></a> [vpc_name](#output\_vpc\_name) | Name of the created VPC. |
 | <a name="output_id"></a> [id](#output\_id) | The identifier for this resource. Will be the same as `instance_id`. |
 | <a name="output_status"></a> [status](#output\_status) | Private Service Connect status [enable, pending, disable]. |
+
+## Example
+
+```yaml
+kind: TFWorkspaceClaim
+lifecycle: production
+name: example-cloudamqp-vpc
+system: 'system:example'
+version: '1.0'
+providers:
+  terraform:
+    tfStateKey: 12345678-1234-1234-1234-123456789abc
+    name: example-cloudamqp-vpc
+    source: remote
+    module: git::https://github.com/example/tfm.git//modules/cloudamqp-vpc?ref=example-branch
+    values:
+      cloudamqp_vpc:
+        name: "example-dev-vpc"
+        region: "azure-arm::eastus"
+        subnet: "10.0.0.0/24"
+        tags:
+          - "example"
+          - "dev"
+      cloudamqp_vpc_connect:
+        instance_id: 123456
+        region: "azure-arm::eastus"
+        approved_subcriptions:
+          - "xxxxxx-xxxx-xxxx-xxxxxxx"
+          - "xxxxxx-xxxx-xxxx-xxxxxxx"
+
+    context:
+      providers:
+        - name: cloudamqp-example
+        - name: azure-provider-example
+      backend:
+        name: azure-backend-example
+```
+
