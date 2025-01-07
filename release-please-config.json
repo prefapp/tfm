@@ -65,6 +65,12 @@
         },
         "modules/mongodb-atlas-azure-privatelink": {
             "package-name": "mongodb-atlas-azure-privatelink"
+        },
+        "modules/cloudamqp-vpc": {
+            "package-name": "cloudamqp-vpc"
+        },
+        "modules/cloudamqp-cluster": {
+            "package-name": "cloudamqp-cluster"
         }
     }
 }
