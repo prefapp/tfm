@@ -21,5 +21,6 @@
     "modules/mongodb-atlas-cluster": "0.1.1",
     "modules/mongodb-atlas-azure-privatelink": "0.1.0",
     "modules/cloudampq-cluster": "0.0.0",
-    "modules/cloudampq-vpc": "0.0.0"
+    "modules/cloudampq-vpc": "0.0.0",
+    "modules/cloudamqp-vpc": "0.1.0"
 }
