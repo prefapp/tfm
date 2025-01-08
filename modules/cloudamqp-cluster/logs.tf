@@ -1,3 +1,11 @@
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
+data "azurerm_key_vault_secret" "secret_cloudamqp_datadog_integration_logs_dev" {
+  name         = "cloudamqp-corpme-dev-integration-datadog-logs-apikey"
+  key_vault_id = data.azurerm_key_vault.key_vault_corpme_common_predev.id
+  depends_on   = [cloudamqp_instance.this]
+}
+
+
 # https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/integration_log
 resource "cloudamqp_integration_log" "this" {
   for_each           = var.logs_integrations
