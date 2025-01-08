@@ -1,9 +1,3 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
-data "azurerm_key_vault" "key_vault_corpme_common_predev" {
-  name                = "corpme-common-predev-kv"
-  resource_group_name = "corpme-common-predev"
-}
-
 # https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/instance
 resource "cloudamqp_instance" "this" {
   name                = var.cloudamqp_instance.name
