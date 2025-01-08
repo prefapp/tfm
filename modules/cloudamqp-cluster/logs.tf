@@ -1,9 +1,3 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
-data "azurerm_key_vault" "key_vault_corpme_common_predev" {
-  name                = "corpme-common-predev-kv"
-  resource_group_name = "corpme-common-predev"
-}
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
 data "azurerm_key_vault_secret" "secret_cloudamqp_datadog_integration_logs_dev" {
   name         = "cloudamqp-corpme-dev-integration-datadog-logs-apikey"
