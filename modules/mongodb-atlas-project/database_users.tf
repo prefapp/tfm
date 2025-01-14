@@ -1,8 +1,18 @@
 # https://registry.terraform.io/providers/mongodb/mongodbatlas/1.23.0/docs/resources/database_user
+resource "random_password" "this" {
+  for_each = var.database_users
+  length   = 30
+  lower    = true
+  upper    = true
+  numeric  = true
+  special  = false
+}
+
+# https://registry.terraform.io/providers/mongodb/mongodbatlas/1.23.0/docs/resources/database_user
 resource "mongodbatlas_database_user" "this" {
   for_each           = var.database_users
   username           = each.value.username
-  password           = each.value.password
+  password           = random_password.this[each.key].result
   project_id         = mongodbatlas_project.this.id
   auth_database_name = each.value.auth_database_name
   roles {
