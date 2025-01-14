@@ -15,6 +15,7 @@ data "azurerm_network_security_group" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/user_assigned_identity
 data "azurerm_user_assigned_identity" "this" {
+  count = contains(["UserAssigned", "SystemAssigned, UserAssigned"])
   name                = "${var.vmss.name}-mi"
   resource_group_name = var.vmss.resource_group_name
 }
@@ -22,9 +23,10 @@ data "azurerm_user_assigned_identity" "this" {
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix
 resource "azurerm_public_ip_prefix" "this" {
+  count               = var.vmss.prefix_length != null ? 1 : 0
   name                = var.public_ip_prefix.name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = var.vmss.resource_group_name
+  location            = var.common.location
+  resource_group_name = var.common.resource_group_name
   prefix_length       = var.vmss.prefix_length
   tags                = var.common.tags
 }
@@ -32,8 +34,8 @@ resource "azurerm_public_ip_prefix" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
   name                = var.vmss.name
-  resource_group_name = data.azurerm_resource_group.rg.name
-  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = var.common.resource_group_name
+  location            = var.common.location
   sku                 = var.vmss.sku
   instances           = var.vmss_.instances
   admin_username      = var.vmss.admin_username
@@ -77,10 +79,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
-        public_ip_prefix_id = azurerm_public_ip_prefix.soups.id
+        public_ip_prefix_id = data.azurerm_public_ip_prefix.soups.id
       }
     }
-
   }
 
   identity {

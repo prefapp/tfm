@@ -17,6 +17,7 @@ variable "network" {
   })
 }
 
+
 variable "public_ip_prefix" {
   type = object({
     name                = string
@@ -31,7 +32,7 @@ variable "vmss" {
   type = object({
     name                                                           = string
     sku                                                            = string
-    instances                                                      = number
+    instances                                                      = optional(number)
     admin_username                                                 = string
     first_public_key                                               = string
     template_cloudinit_config                                      = string
@@ -47,10 +48,10 @@ variable "vmss" {
     image_version                                                  = string
     disk_storage_account_type                                      = string
     disk_caching                                                   = string
-    network_primary                                                = bool
-    network_ip_primary                                             = bool
+    network_primary                                                = optional(bool)
+    network_ip_primary                                             = optional(bool)
     identity_type                                                  = string
-    run_script                                                     = string
-    prefix_length                                                  = number
+    run_script                                                     = optional(string)
+    prefix_length                                                  = optional(number)
   })
 }
