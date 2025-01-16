@@ -9,7 +9,7 @@ data "azurerm_subnet" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/network_security_group
 data "azurerm_network_security_group" "this" {
   count               = var.network.enable_nsg ? 1 : 0
-  name                = "${var.vmss.name}-nsg"
+  name                = var.network_security_group_name
   resource_group_name = var.common.resource_group_name
 }
 
