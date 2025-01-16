@@ -34,7 +34,7 @@ variable "vmss" {
     sku                                                            = string
     instances                                                      = optional(number)
     admin_username                                                 = string
-    first_public_key                                               = string
+    first_public_key                                               = optional(string)
     edge_zone                                                      = optional(string)
     eviction_policy                                                = optional(string)
     data_disk_name                                                 = optional(string)
