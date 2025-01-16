@@ -73,7 +73,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   network_interface {
     name                      = var.vmss.name
     primary                   = var.vmss.network_primary
-    network_security_group_id = data.azurerm_network_security_group.this[count.index].id
+    network_security_group_id = data.azurerm_network_security_group.this[0].id
 
     ip_configuration {
       name      = var.vmss.name
@@ -82,14 +82,14 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
-        public_ip_prefix_id = azurerm_public_ip_prefix.this[count.index].id
+        public_ip_prefix_id = azurerm_public_ip_prefix.this[0].id
       }
     }
   }
 
   identity {
     type         = var.vmss.identity_type
-    identity_ids = [data.azurerm_user_assigned_identity.this[count.index].id]
+    identity_ids = [data.azurerm_user_assigned_identity.this[0].id]
   }
 
   extension {
