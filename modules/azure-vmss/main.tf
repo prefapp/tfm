@@ -73,23 +73,23 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   network_interface {
     name                      = var.vmss.name
     primary                   = var.vmss.network_primary
-    network_security_group_id = data.azurerm_network_security_group.nsg.id
+    network_security_group_id = data.azurerm_network_security_group.this.id
 
     ip_configuration {
       name      = var.vmss.name
       primary   = var.vmss.network_ip_primary
-      subnet_id = data.azurerm_subnet.subnet.id
+      subnet_id = data.azurerm_subnet.this.id
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
-        public_ip_prefix_id = data.azurerm_public_ip_prefix.soups.id
+        public_ip_prefix_id = data.azurerm_public_ip_prefix.this.id
       }
     }
   }
 
   identity {
     type         = var.vmss.identity_type
-    identity_ids = [data.azurerm_user_assigned_identity.corpme-soups.id]
+    identity_ids = [data.azurerm_user_assigned_identity.this.id]
   }
 
   extension {
