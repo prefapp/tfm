@@ -55,7 +55,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
   admin_ssh_key {
     username   = var.vmss.admin_ssh_key_username
-    public_key = var.common.first_public_key
+    public_key = var.vmss.first_public_key
   }
 
   source_image_reference {
@@ -106,7 +106,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
   data_disk {
     name                 = var.vmss.data_disk_name
-    caching              = var.vmss.data_disk_catching
+    caching              = var.vmss.data_disk_caching
     create_option        = var.vmss.data_disk_create_option
     disk_size_gb         = var.vmss.data_disk_disk_size_gb
     lun                  = var.vmss.data_disk_lun
