@@ -11,7 +11,8 @@ variable "common" {
 variable "network" {
   type = object({
     enable_nsg                  = bool
-    network_security_rg_name = optional(string)
+    nsg_name                    = optional(string)
+    nsg_rg_name                 = optional(string)
     vnet_name                   = string
     subnet_name                 = string
     subnet_rg_name              = string
@@ -60,6 +61,8 @@ variable "vmss" {
     network_primary                                                = optional(bool)
     network_ip_primary                                             = optional(bool)
     identity_type                                                  = string
+    identity_name                                                  = optional(string)
+    identity_rg_name                                               = optional(string)
     run_script                                                     = optional(string)
     prefix_length                                                  = optional(number)
   })
