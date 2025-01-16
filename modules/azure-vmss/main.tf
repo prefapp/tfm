@@ -73,7 +73,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   network_interface {
     name                      = var.vmss.name
     primary                   = var.vmss.network_primary
-    network_security_group_id = data.azurerm_network_security_group.this[0].id
+    network_security_group_id = data.azurerm_network_security_group.this[*].id
 
     ip_configuration {
       name      = var.vmss.name
@@ -82,14 +82,14 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
-        public_ip_prefix_id = azurerm_public_ip_prefix.this[0].id
+        public_ip_prefix_id = azurerm_public_ip_prefix.this[*].id
       }
     }
   }
 
   identity {
     type         = var.vmss.identity_type
-    identity_ids = [data.azurerm_user_assigned_identity.this[0].id]
+    identity_ids = [data.azurerm_user_assigned_identity.this[*].id]
   }
 
   extension {
@@ -116,7 +116,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   depends_on = [
     data.azurerm_network_security_group.this,
     data.azurerm_user_assigned_identity.this,
-    var.vmss.prefix_length != null ? azurerm_public_ip_prefix.this[*] : []  # Conditional dependency for Public IP Prefix
+    azurerm_public_ip_prefix.this
   ]
 }
 
