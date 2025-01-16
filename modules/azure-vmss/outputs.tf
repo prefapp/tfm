@@ -20,7 +20,7 @@ output "unique_id" {
 
 output "vmss_identity" {
   value = {
-    principal_id = azurerm_linux_virtual_machine_scale_set.this.identity.principal_id
-    tenant_id    = azurerm_linux_virtual_machine_scale_set.this.identity.tenant_id
+    principal_id = azurerm_linux_virtual_machine_scale_set.this.identity[0].principal_id
+    tenant_id    = azurerm_linux_virtual_machine_scale_set.this.identity[0].tenant_id
   }
 }
