@@ -23,7 +23,7 @@ variable "public_ip_prefix" {
     location            = string
     resource_group_name = string
     prefix_length       = number
-    ip_version          = string
+    ip_version          = optional(string)
     tags                = map(string)
   })
 }
