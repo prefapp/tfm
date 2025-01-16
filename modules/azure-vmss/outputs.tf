@@ -9,15 +9,6 @@ output "output_run_script" {
   })
 }
 
-# Outputs for public_ip_prefix
-output "public_ip_prefix_id" {
-  value = azurerm_public_ip_prefix.this.id
-}
-
-output "ip_prefix" {
-  value = azurerm_public_ip_prefix.this.ip_prefix
-}
-
 # Outputs for linux_virtual_machine_scale_set
 output "vmss_id" {
   value = azurerm_linux_virtual_machine_scale_set.this.id
