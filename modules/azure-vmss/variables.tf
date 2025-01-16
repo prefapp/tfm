@@ -38,7 +38,7 @@ variable "vmss" {
     edge_zone                                                      = optional(string)
     eviction_policy                                                = optional(string)
     data_disk_name                                                 = optional(string)
-    data_disk_size_catching                                        = optional(string)
+    data_disk_caching                                              = optional(string)
     data_disk_create_option                                        = optional(string)
     data_disk_disk_size_gb                                         = optional(number)
     data_disk_lun                                                  = optional(number)
