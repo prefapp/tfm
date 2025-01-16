@@ -13,12 +13,14 @@ output "output_run_script" {
 output "vmss_id" {
   value = azurerm_linux_virtual_machine_scale_set.this.id
 }
-output "principal_id" {
-  value = azurerm_linux_virtual_machine_scale_set.this.principal_id
-}
-output "tenant_id" {
-  value = azurerm_linux_virtual_machine_scale_set.this.tenant_id
-}
+
 output "unique_id" {
   value = azurerm_linux_virtual_machine_scale_set.this.unique_id
+}
+
+output "vmss_identity" {
+  value = {
+    principal_id = azurerm_linux_virtual_machine_scale_set.this.identity.principal_id
+    tenant_id    = azurerm_linux_virtual_machine_scale_set.this.identity.tenant_id
+  }
 }
