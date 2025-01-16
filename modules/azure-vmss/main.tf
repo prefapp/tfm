@@ -116,7 +116,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   depends_on = [
     data.azurerm_network_security_group.this,
     data.azurerm_user_assigned_identity.this,
-    azurerm_public_ip_prefix.this
+    azurerm_public_ip_prefix[0].this
   ]
 }
 
