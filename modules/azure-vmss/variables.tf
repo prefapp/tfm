@@ -11,7 +11,7 @@ variable "common" {
 variable "network" {
   type = object({
     enable_nsg                  = bool
-    network_security_group_name = string
+    network_security_group_name = optional(string)
     vnet_name                   = string
     subnet_name                 = string
     subnet_rg_name              = string
