@@ -9,15 +9,15 @@ data "azurerm_subnet" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/network_security_group
 data "azurerm_network_security_group" "this" {
   count               = var.network.enable_nsg ? 1 : 0
-  name                = var.network.network_security_rg_name
-  resource_group_name = var.common.resource_group_name
+  name                = var.network.nsg_name
+  resource_group_name = var.network.nsg_rg_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/user_assigned_identity
 data "azurerm_user_assigned_identity" "this" {
   count               = strcontains(var.vmss.identity_type, "UserAssigned") ? 1 : 0
-  name                = "${var.vmss.name}-mi"
-  resource_group_name = var.common.resource_group_name
+  name                = var.vmss.identity_name
+  resource_group_name = var.vmss.identity_rg_name
 }
 
 # RESOURCES SECTION
