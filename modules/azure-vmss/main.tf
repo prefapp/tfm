@@ -15,7 +15,7 @@ data "azurerm_network_security_group" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/user_assigned_identity
 data "azurerm_user_assigned_identity" "this" {
-  count = contains(["UserAssigned", "SystemAssigned, UserAssigned"])
+  count               = contains(["UserAssigned", "SystemAssigned, UserAssigned"])
   name                = "${var.vmss.name}-mi"
   resource_group_name = var.vmss.resource_group_name
 }
@@ -29,6 +29,7 @@ resource "azurerm_public_ip_prefix" "this" {
   resource_group_name = var.common.resource_group_name
   prefix_length       = var.vmss.prefix_length
   tags                = var.common.tags
+  ip_version          = var.public_ip_prefix.ip_version
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
@@ -40,6 +41,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   instances           = var.vmss_.instances
   admin_username      = var.vmss.admin_username
   tags                = var.common.tags
+  edge_zone           = var.vmss.edge_zone
+  eviction_policy     = var.vmss.eviction_policy
   # template_cloudinit_config
   custom_data  = base64encode(var.vmss.template_cloudinit_config)
   upgrade_mode = var.vmss.upgrade_mode
@@ -99,6 +102,15 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     settings = jsonencode({
       "script" = base64encode(var.vmss.run_script)
     })
+  }
+
+  data_disk {
+    name                 = var.vmss.data_disk_name
+    caching              = var.vmss.data_disk_catching
+    create_option        = var.vmss.data_disk_create_option
+    disk_size_gb         = var.vmss.data_disk_disk_size_gb
+    lun                  = var.vmss.data_disk_lun
+    storage_account_type = var.vmss.data_disk_storage_account_type
   }
 }
 
