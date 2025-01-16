@@ -38,7 +38,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   resource_group_name = var.common.resource_group_name
   location            = var.common.location
   sku                 = var.vmss.sku
-  instances           = var.vmss_.instances
+  instances           = var.vmss.instances
   admin_username      = var.vmss.admin_username
   tags                = var.common.tags
   edge_zone           = var.vmss.edge_zone
