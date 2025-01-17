@@ -15,7 +15,8 @@ variable "location" {
 
 variable "sku" {
   description = "The SKU of the Public IP Prefix."
-  type        = string
+  type        = optional(string)
+  default = "Standard"
   validation {
     condition     = contains(["Standard"], var.sku)
     error_message = "The only supported value for 'sku' is 'Standard'."
@@ -24,7 +25,8 @@ variable "sku" {
 
 variable "sku_tier" {
   description = "The SKU tier of the Public IP Prefix."
-  type        = string
+  type        = optional(string)
+  default = "Regional"
   validation {
     condition     = contains(["Regional", "Global"], var.sku_tier)
     error_message = "The supported values for 'sku_tier' are 'Regional' and 'Global'."
@@ -33,7 +35,8 @@ variable "sku_tier" {
 
 variable "ip_version" {
   description = "The IP version of the Public IP Prefix."
-  type        = string
+  type        = optional(s)
+  default     = "IPv4"
   validation {
     condition     = contains(["IPv4", "IPv6"], var.ip_version)
     error_message = "The supported values for 'ip_version' are 'IPv4' and 'IPv6'."
@@ -42,7 +45,8 @@ variable "ip_version" {
 
 variable "prefix_length" {
   description = "The length of the Public IP Prefix."
-  type        = number
+  type        = optional(number)
+  default     = 28
   validation {
     condition     = var.prefix_length >= 0 && var.prefix_length <= 32
     error_message = "The 'prefix_length' must be between 0 and 32."
@@ -51,12 +55,12 @@ variable "prefix_length" {
 
 variable "zones" {
   description = "The availability zone to allocate the Public IP Prefix in."
-  type        = list(string)
+  type        = optional(list(string))
   default     = []
 }
 
 variable "tags" {
   description = "A mapping of tags to assign to the resource."
-  type        = map(string)
+  type        = optional(map(string))
   default     = {}
 }
