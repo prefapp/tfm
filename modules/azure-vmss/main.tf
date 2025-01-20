@@ -16,8 +16,8 @@ data "azurerm_network_security_group" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/user_assigned_identity
 data "azurerm_user_assigned_identity" "this" {
   count               = strcontains(var.vmss.identity_type, "UserAssigned") ? 1 : 0
-  name                = var.vmss.identity_name
-  resource_group_name = var.vmss.identity_rg_name
+  name                = var.vmss.name
+  resource_group_name = var.vmss.resource_group_name
 }
 
 # RESOURCES SECTION
