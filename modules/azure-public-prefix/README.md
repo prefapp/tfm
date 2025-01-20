@@ -41,3 +41,21 @@ No modules.
 |------|-------------|
 | <a name="output_id"></a> [id](#output\_id) | # OUTPUTS SECTION Public IP Prefix |
 | <a name="output_ip_prefix"></a> [ip\_prefix](#output\_ip\_prefix) | n/a |
+
+## Example
+
+```yaml
+    values:
+      name: "example_name"
+      resource_group_name: "example_rg"
+      location: "westeurope"
+      sku: "Standard"
+      sku_tier: "Regional"
+      ip_version: "IPv4"
+      prefix_length: 29
+      zones: ["1"]
+      tags:
+        application: "example_app"
+        env: "example_env"
+        tenant: "example_tenant"
+```
