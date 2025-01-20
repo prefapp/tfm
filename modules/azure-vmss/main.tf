@@ -17,7 +17,7 @@ data "azurerm_network_security_group" "this" {
 data "azurerm_user_assigned_identity" "this" {
   count               = strcontains(var.vmss.identity_type, "UserAssigned") ? 1 : 0
   name                = var.vmss.name
-  resource_group_name = var.vmss.resource_group_name
+  resource_group_name = var.common.resource_group_name
 }
 
 # RESOURCES SECTION
