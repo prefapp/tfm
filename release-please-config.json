@@ -71,6 +71,9 @@
         },
         "modules/cloudamqp-cluster": {
             "package-name": "cloudamqp-cluster"
+        },
+        "modules/azure-public-prefix": {
+            "package-name": "azure-public-prefix"
         }
     }
 }
