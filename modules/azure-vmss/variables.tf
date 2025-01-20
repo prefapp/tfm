@@ -19,17 +19,6 @@ variable "network" {
   })
 }
 
-variable "public_ip_prefix" {
-  type = object({
-    name                = string
-    location            = string
-    resource_group_name = string
-    prefix_length       = number
-    ip_version          = optional(string)
-    tags                = map(string)
-  })
-}
-
 variable "vmss" {
   type = object({
     name                                                           = string

@@ -21,17 +21,6 @@ data "azurerm_user_assigned_identity" "this" {
 }
 
 # RESOURCES SECTION
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix
-resource "azurerm_public_ip_prefix" "this" {
-  count               = var.vmss.prefix_length != null ? 1 : 0
-  name                = var.public_ip_prefix.name
-  location            = var.common.location
-  resource_group_name = var.common.resource_group_name
-  prefix_length       = var.vmss.prefix_length
-  tags                = var.common.tags
-  ip_version          = var.public_ip_prefix.ip_version
-}
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
   name                = var.vmss.name
