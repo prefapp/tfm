@@ -22,5 +22,5 @@
     "modules/mongodb-atlas-azure-privatelink": "0.1.0",
     "modules/cloudamqp-vpc": "0.1.0",
     "modules/cloudamqp-cluster": "0.1.0",
-    "modules/azure-public-prefix": "0.1.0"
+    "modules/azure-public-prefix": "0.2.0"
 }
