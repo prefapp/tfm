@@ -13,13 +13,6 @@ data "azurerm_network_security_group" "this" {
   resource_group_name = var.network.nsg_rg_name
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/user_assigned_identity
-data "azurerm_user_assigned_identity" "this" {
-  count               = strcontains(var.vmss.identity_type, "UserAssigned") ? 1 : 0
-  name                = var.vmss.name
-  resource_group_name = var.common.resource_group_name
-}
-
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
@@ -77,7 +70,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
   identity {
     type         = var.vmss.identity_type
-    identity_ids = [data.azurerm_user_assigned_identity.this[*].id]
+    identity_ids = var.vmss.identity_ids
   }
 
   extension {
@@ -103,7 +96,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
   depends_on = [
     data.azurerm_network_security_group.this,
-    data.azurerm_user_assigned_identity.this
   ]
 }
 

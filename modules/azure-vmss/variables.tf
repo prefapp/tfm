@@ -50,9 +50,19 @@ variable "vmss" {
     network_primary                                                = optional(bool)
     network_ip_primary                                             = optional(bool)
     identity_type                                                  = string
-    identity_name                                                  = optional(string)
+    identity_ids                                                   = optional(list(string))
     identity_rg_name                                               = optional(string)
     run_script                                                     = optional(string)
     prefix_length                                                  = optional(number)
   })
+  validation {
+    condition     = contains(["SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned"], var.vmss.identity_type)
+    error_message = "identity_type must be one of 'SystemAssigned', 'UserAssigned', or 'SystemAssigned, UserAssigned'."
+  }
+  validation {
+    condition     = (
+      var.vmss.identity_type == "UserAssigned" || var.vmss.identity_type == "SystemAssigned, UserAssigned"
+    ) ? length(var.vmss.identity_ids) > 0 : true
+    error_message = "identity_ids must be provided when identity_type is 'UserAssigned' or 'SystemAssigned, UserAssigned'."
+  }
 }
