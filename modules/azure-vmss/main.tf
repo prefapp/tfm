@@ -85,13 +85,16 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     })
   }
 
-  data_disk {
-    name                 = var.vmss.data_disk_name
-    caching              = var.vmss.data_disk_caching
-    create_option        = var.vmss.data_disk_create_option
-    disk_size_gb         = var.vmss.data_disk_disk_size_gb
-    lun                  = var.vmss.data_disk_lun
-    storage_account_type = var.vmss.data_disk_storage_account_type
+  dynamic "data_disk" {
+    for_each = var.vmss.data_disk != null ? [var.vmss.data_disk] : []
+    content {
+      name                 = data_disk.value.name
+      caching              = data_disk.value.caching
+      create_option        = data_disk.value.create_option
+      disk_size_gb         = data_disk.value.disk_size_gb
+      lun                  = data_disk.value.lun
+      storage_account_type = data_disk.value.storage_account_type
+    }
   }
 
   depends_on = [

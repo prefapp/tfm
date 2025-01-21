@@ -28,12 +28,14 @@ variable "vmss" {
     first_public_key                                               = optional(string)
     edge_zone                                                      = optional(string)
     eviction_policy                                                = optional(string)
-    data_disk_name                                                 = optional(string)
-    data_disk_caching                                              = optional(string)
-    data_disk_create_option                                        = optional(string)
-    data_disk_disk_size_gb                                         = optional(number)
-    data_disk_lun                                                  = optional(number)
-    data_disk_storage_account_type                                 = optional(string)
+    data_disk = optional(object({
+      name                                                         = optional(string)
+      caching                                                      = optional(string)
+      create_option                                                = optional(string)
+      disk_size_gb                                                 = optional(number)
+      lun                                                          = optional(number)
+      storage_account_type                                         = optional(string)
+    }))
     template_cloudinit_config                                      = string
     upgrade_mode                                                   = string
     rolling_upgrade_policy_max_batch_instance_percent              = number
