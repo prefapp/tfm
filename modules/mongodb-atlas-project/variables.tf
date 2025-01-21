@@ -32,10 +32,10 @@ variable "database_users" {
       role_name     = string
       database_name = string
     })
-    scopes = object({
+    scopes = optional(object({
       name = string
       type = string
-    })
+    }))
   }))
 }
 
