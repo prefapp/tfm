@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/prefapp/tfm/compare/mongodb-atlas-project-v1.3.0...mongodb-atlas-project-v1.3.1) (2025-01-21)
+
+
+### Bug Fixes
+
+* Set a database_users.scopes as optional ([#407](https://github.com/prefapp/tfm/issues/407)) ([5d7e05a](https://github.com/prefapp/tfm/commit/5d7e05abb78a4ef4c18e9852c2a798ac656d940b))
+
 ## [1.3.0](https://github.com/prefapp/tfm/compare/mongodb-atlas-project-v1.2.0...mongodb-atlas-project-v1.3.0) (2025-01-21)
 
 
