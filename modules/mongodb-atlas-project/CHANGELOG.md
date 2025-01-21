@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/prefapp/tfm/compare/mongodb-atlas-project-v1.2.0...mongodb-atlas-project-v1.3.0) (2025-01-21)
+
+
+### Features
+
+* Update mongodbatlast provider version ([#405](https://github.com/prefapp/tfm/issues/405)) ([fac0619](https://github.com/prefapp/tfm/commit/fac0619d145e3b8c16d4858ed8fca4e885c50f81))
+
 ## [1.2.0](https://github.com/prefapp/tfm/compare/mongodb-atlas-project-v1.1.0...mongodb-atlas-project-v1.2.0) (2025-01-14)
 
 
