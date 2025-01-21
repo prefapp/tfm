@@ -30,11 +30,11 @@ variable "vmss" {
     eviction_policy                                                = optional(string)
     data_disk = optional(object({
       name                                                         = optional(string)
-      caching                                                      = optional(string)
+      caching                                                      = string
       create_option                                                = optional(string)
-      disk_size_gb                                                 = optional(number)
-      lun                                                          = optional(number)
-      storage_account_type                                         = optional(string)
+      disk_size_gb                                                 = number
+      lun                                                          = number
+      storage_account_type                                         = string
     }))
     template_cloudinit_config                                      = string
     upgrade_mode                                                   = string
@@ -64,7 +64,7 @@ variable "vmss" {
   validation {
     condition     = (
       var.vmss.identity_type == "UserAssigned" || var.vmss.identity_type == "SystemAssigned, UserAssigned"
-    ) ? length(var.vmss.identity_ids) > 0 : true
+    ) ? (var.vmss.identity_ids != null) : true
     error_message = "identity_ids must be provided when identity_type is 'UserAssigned' or 'SystemAssigned, UserAssigned'."
   }
 }
