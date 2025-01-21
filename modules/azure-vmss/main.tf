@@ -55,7 +55,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   network_interface {
     name                      = var.vmss.name
     primary                   = var.vmss.network_primary
-    network_security_group_id = data.azurerm_network_security_group.this[*].id
+    network_security_group_id = data.azurerm_network_security_group.this[0].id
 
     ip_configuration {
       name      = var.vmss.name
