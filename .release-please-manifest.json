@@ -19,7 +19,7 @@
     "modules/azure-disks-backup": "1.1.0",
     "modules/mongodb-atlas-project": "1.3.1",
     "modules/mongodb-atlas-cluster": "0.1.1",
-    "modules/mongodb-atlas-azure-privatelink": "0.1.0",
+    "modules/mongodb-atlas-azure-privatelink": "0.1.1",
     "modules/cloudamqp-vpc": "0.1.0",
     "modules/cloudamqp-cluster": "0.1.0",
     "modules/azure-public-prefix": "0.2.0"
