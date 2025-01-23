@@ -48,7 +48,7 @@ variable "vmss" {
     network_primary                                                = optional(bool)
     network_ip_primary                                             = optional(bool)
     network_security_group_id                                      = optional(string)
-    subnet_output                                                  = list(string)
+    subnet_output                                                  = optional(list(string))
     subnet_name                                                    = string
     identity_type                                                  = string
     identity_ids                                                   = optional(list(string))
