@@ -5,8 +5,13 @@ locals {
   subnet = [for i, last_element in local.last_elements : var.vmss.subnet_output[i] if last_element == var.vmss.subnet_name][0]
 }
 
+# DATA SECTION
+data "template_file" "cloud_init" {
+  template = file(var.vmss.cloud_init)
+}
+
 # RESOURCES SECTION
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.3.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
   name                = var.vmss.name
   resource_group_name = var.common.resource_group_name
@@ -18,7 +23,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   edge_zone           = var.vmss.edge_zone
   eviction_policy     = var.vmss.eviction_policy
   # template_cloudinit_config
-  custom_data  = base64encode(var.vmss.template_cloudinit_config)
+  custom_data  = base64encode(data.template_file.cloud_init.rendered)
   upgrade_mode = var.vmss.upgrade_mode
   rolling_upgrade_policy {
     max_batch_instance_percent              = var.vmss.rolling_upgrade_policy_max_batch_instance_percent
@@ -65,18 +70,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     identity_ids = var.vmss.identity_ids
   }
 
-  extension {
-    name                       = "${var.vmss.name}-extension"
-    publisher                  = "Microsoft.Azure.Extensions"
-    type                       = "CustomScript"
-    type_handler_version       = "2.1"
-    auto_upgrade_minor_version = false
-    # run_script
-    settings = jsonencode({
-      "script" = base64encode(var.vmss.run_script)
-    })
-  }
-
   dynamic "data_disk" {
     for_each = var.vmss.data_disk != null ? [var.vmss.data_disk] : []
     content {
@@ -88,5 +81,17 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       storage_account_type = data_disk.value.storage_account_type
     }
   }
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.3.0/docs/resources/virtual_machine_scale_set_extension
+resource "azurerm_virtual_machine_scale_set_extension" "this" {
+  name                         = "${var.vmss.name}-extension"
+  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.this.id
+  publisher                    = "Microsoft.Azure.Extensions"
+  type                         = "CustomScript"
+  type_handler_version         = "2.1"
+  settings = jsonencode({
+    "script" = "${filebase64("${var.vmss.run_script}")}"
+  })
 }
 
