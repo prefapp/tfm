@@ -1,6 +1,11 @@
-# DATA SECTION
+# LOCAL SECTION
 locals {
-  
+  split_subnet = [for subnet in local.var.subnet_output : split("/", subnet)]
+  last_elements = [for split_subnet in local.split_subnet : split_subnet[length(split_subnet) - 1]]
+}
+
+output "last_element" {
+  value = local.last_elements
 }
 
 # RESOURCES SECTION
@@ -52,7 +57,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       primary   = var.vmss.network_ip_primary
       # subnet_id = var.vmss.subnet_id
       # subnet_id = [for id in var.vmss.subnet_output : id if contains(id, var.vmss.subnet_name)][0]
-      subnet_id = "/subscriptions/a152aa4d-7a6d-4535-893d-f11a70b27033/resourceGroups/corpme-common-predev/providers/Microsoft.Network/virtualNetworks/corpme-spoke-common-predev-vnet/subnets/soups"
+      subnet_id = var.vmss.subnet_output[0]
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
