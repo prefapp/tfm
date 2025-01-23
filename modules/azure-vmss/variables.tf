@@ -8,16 +8,6 @@ variable "common" {
   })
 }
 
-variable "network" {
-  type = object({
-    enable_nsg                  = bool
-    nsg_name                    = optional(string)
-    nsg_rg_name                 = optional(string)
-    vnet_name                   = string
-    subnet_name                 = string
-    subnet_rg_name              = string
-  })
-}
 
 variable "vmss" {
   type = object({

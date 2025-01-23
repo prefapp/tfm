@@ -6,13 +6,6 @@ data "azurerm_subnet" "this" {
   resource_group_name  = var.network.subnet_rg_name
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/network_security_group
-data "azurerm_network_security_group" "this" {
-  count               = var.network.enable_nsg ? 1 : 0
-  name                = var.network.nsg_name
-  resource_group_name = var.network.nsg_rg_name
-}
-
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
