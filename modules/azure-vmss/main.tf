@@ -5,15 +5,6 @@ locals {
   subnet = [for i, last_element in local.last_elements : var.vmss.subnet_output[i] if last_element == var.vmss.subnet_name]
 }
 
-output "last_element" {
-  value = local.last_elements
-}
-
-output "subnet" {
-  value = local.subnet
-}
-
-
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
@@ -63,7 +54,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       primary   = var.vmss.network_ip_primary
       # subnet_id = var.vmss.subnet_id
       # subnet_id = [for id in var.vmss.subnet_output : id if contains(id, var.vmss.subnet_name)][0]
-      subnet_id = var.vmss.subnet_output[0]
+      subnet_id = local.subnet
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
