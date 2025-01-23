@@ -52,7 +52,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       primary   = var.vmss.network_ip_primary
       # subnet_id = var.vmss.subnet_id
       # subnet_id = [for id in var.vmss.subnet_output : id if contains(id, var.vmss.subnet_name)][0]
-      subnet_id = var.vmss.subnet_output
+      subnet_id = "/subscriptions/a152aa4d-7a6d-4535-893d-f11a70b27033/resourceGroups/corpme-common-predev/providers/Microsoft.Network/virtualNetworks/corpme-spoke-common-predev-vnet/subnets/soups"
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
