@@ -1,11 +1,4 @@
 # VARIABLES SECTION
-# variable "azurerm_subnet" {
-#   type = object({
-#     name = string
-#     virtual_network_name = string
-#     resource_group_name = string
-#   })
-# }
 variable "common" {
   type = object({
     resource_group_name = string
@@ -13,7 +6,6 @@ variable "common" {
     tags                = map(string)
   })
 }
-
 
 variable "vmss" {
   type = object({
@@ -49,7 +41,7 @@ variable "vmss" {
     network_ip_primary                                             = optional(bool)
     network_security_group_id                                      = optional(string)
     subnet_output                                                  = optional(list(string))
-    subnet_name                                                    = string
+    subnet_name                                                    = optional(string)
     identity_type                                                  = string
     identity_ids                                                   = optional(list(string))
     identity_rg_name                                               = optional(string)

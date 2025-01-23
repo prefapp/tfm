@@ -52,8 +52,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     ip_configuration {
       name      = var.vmss.name
       primary   = var.vmss.network_ip_primary
-      # subnet_id = var.vmss.subnet_id
-      # subnet_id = [for id in var.vmss.subnet_output : id if contains(id, var.vmss.subnet_name)][0]
       subnet_id = local.subnet
 
       public_ip_address {
