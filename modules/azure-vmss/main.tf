@@ -1,9 +1,9 @@
 # DATA SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/subnet
 data "azurerm_subnet" "this" {
-  name                 = var.network.subnet_name
-  virtual_network_name = var.network.vnet_name
-  resource_group_name  = var.network.subnet_rg_name
+  name                 = var.azurerm_subnet.subnet_name
+  virtual_network_name = var.azurerm_subnet.vnet_name
+  resource_group_name  = var.azurerm_subnet.subnet_rg_name
 }
 
 # RESOURCES SECTION
@@ -48,7 +48,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   network_interface {
     name                      = var.vmss.name
     primary                   = var.vmss.network_primary
-    network_security_group_id = data.azurerm_network_security_group.this[0].id
+    network_security_group_id = var.vmss.network_security_group_id
 
     ip_configuration {
       name      = var.vmss.name
@@ -89,9 +89,5 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       storage_account_type = data_disk.value.storage_account_type
     }
   }
-
-  depends_on = [
-    data.azurerm_network_security_group.this,
-  ]
 }
 
