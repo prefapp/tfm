@@ -1,11 +1,11 @@
 # VARIABLES SECTION
-variable "azurerm_subnet" {
-  type = object({
-    name = string
-    virtual_network_name = string
-    resource_group_name = string
-  })
-}
+# variable "azurerm_subnet" {
+#   type = object({
+#     name = string
+#     virtual_network_name = string
+#     resource_group_name = string
+#   })
+# }
 variable "common" {
   type = object({
     resource_group_name = string
