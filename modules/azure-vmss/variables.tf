@@ -47,6 +47,7 @@ variable "vmss" {
     disk_caching                                                   = string
     network_primary                                                = optional(bool)
     network_ip_primary                                             = optional(bool)
+    network_security_group_id                                      = optional(string)
     subnet_output                                                  = list(string)
     subnet_name                                                    = string
     identity_type                                                  = string
