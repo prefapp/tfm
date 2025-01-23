@@ -54,8 +54,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       name      = var.vmss.name
       primary   = var.vmss.network_ip_primary
       # subnet_id = var.vmss.subnet_id
-      subnet_id = tomap({ for subnet in var.vmss.subnet_id : subnet.name => subnet.id })[var.vmss.subnet_name]
-
+      subnet_id = [for id in var.vmss.subnet_name : id if contains(id, "soups")][0]
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
