@@ -91,7 +91,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "this" {
   type                         = "CustomScript"
   type_handler_version         = "2.1"
   settings = jsonencode({
-    "script" = "${filebase64("${var.vmss.run_script}")}"
+    "script" = base64encode(var.vmss.run_script)
   })
 }
 
