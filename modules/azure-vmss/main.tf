@@ -2,7 +2,7 @@
 locals {
   split_subnet = [for subnet in var.vmss.subnet_output : split("/", subnet)]
   last_elements = [for split_subnet in local.split_subnet : split_subnet[length(split_subnet) - 1]]
-  subnet = [for i, last_element in local.last_elements : var.vmss.subnet_output[i] if last_element == var.vmss.subnet_name]
+  subnet = [for i, last_element in local.last_elements : var.vmss.subnet_output[i] if last_element == var.vmss.subnet_name][0]
 }
 
 # RESOURCES SECTION
