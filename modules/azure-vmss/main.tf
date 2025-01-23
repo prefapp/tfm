@@ -1,10 +1,7 @@
 # DATA SECTION
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/subnet
-# data "azurerm_subnet" "this" {
-#   name                 = var.azurerm_subnet.subnet_name
-#   virtual_network_name = var.azurerm_subnet.vnet_name
-#   resource_group_name  = var.azurerm_subnet.subnet_rg_name
-# }
+locals {
+  
+}
 
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
@@ -54,7 +51,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       name      = var.vmss.name
       primary   = var.vmss.network_ip_primary
       # subnet_id = var.vmss.subnet_id
-      subnet_id = [for id in var.vmss.subnet_output : id if contains(id, var.vmss.subnet_name)][0]
+      # subnet_id = [for id in var.vmss.subnet_output : id if contains(id, var.vmss.subnet_name)][0]
+      subnet_id = var.vmss.subnet_output[0]
 
       public_ip_address {
         name                = "${var.vmss.name}-publicIP"
