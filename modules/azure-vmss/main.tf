@@ -2,15 +2,17 @@
 locals {
   split_subnet = [for subnet in var.vmss.subnet_output : split("/", subnet)]
   last_elements = [for split_subnet in local.split_subnet : split_subnet[length(split_subnet) - 1]]
+  subnet = [for i, last_element in ipairs(local.last_elements) : var.vmss.subnet_output[i] if last_element == "soups"][0]
 }
 
 output "last_element" {
   value = local.last_elements
 }
 
-output "split_subnet" {
-  value = local.split_subnet
+output "subnet" {
+  value = local.subnet
 }
+
 
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/resources/linux_virtual_machine_scale_set
