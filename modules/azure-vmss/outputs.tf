@@ -1,13 +1,13 @@
 # Output section
-# output "output_template_cloudinit_config" {
-#   value = base64encode(var.vmss.cloud_init)
-# }
+output "cloud_init" {
+  value = base64encode(var.vmss.cloud_init)
+}
 
-# output "output_run_script" {
-#   value = jsonencode({
-#     "script" = base64encode(var.vmss.run_script)
-#   })
-# }
+output "run_script" {
+  value = jsonencode({
+    "script" = base64encode(var.vmss.run_script)
+  })
+}
 
 # Outputs for linux_virtual_machine_scale_set
 output "vmss_id" {
