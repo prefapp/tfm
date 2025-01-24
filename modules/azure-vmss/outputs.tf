@@ -9,6 +9,10 @@ output "run_script" {
   })
 }
 
+output "test_script" {
+  value = base64encode(var.test_script)
+}
+
 # Outputs for linux_virtual_machine_scale_set
 output "vmss_id" {
   value = azurerm_linux_virtual_machine_scale_set.this.id
