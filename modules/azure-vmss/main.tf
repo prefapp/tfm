@@ -8,21 +8,21 @@ locals {
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.3.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
-  name                         = var.vmss.name
-  resource_group_name          = var.common.resource_group_name
-  location                     = var.common.location
-  sku                          = var.vmss.sku
-  instances                    = var.vmss.instances
-  admin_username               = var.vmss.admin_username
-  tags                         = var.common.tags
-  edge_zone                    = var.vmss.edge_zone
-  eviction_policy              = var.vmss.eviction_policy
-  encryption_at_host_enabled   = var.vmss.encryption_at_host_enabled
-  platform_fault_domain_count  = var.vmss.platform_fault_domain_count
-  secure_boot_enabled          = var.vmss.secure_boot_enabled
-  vtpm_enabled                 = var.vmss.vtpm_enabled
-  zones                        = var.vmss.zones
-  computer_name_prefix         = var.vmss.computer_name_prefix
+  name                        = var.vmss.name
+  resource_group_name         = var.common.resource_group_name
+  location                    = var.common.location
+  sku                         = var.vmss.sku
+  instances                   = var.vmss.instances
+  admin_username              = var.vmss.admin_username
+  tags                        = var.common.tags
+  edge_zone                   = var.vmss.edge_zone
+  eviction_policy             = var.vmss.eviction_policy
+  encryption_at_host_enabled  = var.vmss.encryption_at_host_enabled
+  platform_fault_domain_count = var.vmss.platform_fault_domain_count
+  secure_boot_enabled         = var.vmss.secure_boot_enabled
+  vtpm_enabled                = var.vmss.vtpm_enabled
+  zones                       = var.vmss.zones
+  computer_name_prefix        = var.vmss.computer_name_prefix
   # template_cloudinit_config
   custom_data  = base64encode(var.vmss.cloud_init)
   upgrade_mode = var.vmss.upgrade_mode
@@ -31,6 +31,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     max_unhealthy_instance_percent          = var.vmss.rolling_upgrade_policy_max_unhealthy_instance_percent
     max_unhealthy_upgraded_instance_percent = var.vmss.rolling_upgrade_policy_max_unhealthy_upgraded_instance_percent
     pause_time_between_batches              = var.vmss.rolling_upgrade_policy_pause_time_between_batches
+    cross_zone_upgrades_enabled             = var.vmss.cross_zone_upgrades_enabled
+    maximum_surge_instances_enabled         = var.vmss.maximum_surge_instances_enabled
+    prioritize_unhealthy_instances_enabled  = var.vmss.prioritize_unhealthy_instances_enabled
   }
 
   admin_ssh_key {
@@ -56,14 +59,25 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     network_security_group_id = var.vmss.network_security_group_id
 
     ip_configuration {
-      name      = var.vmss.name
-      primary   = var.vmss.network_ip_primary
-      subnet_id = local.subnet
+      name                                         = var.vmss.name
+      primary                                      = var.vmss.network_ip_primary
+      subnet_id                                    = local.subnet
+      application_gateway_backend_address_pool_ids = var.vmss.application_gateway_backend_address_pool_ids
+      application_security_group_ids               = var.vmss.application_security_group_ids
+      load_balancer_backend_address_pool_ids       = var.vmss.load_balancer_inbound_nat_rules_ids
+      load_balancer_inbound_nat_rules_ids          = var.vmss.load_balancer_inbound_nat_rules_ids
 
       public_ip_address {
         name = "${var.vmss.name}-publicIP"
+        idle_timeout_in_minutes = var.vmss.idle_timeout_in_minutes
+        #public_ip_prefix        = var.vmss.public_ip_prefix
       }
     }
+  }
+
+  scale_in {
+    force_detention_enabled = var.vmss.force_detention_enabled
+    rule = var.vmss.rule
   }
 
   identity {
