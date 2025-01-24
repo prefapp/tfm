@@ -17,10 +17,10 @@ variable "vmss" {
     first_public_key             = optional(string)
     eviction_policy              = optional(string)
     secure_boot_enabled          = optional(bool)
-    plataform_fault_domain_count = optional(number)
+    platform_fault_domain_count = optional(number)
     encryption_at_host_enabled   = optional(bool)
     vtpm_enabled                 = optional(bool)
-    zones                        = optional(string)
+    zones                        = optional(list(string))
     computer_name_prefix         = optional(string)
 
     disk_storage_account_type = string

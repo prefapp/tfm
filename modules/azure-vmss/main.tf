@@ -18,7 +18,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   edge_zone                    = var.vmss.edge_zone
   eviction_policy              = var.vmss.eviction_policy
   encryption_at_host_enabled   = var.vmss.encryption_at_host_enabled
-  plataform_fault_domain_count = var.vmss.plataform_fault_domain_count
+  platform_fault_domain_count = var.vmss.plataform_fault_domain_count
   secure_boot_enabled          = var.vmss.secure_boot_enabled
   vtpm_enabled                 = var.vmss.vtpm_enabled
   zones                        = var.vmss.zones
