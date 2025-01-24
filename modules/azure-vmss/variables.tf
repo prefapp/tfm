@@ -9,23 +9,29 @@ variable "common" {
 
 variable "vmss" {
   type = object({
-    name                                                           = string
-    sku                                                            = string
-    instances                                                      = optional(number)
-    admin_username                                                 = string
-    admin_ssh_key_username                                         = string
-    first_public_key                                               = optional(string)
-    eviction_policy                                                = optional(string)
+    name                         = string
+    sku                          = string
+    instances                    = optional(number)
+    admin_username               = string
+    admin_ssh_key_username       = string
+    first_public_key             = optional(string)
+    eviction_policy              = optional(string)
+    secure_boot_enabled          = optional(bool)
+    plataform_fault_domain_count = optional(number)
+    encryption_at_host_enabled   = optional(bool)
+    vtpm_enabled                 = optional(bool)
+    zones                        = optional(string)
+    computer_name_prefix         = optional(string)
 
-    disk_storage_account_type                                      = string
-    disk_caching                                                   = string
+    disk_storage_account_type = string
+    disk_caching              = string
     data_disk = optional(object({
-      name                                                         = optional(string)
-      caching                                                      = string
-      create_option                                                = optional(string)
-      disk_size_gb                                                 = number
-      lun                                                          = number
-      storage_account_type                                         = string
+      name                 = optional(string)
+      caching              = string
+      create_option        = optional(string)
+      disk_size_gb         = number
+      lun                  = number
+      storage_account_type = string
     }))
 
     upgrade_mode                                                   = string
@@ -34,25 +40,25 @@ variable "vmss" {
     rolling_upgrade_policy_max_unhealthy_upgraded_instance_percent = number
     rolling_upgrade_policy_pause_time_between_batches              = string
 
-    image_publisher                                                = string
-    image_offer                                                    = string
-    image_sku                                                      = string
-    image_version                                                  = string
+    image_publisher = string
+    image_offer     = string
+    image_sku       = string
+    image_version   = string
 
-    edge_zone                                                      = optional(string)
-    network_primary                                                = optional(bool)
-    network_ip_primary                                             = optional(bool)
-    network_security_group_id                                      = optional(string)
-    subnet_output                                                  = optional(list(string))
-    subnet_name                                                    = optional(string)
-    prefix_length                                                  = optional(number)
+    edge_zone                 = optional(string)
+    network_primary           = optional(bool)
+    network_ip_primary        = optional(bool)
+    network_security_group_id = optional(string)
+    subnet_output             = optional(list(string))
+    subnet_name               = optional(string)
+    prefix_length             = optional(number)
 
-    identity_type                                                  = string
-    identity_ids                                                   = optional(list(string))
-    identity_rg_name                                               = optional(string)
+    identity_type    = string
+    identity_ids     = optional(list(string))
+    identity_rg_name = optional(string)
 
-    cloud_init                                                     = optional(string)
-    run_script                                                     = optional(string)
+    cloud_init = optional(string)
+    run_script = optional(string)
   })
 
   validation {
@@ -61,7 +67,7 @@ variable "vmss" {
   }
 
   validation {
-    condition     = (
+    condition = (
       var.vmss.identity_type == "UserAssigned" || var.vmss.identity_type == "SystemAssigned, UserAssigned"
     ) ? (var.vmss.identity_ids != null) : true
     error_message = "identity_ids must be provided when identity_type is 'UserAssigned' or 'SystemAssigned, UserAssigned'."

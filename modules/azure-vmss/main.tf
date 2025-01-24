@@ -1,22 +1,28 @@
 # LOCAL SECTION
 locals {
-  split_subnet = [for subnet in var.vmss.subnet_output : split("/", subnet)]
+  split_subnet  = [for subnet in var.vmss.subnet_output : split("/", subnet)]
   last_elements = [for split_subnet in local.split_subnet : split_subnet[length(split_subnet) - 1]]
-  subnet = [for i, last_element in local.last_elements : var.vmss.subnet_output[i] if last_element == var.vmss.subnet_name][0]
+  subnet        = [for i, last_element in local.last_elements : var.vmss.subnet_output[i] if last_element == var.vmss.subnet_name][0]
 }
 
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.3.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
-  name                = var.vmss.name
-  resource_group_name = var.common.resource_group_name
-  location            = var.common.location
-  sku                 = var.vmss.sku
-  instances           = var.vmss.instances
-  admin_username      = var.vmss.admin_username
-  tags                = var.common.tags
-  edge_zone           = var.vmss.edge_zone
-  eviction_policy     = var.vmss.eviction_policy
+  name                         = var.vmss.name
+  resource_group_name          = var.common.resource_group_name
+  location                     = var.common.location
+  sku                          = var.vmss.sku
+  instances                    = var.vmss.instances
+  admin_username               = var.vmss.admin_username
+  tags                         = var.common.tags
+  edge_zone                    = var.vmss.edge_zone
+  eviction_policy              = var.vmss.eviction_policy
+  encryption_at_host_enabled   = var.vmss.encryption_at_host_enabled
+  plataform_fault_domain_count = var.vmss.plataform_fault_domain_count
+  secure_boot_enabled          = var.vmss.secure_boot_enabled
+  vtpm_enabled                 = var.vmss.vtpm_enabled
+  zones                        = var.vmss.zones
+  computer_name_prefix         = var.vmss.computer_name_prefix
   # template_cloudinit_config
   custom_data  = base64encode(var.vmss.cloud_init)
   upgrade_mode = var.vmss.upgrade_mode
@@ -55,7 +61,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       subnet_id = local.subnet
 
       public_ip_address {
-        name                = "${var.vmss.name}-publicIP"
+        name = "${var.vmss.name}-publicIP"
       }
     }
   }
@@ -85,7 +91,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "this" {
   publisher                    = "Microsoft.Azure.Extensions"
   type                         = "CustomScript"
   type_handler_version         = "2.1"
-  auto_upgrade_minor_version = false
+  auto_upgrade_minor_version   = false
   settings = jsonencode({
     "script" = base64encode(var.vmss.run_script)
   })
