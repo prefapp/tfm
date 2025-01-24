@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.4...azuread-group-v1.0.5) (2025-01-24)
+
+
+### Bug Fixes
+
+* upgrade version provider ([#417](https://github.com/prefapp/tfm/issues/417)) ([b72cddf](https://github.com/prefapp/tfm/commit/b72cddf57c8567353e31535471d96ae560d6286c))
+
 ## [1.0.4](https://github.com/prefapp/tfm/compare/azuread-group-v1.0.3...azuread-group-v1.0.4) (2024-12-04)
 
 
