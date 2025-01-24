@@ -8,6 +8,7 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
     enabled = var.web_application_firewall_policy.policy_settings.enabled
     mode    = var.web_application_firewall_policy.policy_settings.mode
     request_body_check = var.web_application_firewall_policy.policy_settings.request_body_check
+    request_body_enforcement = var.web_application_firewall_policy.policy_settings.request_body_enforcement
     file_upload_limit_in_mb = var.web_application_firewall_policy.policy_settings.file_upload_limit_in_mb
     max_request_body_size_in_kb = var.web_application_firewall_policy.policy_settings.max_request_body_size_in_kb
   }

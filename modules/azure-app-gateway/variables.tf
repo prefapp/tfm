@@ -39,6 +39,7 @@ variable "web_application_firewall_policy" {
       request_body_check          = optional(bool)
       file_upload_limit_in_mb     = optional(number)
       max_request_body_size_in_kb = optional(number)
+      request_body_enforcement    = optional(string)
     }))
     managed_rule_set = list(object({
       type                = optional(string)
