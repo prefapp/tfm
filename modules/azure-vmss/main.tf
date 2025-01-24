@@ -31,9 +31,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     max_unhealthy_instance_percent          = var.vmss.rolling_upgrade_policy_max_unhealthy_instance_percent
     max_unhealthy_upgraded_instance_percent = var.vmss.rolling_upgrade_policy_max_unhealthy_upgraded_instance_percent
     pause_time_between_batches              = var.vmss.rolling_upgrade_policy_pause_time_between_batches
-    cross_zone_upgrades_enabled             = var.vmss.cross_zone_upgrades_enabled
-    maximum_surge_instances_enabled         = var.vmss.maximum_surge_instances_enabled
-    prioritize_unhealthy_instances_enabled  = var.vmss.prioritize_unhealthy_instances_enabled
+    cross_zone_upgrades_enabled             = var.vmss.rolling_upgrade_policycross_zone_upgrades_enabled
+    maximum_surge_instances_enabled         = var.vmss.rolling_upgrade_policymaximum_surge_instances_enabled
+    prioritize_unhealthy_instances_enabled  = var.vmss.rolling_upgrade_policyprioritize_unhealthy_instances_enabled
   }
 
   admin_ssh_key {
@@ -62,15 +62,15 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       name                                         = var.vmss.name
       primary                                      = var.vmss.network_ip_primary
       subnet_id                                    = local.subnet
-      application_gateway_backend_address_pool_ids = var.vmss.application_gateway_backend_address_pool_ids
-      application_security_group_ids               = var.vmss.application_security_group_ids
-      load_balancer_backend_address_pool_ids       = var.vmss.load_balancer_inbound_nat_rules_ids
-      load_balancer_inbound_nat_rules_ids          = var.vmss.load_balancer_inbound_nat_rules_ids
+      application_gateway_backend_address_pool_ids = var.vmss.network_interface_ip_configuration_application_gateway_backend_address_pool_ids
+      application_security_group_ids               = var.vmss.network_interface_ip_configuration_application_security_group_ids
+      load_balancer_backend_address_pool_ids       = var.vmss.network_interface_ip_configuration_load_balancer_inbound_nat_rules_ids
+      load_balancer_inbound_nat_rules_ids          = var.vmss.network_interface_ip_configuration_load_balancer_inbound_nat_rules_ids
 
       public_ip_address {
         name = "${var.vmss.name}-publicIP"
-        idle_timeout_in_minutes = var.vmss.idle_timeout_in_minutes
-        #public_ip_prefix        = var.vmss.public_ip_prefix
+        idle_timeout_in_minutes = var.vmss.network_interface_public_ip_adress_idle_timeout_in_minutes
+        #public_ip_prefix        = var.vmss.network_interface_public_ip_adress_public_ip_prefix
       }
     }
   }
