@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.2.0...azure-app-gateway-v0.3.0) (2025-01-24)
+
+
+### Features
+
+* upgrade azure-app-gateway to  v4.16.0 ([#412](https://github.com/prefapp/tfm/issues/412)) ([60bad50](https://github.com/prefapp/tfm/commit/60bad501f3b63e9c321e4d5e4cc6dc96e0a1066a))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.1.0...azure-app-gateway-v0.2.0) (2024-12-13)
 
 
