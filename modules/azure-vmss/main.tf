@@ -31,9 +31,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     max_unhealthy_instance_percent          = var.vmss.rolling_upgrade_policy_max_unhealthy_instance_percent
     max_unhealthy_upgraded_instance_percent = var.vmss.rolling_upgrade_policy_max_unhealthy_upgraded_instance_percent
     pause_time_between_batches              = var.vmss.rolling_upgrade_policy_pause_time_between_batches
-    cross_zone_upgrades_enabled             = var.vmss.rolling_upgrade_policycross_zone_upgrades_enabled
-    maximum_surge_instances_enabled         = var.vmss.rolling_upgrade_policymaximum_surge_instances_enabled
-    prioritize_unhealthy_instances_enabled  = var.vmss.rolling_upgrade_policyprioritize_unhealthy_instances_enabled
+    cross_zone_upgrades_enabled             = var.vmss.rolling_upgrade_policy_cross_zone_upgrades_enabled
+    maximum_surge_instances_enabled         = var.vmss.rolling_upgrade_policy_maximum_surge_instances_enabled
+    prioritize_unhealthy_instances_enabled  = var.vmss.rolling_upgrade_policy_prioritize_unhealthy_instances_enabled
   }
 
   admin_ssh_key {
@@ -76,8 +76,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   }
 
   scale_in {
-    force_detention_enabled = var.vmss.force_detention_enabled
-    rule = var.vmss.rule
+    force_detention_enabled = var.vmss.scale_in_force_detention_enabled
+    rule = var.vmss.scale_in_rule
   }
 
   identity {
