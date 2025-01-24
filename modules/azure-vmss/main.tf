@@ -70,7 +70,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       public_ip_address {
         name = "${var.vmss.name}-publicIP"
         idle_timeout_in_minutes = var.vmss.network_interface_public_ip_adress_idle_timeout_in_minutes
-        public_ip_prefix        = var.vmss.network_interface_public_ip_adress_public_ip_prefix
+        public_ip_prefix_id        = var.vmss.network_interface_public_ip_adress_public_ip_prefix_id
       }
     }
   }
