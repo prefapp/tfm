@@ -64,7 +64,7 @@ variable "vmss" {
     network_interface_ip_configuration_load_balancer_backend_address_pool_ids       = optional(list(string))
     network_interface_ip_configuration_load_balancer_inbound_nat_rules_ids          = optional(list(string))
     network_interface_public_ip_adress_idle_timeout_in_minutes                      = optional(number)
-    #network_interface_public_ip_adress_public_ip_prefix                             = string
+    network_interface_public_ip_adress_public_ip_prefix                             = string
 
     identity_type    = string
     identity_ids     = optional(list(string))
