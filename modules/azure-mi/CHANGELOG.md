@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/prefapp/tfm/compare/azure-mi-v1.2.1...azure-mi-v1.2.2) (2025-01-24)
+
+
+### Bug Fixes
+
+* upgrade version provider ([#415](https://github.com/prefapp/tfm/issues/415)) ([8a83c7c](https://github.com/prefapp/tfm/commit/8a83c7c56e9caef5d3a318b0995d61286e82dd80))
+
 ## [1.2.1](https://github.com/prefapp/tfm/compare/azure-mi-v1.2.0...azure-mi-v1.2.1) (2024-11-15)
 
 
