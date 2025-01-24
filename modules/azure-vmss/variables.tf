@@ -86,11 +86,3 @@ variable "vmss" {
     error_message = "identity_ids must be provided when identity_type is 'UserAssigned' or 'SystemAssigned, UserAssigned'."
   }
 }
-
-variable "test_script" {
-  default = <<EOT
-#!/bin/bash
-echo "This is a sample script"
-echo "Running custom logic..."
-EOT
-}
