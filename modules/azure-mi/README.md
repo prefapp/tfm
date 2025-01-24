@@ -10,10 +10,6 @@
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | = 4.16.0 |
 
-## Modules
-
-No modules.
-
 ## Resources
 
 | Name | Type |
