@@ -76,7 +76,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   }
 
   scale_in {
-    force_detention_enabled = var.vmss.scale_in_force_detention_enabled
+    force_deletion_enabled = var.vmss.scale_in_force_deletion_enabled
     rule = var.vmss.scale_in_rule
   }
 

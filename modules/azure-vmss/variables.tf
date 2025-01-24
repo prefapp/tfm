@@ -57,7 +57,7 @@ variable "vmss" {
     prefix_length             = optional(number)
 
     scale_in_rule                    = optional(string)
-    scale_in_force_detention_enabled = optional(bool)
+    scale_in_force_deletion_enabled = optional(bool)
 
     network_interface_ip_configuration_application_gateway_backend_address_pool_ids = optional(list(string))
     network_interface_ip_configuration_application_security_group_ids               = optional(list(string))
