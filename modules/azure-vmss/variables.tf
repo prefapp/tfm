@@ -59,12 +59,13 @@ variable "vmss" {
     scale_in_rule                    = optional(string)
     scale_in_force_deletion_enabled = optional(bool)
 
+    network_security_group_id                                                       = string
     network_interface_ip_configuration_application_gateway_backend_address_pool_ids = optional(list(string))
     network_interface_ip_configuration_application_security_group_ids               = optional(list(string))
     network_interface_ip_configuration_load_balancer_backend_address_pool_ids       = optional(list(string))
     network_interface_ip_configuration_load_balancer_inbound_nat_rules_ids          = optional(list(string))
     network_interface_public_ip_adress_idle_timeout_in_minutes                      = optional(number)
-    network_interface_public_ip_adress_public_ip_prefix_id                             = string
+    network_interface_public_ip_adress_public_ip_prefix_id                          = string
 
     identity_type    = string
     identity_ids     = optional(list(string))
