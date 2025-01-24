@@ -17,11 +17,3 @@ output "vmss_id" {
 output "unique_id" {
   value = azurerm_linux_virtual_machine_scale_set.this.unique_id
 }
-
-output "principal_id" {
-  value = azurerm_linux_virtual_machine_scale_set.this.identity[0].principal_id
-}
-
-output "tenant_id" {
-  value = azurerm_linux_virtual_machine_scale_set.this.identity[0].tenant_id
-}
