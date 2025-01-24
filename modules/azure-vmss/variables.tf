@@ -88,5 +88,9 @@ variable "vmss" {
 }
 
 variable "test_script" {
-  
+  default = <<EOT
+#!/bin/bash
+echo "This is a sample script"
+echo "Running custom logic..."
+EOT
 }
