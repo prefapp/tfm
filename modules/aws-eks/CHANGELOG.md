@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/prefapp/tfm/compare/aws-eks-v0.3.0...aws-eks-v0.4.0) (2025-01-27)
+
+
+### Features
+
+* update alb policy ([#419](https://github.com/prefapp/tfm/issues/419)) ([1c28f68](https://github.com/prefapp/tfm/commit/1c28f68674ff4b49d0f5f6dbbadc7a2fc2501ba4))
+* update eks module to v20.33.1 ([1c0abc0](https://github.com/prefapp/tfm/commit/1c0abc014a3e89bf3de3ec780a7871d6c4b7ddab))
+
 ## [0.3.0](https://github.com/prefapp/tfm/compare/aws-eks-v0.2.0...aws-eks-v0.3.0) (2024-02-19)
 
 
