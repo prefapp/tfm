@@ -43,10 +43,7 @@ module "eks" {
 module "eks_auth" {
   source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
   version = "20.33.1"
-
   manage_aws_auth_configmap = true
-
   aws_auth_roles = var.aws_auth_roles
-  
   aws_auth_users    = var.aws_auth_users
 }
