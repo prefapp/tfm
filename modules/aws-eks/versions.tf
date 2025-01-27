@@ -16,22 +16,22 @@ terraform {
 
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.67"
+      version = "~> 5.83"
     }
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.23"
+      version = "~> 2.35"
     }
 
     time = {
       source  = "hashicorp/time"
-      version = "~> 0.9"
+      version = "~> 0.12"
     }
 
     tls = {
       source  = "hashicorp/tls"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
 
   }
