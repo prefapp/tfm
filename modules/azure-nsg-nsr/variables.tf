@@ -55,7 +55,7 @@ variable "rules" {
     ])
     error_message = "Only one of 'source_adress_prefix' or 'source_adress_prefixes' can be specified for each rule."
   }
-validation {
+  validation {
     condition = alltrue([
       for rule in var.rules :
       (rule.destination_address_prefix == null || rule.destination_address_prefixes == null)
