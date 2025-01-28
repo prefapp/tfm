@@ -25,8 +25,6 @@ variable "rules" {
     source_address_prefixes      = optional(list(string))
     destination_address_prefix   = optional(string)
     destination_address_prefixes = optional(list(string))
-    network_security_group_name  = string
-    resource_group_name          = string
   }))
   validation {
     condition = alltrue([
