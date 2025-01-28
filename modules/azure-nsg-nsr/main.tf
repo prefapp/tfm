@@ -16,7 +16,6 @@ resource "azurerm_network_security_rule" "this" {
   access                       = each.value.access
   protocol                     = each.value.protocol
   source_port_range            = each.value.source_port_range
-  source_port_ranges           = each.value.source_port_ranges
   resource_group_name          = var.nsg.resource_group_name
   network_security_group_name  = var.nsg.name
 }
