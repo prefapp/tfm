@@ -23,6 +23,6 @@ resource "azurerm_network_security_rule" "this" {
   source_address_prefixes      = each.value.source_address_prefixes
   destination_address_prefix   = each.value.destination_address_prefix
   destination_address_prefixes = each.value.destination_address_prefixes
-  resource_group_name          = var.rules.resource_group_name
-  network_security_group_name  = var.rules.network_security_group_name
+  resource_group_name          = "corpme-shutter-common-predev"
+  network_security_group_name  = "corpme-soup-nsg-predev"
 }
