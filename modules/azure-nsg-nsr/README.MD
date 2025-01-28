@@ -52,6 +52,8 @@
 | `source_address_prefixes` | A list of source address prefixes. | `list(string)` | - | no |
 | `destination_address_prefix` | The destination address prefix. | `string` | - | no |
 | `destination_address_prefixes` | A list of destination address prefixes. | `list(string)` | - | no |
+| `resource_group_name` | Name of the resource group. | `string` | - | yes |
+| `network_security_group_name` | Name of the network security group. | `string` | - | yes |
 
 ```hcl
 

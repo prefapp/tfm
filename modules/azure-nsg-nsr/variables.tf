@@ -28,6 +28,40 @@ variable "rules" {
     network_security_group_name  = string
     resource_group_name          = string
   }))
+  validation {
+    condition = alltrue([
+      for rule in var.rules :
+      (rule.source_port_range == null || rule.source_port_ranges == null)
+      || (rule.source_port_range != null && rule.source_port_ranges == null)
+      || (rule.source_port_range == null && rule.source_port_ranges != null)
+    ])
+    error_message = "Only one of 'source_port_range' or 'source_port_ranges' can be specified for each rule."
+  }
+  validation {
+    condition = alltrue([
+      for rule in var.rules :
+      (rule.destination_port_range == null || rule.destination_port_ranges == null)
+      || (rule.destination_port_range != null && rule.destination_port_ranges == null)
+      || (rule.destination_port_range == null && rule.destination_port_ranges != null)
+    ])
+    error_message = "Only one of 'destination_port_range' or 'destination_port_ranges' can be specified for each rule."
+  }
+  validation {
+    condition = alltrue([
+      for rule in var.rules :
+      (rule.source_address_prefix == null || rule.source_address_prefixes == null)
+      || (rule.source_address_prefix != null && rule.source_address_prefixes == null)
+      || (rule.source_address_prefix == null && rule.source_address_prefixes != null)
+    ])
+    error_message = "Only one of 'source_adress_prefix' or 'source_adress_prefixes' can be specified for each rule."
+  }
+validation {
+    condition = alltrue([
+      for rule in var.rules :
+      (rule.destination_address_prefix == null || rule.destination_address_prefixes == null)
+      || (rule.destination_address_prefix != null && rule.destination_address_prefixes == null)
+      || (rule.destination_address_prefix == null && rule.destination_address_prefixes != null)
+    ])
+    error_message = "Only one of 'destination_adress_prefix' or 'destination_adress_prefixes' can be specified for each rule."
+  }
 }
-
-#AÑADIR VALIDACIONES
