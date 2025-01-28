@@ -9,8 +9,6 @@ resource "azurerm_network_security_group" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_rule
 resource "azurerm_network_security_rule" "this" {
-  resource_group_name          = var.nsg.resource_group_name
-  network_security_group_name  = var.nsg.name
   for_each                     = var.rules
   name                         = each.value.name
   priority                     = each.value.priority
@@ -25,4 +23,6 @@ resource "azurerm_network_security_rule" "this" {
   source_address_prefixes      = each.value.source_address_prefixes
   destination_address_prefix   = each.value.destination_address_prefix
   destination_address_prefixes = each.value.destination_address_prefixes
+  resource_group_name          = var.nsg.resource_group_name
+  network_security_group_name  = var.nsg.name
 }
