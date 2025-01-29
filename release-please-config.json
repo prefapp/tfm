@@ -74,6 +74,9 @@
         },
         "modules/azure-public-prefix": {
             "package-name": "azure-public-prefix"
+        },
+        "modules/azure-nsg-nsr": {
+            "package-name": "azure-nsg-nsr"
         }
     }
 }
