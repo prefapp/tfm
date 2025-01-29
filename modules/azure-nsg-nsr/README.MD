@@ -61,6 +61,8 @@
 
 **destination_address_prefix** and **destination_address_prefixes** are required to have at least one of them but you can't have both at the same time.
 
+## Example Usage
+
 ```hcl
 
 nsg = {
