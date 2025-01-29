@@ -107,7 +107,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "this" {
   type_handler_version         = "2.1"
   auto_upgrade_minor_version   = false
   settings = jsonencode({
-    "script" = "${filebase64("${var.vmss.extension}")}"
+    "script" = "${filebase64("${var.vmss.run_script}")}"
   })
 }
 
