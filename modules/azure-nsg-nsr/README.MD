@@ -44,14 +44,14 @@
 | `direction` | The direction of the rule (Inbound/Outbound). | `string` | - | yes |
 | `access` | The access type (Allow/Deny). | `string` | - | yes |
 | `protocol` | The network protocol (Tcp, Udp, Icmp, etc.). | `string` | - | yes |
-| `source_port_range` | The source port range. | `string` | - | no |
-| `source_port_ranges` | A list of source port ranges. | `list(string)` | - | no |
-| `destination_port_range` | The destination port range. | `string` | - | no |
-| `destination_port_ranges` | A list of destination port ranges. | `list(string)` | - | no |
-| `source_address_prefix` | The source address prefix. | `string` | - | no |
-| `source_address_prefixes` | A list of source address prefixes. | `list(string)` | - | no |
-| `destination_address_prefix` | The destination address prefix. | `string` | - | no |
-| `destination_address_prefixes` | A list of destination address prefixes. | `list(string)` | - | no |
+| `source_port_range` | The source port range. | `string` | - | show bellow |
+| `source_port_ranges` | A list of source port ranges. | `list(string)` | - | show bellow |
+| `destination_port_range` | The destination port range. | `string` | - | show bellow |
+| `destination_port_ranges` | A list of destination port ranges. | `list(string)` | - | show bellow |
+| `source_address_prefix` | The source address prefix. | `string` | - | show bellow |
+| `source_address_prefixes` | A list of source address prefixes. | `list(string)` | - | show bellow |
+| `destination_address_prefix` | The destination address prefix. | `string` | - | show bellow |
+| `destination_address_prefixes` | A list of destination address prefixes. | `list(string)` | - | show bellow |
 
 **source_port_range** and **source_port_ranges** are required to have at least one of them but you can't have both at the same time.
 
@@ -98,4 +98,4 @@ rules = {
     destination_address_prefix = "*"
   }
 }
-´´´
+```
