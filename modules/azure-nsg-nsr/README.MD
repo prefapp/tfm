@@ -53,6 +53,11 @@
 | `destination_address_prefix` | The destination address prefix. | `string` | - | no |
 | `destination_address_prefixes` | A list of destination address prefixes. | `list(string)` | - | no |
 
+**source_port_range** and **source_port_ranges** are required to have at least one of them but you can't have both at the same time.
+**destination_port_range** and **destination_port_ranges** are required to have at least one of them but you can't have both at the same time.
+**source_address_prefix** and **source_address_prefixes** are required to have at least one of them but you can't have both at the same time.
+**destination_address_prefix** and **destination_address_prefixes** are required to have at least one of them but you can't have both at the same time.
+
 ```hcl
 
 nsg = {
@@ -88,5 +93,4 @@ rules = {
     destination_address_prefix = "*"
   }
 }
-
 ´´´
