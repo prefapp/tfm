@@ -97,5 +97,5 @@ rules = {
     source_address_prefix      = "0.0.0.0/0"
     destination_address_prefix = "*"
   }
-}
+} 
 ```
