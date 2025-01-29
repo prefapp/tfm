@@ -24,7 +24,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   zones                       = var.vmss.zones
   computer_name_prefix        = var.vmss.computer_name_prefix
   # template_cloudinit_config
-  custom_data  = base64encode(var.vmss.cloud_init)
+  custom_data  = base64encode(var.vmss.cloud_init.rendered)
   upgrade_mode = var.vmss.upgrade_mode
   rolling_upgrade_policy {
     max_batch_instance_percent              = var.vmss.rolling_upgrade_policy_max_batch_instance_percent
@@ -107,7 +107,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "this" {
   type_handler_version         = "2.1"
   auto_upgrade_minor_version   = false
   settings = jsonencode({
-    "script" = base64encode(var.vmss.run_script)
+    "script" = "${filebase64("${var.extension}")}"
   })
 }
 
