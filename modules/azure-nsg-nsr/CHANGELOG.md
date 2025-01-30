@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/azure-nsg-nsr-v0.1.0...azure-nsg-nsr-v0.1.1) (2025-01-30)
+
+
+### Bug Fixes
+
+* Added dependecies between nsr and nsg ([#426](https://github.com/prefapp/tfm/issues/426)) ([fc565c0](https://github.com/prefapp/tfm/commit/fc565c02478d44ea68e9a1160886598bc68fe23e))
+
 ## 0.1.0 (2025-01-29)
 
 
