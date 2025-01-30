@@ -100,12 +100,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.3.0/docs/resources/virtual_machine_scale_set_extension
 resource "azurerm_virtual_machine_scale_set_extension" "this" {
-  name                         = "${var.vmss.name}-extension"
+  count                       = var.vmss.run_script != null ? 1 : 0
+  name                        = "${var.vmss.name}-extension"
   virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.this.id
-  publisher                    = "Microsoft.Azure.Extensions"
-  type                         = "CustomScript"
-  type_handler_version         = "2.1"
-  auto_upgrade_minor_version   = false
+  publisher                   = "Microsoft.Azure.Extensions"
+  type                        = "CustomScript"
+  type_handler_version        = "2.1"
+  auto_upgrade_minor_version  = false
   settings = jsonencode({
     "script" = "${base64encode("${var.vmss.run_script}")}"
   })
