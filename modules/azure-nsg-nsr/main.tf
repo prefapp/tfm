@@ -25,5 +25,5 @@ resource "azurerm_network_security_rule" "this" {
   destination_address_prefixes = each.value.destination_address_prefixes
   resource_group_name          = var.nsg.resource_group_name
   network_security_group_name  = var.nsg.name
-  depends on                   = [azurerm_network_security_group.this]
+  depends_on                   = [azurerm_network_security_group.this]
 }
