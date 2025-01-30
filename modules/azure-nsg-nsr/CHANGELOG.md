@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/prefapp/tfm/compare/azure-nsg-nsr-v0.1.1...azure-nsg-nsr-v0.1.2) (2025-01-30)
+
+
+### Bug Fixes
+
+* Removed  code error ([#428](https://github.com/prefapp/tfm/issues/428)) ([3bd116c](https://github.com/prefapp/tfm/commit/3bd116c25d8e1790eb0c2d15dbe0df4220d60c9a))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/azure-nsg-nsr-v0.1.0...azure-nsg-nsr-v0.1.1) (2025-01-30)
 
 
