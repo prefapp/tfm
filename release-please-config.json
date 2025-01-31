@@ -57,6 +57,9 @@
         "modules/azure-disks-backup": {
             "package-name": "azure-disks-backup"
         },
+        "modules/azure-vmss": {
+            "package-name": "azure-vmss"
+        },
         "modules/mongodb-atlas-project": {
             "package-name": "mongodb-atlas-project"
         },
