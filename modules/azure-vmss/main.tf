@@ -68,16 +68,16 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
       load_balancer_inbound_nat_rules_ids          = var.vmss.network_interface_ip_configuration_load_balancer_inbound_nat_rules_ids
 
       public_ip_address {
-        name = "${var.vmss.name}-publicIP"
+        name                    = "${var.vmss.name}-publicIP"
         idle_timeout_in_minutes = var.vmss.network_interface_public_ip_adress_idle_timeout_in_minutes
-        public_ip_prefix_id        = var.vmss.network_interface_public_ip_adress_public_ip_prefix_id
+        public_ip_prefix_id     = var.vmss.network_interface_public_ip_adress_public_ip_prefix_id
       }
     }
   }
 
   scale_in {
     force_deletion_enabled = var.vmss.scale_in_force_deletion_enabled
-    rule = var.vmss.scale_in_rule
+    rule                   = var.vmss.scale_in_rule
   }
 
   identity {
@@ -100,13 +100,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.3.0/docs/resources/virtual_machine_scale_set_extension
 resource "azurerm_virtual_machine_scale_set_extension" "this" {
-  count                       = var.vmss.run_script != null ? 1 : 0
-  name                        = "${var.vmss.name}-extension"
+  count                        = var.vmss.run_script != null ? 1 : 0
+  name                         = "${var.vmss.name}-extension"
   virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.this.id
-  publisher                   = "Microsoft.Azure.Extensions"
-  type                        = "CustomScript"
-  type_handler_version        = "2.1"
-  auto_upgrade_minor_version  = false
+  publisher                    = "Microsoft.Azure.Extensions"
+  type                         = "CustomScript"
+  type_handler_version         = "2.1"
+  auto_upgrade_minor_version   = false
   settings = jsonencode({
     "script" = "${base64encode("${var.vmss.run_script}")}"
   })
