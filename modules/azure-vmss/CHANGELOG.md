@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/azure-vmss-v0.1.0...azure-vmss-v0.2.0) (2025-02-03)
+
+
+### Features
+
+* Change method obtain subnet id into azure-vmss module ([#431](https://github.com/prefapp/tfm/issues/431)) ([36836f4](https://github.com/prefapp/tfm/commit/36836f40775715f799a55f3ce4240436b5e497fd))
+
 ## 0.1.0 (2025-01-31)
 
 
