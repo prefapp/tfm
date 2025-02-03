@@ -1,8 +1,8 @@
-# LOCAL SECTION
-locals {
-  split_subnet  = [for subnet in var.vmss.subnet_output : split("/", subnet)]
-  last_elements = [for split_subnet in local.split_subnet : split_subnet[length(split_subnet) - 1]]
-  subnet        = [for i, last_element in local.last_elements : var.vmss.subnet_output[i] if last_element == var.vmss.subnet_name][0]
+# DATA SECTION
+data "azurerm_subnet" "this" {
+  name                 = var.vmss.subnet_name
+  virtual_network_name = var.vmss.virtual_network_name
+  resource_group_name  = var.common.virtual_network_resource_group_name
 }
 
 # RESOURCES SECTION
@@ -61,7 +61,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
     ip_configuration {
       name                                         = var.vmss.name
       primary                                      = var.vmss.network_ip_primary
-      subnet_id                                    = local.subnet
+      subnet_id                                    = data.azurerm_subnet.this.id
       application_gateway_backend_address_pool_ids = var.vmss.network_interface_ip_configuration_application_gateway_backend_address_pool_ids
       application_security_group_ids               = var.vmss.network_interface_ip_configuration_application_security_group_ids
       load_balancer_backend_address_pool_ids       = var.vmss.network_interface_ip_configuration_load_balancer_inbound_nat_rules_ids
@@ -111,4 +111,3 @@ resource "azurerm_virtual_machine_scale_set_extension" "this" {
     "script" = "${base64encode("${var.vmss.run_script}")}"
   })
 }
-
