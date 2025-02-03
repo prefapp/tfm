@@ -48,14 +48,14 @@ variable "vmss" {
     image_sku       = string
     image_version   = string
 
-    edge_zone                 = optional(string)
-    network_primary           = optional(bool)
-    network_ip_primary        = optional(bool)
-    network_security_group_id = optional(string)
-    subnet_name               = optional(string)
-    virtual_network_name      = optional(string)
-    resource_group_name       = optional(string)
-    prefix_length             = optional(number)
+    edge_zone                           = optional(string)
+    network_primary                     = optional(bool)
+    network_ip_primary                  = optional(bool)
+    network_security_group_id           = optional(string)
+    subnet_name                         = optional(string)
+    virtual_network_name                = optional(string)
+    virtual_network_resource_group_name = optional(string)
+    prefix_length                       = optional(number)
 
     scale_in_rule                   = optional(string)
     scale_in_force_deletion_enabled = optional(bool)
