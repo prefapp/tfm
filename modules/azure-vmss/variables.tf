@@ -52,7 +52,7 @@ variable "vmss" {
     network_primary           = optional(bool)
     network_ip_primary        = optional(bool)
     network_security_group_id = optional(string)
-    name                      = optional(string)
+    subnet_name               = optional(string)
     virtual_network_name      = optional(string)
     resource_group_name       = optional(string)
     prefix_length             = optional(number)
