@@ -2,7 +2,7 @@
 data "azurerm_subnet" "this" {
   name                 = var.vmss.subnet_name
   virtual_network_name = var.vmss.virtual_network_name
-  resource_group_name  = var.common.virtual_network_resource_group_name
+  resource_group_name  = var.vmss.virtual_network_resource_group_name
 }
 
 # RESOURCES SECTION
