@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/prefapp/tfm/compare/azure-vmss-v0.2.1...azure-vmss-v0.2.2) (2025-02-03)
+
+
+### Bug Fixes
+
+* Update main.tf ([4bb707e](https://github.com/prefapp/tfm/commit/4bb707e0149b61d196693a8013b517a12caa6671))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/azure-vmss-v0.2.0...azure-vmss-v0.2.1) (2025-02-03)
 
 
