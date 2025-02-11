@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/prefapp/tfm/compare/azure-kv-v1.2.2...azure-kv-v1.3.0) (2025-02-11)
+
+
+### Features
+
+* upgrade to v4.16.0 ([#437](https://github.com/prefapp/tfm/issues/437)) ([b585e7f](https://github.com/prefapp/tfm/commit/b585e7ffa92fa95c179a3f3b294508c86a060130))
+
 ## [1.2.2](https://github.com/prefapp/tfm/compare/azure-kv-v1.2.1...azure-kv-v1.2.2) (2024-08-02)
 
 
