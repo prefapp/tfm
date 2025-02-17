@@ -31,7 +31,7 @@ resource "azurerm_user_assigned_identity" "this" {
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.19.0/docs/resources/role_definition
-resource "azure_role_definition" "custom_role" {
+resource "azurerm_role_definition" "custom_role" {
   for_each = { for role in var.rbac_custom_roles : role.name => role }
   name = each.value.name
   scope = "/"
