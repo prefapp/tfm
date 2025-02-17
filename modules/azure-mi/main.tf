@@ -30,6 +30,24 @@ resource "azurerm_user_assigned_identity" "this" {
   tags                = local.tags
 }
 
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.19.0/docs/resources/role_definition
+resource "azure_role_definition" "custom_role" {
+  for_each = { for role in var.rbac_custom_roles : role.name => role }
+  name = each.value.name
+  scope = "/"
+  description = "Custom role: ${each.value.name}"
+  permissions = each.value.permissions
+  assignable_scopes = [ "/" ]
+}
+
+## https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/role_assignment
+resource "azurerm_role_assignment" "custom_role_assignment" {
+  for_each = azure_role_definition.custom_role
+  principal_id       = azurerm_user_assigned_identity.this.principal_id
+  role_definition_id = each.value.id
+  scope              = each.value.assignable_scopes[0]
+}
+
 ## https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/role_assignment
 resource "azurerm_role_assignment" "that" {
   for_each             = { for r in local.flattened_rbac : "${r.name}-${r.role}" => r }
