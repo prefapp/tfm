@@ -48,9 +48,9 @@ resource "azurerm_role_definition" "custom_role" {
 ## https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/role_assignment
 resource "azurerm_role_assignment" "custom_role_assignment" {
   for_each = azurerm_role_definition.custom_role
-  principal_id       = azurerm_user_assigned_identity.this.principal_id
-  role_definition_id = each.value.id
-  scope              = local.rbac_custom[each.value.name].scope
+  principal_id         = azurerm_user_assigned_identity.this.principal_id
+  role_definition_name = each.value.name
+  scope                = local.rbac_custom[each.value.name].scope
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/role_assignment
