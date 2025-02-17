@@ -18,6 +18,7 @@ locals {
     ]
   ]
   flattened_rbac = flatten(local.rbac)
+  rbac_custom = { for role in var.rbac_custom_roles : role.name => role } 
   tags           = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
 }
 
@@ -32,20 +33,24 @@ resource "azurerm_user_assigned_identity" "this" {
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.19.0/docs/resources/role_definition
 resource "azurerm_role_definition" "custom_role" {
-  for_each = { for role in var.rbac_custom_roles : role.name => role }
+  for_each = local.rbac_custom
   name = each.value.name
-  scope = "/"
+  scope = each.value.definition_scope
   description = "Custom role: ${each.value.name}"
-  permissions = each.value.permissions
-  assignable_scopes = [ "/" ]
+  permissions {
+    actions = each.value.permissions.actions
+    data_actions = each.value.permissions.data_actions
+    not_actions = each.value.permissions.not_actions
+    not_data_actions = each.value.permissions.not_data_actions
+  }
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/role_assignment
 resource "azurerm_role_assignment" "custom_role_assignment" {
-  for_each = azure_role_definition.custom_role
+  for_each = azurerm_role_definition.custom_role
   principal_id       = azurerm_user_assigned_identity.this.principal_id
   role_definition_id = each.value.id
-  scope              = each.value.assignable_scopes[0]
+  scope              = local.rbac_custom[each.value.name].scope
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/role_assignment
