@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.5...azure-sa-v0.1.6) (2025-02-21)
+
+
+### Bug Fixes
+
+* update "mi" version and correct "sa" deprecation ([#443](https://github.com/prefapp/tfm/issues/443)) ([a3e69ac](https://github.com/prefapp/tfm/commit/a3e69ac68e50ddbcd42d3f9ad279f41650d749a6))
+
 ## [0.1.5](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.4...azure-sa-v0.1.5) (2025-02-21)
 
 
