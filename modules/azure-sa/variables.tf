@@ -18,11 +18,13 @@ variable "allowed_subnets" {
     vnet           = string
     resource_group = string
   }))
+  default = []
 }
 
 variable "additional_allowed_subnet_ids" {
   description = "Additional subnets id for storage account network rules"
   type        = list(string)
+  default     = []
 }
 
 ## Storage account variables
