@@ -88,7 +88,7 @@ resource "azurerm_storage_account_network_rules" "this" {
 resource "azurerm_storage_container" "this" {
   for_each                          = var.containers != null ? { for container in var.containers : container.name => container } : {}
   name                              = each.value.name
-  storage_account_name              = azurerm_storage_account.this.name
+  storage_account_id                = azurerm_storage_account.this.id
   container_access_type             = each.value.container_access_type
   default_encryption_scope          = each.value.default_encryption_scope
   encryption_scope_override_enabled = each.value.encryption_scope_override_enabled
