@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.4...azure-sa-v0.1.5) (2025-02-21)
+
+
+### Bug Fixes
+
+* add null defaults ([#444](https://github.com/prefapp/tfm/issues/444)) ([30d0278](https://github.com/prefapp/tfm/commit/30d0278d1303fe668cf99c75e9ad0505bd34d6b3))
+
 ## [0.1.4](https://github.com/prefapp/tfm/compare/azure-sa-v0.1.3...azure-sa-v0.1.4) (2024-10-22)
 
 
