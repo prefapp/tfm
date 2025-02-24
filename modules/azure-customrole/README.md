@@ -22,7 +22,7 @@
 |------|-------------|------|---------|:--------:|
 | name | The name of the Role Definition | `string` | n/a | yes |
 | assignable_scopes | One or more assignable scopes for this Role Definition. The first one will become de scope at which the Role Definition applies to. | `list(string)` | n/a | yes |
-| permissions | A permissions block with possible 'actions', 'data_actions', 'not_actions' and/or 'not_data_actions'. | object({<br> actions = list(string) (optional)<br> data_actions = list(string) (optional)<br> not_actions = list(string) (optional)<br> not_data_actions = list(string) (optional)<br>}) | n/a | yes |
+| permissions | A permissions block with possible 'actions', 'data_actions', 'not_actions' and/or 'not_data_actions'. | <pre>object({<br> actions = list(string) (optional)<br> data_actions = list(string) (optional)<br> not_actions = list(string) (optional)<br> not_data_actions = list(string) (optional)<br>})<pre> | n/a | yes |
 
 ## Outputs
 
