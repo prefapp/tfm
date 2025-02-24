@@ -29,7 +29,6 @@
 | tags | A mapping of tags to assign to the resource | `map(string)` | n/a | no |
 | tags_from_rg | If true, the tags from the resource group will be inherited exclusively | `bool` | `false` | no |
 | rbac | A list of role-based access control (RBAC) policies to apply to the Managed Identity | <pre>list(object({<br> name: string (required)<br> scope: string (required)<br> roles: list(string) (required)<br>}))</pre> | n/a | yes |
-| rbac_custom_roles | A list of custom RBAC policies to apply to the Managed Identity | <pre>list(object({<br> name: string (required)<br> scope: string (required)<br> definition_scope: string (required)<br> permissions: object({<br>  actions: list(string) (optional)<br>  data_actions: list(string) (optional)<br>  not_actions: list(string) (optional)<br>  not_data_actions: list(string) (optional)<br> }) (required)<br>}))</pre> | n/a | no |
 | federated_credentials | A list of federated credentials to assign to the Managed Identity, posible types are:<br><br>**kubernetes**: `issuer`, `namespace` and `service_account_name`<br>- `issuer`: The cluster issuer<br>- `namespace`: The namespace of the service account<br>- `service_account_name`: The name of the service account<br><br>**github**: `issuer`, `organization`, `repository` and `entity`<br>- `issuer`: The github issuer<br>- `organization`: The github organization<br>- `repository`: The github repository<br>- `entity`: The github entity \|Optional value, if not provided, the entity will be the repository. For other scenarios, the entity should be provided:<br>&nbsp;&nbsp;- environment: `environment:foo_enviroment`<br>&nbsp;&nbsp;- tags: `ref:refs/tags/foo_tag`<br>&nbsp;&nbsp;- branch: `ref:refs/heads/foo_branch`<br>&nbsp;&nbsp;- commit: `ref:refs/commits/foo_commit`<br><br>**other**: `issuer` and `subject`<br>- `issuer`: The issuer<br>- `subject`: The subject | <pre>list(object({<br> name: string (required)<br> type: string (required) - **kubernetes** \|\| **github** \|\| **other**<br> issuer: string (required only when type is **kubernetes** or **other**, when type is **github** is optional because the default is `https://token.actions.githubusercontent.com`)<br> namespace: string (required only when the type is **kubernetes**)<br> service_account_name: string (required only when the type is **kubernetes**)<br> organization: string (required only when the type is **github**)<br> repository: string (required only when the type is **github**)<br> entity: string (required only when the type is **github** and the entity is not the repository)<br> subject: string (required only when the type is **other**)<br>}))</pre> | `[]` | no |
 | audience | The audience of the federated identity credential | `list(string)` | `["api://AzureADTokenExchange"]` | no |
 
@@ -66,20 +65,6 @@ rbac = [
       "yyy",
       "zzz"
     ]
-  }
-]
-
-rbac_custom_roles = [
-  {
-    name: "Custom Role"
-    scope: "xxx"
-    definition_scope: "yyy"
-    permissions: {
-      actions = [
-        "Microsoft.Compute/disks/read",
-        "Microsoft.Compute/disks/write",
-      ]    
-    }
   }
 ]
 
