@@ -58,7 +58,7 @@ assignable_scopes:
   - "zzz"
 permissions:
   actions:
-    - "Microsoft.Compute/disks/read",
+    - "Microsoft.Compute/disks/read"
     - "Microsoft.Compute/disks/write"
   notActions:
     - "Microsoft.Authorization/*/Delete"
