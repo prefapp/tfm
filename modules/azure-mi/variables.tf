@@ -36,22 +36,6 @@ variable "rbac" {
   description = "A list of objects containing the RBAC roles to assign to the User Assigned Identity."
 }
 
-variable "rbac_custom_roles" {
-  type = list(object({
-    name             = string
-    scope            = string
-    definition_scope = string
-    permissions      = object({
-      actions          = optional(list(string), [])
-      data_actions     = optional(list(string), [])
-      not_actions      = optional(list(string), [])
-      not_data_actions = optional(list(string), [])
-    })
-  }))
-  description = "A list of objects containing custom roles to assign to the User Assigned Identity."
-}
-
-
 variable "access_policies" {
   description = "List of access policies for the Key Vault"
   type = list(object({
