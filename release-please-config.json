@@ -80,6 +80,9 @@
         },
         "modules/azure-nsg-nsr": {
             "package-name": "azure-nsg-nsr"
+        },
+        "modules/azure-customrole": {
+            "package-name": "azure-customrole"
         }
     }
 }
