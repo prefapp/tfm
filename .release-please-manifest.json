@@ -24,5 +24,6 @@
     "modules/cloudamqp-cluster": "0.1.0",
     "modules/azure-public-prefix": "0.2.0",
     "modules/azure-nsg-nsr": "0.1.2",
-    "modules/azure-vmss": "0.2.3"
+    "modules/azure-vmss": "0.2.3",
+    "modules/azure-customrole": "0.0.0"
 }
