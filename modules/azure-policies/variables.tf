@@ -61,20 +61,20 @@ variable "assignments" {
   })
   validation {
     condition = alltrue([
-      length(var.policy_assignment.name) <= 64,
-      contains(["SystemAssigned", "UserAssigned"], var.policy_assignment.identity.type)
+      length(var.assignment.name) <= 64,
+      contains(["SystemAssigned", "UserAssigned"], var.assignment.identity.type)
     ])
     error_message = "Invalid value for name length or identity type."
   }
 
   validation {
-    condition     = can(var.policy_assignment.identity) ? can(var.policy_assignment.location) : true
+    condition     = can(var.assignment.identity) ? can(var.assignment.location) : true
     error_message = "The location field must also be specified when identity is specified."
   }
 
   validation {
     condition = alltrue([
-      for o in var.policy_assignment.overrides : (
+      for o in var.assignment.overrides : (
         alltrue([
           can(o.selectors) ? (
             alltrue([
