@@ -14,7 +14,7 @@ variable "policy" {
   })
   validation {
     condition = alltrue([
-      contains(["BuiltIn", "Custom", "NotSpecified", "Static"], var.policy_definition.policy_type),
+      contains(["BuiltIn", "Custom", "NotSpecified", "Static"], var.policy.policy_type),
       contains(["All", "Indexed", "Microsoft.ContainerService.Data", "Microsoft.CustomerLockbox.Data", "Microsoft.DataCatalog.Data", "Microsoft.KeyVault.Data", "Microsoft.Kubernetes.Data", "Microsoft.MachineLearningServices.Data", "Microsoft.Network.Data", "Microsoft.Synapse.Data"], var.policy_definition.mode)
     ])
     error_message = "Invalid value for policy_type or mode."
