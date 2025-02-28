@@ -1,16 +1,16 @@
 # VARIABLES SECTION
-variable "policy_definition" {
+variable "policy" {
   description = "Object containing all the variables for the policy definition."
   type = object({
-    name = string
-    policy_type = string
-    mode = string
-    display_name = string
-    description = optional(string)
+    name                = string
+    policy_type         = string
+    mode                = string
+    display_name        = string
+    description         = optional(string)
     management_group_id = optional(string)
-    policy_rule = optional(string)
-    metadata = optional(string)
-    parameters = optional(string)
+    policy_rule         = optional(string)
+    metadata            = optional(string)
+    parameters          = optional(string)
   })
   validation {
     condition = alltrue([
@@ -21,23 +21,24 @@ variable "policy_definition" {
   }
 }
 
-variable "resource_policy_assignments" {
-  description = "Object containing all the variables for the resource policy assignment."
+variable "assignments" {
+  description = "Object containing all the variables for the policy assignment."
   type = object({
-    name = string
+    name                 = string
     policy_definition_id = string
-    resource_id = string
-    description = optional(string)
-    display_name = optional(string)
-    enforce = optional(bool, true)
+    resource_id          = string
+    scope                = string
+    description          = optional(string)
+    display_name         = optional(string)
+    enforce              = optional(bool, true)
     identity = optional(object({
-      type = string
+      type         = string
       identity_ids = optional(list(string))
     }))
     location = optional(string)
     metadata = optional(string)
     non_compliance_message = optional(list(object({
-      content = string
+      content                        = string
       policy_definition_reference_id = optional(string)
     })))
     not_scopes = optional(list(string))
@@ -45,15 +46,15 @@ variable "resource_policy_assignments" {
     overrides = optional(list(object({
       value = string
       selectors = optional(list(object({
-        in = optional(list(string))
+        in     = optional(list(string))
         not_in = optional(list(string))
       })))
     })))
     resource_selectors = optional(list(object({
       name = optional(string)
       selectors = list(object({
-        kind = string
-        in = optional(list(string))
+        kind   = string
+        in     = optional(list(string))
         not_in = optional(list(string))
       }))
     })))
@@ -67,75 +68,7 @@ variable "resource_policy_assignments" {
   }
 
   validation {
-    condition = can(var.policy_assignment.identity) ? can(var.policy_assignment.location) : true
-    error_message = "The location field must also be specified when identity is specified."
-  }
-
-  validation {
-    condition = alltrue([
-      for o in var.policy_assignment.overrides : (
-        alltrue([
-          can(o.selectors) ? (
-            alltrue([
-              for s in o.selectors : (
-                !(can(s.in) && can(s.not_in))
-              )
-            ])
-          ) : true
-        ])
-      )
-    ])
-    error_message = "The 'in' and 'not_in' fields cannot be used together in override selectors."
-  }
-}
-
-variable "subscription_policy_assignments" {
-  description = "Object containing all the variables for the subscription policy assignment."
-  type = object({
-    name = string
-    policy_definition_id = string
-    subscription_id = string
-    description = optional(string)
-    display_name = optional(string)
-    enforce = optional(bool, true)
-    identity = optional(object({
-      type = string
-      identity_ids = optional(list(string))
-    }))
-    location = optional(string)
-    metadata = optional(string)
-    non_compliance_message = optional(list(object({
-      content = string
-      policy_definition_reference_id = optional(string)
-    })))
-    not_scopes = optional(list(string))
-    parameters = optional(string)
-    overrides = optional(list(object({
-      value = string
-      selectors = optional(list(object({
-        in = optional(list(string))
-        not_in = optional(list(string))
-      })))
-    })))
-    resource_selectors = optional(list(object({
-      name = optional(string)
-      selectors = list(object({
-        kind = string
-        in = optional(list(string))
-        not_in = optional(list(string))
-      }))
-    })))
-  })
-  validation {
-    condition = alltrue([
-      length(var.policy_assignment.name) <= 64,
-      contains(["SystemAssigned", "UserAssigned"], var.policy_assignment.identity.type)
-    ])
-    error_message = "Invalid value for name length or identity type."
-  }
-
-  validation {
-    condition = can(var.policy_assignment.identity) ? can(var.policy_assignment.location) : true
+    condition     = can(var.policy_assignment.identity) ? can(var.policy_assignment.location) : true
     error_message = "The location field must also be specified when identity is specified."
   }
 
