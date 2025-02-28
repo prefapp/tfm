@@ -18,7 +18,7 @@ resource "azurerm_policy_definition" "this" {
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_policy_assignment
 resource "azurerm_resource_policy_assignment" "this" {
-  for_each             = var.assignment.scope == "resource" ? var.assignments : {}
+  for_each             = var.assignments.scope == "resource" ? var.assignments : {}
   name                 = each.value.name
   policy_definition_id = azurerm_policy_definition.this.id
   resource_id          = each.value.resource_id
@@ -47,11 +47,11 @@ resource "azurerm_resource_policy_assignment" "this" {
     for_each = each.value.overrides
     content {
       value = overrides.value.value
-      dynamic "override_selector" {
-        for_each = overrides.value.override_selector
+      dynamic "selectors" {
+        for_each = overrides.value.selectors
         content {
-          in     = override_selector.value.in
-          not_in = override_selector.value.not_in
+          in     = selectors.value.in
+          not_in = selectors.value.not_in
         }
       }
     }
@@ -75,7 +75,7 @@ resource "azurerm_resource_policy_assignment" "this" {
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_group_policy_assignment
 resource "azurerm_resource_group_policy_assignment" "this" {
-  for_each             = var.assignment.scope == "resource group" ? var.assignments : {}
+  for_each             = var.assignments.scope == "resource group" ? var.assignments : {}
   name                 = each.value.name
   policy_definition_id = azurerm_policy_definition.this.id
   resource_group_id    = each.value.resource_id
@@ -132,7 +132,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/subscription_policy_assignment
 resource "azurerm_subscription_policy_assignment" "this" {
-  for_each             = var.assignment.scope == "subscription" ? var.assignments : {}
+  for_each             = var.assignments.scope == "subscription" ? var.assignments : {}
   name                 = each.value.name
   policy_definition_id = azurerm_policy_definition.this.id
   subscription_id      = data.azurerm_subscription.current.id
