@@ -33,6 +33,8 @@ variable "cluster_iam_role_arn" {
 
   type = string
 
+  default = null
+
 }
 
 
@@ -58,7 +60,7 @@ variable "create_cluster_iam_role" {
 
   type = bool
 
-  default = false
+  default = true
 
 }
 
