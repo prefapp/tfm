@@ -1,4 +1,9 @@
 # Data section
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group
+data "azurerm_resource_group" "resource_group" {
+  name = var.resource_group.name
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "subnet" {
   name                 = var.subnet.name

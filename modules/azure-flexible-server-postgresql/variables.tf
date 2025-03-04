@@ -24,6 +24,18 @@ variable "administrator_password_key_vault_secret_name" {
     type = string
 }
 
+variable "tags" {
+  type        = map(string)
+  default = {
+    "name" = "value"
+  }
+}
+
+variable "tags_from_rg" {
+  type        = bool
+  default     = false
+}
+
 variable "postgresql_flexible_server" {
   type = object({
     name                = string
@@ -37,7 +49,6 @@ variable "postgresql_flexible_server" {
     sku_name            = optional(string)
     replication_role    = optional(string)
     create_mode         = optional(string)
-    tags                = optional(map(string))
     maintenance_window  = optional(object({
       day_of_week  = number
       start_hour   = number
