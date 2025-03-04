@@ -83,6 +83,9 @@
         },
         "modules/azure-customrole": {
             "package-name": "azure-customrole"
+        },
+        "modules/azure-public-ip": {
+            "package-name": "azure-public-ip"
         }
     }
 }
