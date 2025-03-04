@@ -1,7 +1,7 @@
 # VARIABLES SECTION
-variable "policy" {
-  description = "Object containing all the variables for the policy definition."
-  type = object({
+variable "policies" {
+  description = "List of objects containing all the variables for the policy definitions."
+  type = list(object({
     name                = string
     policy_type         = string
     mode                = string
@@ -11,19 +11,25 @@ variable "policy" {
     policy_rule         = optional(string)
     metadata            = optional(string)
     parameters          = optional(string)
-  })
+  }))
+  default = []
   validation {
     condition = alltrue([
-      contains(["BuiltIn", "Custom", "NotSpecified", "Static"], var.policy.policy_type),
-      contains(["All", "Indexed", "Microsoft.ContainerService.Data", "Microsoft.CustomerLockbox.Data", "Microsoft.DataCatalog.Data", "Microsoft.KeyVault.Data", "Microsoft.Kubernetes.Data", "Microsoft.MachineLearningServices.Data", "Microsoft.Network.Data", "Microsoft.Synapse.Data"], var.policy.mode)
+      for policy in var.policies : contains(["BuiltIn", "Custom", "NotSpecified", "Static"], policy.policy_type)
     ])
-    error_message = "Invalid value for policy_type or mode."
+    error_message = "Invalid value for policy_type."
+  }
+  validation {
+    condition = alltrue([
+      for policy in var.policies : contains(["All", "Indexed", "Microsoft.ContainerService.Data", "Microsoft.CustomerLockbox.Data", "Microsoft.DataCatalog.Data", "Microsoft.KeyVault.Data", "Microsoft.Kubernetes.Data", "Microsoft.MachineLearningServices.Data", "Microsoft.Network.Data", "Microsoft.Synapse.Data"], policy.mode)
+    ])
+    error_message = "Invalid value for mode."
   }
 }
 
 variable "assignments" {
-  description = "Object containing all the variables for the policy assignment."
-  type = object({
+  description = "List of objects containing all the variables for the policy assignments."
+  type = list(object({
     name                 = string
     policy_definition_id = string
     resource_id          = string
@@ -58,33 +64,35 @@ variable "assignments" {
         not_in = optional(list(string))
       }))
     })))
-  })
+  }))
+  default = []
   validation {
     condition = alltrue([
-      length(var.assignments.name) <= 64,
-      contains(["SystemAssigned", "UserAssigned"], var.assignments.identity.type)
+      for assignment in var.assignments : length(assignment.name) <= 64
     ])
-    error_message = "Invalid value for name length or identity type."
+    error_message = "Invalid value for name length. It cannot exceed 64 characters."
   }
-
   validation {
-    condition     = can(var.assignments.identity) ? can(var.assignments.location) : true
+    condition = alltrue([
+      for assignment in var.assignments : contains(["SystemAssigned", "UserAssigned"], assignment.identity.type)
+    ])
+    error_message = "Invalid value for identity type. Possible values are SystemAssigned and UserAssigned."
+  }
+  validation {
+    condition = alltrue([
+      for assignment in var.assignments : can(assignment.identity) ? can(assignment.location) : true
+    ])
     error_message = "The location field must also be specified when identity is specified."
   }
-
   validation {
     condition = alltrue([
-      for o in var.assignments.overrides : (
-        alltrue([
-          can(o.selectors) ? (
-            alltrue([
-              for s in o.selectors : (
-                !(can(s.in) && can(s.not_in))
-              )
-            ])
-          ) : true
+      for assignment in var.assignments : alltrue([
+        for override in assignment.overrides : alltrue([
+          can(override.selectors) ? alltrue([
+            for selector in override.selectors : !(can(selector.in) && can(selector.not_in))
+          ]) : true
         ])
-      )
+      ])
     ])
     error_message = "The 'in' and 'not_in' fields cannot be used together in override selectors."
   }
