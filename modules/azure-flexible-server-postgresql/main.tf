@@ -16,13 +16,14 @@ resource "azurerm_postgresql_flexible_server" "this" {
   create_mode            = var.postgresql_flexible_server.create_mode
   tags                   = var.postgres_flexible_server.tags
   maintenance_window {
-    day_of_week  = var.postgresql_flexible_server_maintenance_window.day_of_week
-    start_hour   = var.postgresql_flexible_server_maintenance_window.start_hour
-    start_minute = var.postgresql_flexible_server_maintenance_window.start_minute
+    day_of_week  = var.postgresql_flexible_server.day_of_week
+    start_hour   = var.postgresql_flexible_server.start_hour
+    start_minute = var.postgresql_flexible_server.start_minute
   }
   authentication {
-    active_directory_auth_enabled = var.postgresql_flexible_server_authentication.active_directory_auth_enabled
-    password_auth_enabled         = var.postgresql_flexible_server_authentication.password_auth_enabled
+    active_directory_auth_enabled = var.postgresql_flexible_server.active_directory_auth_enabled
+    password_auth_enabled         = var.postgresql_flexible_server.password_auth_enabled
+    tenant_id                     = var.postgresql_flexible_server.tenant_id
   }
   lifecycle {
     ignore_changes = [tags]

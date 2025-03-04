@@ -38,7 +38,7 @@ variable "postgres_flexible_server" {
     replication_role    = optional(string)
     create_mode         = optional(string)
     tags                = optional(map(string))
-    maintenance_window = optional(object({
+    maintenance_window  = optional(object({
       day_of_week  = number
       start_hour   = number
       start_minute = number
@@ -46,6 +46,7 @@ variable "postgres_flexible_server" {
     authentication = optional(object({
       active_directory_auth_enabled = string
       password_auth_enabled         = bool
+      tenant_id                     = string
     }))
   })
 }
