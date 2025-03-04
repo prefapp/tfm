@@ -84,16 +84,4 @@ variable "assignments" {
     ])
     error_message = "The location field must also be specified when identity is specified."
   }
-  validation {
-    condition = alltrue([
-      for assignment in var.assignments : can(assignment.overrides) ? alltrue([
-        for override in assignment.overrides : alltrue([
-          can(override.selectors) ? alltrue([
-            for selector in override.selectors : !(can(selector.in) && can(selector.not_in))
-          ]) : true
-        ])
-      ]) : true
-    ])
-    error_message = "The 'in' and 'not_in' fields cannot be used together in override selectors."
-  }
 }
