@@ -23,11 +23,6 @@ output "instance_url" {
   sensitive = true
 }
 
-output "instance_api_key" {
-  value     = cloudamqp_instance.this.apikey
-  sensitive = true
-}
-
 output "instance_host_internal" {
   value     = cloudamqp_instance.this.host_internal
   sensitive = true
