@@ -14,7 +14,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   sku_name               = var.postgresql_flexible_server.sku_name
   replication_role       = var.postgresql_flexible_server.replication_role
   create_mode            = var.postgresql_flexible_server.create_mode
-  tags                   = var.postgres_flexible_server.tags
+  tags                   = var.postgresql_flexible_server.tags
   maintenance_window {
     day_of_week  = var.postgresql_flexible_server.day_of_week
     start_hour   = var.postgresql_flexible_server.start_hour

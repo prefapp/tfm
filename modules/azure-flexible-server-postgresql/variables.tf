@@ -24,7 +24,7 @@ variable "administrator_password_key_vault_secret_name" {
     type = string
 }
 
-variable "postgres_flexible_server" {
+variable "postgresql_flexible_server" {
   type = object({
     name                = string
     resource_group_name = string
