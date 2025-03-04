@@ -39,14 +39,14 @@ variable "postgresql_flexible_server" {
     create_mode         = optional(string)
     tags                = optional(map(string))
     maintenance_window  = optional(object({
-      day_of_week  = number
-      start_hour   = number
-      start_minute = number
+      day_of_week  = optional(number)
+      start_hour   = optional(number)
+      start_minute = optional(number)
     }))
     authentication = optional(object({
-      active_directory_auth_enabled = string
-      password_auth_enabled         = bool
-      tenant_id                     = string
+      active_directory_auth_enabled = optional(string)
+      password_auth_enabled         = optional(bool)
+      tenant_id                     = optional(string)
     }))
   })
 }
