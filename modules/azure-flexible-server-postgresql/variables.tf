@@ -44,9 +44,9 @@ variable "postgresql_flexible_server" {
       start_minute = number
     }))
     authentication = optional(object({
-      active_directory_auth_enabled = string
+      active_directory_auth_enabled = bool
       password_auth_enabled         = bool
-      tenant_id                     = string
+      tenant_id                     = optional(string)
     }))
   })
 }
