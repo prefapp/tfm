@@ -9,8 +9,7 @@ resource "azurerm_public_ip" "inss-common-predev-public-ip" {
   location            = var.location
   sku                 = var.public_ip_sku
   allocation_method   = var.public_ip_allocation_method
-
-tags = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
+  tags = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
 
   lifecycle {
     # https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#prevent_destroy
