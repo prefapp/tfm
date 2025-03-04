@@ -50,7 +50,7 @@ variable "postgres_flexible_server" {
   })
 }
 
-variable "azurerm_postgresql_flexible_server_configuration" {
+variable "postgresql_flexible_server_configuration" {
     type = object({
         name    = string
         value   = string
