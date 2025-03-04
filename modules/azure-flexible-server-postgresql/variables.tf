@@ -1,8 +1,8 @@
 variable "subnet" {
     type = object({
         name                     = string
-        virtual_network_name     = string
-        resource_group_name      = string
+        vnet_namename            = string
+        vnet_resource_group_name = string
     })
 }
 
