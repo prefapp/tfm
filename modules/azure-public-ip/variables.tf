@@ -25,3 +25,14 @@ variable "public_ip_allocation_method" {
   type = string
   default = "Static"
 }
+
+variable "tags" {
+  description = "A map of tags to add to the public IP"
+  type = optional(map(string))
+}
+
+variable "tags_from_rg" {
+  description = "Use the tags from the resource group"
+  type = bool
+  default = true
+}

@@ -23,6 +23,8 @@
 | location | The location/region where the Public IP should be created. | `string` | n/a | yes |
 | public_ip_sku | The SKU of the Public IP. | `string` | `"Standard"` | no |
 | public_ip_allocation_method | The allocation method of the Public IP. | `string` | `"Static"` | no |
+| tags | A map of tags to add to the public IP | `map(string)` | `{}` | no |
+| tags_from_rg | Use the tags from the resource group, if true, the tags set in the tags variable will be ignored. | `bool` | `true` | no |
 
 ## Outputs
 
@@ -40,4 +42,9 @@ public_ip_name = "example-public-ip"
 location = "East US"
 public_ip_sku = "Standard"
 public_ip_allocation_method = "Static"
+tags = {
+  environment = "production"
+  cost_center = "it"
+}
+tags_from_rg = false
 ```
