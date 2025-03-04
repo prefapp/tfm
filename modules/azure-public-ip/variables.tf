@@ -28,7 +28,8 @@ variable "public_ip_allocation_method" {
 
 variable "tags" {
   description = "A map of tags to add to the public IP"
-  type = optional(map(string))
+  type = map(string)
+  default = {}
 }
 
 variable "tags_from_rg" {
