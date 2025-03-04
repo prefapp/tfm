@@ -32,7 +32,7 @@ variable "assignments" {
   type = list(object({
     name                 = string
     policy_name          = optional(string)
-    policy_definition_id = string
+    policy_definition_id = optional(string)
     resource_id          = string
     scope                = string
     description          = optional(string)

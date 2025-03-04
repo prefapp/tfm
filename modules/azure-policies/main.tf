@@ -27,7 +27,7 @@ resource "azurerm_policy_definition" "this" {
 resource "azurerm_resource_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource" }
   name                 = each.value.name
-  policy_definition_id = data.azurerm_policy_definition.this[each.key].id
+  policy_definition_id = can(each.value.policy_definition_id) ? each.value.policy_definition_id : data.azurerm_policy_definition.this[each.key].id
   resource_id          = each.value.resource_id
   description          = each.value.description
   display_name         = each.value.display_name
