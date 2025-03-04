@@ -1,3 +1,7 @@
+variable "resource_group" {
+    type = string
+}
+
 variable "subnet" {
     type = object({
         name                     = string
