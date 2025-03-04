@@ -37,7 +37,7 @@ output "summary" {
     - Cluster Name: ${var.cluster_name}
     - Cluster Version: ${var.cluster_version}
     - Cluster Region: ${var.region}
-    - IAM Cluster Role: ${split("/", var.cluster_iam_role_arn)[1]}
+    - IAM Cluster Role: ${split("/", var.cluster_iam_role_arn != null ? var.cluster_iam_role_arn : module.eks.cluster_iam_role_arn)[1]}
     - Cluster Tags:
     ${join("\n", [
   for tag_key, tag_value in var.tags :
