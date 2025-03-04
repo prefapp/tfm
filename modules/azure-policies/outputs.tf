@@ -1,12 +1,13 @@
 # OUTPUTS SECTION
-output "policy_definition_id" {
-  value       = azurerm_policy_definition.this.id
-  description = "Azure Policy definition id"
+# OUTPUTS SECTION
+output "policy_definition_ids" {
+  value       = [for policy in azurerm_policy_definition.this : policy.id]
+  description = "List of all Azure Policy definition IDs"
 }
 
-output "policy_definition_name" {
-  value       = azurerm_policy_definition.this.name
-  description = "Azure Policy definition name"
+output "policy_definition_names" {
+  value       = [for policy in azurerm_policy_definition.this : policy.name]
+  description = "List of all Azure Policy definition names"
 }
 
 output "resource_policy_assignment_ids" {
