@@ -1,5 +1,5 @@
 variable "subnet" {
-    type = map({
+    type = object({
         name                     = string
         virtual_network_name     = string
         resource_group_name      = string
@@ -7,14 +7,14 @@ variable "subnet" {
 }
 
 variable "dns_private_zone" {
-    type = map({
+    type = object({
         name                     = string
         resource_group_name      = string
     })
 }
 
 variable "key_vault" {
-    type = map({
+    type = object({
         name                = string
         resource_group_name = string
     })
@@ -38,12 +38,12 @@ variable "postgres_flexible_server" {
     replication_role    = optional(string)
     create_mode         = optional(string)
     tags                = optional(map(string))
-    maintenance_window = optional(map({
+    maintenance_window = optional(object({
       day_of_week  = number
       start_hour   = number
       start_minute = number
     }))
-    authentication = optional(map({
+    authentication = optional(object({
       active_directory_auth_enabled = string
       password_auth_enabled         = bool
     }))
@@ -51,7 +51,7 @@ variable "postgres_flexible_server" {
 }
 
 variable "azurerm_postgresql_flexible_server_configuration" {
-    type = map({
+    type = object({
         name    = string
         value   = string
     })
