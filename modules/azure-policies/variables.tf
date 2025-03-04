@@ -86,13 +86,13 @@ variable "assignments" {
   }
   validation {
     condition = alltrue([
-      for assignment in var.assignments : alltrue([
+      for assignment in var.assignments : can(assignment.overrides) ? alltrue([
         for override in assignment.overrides : alltrue([
           can(override.selectors) ? alltrue([
             for selector in override.selectors : !(can(selector.in) && can(selector.not_in))
           ]) : true
         ])
-      ])
+      ]) : true
     ])
     error_message = "The 'in' and 'not_in' fields cannot be used together in override selectors."
   }
