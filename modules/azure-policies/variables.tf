@@ -31,6 +31,7 @@ variable "assignments" {
   description = "List of objects containing all the variables for the policy assignments."
   type = list(object({
     name                 = string
+    policy_name          = optional(string)
     policy_definition_id = string
     resource_id          = string
     scope                = string
