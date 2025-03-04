@@ -26,5 +26,5 @@
     "modules/azure-nsg-nsr": "0.1.2",
     "modules/azure-vmss": "0.2.3",
     "modules/azure-customrole": "0.1.0",
-    "modules/azure-public-ip": "0.1.0"
+    "modules/azure-public-ip": "0.2.0"
 }
