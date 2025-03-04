@@ -20,7 +20,7 @@ variable "key_vault" {
     })
 }
 
-variable "administrator_password_keyvault_secret_name" {
+variable "administrator_password_key_vault_secret_name" {
     type = string
 }
 
