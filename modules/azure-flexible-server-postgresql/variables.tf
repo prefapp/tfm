@@ -6,9 +6,9 @@ variable "subnet" {
     })
 }
 
-variable "dns_private" {
+variable "dns_private_zone" {
     type = map({
-        zone                     = string
+        name                     = string
         resource_group_name      = string
     })
 }
