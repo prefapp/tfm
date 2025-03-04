@@ -24,7 +24,6 @@ resource "azurerm_postgresql_flexible_server" "this" {
     active_directory_auth_enabled = var.postgresql_flexible_server_authentication.active_directory_auth_enabled
     password_auth_enabled         = var.postgresql_flexible_server_authentication.password_auth_enabled
   }
-  tags
   lifecycle {
     ignore_changes = [tags]
   }
