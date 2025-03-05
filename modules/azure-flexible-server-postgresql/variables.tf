@@ -17,6 +17,13 @@ variable "dns_private_zone" {
     })
 }
 
+variable "key_vault" {
+    type = object({
+        name                = string
+        resource_group_name = string
+    })
+}
+
 variable "administrator_password_key_vault_secret_name" {
     type = string
 }
