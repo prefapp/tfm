@@ -13,18 +13,6 @@ variable "policies" {
     parameters          = optional(string)
   }))
   default = []
-  validation {
-    condition = alltrue([
-      for policy in var.policies : contains(["BuiltIn", "Custom", "NotSpecified", "Static"], policy.policy_type)
-    ])
-    error_message = "Invalid value for policy_type."
-  }
-  validation {
-    condition = alltrue([
-      for policy in var.policies : contains(["All", "Indexed", "Microsoft.ContainerService.Data", "Microsoft.CustomerLockbox.Data", "Microsoft.DataCatalog.Data", "Microsoft.KeyVault.Data", "Microsoft.Kubernetes.Data", "Microsoft.MachineLearningServices.Data", "Microsoft.Network.Data", "Microsoft.Synapse.Data"], policy.mode)
-    ])
-    error_message = "Invalid value for mode."
-  }
 }
 
 variable "assignments" {
