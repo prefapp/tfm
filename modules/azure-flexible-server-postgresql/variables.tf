@@ -68,7 +68,7 @@ variable "postgresql_flexible_server" {
 
 variable "postgresql_flexible_server_configuration" {
     type = map(object({
-        name    = string
-        value   = string
+        name    = optional(string)
+        value   = optional(string)
     }))
 }
