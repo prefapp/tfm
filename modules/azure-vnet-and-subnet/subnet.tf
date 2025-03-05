@@ -28,7 +28,6 @@ resource "azurerm_subnet" "subnet" {
   # all delegations in a subnet must be for the same service. For instance,
   # you can’t have a delegation for Microsoft.ContainerInstance/containerGroups
   # and another for Microsoft.Web/serverFarms in the same subnet.
-  private_endpoint_network_policies_enabled     = lookup(each.value.subnet_value, "private_endpoint_network_policies_enabled", true)
   private_link_service_network_policies_enabled = lookup(each.value.subnet_value, "private_link_service_network_policies_enabled", true)
   service_endpoints                             = lookup(each.value.subnet_value, "service_endpoints", [])
 
