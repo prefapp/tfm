@@ -67,22 +67,4 @@ variable "assignments" {
     })))
   }))
   default = []
-  validation {
-    condition = alltrue([
-      for assignment in var.assignments : length(assignment.name) <= 64
-    ])
-    error_message = "Invalid value for name length. It cannot exceed 64 characters."
-  }
-  validation {
-    condition = alltrue([
-      for assignment in var.assignments : !can(assignment.identity) || contains(["SystemAssigned", "UserAssigned"], assignment.identity.type)
-    ])
-    error_message = "Invalid value for identity type. Possible values are SystemAssigned and UserAssigned."
-  }
-  validation {
-    condition = alltrue([
-      for assignment in var.assignments : can(assignment.identity) ? can(assignment.location) : true
-    ])
-    error_message = "The location field must also be specified when identity is specified."
-  }
 }
