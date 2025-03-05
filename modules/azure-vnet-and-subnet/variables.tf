@@ -1,12 +1,13 @@
 variable "virtual_network" {
   description = "Properties of the virtual network"
   type = object({
+    name                = string
     location            = string
     address_space       = list(string)
     subnets = map(object({
       address_prefixes                              = list(string)
-      private_endpoint_network_policies_enabled     = optional(bool)
-      private_link_service_network_policies_enabled = optional(bool)
+      private_endpoint_network_policies_enabled     = optional(bool, true)
+      private_link_service_network_policies_enabled = optional(bool, true)
       service_endpoints                             = optional(list(string))
       delegation = optional(list(object({
         name = string
