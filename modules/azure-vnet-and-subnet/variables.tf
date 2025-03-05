@@ -6,7 +6,7 @@ variable "virtual_network" {
     address_space = list(string)
     subnets = map(object({
       address_prefixes                              = list(string)
-      private_endpoint_network_policies_enabled     = optional(string, "Enabled")
+      private_endpoint_network_policies_enabled     = optional(string, "Disabled")
       private_link_service_network_policies_enabled = optional(bool, true)
       service_endpoints                             = optional(list(string))
       delegation = optional(list(object({
@@ -33,7 +33,7 @@ variable "private_dns_zone_virtual_network_links" {
   type = map(object({
     name                  = string
     private_dns_zone_name = string
-    registration_enabled  = bool
+    registration_enabled  = optional(bool, false)
   }))
   default = {}
 }

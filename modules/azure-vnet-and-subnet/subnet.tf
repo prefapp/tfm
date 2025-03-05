@@ -22,7 +22,7 @@ resource "azurerm_subnet" "subnet" {
   address_prefixes     = each.value.subnet_value.address_prefixes
 
   private_link_service_network_policies_enabled = lookup(each.value.subnet_value, "private_link_service_network_policies_enabled", true)
-  private_endpoint_network_policies     = lookup(each.value.subnet_value, "private_endpoint_network_policies_enabled", "Enabled")
+  private_endpoint_network_policies             = lookup(each.value.subnet_value, "private_endpoint_network_policies_enabled", "Enabled")
   service_endpoints                             = lookup(each.value.subnet_value, "service_endpoints", [])
 
   dynamic "delegation" {
