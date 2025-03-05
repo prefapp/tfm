@@ -21,9 +21,11 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 data "azurerm_resources" "key_vault" {
   type = "Microsoft.KeyVault/vaults"
   required_tags = {
-    Producto = "${data.azurerm_resource_group.resource_group.tags.Producto}"
-    tenant   = "${data.azurerm_resource_group.resource_group.tags.cliente}"
-    env      = "${data.azurerm_resource_group.resource_group.tags.env}"
+    Producto    = "${data.azurerm_resource_group.resource_group.tags.Producto}"
+    tenant      = "${data.azurerm_resource_group.resource_group.tags.cliente}"
+    env         = "${data.azurerm_resource_group.resource_group.tags.env}"
+    application = "${data.azurerm_resource_group.resource_group.tags.application}"
+    cliente     = "${data.azurerm_resource_group.resource_group.tags.cliente}"
   }
 }
 
