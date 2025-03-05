@@ -75,7 +75,7 @@ variable "assignments" {
   }
   validation {
     condition = alltrue([
-      for assignment in var.assignments : contains(["SystemAssigned", "UserAssigned"], assignment.identity.type)
+      for assignment in var.assignments : !can(assignment.identity) || contains(["SystemAssigned", "UserAssigned"], assignment.identity.type)
     ])
     error_message = "Invalid value for identity type. Possible values are SystemAssigned and UserAssigned."
   }
