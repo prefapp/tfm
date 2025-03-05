@@ -30,5 +30,5 @@ data "azurerm_resources" "key_vault" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
 data "azurerm_key_vault_secret" "administrator_password" {
   name         = var.administrator_password_key_vault_secret_name
-  key_vault_id = data.azurerm_key_vault.key_vault.id
+  key_vault_id = data.azurerm_resources.key_vault.id
 }
