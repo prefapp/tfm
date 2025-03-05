@@ -20,7 +20,7 @@ resource "azurerm_subnet" "subnet" {
   name                 = each.value.subnet_key
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.this[each.value.vnet_key].name
-  address_prefixes     = each.value.subnet_value.address_prefixes
+  address_prefixes     = each.value.subnet_value.subnet_prefixes
 
   # Use the lookup function to get the list of delegations from the subnet definition,
   # and use an empty list if the delegation attribute is not specified
