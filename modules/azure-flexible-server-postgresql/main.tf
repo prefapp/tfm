@@ -1,3 +1,7 @@
+locals {
+  tags = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "this" {
   name                   = var.postgresql_flexible_server.name
@@ -14,7 +18,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   sku_name               = var.postgresql_flexible_server.sku_name
   replication_role       = var.postgresql_flexible_server.replication_role
   create_mode            = var.postgresql_flexible_server.create_mode
-  tags                   = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
+  tags                   = local.tags
   maintenance_window {
     day_of_week  = var.postgresql_flexible_server.maintenance_window.day_of_week
     start_hour   = var.postgresql_flexible_server.maintenance_window.start_hour
