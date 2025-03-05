@@ -6,7 +6,7 @@ variable "virtual_network" {
     address_space = list(string)
     subnets = map(object({
       address_prefixes                              = list(string)
-      private_endpoint_network_policies_enabled     = optional(bool, true)
+      private_endpoint_network_policies_enabled     = optional(bool, "Enabled")
       private_link_service_network_policies_enabled = optional(bool, true)
       service_endpoints                             = optional(list(string))
       delegation = optional(list(object({
