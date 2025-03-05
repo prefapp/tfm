@@ -1,10 +1,10 @@
 locals {
   subnets = flatten([
     # Iterate over each virtual network
-    for vnet_key, vnet_value in var.virtual_network.subnets : [
+    for vnet_key, vnet_value in var.virtual_network : [
       # Iterate over each subnet in the current virtual network
-      for subnet_key, subnet_value in vnet_value : {
-        vnet_key     = vnet_key
+      for subnet_key, subnet_value in vnet_value.subnets : {
+        vnet_name    = vnet_value.name
         subnet_key   = subnet_key
         subnet_value = subnet_value
       }
@@ -14,11 +14,11 @@ locals {
 
 # Resource block for creating Azure subnets
 resource "azurerm_subnet" "subnet" {
-  for_each = { for subnet in local.subnets : "${subnet.vnet_key}.${subnet.subnet_key}" => subnet }
+  for_each = { for subnet in local.subnets : "${subnet.vnet_name}.${subnet.subnet_key}" => subnet }
 
   name                 = each.value.subnet_key
   resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.this[each.value.vnet_key].name
+  virtual_network_name = each.value.vnet_name
   address_prefixes     = each.value.subnet_value.address_prefixes
 
   private_link_service_network_policies_enabled = lookup(each.value.subnet_value, "private_link_service_network_policies_enabled", true)
