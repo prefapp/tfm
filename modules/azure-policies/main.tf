@@ -37,7 +37,7 @@ resource "azurerm_resource_policy_assignment" "this" {
   not_scopes           = each.value.not_scopes
 
   dynamic "identity" {
-    for_each = can(each.value.identity) ? [each.value.identity] : []
+    for_each = each.value.identity != null ? [each.value.identity] : []
     content {
       type         = identity.value.type
       identity_ids = identity.value.identity_ids
@@ -45,7 +45,7 @@ resource "azurerm_resource_policy_assignment" "this" {
   }
 
   dynamic "non_compliance_message" {
-    for_each = tolist(each.value.non_compliance_message)
+    for_each = each.value.non_compliance_message != null ? [each.value.non_compliance_message] : []
     content {
       content                        = non_compliance_message.value.content
       policy_definition_reference_id = non_compliance_message.value.policy_definition_reference_id
@@ -53,25 +53,18 @@ resource "azurerm_resource_policy_assignment" "this" {
   }
 
   dynamic "overrides" {
-    for_each = tolist(each.value.overrides)
+    for_each = each.value.overrides != null ? [each.value.overrides] : []
     content {
       value = overrides.value.value
-      dynamic "selectors" {
-        for_each = tolist(overrides.value.selectors)
-        content {
-          in     = selectors.value.in
-          not_in = selectors.value.not_in
-        }
-      }
     }
   }
 
   dynamic "resource_selectors" {
-    for_each = tolist(each.value.resource_selectors)
+    for_each = each.value.resource_selectors != null ? [each.value.resource_selectors] : []
     content {
       name = resource_selectors.value.name
       dynamic "selectors" {
-        for_each = tolist(resource_selectors.value.selectors)
+        for_each = each.value.selectors != null ? [each.value.selectors] : []
         content {
           kind   = selectors.value.kind
           in     = selectors.value.in
@@ -97,7 +90,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
   not_scopes           = each.value.not_scopes
 
   dynamic "identity" {
-    for_each = can(each.value.identity) ? [each.value.identity] : []
+    for_each = each.value.identity != null ? [each.value.identity] : []
     content {
       type         = identity.value.type
       identity_ids = identity.value.identity_ids
@@ -105,7 +98,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
   }
 
   dynamic "non_compliance_message" {
-    for_each = tolist(each.value.non_compliance_message)
+    for_each = each.value.non_compliance_message != null ? [each.value.non_compliance_message] : []
     content {
       content                        = non_compliance_message.value.content
       policy_definition_reference_id = non_compliance_message.value.policy_definition_reference_id
@@ -113,18 +106,18 @@ resource "azurerm_resource_group_policy_assignment" "this" {
   }
 
   dynamic "overrides" {
-    for_each = tolist(each.value.overrides)
+    for_each = each.value.overrides != null ? [each.value.overrides] : []
     content {
       value = overrides.value.value
     }
   }
 
   dynamic "resource_selectors" {
-    for_each = tolist(each.value.resource_selectors)
+    for_each = each.value.resource_selectors != null ? [each.value.resource_selectors] : []
     content {
       name = resource_selectors.value.name
       dynamic "selectors" {
-        for_each = tolist(resource_selectors.value.selectors)
+        for_each = each.value.selectors != null ? [each.value.selectors] : []
         content {
           kind   = selectors.value.kind
           in     = selectors.value.in
@@ -150,7 +143,7 @@ resource "azurerm_subscription_policy_assignment" "this" {
   not_scopes           = each.value.not_scopes
 
   dynamic "identity" {
-    for_each = can(each.value.identity) ? [each.value.identity] : []
+    for_each = each.value.identity != null ? [each.value.identity] : []
     content {
       type         = identity.value.type
       identity_ids = identity.value.identity_ids
@@ -158,7 +151,7 @@ resource "azurerm_subscription_policy_assignment" "this" {
   }
 
   dynamic "non_compliance_message" {
-    for_each = tolist(each.value.non_compliance_message)
+    for_each = each.value.non_compliance_message != null ? [each.value.non_compliance_message] : []
     content {
       content                        = non_compliance_message.value.content
       policy_definition_reference_id = non_compliance_message.value.policy_definition_reference_id
@@ -166,18 +159,18 @@ resource "azurerm_subscription_policy_assignment" "this" {
   }
 
   dynamic "overrides" {
-    for_each = tolist(each.value.overrides)
+    for_each = each.value.overrides != null ? [each.value.overrides] : []
     content {
       value = overrides.value.value
     }
   }
 
   dynamic "resource_selectors" {
-    for_each = tolist(each.value.resource_selectors)
+    for_each = each.value.resource_selectors != null ? [each.value.resource_selectors] : []
     content {
       name = resource_selectors.value.name
       dynamic "selectors" {
-        for_each = tolist(resource_selectors.value.selectors)
+        for_each = each.value.selectors != null ? [each.value.selectors] : []
         content {
           kind   = selectors.value.kind
           in     = selectors.value.in
@@ -203,7 +196,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   not_scopes           = each.value.not_scopes
 
   dynamic "identity" {
-    for_each = can(each.value.identity) ? [each.value.identity] : []
+    for_each = each.value.identity != null ? [each.value.identity] : []
     content {
       type         = identity.value.type
       identity_ids = identity.value.identity_ids
@@ -211,7 +204,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   }
 
   dynamic "non_compliance_message" {
-    for_each = tolist(each.value.non_compliance_message)
+    for_each = each.value.non_compliance_message != null ? [each.value.non_compliance_message] : []
     content {
       content                        = non_compliance_message.value.content
       policy_definition_reference_id = non_compliance_message.value.policy_definition_reference_id
@@ -219,25 +212,18 @@ resource "azurerm_management_group_policy_assignment" "this" {
   }
 
   dynamic "overrides" {
-    for_each = tolist(each.value.overrides)
+    for_each = each.value.overrides != null ? [each.value.overrides] : []
     content {
       value = overrides.value.value
-      dynamic "selectors" {
-        for_each = tolist(overrides.value.selectors)
-        content {
-          in     = selectors.value.in
-          not_in = selectors.value.not_in
-        }
-      }
     }
   }
 
   dynamic "resource_selectors" {
-    for_each = tolist(each.value.resource_selectors)
+    for_each = each.value.resource_selectors != null ? [each.value.resource_selectors] : []
     content {
       name = resource_selectors.value.name
       dynamic "selectors" {
-        for_each = tolist(resource_selectors.value.selectors)
+        for_each = each.value.selectors != null ? [each.value.selectors] : []
         content {
           kind   = selectors.value.kind
           in     = selectors.value.in
