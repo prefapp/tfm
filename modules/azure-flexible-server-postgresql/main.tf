@@ -32,13 +32,8 @@ resource "azurerm_postgresql_flexible_server" "this" {
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "this" {
-  name      = var.postgresql_flexible_server_configuration.name
+  for_each  = var.postgresql_flexible_server_configuration
+  name      = each.value.name
   server_id = azurerm_postgresql_flexible_server.this.id
-  value     = var.postgresql_flexible_server_configuration.value
-}
-
-resource "azurerm_postgresql_flexible_server_configuration" "pgbouncer" {
-  name      = "pgbouncer.enabled"
-  server_id = azurerm_postgresql_flexible_server.this.id
-  value     = "TRUE"
+  value     = each.value.value
 }
