@@ -4,7 +4,7 @@ data "azurerm_subscription" "current" {}
 
 data "azurerm_policy_definition" "this" {
   for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
-  display_name = each.value.policy_name
+  name     = each.value.policy_name
 }
 
 
