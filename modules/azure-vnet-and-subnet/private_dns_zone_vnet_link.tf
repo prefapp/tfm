@@ -4,7 +4,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
   name                  = each.value.name
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = each.value.private_dns_zone_name
-  virtual_network_id    = module.network.vnet_id
+  virtual_network_id    = azurerm_virtual_network.this.id
   registration_enabled  = each.value.registration_enabled
   tags                  = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
   depends_on = [

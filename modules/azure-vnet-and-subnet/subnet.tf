@@ -2,7 +2,7 @@
 locals {
   subnets = flatten([
     # Iterate over each virtual network
-    for vnet_key, vnet_value in var.virtual_networks : [
+    for vnet_key, vnet_value in var.virtual_network : [
       # Iterate over each subnet in the current virtual network
       for subnet_key, subnet_value in vnet_value.subnets : {
         vnet_key = vnet_key
