@@ -41,9 +41,7 @@ variable "tags_from_rg" {
 
 variable "tags" {
   type = map(string)
-  default = {
-    "name" = "value"
-  }
+  default = {}
 }
 
 variable "postgresql_flexible_server" {

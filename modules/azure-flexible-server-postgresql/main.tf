@@ -5,7 +5,7 @@ locals {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "this" {
   name                   = var.postgresql_flexible_server.name
-  resource_group_name    = var.postgresql_flexible_server.resource_group_name
+  resource_group_name    = var.resource_group
   location               = var.postgresql_flexible_server.location
   version                = var.postgresql_flexible_server.version
   delegated_subnet_id    = data.azurerm_subnet.subnet.id
