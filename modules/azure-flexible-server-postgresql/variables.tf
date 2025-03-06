@@ -13,7 +13,7 @@ variable "subnet" {
 variable "dns_private_zone" {
     type = object({
         name                     = string
-        resource_group_name      = string
+        resource_group_name      = optional(string)
     })
 }
 

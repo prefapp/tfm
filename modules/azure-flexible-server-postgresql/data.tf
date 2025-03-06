@@ -29,7 +29,7 @@ locals {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
 data "azurerm_private_dns_zone" "dns_private_zone" {
   name                = var.dns_private_zone.name
-  resource_group_name = var.dns_private_zone.resource_group_name
+  resource_group_name = local.resource_group_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
