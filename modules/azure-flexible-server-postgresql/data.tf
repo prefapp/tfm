@@ -41,5 +41,5 @@ data "azurerm_key_vault" "key_vault" {
 data "azurerm_key_vault_secret" "administrator_password" {
   count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
   name         = var.administrator_password_key_vault_secret_name
-  key_vault_id = data.azurerm_key_vault.key_vault.id
+  key_vault_id = data.azurerm_key_vault.key_vault[0].id
 }
