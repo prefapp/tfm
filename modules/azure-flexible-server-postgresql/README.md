@@ -17,7 +17,6 @@
 | Resource | Type |
 |---------|------|
 | [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
-| [azurerm_user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | Resource |
 | [azurerm_postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | Resource |
 | [azurerm_postgresql_flexible_server_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | Resource |
 | [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | Data |
@@ -65,7 +64,6 @@ administrator_password_key_vault_secret_name: "your-secret-password"
 postgresql_flexible_server:
   location: "eastus"
   name: "flexible-server-name"
-  resource_group_name: "your-resource-group"
   version: "15"
   administrator_login: "admin1"
   zone: "2"
