@@ -20,6 +20,11 @@ data "azurerm_resources" "subnet" {
   }
 }
 
+locals {
+  vnet_name             = data.azurerm_resources.subnet.name
+  resource_group_name   = data.azurerm_resources.subnet.resource_group_name
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
 data "azurerm_private_dns_zone" "dns_private_zone" {
   name                = var.dns_private_zone.name
