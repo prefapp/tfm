@@ -11,6 +11,12 @@ data "azurerm_subnet" "subnet" {
   resource_group_name  = local.resource_group_name
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
+data "azurerm_private_dns_zone" "dns_private_zone" {
+  name                = var.dns_private_zone.name
+  resource_group_name = local.resource_group_name
+}
+
 data "azurerm_resources" "subnet" {
   type = "Microsoft.Network/virtualNetworks"
   required_tags = {
@@ -23,13 +29,6 @@ data "azurerm_resources" "subnet" {
 locals {
   virtual_network_name = try(data.azurerm_resources.subnet.resources[0].name, "")
   resource_group_name  = try(data.azurerm_resources.subnet.resources[0].resource_group_name, "")
-}
-
-
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
-data "azurerm_private_dns_zone" "dns_private_zone" {
-  name                = var.dns_private_zone.name
-  resource_group_name = local.resource_group_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
