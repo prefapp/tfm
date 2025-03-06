@@ -47,6 +47,7 @@ variable "tags" {
 variable "postgresql_flexible_server" {
   type = object({
     name                = string
+    resource_group_name = string
     location            = string
     version             = optional(number)
     administrator_login = optional(string)
