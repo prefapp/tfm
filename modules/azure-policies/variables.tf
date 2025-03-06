@@ -19,6 +19,7 @@ variable "assignments" {
   description = "List of objects containing all the variables for the policy assignments."
   type = list(object({
     name                 = string
+    policy_type          = optional(string, "builtin")
     policy_name          = optional(string)
     policy_definition_id = optional(string)
     resource_id          = string
@@ -55,4 +56,10 @@ variable "assignments" {
     })))
   }))
   default = []
+  validation {
+    condition = alltrue([
+      for assignment in var.assignments : contains(["builtin", "custom"], assignment.policy_type)
+    ])
+    error_message = "policy_type can only be 'builtin' or 'custom'."
+  }
 }

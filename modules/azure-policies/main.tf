@@ -2,6 +2,11 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/data-sources/subscription
 data "azurerm_subscription" "current" {}
 
+data "azurerm_policy_definition" "this" {
+  for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
+  display_name     = each.value.policy_name
+}
+
 data "azurerm_policy_definition_built_in" "this" {
   for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
   display_name     = each.value.policy_name
@@ -73,6 +78,7 @@ resource "azurerm_resource_policy_assignment" "this" {
       }
     }
   }
+  depends_on = [ azurerm_policy_definition.this ]
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_group_policy_assignment
@@ -126,6 +132,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
       }
     }
   }
+  depends_on = [ azurerm_policy_definition.this ]
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/subscription_policy_assignment
@@ -179,6 +186,7 @@ resource "azurerm_subscription_policy_assignment" "this" {
       }
     }
   }
+  depends_on = [ azurerm_policy_definition.this ]
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_policy_assignment
@@ -232,4 +240,5 @@ resource "azurerm_management_group_policy_assignment" "this" {
       }
     }
   }
+  depends_on = [ azurerm_policy_definition.this ]
 }
