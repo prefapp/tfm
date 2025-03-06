@@ -33,7 +33,7 @@ variable "private_dns_zone_virtual_network_links" {
   type = map(object({
     name                  = string
     private_dns_zone_name = string
-    registration_enabled  = optional(bool, false)
+    registration_enabled  = optional(bool, true)
   }))
   default = {}
 }
@@ -42,10 +42,10 @@ variable "peerings" {
   description = "List of virtual network peerings"
   type = list(object({
     peering_name                 = string
-    allow_forwarded_traffic      = bool
-    allow_gateway_transit        = bool
-    allow_virtual_network_access = bool
-    use_remote_gateways          = bool
+    allow_forwarded_traffic      = optional(bool, false)
+    allow_gateway_transit        = optional(bool, false)
+    allow_virtual_network_access = optional(bool, true)
+    use_remote_gateways          = optional(bool, false)
     resource_group_name          = string
     vnet_name                    = string
     remote_virtual_network_id    = string
