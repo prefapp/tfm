@@ -1,118 +1,88 @@
-# Terraform Module: azurerm_postgresql_flexible_server
-
-This Terraform Module creates a [Azure PostgreSQL Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/) with the following features:
-
-- It creates a single Flexible Server
-- It can create it from a PITr
-- It updates the admin password or takes if from an Azure KeyVault Secret
-- It can update and manage Server additional configurations
-
-## Usage
-
-Module usage:
-
-```hcl
-module "postgresql" {
- source = "<module url>"
- location = "<region>"
- data = yamldecode(file("<path to yaml file with the data>"))
-}
-```
-
 ## Requirements
 
-### Inputs
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.116.0 |
 
-- A DNS private zone
-- A resource group
-- A subnet with a Service Delegation for ```Microsoft.DBforPostgreSQL/flexibleServers``` and service endpoints to ```Microsoft.Storage```
-- A keyvault to store/read a secret with the PostgreSQL admin pass
+## Providers
 
-### Yaml input
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.116.0 |
 
-The module can be used with data expressed in a yaml file such as:
+
+## Resources and datas
+
+| Resource | Type |
+|---------|------|
+| [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
+| [azurerm_user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | Resource |
+| [azurerm_postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | Resource |
+| [azurerm_postgresql_flexible_server_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | Resource |
+| [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | Data |
+| [azurerm_private_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | Data |
+| [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault) | Data |
+| [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | Data |
+
+## Inputs
+
+| Nombre | Descripción | Tipo | Default | Requerido |
+|--------|------------|------|---------|:--------:|
+| `resource_group` | Name of the resource group | `string` | N/A | ✅ |
+| `tags_from_rg` | Setting it to true, gives the tags from your resource group | `bool` | `false` | ❌ |
+| `tags` | Input tags if you dont want the resource group ones | `map(string)` | `{ "name": "value" }` | ❌ |
+| `subnet` | Subnet config | `object` | N/A | ✅ |
+| `dns_private_zone` | DNS private zone config | `object` | N/A | ✅ |
+| `postgresql_flexible_server` |  PostgreSQL Flexible config | `object` | N/A | ✅ |
+| `postgresql_flexible_server_configuration` | Aditional config for the server | `map(object)` | `{}` | ❌ |
+| `key_vault` | Key Vault config | `object` | N/A | ✅ |
+| `administrator_password_key_vault_secret_name` | Name of the secret password from key vault | `string` | N/A | ✅ |
+| `admin_password` | Administrator password (sensitive) | `string` | `null` | ❌ |
+
+### Note
+If you add a **admin_pasword** as a input, you won't get the **administrator_password_key_vault_secret_name**.
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="id"></a> [id](#output\_id) | The ID of the postgresql flexible server |
+
+## Example Usage
 
 ```yaml
-
-server:
-  name: mi-server
-  version: 12
-  disk_size: 32768
-  sku_name: "GP_Standard_D2ds_v4"
-  tags: {}
-  zone: "1"
-  public_network_access_enabled: false
-  replication_role:
-
-server_creation:
-  mode: Default
-  #mode: PointInTimeRestore
-  #from_pitr:
-  #  source_server_name: "mi-original-server"
-  #  source_server_resource_group: "mi-original-server-rg"
-  #  pitr: "2018-03-13T13:59:00Z"
-
-server_parameters:
-  azure_extensions:
-    - PG_BUFFERCACHE
-    - PG_STAT_STATEMENTS
-    - PLPGSQL
-    - UNACCENT
-    - UUID-OSSP
-
-backup_retention_days: 12
-
-administrator_login: pgadmin
-
-maintainance_window:
-  day_of_week: 6
-  start_hour: 0
-  start_minute: 0
-
-authentication:
-  password_auth_enabled: true
-  active_directory_auth_enabled: false
-
-password:
-  key_vault_name: test-tfm-prefapp2
-  key_vault_resource_group: test-modulo
-  key_vault_secret_name: pg-pass2
-
-resource_group:
-  name: test-modulo
-
+resource_group: "your-resource-group"
+tags_from_rg: true
 subnet:
-  id: "/subscriptions/152234234/resourceGroups/test-modulo/providers/Microsoft.Network/virtualNetworks/test-modulo/subnets/default"
-  #name: default
-  vnet:
-    name: test-modulo
-    resource_group: test-modulo
-
-dns:
-  private:
-    name: test.tfm.postgres.database.azure.com
-    resource_group: test-modulo
+  name: "subnet_name"
+dns_private_zone:
+  name: "dns-private-name"
+key_vault:
+  name: "key-vault-name"
+  resource_group_name: "key-vault-resource-group"
+administrator_password_key_vault_secret_name: "your-secret-password"
+postgresql_flexible_server:
+  location: "eastus"
+  name: "flexible-server-name"
+  resource_group_name: "your-resource-group"
+  version: "15"
+  administrator_login: "admin1"
+  zone: "2"
+  storage_mb: "65536"
+  sku_name: "GP_Standar"
+  maintenance_window:
+    day_of_week: 6
+    start_hour: 0
+    start_minute: 0
+  authentication:
+    active_directory_auth_enabled: false
+    password_auth_enabled: true
+postgresql_flexible_server_configuration:
+  azure.config1:
+    name: "azure.config1"
+    value: "Config1"
+  azure.config2:
+    name: "azure.config2"
+    value: "Config2"
 ```
-
-## PITR creation explanation
-
-The creation of a server from a PITR will create a new server. If the source is different and is deleted, the new server will not be affected, however, you will have to change the `server_creation.mode` to `Default` after its creation so that it is not tried to restore again and thus be able to apply a `terraform plan` or` terraform apply` without trying to restore again.
-
-## Get list of PiTRs backups
-
-```yaml
-az postgres flexible-server backup list --resource-group test-modulo --name mi-server
-```
-
-## Password creation
-
-Now it suffises to pass a key vault , a resource group and a key name to have a random password created, inserted as a secret in the KV and as the pass of the server. 
-
-```yaml
-password:
-  key_vault_name: test-tfm-prefapp
-  key_vault_resource_group: test-modulo
-  key_vault_secret_name: pg-pass
-```
-
-If the password exists it will no produce any changes, because it's vinculated to the `random_password` resource
