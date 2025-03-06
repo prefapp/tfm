@@ -21,7 +21,7 @@ data "azurerm_resources" "subnet" {
 }
 
 locals {
-  vnet_name             = data.azurerm_resources.subnet.name
+  vnet_name             = data.azurerm_resources.subnet.virtual_network_name
   resource_group_name   = data.azurerm_resources.subnet.resource_group_name
 }
 
