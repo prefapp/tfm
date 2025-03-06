@@ -3,9 +3,9 @@ output "vnet_id" {
   value = azurerm_virtual_network.this.id
 }
 
-# Output the IDs of the subnets
+# Output the IDs of the subnets with their names as keys
 output "subnet_ids" {
-  value = [for subnet in azurerm_subnet.this : subnet.id]
+  value = { for name, subnet in azurerm_subnet.subnet : name => subnet.id }
 }
 
 # Output the IDs of the private DNS zones
