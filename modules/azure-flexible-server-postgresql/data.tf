@@ -17,7 +17,7 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
   resource_group_name = local.resource_group_name
 }
 
-data "azurerm_resources" "subnet" {
+data "azurerm_resources" "vnet" {
   type = "Microsoft.Network/virtualNetworks"
   required_tags = {
     tenant = "${data.azurerm_resource_group.resource_group.tags.tenant}"
