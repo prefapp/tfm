@@ -5,8 +5,8 @@ variable "resource_group" {
 variable "subnet" {
     type = object({
         name                     = string
-        vnet_name                = string
-        vnet_resource_group_name = string
+        vnet_name                = optional(string)
+        vnet_resource_group_name = optional(string)
     })
 }
 
