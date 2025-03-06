@@ -2,12 +2,8 @@ variable "resource_group" {
     type = string
 }
 
-variable "subnet" {
-    type = object({
-        name                     = string
-        vnet_name                = string
-        vnet_resource_group_name = string
-    })
+variable "subnet_name" {
+    type = string
 }
 
 variable "dns_private_zone" {

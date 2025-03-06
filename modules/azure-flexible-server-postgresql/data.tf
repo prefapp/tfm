@@ -4,12 +4,12 @@ data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
-#data "azurerm_subnet" "subnet" {
-#  name                 = var.subnet.name
-#  virtual_network_name = var.subnet.vnet_name
-#  resource_group_name  = var.subnet.vnet_resource_group_name
-#}
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
+data "azurerm_subnet" "subnet" {
+  subnet_name                 = var.subnet.name
+  virtual_network_name = local.vnet_name
+  resource_group_name  = local.vnet_resource_group_name
+}
 
 data "azurerm_resources" "subnet" {
   type = "Microsoft.Network/virtualNetworks"
@@ -21,8 +21,8 @@ data "azurerm_resources" "subnet" {
 }
 
 locals {
-  vnet_name             = data.azurerm_resources.subnet.name
-  resource_group_name   = data.azurerm_resources.subnet.resource_group_name
+  vnet_name                   = data.azurerm_resources.subnet.name
+  vnet_resource_group_namer   = data.azurerm_resources.subnet.resource_group_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
