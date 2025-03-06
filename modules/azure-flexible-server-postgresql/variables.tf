@@ -10,6 +10,12 @@ variable "subnet" {
     })
 }
 
+variable "admin_password" {
+    type      = string
+    default   = null
+    sensitive = true
+}
+
 variable "dns_private_zone" {
     type = object({
         name                     = string
