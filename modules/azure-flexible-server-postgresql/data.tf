@@ -32,12 +32,14 @@ locals {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
 data "azurerm_key_vault" "key_vault" {
+  count               = var.key_vault != null && var.key_vault.name != "" && var.key_vault.resource_group_name != "" ? 1 : 0
   name                = var.key_vault.name
   resource_group_name = var.key_vault.resource_group_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
 data "azurerm_key_vault_secret" "administrator_password" {
+  count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
   name         = var.administrator_password_key_vault_secret_name
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }

@@ -25,13 +25,14 @@ variable "dns_private_zone" {
 
 variable "key_vault" {
   type = object({
-    name                = string
-    resource_group_name = string
+    name                = optional(string)
+    resource_group_name = optional(string)
   })
 }
 
 variable "administrator_password_key_vault_secret_name" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "tags_from_rg" {
