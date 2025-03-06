@@ -26,7 +26,7 @@ resource "azurerm_policy_definition" "this" {
 resource "azurerm_resource_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource" }
   name                 = each.value.name
-  policy_definition_id = can(each.value.policy_definition_id) ? each.value.policy_definition_id : data.azurerm_policy_definition_built_in.this[each.key].id
+  policy_definition_id = lookup(each.value, "policy_definition_id", null) != null ? each.value.policy_definition_id : lookup(data.azurerm_policy_definition_built_in.this, each.key, null) != null ? data.azurerm_policy_definition_built_in.this[each.key].id : null
   resource_id          = each.value.resource_id
   description          = each.value.description
   display_name         = each.value.display_name
@@ -79,7 +79,7 @@ resource "azurerm_resource_policy_assignment" "this" {
 resource "azurerm_resource_group_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource group" }
   name                 = each.value.name
-  policy_definition_id = can(each.value.policy_definition_id) ? each.value.policy_definition_id : data.azurerm_policy_definition_built_in.this[each.key].id
+  policy_definition_id = lookup(each.value, "policy_definition_id", null) != null ? each.value.policy_definition_id : lookup(data.azurerm_policy_definition_built_in.this, each.key, null) != null ? data.azurerm_policy_definition_built_in.this[each.key].id : null
   resource_group_id    = each.value.resource_id
   description          = each.value.description
   display_name         = each.value.display_name
@@ -132,7 +132,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
 resource "azurerm_subscription_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "subscription" }
   name                 = each.value.name
-  policy_definition_id = can(each.value.policy_definition_id) ? each.value.policy_definition_id : data.azurerm_policy_definition_built_in.this[each.key].id
+  policy_definition_id = lookup(each.value, "policy_definition_id", null) != null ? each.value.policy_definition_id : lookup(data.azurerm_policy_definition_built_in.this, each.key, null) != null ? data.azurerm_policy_definition_built_in.this[each.key].id : null
   subscription_id      = data.azurerm_subscription.current.id
   description          = each.value.description
   display_name         = each.value.display_name
@@ -185,7 +185,7 @@ resource "azurerm_subscription_policy_assignment" "this" {
 resource "azurerm_management_group_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "management group" }
   name                 = each.value.name
-  policy_definition_id = can(each.value.policy_definition_id) ? each.value.policy_definition_id : data.azurerm_policy_definition_built_in.this[each.key].id
+  policy_definition_id = lookup(each.value, "policy_definition_id", null) != null ? each.value.policy_definition_id : lookup(data.azurerm_policy_definition_built_in.this, each.key, null) != null ? data.azurerm_policy_definition_built_in.this[each.key].id : null
   management_group_id  = each.value.management_group_id
   description          = each.value.description
   display_name         = each.value.display_name
