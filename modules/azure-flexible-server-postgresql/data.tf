@@ -5,11 +5,11 @@ data "azurerm_resource_group" "resource_group" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
-data "azurerm_subnet" "subnet" {
-  name                 = var.subnet.name
-  virtual_network_name = var.subnet.vnet_name
-  resource_group_name  = var.subnet.vnet_resource_group_name
-}
+#data "azurerm_subnet" "subnet" {
+#  name                 = var.subnet.name
+#  virtual_network_name = var.subnet.vnet_name
+#  resource_group_name  = var.subnet.vnet_resource_group_name
+#}
 
 data "azurerm_resources" "subnet" {
   type = "Microsoft.Network/virtualNetworks"
