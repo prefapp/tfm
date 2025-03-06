@@ -1,16 +1,24 @@
-output "vnet" {
-  id = vnet_value.id
-  location = vnet_value.location
-  address_space = vnet_value.address_space
-  tags = vnet_value.tags
+# Output the ID of the virtual network
+output "vnet_id" {
+  value = azurerm_virtual_network.this.id
 }
 
-output "subnet" {
-  value = { for subnet_key, subnet_value in azurerm_subnet.subnet : subnet_key => {
-    id = subnet_value.id
-    address_prefixes = subnet_value.address_prefixes
-    network_policies_enabled = subnet_value.private_endpoint_network_policies_enabled
-    private_link_service_network_policies_enabled = subnet_value.private_link_service_network_policies_enabled
-    service_endpoints = subnet_value.service_endpoints
-  }}
+# Output the IDs of the subnets
+output "subnet_ids" {
+  value = [for subnet in azurerm_subnet.this : subnet.id]
+}
+
+# Output the IDs of the private DNS zones
+output "private_dns_zone_ids" {
+  value = [for zone in azurerm_private_dns_zone.this : zone.id]
+}
+
+# Output the IDs of the private DNS zone virtual network links
+output "private_dns_zone_virtual_network_link_ids" {
+  value = [for link in azurerm_private_dns_zone_virtual_network_link.this : link.id]
+}
+
+# Output the IDs of the virtual network peerings
+output "vnet_peering_ids" {
+  value = [for peering in azurerm_virtual_network_peering.this : peering.id]
 }

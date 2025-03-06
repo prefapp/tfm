@@ -1,17 +1,14 @@
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
+data "azurerm_resource_group" "resource_group" {
+  name = var.resource_group_name
+}
+
 # Resource block for creating Azure virtual networks
 # See: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network
-resource "azurerm_virtual_network" "vnet" {
-  # Use the variables for creating each virtual network
-  for_each = var.virtual_networks
-
-  # The name of the virtual network is derived from the key in the local.input map
-  name                = each.key
-  
-  # Other properties of the virtual network are derived from the value in the local.input map
-  location            = each.value.location
-  resource_group_name = each.value.resource_group_name
-  address_space       = each.value.address_space
-  
-  # Tags are also derived from the value in the local.input map
-  tags = each.value.tags
+resource "azurerm_virtual_network" "this" {
+  name                = var.virtual_network.name
+  location            = var.virtual_network.location
+  resource_group_name = var.resource_group_name
+  address_space       = var.virtual_network.address_space
+  tags                = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
 }
