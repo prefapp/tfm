@@ -20,8 +20,8 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 data "azurerm_resources" "subnet" {
   type = "Microsoft.Network/virtualNetworks"
   required_tags = {
-    tenant      = "${data.azurerm_resource_group.resource_group.tags.tenant}"
-    env         = "${data.azurerm_resource_group.resource_group.tags.env}"
+    tenant = "${data.azurerm_resource_group.resource_group.tags.tenant}"
+    env    = "${data.azurerm_resource_group.resource_group.tags.env}"
   }
 }
 

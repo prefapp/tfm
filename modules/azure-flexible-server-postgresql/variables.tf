@@ -1,49 +1,49 @@
 variable "resource_group" {
-    type = string
+  type = string
 }
 
 variable "subnet" {
-    type = object({
-        name                     = string
-        vnet_name                = optional(string)
-        vnet_resource_group_name = optional(string)
-    })
+  type = object({
+    name                     = string
+    vnet_name                = optional(string)
+    vnet_resource_group_name = optional(string)
+  })
 }
 
 variable "admin_password" {
-    type      = string
-    default   = null
-    sensitive = true
+  type      = string
+  default   = null
+  sensitive = true
 }
 
 variable "dns_private_zone" {
-    type = object({
-        name                     = string
-        resource_group_name      = optional(string)
-    })
+  type = object({
+    name                = string
+    resource_group_name = optional(string)
+  })
 }
 
 variable "key_vault" {
-    type = object({
-        name                = string
-        resource_group_name = string
-    })
+  type = object({
+    name                = string
+    resource_group_name = string
+  })
 }
 
 variable "administrator_password_key_vault_secret_name" {
-    type = string
+  type = string
 }
 
 variable "tags_from_rg" {
-    type    = bool
-    default = false
+  type    = bool
+  default = false
 }
 
 variable "tags" {
-    type    = map(string)
-    default = {
-        "name" = "value"
-    }
+  type = map(string)
+  default = {
+    "name" = "value"
+  }
 }
 
 variable "postgresql_flexible_server" {
@@ -59,7 +59,7 @@ variable "postgresql_flexible_server" {
     sku_name            = optional(string)
     replication_role    = optional(string)
     create_mode         = optional(string)
-    maintenance_window  = optional(object({
+    maintenance_window = optional(object({
       day_of_week  = number
       start_hour   = number
       start_minute = number
@@ -73,8 +73,8 @@ variable "postgresql_flexible_server" {
 }
 
 variable "postgresql_flexible_server_configuration" {
-    type = map(object({
-        name    = optional(string)
-        value   = optional(string)
-    }))
+  type = map(object({
+    name  = optional(string)
+    value = optional(string)
+  }))
 }
