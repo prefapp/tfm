@@ -11,6 +11,14 @@ data "azurerm_subnet" "subnet" {
   resource_group_name  = var.subnet.vnet_resource_group_name
 }
 
+data "azurerm_resources" "subnet" {
+  type = "Microsoft.Network/virtualNetworks"
+  required_tags = {
+    tenant = "${data.azurerm_resource_group.resource_group.tags.tenant}"
+    env    = "${data.azurerm_resource_group.resource_group.tags.env == "pro" ? "predev" : data.azurerm_resource_group.resource_group.tags.env}"
+  }
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
 data "azurerm_private_dns_zone" "dns_private_zone" {
   name                = var.dns_private_zone.name

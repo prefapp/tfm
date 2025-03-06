@@ -4,16 +4,16 @@ variable "resource_group" {
 
 variable "subnet" {
     type = object({
-        name                     = string
-        vnet_name                = string
-        vnet_resource_group_name = string
+        name                     = optional(string)
+        vnet_name                = optional(string)
+        vnet_resource_group_name = optional(string)
     })
 }
 
 variable "dns_private_zone" {
     type = object({
-        name                     = string
-        resource_group_name      = string
+        name                     = optional(string)
+        resource_group_name      = optional(string)
     })
 }
 
