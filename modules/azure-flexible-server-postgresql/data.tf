@@ -16,7 +16,7 @@ data "azurerm_resources" "subnet" {
   required_tags = {
     application = "common"
     tenant      = "${data.azurerm_resource_group.resource_group.tags.tenant}"
-    env         = "${data.azurerm_resource_group.resource_group.tags.env == "pro" ? "predev" : data.azurerm_resource_group.resource_group.tags.env}"
+    env         = "${data.azurerm_resource_group.resource_group.tags.env}"
   }
 }
 
