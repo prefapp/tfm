@@ -7,8 +7,8 @@ data "azurerm_resource_group" "resource_group" {
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "subnet" {
   name                 = var.subnet_name
-  virtual_network_name = local.vnet_name
-  resource_group_name  = local.vnet_resource_group_name
+  virtual_network_name = local.virtual_network_name
+  resource_group_name  = local.resource_group_name
 }
 
 data "azurerm_resources" "subnet" {
