@@ -8,6 +8,9 @@ This module creates one or more virtual networks and subnets.
 
 - [Resource terraform - azurerm_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network)
 - [Resource terraform - azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet)
+- [Resource terraform - azurerm_virtual_network_peering](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering)
+- [Resource terraform - azurerm_private_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone)
+- [Resource terraform - azurerm_private_dns_zone_virtual_network_link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link)
 
 ## Usage
 
@@ -29,275 +32,85 @@ module "githuib-oidc" {
 
 ### Set a data .tfvars
 
-#### Example with comments
+#### Example
 
 ```hcl
-virtual_networks = {
-
-  // Virtual Network 1
-  vnet1 = {
-    location            = "westeurope" // The Azure region where the virtual network is located
-    resource_group_name = "example-resources" // The name of the resource group that the virtual network belongs to
-    address_space       = ["192.20.0.0/16"] // The address space of the virtual network
-    subnets = {
-
-      // Subnet 1 with multiple address prefixes
-      subnet1 = {
-        address_prefixes = [
-          "192.20.1.0/24"
-        ],
-        private_endpoint_network_policies_enabled     = true // default
-        private_link_service_network_policies_enabled = false
-        service_endpoints = [ // The service endpoints that are associated with the subnet
-          "Microsoft.Storage",
-          "Microsoft.Sql"
-        ]
-        delegation = [ // The service delegations for the subnet
-          {
-            name = "delegation"
-            service_delegation = {
-              name = "Microsoft.Web/serverFarms" // The name of the service that the subnet is delegated to
-              actions = [ // The actions that are allowed for the service delegation
-                "Microsoft.Network/virtualNetworks/subnets/action"
-              ]
-            }
-          }
-        ]
-      },
-
-      // Subnet 2 without any service endpoints or delegations
-      subnet2 = {
-        address_prefixes = [
-          "192.20.3.0/24"
-        ]
+tags_from_rg = false
+tags = {
+  environment = "myEnvironment"
+  department  = "myDepartment"
+}
+location = "myLocation"
+resource_group_name = "myResourceGroupName"
+address_space = ["10.107.0.0/16"]
+subnets = {
+  subnet1 = {
+    address_prefixes = ["10.107.0.0/18"]
+    service_endpoints = ["Microsoft.Storage"]
+  }
+  subnet2 = {
+    address_prefixes = ["10.107.64.0/24"]
+    service_endpoints = ["Microsoft.Storage"]
+    delegation = [
+      {
+        name = "Microsoft.DBforPostgreSQL.flexibleServers"
+        service_delegation = {
+          name = "Microsoft.DBforPostgreSQL/flexibleServers"
+          actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+        }
       }
-
-    }
-    tags = { // The tags that are associated with the virtual network
-      environment = "prod"
-      department  = "finance"
-    }
-  },
-
-  // Virtual Network 2 with more complex subnet configurations
-  vnet2 = {
-    location            = "westeurope"
-    resource_group_name = "example-resources"
-    address_space       = ["192.30.0.0/16"]
-    subnets = {
-
-      // Subnet 1
-      subnet1 = {
-        address_prefixes = [
-          "192.30.1.0/24"
-        ],
-        private_endpoint_network_policies_enabled     = false
-        private_link_service_network_policies_enabled = true // default
-        service_endpoints = [
-          "Microsoft.ContainerRegistry",
-          "Microsoft.KeyVault"
-        ]
-        delegation = [
-          {
-            name = "delegation"
-            service_delegation = {
-              name = "Microsoft.ContainerInstance/containerGroups"
-              actions = [
-                "Microsoft.Network/virtualNetworks/subnets/action"
-              ]
-            }
-          }
-        ]
-      },
-
-      // Subnet 2
-      subnet2 = {
-        address_prefixes = [
-          "192.30.2.0/24"
-        ]
-      },
-
-      // Subnet 3
-      subnet3 = {
-        address_prefixes = [
-          "192.30.4.0/24"
-        ]
-      }
-
-    }
-    tags = {
-      environment = "dev"
-    }
-  },
-
-  // Virtual Network 3 without any subnets
-  vnet3 = {
-    location            = "westeurope"
-    resource_group_name = "example-resources"
-    address_space       = ["192.40.0.0/16"]
-
-    subnets = {} // This virtual network does not have any subnets
-
-    tags = {
-      environment = "dev"
-    }
+    ]
   }
 }
-```
-
-#### Example without comments
-
-```hcl
-virtual_networks = {
-  vnet1 = {
-    location            = "westeurope"
-    resource_group_name = "example-resources"
-    address_space       = ["192.20.0.0/16"]
-    subnets = {
-      subnet1 = {
-        address_prefixes = [
-          "192.20.1.0/24"
-        ],
-        private_endpoint_network_policies_enabled     = true
-        private_link_service_network_policies_enabled = false
-        service_endpoints = [
-          "Microsoft.Storage",
-          "Microsoft.Sql"
-        ]
-        delegation = [
-          {
-            name = "delegation"
-            service_delegation = {
-              name = "Microsoft.Web/serverFarms"
-              actions = [
-                "Microsoft.Network/virtualNetworks/subnets/action"
-              ]
-            }
-          }
-        ]
-      },
-      subnet2 = {
-        address_prefixes = [
-          "192.20.3.0/24"
-        ]
-      }
-    }
-    tags = {
-      environment = "prod"
-      department  = "finance"
-    }
+private_dns_zones = [
+  {
+    name = "foo.councilbox.postgres.database.azure.com"
   },
-  vnet2 = {
-    location            = "westeurope"
-    resource_group_name = "example-resources"
-    address_space       = ["192.30.0.0/16"]
-    subnets = {
-      subnet1 = {
-        address_prefixes = [
-          "192.30.1.0/24"
-        ],
-        private_endpoint_network_policies_enabled     = false
-        private_link_service_network_policies_enabled = true
-        service_endpoints = [
-          "Microsoft.ContainerRegistry",
-          "Microsoft.KeyVault"
-        ]
-        delegation = [
-          {
-            name = "delegation"
-            service_delegation = {
-              name = "Microsoft.ContainerInstance/containerGroups"
-              actions = [
-                "Microsoft.Network/virtualNetworks/subnets/action"
-              ]
-            }
-          }
-        ]
-      },
-      subnet2 = {
-        address_prefixes = [
-          "192.30.2.0/24"
-        ]
-      },
-      subnet3 = {
-        address_prefixes = [
-          "192.30.4.0/24"
-        ]
-      }
-    }
-    tags = {
-      environment = "dev"
-    }
-  },
-  vnet3 = {
-    location            = "westeurope"
-    resource_group_name = "example-resources"
-    address_space       = ["192.40.0.0/16"]
-    subnets = {}
-    tags = {
-      environment = "dev"
-    }
+  {
+    name = "privatelink.redis.cache.windows.net"
+  }
+]
+private_dns_zone_virtual_network_links = {
+  "foo.bar.postgres.database.azure.com" = {
+    name = "foo-bar"
+    private_dns_zone_name = "foo.bar.postgres.database.azure.com"
+  }
+  "bar.foo.privatelink.redis.cache.windows.net" = {
+    name = "bar-foo"
+    private_dns_zone_name = "bar.foo.privatelink.redis.cache.windows.net"
+    registration_enabled = false
   }
 }
+peerings = [
+  {
+    peering_name = "myPeeringName"
+    resource_group_name = "myResourceGroupName"
+    vnet_name = "myVnetName"
+    remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
+  }
+]
 ```
 
 ## Output
 
-```output
-vnet = {
-  "vnet1" = {
-    "address_space" = tolist([
-      "192.20.0.0/16",
-    ])
-    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1"
-    "location" = "westeurope"
-    "tags" = tomap({
-      "department" = "finance"
-      "environment" = "prod"
-    })
-  }
-  "vnet2" = {
-    "address_space" = tolist([
-      "192.30.0.0/16",
-    ])
-    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet2"
-    "location" = "westeurope"
-    "tags" = tomap({
-      "environment" = "dev"
-    })
-  }
-  "vnet3" = {
-    "address_space" = tolist([
-      "192.40.0.0/16",
-    ])
-    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet3"
-    "location" = "westeurope"
-    "tags" = tomap({
-      "environment" = "dev"
-    })
-  }
+```hcl
+private_dns_zone_ids = [
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com",
+]
+
+private_dns_zone_virtual_network_link_ids = [
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/bar-foo",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.bar.postgres.database.azure.com/virtualNetworkLinks/foo-bar",
+]
+
+subnet_ids = {
+  "myVnetName.subnet1" = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myVnetName/subnets/subnet1"
+  "myVnetName.subnet2" = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myVnetName/subnets/subnet2"
 }
-subnet = {
-  "vnet1.subnet1" = {
-    "address_prefixes" = tolist([
-      "192.20.1.0/24",
-    ])
-    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"
-    "network_policies_enabled" = true
-    "private_link_service_network_policies_enabled" = false
-    "service_endpoints" = toset([
-      "Microsoft.Sql",
-      "Microsoft.Storage",
-    ])
-  }
-  "vnet1.subnet2" = {
-    "address_prefixes" = tolist([
-      "192.20.3.0/24",
-    ])
-    "id" = "/subscriptions/e7616b70-1ad9-4968-91e0-79863ebdb96e/resourceGroups/example-resources/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet2"
-    "network_policies_enabled" = true
-    "private_link_service_network_policies_enabled" = true
-    "service_endpoints" = toset([])
-  }
+
+vnet_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myVnetName"
+vnet_peering_ids = {
+  "myPeeringName" = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myVnetName/virtualNetworkPeerings/myPeeringName"
 }
 ```
