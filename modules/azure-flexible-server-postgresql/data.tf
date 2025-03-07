@@ -6,7 +6,7 @@ locals {
   tags = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
   virtual_network_name = coalesce(var.vnet.name, local.vnet_from_data)
   resource_group_name  = coalesce(var.vnet.resource_group_name, local.resource_group_from_data)
-  dns_private_zone_name = coalesce(var.dns_private_zone.namen local.dns_private_zone_from_data)
+  dns_private_zone_name = coalesce(var.dns_private_zone.namen, local.dns_private_zone_from_data)
 }
 
 # Data section
