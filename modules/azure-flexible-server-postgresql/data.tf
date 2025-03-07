@@ -12,7 +12,7 @@ data "azurerm_resource_group" "resource_group" {
 }
 
 data "azurerm_virtual_network" "vnet" {
-  name                = var.vnet.vnet_name
+  name                = var.vnet.name
   resource_group_name = var.vnet.resource_group_name
 }
 
