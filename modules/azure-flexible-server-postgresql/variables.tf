@@ -18,9 +18,10 @@ variable "admin_password" {
 
 variable "dns_private_zone" {
   type = object({
-    name                = string
+    name                = optional(string)
     resource_group_name = optional(string)
   })
+  default = {}
 }
 
 variable "key_vault" {
@@ -48,6 +49,11 @@ variable "tags" {
 variable "vnet_tags" {
   type    = map
   default = {}
+}
+
+variable "dns_private_zone_tags" {
+  type    = map
+  default ={}
 }
 
 variable "postgresql_flexible_server" {
