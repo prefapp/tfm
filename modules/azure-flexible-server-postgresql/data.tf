@@ -11,6 +11,7 @@ data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network
 data "azurerm_virtual_network" "vnet" {
   count               = var.vnet.name!= null && var.vnet.resource_group_name != "" ? 1 : 0
   name                = var.vnet.name
@@ -32,9 +33,8 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 
 data "azurerm_resources" "vnet" {
   type = "Microsoft.Network/virtualNetworks"
-  required_tags = {
-    tenant = "${data.azurerm_resource_group.resource_group.tags.tenant}"
-    env    = "${data.azurerm_resource_group.resource_group.tags.env}"
+  for tag in vnet_tags {
+    tag = var.vnet_tags[tag]
   }
 }
 

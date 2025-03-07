@@ -45,6 +45,10 @@ variable "tags" {
   default = {}
 }
 
+variable "vnet_tags" {
+  type = map
+}
+
 variable "postgresql_flexible_server" {
   type = object({
     name                = string
