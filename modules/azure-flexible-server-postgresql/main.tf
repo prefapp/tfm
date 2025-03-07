@@ -1,7 +1,3 @@
-locals {
-  tags = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
-}
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "this" {
   name                   = var.postgresql_flexible_server.name

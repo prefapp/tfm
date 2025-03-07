@@ -70,6 +70,13 @@ variable "postgresql_flexible_server" {
   })
 }
 
+variable "vnet" {
+  type = object[{
+    vnet_name                = optional(string)
+    vnet_resource_group      = optional(string)
+  }]
+}
+
 variable "postgresql_flexible_server_configuration" {
   type = map(object({
     name  = optional(string)

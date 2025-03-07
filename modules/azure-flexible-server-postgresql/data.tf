@@ -1,7 +1,22 @@
+# Locals section
+locals {
+  tags = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
+}
+
+locals {
+  virtual_network_name = coalesce(var.vnet.vnet_name, data.azurerm_resources.vnet.resources[0].name)
+  resource_group_name  = coalesce(var.vnet.vnet_resource_group, data.azurerm_resources.vnet.resources[0].resource_group_name)
+}
+
 # Data section
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group
 data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
+}
+
+data "azurerm_resource_group" "vnet" {
+  name                = var.vnet.vnet_name
+  resource_group_name = var.vnet.vnet_resource_group
 }
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
@@ -23,11 +38,6 @@ data "azurerm_resources" "vnet" {
     tenant = "${data.azurerm_resource_group.resource_group.tags.tenant}"
     env    = "${data.azurerm_resource_group.resource_group.tags.env}"
   }
-}
-
-locals {
-  virtual_network_name = coalesce(var.vnet_name, data.azurerm_resources.vnet.resources[0].name)
-  resource_group_name  = coalesce(var.vnet_resource_group, data.azurerm_resources.vnet.resources[0].resource_group_name)
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
