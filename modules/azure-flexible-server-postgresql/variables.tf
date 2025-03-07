@@ -75,6 +75,7 @@ variable "vnet" {
     vnet_name                = optional(string)
     vnet_resource_group      = optional(string)
   })
+  default = {}
 }
 
 variable "postgresql_flexible_server_configuration" {
