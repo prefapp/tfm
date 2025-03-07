@@ -34,9 +34,7 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 data "azurerm_resources" "vnet" {
   count = var.vnet_tags != null ? 1 : 0
   type = "Microsoft.Network/virtualNetworks"
-  tags = {
-    for tag, value in var.vnet_tags : tag => value
-  }
+  required_tags = var.vnet_tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
