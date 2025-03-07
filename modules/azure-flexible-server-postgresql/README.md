@@ -35,8 +35,8 @@
 | `dns_private_zone` | DNS private zone config | `object` | N/A | ✅ |
 | `postgresql_flexible_server` |  PostgreSQL Flexible config | `object` | N/A | ✅ |
 | `postgresql_flexible_server_configuration` | Aditional config for the server | `map(object)` | `{}` | ❌ |
-| `key_vault` | Key Vault config | `object` | N/A | ✅ |
-| `administrator_password_key_vault_secret_name` | Name of the secret password from key vault | `string` | N/A | ✅ |
+| `key_vault` | Key Vault config | `object` | N/A | ❌ |
+| `administrator_password_key_vault_secret_name` | Name of the secret password from key vault | `string` | null | ❌ |
 | `admin_password` | Administrator password (sensitive) | `string` | `null` | ❌ |
 
 ### Note
