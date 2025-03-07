@@ -26,8 +26,8 @@ data "azurerm_resources" "vnet" {
 }
 
 locals {
-  virtual_network_name = try(data.azurerm_resources.vnet.resources[0].name, "")
-  resource_group_name  = try(data.azurerm_resources.vnet.resources[0].resource_group_name, "")
+  virtual_network_name = coalesce(var.vnet_name, data.azurerm_resources.vnet.resources[0].name)
+  resource_group_name  = coalesce(var.vnet_resource_group, data.azurerm_resources.vnet.resources[0].resource_group_name)
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault

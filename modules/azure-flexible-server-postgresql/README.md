@@ -42,6 +42,10 @@
 ### Note
 If you add a **admin_pasword** as a input, you won't get the **administrator_password_key_vault_secret_name**.
 
+## PITR creation explanation
+
+The creation of a server from a PITR will create a new server. If the source is different and is deleted, the new server will not be affected, however, you will have to change the `server_creation.mode` to `Default` after its creation so that it is not tried to restore again and thus be able to apply a `terraform plan` or` terraform apply` without trying to restore again.
+
 ## Outputs
 
 | Name | Description |
