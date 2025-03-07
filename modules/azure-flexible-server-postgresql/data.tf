@@ -1,9 +1,6 @@
 # Locals section
 locals {
   tags = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
-}
-
-locals {
   virtual_network_name = coalesce(var.vnet.vnet_name, data.azurerm_resources.vnet.resources[0].name)
   resource_group_name  = coalesce(var.vnet.vnet_resource_group, data.azurerm_resources.vnet.resources[0].resource_group_name)
 }
