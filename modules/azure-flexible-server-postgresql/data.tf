@@ -45,7 +45,7 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 
 data "azurerm_resources" "dns_private_zone" {
   count = length(var.dns_private_zone_tags) > 0 ? 1 : 0
-  type = "Microsoft.Network/privateDnsZones"
+  type = "Microsoft.Network/privateDnsZones/virtualNetworkLinks"
   required_tags = var.dns_private_zone_tags
 }
 
