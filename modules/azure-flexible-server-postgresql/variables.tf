@@ -46,7 +46,8 @@ variable "tags" {
 }
 
 variable "vnet_tags" {
-  type = map
+  type    = map
+  default = {}
 }
 
 variable "postgresql_flexible_server" {

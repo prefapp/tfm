@@ -32,6 +32,7 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 }
 
 data "azurerm_resources" "vnet" {
+  count = var.vnet_tags != null ? 1 : 0
   type = "Microsoft.Network/virtualNetworks"
   for tag in vnet_tags {
     tag = var.vnet_tags[tag]
