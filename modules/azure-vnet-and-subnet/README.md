@@ -14,6 +14,10 @@ This module creates one or more virtual networks and subnets.
 
 ## Usage
 
+## Observations
+
+Al resources are created in the same resource group.
+
 ### Set a module
 
 ```terraform
@@ -29,6 +33,42 @@ module "githuib-oidc" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-subnet?ref=v1.2.3"
 }
 ```
+
+## Inputs
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| `virtual_network` | Properties of the virtual network | object | n/a | yes |
+| `virtual_network.name` | The name of the virtual network | string | n/a | yes |
+| `virtual_network.location` | The location of the virtual network | string | n/a | yes |
+| `virtual_network.address_space` | The address space of the virtual network | list(string) | n/a | yes |
+| `virtual_network.subnets` | Map of subnets within the virtual network | map(object) | n/a | yes |
+| `virtual_network.subnets.address_prefixes` | List of address prefixes for the subnet | list(string) | n/a | yes |
+| `virtual_network.subnets.private_endpoint_network_policies_enabled` | Whether private endpoint network policies are enabled | string | `Enabled` | no |
+| `virtual_network.subnets.private_link_service_network_policies_enabled` | Whether private link service network policies are enabled | bool | `true` | no |
+| `virtual_network.subnets.service_endpoints` | List of service endpoints for the subnet | list(string) | `[]` | no |
+| `virtual_network.subnets.delegation` | List of delegations for the subnet | list(object) | `[]` | no |
+| `virtual_network.subnets.delegation.name` | The name of the delegation | string | n/a | yes |
+| `virtual_network.subnets.delegation.service_delegation` | Service delegation details | object | n/a | yes |
+| `virtual_network.subnets.delegation.service_delegation.name` | The name of the service delegation | string | n/a | yes |
+| `virtual_network.subnets.delegation.service_delegation.actions` | List of actions for the service delegation | list(string) | n/a | yes |
+| `private_dns_zones` | List of private DNS zones to create | list(object) | `[]` | no |
+| `private_dns_zones.name` | The name of the private DNS zone | string | n/a | yes |
+| `private_dns_zone_virtual_network_links` | Map of private DNS zone virtual network links | map(object) | `{}` | no |
+| `private_dns_zone_virtual_network_links.name` | The name of the virtual network link | string | n/a | yes |
+| `private_dns_zone_virtual_network_links.private_dns_zone_name` | The name of the private DNS zone | string | n/a | yes |
+| `private_dns_zone_virtual_network_links.registration_enabled` | Whether registration is enabled | bool | `true` | no |
+| `peerings` | List of virtual network peerings | list(object) | `[]` | no |
+| `peerings.peering_name` | The name of the peering | string | n/a | yes |
+| `peerings.allow_forwarded_traffic` | Whether forwarded traffic is allowed | bool | `false` | no |
+| `peerings.allow_gateway_transit` | Whether gateway transit is allowed | bool | `false` | no |
+| `peerings.allow_virtual_network_access` | Whether virtual network access is allowed | bool | `true` | no |
+| `peerings.use_remote_gateways` | Whether to use remote gateways | bool | `false` | no |
+| `peerings.resource_group_name` | The name of the resource group for the peering | string | n/a | yes |
+| `peerings.vnet_name` | The name of the virtual network for the peering | string | n/a | yes |
+| `peerings.remote_virtual_network_id` | The ID of the remote virtual network | string | n/a | yes |
+| `resource_group_name` | The name of the resource group in which to create the virtual network | string | n/a | yes |
+| `tags` | A map of tags to add to the public IP | map(string) | `{}` | no |
+| `tags_from_rg` | Use the tags from the resource group, if true, the tags set in the tags variable will be ignored | bool | `true` | no |
 
 ### Set a data .tfvars
 
