@@ -10,5 +10,5 @@ resource "azurerm_virtual_network" "this" {
   location            = var.virtual_network.location
   resource_group_name = var.resource_group_name
   address_space       = var.virtual_network.address_space
-  tags                = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
+  tags                = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
 }
