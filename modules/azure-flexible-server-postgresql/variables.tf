@@ -48,11 +48,6 @@ variable "vnet_tags" {
   default = {}
 }
 
-variable "dns_private_zone_tags" {
-  type    = map
-  default ={}
-}
-
 variable "postgresql_flexible_server" {
   type = object({
     name                = string
