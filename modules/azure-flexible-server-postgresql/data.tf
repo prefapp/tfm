@@ -11,7 +11,7 @@ data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
-data "azurerm_resource_group" "vnet" {
+data "azurerm_virtual_network" "vnet" {
   name                = var.vnet.vnet_name
   resource_group_name = var.vnet.vnet_resource_group
 }
