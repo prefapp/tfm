@@ -72,8 +72,8 @@ variable "postgresql_flexible_server" {
 
 variable "vnet" {
   type = object({
-    vnet_name                = optional(string)
-    vnet_resource_group      = optional(string)
+    name                = optional(string)
+    resource_group_name = optional(string)
   })
   default = {}
 }
