@@ -16,12 +16,9 @@ variable "admin_password" {
   sensitive = true
 }
 
-variable "dns_private_zone" {
-  type = object({
-    name                = optional(string)
-    resource_group_name = optional(string)
-  })
-  default = {}
+variable "dns_private_zone_name" {
+  type = string
+  default = null
 }
 
 variable "key_vault" {
