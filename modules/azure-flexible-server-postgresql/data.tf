@@ -12,6 +12,7 @@ data "azurerm_resource_group" "resource_group" {
 }
 
 data "azurerm_virtual_network" "vnet" {
+  count               = var.vnet.name!= null && var.vnet.resource_group_name != "" ? 1 : 0
   name                = var.vnet.name
   resource_group_name = var.vnet.resource_group_name
 }
