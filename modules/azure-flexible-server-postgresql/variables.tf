@@ -50,17 +50,17 @@ variable "vnet_tags" {
 
 variable "postgresql_flexible_server" {
   type = object({
-    name                = string
-    location            = string
-    version             = optional(number)
-    public_network_access = optional(bool)
-    administrator_login = optional(string)
-    zone                = optional(string)
-    storage_tier        = optional(string)
-    storage_mb          = optional(number)
-    sku_name            = optional(string)
-    replication_role    = optional(string)
-    create_mode         = optional(string)
+    name                          = string
+    location                      = string
+    version                       = optional(number)
+    public_network_access_enabled = optional(bool)
+    administrator_login           = optional(string)
+    zone                          = optional(string)
+    storage_tier                  = optional(string)
+    storage_mb                    = optional(number)
+    sku_name                      = optional(string)
+    replication_role              = optional(string)
+    create_mode                   = optional(string)
     maintenance_window = optional(object({
       day_of_week  = number
       start_hour   = number
