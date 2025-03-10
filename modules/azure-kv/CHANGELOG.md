@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/azure-kv-v1.3.0...azure-kv-v1.4.0) (2025-03-10)
+
+
+### Features
+
+* add optional inheritance tags from rg ([#462](https://github.com/prefapp/tfm/issues/462)) ([5aefdef](https://github.com/prefapp/tfm/commit/5aefdef7197b9979e77e6c1086f2456930571f31))
+
 ## [1.3.0](https://github.com/prefapp/tfm/compare/azure-kv-v1.2.2...azure-kv-v1.3.0) (2025-02-11)
 
 
