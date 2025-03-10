@@ -34,3 +34,20 @@ resource "azurerm_postgresql_flexible_server_configuration" "this" {
   server_id = azurerm_postgresql_flexible_server.this.id
   value     = each.value.value
 }
+
+resource "random_password" "password" {
+  length  = 20
+  special = true
+}
+
+# Create the Key Vault secret
+resource "azurerm_key_vault_secret" "password_create" {
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+  name         = data.azurerm_key_vault_secret.key_vault_secret_name
+  value        = random_password.password.result
+  depends_on = [ random_password.password ]
+  lifecycle {
+    # Ignore changes to the secret's value to prevent overwriting it after the initial creation
+    ignore_changes = [value]
+  }
+}
