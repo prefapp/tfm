@@ -43,7 +43,7 @@ resource "random_password" "password" {
 # Create the Key Vault secret
 resource "azurerm_key_vault_secret" "password_create" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
-  name         = data.azurerm_key_vault_secret.key_vault_secret_name
+  name         = data.azurerm_key_vault_secret.administrator_password.name
   value        = random_password.password.result
   depends_on = [ random_password.password ]
   lifecycle {
