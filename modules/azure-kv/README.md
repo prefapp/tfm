@@ -50,7 +50,6 @@ No modules.
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Enable inherit tags from resource group | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags | `map(string)` | `{}` | no |
 
-
 ## Outputs
 
 | Name | Description |
@@ -64,6 +63,8 @@ No modules.
     values:
       name: "keyvault_name"
       tags_from_rg: true
+      tags:
+        extra_tags: "example"
       enabled_for_disk_encryption: true
       resource_group: "resource_group_name"
       soft_delete_retention_days: 7
