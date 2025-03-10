@@ -3,14 +3,14 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.113.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.21.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 2.53.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.113.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.21.0 |
 | <a name="provider_azurerm"></a> [azuread](#provider\_azuread) | ~> 2.53.0 |
 
 ## Modules
@@ -47,6 +47,8 @@ No modules.
 | <a name="input_accesss_policies.name.secret_permissions"></a> [access_policies.name.secret_permissions](#input\_access\_policies.name.secret_permissions) | [List of secret permissions](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault#secret_permissions) | `list(string)` | n/a | optional |
 | <a name="input_accesss_policies.name.certificate_permissions"></a> [access_policies.name.certificate_permissions](#input\_access\_policies.name.certificate_permissions) | [List of certificate permissions](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault#certificate_permissions) | `list(string)` | n/a | optional |
 | <a name="input_accesss_policies.name.storage_permissions"></a> [access_policies.name.storage_permissions](#input\_access\_policies.name.storage_permissions) | [List of storage permissions](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault#storage_permissions) | `list(string)` | n/a | optional |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Enable inherit tags from resource group | `bool` | `false` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags | `map(string)` | `{}` | no |
 
 ## Outputs
 
@@ -60,6 +62,9 @@ No modules.
 # kv.yaml
     values:
       name: "keyvault_name"
+      tags_from_rg: true
+      tags:
+        extra_tags: "example"
       enabled_for_disk_encryption: true
       resource_group: "resource_group_name"
       soft_delete_retention_days: 7
