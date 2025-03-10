@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.3.1...azure-resource-group-v1.4.0) (2025-03-10)
+
+
+### Features
+
+* Add more outputs ([#461](https://github.com/prefapp/tfm/issues/461)) ([e6d8f4e](https://github.com/prefapp/tfm/commit/e6d8f4e135a00719785573443ecf6cc2fe31f1dd))
+
 ## [1.3.1](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.3.0...azure-resource-group-v1.3.1) (2024-01-25)
 
 
