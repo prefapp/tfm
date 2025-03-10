@@ -1,15 +1,12 @@
 locals {
-  subnets = flatten([
-    # Iterate over each virtual network
-    for vnet in [var.virtual_network] : [
-      # Iterate over each subnet in the current virtual network
-      for subnet_key, subnet_value in vnet.subnets : {
-        vnet_name    = vnet.name
-        subnet_key   = subnet_key
-        subnet_value = subnet_value
-      }
-    ]
-  ])
+  subnets = [
+    # Iterate over each subnet in the current virtual network
+    for subnet_key, subnet_value in var.virtual_network.subnets : {
+      vnet_name    = var.virtual_network.name
+      subnet_key   = subnet_key
+      subnet_value = subnet_value
+    }
+  ]
 }
 
 # Resource block for creating Azure subnets
