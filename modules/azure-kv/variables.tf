@@ -26,6 +26,16 @@ variable "enable_rbac_authorization" {
   type = bool
 }
 
+variable "tags_from_rg" {
+  type    = bool
+  default = false
+}
+
+variable "tags" {
+  type = map(string)
+  default = {}
+}
+
 variable "access_policies" {
   type = list(object({
     type                    = optional(string)
