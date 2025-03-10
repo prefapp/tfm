@@ -53,10 +53,7 @@ module "githuib-oidc" {
 | `virtual_network.subnets.delegation.service_delegation.actions` | List of actions for the service delegation | list(string) | n/a | yes |
 | `private_dns_zones` | List of private DNS zones to create | list(object) | `[]` | no |
 | `private_dns_zones.name` | The name of the private DNS zone | string | n/a | yes |
-| `private_dns_zone_virtual_network_links` | Map of private DNS zone virtual network links | map(object) | `{}` | no |
-| `private_dns_zone_virtual_network_links.name` | The name of the virtual network link | string | n/a | yes |
-| `private_dns_zone_virtual_network_links.private_dns_zone_name` | The name of the private DNS zone | string | n/a | yes |
-| `private_dns_zone_virtual_network_links.registration_enabled` | Whether registration is enabled | bool | `true` | no |
+| `dns_zones_with_registration_enabled` | List of DNS zones with registration enabled, if the zone is not in the list, the registration will be disabled | list(string) | `[]` | no |
 | `peerings` | List of virtual network peerings | list(object) | `[]` | no |
 | `peerings.peering_name` | The name of the peering | string | n/a | yes |
 | `peerings.allow_forwarded_traffic` | Whether forwarded traffic is allowed | bool | `false` | no |
@@ -75,33 +72,33 @@ module "githuib-oidc" {
 #### Example
 
 ```hcl
-tags_from_rg = false
-tags = {
-  environment = "myEnvironment"
-  department  = "myDepartment"
-}
-location = "myLocation"
 resource_group_name = "myResourceGroupName"
-address_space = ["10.107.0.0/16"]
-subnets = {
-  subnet1 = {
-    address_prefixes = ["10.107.0.0/18"]
-    service_endpoints = ["Microsoft.Storage"]
-  }
-  subnet2 = {
-    address_prefixes = ["10.107.64.0/24"]
-    service_endpoints = ["Microsoft.Storage"]
-    delegation = [
-      {
-        name = "Microsoft.DBforPostgreSQL.flexibleServers"
-        service_delegation = {
-          name = "Microsoft.DBforPostgreSQL/flexibleServers"
-          actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+
+virtual_network = {
+  name = "myVnetName"
+  location = "myLocation"
+  address_space = ["10.107.0.0/32"]
+  subnets = {
+    subnet1 = {
+      address_prefixes = ["10.107.0.0/18"]
+      service_endpoints = ["Microsoft.Storage"]
+    }
+    subnet2 = {
+      address_prefixes = ["10.107.64.0/24"]
+      service_endpoints = ["Microsoft.Storage"]
+      delegation = [
+        {
+          name = "Microsoft.DBforPostgreSQL.flexibleServers"
+          service_delegation = {
+            name = "Microsoft.DBforPostgreSQL/flexibleServers"
+            actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+          }
         }
-      }
-    ]
+      ]
+    }
   }
 }
+
 private_dns_zones = [
   {
     name = "foo.councilbox.postgres.database.azure.com"
@@ -110,17 +107,11 @@ private_dns_zones = [
     name = "privatelink.redis.cache.windows.net"
   }
 ]
-private_dns_zone_virtual_network_links = {
-  "foo.bar.postgres.database.azure.com" = {
-    name = "foo-bar"
-    private_dns_zone_name = "foo.bar.postgres.database.azure.com"
-  }
-  "bar.foo.privatelink.redis.cache.windows.net" = {
-    name = "bar-foo"
-    private_dns_zone_name = "bar.foo.privatelink.redis.cache.windows.net"
-    registration_enabled = false
-  }
-}
+
+dns_zones_with_registration_enabled = [
+  "foo.councilbox.postgres.database.azure.com"
+]
+
 peerings = [
   {
     peering_name = "myPeeringName"
@@ -129,6 +120,12 @@ peerings = [
     remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
   }
 ]
+
+tags_from_rg = false
+tags = {
+  environment = "myEnvironment"
+  department  = "myDepartment"
+}
 ```
 
 ## Output
