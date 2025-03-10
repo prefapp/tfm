@@ -28,6 +28,12 @@ variable "private_dns_zones" {
   default = []
 }
 
+variable "dns_zones_with_registration_enabled" {
+  description = "List of DNS zone names that should have registration_enabled set to true"
+  type        = list(string)
+  default     = []
+}
+
 variable "peerings" {
   description = "List of virtual network peerings"
   type = list(object({
