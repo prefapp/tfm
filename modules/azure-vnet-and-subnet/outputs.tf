@@ -20,5 +20,5 @@ output "private_dns_zone_virtual_network_link_ids" {
 
 # Output the IDs of the virtual network peerings with their names as keys
 output "vnet_peering_ids" {
-  value = { for name, peering in azurerm_virtual_network_peering.central-predev : name => peering.id }
+  value = { for name, peering in azurerm_virtual_network_peering.this : name => peering.id }
 }

@@ -1,3 +1,4 @@
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone
 resource "azurerm_private_dns_zone" "this" {
   for_each            = { for zone in var.private_dns_zones : zone.name => zone }
   name                = each.value.name

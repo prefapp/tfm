@@ -28,16 +28,6 @@ variable "private_dns_zones" {
   default = []
 }
 
-variable "private_dns_zone_virtual_network_links" {
-  description = "Map of private DNS zone virtual network links"
-  type = map(object({
-    name                  = string
-    private_dns_zone_name = string
-    registration_enabled  = optional(bool, true)
-  }))
-  default = {}
-}
-
 variable "peerings" {
   description = "List of virtual network peerings"
   type = list(object({

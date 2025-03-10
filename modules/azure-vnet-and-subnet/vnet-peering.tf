@@ -1,5 +1,5 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering
-resource "azurerm_virtual_network_peering" "central-predev" {
+resource "azurerm_virtual_network_peering" "this" {
   for_each                     = { for peering in var.peerings : peering.peering_name => peering }
   name                         = each.value.peering_name
   allow_forwarded_traffic      = each.value.allow_forwarded_traffic
