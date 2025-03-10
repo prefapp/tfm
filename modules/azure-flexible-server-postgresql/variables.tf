@@ -53,6 +53,7 @@ variable "postgresql_flexible_server" {
     name                = string
     location            = string
     version             = optional(number)
+    public_network_access = optional(bool)
     administrator_login = optional(string)
     zone                = optional(string)
     storage_tier        = optional(string)
