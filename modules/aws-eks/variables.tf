@@ -70,7 +70,7 @@ variable "enable_irsa" {
 
   type = bool
 
-  default = false
+  default = true
 
 }
 
@@ -164,15 +164,6 @@ variable "create_parameter_store_iam" {
 
   default = false
 
-}
-
-variable "create_ebs_driver_iam" {
-
-  description = "Create IAM resources for ebs-driver"
-
-  type = bool
-
-  default = true
 }
 
 variable "subnet_ids" {
@@ -270,12 +261,12 @@ variable "cluster_addons" {
 
   description = "Addons to deploy to the cluster"
 
-  # type = any
-  type = map(object({
+  type = any
+  /*type = map(object({
 
     addon_version = optional(string)
 
-    addon_disabled = optional(bool)
+    addon_disabled = optional(bool, false)
 
     resolve_conflicts = optional(string)
 
@@ -287,7 +278,7 @@ variable "cluster_addons" {
 
     service_account_role_arn = optional(string)
 
-  }))
+  }))*/
 
   
 
