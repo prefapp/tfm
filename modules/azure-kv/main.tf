@@ -68,7 +68,7 @@ resource "azurerm_key_vault" "this" {
   enable_rbac_authorization   = var.enable_rbac_authorization
   purge_protection_enabled    = var.purge_protection_enabled
   sku_name                    = var.sku_name
-  tags                        = var.tags_from_rg ? merge(data.azurerm_resource_group.this, var.tags) : var.tags
+  tags                        = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
   lifecycle {
     precondition {
       condition     = !local.has_access_policies
