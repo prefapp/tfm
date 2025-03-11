@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v1.2.2...azure-vnet-subnet-v2.0.0) (2025-03-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* Upgrade vnet-and-subnet module to add pDNSz, vl and peerings ([#460](https://github.com/prefapp/tfm/issues/460))
+
+### Features
+
+* Upgrade vnet-and-subnet module to add pDNSz, vl and peerings ([#460](https://github.com/prefapp/tfm/issues/460)) ([10ce529](https://github.com/prefapp/tfm/commit/10ce529bfcf005100dcb045c7f1a3ba65a08fbb4))
+
 ## [1.2.2](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v1.2.1...azure-vnet-subnet-v1.2.2) (2024-02-19)
 
 
