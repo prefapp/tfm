@@ -33,8 +33,9 @@ resource "azurerm_resource_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    lookup(azurerm_policy_definition.this, each.value.policy_name, null) != null ? azurerm_policy_definition.this[each.value.policy_name].id : null,
-    each.value.policy_type == "builtin" ? lookup(data.azurerm_policy_definition_built_in.this, each.key, null) != null ? data.azurerm_policy_definition_built_in.this[each.key].id : null : lookup(data.azurerm_policy_definition.this, each.key, null) != null ? data.azurerm_policy_definition.this[each.key].id : null
+    each.value.policy_type == "custom" && lookup(azurerm_policy_definition.this, each.key, null) != null ? azurerm_policy_definition.this[each.key].id : null,
+    each.value.policy_type == "custom" && lookup(data.azurerm_policy_definition.this, each.key, null) != null ? data.azurerm_policy_definition.this[each.key].id : null,
+    each.value.policy_type == "builtin" && lookup(data.azurerm_policy_definition_built_in.this, each.key, null) != null ? data.azurerm_policy_definition_built_in.this[each.key].id : null
   )
   resource_id          = each.value.resource_id
   description          = each.value.description
