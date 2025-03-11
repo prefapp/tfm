@@ -1,4 +1,3 @@
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "this" {
   name                           = var.postgresql_flexible_server.name
@@ -6,8 +5,8 @@ resource "azurerm_postgresql_flexible_server" "this" {
   location                       = var.postgresql_flexible_server.location
   version                        = var.postgresql_flexible_server.version
   public_network_access_enabled  = var.postgresql_flexible_server.public_network_access_enabled
-  delegated_subnet_id            = coalesce(data.azurerm_subnet.subnet[0].id, null)
-  private_dns_zone_id            = coalesce(data.azurerm_private_dns_zone.dns_private_zone[0].id, null)
+  delegated_subnet_id            = data.azurerm_subnet.subnet[0].id
+  private_dns_zone_id            = data.azurerm_private_dns_zone.dns_private_zone[0].id
   administrator_login            = var.postgresql_flexible_server.administrator_login
   administrator_password         = coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)
   zone                           = var.postgresql_flexible_server.zone
@@ -27,6 +26,8 @@ resource "azurerm_postgresql_flexible_server" "this" {
     password_auth_enabled         = var.postgresql_flexible_server.authentication.password_auth_enabled
     tenant_id                     = var.postgresql_flexible_server.authentication.tenant_id
   }
+  delegated_subnet_id  = var.public_network_access_enabled == false ? : try(data.azurerm_subnet.subnet[0].id, null)
+  private_dns_zone_id  = var.public_network_access_enabled == false ? : try(data.azurerm_private_dns_zone.dns_private_zone[0].id, null)
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "this" {
