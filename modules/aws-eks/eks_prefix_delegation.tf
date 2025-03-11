@@ -22,7 +22,7 @@ resource "null_resource" "prefix_delegation" {
     cmd_patch        = "kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true"
   }
 
-// Execute the command to enable prefix delegation
+  // Execute the command to enable prefix delegation
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     command     = self.triggers.cmd_patch

@@ -114,7 +114,7 @@ resource "aws_iam_policy" "iam_policy_EFS_CSI_DriverRole" {
     ]
 
   })
-  
+
 }
 
 # IAM Role for EKS_EFS_CSI_DriverRole

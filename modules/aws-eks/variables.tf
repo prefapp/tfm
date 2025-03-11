@@ -121,7 +121,7 @@ variable "fargate_profiles" {
     name = string
     selectors = list(object({
       namespace = string
-      labels = map(string)
+      labels    = map(string)
     }))
     tags = map(string)
   }))
@@ -133,15 +133,15 @@ variable "node_security_group_additional_rules" {
   description = "Additional rules to add to the node security group"
 
   type = map(object({
-    description = string
-    protocol = string
+    description                   = string
+    protocol                      = string
     source_cluster_security_group = optional(bool)
-    from_port = number
-    to_port = number
-    type = string
-    cidr_blocks = optional(list(string))
-    ipv6_cidr_blocks = optional(list(string))
-    self = optional(bool)
+    from_port                     = number
+    to_port                       = number
+    type                          = string
+    cidr_blocks                   = optional(list(string))
+    ipv6_cidr_blocks              = optional(list(string))
+    self                          = optional(bool)
   }))
 }
 
@@ -185,7 +185,7 @@ variable "cluster_encryption_config" {
 
 variable "cluster_security_group_id" {
   type = string
-  
+
   default = ""
 }
 

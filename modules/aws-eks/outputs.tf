@@ -24,8 +24,8 @@ output "eks" {
 
 }
 
- output "summary" {
-   value = <<-SUMMARY
+output "summary" {
+  value = <<-SUMMARY
 
      ############################################################################
      #### SUMARY Amazon EKS Configuration
@@ -40,16 +40,16 @@ output "eks" {
      - IAM Cluster Role: ${split("/", var.cluster_iam_role_arn != null ? var.cluster_iam_role_arn : module.eks.cluster_iam_role_arn)[1]}
      - Cluster Tags:
      ${join("\n", [
-   for tag_key, tag_value in var.tags :
-   format("\t - %s: %s", tag_key, tag_value)
-   ])}
+  for tag_key, tag_value in var.tags :
+  format("\t - %s: %s", tag_key, tag_value)
+  ])}
 
      ----------------------------------------------------------------------------
      Node Groups
      ----------------------------------------------------------------------------
      ${join("\n", [
-   for node_group_key, node_group_value in var.node_groups :
-   <<-EOT
+  for node_group_key, node_group_value in var.node_groups :
+  <<-EOT
        - ${node_group_key}
            - Instance type: ${join(", ", node_group_value.instance_types)}
            - Desired capacity: ${node_group_value.desired_capacity}
@@ -59,23 +59,23 @@ output "eks" {
            - Labels:
          ${join("\n", [for k, v in node_group_value.labels : "\t- ${k}: ${v}"])}
        EOT
-   ])}
+  ])}
 
      ----------------------------------------------------------------------------
      Add-ons
      ----------------------------------------------------------------------------
      ${join("\n", [
-   for addon_key, addon_value in local.cluster_addons :
-   format(
-     " - %s\n \t- Addon Version: %s\n\t- Advanced configuration:\t%s",
-     addon_key,
-     lookup(addon_value, "addon_version", "latest"),
-     replace(
-       jsonencode(lookup(addon_value, "configuration_values", {})),
-       "\n", "\n\t\t\t\t\t"
-     )
-   )
-   ])}
+  for addon_key, addon_value in local.cluster_addons :
+  format(
+    " - %s\n \t- Addon Version: %s\n\t- Advanced configuration:\t%s",
+    addon_key,
+    lookup(addon_value, "addon_version", "latest"),
+    replace(
+      jsonencode(lookup(addon_value, "configuration_values", {})),
+      "\n", "\n\t\t\t\t\t"
+    )
+  )
+  ])}
 
      ----------------------------------------------------------------------------
      Network Details:
@@ -84,9 +84,9 @@ output "eks" {
      - VPC ID: ${var.vpc_id}
      - VPC Subnets:
      ${join("\n", [
-   for subnet_key, subnet_value in var.subnet_ids :
-   format("\t %s: %s", subnet_key + 1, subnet_value)
-   ])}
+  for subnet_key, subnet_value in var.subnet_ids :
+  format("\t %s: %s", subnet_key + 1, subnet_value)
+])}
 
      ----------------------------------------------------------------------------
      IAM Roles:
@@ -103,7 +103,7 @@ output "eks" {
      ############################################################################
 
    SUMMARY
- }
+}
 
 
 output "debug" {

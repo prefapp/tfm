@@ -25,7 +25,7 @@ locals {
 
   ebs_arn_role = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_iam_role_name}"
 
-  ebs_addon = lookup(local.cluster_addons, "aws-ebs-csi-driver", false)
+  ebs_addon         = lookup(local.cluster_addons, "aws-ebs-csi-driver", false)
   ebs_addon_enabled = local.ebs_addon == false ? false : lookup(local.cluster_addons.aws-ebs-csi-driver, "enabled", false)
 }
 
@@ -67,7 +67,7 @@ resource "aws_iam_role" "ebs_driver_policy" {
   })
 
   depends_on = [module.eks]
-  
+
 }
 
 
