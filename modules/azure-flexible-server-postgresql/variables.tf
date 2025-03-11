@@ -8,6 +8,7 @@ variable "subnet" {
     vnet_name                = optional(string)
     vnet_resource_group_name = optional(string)
   })
+  default = {}
 }
 
 variable "dns_private_zone_name" {
