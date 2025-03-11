@@ -53,7 +53,7 @@ module "githuib-oidc" {
 | `virtual_network.subnets.delegation.service_delegation.actions` | List of actions for the service delegation | list(string) | n/a | yes |
 | `private_dns_zones` | List of private DNS zones to create | list(object) | `[]` | no |
 | `private_dns_zones.name` | The name of the private DNS zone | string | n/a | yes |
-| `dns_zones_with_registration_enabled` | List of DNS zones with registration enabled, if the zone is not in the list, the registration will be disabled | list(string) | `[]` | no |
+| `private_dns_zones.auto_registration_enabled` | Whether auto registration is enabled | bool | `false` | no |
 | `peerings` | List of virtual network peerings | list(object) | `[]` | no |
 | `peerings.peering_name` | The name of the peering | string | n/a | yes |
 | `peerings.allow_forwarded_traffic` | Whether forwarded traffic is allowed | bool | `false` | no |
@@ -101,15 +101,12 @@ virtual_network = {
 
 private_dns_zones = [
   {
-    name = "foo.councilbox.postgres.database.azure.com"
+    name = "foo.councilbox.postgres.database.azure.com",
+    auto_registration_enabled = true
   },
   {
     name = "privatelink.redis.cache.windows.net"
   }
-]
-
-dns_zones_with_registration_enabled = [
-  "foo.councilbox.postgres.database.azure.com"
 ]
 
 peerings = [
