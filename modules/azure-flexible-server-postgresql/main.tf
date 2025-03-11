@@ -7,7 +7,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   version                        = var.postgresql_flexible_server.version
   public_network_access_enabled  = var.postgresql_flexible_server.public_network_access_enabled
   delegated_subnet_id            = data.azurerm_subnet.subnet[0].id
-  private_dns_zone_id            = data.azurerm_private_dns_zone.dns_private_zone.id
+  private_dns_zone_id            = data.azurerm_private_dns_zone.dns_private_zone[0].id
   administrator_login            = var.postgresql_flexible_server.administrator_login
   administrator_password         = coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)
   zone                           = var.postgresql_flexible_server.zone

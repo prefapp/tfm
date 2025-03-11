@@ -37,6 +37,7 @@ data "azurerm_subnet" "subnet" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
 data "azurerm_private_dns_zone" "dns_private_zone" {
+  count = var.dns_private_zone_name != null && var.dns_private_zone_name != "" ? 1 : 0
   name                = var.dns_private_zone_name
   resource_group_name = var.vnet.resource_group_name
 }
