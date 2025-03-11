@@ -12,10 +12,10 @@ data "azurerm_policy_definition" "custom" {
   display_name     = each.value.policy_name
 }
 
-# data "azurerm_policy_definition_built_in" "this" {
-#   for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
-#   display_name     = each.value.policy_name
-# }
+data "azurerm_policy_definition_built_in" "this" {
+  for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
+  display_name     = each.value.policy_name
+}
 
 # RESOURCES SECTION
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/policy_definition
