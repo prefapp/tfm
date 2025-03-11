@@ -55,13 +55,9 @@ resource "azurerm_key_vault_secret" "password_create" {
 resource "azurerm_postgresql_flexible_server_firewall_rule" "this" {
   for_each = { for idx, rule in var.azurerm_postgresql_flexible_server_firewall_rule : idx => rule if rule.name != null }
   server_id        = azurerm_postgresql_flexible_server.this.id
+  name             = each.value.name
+  start_ip_address = each.value.start_ip_address
+  end_ip_address   = each.value.end_ip_address
 
-  dynamic "rules"{
-    for_each = var.azurerm_postgresql_flexible_server_firewall_rule
-    content{
-      name             = each.value.name
-      start_ip_address = each.value.start_ip_address
-      end_ip_address   = each.value.end_ip_address
-    }
-  }
-}
+ }
+
