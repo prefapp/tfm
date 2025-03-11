@@ -28,7 +28,7 @@ data "azurerm_resources" "vnet" {
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "subnet" {
-  count = length(var.subnet.name) > 0 ? 1 : 0
+  count = var.subnet.name != null && var.subnet.name != "" ? 1 : 0
   name                 = var.subnet.name
   virtual_network_name = local.virtual_network_name
   resource_group_name  = var.vnet.resource_group_name
