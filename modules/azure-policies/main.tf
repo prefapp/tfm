@@ -2,12 +2,12 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/data-sources/subscription
 data "azurerm_subscription" "current" {}
 
-data "azurerm_policy_definition" "builtin" {
-  for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
-  display_name     = each.value.policy_name
-}
+# data "azurerm_policy_definition" "builtin" {
+#   for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
+#   display_name     = each.value.policy_name
+# }
 
-data "azurerm_policy_definition" "custom" {
+data "azurerm_policy_definition" "this" {
   for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) }
   display_name     = each.value.policy_name
 }
