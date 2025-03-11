@@ -85,10 +85,10 @@ variable "postgresql_flexible_server_configuration" {
 }
 
 variable "azurerm_postgresql_flexible_server_firewall_rule" {
-  type = map(object({
+  type = list(object({
     name             = optional(string)
     start_ip_address = optional(string)
     end_ip_address   = optional(string)
   }))
-  default = {}
+  default = []
 }
