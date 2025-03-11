@@ -26,8 +26,6 @@ resource "azurerm_postgresql_flexible_server" "this" {
     password_auth_enabled         = var.postgresql_flexible_server.authentication.password_auth_enabled
     tenant_id                     = var.postgresql_flexible_server.authentication.tenant_id
   }
-  delegated_subnet_id  = var.public_network_access_enabled == false ? : try(data.azurerm_subnet.subnet[0].id, null)
-  private_dns_zone_id  = var.public_network_access_enabled == false ? : try(data.azurerm_private_dns_zone.dns_private_zone[0].id, null)
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "this" {
