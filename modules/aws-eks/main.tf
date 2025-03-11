@@ -36,14 +36,6 @@ module "eks" {
   cluster_addons = local.cluster_addons
   create_kms_key = var.create_kms_key
   cluster_encryption_config = var.cluster_encryption_config
-  access_entries = {}
+  access_entries = var.access_entries
   fargate_profiles = var.fargate_profiles
-}
-
-module "eks_auth" {
-  source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
-  version = "20.33.1"
-  manage_aws_auth_configmap = true
-  aws_auth_roles = var.aws_auth_roles
-  aws_auth_users    = var.aws_auth_users
 }

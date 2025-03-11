@@ -77,7 +77,7 @@ locals {
 
   processed_addons = {
     for addon_name, config in local.mixed_addons : addon_name => merge(config, {
-      # Si configuration_values existe, lo convertimos a JSON; si no, lo dejamos como null
+      # If configuration_values ​​exists, we convert it to JSON; if not, we leave it as null
       configuration_values = try(jsonencode(config.configuration_values), null)
     })
   }
