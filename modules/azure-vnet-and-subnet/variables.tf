@@ -23,15 +23,10 @@ variable "virtual_network" {
 variable "private_dns_zones" {
   description = "List of private DNS zones to create"
   type = list(object({
-    name = string
+    name                      = string
+    auto_registration_enabled = optional(bool, false)
   }))
   default = []
-}
-
-variable "dns_zones_with_registration_enabled" {
-  description = "List of DNS zone names that should have registration_enabled set to true"
-  type        = list(string)
-  default     = []
 }
 
 variable "peerings" {
