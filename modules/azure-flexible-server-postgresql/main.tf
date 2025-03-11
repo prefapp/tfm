@@ -9,7 +9,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   delegated_subnet_id            = data.azurerm_subnet.subnet.id
   private_dns_zone_id            = data.azurerm_private_dns_zone.dns_private_zone.id
   administrator_login            = var.postgresql_flexible_server.administrator_login
-  administrator_password         = coalesce(var.admin_password, data.azurerm_key_vault_secret.administrator_password[0].value)
+  administrator_password         = coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)
   zone                           = var.postgresql_flexible_server.zone
   storage_tier                   = var.postgresql_flexible_server.storage_tier
   storage_mb                     = var.postgresql_flexible_server.storage_mb
@@ -44,7 +44,7 @@ resource "random_password" "password" {
 # Create the Key Vault secret
 resource "azurerm_key_vault_secret" "password_create" {
   key_vault_id = data.azurerm_key_vault.key_vault[0].id
-  name         = var.admin_password
+  name         = var.dministrator_password_key_vault_secret_name
   value        = random_password.password.result
   depends_on = [ random_password.password ]
   lifecycle {
