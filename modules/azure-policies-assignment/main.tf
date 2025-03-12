@@ -10,6 +10,7 @@ data "azurerm_policy_definition" "this" {
 data "azurerm_resource_group" "this" {
   for_each = { for k, v in var.assignments : k => v if v.scope == "resource group" }
   name = each.value.resource_group_name
+  location = each.value.resource_group_location
 }
 
 data "azurerm_management_group" "this" {

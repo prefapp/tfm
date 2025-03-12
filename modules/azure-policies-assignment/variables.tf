@@ -10,6 +10,7 @@ variable "assignments" {
     resource_group_id    = optional(string)
     management_group_id  = optional(string)
     resource_group_name  = optional(string)
+    resource_group_location = optional(string)
     management_group_name = optional(string)
     scope                = string
     description          = optional(string)
