@@ -23,6 +23,11 @@ variable "key_vault" {
   })
 }
 
+variable "key_vault_tags" {
+  type    = map
+  default = {}
+}
+
 variable "administrator_password_key_vault_secret_name" {
   type    = string
   default = null

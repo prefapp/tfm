@@ -50,6 +50,12 @@ data "azurerm_key_vault" "key_vault" {
   resource_group_name = var.key_vault.resource_group_name
 }
 
+data "azurerm_resources" "key_vault" {
+  count = length(var.key_vault_tags) > 0 ? 1 : 0
+  type = "Microsoft.KeyVault"
+  required_tags = var.key_vault_tags
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
 data "azurerm_key_vault_secret" "administrator_password" {
   count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
