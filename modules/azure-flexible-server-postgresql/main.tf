@@ -28,6 +28,14 @@ resource "azurerm_postgresql_flexible_server" "this" {
     password_auth_enabled         = var.postgresql_flexible_server.authentication.password_auth_enabled
     tenant_id                     = var.postgresql_flexible_server.authentication.tenant_id
   }
+  lifecycle {
+    ignore_changes = [
+      version,
+      create_mode,
+      point_in_time_restore_time_in_utc,
+      source_server_id,
+    ]
+  }
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "this" {
