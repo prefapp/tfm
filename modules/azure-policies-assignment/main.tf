@@ -2,7 +2,7 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/data-sources/subscription
 data "azurerm_subscription" "current" {}
 
-resource "azurerm_management_group" "this" {
+data "azurerm_management_group" "this" {
   display_name = "councilbox"
 }
 
@@ -187,7 +187,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
     lookup(each.value, "policy_definition_id", null),
     try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
-  management_group_id  = azurerm_management_group.this.id
+  management_group_id  = data.azurerm_management_group.this.id
   description          = each.value.description
   display_name         = each.value.display_name
   enforce              = each.value.enforce
