@@ -11,9 +11,9 @@ data "azurerm_policy_definition" "this" {
 resource "azurerm_resource_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource" }
   name                 = each.value.name
-  policy_definition_id = try(
+  policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    data.azurerm_policy_definition.this[each.key].id
+    can(data.azurerm_policy_definition.this[each.key].id)
   )
   resource_id          = each.value.resource_id
   description          = each.value.description
@@ -67,9 +67,9 @@ resource "azurerm_resource_policy_assignment" "this" {
 resource "azurerm_resource_group_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource group" }
   name                 = each.value.name
-  policy_definition_id = try(
+  policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    data.azurerm_policy_definition.this[each.key].id
+    can(data.azurerm_policy_definition.this[each.key].id)
   )
   resource_group_id    = each.value.resource_id
   description          = each.value.description
@@ -123,9 +123,9 @@ resource "azurerm_resource_group_policy_assignment" "this" {
 resource "azurerm_subscription_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "subscription" }
   name                 = each.value.name
-  policy_definition_id = try(
+  policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    data.azurerm_policy_definition.this[each.key].id
+    can(data.azurerm_policy_definition.this[each.key].id)
   )
   subscription_id      = data.azurerm_subscription.current.id
   description          = each.value.description
@@ -179,9 +179,9 @@ resource "azurerm_subscription_policy_assignment" "this" {
 resource "azurerm_management_group_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "management group" }
   name                 = each.value.name
-  policy_definition_id = try(
+  policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    data.azurerm_policy_definition.this[each.key].id
+    can(data.azurerm_policy_definition.this[each.key].id)
   )
   management_group_id  = each.value.management_group_id
   description          = each.value.description
