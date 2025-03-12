@@ -18,3 +18,8 @@ output "management_group_policy_assignment_ids" {
   value       = [for assignment in azurerm_management_group_policy_assignment.this : assignment.id]
   description = "List of all Azure management group policy assignment IDs"
 }
+
+output "management_group_ids" {
+  value       = azurerm_management_group.this.id
+  description = "List of all Azure management group IDs"
+}
