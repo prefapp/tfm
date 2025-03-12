@@ -183,7 +183,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
     lookup(each.value, "policy_definition_id", null),
     try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
-  management_group_id  = each.value.management_group_id
+  management_group_id  = each.value.resource_id
   description          = each.value.description
   display_name         = each.value.display_name
   enforce              = each.value.enforce
