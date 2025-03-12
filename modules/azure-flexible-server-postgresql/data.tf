@@ -53,7 +53,7 @@ data "azurerm_key_vault" "key_vault" {
 data "azurerm_resources" "key_vault" {
   count = length(var.key_vault_tags) > 0 ? 1 : 0
   type = "Microsoft.KeyVault"
-  required_tags = var.key_vault_tags
+  required_tags = var.key_vault_tags.layer
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets

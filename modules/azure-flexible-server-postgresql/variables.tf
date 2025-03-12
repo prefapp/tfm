@@ -24,7 +24,9 @@ variable "key_vault" {
 }
 
 variable "key_vault_tags" {
-  type    = map
+  type    = map({
+    layer = string
+  })
   default = {}
 }
 
