@@ -6,7 +6,7 @@ variable "assignments" {
     policy_type          = optional(string, "builtin")
     policy_name          = optional(string)
     policy_definition_id = optional(string)
-    resource_id          = string
+    resource_id          = optional(string)
     scope                = string
     description          = optional(string)
     display_name         = optional(string)
