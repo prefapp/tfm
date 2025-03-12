@@ -2,8 +2,6 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/data-sources/subscription
 data "azurerm_subscription" "current" {}
 
-data "azurerm_management_group" "current" {}
-
 data "azurerm_policy_definition" "this" {
   for_each = { for k, v in var.assignments : k => v if can(v.policy_name) }
   display_name = each.value.policy_name
