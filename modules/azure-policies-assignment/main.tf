@@ -3,7 +3,7 @@
 data "azurerm_subscription" "current" {}
 
 data "azurerm_policy_definition" "this" {
-  for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) && assignment.policy_type == "custom" }
+  for_each = { for k, v in var.assignments : k => v if can(v.policy_name) }
   display_name = each.value.policy_name
 }
 
@@ -13,7 +13,7 @@ resource "azurerm_resource_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
+    try(data.azurerm_policy_definition.this[each.key].id, null)
   )
   resource_id          = each.value.resource_id
   description          = each.value.description
