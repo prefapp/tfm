@@ -2,14 +2,19 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/data-sources/subscription
 data "azurerm_subscription" "current" {}
 
-data "azurerm_management_group" "this" {
-  for_each = { for k, v in var.assignments : k => v if v.scope == "management group" }
-  display_name = each.value.management_group_name
-}
-
 data "azurerm_policy_definition" "this" {
   for_each = { for k, v in var.assignments : k => v if can(v.policy_name) }
   display_name = each.value.policy_name
+}
+
+data "azurerm_resource_group" "this" {
+  for_each = { for k, v in var.assignments : k => v if v.scope == "resource group" }
+  name = each.value.resource_group_name
+}
+
+data "azurerm_management_group" "this" {
+  for_each = { for k, v in var.assignments : k => v if v.scope == "management group" }
+  display_name = each.value.management_group_name
 }
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_policy_assignment
@@ -76,7 +81,10 @@ resource "azurerm_resource_group_policy_assignment" "this" {
     lookup(each.value, "policy_definition_id", null),
     try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
-  resource_group_id    = each.value.resource_id
+  resource_group_id  = coalesce(
+    lookup(each.value, "resource_group_id", null),
+    try(lookup(data.azurerm_resource_group.this, each.key, null).id, null)
+  )
   description          = each.value.description
   display_name         = each.value.display_name
   enforce              = each.value.enforce

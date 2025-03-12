@@ -7,6 +7,9 @@ variable "assignments" {
     policy_name          = optional(string)
     policy_definition_id = optional(string)
     resource_id          = optional(string)
+    resource_group_id    = optional(string)
+    management_group_id  = optional(string)
+    resource_group_name  = optional(string)
     management_group_name = optional(string)
     scope                = string
     description          = optional(string)
