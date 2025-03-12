@@ -21,6 +21,7 @@ variable "key_vault" {
     name                = optional(string)
     resource_group_name = optional(string)
   })
+  default = {}
 }
 
 variable "key_vault_tags" {
