@@ -51,7 +51,7 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 data "azurerm_key_vault" "key_vault" {
   count               = var.key_vault != null && var.key_vault.name != "" && var.key_vault.resource_group_name != "" ? 1 : 0
   name                = local.key_vault_name
-  resource_group_name = local.key_vault_resource_group_name
+  resource_group_name = local.key_vault_resource_group_from_data
 }
 
 data "azurerm_resources" "key_vault" {
