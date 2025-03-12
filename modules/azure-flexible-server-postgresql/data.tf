@@ -17,7 +17,7 @@ data "azurerm_resource_group" "resource_group" {
 data "azurerm_virtual_network" "vnet" {
   count               = var.vnet.name != null && var.vnet.resource_group_name != "" ? 1 : 0
   name                = var.vnet.name
-  resource_group_name = var.vnet.resource_group_name
+  resource_group_name = local.resource_group_from_data
 }
 
 data "azurerm_resources" "vnet" {
@@ -31,7 +31,7 @@ data "azurerm_subnet" "subnet" {
   count = var.subnet.name != null && var.subnet.name != "" ? 1 : 0
   name                 = var.subnet.name
   virtual_network_name = local.virtual_network_name
-  resource_group_name  = var.vnet.resource_group_name
+  resource_group_name  = local.resource_group_from_data
 }
 
 
@@ -39,7 +39,7 @@ data "azurerm_subnet" "subnet" {
 data "azurerm_private_dns_zone" "dns_private_zone" {
   count = var.dns_private_zone_name != null && var.dns_private_zone_name != "" ? 1 : 0
   name                = var.dns_private_zone_name
-  resource_group_name = var.vnet.resource_group_name
+  resource_group_name = local.resource_group_from_data
 }
 
 
