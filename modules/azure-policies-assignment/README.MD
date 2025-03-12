@@ -19,7 +19,6 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) | resource |
 | [azurerm_resource_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_policy_assignment) | resource |
 | [azurerm_subscription_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subscription_policy_assignment) | resource |
 | [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
@@ -45,53 +44,19 @@ No modules.
 ## Example Usage YAML
 
 ```yaml
-values:
-  policy:
-    name: "example-policy"
-    policy_type: "Custom"
-    mode: "All"
-    display_name: "Example Policy"
-    description: "A sample policy to enforce location."
-    management_group_id: "mgmt-group-1"
-    policy_rule: |
-      {
-        "if": {
-          "field": "location",
-          "equals": "westeurope"
-        },
-        "then": {
-          "effect": "deny"
-        }
-      }
-    metadata: "{}"
-    parameters: "{}"
+    values:
+      assignments:
+        - name: "example-assignment-1"
+          policy_type: "builtin"
+          policy_name: "Allowed locations"
+          resource_id: "/subscriptions/xxxxxx/resourceGroups/example-rg1"
+          scope: "subscription"
 
-  assignments:
-    - name: "example-assignment-1"
-      policy_definition_id: "example-policy"
-      resource_id: "/subscriptions/xxxxxx/resourceGroups/example-rg1"
-      scope: "/subscriptions/xxxxxx"
-      description: "Assigning example policy to RG1"
-      display_name: "Example Policy Assignment 1"
-      enforce: true
-      location: "westeurope"
-      metadata: "{}"
-      identity:
-        type: "SystemAssigned"
-
-    - name: "example-assignment-2"
-      policy_definition_id: "example-policy"
-      resource_id: "/subscriptions/xxxxxx/resourceGroups/example-rg2"
-      scope: "/subscriptions/xxxxxx"
-      description: "Assigning example policy to RG2"
-      display_name: "Example Policy Assignment 2"
-      enforce: false
-      location: "northeurope"
-      metadata: "{}"
-      identity:
-        type: "UserAssigned"
-        identity_ids:
-          - "/subscriptions/xxxxxx/resourceGroups/example-rg2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/example-identity"
+        - name: "example-assignment-3"
+          policy_type: "builtin"
+          policy_name: "Allowed virtual machine size SKUs"
+          resource_id: "/subscriptions/xxxxxx/resourceGroups/example-rg1"
+          scope: "resource group"
 ```
 ## Example usage HCL
 

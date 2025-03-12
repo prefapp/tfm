@@ -7,26 +7,6 @@ data "azurerm_policy_definition" "this" {
   display_name = each.value.policy_name
 }
 
-data "azurerm_policy_definition_built_in" "this" {
-  for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) && assignment.policy_type == "builtin" }
-  display_name = each.value.policy_name
-}
-
-# RESOURCES SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/policy_definition
-resource "azurerm_policy_definition" "this" {
-  for_each            = { for i, policy in var.policies : i => policy }
-  name                = each.value.name
-  policy_type         = each.value.policy_type
-  mode                = each.value.mode
-  display_name        = each.value.display_name
-  description         = each.value.description
-  management_group_id = each.value.management_group_id
-  policy_rule         = each.value.policy_rule
-  metadata            = each.value.metadata
-  parameters          = each.value.parameters
-}
-
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_policy_assignment
 resource "azurerm_resource_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource" }
@@ -35,8 +15,8 @@ resource "azurerm_resource_policy_assignment" "this" {
     lookup(each.value, "policy_definition_id", null),
     one([ for v in azurerm_policy_definition.this : v.id if v.display_name == each.value.policy_name ]),
     each.value.policy_type == "builtin" ?
-      try(data.azurerm_policy_definition_built_in.this[each.key].id, null) :
-      try(data.azurerm_policy_definition.this[each.key].id, null)
+      can(data.azurerm_policy_definition_built_in.this[each.key].id, null) :
+      can(data.azurerm_policy_definition.this[each.key].id, null)
   )
   resource_id          = each.value.resource_id
   description          = each.value.description
