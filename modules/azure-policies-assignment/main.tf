@@ -13,10 +13,7 @@ resource "azurerm_resource_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = try(
     lookup(each.value, "policy_definition_id", null),
-    one([ for v in azurerm_policy_definition.this : v.id if v.display_name == each.value.policy_name ]),
-    each.value.policy_type == "builtin" ?
-      can(data.azurerm_policy_definition_built_in.this[each.key].id, null) :
-      can(data.azurerm_policy_definition.this[each.key].id, null)
+    data.azurerm_policy_definition.this[each.key].id, null
   )
   resource_id          = each.value.resource_id
   description          = each.value.description
@@ -73,10 +70,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = try(
     lookup(each.value, "policy_definition_id", null),
-    one([ for v in azurerm_policy_definition.this : v.id if v.display_name == each.value.policy_name ]),
-    each.value.policy_type == "builtin" ?
-      try(data.azurerm_policy_definition_built_in.this[each.key].id, null) :
-      try(data.azurerm_policy_definition.this[each.key].id, null)
+    data.azurerm_policy_definition.this[each.key].id, null
   )
   resource_group_id    = each.value.resource_id
   description          = each.value.description
@@ -133,10 +127,7 @@ resource "azurerm_subscription_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = try(
     lookup(each.value, "policy_definition_id", null),
-    one([ for v in azurerm_policy_definition.this : v.id if v.display_name == each.value.policy_name ]),
-    each.value.policy_type == "builtin" ?
-      try(data.azurerm_policy_definition_built_in.this[each.key].id, null) :
-      try(data.azurerm_policy_definition.this[each.key].id, null)
+    data.azurerm_policy_definition.this[each.key].id, null
   )
   subscription_id      = data.azurerm_subscription.current.id
   description          = each.value.description
@@ -193,10 +184,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = try(
     lookup(each.value, "policy_definition_id", null),
-    one([ for v in azurerm_policy_definition.this : v.id if v.display_name == each.value.policy_name ]),
-    each.value.policy_type == "builtin" ?
-      try(data.azurerm_policy_definition_built_in.this[each.key].id, null) :
-      try(data.azurerm_policy_definition.this[each.key].id, null)
+    data.azurerm_policy_definition.this[each.key].id, null
   )
   management_group_id  = each.value.management_group_id
   description          = each.value.description
