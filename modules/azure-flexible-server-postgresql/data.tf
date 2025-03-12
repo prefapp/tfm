@@ -64,5 +64,5 @@ data "azurerm_resources" "key_vault" {
 data "azurerm_key_vault_secret" "administrator_password" {
   count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
   name         = var.administrator_password_key_vault_secret_name
-  key_vault_id = local.azurerm_key_vault.key_vault[0].id == null ? try(data.azurerm_resources.key_vault[0].resources[0].id)
+  key_vault_id = if local.azurerm_key_vault.key_vault[0].id == null try(data.azurerm_resources.key_vault[0].resources[0].id)
 }
