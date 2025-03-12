@@ -51,7 +51,7 @@ No modules.
         - name: "example-assignment-3"
           policy_type: "custom"
           policy_name: "Example Policy"
-          resource_id: "/subscriptions/2de29132-986f-482d-a49f-31441fc7992b/resourceGroups/test/providers/Microsoft.KeyVault/vaults/-test"
+          resource_id: "/subscriptions/2de29132-986f-482d-a49f-31441fc7992b/resourceGroups/test/providers/Microsoft.KeyVault/vaults/test"
           scope: "resource"
 
         - name: "example-assignment-2"
