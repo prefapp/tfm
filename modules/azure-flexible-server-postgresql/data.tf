@@ -48,8 +48,8 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
 data "azurerm_key_vault" "key_vault" {
   count               = var.key_vault != null && var.key_vault.name != "" && var.key_vault.resource_group_name != "" ? 1 : 0
-  name                = coalesce(var.key_vault.name, local.key_vault_from_data)
-  resource_group_name = coalesce(var.key_vault.resource_group_name, local.key_vault_resource_group_from_data)
+  name                = try(var.key_vault.name, local.key_vault_from_data)
+  resource_group_name = try(var.key_vault.resource_group_name, local.key_vault_resource_group_from_data)
 }
 
 data "azurerm_resources" "key_vault" {
