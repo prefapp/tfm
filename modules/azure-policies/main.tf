@@ -2,15 +2,15 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/data-sources/subscription
 data "azurerm_subscription" "current" {}
 
-data "azurerm_policy_definition" "this" {
-  for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) && assignment.policy_type == "custom" }
-  display_name = each.value.policy_name
-}
+# data "azurerm_policy_definition" "this" {
+#   for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) && assignment.policy_type == "custom" }
+#   display_name = each.value.policy_name
+# }
 
-data "azurerm_policy_definition_built_in" "this" {
-  for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) && assignment.policy_type == "builtin" }
-  display_name = each.value.policy_name
-}
+# data "azurerm_policy_definition_built_in" "this" {
+#   for_each = { for i, assignment in var.assignments : i => assignment if can(assignment.policy_name) && assignment.policy_type == "builtin" }
+#   display_name = each.value.policy_name
+# }
 
 # RESOURCES SECTION
 ## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/policy_definition
@@ -33,8 +33,10 @@ resource "azurerm_resource_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    lookup(azurerm_policy_definition.this, each.value.policy_name, null) != null ? azurerm_policy_definition.this[each.value.policy_name].id : null,
-    each.value.policy_type == "builtin" ? lookup(data.azurerm_policy_definition_built_in.this, each.key, null) != null ? data.azurerm_policy_definition_built_in.this[each.key].id : null : lookup(data.azurerm_policy_definition.this, each.key, null) != null ? data.azurerm_policy_definition.this[each.key].id : null
+    each.value.policy_type == "custom" ? try(
+      azurerm_policy_definition.this[index({ for k, v in azurerm_policy_definition.this : v.name => k }, each.value.policy_name, null)].id,
+      null
+    ) : null
   )
   resource_id          = each.value.resource_id
   description          = each.value.description
