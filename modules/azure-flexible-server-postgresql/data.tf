@@ -67,4 +67,5 @@ data "azurerm_key_vault_secret" "administrator_password" {
   key_vault_id = length(data.azurerm_key_vault.key_vault) > 0 ? data.azurerm_key_vault.key_vault[0].id : (
                  length(data.azurerm_resources.key_vault) > 0 && length(data.azurerm_resources.key_vault[0].resources) > 0 ?
                  data.azurerm_resources.key_vault[0].resources[0].id : null)
+
 }
