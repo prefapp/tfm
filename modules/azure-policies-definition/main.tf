@@ -1,5 +1,5 @@
 # RESOURCES SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/policy_definition
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/policy_definition
 resource "azurerm_policy_definition" "this" {
   for_each            = { for i, policy in var.policies : i => policy }
   name                = each.value.name

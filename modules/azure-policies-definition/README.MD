@@ -3,13 +3,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.20.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.22.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.20.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.22.0 |
 
 ## Modules
 
@@ -25,14 +25,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_policy_definition"></a> [policy\_definition](#input\_policy\_definition) | Object containing all the variables for the policy definition. | <pre>object({<br/>    name                = string<br/>    policy_type         = string<br/>    mode                = string<br/>    display_name        = string<br/>    description         = optional(string)<br/>    management_group_id = optional(string)<br/>    policy_rule         = optional(string)<br/>    metadata            = optional(string)<br/>    parameters          = optional(string)<br/>  })</pre> | n/a | yes |
+| <a name="input_policies"></a> [policies](#input\_policies) | List of objects containing all the variables for the policy definitions. | <pre>list(object({<br/>    name                = string<br/>    policy_type         = string<br/>    mode                = string<br/>    display_name        = string<br/>    description         = optional(string)<br/>    management_group_id = optional(string)<br/>    policy_rule         = optional(string)<br/>    metadata            = optional(string)<br/>    parameters          = optional(string)<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_policy_definition_id"></a> [policy\_definition\_id](#output\_policy\_definition\_id) | Azure Policy definition id |
-| <a name="output_policy_definition_name"></a> [policy\_definition\_name](#output\_policy\_definition\_name) | Azure Policy definition name |
+| <a name="output_policy_definition_ids"></a> [policy\_definition\_ids](#output\_policy\_definition\_ids) | List of all Azure Policy definition IDs |
+| <a name="output_policy_definition_names"></a> [policy\_definition\_names](#output\_policy\_definition\_names) | List of all Azure Policy definition names |
 
 ## Example Usage YAML
 

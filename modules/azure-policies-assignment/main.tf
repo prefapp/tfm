@@ -1,38 +1,41 @@
 # DATAS SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/data-sources/subscription
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/data-sources/subscription
 data "azurerm_subscription" "current" {}
 
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/data-sources/policy_definition
 data "azurerm_policy_definition" "this" {
-  for_each = { for k, v in var.assignments : k => v if can(v.policy_name) }
+  for_each     = { for k, v in var.assignments : k => v if can(v.policy_name) }
   display_name = each.value.policy_name
 }
 
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
-  for_each = { for k, v in var.assignments : k => v if v.scope == "resource group" && v.resource_group_id == null}
-  name = each.value.resource_group_name
+  for_each = { for k, v in var.assignments : k => v if v.scope == "resource group" && v.resource_group_id == null }
+  name     = each.value.resource_group_name
 }
 
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/data-sources/management_group
 data "azurerm_management_group" "this" {
-  for_each = { for k, v in var.assignments : k => v if v.scope == "management group"  && v.management_group_id == null}
+  for_each     = { for k, v in var.assignments : k => v if v.scope == "management group" && v.management_group_id == null }
   display_name = each.value.management_group_name
 }
 
-## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_policy_assignment
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/resource_policy_assignment
 resource "azurerm_resource_policy_assignment" "this" {
-  for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource" }
-  name                 = each.value.name
+  for_each = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource" }
+  name     = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
     try(data.azurerm_policy_definition.this[each.key].id, null)
   )
-  resource_id          = each.value.resource_id
-  description          = each.value.description
-  display_name         = each.value.display_name
-  enforce              = each.value.enforce
-  location             = each.value.location
-  metadata             = each.value.metadata
-  parameters           = each.value.parameters
-  not_scopes           = each.value.not_scopes
+  resource_id  = each.value.resource_id
+  description  = each.value.description
+  display_name = each.value.display_name
+  enforce      = each.value.enforce
+  location     = each.value.location
+  metadata     = each.value.metadata
+  parameters   = each.value.parameters
+  not_scopes   = each.value.not_scopes
 
   dynamic "identity" {
     for_each = each.value.identity != null ? [each.value.identity] : []
@@ -73,25 +76,25 @@ resource "azurerm_resource_policy_assignment" "this" {
   }
 }
 
-## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_group_policy_assignment
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/resource_group_policy_assignment
 resource "azurerm_resource_group_policy_assignment" "this" {
-  for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource group" }
-  name                 = each.value.name
+  for_each = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource group" }
+  name     = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
     try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
-  resource_group_id  = coalesce(
+  resource_group_id = coalesce(
     lookup(each.value, "resource_group_id", null),
     try(lookup(data.azurerm_resource_group.this, each.key, null).id, null)
   )
-  description          = each.value.description
-  display_name         = each.value.display_name
-  enforce              = each.value.enforce
-  location             = each.value.location
-  metadata             = each.value.metadata
-  parameters           = each.value.parameters
-  not_scopes           = each.value.not_scopes
+  description  = each.value.description
+  display_name = each.value.display_name
+  enforce      = each.value.enforce
+  location     = each.value.location
+  metadata     = each.value.metadata
+  parameters   = each.value.parameters
+  not_scopes   = each.value.not_scopes
 
   dynamic "identity" {
     for_each = each.value.identity != null ? [each.value.identity] : []
@@ -132,22 +135,22 @@ resource "azurerm_resource_group_policy_assignment" "this" {
   }
 }
 
-## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/subscription_policy_assignment
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/subscription_policy_assignment
 resource "azurerm_subscription_policy_assignment" "this" {
-  for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "subscription" }
-  name                 = each.value.name
+  for_each = { for i, assignment in var.assignments : i => assignment if assignment.scope == "subscription" }
+  name     = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
     try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
-  subscription_id      = data.azurerm_subscription.current.id
-  description          = each.value.description
-  display_name         = each.value.display_name
-  enforce              = each.value.enforce
-  location             = each.value.location
-  metadata             = each.value.metadata
-  parameters           = each.value.parameters
-  not_scopes           = each.value.not_scopes
+  subscription_id = data.azurerm_subscription.current.id
+  description     = each.value.description
+  display_name    = each.value.display_name
+  enforce         = each.value.enforce
+  location        = each.value.location
+  metadata        = each.value.metadata
+  parameters      = each.value.parameters
+  not_scopes      = each.value.not_scopes
 
   dynamic "identity" {
     for_each = each.value.identity != null ? [each.value.identity] : []
@@ -188,25 +191,25 @@ resource "azurerm_subscription_policy_assignment" "this" {
   }
 }
 
-## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.1/docs/resources/resource_policy_assignment
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/management_group_policy_assignment
 resource "azurerm_management_group_policy_assignment" "this" {
-  for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "management group" }
-  name                 = each.value.name
+  for_each = { for i, assignment in var.assignments : i => assignment if assignment.scope == "management group" }
+  name     = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
     try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
-  management_group_id  = coalesce(
+  management_group_id = coalesce(
     lookup(each.value, "management_group_id", null),
     try(lookup(data.azurerm_management_group.this, each.key, null).id, null)
   )
-  description          = each.value.description
-  display_name         = each.value.display_name
-  enforce              = each.value.enforce
-  location             = each.value.location
-  metadata             = each.value.metadata
-  parameters           = each.value.parameters
-  not_scopes           = each.value.not_scopes
+  description  = each.value.description
+  display_name = each.value.display_name
+  enforce      = each.value.enforce
+  location     = each.value.location
+  metadata     = each.value.metadata
+  parameters   = each.value.parameters
+  not_scopes   = each.value.not_scopes
 
   dynamic "identity" {
     for_each = each.value.identity != null ? [each.value.identity] : []
