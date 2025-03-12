@@ -31,13 +31,10 @@ resource "azurerm_policy_definition" "this" {
 resource "azurerm_resource_policy_assignment" "this" {
   for_each             = { for i, assignment in var.assignments : i => assignment if assignment.scope == "resource" }
   name                 = each.value.name
-  policy_definition_id = coalesce(
-    lookup(each.value, "policy_definition_id", null),
-    each.value.policy_type == "custom" ? try(
-      azurerm_policy_definition.this[index({ for k, v in azurerm_policy_definition.this : v.name => k }, each.value.policy_name, null)].id,
-      null
-    ) : null
-  )
+  policy_definition_id = one([
+    for v in azurerm_policy_definition.this : v.id
+    if v.display_name == each.value.policy_name
+  ])
   resource_id          = each.value.resource_id
   description          = each.value.description
   display_name         = each.value.display_name
