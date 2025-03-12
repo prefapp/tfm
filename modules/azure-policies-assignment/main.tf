@@ -13,7 +13,7 @@ resource "azurerm_resource_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    try(data.azurerm_policy_definition.this[each.key].id, null)
+    try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
   resource_id          = each.value.resource_id
   description          = each.value.description
@@ -69,7 +69,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    try(data.azurerm_policy_definition.this[each.key].id, null)
+    try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
   resource_group_id    = each.value.resource_id
   description          = each.value.description
@@ -125,7 +125,7 @@ resource "azurerm_subscription_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    try(data.azurerm_policy_definition.this[each.key].id, null)
+    try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
   subscription_id      = data.azurerm_subscription.current.id
   description          = each.value.description
@@ -181,7 +181,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   name                 = each.value.name
   policy_definition_id = coalesce(
     lookup(each.value, "policy_definition_id", null),
-    try(data.azurerm_policy_definition.this[each.key].id, null)
+    try(lookup(data.azurerm_policy_definition.this, each.key, null).id, null)
   )
   management_group_id  = each.value.management_group_id
   description          = each.value.description
