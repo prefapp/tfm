@@ -4,7 +4,7 @@ data "azurerm_subscription" "current" {}
 
 data "azurerm_management_group" "this" {
   for_each = { for k, v in var.assignments : k => v if can(v.management_group_name) && v.scope == "management group" }
-  display_name = each.value.management_group_name
+  name = each.value.management_group_name
 }
 
 data "azurerm_policy_definition" "this" {
