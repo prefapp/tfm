@@ -1,21 +1,23 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "this" {
-  name                           = var.postgresql_flexible_server.name
-  resource_group_name            = data.azurerm_resource_group.resource_group.name
-  location                       = var.postgresql_flexible_server.location
-  version                        = var.postgresql_flexible_server.version
-  public_network_access_enabled  = var.postgresql_flexible_server.public_network_access_enabled
-  delegated_subnet_id            = var.postgresql_flexible_server.public_network_access_enabled == false ? try(data.azurerm_subnet.subnet[0].id, null) : null
-  private_dns_zone_id            = var.postgresql_flexible_server.public_network_access_enabled == false ? try(data.azurerm_private_dns_zone.dns_private_zone[0].id, null) : null
-  administrator_login            = var.postgresql_flexible_server.administrator_login
-  administrator_password         = coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)
-  zone                           = var.postgresql_flexible_server.zone
-  storage_tier                   = var.postgresql_flexible_server.storage_tier
-  storage_mb                     = var.postgresql_flexible_server.storage_mb
-  sku_name                       = var.postgresql_flexible_server.sku_name
-  replication_role               = var.postgresql_flexible_server.replication_role
-  create_mode                    = var.postgresql_flexible_server.create_mode
-  tags                           = local.tags
+  name                              = var.postgresql_flexible_server.name
+  resource_group_name               = data.azurerm_resource_group.resource_group.name
+  location                          = var.postgresql_flexible_server.location
+  version                           = var.postgresql_flexible_server.version
+  public_network_access_enabled     = var.postgresql_flexible_server.public_network_access_enabled
+  delegated_subnet_id               = var.postgresql_flexible_server.public_network_access_enabled == false ? try(data.azurerm_subnet.subnet[0].id, null) : null
+  private_dns_zone_id               = var.postgresql_flexible_server.public_network_access_enabled == false ? try(data.azurerm_private_dns_zone.dns_private_zone[0].id, null) : null
+  administrator_login               = var.postgresql_flexible_server.administrator_login
+  administrator_password            = coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)
+  zone                              = var.postgresql_flexible_server.zone
+  storage_tier                      = var.postgresql_flexible_server.storage_tier
+  storage_mb                        = var.postgresql_flexible_server.storage_mb
+  sku_name                          = var.postgresql_flexible_server.sku_name
+  replication_role                  = var.postgresql_flexible_server.replication_role
+  create_mode                       = var.postgresql_flexible_server.create_mode
+  source_server_id                  = var.postgresql_flexible_server.source_server_id
+  point_in_time_restore_time_in_utc = var.postgresql_flexible_server.point_in_time_restore_time_in_utc
+  tags                              = local.tags
   maintenance_window {
     day_of_week  = var.postgresql_flexible_server.maintenance_window.day_of_week
     start_hour   = var.postgresql_flexible_server.maintenance_window.start_hour
