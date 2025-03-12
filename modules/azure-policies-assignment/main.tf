@@ -3,7 +3,8 @@
 data "azurerm_subscription" "current" {}
 
 data "azurerm_management_group" "this" {
-  display_name = "councilbox"
+  for_each = { for k, v in var.assignments : k => v if can(v.management_group_name) }
+  display_name = each.value.management_group_name
 }
 
 data "azurerm_policy_definition" "this" {
