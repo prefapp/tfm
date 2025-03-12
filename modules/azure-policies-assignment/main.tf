@@ -8,12 +8,12 @@ data "azurerm_policy_definition" "this" {
 }
 
 data "azurerm_resource_group" "this" {
-  for_each = { for k, v in var.assignments : k => v if v.scope == "resource group" }
+  for_each = { for k, v in var.assignments : k => v if v.scope == "resource group" && v.resource_group_id == null}
   name = each.value.resource_group_name
 }
 
 data "azurerm_management_group" "this" {
-  for_each = { for k, v in var.assignments : k => v if v.scope == "management group" }
+  for_each = { for k, v in var.assignments : k => v if v.scope == "management group"  && v.management_group_id == null}
   display_name = each.value.management_group_name
 }
 
