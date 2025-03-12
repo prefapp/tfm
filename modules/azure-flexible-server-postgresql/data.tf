@@ -6,8 +6,8 @@ locals {
   key_vault_from_data = can(data.azurerm_resources.key_vault[0].resources) ? data.azurerm_resources.key_vault[0].resources[0].name : null
   key_vault_resource_group_from_data = can(data.azurerm_resources.key_vault[0].resources) ? data.azurerm_resources.vnet[0].key_vault[0].resource_group_name : null
   resource_group_name  = var.postgresql_flexible_server.public_network_access_enabled == false ? try(coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data), null) : null
-  virtual_network_name = var.postgresql_flexible_server.public_network_access_enabled == false ? try(coalesce(var.vnet.name, local.vnet_from_data), null) : null
-  key_vault_resource_group_name = try(coalesce(var.key_vault.resource_group_name, local.key_vault_resource_group_from_data), null) : null
+  virtual_network_name = var.postgresql_flexible_server.public_network_access_enabled == false ? try(coalesce(var.vnet.name, local.vnet_from_data), null)
+  key_vault_resource_group_name = try(coalesce(var.key_vault.resource_group_name, local.key_vault_resource_group_from_data), null)
   key_vault_name = try(coalesce(var.key_vault.name, local.key_vault_from_data), null) : null
 }
 
