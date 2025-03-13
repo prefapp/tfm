@@ -35,11 +35,9 @@
 | `subnet_name` | Name of the subnet | `string` | `null` | ❌ |
 | `dns_private_zone_name` | Name of the private DNS zone | `string` | `null` | ❌ |
 | `key_vault` | Key Vault configuration | `object({ name = optional(string), resource_group_name = optional(string) })` | `{}` | ❌ |
-| `key_vault_tags` | Tags for the Key Vault | `map(any)` | `{}` | ❌ |
 | `administrator_password_key_vault_secret_name` | Name of the administrator password secret in Key Vault | `string` | `null` | ❌ |
 | `tags_from_rg` | If `true`, uses tags from the resource group | `bool` | `false` | ❌ |
 | `tags` | Input tags if not using the resource group tags | `map(string)` | `{}` | ❌ |
-| `vnet_tags` | Tags for the virtual network | `map(any)` | `{}` | ❌ |
 | `postgresql_flexible_server` | PostgreSQL Flexible Server configuration | `object` | N/A | ✅ |
 | `postgresql_flexible_server_configuration` | Additional configuration for the server | `map(object({ name = optional(string), value = optional(string) }))` | `{}` | ❌ |
 | `vnet` | Virtual network configuration | `object({ name = optional(string), resource_group_name = optional(string) })` | `{}` | ❌ |
