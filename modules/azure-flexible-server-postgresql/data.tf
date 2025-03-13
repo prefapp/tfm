@@ -24,7 +24,7 @@ data "azurerm_virtual_network" "vnet" {
   resource_group_name = var.vnet.resource_group_name
 }
 output "vnet_1"{
-  value = azurerm_virtual_network.vnet
+  value = data.azurerm_virtual_network.vnet
 }
 
 data "azurerm_resources" "vnet" {
@@ -33,7 +33,7 @@ data "azurerm_resources" "vnet" {
   required_tags = var.vnet_tags
 }
 output "vnet_2"{
-  value = azurerm_resources.vnet
+  value = data.azurerm_resources.vnet
 }
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
