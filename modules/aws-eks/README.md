@@ -149,20 +149,19 @@ The module is organized with the following directory and file structure:
 | <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br><br>    rolearn = string<br><br>    username = string<br><br>    groups = list(string)<br><br>  }))</pre> | `[]` | no |
 | <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br><br>    userarn = string<br><br>    username = string<br><br>    groups = list(string)<br><br>  }))</pre> | `[]` | no |
 | <a name="input_cloudwatch_log_group_retention_in_days"></a> [cloudwatch\_log\_group\_retention\_in\_days](#input\_cloudwatch\_log\_group\_retention\_in\_days) | Number of days to retain log events | `number` | `14` | no |
-| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addons to deploy to the cluster | <pre>map(object({<br><br>    addon_version = optional(string)<br><br>    addon_disabled = optional(bool)<br><br>    resolve_conflicts = optional(string)<br><br>    configuration_values = optional(object({<br><br>      env = optional(map(string))<br><br>    }))<br><br>    service_account_role_arn = optional(string)<br><br>  }))</pre> | n/a | yes |
+| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addons to deploy to the cluster | <pre>map(object({<br><br>    addon_version = optional(string)<br><br>    enabled = optional(bool)<br><br>    resolve_conflicts = optional(string)<br><br>    configuration_values = optional(object({<br><br>      env = optional(map(string))<br><br>    }))<br><br>    service_account_role_arn = optional(string)<br><br>  }))</pre> | n/a | yes |
 | <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster encryption config | `any` | `{}` | no |
 | <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is true. | `bool` | `true` | no |
 | <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is false. | `bool` | `false` | no |
-| <a name="input_cluster_iam_role_arn"></a> [cluster\_iam\_role\_arn](#input\_cluster\_iam\_role\_arn) | n/a | `string` | n/a | yes |
+| <a name="input_cluster_iam_role_arn"></a> [cluster\_iam\_role\_arn](#input\_cluster\_iam\_role\_arn) | n/a | `string` | `null` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | n/a | `string` | n/a | yes |
 | <a name="input_cluster_security_group_id"></a> [cluster\_security\_group\_id](#input\_cluster\_security\_group\_id) | n/a | `string` | n/a | yes |
 | <a name="input_cluster_tags"></a> [cluster\_tags](#input\_cluster\_tags) | Tags to apply to the EKS cluster | `map(string)` | `{}` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | n/a | `string` | n/a | yes |
 | <a name="input_create_alb_ingress_iam"></a> [create\_alb\_ingress\_iam](#input\_create\_alb\_ingress\_iam) | Create IAM resources for alb-ingress | `bool` | `false` | no |
 | <a name="input_create_cloudwatch_iam"></a> [create\_cloudwatch\_iam](#input\_create\_cloudwatch\_iam) | Create IAM resources for cloudwatch | `bool` | `false` | no |
-| <a name="input_create_cluster_iam_role"></a> [create\_cluster\_iam\_role](#input\_create\_cluster\_iam\_role) | Create IAM role for cluster | `bool` | `false` | no |
+| <a name="input_create_cluster_iam_role"></a> [create\_cluster\_iam\_role](#input\_create\_cluster\_iam\_role) | Create IAM role for cluster | `bool` | `true` | no |
 | <a name="input_create_cluster_security_group"></a> [create\_cluster\_security\_group](#input\_create\_cluster\_security\_group) | Create cluster security group | `bool` | `true` | no |
-| <a name="input_create_ebs_driver_iam"></a> [create\_ebs\_driver\_iam](#input\_create\_ebs\_driver\_iam) | Create IAM resources for ebs-driver | `bool` | `true` | no |
 | <a name="input_create_efs_driver_iam"></a> [create\_efs\_driver\_iam](#input\_create\_efs\_driver\_iam) | Create IAM resources for efs-driver | `bool` | `false` | no |
 | <a name="input_create_external_dns_iam"></a> [create\_external\_dns\_iam](#input\_create\_external\_dns\_iam) | Create IAM resources for external-dns | `bool` | `false` | no |
 | <a name="input_create_kms_key"></a> [create\_kms\_key](#input\_create\_kms\_key) | Create KMS key for cluster | `bool` | `true` | no |
@@ -174,10 +173,10 @@ The module is organized with the following directory and file structure:
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | n/a | yes |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | <pre>map(object({<br><br>    description = string<br><br>    protocol = string<br><br>    source_cluster_security_group = optional(bool)<br><br>    from_port = number<br><br>    to_port = number<br><br>    type = string<br><br>    cidr_blocks = optional(list(string))<br><br>    ipv6_cidr_blocks = optional(list(string))<br><br>    self = optional(bool)<br><br>  }))</pre> | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
-| <a name="input_security_groups_ids"></a> [security\_groups\_ids](#input\_security\_groups\_ids) | Security group ids | `list(string)` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(any)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | n/a | yes |
+| <a name="access_entries"></a> [access\_entries](#input\access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
 
 ## Outputs
 

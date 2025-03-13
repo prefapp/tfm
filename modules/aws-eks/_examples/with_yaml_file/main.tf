@@ -13,15 +13,15 @@ module "eks_prefapp" {
 
   region = local.values.region
 
-  create_alb_ingress_iam               = local.values.create_alb_ingress_iam
+  create_alb_ingress_iam = local.values.create_alb_ingress_iam
 
-  create_cloudwatch_iam                = local.values.create_cloudwatch_iam
+  create_cloudwatch_iam = local.values.create_cloudwatch_iam
 
-  create_efs_driver_iam                = local.values.create_efs_driver_iam
+  create_efs_driver_iam = local.values.create_efs_driver_iam
 
-  create_external_dns_iam              = local.values.create_external_dns_iam
+  create_external_dns_iam = local.values.create_external_dns_iam
 
-  create_parameter_store_iam           = local.values.create_parameter_store_iam
+  create_parameter_store_iam = local.values.create_parameter_store_iam
 
   node_security_group_additional_rules = local.values.node_security_group_additional_rules
 
