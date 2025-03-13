@@ -47,7 +47,7 @@
 
 
 ### Notes
-You can create the `administrator_password_key_vault_secret_name` with the `random_password` resource or you can add it as a input. Also, if you create the password with this resource, you will need to do a `terraform apply` on the resource `"azurerm_key_vault_secret.password_create` before create the postresql flexible server.
+You can create the `administrator_password_key_vault_secret_name` with the `random_password` resource or you can add it as a input. Also, if you create the password with this resource, you will need to do a `terraform apply` on the resource `azurerm_key_vault_secret.password_create` before create the postresql flexible server.
 
 You can use `name` and `resource_group_name` in `vnet` and `key_vault` variables as inputs to get the `data.azurerm_resource` or you can use `tags` as a input (`vnet_tags` and `key_vault_tags`) to get the data.
 
