@@ -22,7 +22,7 @@ data "azurerm_resources" "vnet_from_name" {
 }
 
 data "azurerm_resources" "vnet_from_tags" {
-  count         = length(var.vnet.tags) > 0 ? 1 : 0
+  count         = length(coalesce(var.vnet.tags), {}) > 0 ? 1 : 0
   type          = "Microsoft.Network/virtualNetworks"
   required_tags = var.vnet.tags
 }
@@ -34,7 +34,7 @@ data "azurerm_resources" "key_vault_from_name" {
 }
 
 data "azurerm_resources" "key_vault_from_tags" {
-  count         = length(var.key_vault.tags) > 0 ? 1 : 0
+  count         = length(coalesce(var.key_vault.tags), {}) > 0 ? 1 : 0
   type          = "Microsoft.KeyVault/vaults"
   required_tags = var.key_vault.tags
 }
