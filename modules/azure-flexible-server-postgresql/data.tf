@@ -28,8 +28,8 @@ data "azurerm_resources" "vnet_from_tags" {
 }
 
 data "azurerm_subnet" "subnet" {
-  count = var.subnet.name != null && var.subnet.name != "" ? 1 : 0
-  name                 = var.subnet.name
+  count = var.subnet_name != null && var.subnet_name != "" ? 1 : 0
+  name                 = var.subnet_name
   virtual_network_name = local.virtual_network_name
   resource_group_name  = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)
 }
