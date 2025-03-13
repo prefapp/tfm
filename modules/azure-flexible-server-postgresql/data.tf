@@ -61,11 +61,8 @@ data "azurerm_resources" "key_vault" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
-data "azurerm_key_vault_secret" "administrator_password" {
-  count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
-  name         = var.administrator_password_key_vault_secret_name
-  key_vault_id = coalesce(
-    length(data.azurerm_key_vault.key_vault) > 0 ? data.azurerm_key_vault.key_vault[0].id : null,
-    length(data.azurerm_resources.key_vault) > 0 ? data.azurerm_resources.key_vault[0].resources[0].id : null
-  )
-}
+#data "azurerm_key_vault_secret" "administrator_password" {
+#  count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
+#  name         = var.administrator_password_key_vault_secret_name
+#  key_vault_id =
+#}
