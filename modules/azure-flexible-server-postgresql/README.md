@@ -58,7 +58,27 @@ When you set `create_mode` to `PointInTimeRestore` you will need to add the outp
 
 ## PITR creation explanation
 
-The creation of a server from a PITR will create a new server. If the source is different and is deleted, the new server will not be affected, however, you will have to change the `server_creation.mode` to `Default` after its creation so that it is not tried to restore again and thus be able to apply a `terraform plan` or` terraform apply` without trying to restore again.
+When create_mode = "PointInTimeRestore", you need to provide:
+
+  1. source_server_id: The resource ID of the original server from which to restore.
+
+  2. point_in_time_restore_time_in_utc: The timestamp (UTC) to restore from.
+
+PointInTimeRestore will do:
+
+  1. **Creates a new server**: This does not modify the original server, it creates a new one with a different name instead.
+
+  2. **Requieres a `source_server_id`**: The original server must have avaliable backups.
+
+  3. **Must provide a restore timestamp**: `point_in_time_restore_time_in_utc` must be within the backup retention period.
+
+  4. Once restored, you may want to change `create_mode` to `Default` to avoid reapplying the restore when running `terraform apply` again.
+
+  5. If the original server is deleted, the PITR server remains unafected.
+
+  6. If `point_in_time_restore_time_in_utc` is not within the retention period, the restore will fail.
+
+
 
 ## Get list of PiTRs backups
 
