@@ -5,10 +5,8 @@ locals {
   vnet_resource_group_from_data = can(data.azurerm_resources.vnet_from_tags[0].resources) ? data.azurerm_resources.vnet_from_tags[0].resources[0].resource_group_name : null
   resource_group_name  = var.postgresql_flexible_server.public_network_access_enabled == false ? try(coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data), null) : null
   virtual_network_name = var.postgresql_flexible_server.public_network_access_enabled == false ? try(coalesce(var.vnet.name, local.vnet_from_data), null) : null
-  key_vault_from_data = can(data.azurerm_resources.key_vault[0].resources) ? data.azurerm_resources.key_vault[0].resources[0].name : null
-  key_vault_resource_group_from_data = can(data.azurerm_resources.key_vault[0].resources) ? data.azurerm_resources.key_vault[0].resource_group_name : null
-  key_vault_resource_group_name = try(coalesce(var.key_vault.resource_group_name, local.key_vault_resource_group_from_data), null)
-  key_vault_name = try(coalesce(var.key_vault.name, local.key_vault_from_data), null)
+  key_vault_id__from_data = can(data.azurerm_resources.key_vault[0].resources) ? data.azurerm_resources.key_vault[0].resource[0].id : null
+  key_vault_id = try(coalesce(data.key_vault.key_vault_from_name.id, local.key_vault_id_from_data), null)
 }
 
 # Data section
@@ -46,22 +44,21 @@ data "azurerm_private_dns_zone" "dns_private_zone" {
 }
 
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
-data "azurerm_key_vault" "key_vault" {
-  count               = var.key_vault.name != null && var.key_vault.resource_group_name != "" ? 1 : 0
-  name                = local.key_vault_name
-  resource_group_name = local.key_vault_resource_group_name
+data "azurerm_resources" "key_vault_from_name" {
+  type = "Microsoft.KeyVault/vaults"
+  name                = var.key_vault.name
+  resource_group_name = var.key_vault.resource_group_name
 }
 
-data "azurerm_resources" "key_vault" {
+data "azurerm_resources" "key_vault_from_tags" {
   count = length(var.key_vault_tags) > 0 ? 1 : 0
   type = "Microsoft.KeyVault/vaults"
   required_tags = var.key_vault_tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
-#data "azurerm_key_vault_secret" "administrator_password" {
-#  count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
-#  name         = var.administrator_password_key_vault_secret_name
-#  key_vault_id =
-#}
+data "azurerm_key_vault_secret" "administrator_password" {
+  count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
+  name         = var.administrator_password_key_vault_secret_name
+  key_vault_id = local.key_vault_id_from_data
+}
