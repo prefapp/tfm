@@ -48,8 +48,11 @@
 
 ### Notes
 You can create the `administrator_password_key_vault_secret_name` with the `random_password` resource or you can add it as a input. Also, if you create the password with this resource, you will need to do a `terraform apply` on the resource `"azurerm_key_vault_secret.password_create` before create the postresql flexible server.
+
 You can use `name` and `resource_group_name` in `vnet` and `key_vault` variables as inputs to get the `data.azurerm_resource` or you can use `tags` as a input (`vnet_tags` and `key_vault_tags`) to get the data.
+
 If you set `public_network_access_enabled: true` you won't need the inputs `subnet_name` and `dns_private_zone_name`. You will need to add a list of IP's in `firewall_rule` to have access to the postresql flexible server instead.
+
 When you set `create_mode` to `PointInTimeRestore` you will need to add the outputs `source_server_id` and `point_in_time_restore_time_in_utc`. Read more about the PITR in the next paragraph (`create_mode` is set to `default` by default).
 
 
