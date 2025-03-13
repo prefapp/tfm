@@ -59,5 +59,5 @@ data "azurerm_resources" "key_vault_from_tags" {
 data "azurerm_key_vault_secret" "administrator_password" {
   count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
   name         = var.administrator_password_key_vault_secret_name
-  key_vault_id = data.azurerm_resources.key_vault_from_name.resources.id
+  key_vault_id = data.azurerm_resources.key_vault_from_name.resources[0].id
 }
