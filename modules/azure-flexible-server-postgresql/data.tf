@@ -35,7 +35,7 @@ data "azurerm_subnet" "subnet" {
   count = var.subnet.name != null && var.subnet.name != "" ? 1 : 0
   name                 = var.subnet.name
   virtual_network_name = local.virtual_network_name
-  resource_group_name  = local.vnet_resource_group_from_data
+  resource_group_name  = var.vnet.resource_group_name
 }
 
 
