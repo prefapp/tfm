@@ -16,35 +16,52 @@
 
 | Resource | Type |
 |---------|------|
-| [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
 | [azurerm_postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | Resource |
 | [azurerm_postgresql_flexible_server_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | Resource |
+| [random_password] | Resource |
+| [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | Resource |
+| [azurerm_postgresql_flexible_server_firewall_rule](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule) | Resource |
+| [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
 | [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | Data |
 | [azurerm_private_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | Data |
-| [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault) | Data |
+| [azurerm_resource](#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | Data |
 | [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | Data |
 
 ## Inputs
 
-| Nombre | Descripción | Tipo | Default | Requerido |
-|--------|------------|------|---------|:--------:|
+| Name | Description | Type | Default | Required |
+|------|------------|------|---------|:--------:|
 | `resource_group` | Name of the resource group | `string` | N/A | ✅ |
-| `tags_from_rg` | Setting it to true, gives the tags from your resource group | `bool` | `false` | ❌ |
-| `tags` | Input tags if you dont want the resource group ones | `map(string)` | `{ "name": "value" }` | ❌ |
-| `subnet` | Subnet config | `object` | N/A | ✅ |
-| `dns_private_zone` | DNS private zone config | `object` | N/A | ✅ |
-| `postgresql_flexible_server` |  PostgreSQL Flexible config | `object` | N/A | ✅ |
-| `postgresql_flexible_server_configuration` | Aditional config for the server | `map(object)` | `{}` | ❌ |
-| `key_vault` | Key Vault config | `object` | N/A | ❌ |
-| `administrator_password_key_vault_secret_name` | Name of the secret password from key vault | `string` | null | ❌ |
-| `admin_password` | Administrator password (sensitive) | `string` | `null` | ❌ |
+| `subnet_name` | Name of the subnet | `string` | `null` | ❌ |
+| `dns_private_zone_name` | Name of the private DNS zone | `string` | `null` | ❌ |
+| `key_vault` | Key Vault configuration | `object({ name = optional(string), resource_group_name = optional(string) })` | `{}` | ❌ |
+| `key_vault_tags` | Tags for the Key Vault | `map(any)` | `{}` | ❌ |
+| `administrator_password_key_vault_secret_name` | Name of the administrator password secret in Key Vault | `string` | `null` | ❌ |
+| `tags_from_rg` | If `true`, uses tags from the resource group | `bool` | `false` | ❌ |
+| `tags` | Input tags if not using the resource group tags | `map(string)` | `{}` | ❌ |
+| `vnet_tags` | Tags for the virtual network | `map(any)` | `{}` | ❌ |
+| `postgresql_flexible_server` | PostgreSQL Flexible Server configuration | `object` | N/A | ✅ |
+| `postgresql_flexible_server_configuration` | Additional configuration for the server | `map(object({ name = optional(string), value = optional(string) }))` | `{}` | ❌ |
+| `vnet` | Virtual network configuration | `object({ name = optional(string), resource_group_name = optional(string) })` | `{}` | ❌ |
+| `firewall_rule` | List of firewall rules to allow access to the PostgreSQL server | `list(object({ name = optional(string), start_ip_address = optional(string), end_ip_address = optional(string) }))` | `[]` | ❌ |
 
-### Note
-If you add a **admin_pasword** as a input, you won't get the **administrator_password_key_vault_secret_name**.
+
+### Notes
+You can create the `administrator_password_key_vault_secret_name` with the `random_password` resource or you can add it as a input. Also, if you create the password with this resource, you will need to do a `terraform apply` on the resource `"azurerm_key_vault_secret.password_create` before create the postresql flexible server.
+You can use `name` and `resource_group_name` in `vnet` and `key_vault` variables as inputs to get the `data.azurerm_resource` or you can use `tags` as a input (`vnet_tags` and `key_vault_tags`) to get the data.
+If you set `public_network_access_enabled: true` you won't need the inputs `subnet_name` and `dns_private_zone_name`. You will need to add a list of IP's in `firewall_rule` to have access to the postresql flexible server instead.
+When you set `create_mode` to `PointInTimeRestore` you will need to add the outputs `source_server_id` and `point_in_time_restore_time_in_utc`. Read more about the PITR in the next paragraph (`create_mode` is set to `default` by default).
+
 
 ## PITR creation explanation
 
 The creation of a server from a PITR will create a new server. If the source is different and is deleted, the new server will not be affected, however, you will have to change the `server_creation.mode` to `Default` after its creation so that it is not tried to restore again and thus be able to apply a `terraform plan` or` terraform apply` without trying to restore again.
+
+## Get list of PiTRs backups
+
+```yaml
+az postgres flexible-server backup list --resource-group test-modulo --name mi-server
+```
 
 ## Outputs
 
@@ -55,36 +72,42 @@ The creation of a server from a PITR will create a new server. If the source is 
 ## Example Usage
 
 ```yaml
-resource_group: "your-resource-group"
-tags_from_rg: true
-subnet:
-  name: "subnet_name"
-dns_private_zone:
-  name: "dns-private-name"
-key_vault:
-  name: "key-vault-name"
-  resource_group_name: "key-vault-resource-group"
-administrator_password_key_vault_secret_name: "your-secret-password"
-postgresql_flexible_server:
-  location: "eastus"
-  name: "flexible-server-name"
-  version: "15"
-  administrator_login: "admin1"
-  zone: "2"
-  storage_mb: "65536"
-  sku_name: "GP_Standar"
-  maintenance_window:
-    day_of_week: 6
-    start_hour: 0
-    start_minute: 0
-  authentication:
-    active_directory_auth_enabled: false
-    password_auth_enabled: true
-postgresql_flexible_server_configuration:
-  azure.config1:
-    name: "azure.config1"
-    value: "Config1"
-  azure.config2:
-    name: "azure.config2"
-    value: "Config2"
+values:
+  resource_group: "example-resource-group"
+  tags_from_rg: true
+  key_vault_tags:
+    value: "tag1"
+  #key_vault:
+    #name: "key-vault-name"
+    #resource_group_name: "key-vault-resource-group-name"
+  vnet_tags:
+    value: "tag1"
+  #vnet:
+    #name: "example-vnet"
+    #resource_group_name: "vnet-resource-group-name"
+  subnet_name: "example-subnet"
+  dns_private_zone_name: "dns.private.zone.example.com"
+  administrator_password_key_vault_secret_name: "flexible-server-secret-example-test"
+  postgresql_flexible_server:
+    location: "westeurope"
+    name: "example-flexible-server"
+    version: "15"
+    administrator_login: "psqladmin"
+    public_network_access_enabled: false
+    storage_mb: "65536"
+    sku_name: "GP_Standard_D2ds_v5"
+    maintenance_window:
+      day_of_week: 6
+      start_hour: 0
+      start_minute: 0
+    authentication:
+      active_directory_auth_enabled: false
+      password_auth_enabled: true
+  postgresql_flexible_server_configuration:
+    azure.extensions:
+      name: "azure.extensions"
+      value: "extension1,extension2"
+    configuration1:
+      name: "example-configuration"
+      value: "TRUE"
 ```

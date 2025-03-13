@@ -51,14 +51,13 @@ resource "random_password" "password" {
   special = true
 }
 
-# Create the Key Vault secret
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret
 resource "azurerm_key_vault_secret" "password_create" {
   key_vault_id = coalesce(data.azurerm_resources.key_vault_from_name.resources[0].id, local.key_vault_id_from_data)
   name         = var.administrator_password_key_vault_secret_name
   value        = random_password.password.result
   depends_on = [ random_password.password ]
   lifecycle {
-    # Ignore changes to the secret's value to prevent overwriting it after the initial creation
     ignore_changes = [value]
   }
 }

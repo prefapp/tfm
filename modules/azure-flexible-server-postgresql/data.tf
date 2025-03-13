@@ -14,45 +14,44 @@ data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources
 data "azurerm_resources" "vnet_from_name" {
-  type = "Microsoft.Network/virtualNetworks"
+  type                = "Microsoft.Network/virtualNetworks"
   name                = var.vnet.name
   resource_group_name = var.vnet.resource_group_name
 }
 
 data "azurerm_resources" "vnet_from_tags" {
-  count = length(var.vnet_tags) > 0 ? 1 : 0
-  type = "Microsoft.Network/virtualNetworks"
+  count         = length(var.vnet_tags) > 0 ? 1 : 0
+  type          = "Microsoft.Network/virtualNetworks"
   required_tags = var.vnet_tags
 }
 
-data "azurerm_subnet" "subnet" {
-  count = var.subnet_name != null && var.subnet_name != "" ? 1 : 0
-  name                 = var.subnet_name
-  virtual_network_name = local.virtual_network_name
-  resource_group_name  = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)
+data "azurerm_resources" "key_vault_from_name" {
+  type                = "Microsoft.KeyVault/vaults"
+  name                = var.key_vault.name
+  resource_group_name = var.key_vault.resource_group_name
 }
 
+data "azurerm_resources" "key_vault_from_tags" {
+  count         = length(var.key_vault_tags) > 0 ? 1 : 0
+  type          = "Microsoft.KeyVault/vaults"
+  required_tags = var.key_vault_tags
+}
+
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
+data "azurerm_subnet" "subnet" {
+  count = var.subnet_name != null && var.subnet_name != "" ? 1 : 0
+  name                  = var.subnet_name
+  virtual_network_name  = local.virtual_network_name
+  resource_group_name   = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)
+}
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
 data "azurerm_private_dns_zone" "dns_private_zone" {
   count = var.dns_private_zone_name != null && var.dns_private_zone_name != "" ? 1 : 0
   name                = var.dns_private_zone_name
   resource_group_name = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)
-}
-
-
-data "azurerm_resources" "key_vault_from_name" {
-  type = "Microsoft.KeyVault/vaults"
-  name                = var.key_vault.name
-  resource_group_name = var.key_vault.resource_group_name
-}
-
-data "azurerm_resources" "key_vault_from_tags" {
-  count = length(var.key_vault_tags) > 0 ? 1 : 0
-  type = "Microsoft.KeyVault/vaults"
-  required_tags = var.key_vault_tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
