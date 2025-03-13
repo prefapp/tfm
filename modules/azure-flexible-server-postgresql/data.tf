@@ -22,9 +22,9 @@ data "azurerm_resources" "vnet_from_name" {
 }
 
 data "azurerm_resources" "vnet_from_tags" {
-  count         = length(var.vnet_tags) > 0 ? 1 : 0
+  count         = length(var.vnet.tags) > 0 ? 1 : 0
   type          = "Microsoft.Network/virtualNetworks"
-  required_tags = var.vnet_tags
+  required_tags = var.vnet.tags
 }
 
 data "azurerm_resources" "key_vault_from_name" {
@@ -34,9 +34,9 @@ data "azurerm_resources" "key_vault_from_name" {
 }
 
 data "azurerm_resources" "key_vault_from_tags" {
-  count         = length(var.key_vault_tags) > 0 ? 1 : 0
+  count         = length(var.key_vault.tags) > 0 ? 1 : 0
   type          = "Microsoft.KeyVault/vaults"
-  required_tags = var.key_vault_tags
+  required_tags = var.key_vault.tags
 }
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet

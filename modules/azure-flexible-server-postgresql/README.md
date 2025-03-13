@@ -78,14 +78,14 @@ az postgres flexible-server backup list --resource-group test-modulo --name mi-s
 values:
   resource_group: "example-resource-group"
   tags_from_rg: true
-  key_vault_tags:
-    value: "tag1"
-  #key_vault:
+  key_vault:
+    tags:
+     value: "tag1"
     #name: "key-vault-name"
     #resource_group_name: "key-vault-resource-group-name"
-  vnet_tags:
-    value: "tag1"
-  #vnet:
+  vnet:
+    tags:
+      value: "tag1"
     #name: "example-vnet"
     #resource_group_name: "vnet-resource-group-name"
   subnet_name: "example-subnet"

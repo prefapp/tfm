@@ -16,12 +16,8 @@ variable "key_vault" {
   type = object({
     name                = optional(string)
     resource_group_name = optional(string)
+    tags                = optional(map(string))
   })
-  default = {}
-}
-
-variable "key_vault_tags" {
-  type    = map
   default = {}
 }
 
@@ -37,11 +33,6 @@ variable "tags_from_rg" {
 
 variable "tags" {
   type = map(string)
-  default = {}
-}
-
-variable "vnet_tags" {
-  type    = map
   default = {}
 }
 
@@ -77,6 +68,7 @@ variable "vnet" {
   type = object({
     name                = optional(string)
     resource_group_name = optional(string)
+    tags                = optional(map(string))
   })
   default = {}
 }
