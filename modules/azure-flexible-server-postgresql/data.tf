@@ -23,11 +23,17 @@ data "azurerm_virtual_network" "vnet" {
   name                = var.vnet.name
   resource_group_name = var.vnet.resource_group_name
 }
+output "vnet_1"{
+  value = azurerm_virtual_network.vnet
+}
 
 data "azurerm_resources" "vnet" {
   count = length(var.vnet_tags) > 0 ? 1 : 0
   type = "Microsoft.Network/virtualNetworks"
   required_tags = var.vnet_tags
+}
+output "vnet_2"{
+  value = azurerm_resources.vnet
 }
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
