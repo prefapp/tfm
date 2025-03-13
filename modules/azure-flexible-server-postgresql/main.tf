@@ -65,7 +65,7 @@ resource "azurerm_key_vault_secret" "password_create" {
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule
 resource "azurerm_postgresql_flexible_server_firewall_rule" "this" {
-  for_each = { for idx, rule in var.azurerm_postgresql_flexible_server_firewall_rule : idx => rule if rule.name != null }
+  for_each = { for idx, rule in var.firewall_rule : idx => rule if rule.name != null }
   server_id        = azurerm_postgresql_flexible_server.this.id
   name             = each.value.name
   start_ip_address = each.value.start_ip_address
