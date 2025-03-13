@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/prefapp/tfm/compare/aws-eks-v0.4.0...aws-eks-v1.0.0) (2025-03-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* create_iam_role, iam_role_arn, cluster_addons and access_entries
+
+### Features
+
+* create_iam_role, iam_role_arn, cluster_addons and access_entries ([42d1495](https://github.com/prefapp/tfm/commit/42d14955944256c2e68bb0ab00ebcbfa432564fd))
+
 ## [0.4.0](https://github.com/prefapp/tfm/compare/aws-eks-v0.3.0...aws-eks-v0.4.0) (2025-01-27)
 
 
