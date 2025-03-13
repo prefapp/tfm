@@ -34,13 +34,13 @@
 | `resource_group` | Name of the resource group | `string` | N/A | ✅ |
 | `subnet_name` | Name of the subnet | `string` | `null` | ❌ |
 | `dns_private_zone_name` | Name of the private DNS zone | `string` | `null` | ❌ |
-| `key_vault` | Key Vault configuration | `object({ name = optional(string), resource_group_name = optional(string) })` | `{}` | ❌ |
+| `key_vault` | Key Vault configuration | `object({ name = optional(string), resource_group_name = optional(string), tags = optional(map(string)) })` | `{}` | ❌ |
 | `administrator_password_key_vault_secret_name` | Name of the administrator password secret in Key Vault | `string` | `null` | ❌ |
 | `tags_from_rg` | If `true`, uses tags from the resource group | `bool` | `false` | ❌ |
 | `tags` | Input tags if not using the resource group tags | `map(string)` | `{}` | ❌ |
 | `postgresql_flexible_server` | PostgreSQL Flexible Server configuration | `object` | N/A | ✅ |
 | `postgresql_flexible_server_configuration` | Additional configuration for the server | `map(object({ name = optional(string), value = optional(string) }))` | `{}` | ❌ |
-| `vnet` | Virtual network configuration | `object({ name = optional(string), resource_group_name = optional(string) })` | `{}` | ❌ |
+| `vnet` | Virtual network configuration | `object({ name = optional(string), resource_group_name = optional(string), tags = optional(map(string)) })` | `{}` | ❌ |
 | `firewall_rule` | List of firewall rules to allow access to the PostgreSQL server | `list(object({ name = optional(string), start_ip_address = optional(string), end_ip_address = optional(string) }))` | `[]` | ❌ |
 
 
