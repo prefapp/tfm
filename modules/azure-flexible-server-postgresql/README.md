@@ -18,7 +18,8 @@
 |---------|------|
 | [azurerm_postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | Resource |
 | [azurerm_postgresql_flexible_server_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | Resource |
-| random_password | Resource |
+| [random_password] (https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
+) | Resource |
 | [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | Resource |
 | [azurerm_postgresql_flexible_server_firewall_rule](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule) | Resource |
 | [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
@@ -76,7 +77,7 @@ PointInTimeRestore will do:
 
   6. If `point_in_time_restore_time_in_utc` is not within the retention period, the restore will fail.
 
-  7. The format of `point_in_time_restore_time_in_utc` must be `Year-Month-DayTHour:Min:sec+00:00` or the restore will fail.
+  7. The format of `point_in_time_restore_time_in_utc` must be `08:26:31ZT082631Z` or the restore will fail.
 
 
 
