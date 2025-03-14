@@ -86,6 +86,12 @@
         },
         "modules/azure-public-ip": {
             "package-name": "azure-public-ip"
+        },
+        "modules/azure-policy-assignments": {
+            "package-name": "azure-policy-assignments"
+        },
+        "modules/azure-policy-definitions": {
+            "package-name": "azure-policy-definitions"
         }
     }
 }
