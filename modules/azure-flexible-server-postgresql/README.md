@@ -77,7 +77,7 @@ PointInTimeRestore will do:
 
   6. If `point_in_time_restore_time_in_utc` is not within the retention period, the restore will fail.
 
-  7. The format of `point_in_time_restore_time_in_utc` must be `08:26:31ZT082631Z` or the restore will fail.
+  7. The format of `point_in_time_restore_time_in_utc` must be `2025-03-14T08:26:31Z` or the restore will fail.
 
 
 
@@ -122,7 +122,7 @@ values:
     sku_name: "GP_Standard_D2ds_v5"
     #create_mode: "PointInTimeRestore"
     #source_server_id: "/subscriptions/xxxxxx-xxxx-xxxx-xxxxxx/resourceGroups/example-resource-group/providers/Microsoft.DBforPostgreSQL/flexibleServers/example-flexible-server"
-    #point_in_time_restore_time_in_utc: "2025-02-21T09:35:43.188556+00:00"
+    #point_in_time_restore_time_in_utc: "2025-02-21T09:35:43.18Z"
     maintenance_window:
       day_of_week: 6
       start_hour: 0
