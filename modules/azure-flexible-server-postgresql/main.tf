@@ -39,6 +39,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   }
 }
 
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration
 resource "azurerm_postgresql_flexible_server_configuration" "this" {
   for_each  = var.postgresql_flexible_server_configuration
   name      = each.value.name
@@ -46,6 +47,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "this" {
   value     = each.value.value
 }
 
+#https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
 resource "random_password" "password" {
   length  = 20
   special = true
