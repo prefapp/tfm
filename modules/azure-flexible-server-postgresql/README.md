@@ -24,7 +24,7 @@ To create the postgresql flexible server you must have:
 |---------|------|
 | [azurerm_postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | Resource |
 | [azurerm_postgresql_flexible_server_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | Resource |
-| [random_password] (https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | Resource |
+| [random_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | Resource |
 | [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | Resource |
 | [azurerm_postgresql_flexible_server_firewall_rule](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule) | Resource |
 | [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
