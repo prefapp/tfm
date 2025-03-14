@@ -9,17 +9,20 @@
 
 // Define local variable for the VPC CNI addon version
 locals {
-  vpc_cni_addon = module.eks.cluster_addons.vpc-cni.addon_version
+  vpc_cni_addon_enabled = lookup(local.cluster_addons, "vpc_cni", false)
+
+  vpc_cni_addon = local.vpc_cni_addon_enabled ? module.eks.cluster_addons.vpc-cni.addon_version : null
 }
 
 // Create a null resource to enable prefix delegation
 resource "null_resource" "prefix_delegation" {
+  count = local.vpc_cni_addon_enabled ? 1 : 0
   triggers = {
     cluster_endpoint = local.vpc_cni_addon
     cmd_patch        = "kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true"
   }
 
-// Execute the command to enable prefix delegation
+  // Execute the command to enable prefix delegation
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     command     = self.triggers.cmd_patch
