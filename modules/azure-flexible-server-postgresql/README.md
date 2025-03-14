@@ -83,7 +83,7 @@ PointInTimeRestore will do:
 
   6. If `point_in_time_restore_time_in_utc` is not within the retention period, the restore will fail.
 
-  7. The format of `point_in_time_restore_time_in_utc` must be `Year-Month-DayTHour:Min:sec+00:00` or the restore will fail, for example `2025-03-14T08:26:31Z`.
+  7. The format of `point_in_time_restore_time_in_utc` must be `Year-Month-DayTHour:Min:sec+00:00` or the restore will fail, for example `2025-03-14T08:26:31Z`(https://en.wikipedia.org/wiki/ISO_8601).
 
 
 
