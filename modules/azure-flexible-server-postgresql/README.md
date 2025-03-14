@@ -56,7 +56,7 @@ When you set `create_mode` to `PointInTimeRestore` you will need to add the outp
 
 ## PITR creation explanation
 
-When create_mode = "PointInTimeRestore", you need to provide:
+When `create_mode = PointInTimeRestore`, you need to provide:
 
   1. source_server_id: The resource ID of the original server from which to restore.
 
@@ -76,12 +76,14 @@ PointInTimeRestore will do:
 
   6. If `point_in_time_restore_time_in_utc` is not within the retention period, the restore will fail.
 
+  7. The format of `point_in_time_restore_time_in_utc` must be `Year-Month-DayTHour:Min:sec+00:00` or the restore will fail.
+
 
 
 ## Get list of PiTRs backups
 
 ```yaml
-az postgres flexible-server backup list --resource-group test-modulo --name mi-server
+az postgres flexible-server backup list --resource-group my-resource-group --name my-server-name
 ```
 
 ## Outputs
@@ -117,6 +119,9 @@ values:
     public_network_access_enabled: false
     storage_mb: "65536"
     sku_name: "GP_Standard_D2ds_v5"
+    #create_mode: "PointInTimeRestore"
+    #source_server_id: "/subscriptions/xxxxxx-xxxx-xxxx-xxxxxx/resourceGroups/example-resource-group/providers/Microsoft.DBforPostgreSQL/flexibleServers/example-flexible-server"
+    #point_in_time_restore_time_in_utc: "2025-02-21T09:35:43.188556+00:00"
     maintenance_window:
       day_of_week: 6
       start_hour: 0
