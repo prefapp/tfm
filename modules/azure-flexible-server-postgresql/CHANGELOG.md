@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.6.1...azure-flexible-server-postgresql-v3.0.0) (2025-03-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Azurerm postgresql flexible server update ([#453](https://github.com/prefapp/tfm/issues/453))
+
+### Features
+
+* Azurerm postgresql flexible server update ([#453](https://github.com/prefapp/tfm/issues/453)) ([0295604](https://github.com/prefapp/tfm/commit/0295604fce0983922b1062afd27d93893de5c83b))
+
 ## [2.6.1](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.6.0...azure-flexible-server-postgresql-v2.6.1) (2024-09-13)
 
 
