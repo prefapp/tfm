@@ -49,7 +49,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "this" {
 
 #https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
 resource "random_password" "password" {
-  length  = 20
+  length  = var.password_length
   special = true
 }
 

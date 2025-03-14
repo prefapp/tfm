@@ -2,6 +2,11 @@ variable "resource_group" {
   type = string
 }
 
+variable "password_length" {
+  type    = number
+  default = 20
+}
+
 variable "subnet_name" {
   type    = string
   default = null

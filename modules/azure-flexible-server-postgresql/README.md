@@ -5,6 +5,12 @@
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.116.0 |
 
+To create the postgresql flexible server you must have:
+ - A resource group.
+ - A virtual network.
+ - A keyvault to store/read a secret with the PostgreSQL admin pass.
+ - The dns and the subnet will be necesary when `public_network_access_enabled=false`.
+
 ## Providers
 
 | Name | Version |
@@ -32,6 +38,7 @@
 | Name | Description | Type | Default | Required |
 |------|------------|------|---------|:--------:|
 | `resource_group` | Name of the resource group | `string` | N/A | ✅ |
+| `password_lenght` | Lenght of the random password for the keyvault secret | `number` | `20` | ❌ |
 | `subnet_name` | Name of the subnet | `string` | `null` | ❌ |
 | `dns_private_zone_name` | Name of the private DNS zone | `string` | `null` | ❌ |
 | `key_vault` | Key Vault configuration | `object({ name = optional(string), resource_group_name = optional(string), tags = optional(map(string)) })` | `{}` | ❌ |
