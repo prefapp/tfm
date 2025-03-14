@@ -1,0 +1,41 @@
+variable "resource_group" {
+  type = string
+}
+
+variable "tags_from_rg" {
+  type    = bool
+  default = false
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
+variable "redis" {
+  type = object({
+    name                          = string
+    location                      = string
+    capacity                      = number
+    family                        = string
+    sku_name                      = string
+    non_ssl_port_enabled          = optional(bool)
+    minimum_tls_version           = optional(string)
+    redis_version                 = optional(number)
+    public_network_access_enabled = optional(bool)
+    zones                         = optional(string)
+    authentication_enabled        = optional(bool)
+    subnet_id                     = optional(string)
+    patch_schedule = optional(object({
+      day_of_week     = string
+      start_hour_utc  = number
+    }))
+    redis_configuration = optional(object({
+      aof_backup_enabled              = bool
+      aof_storage_connection_string_0 = string
+      aof_storage_connection_string_1 = string
+      }))
+  })
+}
+
+
