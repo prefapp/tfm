@@ -28,5 +28,5 @@
     "modules/azure-customrole": "0.1.0",
     "modules/azure-public-ip": "0.2.0",
     "modules/azure-policy-assignments": "0.0.0",
-    "modules/azure-policy-definitions": "0.0.0"
+    "modules/azure-policy-definitions": "0.1.0"
 }
