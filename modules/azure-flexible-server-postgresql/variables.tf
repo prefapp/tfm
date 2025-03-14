@@ -13,7 +13,7 @@ variable "subnet_name" {
 }
 
 variable "dns_private_zone_name" {
-  type = string
+  type    = string
   default = null
 }
 
@@ -37,7 +37,7 @@ variable "tags_from_rg" {
 }
 
 variable "tags" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 

@@ -58,7 +58,7 @@ resource "azurerm_key_vault_secret" "password_create" {
   key_vault_id = coalesce(data.azurerm_resources.key_vault_from_name.resources[0].id, local.key_vault_id_from_data)
   name         = var.administrator_password_key_vault_secret_name
   value        = random_password.password.result
-  depends_on = [ random_password.password ]
+  depends_on   = [random_password.password]
   lifecycle {
     ignore_changes = [value]
   }
@@ -66,11 +66,11 @@ resource "azurerm_key_vault_secret" "password_create" {
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule
 resource "azurerm_postgresql_flexible_server_firewall_rule" "this" {
-  for_each = { for idx, rule in var.firewall_rule : idx => rule if rule.name != null }
+  for_each         = { for idx, rule in var.firewall_rule : idx => rule if rule.name != null }
   server_id        = azurerm_postgresql_flexible_server.this.id
   name             = each.value.name
   start_ip_address = each.value.start_ip_address
   end_ip_address   = each.value.end_ip_address
 
- }
+}
 
