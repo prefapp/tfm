@@ -41,7 +41,6 @@ variable "redis" {
     redis_version                 = optional(number)
     public_network_access_enabled = optional(bool)
     zones                         = optional(string)
-    authentication_enabled        = optional(bool)
     subnet_id                     = optional(string)
     patch_schedule = optional(object({
       day_of_week     = string
@@ -51,6 +50,7 @@ variable "redis" {
       aof_backup_enabled              = bool
       aof_storage_connection_string_0 = string
       aof_storage_connection_string_1 = string
+      authentication_enabled          = bool
       }))
   })
 }

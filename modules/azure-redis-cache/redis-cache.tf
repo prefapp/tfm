@@ -11,9 +11,9 @@ resource "azurerm_redis_cache" "this" {
   redis_version                 = var.redis.redis_version
   public_network_access_enabled = var.redis.public_network_access_enabled
   tags                          = local.tags
-  zones                         = var.redis.zone
-  authentication_enabled        = var.redis.authentication_enabled
-  subnet_id                     = var.redis.subnet_id #Introducir validación solo si authentication_enabled=false, coller subnet de data
+  zones                         = var.redis.zones
+
+  subnet_id                     = data.azurerm_subnet.subnet[0].id
   patch_schedule {
     day_of_week     = var.redis.patch_schedule.day_of_week
     start_hour_utc  = var.redis.patch_schedule.start_hour_utc
@@ -22,6 +22,7 @@ resource "azurerm_redis_cache" "this" {
     aof_backup_enabled              = var.redis.redis_configuration.aof_backup_enabled
     aof_storage_connection_string_0 = var.redis.redis_configuration.aof_storage_connection_string_0
     aof_storage_connection_string_1 = var.redis.redis_configuration.aof_storage_connection_string_1
+    authentication_enabled          = var.redis.redis_configuration.authentication_enabled
     }
 }
 
