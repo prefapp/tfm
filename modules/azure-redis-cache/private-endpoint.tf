@@ -2,7 +2,7 @@
 resource "azurerm_private_endpoint" "this" {
   name                          = var.private_endpoint.name
   location                      = var.redis.location
-  resource_group_name           = local.azurerm_resource_group.resource_group
+  resource_group_name           = data.azurerm_resource_group.resource_group
   subnet_id                     = data.azurerm_subnet.subnet[0].id
   custom_network_interface_name = var.private_endpoint.custom_network_interface_name
   tags                          = local.tags
