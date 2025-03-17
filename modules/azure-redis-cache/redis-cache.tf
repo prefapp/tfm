@@ -2,7 +2,7 @@
 resource "azurerm_redis_cache" "this" {
   name                          = var.redis.name
   location                      = var.redis.location
-  resource_group_name           = data.azurerm_resource_group.resource_group
+  resource_group_name           = data.azurerm_resource_group.resource_group.name
   capacity                      = var.redis.capacity
   family                        = var.redis.family
   sku_name                      = var.redis.sku_name

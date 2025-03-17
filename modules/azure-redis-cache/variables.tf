@@ -43,14 +43,14 @@ variable "redis" {
     zones                         = optional(list(string))
     subnet_id                     = optional(string)
     patch_schedule = optional(object({
-      day_of_week     = string
-      start_hour_utc  = number
+      day_of_week     = optional(string)
+      start_hour_utc  = optional(number)
     }))
     redis_configuration = optional(object({
-      aof_backup_enabled              = bool
-      aof_storage_connection_string_0 = string
-      aof_storage_connection_string_1 = string
-      authentication_enabled          = bool
+      aof_backup_enabled              = optional(bool)
+      aof_storage_connection_string_0 = optional(string)
+      aof_storage_connection_string_1 = optional(string)
+      authentication_enabled          = optional(bool)
       }))
   })
 }
