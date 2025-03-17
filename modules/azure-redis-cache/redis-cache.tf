@@ -13,7 +13,7 @@ resource "azurerm_redis_cache" "this" {
   tags                          = local.tags
   zones                         = var.redis.zone
   authentication_enabled        = var.redis.authentication_enabled
-  subnet_id                     = var.redis.subnet_id #Introducir validación solo si authentication_enabled=false
+  subnet_id                     = var.redis.subnet_id #Introducir validación solo si authentication_enabled=false, coller subnet de data
   patch_schedule {
     day_of_week     = var.redis.patch_schedule.day_of_week
     start_hour_utc  = var.redis.patch_schedule.start_hour_utc

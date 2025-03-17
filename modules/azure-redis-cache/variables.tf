@@ -38,4 +38,14 @@ variable "redis" {
   })
 }
 
+variable "private_endpoint" {
+  type = object({
+    name = string
+    custom_network_interface_name = string
+    private_service_connection = optional(object{(
+      is_manual_connection = bool
+    )})
+  })
+}
+
 
