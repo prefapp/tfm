@@ -40,7 +40,7 @@ variable "redis" {
     minimum_tls_version           = optional(string)
     redis_version                 = optional(number)
     public_network_access_enabled = optional(bool)
-    zones                         = optional(string)
+    zones                         = optional(list(string))
     subnet_id                     = optional(string)
     patch_schedule = optional(object({
       day_of_week     = string
