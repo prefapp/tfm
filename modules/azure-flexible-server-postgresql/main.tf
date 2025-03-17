@@ -9,7 +9,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   private_dns_zone_id               = var.postgresql_flexible_server.public_network_access_enabled == false ? try(data.azurerm_private_dns_zone.dns_private_zone[0].id, null) : null
   administrator_login               = var.postgresql_flexible_server.administrator_login
   administrator_password            = coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)
-  zone                              = var.postgresql_flexible_server.zone
+  zones                             = var.postgresql_flexible_server.zones
   storage_tier                      = var.postgresql_flexible_server.storage_tier
   storage_mb                        = var.postgresql_flexible_server.storage_mb
   sku_name                          = var.postgresql_flexible_server.sku_name

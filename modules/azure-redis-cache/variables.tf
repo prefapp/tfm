@@ -12,6 +12,23 @@ variable "tags" {
   default = {}
 }
 
+variable "vnet" {
+  type = object({
+    name                = optional(string)
+    resource_group_name = optional(string)
+    tags                = optional(map)
+  })
+  default = {}
+}
+
+variable "subnet_name" {
+  type = string
+}
+
+variable "dns_private_zone_name" {
+  type = string
+}
+
 variable "redis" {
   type = object({
     name                          = string
