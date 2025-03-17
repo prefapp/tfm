@@ -16,7 +16,7 @@ variable "vnet" {
   type = object({
     name                = optional(string)
     resource_group_name = optional(string)
-    tags                = optional(map)
+    tags                = optional(map(string))
   })
   default = {}
 }
