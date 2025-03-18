@@ -18,10 +18,10 @@ resource "azurerm_redis_cache" "this" {
     start_hour_utc  = var.redis.patch_schedule.start_hour_utc
   }
   redis_configuration {
-    aof_backup_enabled              = var.redis.redis_configuration.aof_backup_enabled
-    aof_storage_connection_string_0 = var.redis.redis_configuration.aof_storage_connection_string_0
-    aof_storage_connection_string_1 = var.redis.redis_configuration.aof_storage_connection_string_1
-    authentication_enabled          = var.redis.redis_configuration.authentication_enabled
-    }
+    aof_backup_enabled              = var.redis.family == "P" ? var.redis.redis_configuration.aof_backup_enabled : false
+    aof_storage_connection_string_0 = var.redis.family == "P" ? var.redis.redis_configuration.aof_storage_connection_string_0 : null
+    aof_storage_connection_string_1 = var.redis.family == "P" ? var.redis.redis_configuration.aof_storage_connection_string_1 : null
+    authentication_enabled          = var.redis.family == "P" ? var.redis.redis_configuration.authentication_enabled : false
+  }
 }
 
