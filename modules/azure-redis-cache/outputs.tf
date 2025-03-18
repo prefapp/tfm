@@ -1,5 +1,5 @@
 output "redis_id" {
-  value = azurerm_redis_cache.this.id
+  value = azurerm_redis_cache.this[0].id
 }
 
 output "private_endpoint_id" {
