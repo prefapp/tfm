@@ -1,5 +1,5 @@
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/redis_cache
-resource "azurerm_redis_cache" "basic_config" {
+resource "azurerm_redis_cache" "this" {
   name                          = var.redis.name
   location                      = var.redis.location
   resource_group_name           = data.azurerm_resource_group.resource_group.name
@@ -17,7 +17,7 @@ resource "azurerm_redis_cache" "basic_config" {
     start_hour_utc  = var.redis.patch_schedule.start_hour_utc
   }
   dynamic "redis_configuration" {
-    for_each = var.family == "P" ? [1] : []
+    for_each = var.redis.family == "P" ? [1] : []
 
     content {
       aof_backup_enabled              = var.redis.redis_configuration.aof_backup_enabled
