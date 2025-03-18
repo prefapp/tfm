@@ -15,7 +15,7 @@ resource "azurerm_private_endpoint" "this" {
   private_service_connection {
     is_manual_connection           = var.private_endpoint.private_service_connection.is_manual_connection
     name                           = var.private_endpoint.name
-    private_connection_resource_id = azurerm_redis_cache.this.id
+    private_connection_resource_id = azurerm_redis_cache.this[0].id
     subresource_names = [
       "redisCache",
     ]
