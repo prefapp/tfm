@@ -12,7 +12,7 @@ resource "azurerm_redis_cache" "this" {
   public_network_access_enabled = var.redis.public_network_access_enabled
   tags                          = local.tags
   zones                         = var.redis.zones
-  subnet_id                     = data.azurerm_subnet.subnet[0].id
+  subnet_id                     = var.redis.family == "P" ? try(data.azurerm_subnet.subnet[0].id, null) : null
   patch_schedule {
     day_of_week     = var.redis.patch_schedule.day_of_week
     start_hour_utc  = var.redis.patch_schedule.start_hour_utc
