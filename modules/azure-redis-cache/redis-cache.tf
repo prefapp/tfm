@@ -17,11 +17,12 @@ resource "azurerm_redis_cache" "this" {
     day_of_week     = var.redis.patch_schedule.day_of_week
     start_hour_utc  = var.redis.patch_schedule.start_hour_utc
   }
+  count = var.redis.family == "P" ? 1 : 0
   redis_configuration {
-    aof_backup_enabled              = var.redis.family == "P" ? try(var.redis.redis_configuration.aof_backup_enabled, false) : false
-    aof_storage_connection_string_0 = var.redis.family == "P" ? try(var.redis.redis_configuration.aof_storage_connection_string_0, null) : null
-    aof_storage_connection_string_1 = var.redis.family == "P" ? try(var.redis.redis_configuration.aof_storage_connection_string_1, null) : null
-    authentication_enabled          = var.redis.family == "P" ? try(var.redis.redis_configuration.authentication_enabled, false) : false
-  }
+    aof_backup_enabled              = var.redis.redis_configuration.aof_backup_enabled
+    aof_storage_connection_string_0 = var.redis.redis_configuration.aof_storage_connection_string_0
+    aof_storage_connection_string_1 = var.redis.redis_configuration.aof_storage_connection_string_1
+    authentication_enabled          = var.redis.redis_configuration.authentication_enabled
+    }
 }
 
