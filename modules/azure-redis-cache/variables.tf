@@ -51,6 +51,13 @@ variable "redis" {
       aof_storage_connection_string_0 = optional(string)
       aof_storage_connection_string_1 = optional(string)
       authentication_enabled          = optional(bool)
+      maxmemory_reserved              = optional(number)
+      maxmemory_delta                 = optional(number)
+      maxmemory_policy                = optional(string)
+      maxfragmentationmemory_reserved = optional(number)
+      rdb_backup_frequency            = optional(string)
+      rdb_backup_max_snapshot_count   = optional(string)
+      rdb_storage_connection_string   = optional(string)
       }))
   })
 }
