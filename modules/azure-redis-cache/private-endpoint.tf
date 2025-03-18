@@ -8,14 +8,14 @@ resource "azurerm_private_endpoint" "this" {
   tags                          = local.tags
   private_dns_zone_group {
     name = data.azurerm_private_dns_zone.dns_private_zone[0].name
-    private_dns_zone_ids = [ #Uso de data aqui para non introducir manualmente o dns_id
+    private_dns_zone_ids = [
       data.azurerm_private_dns_zone.dns_private_zone[0].id,
     ]
   }
   private_service_connection {
     is_manual_connection           = var.private_endpoint.private_service_connection.is_manual_connection
     name                           = var.private_endpoint.name
-    private_connection_resource_id = azurerm_redis_cache.this[0].id
+    private_connection_resource_id = azurerm_redis_cache.this.id
     subresource_names = [
       "redisCache",
     ]
