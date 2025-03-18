@@ -10,6 +10,7 @@ resource "azurerm_redis_cache" "this" {
   minimum_tls_version           = var.redis.minimum_tls_version
   redis_version                 = var.redis.redis_version
   public_network_access_enabled = var.redis.public_network_access_enabled
+  subnet_id                     = var.redis.family == "P" ? 1 : 0 try(data.azurerm_subnet.subnet[0].id, null) : null
   tags                          = local.tags
   zones                         = var.redis.zones
   patch_schedule {
