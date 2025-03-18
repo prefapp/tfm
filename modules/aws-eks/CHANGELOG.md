@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.0...aws-eks-v1.0.1) (2025-03-18)
+
+
+### Bug Fixes
+
+* redundant enable_prefix_delegation ([#476](https://github.com/prefapp/tfm/issues/476)) ([e0ecc52](https://github.com/prefapp/tfm/commit/e0ecc5207dcb45fc114c6424513e344e120c4215))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/aws-eks-v0.4.0...aws-eks-v1.0.0) (2025-03-13)
 
 

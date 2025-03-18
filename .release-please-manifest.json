@@ -1,5 +1,5 @@
 {
-    "modules/aws-eks": "1.0.0",
+    "modules/aws-eks": "1.0.1",
     "modules/aws-parameter-store": "0.3.0",
     "modules/aws-sso": "0.5.0",
     "modules/azure-flexible-server-postgresql": "3.0.0",
