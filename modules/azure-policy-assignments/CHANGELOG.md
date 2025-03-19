@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/azure-policy-assignments-v0.1.0...azure-policy-assignments-v0.1.1) (2025-03-19)
+
+
+### Bug Fixes
+
+* optional argument parameter as map instead of string ([#478](https://github.com/prefapp/tfm/issues/478)) ([63bae2d](https://github.com/prefapp/tfm/commit/63bae2d4795e2c71309a4eea8a207d80afe11be5))
+
 ## 0.1.0 (2025-03-14)
 
 
