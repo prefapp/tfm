@@ -108,8 +108,8 @@ values:
     location: "westeurope"
     name: "redis-test"
     capacity: 1
-    family: "C"
-    sku_name: "Standard"
+    family: "P"
+    sku_name: "Premium"
     non_ssl_port_enabled: true
     public_network_access_enabled: false
     minimum_tls_version: "1.2"
