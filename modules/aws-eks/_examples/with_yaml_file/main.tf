@@ -49,6 +49,8 @@ module "eks_prefapp" {
 
   enable_irsa = local.values.enable_irsa
 
+  access_entries = local.values.access_entries
+
 }
 
 

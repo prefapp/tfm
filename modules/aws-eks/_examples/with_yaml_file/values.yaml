@@ -131,3 +131,62 @@ cluster_version: 1.25
 iam_role_arn: arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-pro-cluster-XXXXXXXXXXXXXXXXXXXXXXXX
 
 create_cluster_security_group: false
+
+# Access entries
+access_entries:
+  # Allow administrator access to an IAM role
+  administratorAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AdministratorAccess_b943c3dee381e483"
+    policy_associations:
+      AmazonEKSClusterAdminPolicy:
+        policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        access_scope:
+          type: "cluster"
+  
+  # Read-only access to a group of users
+  readOnlyAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/ReadOnlyRole"
+    policy_associations:
+      AmazonEKSClusterReadOnlyPolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
+        access_scope:
+          type: "cluster"
+  
+  # Allow access to a group of IAM users with limited permissions to a namespace
+  limitedNamespaceAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/NamespaceLimitedRole"
+    policy_associations:
+      EKSNamespaceAccessPolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSNamespaceReadOnlyAccess"
+        access_scope:
+          type: "namespace"
+          namespace: "my-namespace"
+  
+  # Allow write access to a group of users in a namespace
+  writeNamespaceAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/NamespaceWriteRole"
+    policy_associations:
+      EKSNamespaceWritePolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSClusterWriteAccess"
+        access_scope:
+          type: "namespace"
+          namespace: "my-namespace"
+
+  # Allow a specific user to access the cluster with limited permissions
+  userAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:user/john_doe"
+    policy_associations:
+      AmazonEKSClusterReadOnlyPolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
+        access_scope:
+          type: "cluster"
+  
+  # Allow a specific user to access a namespace with limited permissions
+  userNamespaceAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:user/john_doe"
+    policy_associations:
+      EKSNamespaceReadWritePolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSNamespaceReadOnlyAccess"
+        access_scope:
+          type: "namespace"
+          namespace: "my-namespace"
