@@ -21,18 +21,20 @@ resource "azurerm_redis_cache" "this" {
     for_each = var.redis.family == "P" ? [1] : []
 
     content {
-      aof_backup_enabled              = var.redis.redis_configuration.aof_backup_enabled
-      aof_storage_connection_string_0 = var.redis.redis_configuration.aof_storage_connection_string_0
-      aof_storage_connection_string_1 = var.redis.redis_configuration.aof_storage_connection_string_1
-      authentication_enabled          = var.redis.redis_configuration.authentication_enabled
+      aof_backup_enabled                      = var.redis.redis_configuration.aof_backup_enabled
+      aof_storage_connection_string_0         = var.redis.redis_configuration.aof_storage_connection_string_0
+      aof_storage_connection_string_1         = var.redis.redis_configuration.aof_storage_connection_string_1
+      authentication_enabled                  = var.redis.redis_configuration.authentication_enabled
       active_directory_authentication_enabled = var.redis.redis_configuration.active_directory_authentication_enabled
-      maxmemory_reserved = var.redis.redis_configuration.maxmemory_reserved
-      maxmemory_delta = var.redis.redis_configuration.maxmemory_delta
-      maxmemory_policy = var.redis.redis_configuration.maxmemory_policy
-      maxfragmentationmemory_reserved = var.redis.redis_configuration.maxfragmentationmemory_reserved
-      rdb_backup_frequency = var.redis.redis_configuration.rdb_backup_frequency
-      rdb_backup_max_snapshot_count = var.redis.redis_configuration.rdb_backup_max_snapshot_count
-      rdb_storage_connection_string = var.redis.redis_configuration.rdb_storage_connection_string
+      maxmemory_reserved                      = var.redis.redis_configuration.maxmemory_reserved
+      maxmemory_delta                         = var.redis.redis_configuration.maxmemory_delta
+      maxmemory_policy                        = var.redis.redis_configuration.maxmemory_policy
+      maxfragmentationmemory_reserved         = var.redis.redis_configuration.maxfragmentationmemory_reserved
+      rdb_backup_enabled                      = var.redis.redis_configuration.rdb_backup_enabled
+      rdb_backup_frequency                    = var.redis.redis_configuration.rdb_backup_frequency
+      rdb_backup_max_snapshot_count           = var.redis.redis_configuration.rdb_backup_max_snapshot_count
+      rdb_storage_connection_string           = var.redis.redis_configuration.rdb_storage_connection_string
+      storage_account_subscription_id         = var.redis.redis_configuration.storage_account_subscription_id
     }
   }
 }

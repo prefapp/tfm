@@ -56,9 +56,11 @@ variable "redis" {
       maxmemory_delta                         = optional(number)
       maxmemory_policy                        = optional(string)
       maxfragmentationmemory_reserved         = optional(number)
+      rdb_backup_enabled                      = optional(bool)
       rdb_backup_frequency                    = optional(number)
       rdb_backup_max_snapshot_count           = optional(number)
       rdb_storage_connection_string           = optional(string)
+      storage_account_subscription_id         = optional(string)
       }))
   })
 }
