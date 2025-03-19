@@ -93,7 +93,7 @@ node_groups:
       EOF
       # Source extra environment variables in bootstrap script
       sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
-    desired_capacity: 2
+    desired_size: 2
     min_size: 0
     max_size: 3
     create_iam_role: false
