@@ -8,7 +8,6 @@ cluster_security_group_id: sg-XXXXXXXXXXXXXXXXX
 cluster_iam_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-pro-cluster-XXXXXXXXXXXXXXXXXXXXXXXX"
 create_cluster_iam_role: false
 create_kms_key: false
-manage_aws_auth_configmap: true
 cluster_encryption_config: {}
 enable_irsa: true
 
@@ -82,7 +81,6 @@ node_security_group_additional_rules:
 node_groups:
   worker:
     name: "worker"
-    create_launch_template: true
     instance_types:
       - "m5.large"
     pre_bootstrap_user_data: |
@@ -115,20 +113,6 @@ node_groups:
 tags:
   project: "prefapp"
   env: "pro"
-
-# aws-auth configmap
-manage_aws_auth_configmap: true
-
-# aws-auth configmap
-aws_auth_users:
-  - userarn: "arn:aws:iam::XXXXXXXXXXXX:user/prefapp.m.vergara"
-    username: "prefapp.m.vergara"
-    groups:
-      - "system:masters"
-  - userarn: "arn:aws:iam::XXXXXXXXXXXX:user/prefapp.a.rodriguez"
-    username: "prefapp.a.rodriguez"
-    groups:
-      - "system:masters"
 
 # Vpc config
 vpc_config: {}
