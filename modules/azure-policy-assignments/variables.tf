@@ -26,7 +26,7 @@ variable "assignments" {
       policy_definition_reference_id = optional(string)
     })))
     not_scopes = optional(list(string))
-    parameters = optional(string)
+    parameters = optional(map(any))
     overrides = optional(list(object({
       value = string
       selectors = optional(list(object({
