@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.2...aws-eks-v1.0.3) (2025-03-19)
+
+
+### Bug Fixes
+
+* desired_size field ([#483](https://github.com/prefapp/tfm/issues/483)) ([239d2c0](https://github.com/prefapp/tfm/commit/239d2c0ad65e071eeb989fa3a60731bbcf1fb4a4))
+
 ## [1.0.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.1...aws-eks-v1.0.2) (2025-03-19)
 
 
