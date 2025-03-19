@@ -30,7 +30,7 @@
 |------|-------------|------|---------|:--------:|
 | `resource_group` | Name of the resource group | `string` | N/A | ✅ |
 | `tags_from_rg` | If `true`, uses tags from the resource group | `bool` | `false` | ❌ |
-| `tags` | Input tags if not using the resource group tags | `map(string)` | `{}` | ❌ |
+| `tags` | Tags to set in the resource if `tags_from_rg` is not enable. If both are enabled, the tags to be set are composed by merging those of the resource group with those defined here | `map(string)` | `{}` | ❌ |
 | `vnet` | Virtual network configuration | `object({ name = optional(string), resource_group_name = optional(string), tags = optional(map(string)) })` | `{}` | ❌ |
 | `subnet_name` | Name of the subnet | `string` | N/A | ✅ |
 | `dns_private_zone_name` | Name of the private DNS zone | `string` | N/A | ✅ |
@@ -43,11 +43,11 @@
 
 1. The configuration block `redis_configuration` is only available when `sku_name = "Premium"` and `family = "P"`.
 
-2. You can get data from `name` and `resource_group_name` or with `tags`.
+2. You can get needed resources, like `vnet` by `name` and `resource_group_name` or by `tags`.
 
-2. When you set `sku_name = "Premium"` and `family = "P"`, you won't be able to create the resource `azurerm_private_endpoint.this`.
+3. If you add `subnet_id` as a input, you won't be able to create `azurerm_private_endpoint.this` (Read more in https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-how-to-premium-vnet).
 
-3. Creating an Azure Redis cache resource takes approximately 25 minutes.
+4. Creating an Azure Redis cache resource takes approximately 25 minutes.
 
 
 ## Outputs
