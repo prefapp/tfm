@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.1...aws-eks-v1.0.2) (2025-03-19)
+
+
+### Bug Fixes
+
+* delete manage_aws_auth_configmap field ([#479](https://github.com/prefapp/tfm/issues/479)) ([13f000b](https://github.com/prefapp/tfm/commit/13f000b0bb881e53eccf91355c2dfc8d39447b2c))
+
 ## [1.0.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.0...aws-eks-v1.0.1) (2025-03-18)
 
 
