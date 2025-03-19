@@ -41,13 +41,13 @@
 
 ### Notes
 
-1. The configuration block `redis_configuration` is only avaliable when `sku_name = "Premium"` and `family = "P"`.
+1. The configuration block `redis_configuration` is only available when `sku_name = "Premium"` and `family = "P"`.
 
-2. You can get datas from `name` and `resource_group_name` or with `tags`.
+2. You can get data from `name` and `resource_group_name` or with `tags`.
 
 2. When you set `sku_name = "Premium"` and `family = "P"`, you won't be able to create the resource `azurerm_private_endpoint.this`.
 
-3. To create this resources allow arround 25 minutes of down time.
+3. Creating an Azure Redis cache resource takes approximately 25 minutes.
 
 
 ## Outputs
@@ -67,8 +67,8 @@ values:
   vnet:
     tags:
       value: "tag1"
-      #name: "example-vnet-name"
-      #resource_group_name: "example-vnet"
+    #name: "example-vnet-name"
+    #resource_group_name: "example-vnet"
   subnet_name: "example-subnet"
   dns_private_zone_name: "example.dns.zone"
   redis:
@@ -100,8 +100,8 @@ values:
   vnet:
     tags:
       value: "tag1"
-      #name: "example-vnet-name"
-      #resource_group_name: "example-vnet"
+    #name: "example-vnet-name"
+    #resource_group_name: "example-vnet"
   subnet_name: "example-subnet"
   dns_private_zone_name: "example.dns.zone"
   redis:
@@ -120,7 +120,7 @@ values:
     redis_configuration:
       aof_backup_enabled: true
       aof_storage_connection_string_0: "DefaultEndpointsProtocol=https;BlobEndpoint=${azurerm_storage_account.nc-cruks-storage-account.primary_blob_endpoint};AccountName=${azurerm_storage_account.mystorageaccount.name};AccountKey=${azurerm_storage_account.mystorageaccount.primary_access_key}"
-      aof_storage_connection_string_1: "DefaultEndpointsProtocol=https;BlobEndpoint=${azurerm_storage_account.mystorageaccount.primary_blob_endpoint};AccountName=${azurerm_storage_account.mystorageaccount.name};AccountKey=${azurerm_storage_account.mystorageaccount.secondary_access_key}"S
+      aof_storage_connection_string_1: "DefaultEndpointsProtocol=https;BlobEndpoint=${azurerm_storage_account.mystorageaccount.primary_blob_endpoint};AccountName=${azurerm_storage_account.mystorageaccount.name};AccountKey=${azurerm_storage_account.mystorageaccount.secondary_access_key}"
       authentication_enabled: true
       active_directory_authentication_enabled: false
       maxmemory_reserved: 200
