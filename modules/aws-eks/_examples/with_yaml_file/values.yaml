@@ -8,7 +8,6 @@ cluster_security_group_id: sg-XXXXXXXXXXXXXXXXX
 cluster_iam_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-pro-cluster-XXXXXXXXXXXXXXXXXXXXXXXX"
 create_cluster_iam_role: false
 create_kms_key: false
-manage_aws_auth_configmap: true
 cluster_encryption_config: {}
 enable_irsa: true
 
@@ -82,7 +81,6 @@ node_security_group_additional_rules:
 node_groups:
   worker:
     name: "worker"
-    create_launch_template: true
     instance_types:
       - "m5.large"
     pre_bootstrap_user_data: |
@@ -116,20 +114,6 @@ tags:
   project: "prefapp"
   env: "pro"
 
-# aws-auth configmap
-manage_aws_auth_configmap: true
-
-# aws-auth configmap
-aws_auth_users:
-  - userarn: "arn:aws:iam::XXXXXXXXXXXX:user/prefapp.m.vergara"
-    username: "prefapp.m.vergara"
-    groups:
-      - "system:masters"
-  - userarn: "arn:aws:iam::XXXXXXXXXXXX:user/prefapp.a.rodriguez"
-    username: "prefapp.a.rodriguez"
-    groups:
-      - "system:masters"
-
 # Vpc config
 vpc_config: {}
 
@@ -147,3 +131,62 @@ cluster_version: 1.25
 iam_role_arn: arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-pro-cluster-XXXXXXXXXXXXXXXXXXXXXXXX
 
 create_cluster_security_group: false
+
+# Access entries
+access_entries:
+  # Allow administrator access to an IAM role
+  administratorAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AdministratorAccess_b943c3dee381e483"
+    policy_associations:
+      AmazonEKSClusterAdminPolicy:
+        policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        access_scope:
+          type: "cluster"
+  
+  # Read-only access to a group of users
+  readOnlyAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/ReadOnlyRole"
+    policy_associations:
+      AmazonEKSClusterReadOnlyPolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
+        access_scope:
+          type: "cluster"
+  
+  # Allow access to a group of IAM users with limited permissions to a namespace
+  limitedNamespaceAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/NamespaceLimitedRole"
+    policy_associations:
+      EKSNamespaceAccessPolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSNamespaceReadOnlyAccess"
+        access_scope:
+          type: "namespace"
+          namespace: "my-namespace"
+  
+  # Allow write access to a group of users in a namespace
+  writeNamespaceAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/NamespaceWriteRole"
+    policy_associations:
+      EKSNamespaceWritePolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSClusterWriteAccess"
+        access_scope:
+          type: "namespace"
+          namespace: "my-namespace"
+
+  # Allow a specific user to access the cluster with limited permissions
+  userAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:user/john_doe"
+    policy_associations:
+      AmazonEKSClusterReadOnlyPolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
+        access_scope:
+          type: "cluster"
+  
+  # Allow a specific user to access a namespace with limited permissions
+  userNamespaceAccess:
+    principal_arn: "arn:aws:iam::XXXXXXXXXXXX:user/john_doe"
+    policy_associations:
+      EKSNamespaceReadWritePolicy:
+        policy_arn: "arn:aws:iam::aws:policy/AmazonEKSNamespaceReadOnlyAccess"
+        access_scope:
+          type: "namespace"
+          namespace: "my-namespace"

@@ -33,10 +33,6 @@ module "eks_prefapp" {
 
   cluster_addons = local.values.cluster_addons
 
-  security_groups_ids = local.values.security_groups_ids
-
-  aws_auth_users = local.values.aws_auth_users
-
   cluster_endpoint_private_access = local.values.cluster_endpoint_private_access
 
   cluster_endpoint_public_access = local.values.cluster_endpoint_public_access
@@ -51,9 +47,9 @@ module "eks_prefapp" {
 
   create_kms_key = local.values.create_kms_key
 
-  manage_aws_auth_configmap = local.values.manage_aws_auth_configmap
-
   enable_irsa = local.values.enable_irsa
+
+  access_entries = local.values.access_entries
 
 }
 
