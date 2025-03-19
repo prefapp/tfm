@@ -34,7 +34,7 @@ resource "azurerm_resource_policy_assignment" "this" {
   enforce      = each.value.enforce
   location     = each.value.location
   metadata     = each.value.metadata
-  parameters   = each.value.parameters
+  parameters   = each.value.parameters != null ? jsonencode(each.value.parameters) : null
   not_scopes   = each.value.not_scopes
 
   dynamic "identity" {
@@ -93,7 +93,7 @@ resource "azurerm_resource_group_policy_assignment" "this" {
   enforce      = each.value.enforce
   location     = each.value.location
   metadata     = each.value.metadata
-  parameters   = each.value.parameters
+  parameters   = each.value.parameters != null ? jsonencode(each.value.parameters) : null
   not_scopes   = each.value.not_scopes
 
   dynamic "identity" {
@@ -149,7 +149,7 @@ resource "azurerm_subscription_policy_assignment" "this" {
   enforce         = each.value.enforce
   location        = each.value.location
   metadata        = each.value.metadata
-  parameters      = each.value.parameters
+  parameters      = each.value.parameters != null ? jsonencode(each.value.parameters) : null
   not_scopes      = each.value.not_scopes
 
   dynamic "identity" {
@@ -208,7 +208,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   enforce      = each.value.enforce
   location     = each.value.location
   metadata     = each.value.metadata
-  parameters   = each.value.parameters
+  parameters   = each.value.parameters != null ? jsonencode(each.value.parameters) : null
   not_scopes   = each.value.not_scopes
 
   dynamic "identity" {
