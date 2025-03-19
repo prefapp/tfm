@@ -59,7 +59,7 @@
 
 ## Example Usage
 
-## Basic configuration example.
+### Basic configuration example.
 
 ```yaml
 values:
