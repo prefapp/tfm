@@ -73,7 +73,7 @@ values:
   dns_private_zone_name: "example.dns.zone"
   redis:
     location: "westeurope"
-    name: "pocplatform-redis-test"
+    name: "redis-test"
     capacity: 1
     family: "C"
     sku_name: "Standard"
@@ -106,7 +106,7 @@ values:
   dns_private_zone_name: "example.dns.zone"
   redis:
     location: "westeurope"
-    name: "pocplatform-redis-test"
+    name: "redis-test"
     capacity: 1
     family: "C"
     sku_name: "Standard"
