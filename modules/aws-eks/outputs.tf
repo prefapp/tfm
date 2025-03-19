@@ -52,7 +52,7 @@ output "summary" {
   <<-EOT
        - ${node_group_key}
            - Instance type: ${join(", ", node_group_value.instance_types)}
-           - Desired capacity: ${node_group_value.desired_capacity}
+           - Desired capacity: ${node_group_value.desired_size}
            - Min size: ${node_group_value.min_size}
            - Max size: ${node_group_value.max_size}
            - Launch template version: ${lookup(node_group_value, "launch_template_version", module.eks.eks_managed_node_groups[node_group_key].launch_template_latest_version)}
