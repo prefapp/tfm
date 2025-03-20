@@ -39,6 +39,8 @@ module "azuread-group"{
     members = local.values.members
     
     subscription_roles = local.values.subscription_roles 
+
+    management_group_roles = local.values.management_group_roles
     
     directory_roles = local.values.directory_roles
     

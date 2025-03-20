@@ -101,6 +101,19 @@ variable "subscription_roles" {
   }))
 }
 
+variable "management_group_roles" {
+    
+  description = "The list of built-in roles to assign to the group"
+    
+  type = list(object({
+    
+      role_name      = string
+        
+      resources_scopes = list(string)
+    
+  }))
+}
+
 variable "directory_roles" {
     
     description = "The list of directory roles to assign to the group"

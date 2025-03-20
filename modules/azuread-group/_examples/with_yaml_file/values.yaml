@@ -10,6 +10,11 @@ subscription_roles:
     resources_scopes:
       - /subscriptions/00000000-0000-0000-0000-000000000000
 
+management_group_roles:
+  - role_name: Reader
+    resources_scopes:
+      - /providers/Microsoft.Management/managementGroups/00000000-0000-0000-0000-000000000000
+
 pim_maximum_duration_hours: 12
 pim_require_justification: true
 
