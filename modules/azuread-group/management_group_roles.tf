@@ -11,7 +11,7 @@ locals {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "that" {
-  for_each = { for role in local.mgmnt_flattened_role_assingments : role.name => role }
+  for_each = length(local.mgmnt_flattened_role_assingments) > 0 ? { for role in local.mgmnt_flattened_role_assingments : role.name => role } : {}
   scope                = each.value.scope 
   role_definition_name = each.value.role_name
   principal_id         = azuread_group.this.id
