@@ -17,27 +17,26 @@
 
 | Resource | Type |
 |---------|------|
-| [azurerm_redis_cache](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/redis_cache) | Resource |
-| [azurerm_private_endpoint](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) | Resource |
-| [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
-| [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | Data |
-| [azurerm_private_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | Data |
-| [azurerm_resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | Data |
+| [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) | resource |
+| [azurerm_redis_cache.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/redis_cache) | resource |
+| [azurerm_private_dns_zone.dns_private_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | data source |
+| [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_resources.vnet_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_resources.vnet_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| `resource_group` | Name of the resource group | `string` | N/A | ✅ |
-| `tags_from_rg` | If `true`, uses tags from the resource group | `bool` | `false` | ❌ |
-| `tags` | Tags to set in the resource if `tags_from_rg` is not enable. If both are enabled, the tags to be set are composed by merging those of the resource group with those defined here | `map(string)` | `{}` | ❌ |
-| `vnet` | Virtual network configuration | `object({ name = optional(string), resource_group_name = optional(string), tags = optional(map(string)) })` | `{}` | ❌ |
-| `subnet_name` | Name of the subnet | `string` | N/A | ✅ |
-| `dns_private_zone_name` | Name of the private DNS zone | `string` | N/A | ✅ |
-| `redis` | Redis cache configuration | `object({ name = string, location = string, capacity = number, family = string, sku_name = string, non_ssl_port_enabled = optional(bool), minimum_tls_version = optional(string), redis_version = optional(number), public_network_access_enabled = optional(bool), zones = optional(list(string)), subnet_id = optional(string), patch_schedule = optional(object({ day_of_week = optional(string), start_hour_utc = optional(number) })), redis_configuration = optional(object({ aof_backup_enabled = optional(bool), aof_storage_connection_string_0 = optional(string), aof_storage_connection_string_1 = optional(string), authentication_enabled = optional(bool), active_directory_authentication_enabled = optional(bool), maxmemory_reserved = optional(number), maxmemory_delta = optional(number), maxmemory_policy = optional(string), maxfragmentationmemory_reserved = optional(number), rdb_backup_enabled = optional(bool), rdb_backup_frequency = optional(number), rdb_backup_max_snapshot_count = optional(number), rdb_storage_connection_string = optional(string), storage_account_subscription_id = optional(string) })) })` | N/A | ✅ |
-| `private_endpoint` | Private endpoint configuration | `object({ name = string, custom_network_interface_name = string, private_service_connection = optional(object({ is_manual_connection = bool })) })` | N/A | ✅ |
-
-
+| <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | n/a | `string` | n/a | yes |
+| <a name="input_private_endpoint"></a> [private\_endpoint](#input\_private\_endpoint) | n/a | <pre>object({<br/>    name                          = string<br/>    dns_zone_group_name           = optional(string, "default")<br/>    custom_network_interface_name = string<br/>    private_service_connection = optional(object({<br/>      is_manual_connection = bool<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_redis"></a> [redis](#input\_redis) | n/a | <pre>object({<br/>    name                          = string<br/>    location                      = string<br/>    capacity                      = number<br/>    family                        = string<br/>    sku_name                      = string<br/>    non_ssl_port_enabled          = optional(bool)<br/>    minimum_tls_version           = optional(string)<br/>    redis_version                 = optional(number)<br/>    public_network_access_enabled = optional(bool)<br/>    zones                         = optional(list(string))<br/>    subnet_id                     = optional(string)<br/>    patch_schedule = optional(object({<br/>      day_of_week    = optional(string)<br/>      start_hour_utc = optional(number)<br/>    }))<br/>    redis_configuration = optional(object({<br/>      aof_backup_enabled                      = optional(bool)<br/>      aof_storage_connection_string_0         = optional(string)<br/>      aof_storage_connection_string_1         = optional(string)<br/>      authentication_enabled                  = optional(bool)<br/>      active_directory_authentication_enabled = optional(bool)<br/>      maxmemory_reserved                      = optional(number)<br/>      maxmemory_delta                         = optional(number)<br/>      maxmemory_policy                        = optional(string)<br/>      maxfragmentationmemory_reserved         = optional(number)<br/>      rdb_backup_enabled                      = optional(bool)<br/>      rdb_backup_frequency                    = optional(number)<br/>      rdb_backup_max_snapshot_count           = optional(number)<br/>      rdb_storage_connection_string           = optional(string)<br/>      storage_account_subscription_id         = optional(string)<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | n/a | `string` | n/a | yes |
+| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | n/a | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | n/a | `bool` | `false` | no |
+| <a name="input_vnet"></a> [vnet](#input\_vnet) | n/a | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
 
 ### Notes
 
@@ -81,15 +80,11 @@ values:
     public_network_access_enabled: false
     minimum_tls_version: "1.2"
     redis_version: 6
-    patch_schedule:
-      day_of_week: "Monday"
-      start_hour_utc: 0
   private_endpoint:
     name: "pv_exmaple_redis-nic"
     custom_network_interface_name: "pv_example_redis-nic"
     private_service_connection:
       is_manual_connection: false
-
 ```
 
 ### Premium configuration example.
@@ -134,5 +129,4 @@ values:
     custom_network_interface_name: "pv_example_redis-nic"
     private_service_connection:
       is_manual_connection: false
-
 ```

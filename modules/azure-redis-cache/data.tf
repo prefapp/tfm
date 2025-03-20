@@ -1,10 +1,10 @@
 #Locals section
 locals {
-    tags = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
-    vnet_from_data                = can(data.azurerm_resources.vnet_from_tags[0].resources) ? data.azurerm_resources.vnet_from_tags[0].resources[0].name : null
-    vnet_resource_group_from_data = can(data.azurerm_resources.vnet_from_tags[0].resources) ? data.azurerm_resources.vnet_from_tags[0].resources[0].resource_group_name : null
-    resource_group_name           = try(coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data), null)
-    virtual_network_name          = try(coalesce(var.vnet.name, local.vnet_from_data), null)
+  tags                          = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
+  vnet_from_data                = can(data.azurerm_resources.vnet_from_tags[0].resources) ? data.azurerm_resources.vnet_from_tags[0].resources[0].name : null
+  vnet_resource_group_from_data = can(data.azurerm_resources.vnet_from_tags[0].resources) ? data.azurerm_resources.vnet_from_tags[0].resources[0].resource_group_name : null
+  resource_group_name           = try(coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data), null)
+  virtual_network_name          = try(coalesce(var.vnet.name, local.vnet_from_data), null)
 }
 
 #Data Section

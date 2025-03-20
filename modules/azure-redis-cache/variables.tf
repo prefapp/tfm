@@ -43,8 +43,8 @@ variable "redis" {
     zones                         = optional(list(string))
     subnet_id                     = optional(string)
     patch_schedule = optional(object({
-      day_of_week     = optional(string)
-      start_hour_utc  = optional(number)
+      day_of_week    = optional(string)
+      start_hour_utc = optional(number)
     }))
     redis_configuration = optional(object({
       aof_backup_enabled                      = optional(bool)
@@ -61,14 +61,14 @@ variable "redis" {
       rdb_backup_max_snapshot_count           = optional(number)
       rdb_storage_connection_string           = optional(string)
       storage_account_subscription_id         = optional(string)
-      }))
+    }))
   })
 }
 
 variable "private_endpoint" {
   type = object({
-    name = string
-    dns_zone_group_name = optional(string, "default")
+    name                          = string
+    dns_zone_group_name           = optional(string, "default")
     custom_network_interface_name = string
     private_service_connection = optional(object({
       is_manual_connection = bool
