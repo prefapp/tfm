@@ -38,9 +38,9 @@ module "azuread-group"{
     
     members = local.values.members
     
-    subscription_roles = local.values.subscription_roles 
+    subscription_roles = lookup(local.values, "subscription_roles", null)
 
-    management_group_roles = local.values.management_group_roles
+    management_group_roles = lookup(local.values, "management_group_roles", null)
     
     directory_roles = local.values.directory_roles
     
