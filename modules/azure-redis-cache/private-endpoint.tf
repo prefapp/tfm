@@ -7,7 +7,7 @@ resource "azurerm_private_endpoint" "this" {
   custom_network_interface_name = var.private_endpoint.custom_network_interface_name
   tags                          = local.tags
   private_dns_zone_group {
-    name = data.azurerm_private_dns_zone.dns_private_zone[0].name
+    name = lookup(var.private_endpoint.dns_zone_group_name, "default")
     private_dns_zone_ids = [
       data.azurerm_private_dns_zone.dns_private_zone[0].id,
     ]

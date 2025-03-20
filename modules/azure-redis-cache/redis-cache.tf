@@ -15,7 +15,6 @@ resource "azurerm_redis_cache" "this" {
   zones                         = var.redis.zones
   dynamic "patch_schedule" {
     for_each = var.redis.patch_schedule != null ? [var.redis.patch_schedule] : []
-
     content {
       day_of_week    = patch_schedule.value.day_of_week
       start_hour_utc = patch_schedule.value.start_hour_utc
@@ -23,7 +22,6 @@ resource "azurerm_redis_cache" "this" {
   }
   dynamic "redis_configuration" {
     for_each = var.redis.family == "P" ? [1] : []
-
     content {
       aof_backup_enabled                      = var.redis.redis_configuration.aof_backup_enabled
       aof_storage_connection_string_0         = var.redis.redis_configuration.aof_storage_connection_string_0
