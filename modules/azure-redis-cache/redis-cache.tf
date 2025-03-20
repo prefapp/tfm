@@ -13,9 +13,13 @@ resource "azurerm_redis_cache" "this" {
   subnet_id                     = var.redis.subnet_id
   tags                          = local.tags
   zones                         = var.redis.zones
-  patch_schedule {
-    day_of_week     = var.redis.patch_schedule.day_of_week
-    start_hour_utc  = var.redis.patch_schedule.start_hour_utc
+  dynamic "patch_schedule" {
+    for_each = var.redis.patch_schedule != null ? [var.redis.patch_schedule] : []
+
+    content {
+      day_of_week    = patch_schedule.value.day_of_week
+      start_hour_utc = patch_schedule.value.start_hour_utc
+    }
   }
   dynamic "redis_configuration" {
     for_each = var.redis.family == "P" ? [1] : []
