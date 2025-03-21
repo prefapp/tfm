@@ -92,6 +92,9 @@
         },
         "modules/azure-policy-definitions": {
             "package-name": "azure-policy-definitions"
+        },
+        "modules/azure-redis-cache": {
+            "package-name": "azure-redis-cache"
         }
     }
 }
