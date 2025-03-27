@@ -80,6 +80,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
           "ec2:GetCoipPoolUsage",
           "ec2:DescribeCoipPools",
           "ec2:GetSecurityGroupsForVpc",
+          "ec2:DescribeIpamPools",
           "elasticloadbalancing:DescribeLoadBalancers",
           "elasticloadbalancing:DescribeLoadBalancerAttributes",
           "elasticloadbalancing:DescribeListeners",
@@ -243,7 +244,8 @@ resource "aws_iam_policy" "iam_policy_alb" {
           "elasticloadbalancing:ModifyTargetGroupAttributes",
           "elasticloadbalancing:DeleteTargetGroup",
           "elasticloadbalancing:ModifyListenerAttributes",
-          "elasticloadbalancing:ModifyCapacityReservation"
+          "elasticloadbalancing:ModifyCapacityReservation",
+          "elasticloadbalancing:ModifyIpPools"
         ],
         "Resource" : "*",
         "Condition" : {
@@ -289,7 +291,8 @@ resource "aws_iam_policy" "iam_policy_alb" {
           "elasticloadbalancing:ModifyListener",
           "elasticloadbalancing:AddListenerCertificates",
           "elasticloadbalancing:RemoveListenerCertificates",
-          "elasticloadbalancing:ModifyRule"
+          "elasticloadbalancing:ModifyRule",
+          "elasticloadbalancing:SetRulePriorities"
         ],
         "Resource" : "*"
       }
