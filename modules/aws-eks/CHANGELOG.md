@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.3...aws-eks-v1.0.4) (2025-03-27)
+
+
+### Bug Fixes
+
+* update iam alb policy ([#487](https://github.com/prefapp/tfm/issues/487)) ([acaf02d](https://github.com/prefapp/tfm/commit/acaf02d0817e0f2e4f8060a1b2336238617364de))
+
 ## [1.0.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.2...aws-eks-v1.0.3) (2025-03-19)
 
 
