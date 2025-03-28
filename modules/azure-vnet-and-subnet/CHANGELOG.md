@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.0.0...azure-vnet-subnet-v2.0.1) (2025-03-28)
+
+
+### Bug Fixes
+
+* add config option to vnet link ([#489](https://github.com/prefapp/tfm/issues/489)) ([76e18a7](https://github.com/prefapp/tfm/commit/76e18a7292c8bc80abce9cdb709f319cf4df982e))
+
 ## [2.0.0](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v1.2.2...azure-vnet-subnet-v2.0.0) (2025-03-11)
 
 
