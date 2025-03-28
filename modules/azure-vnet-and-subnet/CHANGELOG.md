@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.0.1...azure-vnet-subnet-v2.0.2) (2025-03-28)
+
+
+### Bug Fixes
+
+* coalesce to control optional link_name ([#491](https://github.com/prefapp/tfm/issues/491)) ([88ffdd9](https://github.com/prefapp/tfm/commit/88ffdd9cac9cc4d10604c1e2790cf3ad173408f3))
+
 ## [2.0.1](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.0.0...azure-vnet-subnet-v2.0.1) (2025-03-28)
 
 
