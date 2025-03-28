@@ -24,6 +24,7 @@ variable "private_dns_zones" {
   description = "List of private DNS zones to create"
   type = list(object({
     name                      = string
+    link_name                 = optional(string)
     auto_registration_enabled = optional(bool, false)
   }))
   default = []
