@@ -53,6 +53,7 @@ module "githuib-oidc" {
 | `virtual_network.subnets.delegation.service_delegation.actions` | List of actions for the service delegation | list(string) | n/a | yes |
 | `private_dns_zones` | List of private DNS zones to create | list(object) | `[]` | no |
 | `private_dns_zones.name` | The name of the private DNS zone | string | n/a | yes |
+| `private_dns_zones.link_name` | The name of the private DNS zone VNET link | string | n/a | no |
 | `private_dns_zones.auto_registration_enabled` | Whether auto registration is enabled | bool | `false` | no |
 | `peerings` | List of virtual network peerings | list(object) | `[]` | no |
 | `peerings.peering_name` | The name of the peering | string | n/a | yes |
@@ -106,6 +107,7 @@ private_dns_zones = [
   },
   {
     name = "privatelink.redis.cache.windows.net"
+    link_name = "redis_link"
   }
 ]
 
