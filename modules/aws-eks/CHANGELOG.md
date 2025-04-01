@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.4...aws-eks-v1.0.5) (2025-04-01)
+
+
+### Bug Fixes
+
+* update aws-eks external-dns policy ([#493](https://github.com/prefapp/tfm/issues/493)) ([3ca2c98](https://github.com/prefapp/tfm/commit/3ca2c988b78ae877ba0a1f7b18e9555b22a37866))
+
 ## [1.0.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.0.3...aws-eks-v1.0.4) (2025-03-27)
 
 
