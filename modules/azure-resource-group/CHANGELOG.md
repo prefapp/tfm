@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.4.1...azure-resource-group-v1.4.2) (2025-04-07)
+
+
+### Bug Fixes
+
+* avoid destroy of resource group previously created ([#498](https://github.com/prefapp/tfm/issues/498)) ([2fefa56](https://github.com/prefapp/tfm/commit/2fefa56bb51426a2502d0a6f5456de9ce0af1376))
+
 ## [1.4.1](https://github.com/prefapp/tfm/compare/azure-resource-group-v1.4.0...azure-resource-group-v1.4.1) (2025-04-04)
 
 
