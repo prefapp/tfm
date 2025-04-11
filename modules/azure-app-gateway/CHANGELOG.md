@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.3.0...azure-app-gateway-v0.4.0) (2025-04-11)
+
+
+### Features
+
+* add custom rules azure app gateway ([#500](https://github.com/prefapp/tfm/issues/500)) ([d06008e](https://github.com/prefapp/tfm/commit/d06008e2cea8fe945f790dfe81779aad87419856))
+
 ## [0.3.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.2.0...azure-app-gateway-v0.3.0) (2025-01-24)
 
 
