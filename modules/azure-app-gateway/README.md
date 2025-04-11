@@ -66,20 +66,19 @@
           request_body_check: true
           file_upload_limit_in_mb: 100
           max_request_body_size_in_kb: 128
-      custom_rules:
-        - name: "BlockSpecificIPs"
-          enabled: true
-          priority: 1
-          rule_type: "MatchRule"
-          action: "Block"
-          match_conditions:
-            - operator: "IPMatch"
-              negation_condition: false
-              match_values:
-                - "192.168.1.0/24"
-                - "10.0.0.0/24"
-              match_variables:
-                - variable_name: "RemoteAddr"
+        custom_rules:
+          - name: "HeaderName"
+            enabled: true
+            priority: 1
+            rule_type: "MatchRule"
+            action: "Allow"
+            match_conditions:
+              - match_values:
+                  - "example.com"
+                operator: "Equal"
+                match_variables:
+                  - variable_name: "RequestHeaders"
+                    selector: "Host"
         - name: "BlockUserAgentWindows"
           enabled: true
           priority: 2
