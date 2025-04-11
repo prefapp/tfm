@@ -16,7 +16,7 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
   dynamic "custom_rules" {
     for_each = var.web_application_firewall_policy.custom_rules
     content {
-      enabled    = coalesce(custom_rule.value.enabled, true)
+      enabled    = coalesce(custom_rules.value.enabled, true)
       name       = custom_rules.value.name
       priority   = custom_rules.value.priority
       rule_type  = custom_rules.value.rule_type
