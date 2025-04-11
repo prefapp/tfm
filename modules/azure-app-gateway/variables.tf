@@ -41,6 +41,26 @@ variable "web_application_firewall_policy" {
       max_request_body_size_in_kb = optional(number)
       request_body_enforcement    = optional(string)
     }))
+    custom_rules = optional(list(object({
+      enabled               = optional(bool, true)
+      name                  = string
+      priority              = number
+      rule_type             = string
+      action                = string
+      rate_limit_duration   = optional(string)
+      rate_limit_threshold  = optional(number)
+      group_rate_limit_by   = optional(string)
+      match_conditions      = list(object({
+        operator           = string
+        negation_condition = optional(bool, false)
+        match_values       = optional(list(string))
+        transforms         = optional(list(string))
+        match_variables    = list(object({
+          variable_name = string
+          selector      = optional(string)
+        }))
+      }))
+    })), [])
     managed_rule_set = list(object({
       type                = optional(string)
       version             = string

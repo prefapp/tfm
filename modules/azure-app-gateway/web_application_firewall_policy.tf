@@ -3,7 +3,7 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
   name                = var.web_application_firewall_policy.name #"central-waf-policy-default-predev"
   resource_group_name = var.resource_group_name
   location            = var.location
-  # Max 1 managed_rule_set block
+
   policy_settings {
     enabled = var.web_application_firewall_policy.policy_settings.enabled
     mode    = var.web_application_firewall_policy.policy_settings.mode
@@ -11,6 +11,40 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
     request_body_enforcement = var.web_application_firewall_policy.policy_settings.request_body_enforcement
     file_upload_limit_in_mb = var.web_application_firewall_policy.policy_settings.file_upload_limit_in_mb
     max_request_body_size_in_kb = var.web_application_firewall_policy.policy_settings.max_request_body_size_in_kb
+  }
+
+  dynamic "custom_rules" {
+    for_each = length(coalesce(var.web_application_firewall_policy.custom_rules, [])) > 0 ? [1] : []
+    content {
+      enabled    = coalesce(custom_rule.value.enabled, true)
+      name       = custom_rule.value.name
+      priority   = custom_rule.value.priority
+      rule_type  = custom_rule.value.rule_type
+      action     = custom_rule.value.action
+
+      # Optional fields for RateLimitRule
+      rate_limit_duration   = custom_rule.value.rate_limit_duration
+      rate_limit_threshold  = custom_rule.value.rate_limit_threshold
+      group_rate_limit_by   = custom_rule.value.group_rate_limit_by
+
+      dynamic "match_conditions" {
+        for_each = coalesce(custom_rule.value.match_conditions, [])
+        content {
+          operator           = match_conditions.value.operator
+          negation_condition = coalesce(match_conditions.value.negation_condition, false)
+          match_values       = match_conditions.value.match_values
+          transforms         = match_conditions.value.transforms
+
+          dynamic "match_variables" {
+            for_each = coalesce(match_conditions.value.match_variables, [])
+            content {
+              variable_name = match_variables.value.variable_name
+              selector      = match_variables.value.selector
+            }
+          }
+        }
+      }
+    }
   }
 
   managed_rules {
