@@ -1,5 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group_role_management_policy#require_justification
 resource "azuread_group_role_management_policy" "members" {
+  count   = var.enable_pim ? 1 : 0
   group_id = azuread_group.this.id
   role_id  = "member"
 
@@ -22,6 +23,7 @@ resource "azuread_group_role_management_policy" "members" {
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group_role_management_policy#require_justification
 resource "azuread_group_role_management_policy" "owners" {
+  count   = var.enable_pim ? 1 : 0
   group_id = azuread_group.this.id
   role_id  = "owner"
 
