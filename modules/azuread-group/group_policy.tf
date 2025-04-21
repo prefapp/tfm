@@ -4,11 +4,11 @@ resource "azuread_group_role_management_policy" "members" {
   role_id  = "member"
 
   activation_rules {
-    maximum_duration = "PT${var.pim_maximum_duration_hours}H"
+    maximum_duration      = "PT${var.pim_maximum_duration_hours}H"
     require_justification = var.pim_require_justification
-    require_approval = false
+    require_approval      = false
   }
-  
+
   eligible_assignment_rules {
     expiration_required = var.expiration_required
   }
@@ -26,9 +26,9 @@ resource "azuread_group_role_management_policy" "owners" {
   role_id  = "owner"
 
   activation_rules {
-    maximum_duration = "PT${var.pim_maximum_duration_hours}H"
+    maximum_duration      = "PT${var.pim_maximum_duration_hours}H"
     require_justification = var.pim_require_justification
-    require_approval = false
+    require_approval      = false
   }
 
   eligible_assignment_rules {
