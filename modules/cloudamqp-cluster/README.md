@@ -1,3 +1,7 @@
+# Cloudamqp cluster module
+
+This terraform module creates a Cloudamqp cluster (with your instance/s) and create a associated VPC. Which means that before creating a resource it must have a VPC.
+
 ## Requirements
 
 | Name | Version |
@@ -32,6 +36,7 @@
 | <a name="input_rmq_version"></a> [rmq\_version](#input_rmq_version) | RabbitMQ version for the CloudAMQP instance | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input_tags) | Tags for the CloudAMQP instance | `list(string)` | `[]` | no |
 | <a name="input_no_default_alarms"></a> [no\_default\_alarms](#input\_no\_default\_alarms) | Disable the default alarms created for the CloudAMQP instance | `bool` | `false` | no |
+| <a name="vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC to associate with the CloudAMQP instance | `string` | n/a | yes |
 | <a name="input_keep_associated_vpc"></a> [keep\_associated\_vpc](#input\_keep\_associated\_vpc) | Preserve the associated VPC when the CloudAMQP instance is deleted | `bool` | `false` | no |
 | <a name="input_enable_firewall"></a> [enable\_firewall](#input\_enable\_firewall) | Enable firewall configuration | `bool` | `false` | no |
 | <a name="input_firewall_rules"></a> [firewall\_rules](#input\_firewall\_rules) | *Depends on* `enable_firewall=true`. Firewall rules for the instance | `map(object({ description = string, ip = string, ports = list(string), services = list(string) }))` | `{}` | no |
@@ -63,16 +68,15 @@
 
 ## Example 1: tfvars
 
-```yaml
-#tfvars
-
+```hcl
 cloudamqp_instance = {
 
-  plan      = "your-plan"
-  region    = "your-region"
-  nodes     = 1
+  plan        = "your-plan"
+  region      = "your-region"
+  nodes       = 1
   rmq_version = "4.0.4"
-  tags      = ["production", "messaging"]
+  vpc_id      = "your-vpc-id"
+  tags        = ["production", "messaging"]
   }
 
 enable_firewall  = true
@@ -99,8 +103,8 @@ recipients = {
 }
 alarms = {
   high_memory_usage = {
-    type             = "memory"
-    enabled          = true
+    type              = "memory"
+    enabled           = true
     reminder_interval = 30
     value_threshold   = 80
     time_threshold    = 5
@@ -117,16 +121,16 @@ metrics_integrations = {
 }
 logs_integrations = {
   azure = {
-    name              = "azure-log-analytics"
-    api_key           = "your-azure-api-key"
-    region            = "us-east-1"
-    tags              = { environment = "production" }
-    tenant_id         = "your-tenant-id"
-    application_id    = "your-application-id"
+    name               = "azure-log-analytics"
+    api_key            = "your-azure-api-key"
+    region             = "us-east-1"
+    tags               = { environment = "production" }
+    tenant_id          = "your-tenant-id"
+    application_id     = "your-application-id"
     application_secret = "your-application-secret"
-    dce_uri           = "https://example.com"
-    table             = "logs"
-    dcr_id            = "your-dcr-id"
+    dce_uri            = "https://example.com"
+    table              = "logs"
+    dcr_id             = "your-dcr-id"
   }
 }
 
@@ -152,6 +156,7 @@ providers:
         region: "your-region"
         nodes: 1
         rmq_version: "4.0.4"
+        vpc_id: "your-vpc-id"
         tags:
           - "production"
           - "messaging"

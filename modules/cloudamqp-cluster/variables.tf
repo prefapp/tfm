@@ -8,6 +8,7 @@ variable "cloudamqp_instance" {
     tags                = optional(list(string), [])
     nodes               = number
     rmq_version         = string
+    vpc_id              = string
     no_default_alarms   = optional(bool)
     keep_associated_vpc = optional(bool)
   })
