@@ -6,6 +6,7 @@ resource "cloudamqp_instance" "this" {
   tags                = var.cloudamqp_instance.tags
   nodes               = var.cloudamqp_instance.nodes
   rmq_version         = var.cloudamqp_instance.rmq_version
+  vpc_id              = var.cloudamqp_instance.vpc_id
   keep_associated_vpc = var.cloudamqp_instance.keep_associated_vpc
   no_default_alarms   = var.cloudamqp_instance.no_default_alarms
   lifecycle {
