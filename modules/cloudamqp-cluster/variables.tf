@@ -355,7 +355,7 @@ variable "logs_integrations" {
 variable "cloudamqp_vpc_connect" {
   description = "CloudAMQP vpc_connect configurations"
   type = object({
-    instance_id            = number
+    instance_id            = optional(number)
     approved_subscriptions = optional(list(string))
     sleep                  = optional(number)
     timeout                = optional(number)
