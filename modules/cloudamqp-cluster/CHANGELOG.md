@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v0.1.1...cloudamqp-cluster-v1.0.0) (2025-04-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* vpc_id reference and vpc associated into cloudamp-cluster module ([#505](https://github.com/prefapp/tfm/issues/505))
+
+### Bug Fixes
+
+* vpc_id reference and vpc associated into cloudamp-cluster module ([#505](https://github.com/prefapp/tfm/issues/505)) ([91d324b](https://github.com/prefapp/tfm/commit/91d324b725a1d9bf3ef15eb5e7f2816be619fcac))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v0.1.0...cloudamqp-cluster-v0.1.1) (2025-03-04)
 
 
