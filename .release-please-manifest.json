@@ -1,6 +1,6 @@
 {
     "modules/azure-resource-group": "1.5.0",
-    "modules/azure-oidc": "1.4.0",
+    "modules/azure-oidc": "1.4.1",
     "modules/aws-sso": "0.6.0",
     "modules/aws-parameter-store": "0.4.0",
     "modules/aws-eks": "1.1.0",
