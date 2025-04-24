@@ -23,7 +23,7 @@
     "modules/mongodb-atlas-project": "1.4.0",
     "modules/azure-policy-definitions": "0.2.1",
     "modules/azure-customrole": "0.2.0",
-    "modules/azure-nsg-nsr": "0.2.0",
+    "modules/azure-nsg-nsr": "0.2.1",
     "modules/azure-public-prefix": "0.3.0",
     "modules/azure-vmss": "0.3.0",
     "modules/azure-policy-assignments": "0.2.1",
