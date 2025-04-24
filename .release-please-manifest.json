@@ -33,5 +33,5 @@
     "modules/azure-redis-cache": "0.2.0",
     "azure-role-assignment": "0.1.0",
     "modules/azure-role-assignment": "0.1.0",
-    "modules/cloudamqp-cluster": "0.1.0"
+    "modules/cloudamqp-cluster": "1.0.0"
 }
