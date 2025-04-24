@@ -15,7 +15,7 @@
     "modules/azure-mi": "1.3.0",
     "modules/azure-sa": "0.1.6",
     "modules/azure-sa-backup": "0.2.6",
-    "modules/azure-disks": "1.0.2",
+    "modules/azure-disks": "1.1.0",
     "modules/azure-disks-backup": "1.1.0",
     "modules/mongodb-atlas-project": "1.3.1",
     "modules/mongodb-atlas-cluster": "0.1.1",
