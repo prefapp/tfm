@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v3.0.0...azure-flexible-server-postgresql-v3.1.0) (2025-04-24)
+
+
+### Features
+
+* Update README.md ([a7dfb55](https://github.com/prefapp/tfm/commit/a7dfb55b83447cf3ef08d168ab756e791f322e7a))
+
 ## [3.0.0](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v2.6.1...azure-flexible-server-postgresql-v3.0.0) (2025-03-14)
 
 
