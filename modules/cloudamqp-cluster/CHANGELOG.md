@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.1.1](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v1.1.0...cloudamqp-cluster-v1.1.1) (2025-04-24)
+
+
+### Bug Fixes
+
+* Update role_assignment.tf ([7592841](https://github.com/prefapp/tfm/commit/75928419415d74de12d2d38a602df7aa703c860e))
+
+## [1.1.0](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v1.0.0...cloudamqp-cluster-v1.1.0) (2025-04-24)
+
+
+### Features
+
+* Update README.md ([a7dfb55](https://github.com/prefapp/tfm/commit/a7dfb55b83447cf3ef08d168ab756e791f322e7a))
+
+
+### Bug Fixes
+
+* Update role_assignment.tf ([7592841](https://github.com/prefapp/tfm/commit/75928419415d74de12d2d38a602df7aa703c860e))
+* value ([5cacf36](https://github.com/prefapp/tfm/commit/5cacf36592574c95eb252629054c0033338d6ee6))
+
+## [1.1.0](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v1.0.0...cloudamqp-cluster-v1.1.0) (2025-04-24)
+
+
+### Features
+
+* Update README.md ([a7dfb55](https://github.com/prefapp/tfm/commit/a7dfb55b83447cf3ef08d168ab756e791f322e7a))
+
+
+### Bug Fixes
+
+* Update role_assignment.tf ([7592841](https://github.com/prefapp/tfm/commit/75928419415d74de12d2d38a602df7aa703c860e))
+* value ([5cacf36](https://github.com/prefapp/tfm/commit/5cacf36592574c95eb252629054c0033338d6ee6))
+
 ## [1.1.0](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v1.0.0...cloudamqp-cluster-v1.1.0) (2025-04-24)
 
 
