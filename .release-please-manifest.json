@@ -1,4 +1,5 @@
 {
+    "modules/azure-disks-backup": "1.2.1",
     "modules/aws-sso": "0.6.1",
     "modules/azure-resource-group": "1.5.1",
     "modules/azure-oidc": "1.4.1",
@@ -10,7 +11,6 @@
     "modules/cloudamqp-vpc": "1.1.1",
     "modules/aws-oidc": "1.4.1",
     "modules/azure-vnet-and-subnet": "2.1.1",
-    "modules/azure-disks-backup": "1.2.0",
     "modules/azure-sa-backup": "0.3.1",
     "modules/azuread-group": "1.1.1",
     "modules/azure-app-gateway": "0.5.1",
