@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/aws-oidc-v1.3.0...aws-oidc-v1.4.0) (2025-04-24)
+
+
+### Features
+
+* Update README.md ([a7dfb55](https://github.com/prefapp/tfm/commit/a7dfb55b83447cf3ef08d168ab756e791f322e7a))
+
 ## [1.3.0](https://github.com/prefapp/tfm/compare/aws-oidc-v1.2.0...aws-oidc-v1.3.0) (2023-12-19)
 
 
