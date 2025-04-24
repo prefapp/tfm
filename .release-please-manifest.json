@@ -9,7 +9,7 @@
     "modules/azure-resource-group": "1.4.2",
     "modules/azure-aks": "1.8.1",
     "modules/azure-vnet-peering": "1.2.0",
-    "modules/azuread-group": "1.0.6",
+    "modules/azuread-group": "1.1.0",
     "modules/azure-kv": "1.5.0",
     "modules/azure-app-gateway": "0.4.0",
     "modules/azure-mi": "1.3.0",
