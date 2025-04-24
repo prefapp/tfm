@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.8.0...azure-aks-v1.8.1) (2025-04-24)
+
+
+### Bug Fixes
+
+* Fix kubelet_identity_client_id output ([#511](https://github.com/prefapp/tfm/issues/511)) ([5277b83](https://github.com/prefapp/tfm/commit/5277b8306c1ae656f9a193ebce814e89733e5229))
+
 ## [1.8.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.7.1...azure-aks-v1.8.0) (2024-10-17)
 
 
