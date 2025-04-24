@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v1.0.0...cloudamqp-cluster-v1.1.0) (2025-04-24)
+
+
+### Features
+
+* Update README.md ([a7dfb55](https://github.com/prefapp/tfm/commit/a7dfb55b83447cf3ef08d168ab756e791f322e7a))
+
+
+### Bug Fixes
+
+* value ([5cacf36](https://github.com/prefapp/tfm/commit/5cacf36592574c95eb252629054c0033338d6ee6))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/cloudamqp-cluster-v0.1.0...cloudamqp-cluster-v1.0.0) (2025-04-24)
 
 
