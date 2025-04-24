@@ -21,8 +21,8 @@ output "cluster_issuer" {
   value = module.aks.oidc_issuer_url
 }
 
-output "kubelet_identity" {
-  value = module.aks.kubelet_identity
+output "kubelet_identity_client_id" {
+  value = module.aks.kubelet_identity[0].client_id
 }
 
 output "network_profile" {
