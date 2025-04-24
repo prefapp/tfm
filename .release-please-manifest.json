@@ -20,10 +20,10 @@
     "modules/azure-disks": "1.1.0",
     "modules/mongodb-atlas-cluster": "0.2.0",
     "modules/mongodb-atlas-azure-privatelink": "0.2.0",
-    "modules/cloudamqp-cluster": "1.1.0",
+    "modules/cloudamqp-cluster": "1.0.0",
     "modules/mongodb-atlas-project": "1.4.0",
     "modules/azure-policy-definitions": "0.2.0",
-    "modules/azure-customrole": "0.2.0",
+    "modules/azure-customrole": "0.2.1",
     "modules/azure-nsg-nsr": "0.2.0",
     "modules/azure-public-prefix": "0.3.0",
     "modules/azure-vmss": "0.3.0",
@@ -31,6 +31,5 @@
     "modules/azure-public-ip": "0.3.0",
     "modules/azure-redis-cache": "0.2.0",
     "azure-role-assignment": "0.1.0",
-    "modules/azure-role-assignment": "0.1.1",
-    "modules/cloudamqp-cluster": "1.0.0"
+    "modules/azure-role-assignment": "0.1.1"
 }
