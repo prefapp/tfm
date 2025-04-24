@@ -11,7 +11,7 @@
     "modules/azure-vnet-peering": "1.2.0",
     "modules/azuread-group": "1.0.6",
     "modules/azure-kv": "1.4.0",
-    "modules/azure-app-gateway": "0.4.0",
+    "modules/azure-app-gateway": "0.5.0",
     "modules/azure-mi": "1.2.2",
     "modules/azure-sa": "0.1.6",
     "modules/azure-sa-backup": "0.2.6",
