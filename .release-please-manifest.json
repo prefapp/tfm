@@ -7,7 +7,7 @@
     "modules/aws-oidc": "1.4.0",
     "modules/azure-vnet-and-subnet": "2.1.0",
     "modules/azure-resource-group": "1.4.2",
-    "modules/azure-aks": "1.8.1",
+    "modules/azure-aks": "1.9.0",
     "modules/azure-vnet-peering": "1.2.0",
     "modules/azure-app-gateway": "0.5.0",
     "modules/azuread-group": "1.1.0",
