@@ -21,7 +21,7 @@
     "modules/mongodb-atlas-cluster": "0.2.0",
     "modules/mongodb-atlas-azure-privatelink": "0.2.0",
     "modules/cloudamqp-cluster": "1.0.0",
-    "modules/mongodb-atlas-project": "1.4.0",
+    "modules/mongodb-atlas-project": "1.4.1",
     "modules/azure-policy-definitions": "0.2.1",
     "modules/azure-customrole": "0.2.0",
     "modules/azure-nsg-nsr": "0.2.1",
