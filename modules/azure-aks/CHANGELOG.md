@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.1...azure-aks-v1.9.2) (2025-04-25)
+
+
+### Bug Fixes
+
+* Fix kubelet_identity_object_id output ([#632](https://github.com/prefapp/tfm/issues/632)) ([a99a854](https://github.com/prefapp/tfm/commit/a99a8542d34be66e6387a6d56d34d0672a6b21a9))
+
 ## [1.9.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.0...azure-aks-v1.9.1) (2025-04-24)
 
 
