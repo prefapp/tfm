@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/azure-role-assignment-v0.1.2...azure-role-assignment-v0.2.0) (2025-04-25)
+
+
+### Features
+
+* Fix terraform version azure-role-assignment module ([#631](https://github.com/prefapp/tfm/issues/631)) ([4662f10](https://github.com/prefapp/tfm/commit/4662f10ef9775a22273e34de896bd6f61fdbb9f8))
+
 ## [0.1.2](https://github.com/prefapp/tfm/compare/azure-role-assignment-v0.1.1...azure-role-assignment-v0.1.2) (2025-04-24)
 
 
