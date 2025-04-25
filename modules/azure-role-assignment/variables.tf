@@ -3,7 +3,7 @@ variable "role_assignments" {
   description = "A map of role assignments to create. The key is the scope, and the value is a map containing the role definition name and target ID."
   type = map(object({
     scope                = string
-    delegated_managed_identity_resource_id            = string
+    target_id            = string
     type                 = optional(string, "ServicePrincipal")
     role_definition_name = optional(string)
     role_definition_id   = optional(string)
