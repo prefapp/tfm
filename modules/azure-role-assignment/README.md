@@ -24,8 +24,9 @@ This module creates a User Assigned Identity in Azure and assigns it role-based 
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| role_assignments | A map of role assignments to create. The key is the scope, and the value is a map containing the role definition name and target ID. | `map(object({ scope = string role_definition_name = optional(string) role_definition_id = optional(string) target_id = string }))` | `{}` | no |
+| role_assignments | A map of role assignments to create. The key is the scope, and the value is a map containing the role definition name and target ID. | `map(object({ scope = string type = string role_definition_name = optional(string) role_definition_id = optional(string) target_id = string }))` | `{}` | no |
 | role_assignments.scope | The scope of the role assignment. | `string` | n/a | yes |
+| role_assignments.type | The type of the role assignment. [`ServicePrincipal`, `Group`, `User`] | `string` | `ServicePrincipal` | no |
 | role_assignments.role_definition_name | The name of the role definition. | `string` | n/a | yes |
 | role_assignments.role_definition_id | The ID of the role definition. | `string` | n/a | yes |
 | role_assignments.target_id | The ID of the target resource. | `string` | n/a | yes |
