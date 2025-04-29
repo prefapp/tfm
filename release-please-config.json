@@ -98,6 +98,9 @@
         },
         "modules/azure-role-assignment": {
             "package-name": "azure-role-assignment"
+        },
+        "modules/firestartr-bootstrap": {
+            "package-name": "firestartr-bootstrap"
         }
     }
 }
