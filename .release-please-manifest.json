@@ -30,5 +30,6 @@
     "modules/azure-policy-assignments": "0.2.1",
     "modules/azure-public-ip": "0.3.1",
     "modules/azure-redis-cache": "0.2.1",
-    "modules/azure-role-assignment": "0.2.0"
+    "modules/azure-role-assignment": "0.2.0",
+    "modules/firestartr-bootstrap": "0.0.0"
 }
