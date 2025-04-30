@@ -1,8 +1,3 @@
-variable "bootstrap_bucket_name" {
-    description = "Name of the S3 Bucket used for storing the Terraform state for the bootstrap process"
-    type = string
-}
-
 variable "tfworkspaces_bucket_name" {
     description = "Name of the S3 Bucket used for storing the Terraform state for the workspaces"
     type = string

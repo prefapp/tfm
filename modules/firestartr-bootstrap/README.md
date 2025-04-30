@@ -29,7 +29,6 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| bootstrap_bucket_name | "Name of the S3 Bucket used for storing the Terraform state for the bootstrap process" | string | "" | Y |
 | tfworkspaces_bucket_name | "Name of the S3 Bucket used for storing the Terraform state for the workspaces" | string | "" | Y |
 | locks_dynamodb_table_name | "Name of the locks DynamoDB table" | string | "" | Y |
 | tags | "Common tags for all resources" | string | "" | Y |
@@ -39,7 +38,6 @@
 
 | Name | Description |
 |------|-------------|
-| bootstrap_bucket_arn | "Bootstrap S3 bucket's ARN" |
 | tfworskpaces_bucket_arn | "tfworkspaces bucket's ARN" |
 | locks_dynamodb_table_arn | "Locks' DynamoDB table's ARN" |
 | locks_dynamodb_table_id | "Locks' DynamoDB table's ID" |

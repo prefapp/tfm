@@ -7,18 +7,6 @@ terraform {
     }
 }
 
-module "s3_bucket_bootstrap" {
-    source = "terraform-aws-modules/s3-bucket/aws"
-    version = "~> 3.0"
-
-    bucket = var.bootstrap_bucket_name
-    tags = var.tags
-    
-    versioning = {
-        enabled = true
-    }
-}
-
 module "s3_bucket_tfworkspaces" {
     source = "terraform-aws-modules/s3-bucket/aws"
     version = "~> 3.0"
