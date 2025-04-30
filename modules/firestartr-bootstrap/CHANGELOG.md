@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/firestartr-bootstrap-v0.1.0...firestartr-bootstrap-v0.1.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* Remove redundant S3 bucket ([#639](https://github.com/prefapp/tfm/issues/639)) ([0b56930](https://github.com/prefapp/tfm/commit/0b5693053633058edc8973a59298006110db0176))
+
 ## 0.1.0 (2025-04-29)
 
 
