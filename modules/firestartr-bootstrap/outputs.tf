@@ -1,8 +1,3 @@
-output "bootstrap_bucket_arn" {
-    description = "Bootstrap S3 bucket's ARN"
-    value = module.s3_bucket_bootstrap.s3_bucket_arn
-}
-
 output "tfworskpaces_bucket_arn" {
     description = "tfworkspaces bucket's ARN"
     value = module.s3_bucket_tfworkspaces_arn
