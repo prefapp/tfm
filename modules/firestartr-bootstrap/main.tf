@@ -1,41 +1,48 @@
-terraform {
-    required_providers {
-      aws = {
-        source = "hashicorp/aws"
-        version = "~> 5.0"
-      }
-    }
+resource "aws_s3_bucket" "terraform_state" {
+  bucket        = var.bucket_name
+  force_destroy = var.force_destroy
+
+  tags = var.tags
 }
 
-module "s3_bucket_tfworkspaces" {
-    source = "terraform-aws-modules/s3-bucket/aws"
-    version = "~> 3.0"
+resource "aws_s3_bucket_versioning" "terraform_state" {
+  bucket = aws_s3_bucket.terraform_state.id
 
-    bucket = var.tfworkspaces_bucket_name
-    tags = var.tags
-
-    versioning = {
-        enabled = true
-    }
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
-module "locks_dynamodb_table" {
-    source = "terraform-aws-modules/dynamodb-table/aws"
-    version = "~> 3.0"
+resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
+  bucket = aws_s3_bucket.terraform_state.id
 
-    name = var.locks_dynamodb_table_name
-    hash_key = "id"
-    tags = var.tags
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
 
-    attributes = [
-        {
-            name = "id"
-            type = "S"
-        }
-    ]
+resource "aws_s3_bucket_public_access_block" "terraform_state" {
+  bucket = aws_s3_bucket.terraform_state.id
 
-    billing_mode = "PROVISIONED"
-    read_capacity = 5
-    write_capacity = 5
-    
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# Only create DynamoDB table if name is provided
+resource "aws_dynamodb_table" "terraform_locks" {
+  count        = var.dynamodb_table_name != "" ? 1 : 0
+  name         = var.dynamodb_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+
+  tags = var.tags
 }

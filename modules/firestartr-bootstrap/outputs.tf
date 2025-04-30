@@ -1,14 +1,19 @@
-output "tfworskpaces_bucket_arn" {
-    description = "tfworkspaces bucket's ARN"
-    value = module.s3_bucket_tfworkspaces_arn
+output "s3_bucket_arn" {
+  description = "ARN of the S3 bucket"
+  value       = aws_s3_bucket.terraform_state.arn
 }
 
-output "locks_dynamodb_table_arn" {
-    description = "Locks' DynamoDB table's ARN"
-    value = module.locks_dynamodb_table_arn
+output "s3_bucket_name" {
+  description = "Name of the S3 bucket"
+  value       = aws_s3_bucket.terraform_state.id
 }
 
-output "locks_dynamodb_table_id" {
-    description = "Locks' DynamoDB table's ID"
-    value = module.locks_dynamodb_table_id
+output "dynamodb_table_name" {
+  description = "Name of the DynamoDB table (empty if not created)"
+  value       = var.dynamodb_table_name != "" ? aws_dynamodb_table.terraform_locks[0].name : ""
+}
+
+output "dynamodb_table_arn" {
+  description = "ARN of the DynamoDB table (empty if not created)"
+  value       = var.dynamodb_table_name != "" ? aws_dynamodb_table.terraform_locks[0].arn : ""
 }
