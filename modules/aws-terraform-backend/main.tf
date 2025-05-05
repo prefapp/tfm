@@ -1,3 +1,4 @@
+# AWS S3 bucket to store Terraform state
 resource "aws_s3_bucket" "this" {
   bucket        = var.bucket_name
   force_destroy = var.force_destroy
@@ -5,6 +6,7 @@ resource "aws_s3_bucket" "this" {
   tags = var.tags
 }
 
+# AWS S3 bucket versioning
 resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -13,6 +15,7 @@ resource "aws_s3_bucket_versioning" "this" {
   }
 }
 
+# AWS S3 bucket encryption
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -23,6 +26,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   }
 }
 
+# AWS S3 bucket public access block
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -32,17 +36,14 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = true
 }
 
-# Only create DynamoDB table if name is provided
-resource "aws_dynamodb_table" "terraform_locks" {
-  count        = var.dynamodb_table_name != "" ? 1 : 0
-  name         = var.dynamodb_table_name
+
+# AWS DynamoDB table to store Terraform locks. 
+# Only needed if terraform version is less than 1.11
+module "dynamodb_conditional" {
+  source       = "./dynamodb_conditional"
+  enable       = terraform_version < "1.11"
   billing_mode = "PAY_PER_REQUEST"
+  table_name   = var.dynamodb_table_name
   hash_key     = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-
-  tags = var.tags
+  tags         = var.tags
 }
