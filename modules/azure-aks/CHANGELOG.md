@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.9.2](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.1...azure-aks-v1.9.2) (2025-04-25)
+
+
+### Bug Fixes
+
+* Fix kubelet_identity_object_id output ([#632](https://github.com/prefapp/tfm/issues/632)) ([a99a854](https://github.com/prefapp/tfm/commit/a99a8542d34be66e6387a6d56d34d0672a6b21a9))
+
+## [1.9.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.0...azure-aks-v1.9.1) (2025-04-24)
+
+
+### Bug Fixes
+
+* Update role_assignment.tf ([7592841](https://github.com/prefapp/tfm/commit/75928419415d74de12d2d38a602df7aa703c860e))
+
+## [1.9.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.8.1...azure-aks-v1.9.0) (2025-04-24)
+
+
+### Features
+
+* Update README.md ([a7dfb55](https://github.com/prefapp/tfm/commit/a7dfb55b83447cf3ef08d168ab756e791f322e7a))
+
+## [1.8.1](https://github.com/prefapp/tfm/compare/azure-aks-v1.8.0...azure-aks-v1.8.1) (2025-04-24)
+
+
+### Bug Fixes
+
+* Fix kubelet_identity_client_id output ([#511](https://github.com/prefapp/tfm/issues/511)) ([5277b83](https://github.com/prefapp/tfm/commit/5277b8306c1ae656f9a193ebce814e89733e5229))
+
 ## [1.8.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.7.1...azure-aks-v1.8.0) (2024-10-17)
 
 
