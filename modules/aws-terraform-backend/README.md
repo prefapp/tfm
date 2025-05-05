@@ -32,6 +32,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| terraform_version | "Terraform executable version" | string | "1.11.4" | Y |
 | bucket_name | "Name of the S3 Bucket used for storing the Terraform state for the workspaces" | string | "" | Y |
 | dynamodb_table_name | "Name of the locks DynamoDB table. Only needed if Terraform executable version < v1.11" | string | "" | N |
 | tags | "Common tags for all resources" | string | "" | Y |

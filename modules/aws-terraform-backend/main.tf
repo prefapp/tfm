@@ -41,7 +41,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
 # Only needed if terraform version is less than 1.11
 module "dynamodb_conditional" {
   source       = "./dynamodb_conditional"
-  enable       = terraform_version < "1.11"
+  enable       = var.terraform_version < "1.11"
   billing_mode = "PAY_PER_REQUEST"
   table_name   = var.dynamodb_table_name
   hash_key     = "LockID"

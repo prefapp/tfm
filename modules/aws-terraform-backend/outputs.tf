@@ -10,10 +10,10 @@ output "s3_bucket_name" {
 
 output "dynamodb_table_name" {
   description = "Name of the DynamoDB table (empty if not created)"
-  value       = var.dynamodb_table_name != "" ? aws_dynamodb_table.terraform_locks[0].name : ""
+  value       = var.dynamodb_table_name != "" ? aws_dynamodb_table.terraform_locks.name : ""
 }
 
 output "dynamodb_table_arn" {
   description = "ARN of the DynamoDB table (empty if not created)"
-  value       = var.dynamodb_table_name != "" ? aws_dynamodb_table.terraform_locks[0].arn : ""
+  value       = var.dynamodb_table_name != "" ? aws_dynamodb_table.terraform_locks.arn : ""
 }

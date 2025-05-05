@@ -1,3 +1,9 @@
+variable "terraform_version" {
+  description = "Terraform version number"
+  default = "1.11.4"
+  type        = string
+}
+
 variable "bucket_name" {
   description = "Name of the S3 Bucket used for storing the Terraform state for the workspaces"
   type        = string
