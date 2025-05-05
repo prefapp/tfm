@@ -69,15 +69,15 @@ resource "azuread_application_password" "this" {
   count          = var.client_secret.enabled ? 1 : 0
   application_id = azuread_application.this.id
   rotate_when_changed = {
-    rotation = time_rotating.this.id[0]
+    rotation = time_rotating.this[0].id
   }
 }
 
 resource "azurerm_key_vault_secret" "this" {
-  count        = var.client_secret.keyvault != null ? 1 : 0
+  count        = (var.client_secret.keyvault != null && var.client_secret.enabled) ? 1 : 0
   key_vault_id = var.client_secret.keyvault.id
   name         = var.client_secret.keyvault.name
-  value        = azuread_application_password.this.value[0]
+  value        = azuread_application_password.this[0].value
 }
 
 
