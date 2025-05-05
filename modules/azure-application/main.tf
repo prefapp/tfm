@@ -120,7 +120,6 @@ resource "azuread_application_federated_identity_credential" "this" {
 
 # Extra role assignments
 resource "azurerm_role_assignment" "acr_access" {
-  count                = length(var.extra_role_assignments)
   for_each             = values.extra_role_assignments
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
