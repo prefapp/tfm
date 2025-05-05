@@ -37,7 +37,7 @@ variable "extra_role_assignments" {
 variable "client_secret" {
   type = object({
     enabled       = bool
-    rotation_days = optionl(number)
+    rotation_days = optional(number)
     keyvault = optional(object({
       id       = string
       key_name = string
