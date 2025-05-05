@@ -34,7 +34,8 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 # Only create DynamoDB table if name is provided
 resource "aws_dynamodb_table" "this" {
-  count        = var.dynamodb_table_name != "" ? 1 : 0
+  count = var.dynamodb_table_name == "" ? 0 : 1
+  
   name         = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
