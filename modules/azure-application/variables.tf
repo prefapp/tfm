@@ -26,32 +26,32 @@ variable "msgraph_roles" {
 }
 
 variable "extra_role_assignments" {
-  type = list(object({
+  type = optional(list(object({
     role_definition_name = string
     scope                = string
-  }))
+  })))
   description = "The list of extra role assignments to be added to the Azure App Registration."
 }
 
 variable "client_secret" {
-  type = object({
+  type = optional(object({
     enabled       = bool
     rotation_days = number
     keyvault = optional(object({
       id       = string
       key_name = string
     }))
-  })
+  }))
   description = "The client secret configuration for the Azure App Registration."
 }
 
 variable "federated_credentials" {
-  type = list(object({
+  type = optional(list(object({
     display_name = string
     audiences    = list(string)
     issuer       = string
     subject      = string
     description  = optional(string)
-  }))
+  })))
   description = "The federated credentials configuration for the Azure App Registration."
 }
