@@ -33,7 +33,7 @@ resource "azuread_application" "this" {
         for_each = var.msgraph_roles
 
         content {
-          id   = data.azuread_service_principal.msgraph.app_role_ids[each.value]
+          id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, each.value, null)
           type = "Role"
         }
 
@@ -120,7 +120,7 @@ resource "azuread_application_federated_identity_credential" "this" {
 
 # Extra role assignments
 resource "azurerm_role_assignment" "extra_role_assignments" {
-  for_each             = zipmap(tolist(range(length(var.extra_role_assignments))), var.extra_role_assignments)
+  for_each             = { for idx, assignment in var.extra_role_assignments : idx => assignment }
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
   principal_id         = azuread_service_principal.this.id
