@@ -69,7 +69,7 @@ resource "azuread_application_password" "this" {
   count          = var.client_secret.enabled ? 1 : 0
   application_id = azuread_application.this.id
   rotate_when_changed = {
-    rotation = time_rotating.this.id
+    rotation = time_rotating.this.id[0]
   }
 }
 
@@ -77,7 +77,7 @@ resource "azurerm_key_vault_secret" "this" {
   count        = var.client_secret.keyvault != null ? 1 : 0
   key_vault_id = var.client_secret.keyvault.id
   name         = var.client_secret.keyvault.name
-  value        = azuread_application_password.this.value
+  value        = azuread_application_password.this.value[0]
 }
 
 
@@ -120,6 +120,7 @@ resource "azuread_application_federated_identity_credential" "this" {
 
 # Extra role assignments
 resource "azurerm_role_assignment" "acr_access" {
+  count                = length(var.extra_role_assignments)
   for_each             = values.extra_role_assignments
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
