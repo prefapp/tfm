@@ -32,22 +32,18 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| terraform_version | "Terraform executable version" | string | "1.11.4" | Y |
-| bucket_name | "Name of the S3 Bucket used for storing the Terraform state for the workspaces" | string | "" | Y |
-| dynamodb_table_name | "Name of the locks DynamoDB table. Only needed if Terraform executable version < v1.11" | string | "" | N |
+| tfworkspaces_bucket_name | "Name of the S3 Bucket used for storing the Terraform state for the workspaces" | string | "" | Y |
+| locks_dynamodb_table_name | "Name of the locks DynamoDB table" | string | "" | Y |
 | tags | "Common tags for all resources" | string | "" | Y |
-| force_destroy | "Allow destroying the bucket even if it contains state" | bool | false | N |
-| enable_versioning | "Enable versioning on the bucket" |  bool | true | N |
 
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| s3_bucket_arn | "ARN of the S3 bucket" |
-| s3_bucket_name | "Name of the S3 bucket" |
-| dynamodb_table_arn | "ARN of the DynamoDB table (empty if not created)" |
-| dynamodb_table_name | "Name of the DynamoDB table (empty if not created)" |
+| tfworskpaces_bucket_arn | "tfworkspaces bucket's ARN" |
+| locks_dynamodb_table_arn | "Locks' DynamoDB table's ARN" |
+| locks_dynamodb_table_id | "Locks' DynamoDB table's ID" |
 
 <!-- END_TF_DOCS -->
 
