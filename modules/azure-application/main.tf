@@ -76,7 +76,7 @@ resource "azuread_application_password" "this" {
 resource "azurerm_key_vault_secret" "this" {
   count        = (var.client_secret.keyvault != null && var.client_secret.enabled) ? 1 : 0
   key_vault_id = var.client_secret.keyvault.id
-  name         = var.client_secret.keyvault.name
+  name         = var.client_secret.keyvault.key_name
   value        = azuread_application_password.this[0].value
 }
 
@@ -119,7 +119,7 @@ resource "azuread_application_federated_identity_credential" "this" {
 
 
 # Extra role assignments
-resource "azurerm_role_assignment" "acr_access" {
+resource "azurerm_role_assignment" "extra_role_assignments" {
   for_each             = values.extra_role_assignments
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
