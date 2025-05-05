@@ -33,7 +33,7 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | bucket_name | "Name of the S3 Bucket used for storing the Terraform state for the workspaces" | string | "" | Y |
-| dynamodb_table_name | "Name of the locks DynamoDB table. Not needed if Terraform version is 1.11 or newer" | string | "" | N |
+| dynamodb_table_name | "Name of the locks DynamoDB table. Not needed if Terraform version is 1.11 or newer" | string | null | N |
 | tags | "Common tags for all resources" | string | "" | N |
 | force_destroy | "Allow destroying the bucket even if it contains state" | boolean | false | N |
 | enable_versioning | "Enable versioning on the bucket" | boolean | true | N |

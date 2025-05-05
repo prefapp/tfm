@@ -6,7 +6,7 @@ variable "bucket_name" {
 variable "dynamodb_table_name" {
   description = "Name of the locks DynamoDB table"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "tags" {
