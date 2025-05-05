@@ -11,10 +11,10 @@ output "s3_bucket_name" {
 
 output "dynamodb_table_arn" {
   description = "ARN of the DynamoDB table (empty if not created)"
-  value       = coalesce(var.dynamodb_table_name.this.arn, "")
+  value       = coalesce(aws_dynamodb_table.this.arn, "")
 }
 
 output "dynamodb_table_name" {
   description = "Name of the DynamoDB table (empty if not created)"
-  value       = coalesce(var.dynamodb_table_name.this.name, "")
+  value       = coalesce(aws_dynamodb_table.this.name, "")
 }
