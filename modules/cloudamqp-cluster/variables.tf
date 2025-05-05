@@ -8,19 +8,11 @@ variable "cloudamqp_instance" {
     tags                = optional(list(string), [])
     nodes               = number
     rmq_version         = string
+    vpc_id              = optional(number)
     no_default_alarms   = optional(bool)
     keep_associated_vpc = optional(bool)
   })
-   default = {
-     name        = "default_instance"
-     plan        = "lemming"
-     region      = "azure-arm::westeurope"
-     tags        = []
-     nodes       = 1
-     rmq_version = "4.0.4"
-   }
 }
-
 
 # Firewall
 variable "enable_firewall" {
@@ -358,4 +350,14 @@ variable "logs_integrations" {
     ])
     error_message = "The 'stackdriver_logs' integration must have a non-empty 'credentials': 'project_id', 'private_key', and 'client_email'."
   }
+}
+
+variable "cloudamqp_vpc_connect" {
+  description = "CloudAMQP vpc_connect configurations"
+  type = object({
+    instance_id            = optional(number)
+    approved_subscriptions = optional(list(string))
+    sleep                  = optional(number)
+    timeout                = optional(number)
+  })
 }

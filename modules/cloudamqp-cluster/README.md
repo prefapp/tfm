@@ -1,3 +1,7 @@
+# Cloudamqp cluster module
+
+This terraform module creates a Cloudamqp cluster (with your instance/s) and create a associated VPC. Which means that before creating a resource it must have a VPC.
+
 ## Requirements
 
 | Name | Version |
@@ -27,12 +31,17 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_plan"></a> [plan](#input_plan) | Plan for the CloudAMQP instance ([List of plans](https://registry.terraform.io/providers/cloudamqp/cloudamqp/latest/docs/guides/info_plan)) | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input_region) | Region for the CloudAMQP instance | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input_region) | Region for the CloudAMQP instance and associated VPC | `string` | n/a | yes |
 | <a name="input_nodes"></a> [nodes](#input_nodes) | Number of nodes for the CloudAMQP instance | `number` | n/a | yes |
 | <a name="input_rmq_version"></a> [rmq\_version](#input_rmq_version) | RabbitMQ version for the CloudAMQP instance | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input_tags) | Tags for the CloudAMQP instance | `list(string)` | `[]` | no |
 | <a name="input_no_default_alarms"></a> [no\_default\_alarms](#input\_no\_default\_alarms) | Disable the default alarms created for the CloudAMQP instance | `bool` | `false` | no |
+| <a name="vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC to associate with the CloudAMQP instance | `string` | n/a | yes |
 | <a name="input_keep_associated_vpc"></a> [keep\_associated\_vpc](#input\_keep\_associated\_vpc) | Preserve the associated VPC when the CloudAMQP instance is deleted | `bool` | `false` | no |
+| <a name="input_cloudamqp_vpc_connect.instance_id"></a> [cloudamqp\_vpc\_connect.instance\_id](#input\_cloudamqp\_vpc\_connect.instance\_id) | ID of the CloudAMQP instance to connect to the VPC | `number` | n/a | yes |
+| <a name="input_cloudamqp_vpc_connect.approved_subscriptions"></a> [cloudamqp\_vpc\_connect.approved\_subscriptions](#input\_cloudamqp\_vpc\_connect.approved\_subscriptions) | List of approved subscriptions for the VPC connection | `list(string)` | `[]` | no |
+| <a name="input_cloudamqp_vpc_connect.sleep"></a> [cloudamqp\_vpc\_connect.sleep](#input\_cloudamqp\_vpc\_connect.sleep) | Sleep time before checking the VPC connection status | `number` | `30` | no |
+| <a name="input_cloudamqp_vpc_connect.timeout"></a> [cloudamqp\_vpc\_connect.timeout](#input\_cloudamqp\_vpc\_connect.timeout) | Timeout for the VPC connection operation | `number` | `60` | no |
 | <a name="input_enable_firewall"></a> [enable\_firewall](#input\_enable\_firewall) | Enable firewall configuration | `bool` | `false` | no |
 | <a name="input_firewall_rules"></a> [firewall\_rules](#input\_firewall\_rules) | *Depends on* `enable_firewall=true`. Firewall rules for the instance | `map(object({ description = string, ip = string, ports = list(string), services = list(string) }))` | `{}` | no |
 | <a name="input_recipients"></a> [recipients](#input\_recipients) | Map of notification recipients | `map(object({ value = string, name = string, type = string }))` | `{}` | no |
@@ -63,18 +72,21 @@
 
 ## Example 1: tfvars
 
-```yaml
-#tfvars
-
+```hcl
 cloudamqp_instance = {
 
-  plan      = "your-plan"
-  region    = "your-region"
-  nodes     = 1
+  plan        = "your-plan"
+  region      = "your-region"
+  nodes       = 1
   rmq_version = "4.0.4"
-  tags      = ["production", "messaging"]
+  vpc_id      = "your-vpc-id"
+  tags        = ["production", "messaging"]
   }
-
+cloudamqp_vpc_connect = {
+  instance_id            = 123456
+  region                 = "azure-arm::eastus"
+  approved_subscriptions = ["xxxxxx-xxxx-xxxx-xxxxxxx", "xxxxxx-xxxx-xxxx-xxxxxxx"]
+}
 enable_firewall  = true
 firewall_rules = {
   rule1 = {
@@ -99,8 +111,8 @@ recipients = {
 }
 alarms = {
   high_memory_usage = {
-    type             = "memory"
-    enabled          = true
+    type              = "memory"
+    enabled           = true
     reminder_interval = 30
     value_threshold   = 80
     time_threshold    = 5
@@ -117,24 +129,23 @@ metrics_integrations = {
 }
 logs_integrations = {
   azure = {
-    name              = "azure-log-analytics"
-    api_key           = "your-azure-api-key"
-    region            = "us-east-1"
-    tags              = { environment = "production" }
-    tenant_id         = "your-tenant-id"
-    application_id    = "your-application-id"
+    name               = "azure-log-analytics"
+    api_key            = "your-azure-api-key"
+    region             = "us-east-1"
+    tags               = { environment = "production" }
+    tenant_id          = "your-tenant-id"
+    application_id     = "your-application-id"
     application_secret = "your-application-secret"
-    dce_uri           = "https://example.com"
-    table             = "logs"
-    dcr_id            = "your-dcr-id"
+    dce_uri            = "https://example.com"
+    table              = "logs"
+    dcr_id             = "your-dcr-id"
   }
 }
-
 ```
+
 ## Example 2: yaml
 
 ```yaml
-#Claim
 kind: YourKind
 lifecycle: production
 name: name-of-your-instance
@@ -145,17 +156,23 @@ providers:
     tfStateKey: xxxxxx-xxxx-xxxx-xxxxxx
     name: name-of-your-instace
     source: remote
-    module: git::https://this.module.ref.com
+    module: git::https://github.com/prefapp/tfm.git//modules/cloudamqp-cluster?ref=example-version
     values:
       cloudamqp_instance:
         plan: "your-plan"
         region: "your-region"
         nodes: 1
         rmq_version: "4.0.4"
+        vpc_id: "your-vpc-id"
         tags:
           - "production"
           - "messaging"
-
+      cloudamqp_vpc_connect:
+        instance_id: 123456
+        region: "azure-arm::eastus"
+        approved_subcriptions:
+          - "xxxxxx-xxxx-xxxx-xxxxxxx"
+          - "xxxxxx-xxxx-xxxx-xxxxxxx"
       enable_firewall: true
       firewall_rules:
         rule1:
@@ -173,13 +190,11 @@ providers:
             - "443"
           services:
             - "monitoring"
-
       recipients:
         admin:
           value: "admin@example.com"
           name: "Admin"
           type: "email"
-
       alarms:
         high_memory_usage:
           type: "memory"
@@ -188,7 +203,6 @@ providers:
           value_threshold: 80
           time_threshold: 5
           recipient_key: "admin"
-
       metrics_integrations:
         datadog:
           name: "datadog"
@@ -196,7 +210,6 @@ providers:
           region: "us-east-1"
           tags:
             environment: "production"
-
       logs_integrations:
         azure:
           name: "azure-log-analytics"
@@ -210,7 +223,6 @@ providers:
           dce_uri: "https://example.com"
           table: "logs"
           dcr_id: "your-dcr-id"
-
     context:
       providers:
         - name: your-provider

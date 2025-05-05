@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.1.1](https://github.com/prefapp/tfm/compare/cloudamqp-vpc-v1.1.0...cloudamqp-vpc-v1.1.1) (2025-04-24)
+
+
+### Bug Fixes
+
+* Update role_assignment.tf ([7592841](https://github.com/prefapp/tfm/commit/75928419415d74de12d2d38a602df7aa703c860e))
+
+## [1.1.0](https://github.com/prefapp/tfm/compare/cloudamqp-vpc-v1.0.0...cloudamqp-vpc-v1.1.0) (2025-04-24)
+
+
+### Features
+
+* Update README.md ([a7dfb55](https://github.com/prefapp/tfm/commit/a7dfb55b83447cf3ef08d168ab756e791f322e7a))
+
+## [1.0.0](https://github.com/prefapp/tfm/compare/cloudamqp-vpc-v0.1.0...cloudamqp-vpc-v1.0.0) (2025-04-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove vpc connect into cloudamqp-vpc module ([#506](https://github.com/prefapp/tfm/issues/506))
+
+### Bug Fixes
+
+* Remove vpc connect into cloudamqp-vpc module ([#506](https://github.com/prefapp/tfm/issues/506)) ([0514f6f](https://github.com/prefapp/tfm/commit/0514f6f3d42f3cbd44adadcdf4228fc5c73e6701))
+
 ## 0.1.0 (2025-01-07)
 
 
