@@ -105,7 +105,8 @@ The following values are not configurable:
 | <a name="output_cluster_fqdn"></a> [cluster\_fqdn](#output_cluster_fqdn) | The FQDN of the AKS cluster. |
 | <a name="output_cluster_identity"></a> [cluster\_identity](#output_cluster_identity) | The cluster identity of the AKS cluster. |
 | <a name="output_cluster_issuer"></a> [cluster\_issuer](#output_cluster_issuer) | The OIDC issuer URL of the AKS cluster. |
-| <a name="output_kubelet_identity"></a> [kubelet\_identity](#output_kubelet_identity) | The kubelet identity of the AKS cluster. |
+| <a name="output_kubelet_identity_client_id"></a> [kubelet\_identity](#output_kubelet_identity) | The client ID of the kubelet identity of the AKS cluster. |
+| <a name="output_kubelet_identity_object_id"></a> [kubelet\_identity](#output_kubelet_identity) | The object ID of the kubelet identity of the AKS cluster. |
 | <a name="output_network_profile"></a> [network\_profile](#output_network_profile) | The network profile of the AKS cluster. |
 | <a name="output_node_resource_group"></a> [node\_resource\_group](#output_node_resource_group) | The node resource group of the AKS cluster. |
 | <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output_oidc_issuer_url) | The OIDC issuer URL of the AKS cluster. |
