@@ -34,7 +34,7 @@ resource "azuread_application" "this" {
         iterator = role
         content {
           id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, role.value, null)
-          type = "Role"
+          type = "Scope"
         }
 
       }
