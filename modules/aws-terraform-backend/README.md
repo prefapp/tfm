@@ -44,7 +44,9 @@
 | Name | Description |
 |------|-------------|
 | s3_bucket_arn | "ARN of the S3 bucket" |
+| s3_bucket_name | "Name of the S3 bucket" |
 | dynamodb_table_arn | "ARN of the DynamoDB table, empty if not created" |
+| dynamodb_table_name | "Name of the DynamoDB table, empty if not created" |
 
 <!-- END_TF_DOCS -->
 
