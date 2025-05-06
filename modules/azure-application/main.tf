@@ -44,10 +44,15 @@ resource "azuread_application" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_redirect_uris
 resource "azuread_application_redirect_uris" "this" {
+  depends_on     = [azuread_application.this]
   for_each       = { for idx, redirect in var.redirects : idx => redirect }
   application_id = azuread_application.this.id
   type           = each.value.platform
   redirect_uris  = each.value.redirect_uris
+  lifecycle {
+    replace_triggered_by = [azuread_application.this]
+
+  }
 }
 
 ## Azure Enterprise Application
