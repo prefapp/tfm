@@ -33,7 +33,7 @@ resource "azuread_application" "this" {
         for_each = var.msgraph_roles
 
         content {
-          id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, var.msgraph_roles[count.index], null)
+          id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, msgraph_roles, null)
           type = "Role"
         }
 
