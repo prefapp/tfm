@@ -100,7 +100,7 @@ resource "azuread_app_role_assignment" "msgraph_roles" {
   depends_on          = [azuread_service_principal.this]
   principal_object_id = azuread_service_principal.this.object_id
   resource_object_id  = data.azuread_service_principal.msgraph.object_id
-  app_role_id         = each.value
+  app_role_id         = lookup(data.azuread_service_principal.msgraph.app_role_ids, each.value, null)
 
 }
 
