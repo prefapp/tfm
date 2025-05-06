@@ -5,5 +5,5 @@ output "s3_bucket_arn" {
 
 output "dynamodb_locks_table_arn" {
   description = "ARN of the DynamoDB table (empty if not created)"
-  value       = var.dynamodb_table_name == "" ? "" : aws_dynamodb_table.this[0].arn
+  value       = var.dynamodb_table_name == "" || var.dynamodb_table_name == null ? "" : aws_dynamodb_table.this[0].arn
 }
