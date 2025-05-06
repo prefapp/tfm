@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/prefapp/tfm/compare/azuread-group-v1.1.1...azuread-group-v1.2.0) (2025-05-06)
+
+
+### Features
+
+* zuread group pim ([#647](https://github.com/prefapp/tfm/issues/647)) ([5b15051](https://github.com/prefapp/tfm/commit/5b150515f2b9fd46b87ee6129c2b94040d16098c))
+
 ## [1.1.1](https://github.com/prefapp/tfm/compare/azuread-group-v1.1.0...azuread-group-v1.1.1) (2025-04-24)
 
 

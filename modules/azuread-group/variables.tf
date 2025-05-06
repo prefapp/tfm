@@ -70,6 +70,12 @@ variable "directory_roles" {
   }))
 }
 
+variable "enable_pim" {
+  description = "Enable Privileged Identity Management (PIM) for the group"
+  type        = bool
+  default     = false
+}
+
 variable "default_pim_duration" {
   description = "The default duration for PIM role assignments"
   type        = string
