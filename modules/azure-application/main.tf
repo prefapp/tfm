@@ -31,9 +31,9 @@ resource "azuread_application" "this" {
 
       dynamic "resource_access" {
         for_each = var.msgraph_roles
-
+        iterator = role
         content {
-          id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, resource_access.value, null)
+          id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, role.value, null)
           type = "Role"
         }
 
