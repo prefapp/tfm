@@ -12,7 +12,7 @@
     "modules/aws-oidc": "1.4.1",
     "modules/azure-vnet-and-subnet": "2.1.1",
     "modules/azure-sa-backup": "0.3.1",
-    "modules/azuread-group": "1.1.1",
+    "modules/azuread-group": "1.2.0",
     "modules/azure-app-gateway": "0.5.1",
     "modules/azure-sa": "0.2.1",
     "modules/azure-kv": "1.5.1",
