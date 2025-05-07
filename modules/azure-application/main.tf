@@ -128,5 +128,5 @@ resource "azurerm_role_assignment" "extra_role_assignments" {
   for_each             = { for idx, assignment in var.extra_role_assignments : idx => assignment }
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
-  principal_id         = azuread_service_principal.this.id
+  principal_id         = azuread_service_principal.this.object_id
 }
