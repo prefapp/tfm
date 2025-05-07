@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/azure-application-v0.1.0...azure-application-v0.1.1) (2025-05-07)
+
+
+### Bug Fixes
+
+* Use object id to create role assignment ([#651](https://github.com/prefapp/tfm/issues/651)) ([bd5b759](https://github.com/prefapp/tfm/commit/bd5b75969bbd49efa512bf27775f360cc6c907aa))
+
 ## 0.1.0 (2025-05-07)
 
 
