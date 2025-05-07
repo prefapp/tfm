@@ -82,7 +82,7 @@ resource "azurerm_key_vault_secret" "this" {
   count        = (var.client_secret.keyvault != null && var.client_secret.enabled) ? 1 : 0
   key_vault_id = var.client_secret.keyvault.id
   name         = var.client_secret.keyvault.key_name
-  value        = azuread_application_password.this[0].value
+  value_wo     = azuread_application_password.this[0].value
 
   lifecycle {
     replace_triggered_by = [
@@ -134,5 +134,5 @@ resource "azurerm_role_assignment" "extra_role_assignments" {
   for_each             = { for idx, assignment in var.extra_role_assignments : idx => assignment }
   scope                = each.value.scope
   role_definition_name = each.value.role_definition_name
-  principal_id         = azuread_service_principal.this.id
+  principal_id         = azuread_service_principal.this.object_id
 }
