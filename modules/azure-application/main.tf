@@ -85,7 +85,9 @@ resource "azurerm_key_vault_secret" "this" {
   value        = azuread_application_password.this[0].value
 
   lifecycle {
-    replace_triggered_by = [azuread_application_password.this]
+    replace_triggered_by = [
+      azuread_application_password.this[0].value
+    ]
   }
 }
 
