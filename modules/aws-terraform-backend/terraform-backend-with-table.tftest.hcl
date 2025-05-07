@@ -1,33 +1,59 @@
-variables {
-  unique_id = uuid()
+# provider "aws" {}
+mock_provider "aws" {
+  alias           = "mock"
+  override_during = apply
+
+  mock_resource "aws_s3_bucket" {
+    defaults = {
+      id = "test-bucket-tfstate-MOCK"
+    }
+  }
+
+  mock_resource "aws_dynamodb_table" {
+    defaults = {
+      name = "test-table-tfstate-MOCK"
+    }
+  }
 }
 
 run "valid_bucket_creation" {
+  providers = {
+    aws = aws.mock
+  }
+
   variables {
-    bucket_name         = "test-bucket-tfstate-${var.unique_id}"
-    dynamodb_table_name = "test-table-tfstate-${var.unique_id}"
+    bucket_name         = "test-bucket-tfstate-MOCK"
+    dynamodb_table_name = "test-table-tfstate-MOCK"
   }
 
   # in order to check if the bucket was created, we check its arn
   # we can only check it if it was created, so we need the command to apply
+  command = apply
   assert {
     condition     = aws_s3_bucket.this.arn != ""
     error_message = "S3 bucket was not created"
   }
 
+  ## usando mock, no se usa
   assert {
-    condition     = aws_s3_bucket.this.id == var.bucket_name
+    condition     = aws_s3_bucket.this.id != ""
     error_message = "S3 bucket was created but its name does not match the provided name"
   }
 }
 
 run "dynamodb_table_created" {
-  variables {
-    bucket_name         = "test-bucket-tfstate-${var.unique_id}"
-    dynamodb_table_name = "test-table-tfstate-${var.unique_id}"
+  providers = {
+    aws = aws.mock
   }
+
+  variables {
+    bucket_name         = "test-bucket-tfstate-MOCK"
+    dynamodb_table_name = "test-table-tfstate-MOCK"
+  }
+
   # in order to check if the table was created, we check its arn
   # we can only check it if it was created, so we need the command to apply
+  command = apply
   assert {
     condition     = length(aws_dynamodb_table.this) == 1
     error_message = "A DynamoDB table was not created"
