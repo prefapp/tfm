@@ -119,6 +119,7 @@ $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $Permiss
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_assignable_to_role"></a> [assignable\_to\_role](#input\_assignable\_to\_role) | Indicates if the group is assignable to a role | `bool` | `true` | no |
+| <a name="input_enable_pim"></a> [enable\_pim](#input\_enable\_pim) | Enable PIM for groups | `bool` | `false` | no |
 | <a name="input_default_pim_duration"></a> [default\_pim\_duration](#input\_default\_pim\_duration) | The default duration for PIM role assignments | `string` | `"12"` | no |
 | <a name="input_description"></a> [description](#input\_description) | The description of the Azure AD group | `string` | n/a | yes |
 | <a name="input_directory_roles"></a> [directory\_roles](#input\_directory\_roles) | The list of directory roles to assign to the group | <pre>list(object({<br>    <br>        role_name = string<br>    <br>    }))</pre> | n/a | yes |
@@ -137,12 +138,7 @@ $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $Permiss
 |------|-------------|
 | <a name="output_group_id"></a> [group\_id](#output\_group\_id) | group id |
 
-## Troubleshooting
-
 ### Known issues
 
 1. Sometimes, if you try to remove a `azuread_privileged_access_group_eligibility_schedule` resource, the provider crashes, we are waiting for a fix. Check the [issue](https://github.com/hashicorp/terraform-provider-azuread/issues/1399).
 2. If you want to update a `azuread_privileged_access_group_eligibility_schedule`, the provider shows a wrong log error. You should remove from terraform the resource and then recreate it. But sometimes has conflicts with the previous point. Check the [issue](https://github.com/hashicorp/terraform-provider-azuread/issues/1412).
-
-
-

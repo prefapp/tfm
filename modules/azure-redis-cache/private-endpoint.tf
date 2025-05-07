@@ -1,4 +1,8 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/1.43.0/docs/resources/private_endpoint
+moved {
+  from = azurerm_private_endpoint.private_endpoint
+  to   = azurerm_private_endpoint.this
+}
 resource "azurerm_private_endpoint" "this" {
   name                          = var.private_endpoint.name
   location                      = var.redis.location
