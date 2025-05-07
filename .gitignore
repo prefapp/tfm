@@ -45,3 +45,6 @@ terraform.rc
 # @tonirvega dirs and files
 issue.yaml
 debug.tf
+
+# Editor
+.vscode
