@@ -12,11 +12,6 @@
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
 
-## Modules
-
-| Name | Source | Version |
-|------|--------|---------|
-
 ## Resources
 
 | Name | Type |
