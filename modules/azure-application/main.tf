@@ -90,7 +90,7 @@ resource "azurerm_key_vault_secret" "this" {
   count        = (var.client_secret.keyvault != null && var.client_secret.enabled) ? 1 : 0
   key_vault_id = var.client_secret.keyvault.id
   name         = var.client_secret.keyvault.key_name
-  value_wo     = azuread_application_password.this[0].value
+  value     = azuread_application_password.this[0].value
 
 }
 
