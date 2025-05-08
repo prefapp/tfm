@@ -40,6 +40,14 @@ resource "azuread_application" "this" {
       }
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      public_client,
+      web,
+      single_page_application,
+    ]
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_redirect_uris
@@ -84,11 +92,6 @@ resource "azurerm_key_vault_secret" "this" {
   name         = var.client_secret.keyvault.key_name
   value_wo     = azuread_application_password.this[0].value
 
-  lifecycle {
-    replace_triggered_by = [
-      azuread_application_password.this[0].value
-    ]
-  }
 }
 
 
