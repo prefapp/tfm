@@ -92,6 +92,12 @@ resource "azurerm_key_vault_secret" "this" {
   name         = var.client_secret.keyvault.key_name
   value     = azuread_application_password.this[0].value
 
+  lifecycle {
+    ignore_changes = [
+      value,
+    ]
+  }
+
 }
 
 
