@@ -31,5 +31,6 @@
     "modules/azure-public-ip": "0.3.1",
     "modules/azure-redis-cache": "0.2.2",
     "modules/azure-role-assignment": "0.2.0",
-    "modules/azure-application": "0.1.0"
+    "modules/azure-application": "0.1.1",
+    "modules/aws-terraform-backend": "0.1.0"
 }
