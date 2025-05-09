@@ -93,9 +93,7 @@ resource "azurerm_key_vault_secret" "this" {
   value     = azuread_application_password.this[0].value
 
   lifecycle {
-    ignore_changes = [
-      value,
-    ]
+    replace_triggered_by = [ time_rotating.this[0] ]
   }
 
 }
