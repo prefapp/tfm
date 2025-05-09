@@ -12,7 +12,7 @@ data "azuread_service_principal" "msgraph" {
 # IMPORT SECTION
 
 import {
-  id = "https://central-management-kv.vault.azure.net/secrets/${var.client_secret.keyvault.key_name}"
+  id = "https://central-management-kv.vault.azure.net/secrets/${var.client_secret.keyvault.key_name}/2b55ea16228049a0a25ba8cac145d6f0"
   to = azurerm_key_vault_secret.this[0]
 }
 
