@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/prefapp/tfm/compare/azure-application-v0.1.1...azure-application-v0.1.2) (2025-05-09)
+
+
+### Bug Fixes
+
+* [azure-application] Add outputs and docs ([#654](https://github.com/prefapp/tfm/issues/654)) ([c2f55e5](https://github.com/prefapp/tfm/commit/c2f55e5fb732994c3092e132c7d0379d2072bada))
+* Add lifecycle to avoid to recreate redirect_uris ([#650](https://github.com/prefapp/tfm/issues/650)) ([b242748](https://github.com/prefapp/tfm/commit/b242748ab56256df2cec55d94d2568933261b277))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/azure-application-v0.1.0...azure-application-v0.1.1) (2025-05-07)
 
 
