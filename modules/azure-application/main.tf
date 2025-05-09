@@ -9,13 +9,6 @@ data "azuread_service_principal" "msgraph" {
   client_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 }
 
-# IMPORT SECTION
-
-import {
-  id = "https://central-management-kv.vault.azure.net/secrets/${var.client_secret.keyvault.key_name}/2b55ea16228049a0a25ba8cac145d6f0"
-  to = azurerm_key_vault_secret.this[0]
-}
-
 # RESOURCES SECTION
 
 ## Azure AD Application
@@ -98,10 +91,6 @@ resource "azurerm_key_vault_secret" "this" {
   key_vault_id = var.client_secret.keyvault.id
   name         = var.client_secret.keyvault.key_name
   value     = azuread_application_password.this[0].value
-
-  lifecycle {
-    replace_triggered_by = [ time_rotating.this[0] ]
-  }
 
 }
 
