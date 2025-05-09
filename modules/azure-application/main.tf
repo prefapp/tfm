@@ -12,7 +12,7 @@ data "azuread_service_principal" "msgraph" {
 # IMPORT SECTION
 
 import {
-  id = "https://central-management-kv.vault.azure.net/"
+  id = "central-management/secret/argo-sso-poc"
   to = azurerm_key_vault_secret.this[0]
 }
 
