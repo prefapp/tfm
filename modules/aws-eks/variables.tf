@@ -1,13 +1,13 @@
 /*
-  This Terraform script is used to define the variables required for the 
-  configuration of an EKS cluster. It includes variables for basic cluster 
-  configuration like region, cluster version, and cluster name. It also includes 
-  variables for more complex configurations like node groups, security group 
-  ids, IAM roles, and various feature flags (like enable_irsa, 
-  create_cluster_iam_role, etc.). Additionally, it defines variables for AWS 
-  auth users and roles, various IAM resources, subnet ids, VPC id, fargate 
-  profiles, and cluster addons. Lastly, it includes variables for cluster 
-  encryption config, log group retention, and cluster tags. 
+  This Terraform script is used to define the variables required for the
+  configuration of an EKS cluster. It includes variables for basic cluster
+  configuration like region, cluster version, and cluster name. It also includes
+  variables for more complex configurations like node groups, security group
+  ids, IAM roles, and various feature flags (like enable_irsa,
+  create_cluster_iam_role, etc.). Additionally, it defines variables for AWS
+  auth users and roles, various IAM resources, subnet ids, VPC id, fargate
+  profiles, and cluster addons. Lastly, it includes variables for cluster
+  encryption config, log group retention, and cluster tags.
 */
 
 variable "region" {
@@ -110,6 +110,12 @@ variable "subnet_ids" {
 
 variable "vpc_id" {
   description = "VPC ID"
+
+  type = string
+}
+
+variable "vpc_name" {
+  description = "VPC Name"
 
   type = string
 }
