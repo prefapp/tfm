@@ -4,5 +4,5 @@ locals {
 }
 
 locals {
-  vpc_id = data.aws_vpc.by_tag.id
+  vpc_id = data.aws_vpc.by_tag[0].id
 }
