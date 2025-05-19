@@ -21,7 +21,7 @@ data "aws_vpc" "by_tag" {
   Single VPC ID from the filtered list
 */
 data "aws_vpc" "selected" {
-  id = data.aws_vpc.by_tag.id
+  id = coalesce(try(data.aws_vpc.by_tag.id, null), var.vpc_id)
 }
 
 /*
