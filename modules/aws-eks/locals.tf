@@ -1,4 +1,4 @@
 # Get only two of the private subnets to create the cluster
 locals {
-  private_subnet_ids = slice(data.aws_subnets.private_by_tag.ids, 0, 2)
+  private_subnet_ids = data.aws_subnets.private_by_tag.ids
 }

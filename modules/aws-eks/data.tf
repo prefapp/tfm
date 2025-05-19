@@ -34,7 +34,7 @@ data "aws_subnets" "private_by_tag" {
   }
 
   filter {
-    name   = "tag:Type"
-    values = ["private"] # assume that the private subnets are tagged with Type=private
+    name   = "tag:eks-enabled"
+    values = ["1"] # assume that the private subnets are tagged with Type=private
   }
 }
