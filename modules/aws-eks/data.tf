@@ -21,7 +21,7 @@ data "aws_vpc" "by_tag" {
   Single VPC ID from the filtered list
 */
 data "aws_vpc" "selected" {
-  id = tolist(data.aws_vpc.by_tag.id)[0]
+  id = tolist(data.aws_vpc.by_tag.id)
 }
 
 /*
