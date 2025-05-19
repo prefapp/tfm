@@ -84,7 +84,10 @@ output "summary" {
      - VPC ID: coalesce(${local.vpc_id}, ${var.vpc_id})
      - VPC Subnets:
      ${join("\n", [
-  for subnet_key, subnet_value in coalesce(local.private_subnet_ids, var.subnet_ids) :
+  for subnet_key, subnet_value in zipmap(
+    range(length(coalesce(local.private_subnet_ids, var.subnet_ids))),
+    coalesce(local.private_subnet_ids, var.subnet_ids)
+  ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
 ])}
 
