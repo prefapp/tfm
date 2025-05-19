@@ -21,7 +21,7 @@ data "aws_vpc" "by_tag" {
   Single VPC ID from the filtered list
 */
 data "aws_vpc" "selected" {
-  id = tolist(data.aws_vpc.by_tag.ids)[0]
+  id = tolist(data.aws_vpc.by_tag.id)[0]
 }
 
 /*
@@ -30,7 +30,7 @@ data "aws_vpc" "selected" {
 data "aws_subnets" "private_by_tag" {
   filter {
     name   = "vpc-id"
-    values = [data.aws.vpc.selected.id]
+    values = [data.aws_vpc.selected.id]
   }
 
   filter {
