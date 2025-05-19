@@ -81,10 +81,10 @@ output "summary" {
      Network Details:
      ----------------------------------------------------------------------------
      - Account ID: ${local.account_id}
-     - VPC ID: ${local.vpc_id}
+     - VPC ID: coalesce(${local.vpc_id}, ${var.vpc_id})
      - VPC Subnets:
      ${join("\n", [
-  for subnet_key, subnet_value in local.private_subnet_ids :
+  for subnet_key, subnet_value in coalesce(local.private_subnet_ids, var.subnet_ids) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
 ])}
 

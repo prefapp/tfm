@@ -101,10 +101,25 @@ variable "create_parameter_store_iam" {
   default = false
 }
 
+variable "subnet_ids" {
+  description = "Subnet ids"
+
+  type    = list(string)
+  default = null
+}
+
+variable "vpc_id" {
+  description = "VPC Name"
+
+  type    = string
+  default = null
+}
+
 variable "vpc_name" {
   description = "VPC Name"
 
-  type = string
+  type    = string
+  default = null
 }
 
 variable "fargate_profiles" {
