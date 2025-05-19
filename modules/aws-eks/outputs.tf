@@ -81,7 +81,7 @@ output "summary" {
      Network Details:
      ----------------------------------------------------------------------------
      - Account ID: ${local.account_id}
-     - VPC ID: ${var.vpc_id}
+     - VPC ID: ${local.vpc_id}
      - VPC Subnets:
      ${join("\n", [
   for subnet_key, subnet_value in local.private_subnet_ids :

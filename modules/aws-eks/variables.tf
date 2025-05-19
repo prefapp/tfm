@@ -101,19 +101,6 @@ variable "create_parameter_store_iam" {
   default = false
 }
 
-# variable "subnet_ids" {
-#   description = "Subnet ids"
-#
-#   type = list(string)
-# }
-
-
-variable "vpc_id" {
-  description = "VPC ID"
-
-  type = string
-}
-
 variable "vpc_name" {
   description = "VPC Name"
 

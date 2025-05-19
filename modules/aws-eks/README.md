@@ -52,7 +52,7 @@ The module is organized with the following directory and file structure:
 - **`_examples`**: Directory containing examples of module usage.
 
   - **`with_import`**: Example using module import.
-  
+
   - **`with_vpc`**: Example integrating with an existing VPC.
 
   - **`with_yaml_file`**: Example utilizing a YAML file for configuration.
@@ -171,7 +171,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(any)` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | n/a | yes |
+| <a name="input_vpc_name"></a> [vpc\_id](#input\_vpc\_id) | VPC Name (tag Name) | `string` | n/a | yes |
 | <a name="access_entries"></a> [access\_entries](#input\access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
 
 ## Outputs
