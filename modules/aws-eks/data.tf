@@ -10,6 +10,7 @@ data "aws_caller_identity" "current" {}
   This data source is used to get the VPC ID in order to create the EKS cluster.
 */
 data "aws_vpc" "by_tag" {
+  count = var.vpc_name != null ? 1 : 0
   filter {
     name   = "tag:Name"
     values = ["${var.vpc_name}"]
