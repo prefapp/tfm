@@ -4,5 +4,5 @@ locals {
 }
 
 locals {
-  vpc_id = data.aws_vpc.by_tag[0].id
+  vpc_id = coalesce(try(data.aws_vpc.by_tag[0].id, null), var.vpc_id)
 }
