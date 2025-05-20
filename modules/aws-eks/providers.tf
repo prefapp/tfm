@@ -2,9 +2,10 @@
 
 # Providers: AWS, Kubernetes
 
-provider "aws" {
-  region = var.region
-}
+# TEST
+# provider "aws" {
+#   region = var.region
+# }
 
 
 data "aws_eks_cluster_auth" "default" {
