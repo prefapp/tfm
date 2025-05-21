@@ -111,7 +111,7 @@ variable "subnet_ids" {
 variable "subnet_tag" {
   description = "Tag key used by Kubernetes for internal ELB"
   type        = string
-  default     = "kubernetes.io/role/custom-internal-elb"
+  default     = "custom-internal-elb"
 }
 
 variable "subnet_tag_value" {
