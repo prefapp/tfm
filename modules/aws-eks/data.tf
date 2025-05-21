@@ -40,7 +40,7 @@ data "aws_subnets" "private_by_tag" {
   }
 
   filter {
-    name   = var.subnet_tag
+    name   = "tag:${var.subnet_tag}"
     values = [var.subnet_tag_value]
   }
 }
