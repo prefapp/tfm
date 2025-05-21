@@ -33,7 +33,7 @@ resource "azuread_application" "this" {
         for_each = var.msgraph_roles
         iterator = role
         content {
-          id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, role.value, null)
+          id   = role.value.id
           type = "Scope"
         }
 
@@ -90,7 +90,7 @@ resource "azurerm_key_vault_secret" "this" {
   count        = (var.client_secret.keyvault != null && var.client_secret.enabled) ? 1 : 0
   key_vault_id = var.client_secret.keyvault.id
   name         = var.client_secret.keyvault.key_name
-  value     = azuread_application_password.this[0].value
+  value        = azuread_application_password.this[0].value
 
 }
 
@@ -110,12 +110,11 @@ resource "azuread_app_role_assignment" "members" {
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/app_role_assignment
 resource "azuread_app_role_assignment" "msgraph_roles" {
-  for_each            = toset(var.msgraph_roles)
+  for_each            = { for idx, role in var.msgraph_roles : idx => role if role.delegated }
   depends_on          = [azuread_service_principal.this]
   principal_object_id = azuread_service_principal.this.object_id
   resource_object_id  = data.azuread_service_principal.msgraph.object_id
-  app_role_id         = lookup(data.azuread_service_principal.msgraph.app_role_ids, each.value, null)
-
+  app_role_id         = lookup(data.azuread_service_principal.msgraph.app_role_ids, each.value.id, null)
 }
 
 ## Federated Identity Credential
