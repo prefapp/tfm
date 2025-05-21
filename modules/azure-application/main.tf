@@ -33,7 +33,7 @@ resource "azuread_application" "this" {
         for_each = var.msgraph_roles
         iterator = role
         content {
-          id   = lookup(data.azuread_service_principal.msgraph.app_role_ids, role.value.name, null)
+          id   = role.value.id
           type = "Scope"
         }
 
@@ -114,7 +114,7 @@ resource "azuread_app_role_assignment" "msgraph_roles" {
   depends_on          = [azuread_service_principal.this]
   principal_object_id = azuread_service_principal.this.object_id
   resource_object_id  = data.azuread_service_principal.msgraph.object_id
-  app_role_id         = lookup(data.azuread_service_principal.msgraph.app_role_ids, each.value.name, null)
+  app_role_id         = lookup(data.azuread_service_principal.msgraph.app_role_ids, each.value.id, null)
 }
 
 ## Federated Identity Credential

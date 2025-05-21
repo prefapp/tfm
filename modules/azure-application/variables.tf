@@ -22,7 +22,7 @@ variable "members" {
 
 variable "msgraph_roles" {
   type = list(object({
-    name      = string
+    id        = string
     delegated = bool
   }))
   description = "The list of Microsoft Graph roles to be assigned to the Azure App Registration. Each role includes a name and whether it is delegated."
