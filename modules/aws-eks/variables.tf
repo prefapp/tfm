@@ -108,6 +108,18 @@ variable "subnet_ids" {
   default = null
 }
 
+variable "subnet_tag" {
+  description = "Tag key used by Kubernetes for internal ELB"
+  type        = string
+  default     = "kubernetes.io/role/custom-internal-elb"
+}
+
+variable "subnet_tag_value" {
+  description = "Tag value for internal ELB"
+  type        = string
+  default     = "1"
+}
+
 variable "vpc_id" {
   description = "VPC id"
 

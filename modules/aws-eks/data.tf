@@ -26,7 +26,7 @@ data "aws_vpc" "selected" {
 }
 
 /*
-  Get private subents in the VPC by tag
+  Get private subents in the VPC by tag (provided as variable)
 */
 data "aws_subnets" "private_by_tag" {
   filter {
@@ -35,7 +35,7 @@ data "aws_subnets" "private_by_tag" {
   }
 
   filter {
-    name   = "tag:eks-enabled"
-    values = ["1"] # assume that the private subnets are tagged with Type=private
+    name   = var.subnet_tag
+    values = [var.subnet_tag_value]
   }
 }
