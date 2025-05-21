@@ -21,8 +21,11 @@ variable "members" {
 }
 
 variable "msgraph_roles" {
-  type        = list(string)
-  description = "The list of Microsoft Graph roles to be assigned to the Azure App Registration. e.g. User.Read.All"
+  type = list(object({
+    name      = string
+    delegated = bool
+  }))
+  description = "The list of Microsoft Graph roles to be assigned to the Azure App Registration. Each role includes a name and whether it is delegated."
 }
 
 variable "extra_role_assignments" {
@@ -31,7 +34,7 @@ variable "extra_role_assignments" {
     scope                = string
   }))
   description = "The list of extra role assignments to be added to the Azure App Registration."
-  default = []
+  default     = []
 }
 
 variable "client_secret" {
@@ -45,7 +48,7 @@ variable "client_secret" {
   })
   description = "The client secret configuration for the Azure App Registration."
   default = {
-    enabled = false
+    enabled  = false
     keyvault = null
   }
 }
@@ -59,5 +62,5 @@ variable "federated_credentials" {
     description  = optional(string)
   }))
   description = "The federated credentials configuration for the Azure App Registration."
-  default = []
+  default     = []
 }
