@@ -36,7 +36,7 @@ data "aws_subnets" "private_by_tag" {
 
   filter {
     name   = "kubernetes.io/role/internal-elb"
-    values = "1"
+    values = ["1"]
   }
 
   filter {
