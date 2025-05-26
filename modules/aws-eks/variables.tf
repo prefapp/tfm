@@ -103,35 +103,30 @@ variable "create_parameter_store_iam" {
 }
 
 variable "subnet_ids" {
-  description = "Subnet ids"
+  description = "Optional list of explicit subnet IDs to use for EKS cluster"
 
   type    = list(string)
   default = null
 }
 
-variable "subnet_tag" {
-  description = "Tag key used by Kubernetes for internal ELB"
-  type        = string
-  default     = "custom-internal-elb"
+variable "subnet_tags" {
+  description = "Optional tags to discover subnets for EKS cluster"
+  type        = map(string)
+  default     = null
 }
 
-variable "subnet_tag_value" {
-  description = "Tag value for internal ELB"
-  type        = string
-  default     = "1"
-}
 
 variable "vpc_id" {
-  description = "VPC id"
+  description = "Optional explicit VPC ID to use for EKS cluster"
 
   type    = string
   default = null
 }
 
-variable "vpc_name" {
-  description = "VPC Name"
+variable "vpc_tags" {
+  description = "Optional tags to discover VPCs for EKS cluster"
 
-  type    = string
+  type    = map(string)
   default = null
 }
 

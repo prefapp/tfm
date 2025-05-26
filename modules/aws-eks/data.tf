@@ -6,41 +6,29 @@
 */
 data "aws_caller_identity" "current" {}
 
-/*
-  This data source is used to get the VPC ID in order to create the EKS cluster.
-*/
-data "aws_vpc" "by_tag" {
-  count = var.vpc_name != null ? 1 : 0
-  filter {
-    name   = "tag:Name"
-    values = ["${var.vpc_name}"]
-  }
+data "aws_vpc" "by_id" {
+  count = var.vpc_id != null ? 1 : 0
+  id    = var.vpc_id
 }
 
-
-/*
-  Single VPC ID from the filtered list
-*/
-data "aws_vpc" "selected" {
-  id = coalesce(try(data.aws_vpc.by_tag[0].id, null), var.vpc_id)
+data "aws_subnets" "by_ids" {
+  count = length(var.subnet_ids)
+  id    = var.subnet_ids[count.index]
 }
 
-/*
-  Get private subents in the VPC by tag (provided as variable)
-*/
-data "aws_subnets" "private_by_tag" {
+data "aws_vpcs" "by_tag" {
+  count = var.vpc_tags != null ? 1 : 0
+  tags  = var.vpc_tags
+}
+
+data "aws_subnets" "by_tags" {
+  count = var.subnet_tags != null ? length(data.aws_vpcs_by_tags[0].ids) : 0
+
   filter {
     name   = "vpc-id"
-    values = [data.aws_vpc.selected.id]
+    values = [data.aws_vpcs.by_tag[0].ids[count.index]]
   }
 
-  filter {
-    name   = "tag:kubernetes.io/role/internal-elb"
-    values = ["1"]
-  }
-
-  filter {
-    name   = "tag:${var.subnet_tag}"
-    values = [var.subnet_tag_value]
-  }
+  tags = var_subnet_tags
 }
+
