@@ -52,7 +52,7 @@ data "aws_vpc" "by_tags" {
 # If we have a vpc_id, we will use that.
 # If we don't, we will use the found vpc by tags
 data "aws_vpc" "selected" {
-  id = coalesce(try(data.aws_vpc.by_tags[0].id, null), var.vpc_id)
+  id = coalesce(try(data.aws_vpc.by_tags.id, null), var.vpc_id)
 }
 
 
