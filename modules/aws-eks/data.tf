@@ -6,6 +6,9 @@
 */
 data "aws_caller_identity" "current" {}
 
+#######################################
+# VPC Lookup
+#######################################
 
 data "aws_vpc" "by_tags" {
   dynamic "filter" {
@@ -24,6 +27,10 @@ data "aws_vpc" "selected" {
   id = coalesce(try(data.aws_vpc.by_tags.id, null), var.vpc_id)
 }
 
+
+#######################################
+# Subnet Lookup
+#######################################
 
 data "aws_subnets" "filtered" {
   filter {
@@ -45,7 +52,4 @@ data "aws_subnets" "filtered" {
   }
 }
 
-data "aws_subnets" "selected" {
-  count = length(data.aws_subnets.filtered.ids)
-  ids   = coalesce(try(data.aws_subnets.filtered.ids, null), var.subnet_ids)
-}
+# final subnet selection in locals.tf

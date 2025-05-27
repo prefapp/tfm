@@ -33,3 +33,12 @@ locals {
     }
   ]
 }
+
+
+#######################################
+# Final Subnet Selection (Dynamic Logic)
+#######################################
+# Decide which subnet IDs to use (filtered or manually provided)
+locals {
+  selected_subnet_ids = length(data.aws_subnets.filtered.ids) > 0 ? data.aws_subnets.filtered.ids : var.subnet_ids
+}

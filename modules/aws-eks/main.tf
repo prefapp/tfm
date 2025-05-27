@@ -23,7 +23,7 @@ module "eks" {
   cluster_endpoint_public_access         = var.cluster_endpoint_public_access
   cloudwatch_log_group_retention_in_days = var.cloudwatch_log_group_retention_in_days
   vpc_id                                 = data.aws_vpc.selected.id
-  subnet_ids                             = data.aws_subnets.selected
+  subnet_ids                             = local.selected_subnet_ids
   create_cluster_security_group          = var.create_cluster_security_group
   cluster_security_group_id              = var.cluster_security_group_id
   iam_role_arn                           = var.cluster_iam_role_arn
