@@ -13,7 +13,10 @@ data "aws_vpc" "by_id" {
 
 data "aws_subnets" "by_ids" {
   count = var.subnet_ids != null ? length(var.subnet_ids) : 0
-  ids   = var.subnet_ids
+  filter {
+    name   = "subnet-id"
+    values = var.subnet_ids
+  }
 }
 
 data "aws_vpcs" "by_tag" {

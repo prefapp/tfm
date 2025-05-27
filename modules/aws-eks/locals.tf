@@ -31,7 +31,7 @@ locals {
   vpc_subnets_map = { for idx, vpc_id in local.selected_vpcs :
     vpc_id => [
       for subnet_id in local.selected_subnets :
-      subnet_id if contains(data.aws_subnet.by_ids[*].vpc_id, vpc_id)
+      subnet_id if contains(data.aws_subnets.by_ids[*].vpc_id, vpc_id)
     ]
   }
 }
