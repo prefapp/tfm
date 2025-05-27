@@ -33,10 +33,6 @@ locals {
   # Final selection (fails if empty)
   selected_subnets = concat(local.explicit_subnets, local.discovered_subnets)
 
-  # Validation (fails fast if no subnets found)
-  validate_subnets = length(local.selected_subnets) > 0 ? true : (
-    error("No subnets found. Check: 1) subnet_ids, 2) subnet_tags + vpc_id/vpc_tags")
-  )
 }
 
 locals {
