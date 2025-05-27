@@ -17,7 +17,7 @@ locals {
 
 locals {
   selected_vpcs = var.vpc_id != null ? [data.aws_vpc.by_id[0].id] : (
-    var.vpc_tags != null ? data.aws_vpcs.by_tag[0].ids : []
+    var.vpc_tags != null ? flatten(data.aws_vpcs.by_tag.ids) : []
   )
 }
 
@@ -30,7 +30,7 @@ locals {
     data.aws_subnets.by_tags[0].ids
   ) : []
 
-  # Final selection (fails if empty)
+  #Final selection (fails if empty)
   selected_subnets = concat(local.explicit_subnets, local.discovered_subnets)
 
 }
