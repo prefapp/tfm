@@ -109,18 +109,6 @@ variable "subnet_ids" {
   default = null
 }
 
-variable "subnet_tag" {
-  description = "Tag key used by Kubernetes for internal ELB"
-  type        = string
-  default     = "custom-internal-elb"
-}
-
-variable "subnet_tag_value" {
-  description = "Tag value for internal ELB"
-  type        = string
-  default     = "1"
-}
-
 variable "subnet_tags" {
   description = "Map of subnet tags to filter which subnets we want"
 
@@ -137,13 +125,6 @@ variable "vpc_tags" {
 
 variable "vpc_id" {
   description = "VPC id"
-
-  type    = string
-  default = null
-}
-
-variable "vpc_name" {
-  description = "VPC Name"
 
   type    = string
   default = null
