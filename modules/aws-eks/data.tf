@@ -13,7 +13,7 @@ data "aws_vpc" "by_id" {
 
 data "aws_subnets" "by_ids" {
   count = var.subnet_ids != null ? length(var.subnet_ids) : 0
-  id    = var.subnet_ids[count.index]
+  ids   = var.subnet_ids
 }
 
 data "aws_vpcs" "by_tag" {
@@ -22,18 +22,15 @@ data "aws_vpcs" "by_tag" {
 }
 
 data "aws_subnets" "by_tags" {
-  count = var.subnet_tags != null && data.aws_vpcs.by_tag[0].vpcs != null ? 1 : 0
+  count = var.subnet_tags != null ? 1 : 0
+  tags  = var.subnet_tags
 
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpcs.by_tag[0].vpcs[0].id]
-  }
-
+  # Optionally filter by VPC if one is specified either by ID or tags
   dynamic "filter" {
-    for_each = var.subnet_tags
+    for_each = (var.vpc_id != null || var.vpc_tags != null) ? [1] : []
     content {
-      name   = "tag:${filter.key}"
-      values = [filter.value]
+      name   = "vpc-id"
+      values = var.vpc_id != null ? [var.vpc_id] : data.aws_vpcs.by_tag[0].ids
     }
   }
 }
