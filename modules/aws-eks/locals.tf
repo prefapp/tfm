@@ -21,3 +21,23 @@ locals {
     )
   }
 }
+
+# Convert vpc_tags into a list of filters
+locals {
+  vpc_tag_filters = [
+    for k, v in var.vpc_tags : {
+      name   = "tag:${k}"
+      values = [v]
+    }
+  ]
+}
+
+
+locals {
+  subnet_tag_filters = [
+    for k, v in var.subnet_tags : {
+      name   = "tag:${k}"
+      values = [v]
+    }
+  ]
+}

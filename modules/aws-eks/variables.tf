@@ -121,6 +121,20 @@ variable "subnet_tag_value" {
   default     = "1"
 }
 
+variable "subnet_tags" {
+  description = "Map of subnet tags to filter which subnets we want"
+
+  type    = map(string)
+  default = null
+}
+
+variable "vpc_tags" {
+  description = "Map of VPC tags to filter which VPC we want"
+
+  type    = map(string)
+  default = null
+}
+
 variable "vpc_id" {
   description = "VPC id"
 

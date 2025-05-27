@@ -19,13 +19,6 @@ data "aws_vpc" "by_tag" {
 
 
 /*
-  Single VPC ID from the filtered list
-*/
-data "aws_vpc" "selected" {
-  id = coalesce(try(data.aws_vpc.by_tag[0].id, null), var.vpc_id)
-}
-
-/*
   Get private subents in the VPC by tag (provided as variable)
 */
 data "aws_subnets" "private_by_tag" {
@@ -43,4 +36,43 @@ data "aws_subnets" "private_by_tag" {
     name   = "tag:${var.subnet_tag}"
     values = [var.subnet_tag_value]
   }
+}
+
+data "aws_vpc" "by_tags" {
+  dynamic "filter" {
+    for_each = local.vpc_tag_filters
+    content {
+      name   = filter.value.name
+      values = filter.value.values
+    }
+  }
+}
+
+# Select the VPC for the EKS
+# If we have a vpc_id, we will use that.
+# If we don't, we will use the found vpc by tags
+data "aws_vpc" "selected" {
+  id = coalesce(try(data.aws_vpc.by_tags[0].id, null), var.vpc_id)
+}
+
+
+data "aws_subnets" "filtered" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.selected.id]
+  }
+
+  dynamic "filter" {
+    for_each = local.subnet_tag_filters
+    content {
+      name   = filter.value.name
+      values = filter.value.values
+    }
+  }
+}
+
+data "aws_subnet" "selected" {
+  count = length(data.aws_subnets.filtered.ids)
+
+  id = data.aws_subnets.filtered.ids[count.index]
 }
