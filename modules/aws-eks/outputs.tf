@@ -112,3 +112,7 @@ output "summary" {
 output "debug" {
   value = local.mixed_addons
 }
+
+output "debug_selected_vpcs" {
+  value = local.selected_vpcs
+}
