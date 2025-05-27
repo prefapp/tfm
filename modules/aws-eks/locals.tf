@@ -4,10 +4,6 @@ locals {
 }
 
 locals {
-  vpc_id = coalesce(try(data.aws_vpc.by_tag[0].id, null), var.vpc_id)
-}
-
-locals {
   node_groups_with_subnets = {
     for group_name, group in var.node_groups : group_name => merge(
       group,
@@ -25,7 +21,7 @@ locals {
 
 locals {
   selected_vpcs = var.vpc_id != null ? [data.aws_vpc.by_id[0].id] : (
-    var.vpc_tags != null ? data.aws_vpcs.by_tags[0].ids : []
+    var.vpc_tags != null ? data.aws_vpcs.by_tag[0].ids : []
   )
 }
 
