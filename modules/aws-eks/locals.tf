@@ -7,14 +7,13 @@ locals {
         subnet_ids = (
           (lookup(group, "subnet_ids", null) != null)
           ? group.subnet_ids
-          : data.aws_subnets.selected.ids
+          : local.selected_subnet_ids
         )
       }
     )
   }
 }
 
-# Convert vpc_tags into a list of filters
 locals {
   vpc_tag_filters = [
     for k, v in var.vpc_tags : {
