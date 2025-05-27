@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/prefapp/tfm/compare/azure-application-v0.1.2...azure-application-v1.0.0) (2025-05-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* [azure-application] add non admin consent msgraph roles ([#659](https://github.com/prefapp/tfm/issues/659))
+
+### Features
+
+* [azure-application] add non admin consent msgraph roles ([#659](https://github.com/prefapp/tfm/issues/659)) ([8fb68bb](https://github.com/prefapp/tfm/commit/8fb68bb88179c9085bbec33a9aa87b1bc1e4d918))
+
 ## [0.1.2](https://github.com/prefapp/tfm/compare/azure-application-v0.1.1...azure-application-v0.1.2) (2025-05-09)
 
 
