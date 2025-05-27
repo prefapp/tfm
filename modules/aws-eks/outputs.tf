@@ -85,8 +85,8 @@ output "summary" {
      - VPC Subnets:
      ${join("\n", [
   for subnet_key, subnet_value in zipmap(
-    range(length(coalesce(local.private_subnet_ids, var.subnet_ids))),
-    coalesce(local.private_subnet_ids, var.subnet_ids)
+    range(length(coalesce(data.aws_subnets.filtered.ids, var.subnet_ids))),
+    coalesce(data.aws_subnets.filtered.ids, var.subnet_ids)
   ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
 ])}

@@ -71,7 +71,7 @@ data "aws_subnets" "filtered" {
   }
 }
 
-data "aws_subnet" "selected" {
+data "aws_subnets" "selected" {
   count = length(data.aws_subnets.filtered.ids)
 
   id = data.aws_subnets.filtered.ids[count.index]
