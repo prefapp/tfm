@@ -17,7 +17,7 @@ locals {
 
 locals {
   selected_vpcs = var.vpc_id != null ? [var.vpc_id] : (
-    var.vpc_tags != null ? flatten(data.aws_vpcs.by_tag[0].ids) : []
+    var.vpc_tags != null ? flatten(data.aws_vpcs.by_tag[0]) : []
   )
 }
 
