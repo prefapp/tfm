@@ -1,9 +1,5 @@
 # Get only two of the private subnets to create the cluster
 locals {
-  private_subnet_ids = data.aws_subnets.private_by_tag.ids
-}
-
-locals {
   node_groups_with_subnets = {
     for group_name, group in var.node_groups : group_name => merge(
       group,
@@ -11,7 +7,7 @@ locals {
         subnet_ids = (
           (lookup(group, "subnet_ids", null) != null)
           ? group.subnet_ids
-          : data.aws_subnets.private_by_tag.ids
+          : data.aws_subnets.selected.ids
         )
       }
     )
