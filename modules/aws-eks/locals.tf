@@ -22,18 +22,20 @@ locals {
 }
 
 locals {
-  # Get subnets from explicit IDs if provided
-  subnets_from_ids = var.subnet_ids != null ? var.subnet_ids : []
+  # Explicit subnet_ids always take priority
+  explicit_subnets = coalesce(var.subnet_ids, [])
 
-  # Get subnets from tags if no explicit IDs were provided
-  subnets_from_tags = length(local.subnets_from_ids) == 0 && var.subnet_tags != null ? (data.aws_subnets.by_tags[0].ids) : []
+  # Subnets discovered via tags (only if no explicit IDs are given)
+  discovered_subnets = length(local.explicit_subnets) == 0 && var.subnet_tags != null ? (
+    data.aws_subnets.by_tags[0].ids
+  ) : []
 
-  # Final selection (fails if neither source provided subnets)
-  selected_subnets = length(local.subnets_from_ids) > 0 ? (local.subnets_from_ids) : (local.subnets_from_tags)
+  # Final selection (fails if empty)
+  selected_subnets = concat(local.explicit_subnets, local.discovered_subnets)
 
-  # Optional validation
+  # Validation (fails fast if no subnets found)
   validate_subnets = length(local.selected_subnets) > 0 ? true : (
-    file("ERROR: No subnets could be discovered - provide either subnet_ids or subnet_tags")
+    error("No subnets found. Check: 1) subnet_ids, 2) subnet_tags + vpc_id/vpc_tags")
   )
 }
 
