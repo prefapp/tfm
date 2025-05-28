@@ -36,7 +36,7 @@ variable "node_groups" {
   description = "Define dynamically the different k8s node groups"
 
   type    = any
-  default = null
+  default = {}
 }
 
 variable "create_cluster_iam_role" {

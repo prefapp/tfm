@@ -13,15 +13,15 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 - **Variable Configuration**: Fill in the variables in the `variables.tf` file according to the specific requirements of your environment, such as the AWS region, _Kubernetes_ version, and VPC configuration.
   - For **VPC** configuration, there are two available methods: based on **ids** and based on **tags**.
     - Direct configuration with `vpc_id` and `subnet_ids`. The EKS will be attached to the provided resources. If this variables are provided, they will take precedence over the variables for configuration based on tags.
-    
+
     - Configuration based on tags, with `vpc_tags` and `subnet_tags`. The module will search for the resources with the corresponding tags and values, and the EKS will be attached to the found resources. All provided tags must match.
-    
-      Example: 
-    
+
+      Example:
+
       ```terraform
       # Create the VPC first and add its vpc-id here
-      vpc_id = "vpc-0123456789abcdef1" 
-      
+      vpc_id = "vpc-0123456789abcdef1"
+
       # If we don't want to use the VPC ID, we can search for a VPC
       # With the correct tag map. All tags must match. For example purposes we use Name, application and environment, but you can use whatever tag key you need.
       vpc_tags = {
@@ -30,23 +30,23 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
         environment = "environment"
         other-tag   = "other-tag-value"
       }
-      
+
       # For subnets, an analogous system is used.
       # If we know the subnet ids we want to use to attach the eks, we can reference them directly
       subnet_ids = ["subnet-0123456789abcdef1", "subnet-34567890abcdef123"]
-      
+
       # If we don't know or don't want to use subnet ids, you can use a tag map. This map is only an example, you can use your own tag keys and values.
       subnet_tags = {
         custom-tag 	= "custom-value"
-        application   = "appplication-name-here"
+        application   = "application-name-here"
         Tier          = "Private"
         environment   = "environment-here"
       }
-      
+
       ```
-    
-      
-  
+
+
+
 - **Terraform Execution**: Run `terraform init` and `terraform apply` to create and configure the EKS cluster. Terraform will manage the creation of resources on AWS based on the provided configuration.
 
 - **Advanced Customization**: Adjust the configuration as needed, such as adding IAM users and roles, tweaking node settings, and enabling additional addons.
@@ -209,7 +209,6 @@ The module is organized with the following directory and file structure:
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids (Mandatory if *subnet_tags* is not present). They need to be attached to the provided VPC. | `list(string)` | n/a | no |
 | <a name="subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | Subnet tags to select subnets ; mandatory if *subnet_ids* are not present. They need to be attached to the provided VPC. | `map(string)` | "custom-internal-elb" | no |
-| <a name="subnet_tag_value"></a> [subnet\_tag\_value](#input\_subnet\_tag\_value) | Subnet tag value (to select subnets if VPC name is present) | `string` | "1" | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(any)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id (Mandatory if *vpc_tags* is not present) | `string` | n/a | no |
 | <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_name) | VPC tags (tag Name) (Mandatory if *vpc_id* is not present) | `map(string)` | n/a | no |
