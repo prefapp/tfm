@@ -124,7 +124,7 @@ variable "vpc_tags" {
 }
 
 variable "vpc_id" {
-  description = "VPC id"
+  description = "VPC ID"
 
   type    = string
   default = null
