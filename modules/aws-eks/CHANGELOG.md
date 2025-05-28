@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.1.1...aws-eks-v1.2.0) (2025-05-28)
+
+
+### Features
+
+* Add VPC selection based on tag ([abbd24b](https://github.com/prefapp/tfm/commit/abbd24bf58c022f565f03a166a15978e3358ed68))
+
 ## [1.1.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.1.0...aws-eks-v1.1.1) (2025-04-24)
 
 
