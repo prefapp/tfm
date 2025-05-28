@@ -22,14 +22,14 @@ module "eks" {
   cluster_endpoint_private_access        = var.cluster_endpoint_private_access
   cluster_endpoint_public_access         = var.cluster_endpoint_public_access
   cloudwatch_log_group_retention_in_days = var.cloudwatch_log_group_retention_in_days
-  vpc_id                                 = var.vpc_id
-  subnet_ids                             = var.subnet_ids
+  vpc_id                                 = data.aws_vpc.selected.id
+  subnet_ids                             = local.selected_subnet_ids
   create_cluster_security_group          = var.create_cluster_security_group
   cluster_security_group_id              = var.cluster_security_group_id
   iam_role_arn                           = var.cluster_iam_role_arn
   create_iam_role                        = var.create_cluster_iam_role
   enable_irsa                            = var.enable_irsa
-  eks_managed_node_groups                = var.node_groups
+  eks_managed_node_groups                = local.node_groups_with_subnets
   node_security_group_additional_rules   = var.node_security_group_additional_rules
   tags                                   = var.tags
   cluster_tags                           = merge(var.cluster_tags, var.tags)

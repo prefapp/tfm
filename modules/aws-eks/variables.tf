@@ -1,13 +1,13 @@
 /*
-  This Terraform script is used to define the variables required for the 
-  configuration of an EKS cluster. It includes variables for basic cluster 
-  configuration like region, cluster version, and cluster name. It also includes 
-  variables for more complex configurations like node groups, security group 
-  ids, IAM roles, and various feature flags (like enable_irsa, 
-  create_cluster_iam_role, etc.). Additionally, it defines variables for AWS 
-  auth users and roles, various IAM resources, subnet ids, VPC id, fargate 
-  profiles, and cluster addons. Lastly, it includes variables for cluster 
-  encryption config, log group retention, and cluster tags. 
+  This Terraform script is used to define the variables required for the
+  configuration of an EKS cluster. It includes variables for basic cluster
+  configuration like region, cluster version, and cluster name. It also includes
+  variables for more complex configurations like node groups, security group
+  ids, IAM roles, and various feature flags (like enable_irsa,
+  create_cluster_iam_role, etc.). Additionally, it defines variables for AWS
+  auth users and roles, various IAM resources, subnet ids, VPC id, fargate
+  profiles, and cluster addons. Lastly, it includes variables for cluster
+  encryption config, log group retention, and cluster tags.
 */
 
 variable "region" {
@@ -35,7 +35,8 @@ variable "cluster_iam_role_arn" {
 variable "node_groups" {
   description = "Define dynamically the different k8s node groups"
 
-  type = any
+  type    = any
+  default = {}
 }
 
 variable "create_cluster_iam_role" {
@@ -104,14 +105,29 @@ variable "create_parameter_store_iam" {
 variable "subnet_ids" {
   description = "Subnet ids"
 
-  type = list(string)
+  type    = list(string)
+  default = null
 }
 
+variable "subnet_tags" {
+  description = "Map of subnet tags to filter which subnets we want"
+
+  type    = map(string)
+  default = null
+}
+
+variable "vpc_tags" {
+  description = "Map of VPC tags to filter which VPC we want"
+
+  type    = map(string)
+  default = null
+}
 
 variable "vpc_id" {
   description = "VPC ID"
 
-  type = string
+  type    = string
+  default = null
 }
 
 variable "fargate_profiles" {

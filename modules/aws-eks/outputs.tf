@@ -1,14 +1,14 @@
 /*
-  This Terraform script is used to output various details about the EKS cluster 
-  configuration. It outputs the AWS account ID, the EKS module, a detailed 
+  This Terraform script is used to output various details about the EKS cluster
+  configuration. It outputs the AWS account ID, the EKS module, a detailed
   summary of the EKS configuration, and debug information.
 
-  - The summary includes details about the EKS cluster, node groups, add-ons, 
-  network details, users, and IAM roles. 
+  - The summary includes details about the EKS cluster, node groups, add-ons,
+  network details, users, and IAM roles.
 
   - The debug output is related to mixed addons in the EKS cluster.
 
-  This script is useful for getting a comprehensive overview of the EKS cluster 
+  This script is useful for getting a comprehensive overview of the EKS cluster
   configuration and for debugging purposes.
 */
 
@@ -81,10 +81,13 @@ output "summary" {
      Network Details:
      ----------------------------------------------------------------------------
      - Account ID: ${local.account_id}
-     - VPC ID: ${var.vpc_id}
+     - VPC ID: ${data.aws_vpc.selected.id}
      - VPC Subnets:
      ${join("\n", [
-  for subnet_key, subnet_value in var.subnet_ids :
+  for subnet_key, subnet_value in zipmap(
+    range(length(coalesce(data.aws_subnets.filtered.ids, var.subnet_ids))),
+    coalesce(data.aws_subnets.filtered.ids, var.subnet_ids)
+  ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
 ])}
 

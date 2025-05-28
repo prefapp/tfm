@@ -11,8 +11,46 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 ## Module Usage
 
 - **Variable Configuration**: Fill in the variables in the `variables.tf` file according to the specific requirements of your environment, such as the AWS region, _Kubernetes_ version, and VPC configuration.
+  - For **VPC** configuration, there are two available methods: based on **ids** and based on **tags**.
+    - Direct configuration with `vpc_id` and `subnet_ids`. The EKS will be attached to the provided resources. If this variables are provided, they will take precedence over the variables for configuration based on tags.
+
+    - Configuration based on tags, with `vpc_tags` and `subnet_tags`. The module will search for the resources with the corresponding tags and values, and the EKS will be attached to the found resources. All provided tags must match.
+
+      Example:
+
+      ```terraform
+      # Create the VPC first and add its vpc-id here
+      vpc_id = "vpc-0123456789abcdef1"
+
+      # If we don't want to use the VPC ID, we can search for a VPC
+      # With the correct tag map. All tags must match. For example purposes we use Name, application and environment, but you can use whatever tag key you need.
+      vpc_tags = {
+        Name        = "vpc-name-here"
+        application = "application-name-here"
+        environment = "environment"
+        other-tag   = "other-tag-value"
+      }
+
+      # For subnets, an analogous system is used.
+      # If we know the subnet ids we want to use to attach the eks, we can reference them directly
+      subnet_ids = ["subnet-0123456789abcdef1", "subnet-34567890abcdef123"]
+
+      # If we don't know or don't want to use subnet ids, you can use a tag map. This map is only an example, you can use your own tag keys and values.
+      subnet_tags = {
+        custom-tag 	= "custom-value"
+        application   = "application-name-here"
+        Tier          = "Private"
+        environment   = "environment-here"
+      }
+
+      ```
+
+
+
 - **Terraform Execution**: Run `terraform init` and `terraform apply` to create and configure the EKS cluster. Terraform will manage the creation of resources on AWS based on the provided configuration.
+
 - **Advanced Customization**: Adjust the configuration as needed, such as adding IAM users and roles, tweaking node settings, and enabling additional addons.
+
 - **Scalability and Maintenance**: Utilize Terraform's capabilities to scale and maintain the EKS cluster easily as environment requirements evolve.
 
 ## File Structure
@@ -52,7 +90,7 @@ The module is organized with the following directory and file structure:
 - **`_examples`**: Directory containing examples of module usage.
 
   - **`with_import`**: Example using module import.
-  
+
   - **`with_vpc`**: Example integrating with an existing VPC.
 
   - **`with_yaml_file`**: Example utilizing a YAML file for configuration.
@@ -169,9 +207,11 @@ The module is organized with the following directory and file structure:
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | n/a | yes |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | <pre>map(object({<br><br>    description = string<br><br>    protocol = string<br><br>    source_cluster_security_group = optional(bool)<br><br>    from_port = number<br><br>    to_port = number<br><br>    type = string<br><br>    cidr_blocks = optional(list(string))<br><br>    ipv6_cidr_blocks = optional(list(string))<br><br>    self = optional(bool)<br><br>  }))</pre> | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids | `list(string)` | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids (Mandatory if *subnet_tags* is not present). They need to be attached to the provided VPC. | `list(string)` | n/a | no |
+| <a name="subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | Subnet tags to select subnets ; mandatory if *subnet_ids* are not present. They need to be attached to the provided VPC. | `map(string)` | "custom-internal-elb" | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(any)` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | n/a | yes |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id (Mandatory if *vpc_tags* is not present) | `string` | n/a | no |
+| <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_name) | VPC tags (tag Name) (Mandatory if *vpc_id* is not present) | `map(string)` | n/a | no |
 | <a name="access_entries"></a> [access\_entries](#input\access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
 
 ## Outputs
