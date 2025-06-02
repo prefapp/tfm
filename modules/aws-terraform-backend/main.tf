@@ -47,3 +47,60 @@ resource "aws_dynamodb_table" "this" {
 
   tags = var.tags
 }
+
+resource "aws_iam_role" "this" {
+  name = "TerraformBackendAccessRole"
+  assume_role_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          AWS = "arn:aws:iam::${var.aws_account_id}:role/FirestartrCustomerRole"
+        },
+        "Action" : "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+
+resource "aws_iam_policy" "this" {
+  name        = "TerraformBackendPolicy"
+  description = "Access to Terrafomr S3 state and DynamoDB lock table"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject",
+          "S3:PutObject",
+          "S3:DeleteObject",
+          "s3:ListBucket",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::${var.bucket_name}",
+          "arn:aws:s3:::${var.bucket_name}/*"
+        ]
+      },
+      {
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
+        ]
+        Effect = "Allow"
+        Resource = {
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.dynamodb_table_name}",
+        }
+      }
+    ]
+  })
+}
+
+resource  "aws_iam_role_policy_attachment" "this" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.this.arn
+}

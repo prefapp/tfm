@@ -26,3 +26,8 @@ variable "enable_versioning" {
   type        = bool
   default     = true
 }
+
+variable "aws_account_id" {
+  description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table"
+  type        = string
+}
