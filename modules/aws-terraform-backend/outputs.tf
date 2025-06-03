@@ -20,5 +20,5 @@ output "dynamodb_locks_table_name" {
 
 output "cloudformation_stack_id" {
   description = "ID of the CloudFormation stack"
-  value       = aws_cloudformation_stack.this.id
+  value       = aws_cloudformation_stack.this[0].id
 }
