@@ -43,13 +43,19 @@ variable "aws_account_id" {
 }
 
 variable "generate_cloudformation_role_for_client_account" {
-  description = ""
+  description = "Decide whether to generate a cloudformation stack with a iam role to access the S3 bucket and the dynamodb table"
   type        = bool
   default     = true
 }
 
 variable "upload_cloudformation_role" {
-  description = ""
+  description = "Decide whether to upload to S3 the cloudformation stack"
   type        = bool
   default     = true
+}
+
+variable "s3_bucket_template_upload" {
+  description = "Name of the S3 bucket where the cloudformation template will be uploaded"
+  type        = string
+  default     = ""
 }

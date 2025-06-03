@@ -140,10 +140,10 @@ resource "aws_cloudformation_stack" "this" {
 }
 
 
-resource "aws_s3_bucket_object" "template_upload" {
+resource "aws_s3_bucket_object" "this" {
   count  = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
-  bucket = "name-of-the-bucket"
+  bucket = var.s3_bucket_template_upload
   key    = "templates/TerraformBackend.yaml"
-  source = "$(path.module)/template.yaml"
-  etag   = filemd5("$(path.module)/template.yaml")
+  source = "${path.module}/template.yaml"
+  etag   = filemd5("${path.module}/template.yaml")
 }
