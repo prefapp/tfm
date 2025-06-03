@@ -131,7 +131,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_cloudformation_stack" "this" {
   count         = var.generate_cloudformation_role_for_client_account ? 1 : 0
   name          = "TerraformBackend"
-  template_body = file("$(path.module)/template.yaml")
+  template_body = file("${path.module}/template.yaml")
   parameters = {
     BackendAccountId = var.aws_account_id
     # Param2           = "value2"
