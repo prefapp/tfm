@@ -76,14 +76,36 @@ resource "aws_iam_policy" "this" {
         Action = [
           "s3:GetObject",
           "S3:PutObject",
-          "S3:DeleteObject",
-          "s3:ListBucket",
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:s3:::${var.bucket_name}",
-          "arn:aws:s3:::${var.bucket_name}/*"
+          "arn::aws:.s3::${var.bucket_name}/${var.bucket_prefix}"
+        ],
+      },
+      {
+        Action = [
+          "s3:GetObject",
+          "S3:PutObject",
+          "S3:DeleteObject",
         ]
+        Effect = "Allow"
+        Resource = [
+          "arn::aws:.s3::${var.bucket_name}/${var.bucket_prefix}.tflock"
+        ],
+      },
+      {
+        Action = [
+          "s3:ListBucket"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::${var.bucket_name}"
+        ],
+        Condition = {
+          StringEquals = {
+            "s3:prefix" = "${var.bucket_name}/${var.bucket_prefix}"
+          }
+        }
       },
       {
         Action = [

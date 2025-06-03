@@ -3,6 +3,11 @@ variable "bucket_name" {
   type        = string
 }
 
+variable "bucket_prefix" {
+  description = "Prefix to the S3 bucket object"
+  type        = string
+}
+
 variable "dynamodb_table_name" {
   description = "Name of the locks DynamoDB table"
   type        = string
