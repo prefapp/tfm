@@ -93,7 +93,7 @@ resource "aws_iam_policy" "this" {
         ]
         Effect = "Allow"
         Resource = {
-          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.dynamodb_table_name}",
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.dynamodb_table_name}"
         }
       }
     ]
