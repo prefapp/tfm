@@ -41,3 +41,15 @@ variable "aws_account_id" {
   description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table"
   type        = string
 }
+
+variable "generate_cloudformation_role_for_client_account" {
+  description = ""
+  type        = bool
+  default     = true
+}
+
+variable "upload_cloudformation_role" {
+  description = ""
+  type        = bool
+  default     = true
+}

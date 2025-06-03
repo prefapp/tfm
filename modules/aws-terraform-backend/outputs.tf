@@ -17,3 +17,8 @@ output "dynamodb_locks_table_name" {
   description = "Name of the DynamoDB table (empty if not created)"
   value       = var.dynamodb_table_name == "" || var.dynamodb_table_name == null ? "" : aws_dynamodb_table.this[0].name
 }
+
+output "cloudformation_stack_id" {
+  description = "ID of the CloudFormation stack"
+  value       = aws_cloudformation_stack.this.id
+}

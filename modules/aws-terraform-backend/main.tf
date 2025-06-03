@@ -126,3 +126,24 @@ resource "aws_iam_role_policy_attachment" "this" {
   role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
 }
+
+
+resource "aws_cloudformation_stack" "this" {
+  count         = var.generate_cloudformation_role_for_client_account ? 1 : 0
+  name          = "TerraformBackend"
+  template_body = file("$(path.module)/template.yaml")
+  parameters = {
+    BackendAccountId = var.aws_account_id
+    # Param2           = "value2"
+  }
+  capabilities = ["CAPABILITY_NAMED_IAM"] # if the template creates IAM resources
+}
+
+
+resource "aws_s3_bucket_object" "template_upload" {
+  count      = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
+  bucket     = "name-of-the-bucket"
+  object_key = "templates/TerraformBackend.yaml"
+  source     = "$(path.module)/template.yaml"
+  etag       = filemd5("$(path.module)/template.yaml")
+}
