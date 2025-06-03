@@ -92,15 +92,15 @@ resource "aws_iam_policy" "this" {
           "dynamodb:DeleteItem",
         ]
         Effect = "Allow"
-        Resource = {
+        Resource = [
           "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.dynamodb_table_name}"
-        }
+        ]
       }
     ]
   })
 }
 
-resource  "aws_iam_role_policy_attachment" "this" {
+resource "aws_iam_role_policy_attachment" "this" {
   role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.this.arn
 }

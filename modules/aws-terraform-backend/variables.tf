@@ -9,6 +9,11 @@ variable "dynamodb_table_name" {
   default     = null
 }
 
+variable "aws_region" {
+  description = "AWS Region"
+  type        = string
+}
+
 variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)
