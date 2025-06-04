@@ -79,7 +79,7 @@ resource "aws_iam_policy" "this" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn::aws:.s3::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}"
+          "arn::aws::s3:::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}"
         ],
       },
       {
@@ -90,7 +90,7 @@ resource "aws_iam_policy" "this" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn::aws:.s3::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}.tflock"
+          "arn::aws::s3:::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}.tflock"
         ],
       },
       {
