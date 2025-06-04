@@ -147,9 +147,9 @@ resource "aws_s3_bucket" "cf_role" {
 
 
 resource "aws_s3_object" "this" {
-  count  = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
-  bucket = aws_s3_bucket.cf_role[0].id
-  key    = "templates/TerraformBackend.yaml"
-  source = "${path.module}/template.yaml"
-  etag   = filemd5("${path.module}/template.yaml")
+  count   = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
+  bucket  = aws_s3_bucket.cf_role[0].id
+  key     = "templates/TerraformBackend.yaml"
+  content = local.rendered_template
+  etag    = filemd5("${path.module}/template.yaml")
 }
