@@ -42,6 +42,11 @@ variable "aws_account_id" {
   type        = string
 }
 
+variable "aws_account_role" {
+  description = "Role name that will assume the role to access the S3 bucket and the dynamodb table"
+  type        = string
+}
+
 variable "generate_cloudformation_role_for_client_account" {
   description = "Decide whether to generate a cloudformation stack with a iam role to access the S3 bucket and the dynamodb table"
   type        = bool
