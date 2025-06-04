@@ -18,7 +18,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: !Sub arn:aws:iam::${BackendAccountId}:${BackendAccountRole}
+              AWS: !Sub arn:aws:iam::${BackendAccountId}:role/${BackendAccountRole}
             Action: sts:AssumeRole
       Policies:
         - PolicyName: AssumeBackendRolePolicy
