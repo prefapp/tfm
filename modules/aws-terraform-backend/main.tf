@@ -136,7 +136,7 @@ resource "aws_cloudformation_stack" "this" {
     BackendAccountId   = var.aws_account_id
     BackendAccountRole = var.aws_account_role
   }
-  # capabilities = ["CAPABILITY_NAMED_IAM"] # if the template creates IAM resources
+  capabilities = ["CAPABILITY_NAMED_IAM"] # if the template creates IAM resources
 }
 
 resource "aws_s3_bucket" "cf_role" {
