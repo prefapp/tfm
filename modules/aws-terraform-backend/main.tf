@@ -133,8 +133,8 @@ resource "aws_cloudformation_stack" "this" {
   name          = "TerraformBackend"
   template_body = file("${path.module}/template.yaml")
   parameters = {
-    BackendAccountId = var.aws_account_id
-    # Param2           = "value2"
+    BackendAccountId   = var.aws_account_id
+    BackendAccountRole = var.aws_account_role
   }
   capabilities = ["CAPABILITY_NAMED_IAM"] # if the template creates IAM resources
 }
