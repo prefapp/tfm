@@ -75,18 +75,18 @@ resource "aws_iam_policy" "this" {
       {
         Action = [
           "s3:GetObject",
-          "S3:PutObject",
+          "s3:PutObject",
         ]
         Effect = "Allow"
         Resource = [
-          "arn::aws::s3:::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}"
+          "arn:aws:s3:::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}"
         ],
       },
       {
         Action = [
           "s3:GetObject",
-          "S3:PutObject",
-          "S3:DeleteObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
         ]
         Effect = "Allow"
         Resource = [
