@@ -1,38 +1,24 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Role to access Terraform backend in external AWS account.
-
-Parameters:
-  BackendAccountId:
-    Type: String
-    Description: The AWS account ID where the backend resources are stored.
-  BackendAccountRole:
-    Type: String
-    Description: The role name for the AWS account
 Resources:
-  CustomerTerraformRole:
-    Type: AWS::IAM::Role
+  AdministratorRole:
+    Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: CustomerTerraformRole
+      RoleName: 'FirestartrAdminRole'
+      Description: 'Administrator role for the AWS account, to the Firestartr service'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
               AWS: !Sub arn:aws:iam::${BackendAccountId}:role/${BackendAccountRole}
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: AssumeBackendRolePolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action: sts:AssumeRole
-                Resource: !Sub arn:aws:iam::${BackendAccountId}:Administrator-firestartr-pro/TerraformBackendAccessRole
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
 
 Outputs:
-  TerraformRoleName:
-    Value: !Ref CustomerTerraformRole
-    Description: Name of the IAM role created in the AWS account
-  TerraformRoleArn:
-    Value: !GetAtt CustomerTerraformRole.Arn
-    Description: ARN of the IAM role created in the AWS account
+  AdministratorRole:
+    Description: 'Firestartr Administrator role'
+    Value: !Ref AdministratorRole
+  AdministratorRoleArn:
+    Description: 'Firestartr Administrator role ARN'
+    Value: !GetAtt AdministratorRole.Arn
