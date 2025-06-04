@@ -1,4 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  BackendAccountId:
+    Type: String
+    Description: The AWS account ID where the backend resources are stored.
+  BackendAccountRole:
+    Type: String
+    Description: The role name for the AWS account
 Resources:
   AdministratorRole:
     Type: 'AWS::IAM::Role'
