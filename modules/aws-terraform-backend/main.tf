@@ -140,7 +140,7 @@ resource "aws_cloudformation_stack" "this" {
 }
 
 
-resource "aws_s3_bucket_object" "this" {
+resource "aws_s3_object" "this" {
   count  = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
   bucket = var.s3_bucket_template_upload
   key    = "templates/TerraformBackend.yaml"
