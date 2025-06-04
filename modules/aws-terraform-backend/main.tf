@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "tfstate" {
 }
 
 resource "aws_s3_bucket_versioning" "this" {
-  bucket = aws_s3_bucket.this.id
+  bucket = aws_s3_bucket.tfstate.id
 
   versioning_configuration {
     status = var.tfstate_enable_versioning ? "Enabled" : "Disabled"
@@ -14,7 +14,7 @@ resource "aws_s3_bucket_versioning" "this" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  bucket = aws_s3_bucket.this.id
+  bucket = aws_s3_bucket.tfstate.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {
-  bucket = aws_s3_bucket.this.id
+  bucket = aws_s3_bucket.tfstate.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -148,7 +148,7 @@ resource "aws_s3_bucket" "cf_role" {
 
 resource "aws_s3_object" "this" {
   count  = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
-  bucket = aws_s3_bucket.cloudformation_role[0].id
+  bucket = aws_s3_bucket.cf_role[0].id
   key    = "templates/TerraformBackend.yaml"
   source = "${path.module}/template.yaml"
   etag   = filemd5("${path.module}/template.yaml")
