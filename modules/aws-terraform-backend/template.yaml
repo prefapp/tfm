@@ -29,7 +29,7 @@ Resources:
 
 Outputs:
   TerraformRoleName:
-    Value: !GetAtt CustomerTerraformRole
+    Value: !Ref CustomerTerraformRole
     Description: Name of the IAM role created in the AWS account
   TerraformRoleArn:
     Value: !GetAtt CustomerTerraformRole.Arn
