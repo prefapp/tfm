@@ -1,14 +1,14 @@
-variable "bucket_name" {
+variable "tfstate_bucket_name" {
   description = "Name of the S3 Bucket used for storing the Terraform state for the workspaces"
   type        = string
 }
 
-variable "bucket_prefix" {
-  description = "Prefix to the S3 bucket object"
+variable "tfstate_object_prefix" {
+  description = "Prefix to the S3 bucket objects"
   type        = string
 }
 
-variable "dynamodb_table_name" {
+variable "locks_table_name" {
   description = "Name of the locks DynamoDB table"
   type        = string
   default     = null
@@ -25,13 +25,13 @@ variable "tags" {
   default     = {}
 }
 
-variable "force_destroy" {
-  description = "Allow destroying the bucket even if it contains state"
+variable "tfstate_force_destroy" {
+  description = "Allow destroying the Terraform state bucket even if it contains objects"
   type        = bool
   default     = false
 }
 
-variable "enable_versioning" {
+variable "tfstate_enable_versioning" {
   description = "Enable versioning on the bucket"
   type        = bool
   default     = true
@@ -54,7 +54,7 @@ variable "upload_cloudformation_role" {
   default     = true
 }
 
-variable "s3_bucket_template_upload" {
+variable "s3_bucket_cloudformation_role" {
   description = "Name of the S3 bucket where the cloudformation template will be uploaded"
   type        = string
   default     = ""

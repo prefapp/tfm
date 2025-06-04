@@ -1,6 +1,6 @@
-resource "aws_s3_bucket" "this" {
-  bucket        = var.bucket_name
-  force_destroy = var.force_destroy
+resource "aws_s3_bucket" "tfstate" {
+  bucket        = var.tfstate_bucket_name
+  force_destroy = var.tfstate_force_destroy
 
   tags = var.tags
 }
@@ -9,7 +9,7 @@ resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
 
   versioning_configuration {
-    status = "Enabled"
+    status = var.tfstate_enable_versioning ? "Enabled" : "Disabled"
   }
 }
 
@@ -34,9 +34,9 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 # Only create DynamoDB table if name is provided
 resource "aws_dynamodb_table" "this" {
-  count = var.dynamodb_table_name == null || var.dynamodb_table_name == "" ? 0 : 1
+  count = var.locks_table_name == null || var.locks_table_name == "" ? 0 : 1
 
-  name         = var.dynamodb_table_name
+  name         = var.locks_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
@@ -79,7 +79,7 @@ resource "aws_iam_policy" "this" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn::aws:.s3::${var.bucket_name}/${var.bucket_prefix}"
+          "arn::aws:.s3::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}"
         ],
       },
       {
@@ -90,7 +90,7 @@ resource "aws_iam_policy" "this" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn::aws:.s3::${var.bucket_name}/${var.bucket_prefix}.tflock"
+          "arn::aws:.s3::${var.tfstate_bucket_name}/${var.tfstate_object_prefix}.tflock"
         ],
       },
       {
@@ -99,11 +99,11 @@ resource "aws_iam_policy" "this" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:s3:::${var.bucket_name}"
+          "arn:aws:s3:::${var.tfstate_bucket_name}"
         ],
         Condition = {
           StringEquals = {
-            "s3:prefix" = "${var.bucket_name}/${var.bucket_prefix}"
+            "s3:prefix" = "${var.tfstate_bucket_name}/${var.tfstate_object_prefix}"
           }
         }
       },
@@ -115,7 +115,7 @@ resource "aws_iam_policy" "this" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.dynamodb_table_name}"
+          "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.locks_table_name}"
         ]
       }
     ]
@@ -139,10 +139,16 @@ resource "aws_cloudformation_stack" "this" {
   capabilities = ["CAPABILITY_NAMED_IAM"] # if the template creates IAM resources
 }
 
+resource "aws_s3_bucket" "cf_role" {
+  count         = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
+  bucket        = var.s3_bucket_cloudformation_role
+  force_destroy = true
+}
+
 
 resource "aws_s3_object" "this" {
   count  = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
-  bucket = var.s3_bucket_template_upload
+  bucket = aws_s3_bucket.cloudformation_role[0].id
   key    = "templates/TerraformBackend.yaml"
   source = "${path.module}/template.yaml"
   etag   = filemd5("${path.module}/template.yaml")
