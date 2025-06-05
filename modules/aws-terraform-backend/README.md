@@ -44,6 +44,7 @@
 | generate_cloudformation_role_for_client_account | Decide whether to generate a cloudformation stack with a iam role to access the S3 bucket and the dynamodb table | boolean | true | N |
 | upload_cloudformation_role | Decide whether to upload to S3 the cloudformation stack | boolean | true | N |
 | s3_bucket_cloudformation_role | Name of the S3 bucket where the cloudformation template will be uploaded | string | "" | Only if "upload_cloudformation_role" is true |
+| s3_bucket_cloudformation_role_key | Key to use when uploading the template to S3 | string | "cloudformation/rendered-template.yaml" | N |
 
 
 ## Outputs
@@ -54,9 +55,8 @@
 | tfstate_bucket_name | "Name of the Terraform State S3 bucket" |
 | dynamodb_locks_table_arn | "ARN of the DynamoDB table (empty if not created)" |
 | dynamodb_locks_table_name | "Name of the DynamoDB table (empty if not created)" |
-| cloudformation_stack_id | "ID of the CloudFormation stack" |
-| cloudformation_role_bucket_arn | "ARN of the S3 bucket where the CloudFormation stack will be saved" |
-| cloudformation_role_bucket_name | "Name of the S3 bucket where the CloudFormation stack will be saved" |
+| rendered_template_content | "Cloudformation stack with a iam role to access the S3 bucket and the dynamodb table" |
+| s3_template_url | "S3 URL of the uploaded template (only if 'upload_cloudformation_role' is true)" |
 
 <!-- END_TF_DOCS -->
 

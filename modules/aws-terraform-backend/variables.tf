@@ -64,3 +64,9 @@ variable "s3_bucket_cloudformation_role" {
   type        = string
   default     = ""
 }
+
+variable "s3_bucket_cloudformation_role_key" {
+  type        = string
+  default     = "cloudformation/rendered-template.yaml"
+  description = "Key to use when uploading the template to S3"
+}

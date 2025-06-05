@@ -18,12 +18,12 @@ output "dynamodb_locks_table_name" {
   value       = var.locks_table_name == "" || var.locks_table_name == null ? "" : aws_dynamodb_table.this[0].name
 }
 
-output "cloudformation_role_bucket_arn" {
-  description = "ARN of the S3 bucket"
-  value       = aws_s3_bucket.cf_role[0].arn
+output "rendered_template_content" {
+  description = "cloudformation stack with a iam role to access the S3 bucket and the dynamodb table "
+  value       = local.should_upload ? null : local.rendered_template
 }
 
-output "cloudformation_role_bucket_name" {
-  description = "Name of the S3 bucket"
-  value       = aws_s3_bucket.cf_role[0].id
+output "s3_template_url" {
+  description = "S3 URL of the uploaded template (only if 'upload_cloudformation_role' is true)"
+  value       = local.should_upload ? "s3://${var.s3_bucket_cloudformation_role}/${var.s3_bucket_cloudformation_role_key}" : null
 }

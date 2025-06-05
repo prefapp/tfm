@@ -127,16 +127,12 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = aws_iam_policy.this.arn
 }
 
-resource "aws_s3_bucket" "cf_role" {
-  count         = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
-  bucket        = var.s3_bucket_cloudformation_role
-  force_destroy = true
-}
-
+# Only upload the rendered cloudformation template if a bucket name is provided
 resource "aws_s3_object" "this" {
-  count   = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
-  bucket  = aws_s3_bucket.cf_role[0].id
-  key     = "templates/TerraformBackend.yaml"
+  count   = local.should_upload ? 1 : 0
+  bucket  = var.s3_bucket_cloudformation_role
+  key     = var.s3_bucket_cloudformation_role_key
   content = local.rendered_template
+  acl     = "private"
   etag    = filemd5("${path.module}/template.yaml")
 }
