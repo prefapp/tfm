@@ -127,24 +127,11 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = aws_iam_policy.this.arn
 }
 
-
-resource "aws_cloudformation_stack" "this" {
-  count         = var.generate_cloudformation_role_for_client_account ? 1 : 0
-  name          = "TerraformBackend"
-  template_body = file("${path.module}/template.yaml")
-  parameters = {
-    BackendAccountId   = var.aws_account_id
-    BackendAccountRole = var.aws_account_role
-  }
-  capabilities = ["CAPABILITY_NAMED_IAM"] # if the template creates IAM resources
-}
-
 resource "aws_s3_bucket" "cf_role" {
   count         = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1
   bucket        = var.s3_bucket_cloudformation_role
   force_destroy = true
 }
-
 
 resource "aws_s3_object" "this" {
   count   = var.upload_cloudformation_role == null || var.upload_cloudformation_role == "" ? 0 : 1

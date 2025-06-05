@@ -1,11 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-  BackendAccountId:
+  FirestartrAccountId:
     Type: String
-    Description: The AWS account ID where the backend resources are stored.
-  BackendAccountRole:
-    Type: String
-    Description: The role name for the AWS account
+    Description: The Firestartr account ID
 Resources:
   AdministratorRole:
     Type: 'AWS::IAM::Role'
@@ -17,7 +14,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: !Sub arn:aws:iam::${BackendAccountId}:role/${BackendAccountRole}
+              AWS: !Sub arn:aws:iam::${FirestartrAccountId}
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AdministratorAccess"
