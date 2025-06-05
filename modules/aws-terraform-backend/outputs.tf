@@ -18,11 +18,6 @@ output "dynamodb_locks_table_name" {
   value       = var.locks_table_name == "" || var.locks_table_name == null ? "" : aws_dynamodb_table.this[0].name
 }
 
-output "cloudformation_stack_id" {
-  description = "ID of the CloudFormation stack"
-  value       = aws_cloudformation_stack.this[0].id
-}
-
 output "cloudformation_role_bucket_arn" {
   description = "ARN of the S3 bucket"
   value       = aws_s3_bucket.cf_role[0].arn
