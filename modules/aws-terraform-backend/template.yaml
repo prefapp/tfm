@@ -3,6 +3,9 @@ Parameters:
   FirestartrAccountId:
     Type: String
     Description: The Firestartr account ID
+  FirestartrAccountRole:
+    Type: String
+    Description: The Firestartr role name for the client, that can assume this new role with Administration permissions in the client's workload account
 Resources:
   AdministratorRole:
     Type: 'AWS::IAM::Role'
@@ -14,7 +17,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: !Sub arn:aws:iam::${FirestartrAccountId}
+              AWS: !Sub arn:aws:iam::${FirestartrAccountId}:role/${FirestartrAccountRole}
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AdministratorAccess"
