@@ -15,22 +15,22 @@ locals {
 }
 
 locals {
-  vpc_tag_filters = [
+  vpc_tag_filters = var.vpc_tags != null ? [
     for k, v in var.vpc_tags : {
       name   = "tag:${k}"
       values = [v]
     }
-  ]
+  ] : []
 }
 
 
 locals {
-  subnet_tag_filters = [
+  subnet_tag_filters = var.subnet_tags != null ? [
     for k, v in var.subnet_tags : {
       name   = "tag:${k}"
       values = [v]
     }
-  ]
+  ] : []
 }
 
 
@@ -39,5 +39,5 @@ locals {
 #######################################
 # Decide which subnet IDs to use (filtered or manually provided)
 locals {
-  selected_subnet_ids = length(data.aws_subnets.filtered.ids) > 0 ? data.aws_subnets.filtered.ids : var.subnet_ids
+  selected_subnet_ids = var.subnet_tags != null && length(data.aws_subnets.filtered.ids) > 0 ? data.aws_subnets.filtered.ids : var.subnet_ids
 }
