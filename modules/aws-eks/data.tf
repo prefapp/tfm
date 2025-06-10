@@ -11,6 +11,7 @@ data "aws_caller_identity" "current" {}
 #######################################
 
 data "aws_vpc" "by_tags" {
+  count = var.vpc_tags != null ? 1 : 0
   dynamic "filter" {
     for_each = local.vpc_tag_filters
     content {
@@ -24,7 +25,7 @@ data "aws_vpc" "by_tags" {
 # If we have a vpc_id, we will use that.
 # If we don't, we will use the found vpc by tags
 data "aws_vpc" "selected" {
-  id = coalesce(try(data.aws_vpc.by_tags.id, null), var.vpc_id)
+  id = coalesce(try(data.aws_vpc.by_tags[0].id, null), var.vpc_id)
 }
 
 
