@@ -161,6 +161,20 @@ variable "node_security_group_additional_rules" {
   }))
 }
 
+variable "cluster_security_group_additional_rules" {
+  description = "Additional rules for the cluster security group"
+
+  type = map(object({
+    description                = string
+    protocol                   = string
+    from_port                  = number
+    to_port                    = number
+    type                       = string
+    source_node_security_group = optional(bool)
+  }))
+  default = {}
+}
+
 variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is false."
 
