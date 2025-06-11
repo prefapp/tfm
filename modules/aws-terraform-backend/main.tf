@@ -56,7 +56,7 @@ resource "aws_iam_role" "this" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_account_role}"
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.aws_account_role}"
         },
         "Action" : "sts:AssumeRole"
       }
@@ -67,7 +67,7 @@ resource "aws_iam_role" "this" {
 
 resource "aws_iam_policy" "this" {
   name        = "TerraformBackendPolicy"
-  description = "Access to Terrafomr S3 state and DynamoDB lock table"
+  description = "Access to Terraform S3 state and DynamoDB lock table"
 
   policy = jsonencode({
     Version = "2012-10-17"
