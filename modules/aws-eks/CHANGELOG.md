@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.0...aws-eks-v1.2.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* add cluster_security_group_additional_rules ([#668](https://github.com/prefapp/tfm/issues/668)) ([4de1b06](https://github.com/prefapp/tfm/commit/4de1b064359590d9a0a21e2098f940a418fcd6ae))
+* aws-eks subnet vpc tags ([#665](https://github.com/prefapp/tfm/issues/665)) ([4381b2a](https://github.com/prefapp/tfm/commit/4381b2acf036d2ced8af795b47302fa4c782796a))
+
 ## [1.2.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.1.1...aws-eks-v1.2.0) (2025-05-28)
 
 
