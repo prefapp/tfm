@@ -41,7 +41,7 @@ locals {
                       { "Fn::Sub" : "arn:aws:iam::${var.aws_account_id}:user/${var.aws_iam_user}" },
                       { "Fn::If" : [
                         "HasRole",
-                        { "Fn::Sub" : "arn:aws:iam::${var.aws_account_id}:role/${varaws_account_role}" },
+                        { "Fn::Sub" : "arn:aws:iam::${var.aws_account_id}:role/${var.aws_account_role}" },
                         { "Ref" : "AWS::NoValue" }
                       ] }
                     ]
