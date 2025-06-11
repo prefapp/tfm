@@ -27,3 +27,13 @@ output "s3_template_url" {
   description = "S3 URL of the uploaded template (only if 'upload_cloudformation_role' is true)"
   value       = local.should_upload ? "s3://${var.s3_bucket_cloudformation_role}/${var.s3_bucket_cloudformation_role_key}" : null
 }
+
+output "terraform_state_role_arn" {
+  description = "ARN of the terraform state role"
+  value       = aws_iam_role.this.arn
+}
+
+output "terraform_state_role_name" {
+  description = "ARN of the terraform state role"
+  value       = aws_iam_role.this.id
+}
