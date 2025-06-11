@@ -37,16 +37,17 @@ variable "tfstate_enable_versioning" {
   default     = true
 }
 
-variable "tfbackend_access_role_name" {
-  description = "Name for the Terraform backend access role"
+variable "tfbackend_access_role_name_suffix" {
+  description = "Suffix for the Terraform backend access role"
   type        = string
-  default     = "TerraformBackendAccessRole"
+  default     = "terraform-backend-access-role"
 }
 
-variable "tfbackend_policy_name" {
-  description = "Name for the Terraform backend policy"
-  type        = string
-  default     = "TerraformBackendPolicy"
+
+variable "backend_extra_roles" {
+  description = "Additional roles to add to the Terraform backend access role"
+  type        = list(string)
+  default     = []
 }
 
 variable "aws_account_id" {
