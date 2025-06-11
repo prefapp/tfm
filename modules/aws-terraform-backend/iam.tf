@@ -78,7 +78,7 @@ resource "aws_iam_policy" "locks_table" {
           "dynamodb:PutItem",
           "dynamodb:DeleteItem"
         ]
-        Resource = aws_dynamodb_table.this.arn
+        Resource = aws_dynamodb_table.this[0].arn
       }
     ]
   })
