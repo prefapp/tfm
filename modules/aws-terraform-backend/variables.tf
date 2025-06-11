@@ -55,6 +55,11 @@ variable "aws_account_id" {
   type        = string
 }
 
+variable "aws_iam_user" {
+  description = "AWS IAM user that will assume the role to access the S3 bucket and the dynamodb table"
+  type        = string
+}
+
 variable "aws_account_role" {
   description = "Role name that will assume the role to access the S3 bucket and the dynamodb table"
   type        = string
