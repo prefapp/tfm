@@ -57,6 +57,6 @@ resource "aws_s3_object" "this" {
   count   = local.should_upload ? 1 : 0
   bucket  = var.s3_bucket_cloudformation_role
   key     = var.s3_bucket_cloudformation_role_key
-  content = local.cloudformation_template
+  content = local.cloudformation_template_yaml
   acl     = "private"
 }
