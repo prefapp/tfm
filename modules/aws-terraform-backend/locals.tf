@@ -1,5 +1,5 @@
 locals {
-  user_arn = "arn:aws:iam::${var.aws_account_id}:user/${var.aws_iam_user}"
+  user_arn = "arn:aws:iam::${var.aws_account_id}:root"
   role_arn = var.aws_account_role != null ? "arn:aws:iam::${var.aws_account_id}:role/${var.aws_account_role}" : null
 
   # First create the data structure
