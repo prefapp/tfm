@@ -4,31 +4,62 @@ locals {
 
   # First create the data structure
   cf_template = {
-    AWSTemplateFormatVersion = "2010-09-09"
-    Description              = "Creates admin role with full AWS permissions"
-    Resources = {
-      AdminRole = {
-        Type = "AWS::IAM::Role"
-        Properties = {
-          RoleName = var.aws_account_role
-          AssumeRolePolicyDocument = {
-            Version = "2012-10-17"
-            Statement = [{
-              Effect = "Allow"
-              Action = "sts:AssumeRole"
-              Principal = {
-                AWS = compact([local.user_arn, local.role_arn])
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description" : "Creates admin role with full AWS permissions",
+    "Parameters" : {
+      "TrustedAccountId" : {
+        "Type" : "String",
+        "Description" : "Account ID where trusted entities reside"
+      },
+      "TrustedIAMUser" : {
+        "Type" : "String",
+        "Description" : "IAM username allowed to assume this role"
+      },
+      "TrustedIAMRole" : {
+        "Type" : "String",
+        "Description" : "IAM role name allowed to assume this role",
+        "Default" : ""
+      }
+    },
+    "Resources" : {
+      "AdminRole" : {
+        "Type" : "AWS::IAM::Role",
+        "Properties" : {
+          "RoleName" : { "Ref" : "AWS::StackName" },
+          "AssumeRolePolicyDocument" : {
+            "Version" : "2012-10-17",
+            "Statement" : [
+              {
+                "Effect" : "Allow",
+                "Action" : "sts:AssumeRole",
+                "Principal" : {
+                  "AWS" : { "Fn::Sub" : "arn:aws:iam::${var.aws_account_id}:root" }
+                },
+                "Condition" : {
+                  "ArnLike" : {
+                    "aws:PrincipalArn" : [
+                      { "Fn::Sub" : "arn:aws:iam::${var.aws_account_id}:user/${var.aws_iam_user}" },
+                      { "Fn::If" : [
+                        "HasRole",
+                        { "Fn::Sub" : "arn:aws:iam::${var.aws_account_id}:role/${varaws_account_role}" },
+                        { "Ref" : "AWS::NoValue" }
+                      ] }
+                    ]
+                  }
+                }
               }
-            }]
-          }
-          ManagedPolicyArns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+            ]
+          },
+          "ManagedPolicyArns" : [
+            "arn:aws:iam::aws:policy/AdministratorAccess"
+          ]
         }
       }
-    }
-    Outputs = {
-      RoleARN = {
-        Description = "ARN of the created admin role"
-        Value       = { "Ref" = "AdminRole" }
+    },
+    "Outputs" : {
+      "RoleARN" : {
+        "Description" : "ARN of the created admin role",
+        "Value" : { "Ref" : "AdminRole" }
       }
     }
   }
