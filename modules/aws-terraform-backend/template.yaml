@@ -17,7 +17,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: !Sub arn:aws:iam::${FirestartrAccountId}:role/${FirestartrRoleName}
+              AWS: !Sub "arn:aws:iam::${FirestartrAccountId}:role/${FirestartrRoleName}"
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AdministratorAccess"
