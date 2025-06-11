@@ -37,6 +37,18 @@ variable "tfstate_enable_versioning" {
   default     = true
 }
 
+variable "tfbackend_access_role_name" {
+  description = "Name for the Terraform backend access role"
+  type        = string
+  default     = "TerraformBackendAccessRole"
+}
+
+variable "tfbackend_policy_name" {
+  description = "Name for the Terraform backend policy"
+  type        = string
+  default     = "TerraformBackendPolicy"
+}
+
 variable "aws_account_id" {
   description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table"
   type        = string
