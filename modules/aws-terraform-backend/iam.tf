@@ -39,7 +39,7 @@ resource "aws_iam_policy" "state_management" {
       },
       # S3 Object Permissions
       {
-        Sid    = "S3ObjectAccess"
+        Sid    = "S3BucketObjectAccess"
         Effect = "Allow"
         Action = [
           "s3:GetObject",
