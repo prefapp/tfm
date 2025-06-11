@@ -56,7 +56,7 @@ resource "aws_iam_role" "this" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_account_role}"
+          AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.tfbackend_access_role_name}"
         },
         "Action" : "sts:AssumeRole"
       }
