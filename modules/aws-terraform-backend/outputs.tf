@@ -20,7 +20,7 @@ output "dynamodb_locks_table_name" {
 
 output "rendered_template_content" {
   description = "Cloudformation stack with a iam role to access the S3 bucket and the dynamodb table"
-  value       = local.should_upload ? null : local.rendered_template
+  value       = local.should_upload ? null : local.cloudformation_template
 }
 
 output "s3_template_url" {

@@ -59,5 +59,4 @@ resource "aws_s3_object" "this" {
   key     = var.s3_bucket_cloudformation_role_key
   content = local.cloudformation_template
   acl     = "private"
-  etag    = filemd5("${path.module}/template.yaml")
 }
