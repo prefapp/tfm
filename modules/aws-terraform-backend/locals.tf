@@ -3,7 +3,7 @@ locals {
   role_arn = var.aws_account_role != null ? "arn:aws:iam::${var.aws_account_id}:role/${var.aws_account_role}" : null
 
   # First create the data structure
-  cf_template = jsonencode({
+  cf_template = {
     AWSTemplateFormatVersion = "2010-09-09"
     Description              = "Allows administrator account to assume admin role in client account"
     Resources = {
@@ -33,7 +33,7 @@ locals {
         Value       = { "Ref" = "AdminRole" }
       }
     }
-  })
+  }
 
   # Then convert to YAML
   cloudformation_template_yaml = yamlencode(local.cf_template)
