@@ -1,8 +1,7 @@
 locals {
-  user_arn = "arn:aws:iam::${var.aws_account_id}:root"
-  role_arn = var.aws_account_role != null ? "arn:aws:iam::${var.aws_account_id}:role/${var.aws_account_role}" : null
+  # user_arn = "arn:aws:iam::${var.aws_account_id}:root"
+  # role_arn = var.aws_account_role != null ? "arn:aws:iam::${var.aws_account_id}:role/${var.aws_admin_role}" : null
 
-  # First create the data structure
   cf_template = {
     AWSTemplateFormatVersion = "2010-09-09"
     Description              = "Allows administrator account to assume admin role in client account"
@@ -18,7 +17,7 @@ locals {
                 Effect = "Allow"
                 Action = "sts:AssumeRole"
                 Principal = {
-                  AWS = "arn:aws:iam::${var.aws_account_id}:root"
+                  AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_admin_role}"
                 }
               }
             ]
