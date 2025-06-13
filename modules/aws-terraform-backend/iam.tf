@@ -21,7 +21,9 @@ resource "aws_iam_role" "tfbackend_access_role" {
           ]
         },
         Condition = {
-          "aws:PrincipalArn" = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
+          ArnLike = {
+            "aws:PrincipalArn" = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
+          }
         }
       }
     ]
