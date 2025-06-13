@@ -17,12 +17,7 @@ locals {
                 Effect = "Allow"
                 Action = "sts:AssumeRole"
                 Principal = {
-                  AWS = "arn:aws:iam::${var.aws_account_id}:root"
-                }
-                Condition = {
-                  ArnEquals = {
-                    "aws:PrincipalArn" : "arn:aws:iam::${var.aws_account_id}:role/${var.aws_admin_role}"
-                  }
+                  AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.tfbackend_access_role_name}"
                 }
               }
             ]

@@ -37,7 +37,7 @@ variable "tfstate_enable_versioning" {
   default     = true
 }
 
-variable "tfbackend_access_role_name_suffix" {
+variable "tfbackend_access_role_name" {
   description = "Suffix for the Terraform backend access role"
   type        = string
   default     = "terraform-backend-access-role"
@@ -87,4 +87,16 @@ variable "s3_bucket_cloudformation_role_key" {
   type        = string
   default     = "cloudformation/rendered-template.yaml"
   description = "Key to use when uploading the template to S3"
+}
+
+variable "create_github_iam" {
+  description = "Create IAM resources for GitHub"
+  type        = bool
+  default     = false
+}
+
+variable "github_repository" {
+  description = "Name of the GitHub repository to access the backend"
+  type        = string
+  default     = ""
 }
