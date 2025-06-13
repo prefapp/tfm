@@ -9,8 +9,19 @@ resource "aws_iam_role" "tfbackend_access_role" {
         Principal = {
           AWS = [
             "arn:aws:iam::${var.aws_account_id}:root",
-            "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
           ]
+        }
+      },
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = [
+            "*"
+          ]
+        },
+        Condition = {
+          "aws:PrincipalArn" = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
         }
       }
     ]
