@@ -105,7 +105,7 @@ resource "aws_iam_policy" "state_management" {
 
 resource "aws_iam_policy" "locks_table" {
   count       = var.locks_table_name == null || var.locks_table_name == "" ? 0 : 1
-  name        = "firestartr-${var.tfbackend_access_role_name}-state-lock"
+  name        = "${var.tfbackend_access_role_name}-state-lock"
   description = "Permissions for Terraform state locks DynamoDB table"
   policy = jsonencode({
     Version = "2012-10-17"
