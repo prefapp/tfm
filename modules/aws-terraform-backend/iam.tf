@@ -103,14 +103,14 @@ resource "aws_iam_policy" "locks_table" {
 
 
 resource "aws_iam_role_policy_attachment" "client" {
-  role       = aws_iam_role.tfbackend_access_role.name
+  role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.state_management.arn
 }
 
 
 resource "aws_iam_role_policy_attachment" "locks_table" {
   count      = var.locks_table_name == null || var.locks_table_name == "" ? 0 : 1
-  role       = aws_iam_role.tfbackend_access_role.name
+  role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.locks_table[0].arn
 }
 
