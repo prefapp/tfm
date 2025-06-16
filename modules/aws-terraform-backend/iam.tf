@@ -15,13 +15,6 @@ resource "aws_iam_role" "this" {
         }
       },
       {
-        "Effect" : "Allow",
-        "Principal" : {
-          "AWS" : "arn:aws:sts::${data.aws_caller_identity.current.account_id}:assumed-role/${var.tfbackend_access_role_name}/${var.aws_admin_role}"
-        },
-        "Action" : "sts:AssumeRole"
-      },
-      {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
