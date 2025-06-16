@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 locals {
   # user_arn = "arn:aws:iam::${var.aws_account_id}:root"
   # role_arn = var.aws_account_role != null ? "arn:aws:iam::${var.aws_account_id}:role/${var.aws_admin_role}" : null
@@ -21,6 +23,13 @@ locals {
                   # It can not be a role in that account, it is not allowed directly
                   # Here, AWS expects, as a principal, either an IAM user, an account root or a service principal
                   AWS = "arn:aws:iam::${var.aws_account_id}:root"
+                }
+              },
+              {
+                Effect = "Allow"
+                Action = "sts:AssumeRole"
+                Principal = {
+                  AWS = "arn:aws:sts::${data.aws_caller_identity.current.account_id}:assumed-role/${var.tfbackend_access_role_name}/${var.aws_admin_role}"
                 }
               }
             ]
