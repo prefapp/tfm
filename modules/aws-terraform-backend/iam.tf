@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "this" {
   name = var.tfbackend_access_role_name
   assume_role_policy = jsonencode({
@@ -11,6 +13,13 @@ resource "aws_iam_role" "this" {
             "arn:aws:iam::${var.aws_account_id}:root",
           ]
         }
+      },
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : "arn:aws:sts::${data.aws_caller_identity.current.account_id}:assumed-role/${var.tfbackend_access_role_name}/${var.aws_admin_role}"
+        },
+        "Action" : "sts:AssumeRole"
       },
       {
         Action = "sts:AssumeRoleWithWebIdentity"
