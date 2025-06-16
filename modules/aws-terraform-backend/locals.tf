@@ -17,7 +17,9 @@ locals {
                 Effect = "Allow"
                 Action = "sts:AssumeRole"
                 Principal = {
-                  AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.tfbackend_access_role_name}"
+                  # Con el role da error al aplicar cloudformation
+                  # AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.tfbackend_access_role_name}"
+                  AWS = "arn:aws:iam::${var.aws_account_id}:root"
                 }
               }
             ]
