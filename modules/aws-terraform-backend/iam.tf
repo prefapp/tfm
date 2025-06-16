@@ -1,4 +1,4 @@
-resource "aws_iam_role" "tfbackend_access_role" {
+resource "aws_iam_role" "this" {
   name = var.tfbackend_access_role_name
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -12,30 +12,6 @@ resource "aws_iam_role" "tfbackend_access_role" {
           ]
         }
       },
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = [
-            "*"
-          ]
-        },
-        Condition = {
-          ArnLike = {
-            "aws:PrincipalArn" = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
-          }
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role" "github_tfbackend_access_role" {
-  count = var.create_github_iam ? 1 : 0
-  name  = "${var.tfbackend_access_role_name}-github"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
       {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
