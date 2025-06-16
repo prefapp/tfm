@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 resource "aws_iam_role" "this" {
   name = var.tfbackend_access_role_name
   assume_role_policy = jsonencode({
