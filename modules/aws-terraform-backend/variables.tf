@@ -56,7 +56,7 @@ variable "aws_account_id" {
 }
 
 variable "aws_admin_role" {
-  description = "AWS IAM user that will assume the role to access the account as administrator"
+  description = "AWS IAM role that will assume the role to access the account as administrator"
   type        = string
 }
 

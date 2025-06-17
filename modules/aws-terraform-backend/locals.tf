@@ -1,9 +1,6 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  # user_arn = "arn:aws:iam::${var.aws_account_id}:root"
-  # role_arn = var.aws_account_role != null ? "arn:aws:iam::${var.aws_account_id}:role/${var.aws_admin_role}" : null
-
   cf_template = {
     AWSTemplateFormatVersion = "2010-09-09"
     Description              = "Allows administrator account to assume admin role in client account"
