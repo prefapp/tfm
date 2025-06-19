@@ -23,10 +23,16 @@ locals {
                 }
               },
               {
-                Effect = "Allow"
-                Action = "sts:AssumeRole"
-                Principal = {
-                  AWS = "arn:aws:sts::${data.aws_caller_identity.current.account_id}:assumed-role/${var.tfbackend_access_role_name}/${var.aws_admin_role}"
+                Effect    = "Allow"
+                Principal = "Federated: !Sub 'arn:aws:iam::${var.aws_account_id}:oidc-provider/token.actions.githubusercontent.com'"
+                Action    = "sts:AssumeRoleWithWebIdentity"
+                Condition = {
+                  StringEquals = {
+                    "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
+                  }
+                  StringLike = {
+                    "token.actions.githubusercontent.com:sub" : "repo:${var.github_repository}:*"
+                  }
                 }
               }
             ]
