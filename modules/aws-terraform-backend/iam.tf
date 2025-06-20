@@ -78,18 +78,9 @@ resource "aws_iam_policy" "state_management" {
         Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
       },
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = [
-            "*"
-          ]
-        }
-        Condition = {
-          StringLike = {
-            "aws:PrincipalArn" : ["arn:aws:iam::*:role/${var.tfbackend_access_role_name}"]
-          }
-        }
+        Action   = "sts:AssumeRole"
+        Effect   = "Allow"
+        Resource = "arn:aws:iam::*/role/${var.tfbackend_access_role_name}"
       }
     ]
   })
@@ -114,18 +105,9 @@ resource "aws_iam_policy" "locks_table" {
         Resource = aws_dynamodb_table.this[0].arn
       },
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = [
-            "*"
-          ]
-        }
-        Condition = {
-          StringLike = {
-            "aws:PrincipalArn" : ["arn:aws:iam::*:role/${var.tfbackend_access_role_name}"]
-          }
-        }
+        Action   = "sts:AssumeRole"
+        Effect   = "Allow"
+        Resource = "arn:aws:iam::*/role/${var.tfbackend_access_role_name}"
       }
     ]
   })
