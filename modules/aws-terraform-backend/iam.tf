@@ -12,21 +12,6 @@ resource "aws_iam_role" "this" {
               "arn:aws:iam::${var.aws_account_id}:root",
             ]
           }
-        },
-        ## In order to prevent "Invalid principal in policy"
-        {
-          Action = "sts:AssumeRole"
-          Effect = "Allow"
-          Principal = {
-            AWS = [
-              "*"
-            ]
-          }
-          Condition = {
-            StringLike = {
-              "aws:PrincipalArn" : ["arn:aws:iam::*:role/${var.tfbackend_access_role_name}"]
-            }
-          }
         }
       ],
       var.create_github_iam ? [{
@@ -91,6 +76,20 @@ resource "aws_iam_policy" "state_management" {
           "s3:DeleteObject"
         ]
         Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
+      },
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = [
+            "*"
+          ]
+        }
+        Condition = {
+          StringLike = {
+            "aws:PrincipalArn" : ["arn:aws:iam::*:role/${var.tfbackend_access_role_name}"]
+          }
+        }
       }
     ]
   })
@@ -113,6 +112,20 @@ resource "aws_iam_policy" "locks_table" {
           "dynamodb:DeleteItem"
         ]
         Resource = aws_dynamodb_table.this[0].arn
+      },
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          AWS = [
+            "*"
+          ]
+        }
+        Condition = {
+          StringLike = {
+            "aws:PrincipalArn" : ["arn:aws:iam::*:role/${var.tfbackend_access_role_name}"]
+          }
+        }
       }
     ]
   })
