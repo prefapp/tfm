@@ -84,7 +84,7 @@ resource "aws_iam_policy" "state_management" {
         Sid      = "AssumeRoleAccess"
         Action   = "sts:AssumeRole"
         Effect   = "Allow"
-        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}/role/${var.tfbackend_access_role_name}"
+        Resource = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
       }
     ]
   })
@@ -112,7 +112,7 @@ resource "aws_iam_policy" "locks_table" {
         Sid      = "AssumeRoleAccess"
         Action   = "sts:AssumeRole"
         Effect   = "Allow"
-        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}/role/${var.tfbackend_access_role_name}"
+        Resource = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
       }
     ]
   })
