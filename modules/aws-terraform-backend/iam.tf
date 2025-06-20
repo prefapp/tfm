@@ -13,13 +13,19 @@ resource "aws_iam_role" "this" {
             ]
           }
         },
+        ## In order to prevent "Invalid principal in policy"
         {
           Action = "sts:AssumeRole"
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::*:role/${var.tfbackend_access_role_name}",
+              "*"
             ]
+          }
+          Condition = {
+            StringLike = {
+              "aws:PrincipalArn" : ["arn:aws:iam::*:role/${var.tfbackend_access_role_name}"]
+            }
           }
         }
       ],
