@@ -38,7 +38,7 @@ variable "tfstate_enable_versioning" {
 }
 
 variable "tfbackend_access_role_name" {
-  description = "Suffix for the Terraform backend access role"
+  description = "Terraform backend access role"
   type        = string
   default     = "terraform-backend-access-role"
 }
@@ -55,12 +55,7 @@ variable "aws_account_id" {
   type        = string
 }
 
-variable "aws_admin_role" {
-  description = "AWS IAM role that will assume the role to access the account as administrator"
-  type        = string
-}
-
-variable "aws_account_role" {
+variable "cloudformation_admin_role_for_client_account" {
   description = "Role name that will assume the role to access the S3 bucket and the dynamodb table"
   type        = string
 }

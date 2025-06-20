@@ -43,8 +43,7 @@
 | tfstate_force_destroy | Allow destroying the Terraform state bucket even if it contains objects | boolean | false | N |
 | tfstate_enable_versioning | Enable versioning on the bucket | boolean | true | N |
 | aws_account_id | AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
-| aws_account_role | Role name that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
-| aws_admin_role | AWS IAM role that will assume the role to access the account as administrator | string | . | Y |
+| cloudformation_admin_role_for_client_account | Role name that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
 | backend_extra_roles | Additional roles to add to the Terraform backend access role | list(string) | [] | N |
 | generate_cloudformation_role_for_client_account | Decide whether to generate a cloudformation stack with a iam role to access the S3 bucket and the dynamodb table | boolean | true | N |
 | upload_cloudformation_role | Decide whether to upload to S3 the cloudformation stack | boolean | true | N |

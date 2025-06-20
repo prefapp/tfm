@@ -8,7 +8,7 @@ locals {
       AdminRole = {
         Type = "AWS::IAM::Role"
         Properties = {
-          RoleName = var.aws_account_role
+          RoleName = var.cloudformation_admin_role_for_client_account
           AssumeRolePolicyDocument = {
             Version = "2012-10-17"
             Statement = [
@@ -19,20 +19,7 @@ locals {
                   # The principal must be root of the aws_account_id
                   # It can not be a role in that account, it is not allowed directly
                   # Here, AWS expects, as a principal, either an IAM user, an account root or a service principal
-                  AWS = "arn:aws:iam::${var.aws_account_id}:root"
-                }
-              },
-              {
-                Effect    = "Allow"
-                Principal = "Federated: !Sub 'arn:aws:iam::${var.aws_account_id}:oidc-provider/token.actions.githubusercontent.com'"
-                Action    = "sts:AssumeRoleWithWebIdentity"
-                Condition = {
-                  StringEquals = {
-                    "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
-                  }
-                  StringLike = {
-                    "token.actions.githubusercontent.com:sub" : "repo:${var.github_repository}:*"
-                  }
+                  AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.tfbackend_access_role_name}"
                 }
               }
             ]
