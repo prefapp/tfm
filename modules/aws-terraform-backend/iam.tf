@@ -52,7 +52,7 @@ resource "aws_iam_policy" "state_management" {
         Resource = aws_s3_bucket.tfstate.arn
         Condition = {
           StringEquals = {
-            "s3:prefix" : var.tfstate_object_prefix
+            "s3:prefix" = ["${var.tfstate_object_prefix}"]
           }
         }
       },
@@ -64,9 +64,9 @@ resource "aws_iam_policy" "state_management" {
           "s3:GetObject",
           "s3:PutObject"
         ]
-        Resource = "${aws_s3_bucket.tfstate.arn}"
+        Resource = "${aws_s3_bucket.tfstate.arn}/*"
       },
-      # S3 Object Permissions
+      # S3 Lock File Permissions
       {
         Sid    = "S3ObjectAccess"
         Effect = "Allow"
@@ -77,7 +77,9 @@ resource "aws_iam_policy" "state_management" {
         ]
         Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
       },
+      # STS AssumeRole Permissions
       {
+        Sid      = "AssumeRoleAccess"
         Action   = "sts:AssumeRole"
         Effect   = "Allow"
         Resource = "arn:aws:iam::*/role/${var.tfbackend_access_role_name}"
@@ -105,6 +107,7 @@ resource "aws_iam_policy" "locks_table" {
         Resource = aws_dynamodb_table.this[0].arn
       },
       {
+        Sid      = "AssumeRoleAccess"
         Action   = "sts:AssumeRole"
         Effect   = "Allow"
         Resource = "arn:aws:iam::*/role/${var.tfbackend_access_role_name}"
