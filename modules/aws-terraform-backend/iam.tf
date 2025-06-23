@@ -82,7 +82,7 @@ resource "aws_iam_policy" "state_management" {
         Sid      = "AssumeRoleAccess"
         Action   = "sts:AssumeRole"
         Effect   = "Allow"
-        Resource = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
+        Resource = "arn:aws:iam::*:role/${var.cloudformation_admin_role_for_client_account}"
       }
     ]
   })
@@ -106,11 +106,12 @@ resource "aws_iam_policy" "locks_table" {
         ]
         Resource = aws_dynamodb_table.this[0].arn
       },
+      # STS AssumeRole Permissions
       {
         Sid      = "AssumeRoleAccess"
         Action   = "sts:AssumeRole"
         Effect   = "Allow"
-        Resource = "arn:aws:iam::*:role/${var.tfbackend_access_role_name}"
+        Resource = "arn:aws:iam::*:role/${var.cloudformation_admin_role_for_client_account}"
       }
     ]
   })
