@@ -20,13 +20,9 @@
 | [aws_s3_bucket_versioning](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
 | [aws_s3_bucket_server_side_encryption_configuration](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration) | resource |
 | [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
+| [aws_s3_object](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
 | [aws_dynamodb_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/dynamodb_table) | resource |
 | [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role)| resource |
-| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy_attachment) | resource |
-| [aws_cloudformation_stack](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack) | resource |
-| [aws_s3_object](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
-| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy_attachment) | resource |
 
@@ -42,13 +38,16 @@
 | tags | Common tags for all resources | map(string) | {} | N |
 | tfstate_force_destroy | Allow destroying the Terraform state bucket even if it contains objects | boolean | false | N |
 | tfstate_enable_versioning | Enable versioning on the bucket | boolean | true | N |
+| tfbackend_access_role_name | Terraform backend access role: role name for Terraform Backend | string | - | Y |
+| backend_extra_roles | Additional roles to add to the Terraform backend access role | list(string) | [] | N |
 | aws_account_id | AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
 | cloudformation_admin_role_for_client_account | Role name that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
-| backend_extra_roles | Additional roles to add to the Terraform backend access role | list(string) | [] | N |
 | generate_cloudformation_role_for_client_account | Decide whether to generate a cloudformation stack with a iam role to access the S3 bucket and the dynamodb table | boolean | true | N |
 | upload_cloudformation_role | Decide whether to upload to S3 the cloudformation stack | boolean | true | N |
 | s3_bucket_cloudformation_role | Name of the S3 bucket where the cloudformation template will be uploaded | string | "" | Only if "upload_cloudformation_role" is true |
 | s3_bucket_cloudformation_role_key | Key to use when uploading the template to S3 | string | cloudformation/rendered-template.yaml | N |
+| create_github_iam | Controls if we want to create IAM resources for GitHub | bool | false | N |
+| github_repository | Name of the GitHub repository that will have access to the backend | string | "" | N |
 
 
 ## Outputs
