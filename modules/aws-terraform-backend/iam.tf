@@ -109,7 +109,7 @@ resource "aws_iam_policy" "full" {
 
 
 resource "aws_iam_policy" "limited" {
-  name        = var.tfbackend_access_role_name
+  name        = "${var.tfbackend_access_role_name}-extra"
   description = "Permissions for Terraform state"
   policy = jsonencode({
     Version = "2012-10-17"
