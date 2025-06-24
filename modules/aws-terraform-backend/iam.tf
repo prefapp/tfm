@@ -34,112 +34,91 @@ resource "aws_iam_role" "this" {
 }
 
 
-resource "aws_iam_policy" "state_management" {
-  name        = "${var.tfbackend_access_role_name}-state-access"
-  description = "Permissions for Terraform state bucket and DynamoDB lock table"
-
+resource "aws_iam_policy" "this" {
+  name        = var.tfbackend_access_role_name
+  description = "Permissions for Terraform state"
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
-      # S3 Bucket Permissions
-      {
-        Sid    = "S3BucketAccess"
-        Effect = "Allow"
-        Action = [
-          "s3:ListBucket",
-          "s3:GetBucketVersioning"
-        ]
-        Resource = aws_s3_bucket.tfstate.arn
-        Condition = {
-          StringEquals = {
-            "s3:prefix" = ["${var.tfstate_object_prefix}"]
+    Statement = concat(
+      [
+        # S3 Bucket Permissions
+        {
+          Sid    = "S3BucketAccess"
+          Effect = "Allow"
+          Action = [
+            "s3:ListBucket",
+            "s3:GetBucketVersioning"
+          ]
+          Resource = aws_s3_bucket.tfstate.arn
+          Condition = {
+            StringEquals = {
+              "s3:prefix" = ["${var.tfstate_object_prefix}"]
+            }
           }
+        },
+        # S3 Object Permissions
+        {
+          Sid    = "S3BucketObjectAccess"
+          Effect = "Allow"
+          Action = [
+            "s3:GetObject",
+            "s3:PutObject"
+          ]
+          Resource = "${aws_s3_bucket.tfstate.arn}/*"
+        },
+        # S3 Lock File Permissions
+        {
+          Sid    = "S3ObjectAccess"
+          Effect = "Allow"
+          Action = [
+            "s3:GetObject",
+            "s3:PutObject",
+            "s3:DeleteObject"
+          ]
+          Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
+        },
+      ],
+      # If locks_table_name is present, add permissions to locks table
+      var.locks_table_name == null || var.locks_table_name == "" ? [] :
+      [
+        # DynamoDB Table Permissions
+        {
+          Sid    = "DynamoDBLockTableAccess"
+          Effect = "Allow"
+          Action = [
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:DeleteItem"
+          ]
+          Resource = aws_dynamodb_table.this[0].arn
         }
-      },
-      # S3 Object Permissions
-      {
-        Sid    = "S3BucketObjectAccess"
-        Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject"
-        ]
-        Resource = "${aws_s3_bucket.tfstate.arn}/*"
-      },
-      # S3 Lock File Permissions
-      {
-        Sid    = "S3ObjectAccess"
-        Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject"
-        ]
-        Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
-      },
-      # STS AssumeRole Permissions
-      {
-        Sid      = "AssumeRoleAccess"
-        Action   = "sts:AssumeRole"
-        Effect   = "Allow"
-        Resource = "arn:aws:iam::*:role/${var.cloudformation_admin_role_for_client_account}"
-      }
-    ]
+      ],
+      # Permissions to assume role
+      [
+        # STS AssumeRole Permissions
+        {
+          Sid      = "AssumeRoleAccess"
+          Action   = "sts:AssumeRole"
+          Effect   = "Allow"
+          Resource = "arn:aws:iam::*:role/${var.cloudformation_admin_role_for_client_account}"
+        }
+      ]
+    )
   })
 }
 
-resource "aws_iam_policy" "locks_table" {
-  count       = var.locks_table_name == null || var.locks_table_name == "" ? 0 : 1
-  name        = "${var.tfbackend_access_role_name}-state-lock"
-  description = "Permissions for Terraform state locks DynamoDB table"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      # DynamoDB Table Permissions
-      {
-        Sid    = "DynamoDBLockTableAccess"
-        Effect = "Allow"
-        Action = [
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem"
-        ]
-        Resource = aws_dynamodb_table.this[0].arn
-      },
-      # STS AssumeRole Permissions
-      {
-        Sid      = "AssumeRoleAccess"
-        Action   = "sts:AssumeRole"
-        Effect   = "Allow"
-        Resource = "arn:aws:iam::*:role/${var.cloudformation_admin_role_for_client_account}"
-      }
-    ]
-  })
-}
 
 
 resource "aws_iam_role_policy_attachment" "client" {
   role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.state_management.arn
+  policy_arn = aws_iam_policy.this.arn
 }
 
-
-resource "aws_iam_role_policy_attachment" "locks_table" {
-  count      = var.locks_table_name == null || var.locks_table_name == "" ? 0 : 1
-  role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.locks_table[0].arn
-}
 
 
 resource "aws_iam_role_policy_attachment" "extra_roles" {
   for_each   = toset(var.backend_extra_roles)
   role       = each.key
-  policy_arn = aws_iam_policy.state_management.arn
-}
-
-resource "aws_iam_role_policy_attachment" "extra_roles_lock_tables" {
-  for_each   = toset(var.backend_extra_roles)
-  role       = each.key
-  policy_arn = aws_iam_policy.locks_table[0].arn
+  policy_arn = aws_iam_policy.this.arn
 }
 
