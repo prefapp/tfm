@@ -31,7 +31,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| tfstate_bucket_name | Name of the S3 Bucket used for storing the Terraform state for the workspaces" | string | -- | Y |
+| tfstate_bucket_name | Name of the S3 Bucket used for storing the Terraform state for the workspaces | string | -- | Y |
 | tfstate_object_prefix | Prefix to the S3 bucket objects | string | -- | Y |
 | locks_table_name | "Name of the locks DynamoDB table. Not needed if Terraform version is 1.11 or newer | string | null | N |
 | aws_region | AWS Region | string | Default provider region (i.e. "us-east-1") | N |
