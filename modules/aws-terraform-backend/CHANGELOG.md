@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/prefapp/tfm/compare/aws-terraform-backend-v0.1.0...aws-terraform-backend-v1.0.0) (2025-06-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add IAM roles to Terraform Backend module
+
+### Features
+
+* Add IAM roles to Terraform Backend module ([0f0b7ad](https://github.com/prefapp/tfm/commit/0f0b7adebd8873e311b52c1c02b7a2617e4650e9))
+
 ## 0.1.0 (2025-05-07)
 
 
