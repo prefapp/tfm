@@ -32,5 +32,5 @@
     "modules/azure-redis-cache": "0.2.2",
     "modules/azure-role-assignment": "0.2.0",
     "modules/azure-application": "1.0.0",
-    "modules/aws-terraform-backend": "0.1.0"
+    "modules/aws-terraform-backend": "1.0.0"
 }
