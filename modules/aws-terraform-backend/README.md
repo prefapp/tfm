@@ -46,7 +46,7 @@
 | upload_cloudformation_role | Decide whether to upload to S3 the cloudformation stack | boolean | true | N |
 | s3_bucket_cloudformation_role | Name of the S3 bucket where the cloudformation template will be uploaded | string | "" | Only if "upload_cloudformation_role" is true |
 | s3_bucket_cloudformation_role_key | Key to use when uploading the template to S3 | string | cloudformation/rendered-template.yaml | N |
-| create_github_iam | Controls if we want to create IAM resources for GitHub | bool | false | N |
+| create_github_iam | Controls if we want to assume the backend role from Github Actions | bool | false | N |
 | github_repository | Name of the GitHub repository that will have access to the backend | string | "" | N |
 
 
