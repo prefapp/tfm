@@ -1,15 +1,3 @@
-# Scheduled retention policies for snapshots
-variable "scheduled_retention_policies" {
-  description = "Scheduled retention policies for snapshots"
-  type = object({
-    hourly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
-    daily    = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
-    weekly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
-    monthly  = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
-    yearly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
-  })
-}
-
 # https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/cloud_backup_schedule
 resource "mongodbatlas_cloud_backup_schedule" "this" {
   project_id   = var.project_id
