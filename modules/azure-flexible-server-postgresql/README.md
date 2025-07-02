@@ -127,6 +127,7 @@ values:
     public_network_access_enabled: false
     storage_mb: "65536"
     sku_name: "GP_Standard_D2ds_v5"
+    backup_retention_days: 30
     #create_mode: "PointInTimeRestore"
     #source_server_id: "/subscriptions/xxxxxx-xxxx-xxxx-xxxxxx/resourceGroups/example-resource-group/providers/Microsoft.DBforPostgreSQL/flexibleServers/example-flexible-server"
     #point_in_time_restore_time_in_utc: "2025-02-21T09:35:43Z"
