@@ -1,3 +1,15 @@
+# Scheduled retention policies for snapshots
+variable "scheduled_retention_policies" {
+  description = "Scheduled retention policies for snapshots"
+  type = object({
+    hourly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    daily    = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    weekly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    monthly  = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    yearly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+  })
+}
+
 # https://registry.terraform.io/providers/mongodb/mongodbatlas/latest/docs/resources/cloud_backup_schedule
 resource "mongodbatlas_cloud_backup_schedule" "this" {
   project_id   = var.project_id
@@ -10,30 +22,27 @@ resource "mongodbatlas_cloud_backup_schedule" "this" {
   dynamic "policy_item_hourly" {
     for_each = var.scheduled_retention_policies.hourly != null ? [var.scheduled_retention_policies.hourly] : []
     content {
-      frequency_interval = hourly.value.frequency_interval
-      retention_unit     = hourly.value.retention_unit
-      retention_value    = hourly.value.retention_value
+      frequency_interval = policy_item_hourly.value.frequency_interval
+      retention_unit     = policy_item_hourly.value.retention_unit
+      retention_value    = policy_item_hourly.value.retention_value
     }
   }
-
   dynamic "policy_item_daily" {
     for_each = var.scheduled_retention_policies.daily != null ? [var.scheduled_retention_policies.daily] : []
     content {
-      frequency_interval = daily.value.frequency_interval
-      retention_unit     = daily.value.retention_unit
-      retention_value    = daily.value.retention_value
+      frequency_interval = policy_item_daily.value.frequency_interval
+      retention_unit     = policy_item_daily.value.retention_unit
+      retention_value    = policy_item_daily.value.retention_value
     }
   }
-
-  dynamic "policy_item_monthly" {
+  dynamic "policy_item_weekly" {
     for_each = var.scheduled_retention_policies.weekly != null ? [var.scheduled_retention_policies.weekly] : []
     content {
-      frequency_interval = policy_item_monthly.value.frequency_interval
-      retention_unit     = policy_item_monthly.value.retention_unit
-      retention_value    = policy_item_monthly.value.retention_value
+      frequency_interval = policy_item_weekly.value.frequency_interval
+      retention_unit     = policy_item_weekly.value.retention_unit
+      retention_value    = policy_item_weekly.value.retention_value
     }
-  }  
-
+  }
   dynamic "policy_item_monthly" {
     for_each = var.scheduled_retention_policies.monthly != null ? [var.scheduled_retention_policies.monthly] : []
     content {
@@ -42,7 +51,6 @@ resource "mongodbatlas_cloud_backup_schedule" "this" {
       retention_value    = policy_item_monthly.value.retention_value
     }
   }
-
   dynamic "policy_item_yearly" {
     for_each = var.scheduled_retention_policies.yearly != null ? [var.scheduled_retention_policies.yearly] : []
     content {
