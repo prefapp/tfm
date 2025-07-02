@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.2](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v3.1.1...azure-flexible-server-postgresql-v3.1.2) (2025-07-02)
+
+
+### Bug Fixes
+
+* add optional backup retention days argument ([#674](https://github.com/prefapp/tfm/issues/674)) ([4799394](https://github.com/prefapp/tfm/commit/4799394dec264978fa13326a3e1d48be47df11fc))
+
 ## [3.1.1](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v3.1.0...azure-flexible-server-postgresql-v3.1.1) (2025-04-24)
 
 
