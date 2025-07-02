@@ -17,7 +17,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   create_mode                       = var.postgresql_flexible_server.create_mode
   source_server_id                  = var.postgresql_flexible_server.source_server_id
   point_in_time_restore_time_in_utc = var.postgresql_flexible_server.point_in_time_restore_time_in_utc
-  backup_retention_days = var.postgresql_flexible_server.backup_retention_days
+  backup_retention_days             = var.postgresql_flexible_server.backup_retention_days
   tags                              = local.tags
   maintenance_window {
     day_of_week  = var.postgresql_flexible_server.maintenance_window.day_of_week
