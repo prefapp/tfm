@@ -3,7 +3,7 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.116.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.35.0 |
 
 To create the postgresql flexible server you must have:
  - A resource group.
@@ -15,41 +15,43 @@ To create the postgresql flexible server you must have:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 3.116.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.35.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
+## Resources
 
-## Resources and datas
-
-| Resource | Type |
-|---------|------|
-| [azurerm_postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | Resource |
-| [azurerm_postgresql_flexible_server_configuration](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | Resource |
-| [random_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | Resource |
-| [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | Resource |
-| [azurerm_postgresql_flexible_server_firewall_rule](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule) | Resource |
-| [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group.html) | Data |
-| [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | Data |
-| [azurerm_private_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | Data |
-| [azurerm_resource](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | Data |
-| [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | Data |
+| Name | Type |
+|------|------|
+| [azurerm_key_vault_secret.password_create](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
+| [azurerm_postgresql_flexible_server.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | resource |
+| [azurerm_postgresql_flexible_server_configuration.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | resource |
+| [azurerm_postgresql_flexible_server_firewall_rule.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule) | resource |
+| [random_password.password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [azurerm_key_vault_secret.administrator_password](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_private_dns_zone.dns_private_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | data source |
+| [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_resources.key_vault_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_resources.key_vault_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_resources.vnet_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_resources.vnet_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|------------|------|---------|:--------:|
-| `resource_group` | Name of the resource group | `string` | N/A | ✅ |
-| `password_lenght` | Lenght of the random password for the keyvault secret | `number` | `20` | ❌ |
-| `subnet_name` | Name of the subnet | `string` | `null` | ❌ |
-| `dns_private_zone_name` | Name of the private DNS zone | `string` | `null` | ❌ |
-| `key_vault` | Key Vault configuration | `object({ name = optional(string), resource_group_name = optional(string), tags = optional(map(string)) })` | `{}` | ❌ |
-| `administrator_password_key_vault_secret_name` | Name of the administrator password secret in Key Vault | `string` | `null` | ❌ |
-| `tags_from_rg` | If `true`, uses tags from the resource group | `bool` | `false` | ❌ |
-| `tags` | Input tags if not using the resource group tags | `map(string)` | `{}` | ❌ |
-| `postgresql_flexible_server` | PostgreSQL Flexible Server configuration | `object` | N/A | ✅ |
-| `postgresql_flexible_server_configuration` | Additional configuration for the server | `map(object({ name = optional(string), value = optional(string) }))` | `{}` | ❌ |
-| `vnet` | Virtual network configuration | `object({ name = optional(string), resource_group_name = optional(string), tags = optional(map(string)) })` | `{}` | ❌ |
-| `firewall_rule` | List of firewall rules to allow access to the PostgreSQL server | `list(object({ name = optional(string), start_ip_address = optional(string), end_ip_address = optional(string) }))` | `[]` | ❌ |
-
+|------|-------------|------|---------|:--------:|
+| <a name="input_administrator_password_key_vault_secret_name"></a> [administrator\_password\_key\_vault\_secret\_name](#input\_administrator\_password\_key\_vault\_secret\_name) | Name of the Key Vault secret containing the administrator password | `string` | `null` | no |
+| <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | Name of the private DNS zone for the PostgreSQL server | `string` | `null` | no |
+| <a name="input_firewall_rule"></a> [firewall\_rule](#input\_firewall\_rule) | List of firewall rules to allow access to the server | <pre>list(object({<br/>    name             = optional(string)<br/>    start_ip_address = optional(string)<br/>    end_ip_address   = optional(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_key_vault"></a> [key\_vault](#input\_key\_vault) | Key Vault configuration object (name, resource group, tags) | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
+| <a name="input_password_length"></a> [password\_length](#input\_password\_length) | Length of the generated administrator password | `number` | `20` | no |
+| <a name="input_postgresql_flexible_server"></a> [postgresql\_flexible\_server](#input\_postgresql\_flexible\_server) | Configuration object for the PostgreSQL Flexible Server | <pre>object({<br/>    name                              = string<br/>    location                          = string<br/>    version                           = optional(number)<br/>    public_network_access_enabled     = optional(bool)<br/>    administrator_login               = optional(string)<br/>    zone                              = optional(string)<br/>    storage_tier                      = optional(string)<br/>    storage_mb                        = optional(number)<br/>    sku_name                          = optional(string)<br/>    replication_role                  = optional(string)<br/>    create_mode                       = optional(string)<br/>    source_server_id                  = optional(string)<br/>    point_in_time_restore_time_in_utc = optional(string)<br/>    backup_retention_days             = optional(number)<br/>    maintenance_window = optional(object({<br/>      day_of_week  = number<br/>      start_hour   = number<br/>      start_minute = number<br/>    }))<br/>    authentication = optional(object({<br/>      active_directory_auth_enabled = bool<br/>      password_auth_enabled         = bool<br/>      tenant_id                     = optional(string)<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_postgresql_flexible_server_configuration"></a> [postgresql\_flexible\_server\_configuration](#input\_postgresql\_flexible\_server\_configuration) | Map of configuration parameters for the PostgreSQL Flexible Server | <pre>map(object({<br/>    name  = optional(string)<br/>    value = optional(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Name of the resource group where resources will be created | `string` | n/a | yes |
+| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of the subnet for the PostgreSQL Flexible Server | `string` | `null` | no |
+| <a name="input_tags"></a> [tags](#input_tags) | Map of tags to assign to resources | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input_tags_from_rg) | Whether to inherit tags from the resource group | `bool` | `false` | no |
+| <a name="input_vnet"></a> [vnet](#input_vnet) | Virtual Network configuration object (name, resource group, tags) | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
 
 ### Notes
 You can create the `administrator_password_key_vault_secret_name` with the `random_password` resource or you can add it as a input. Also, if you create the password with this resource, you will need to do a `terraform apply` on the resource `azurerm_key_vault_secret.password_create` before create the postresql flexible server.
@@ -84,8 +86,6 @@ PointInTimeRestore will do:
   6. If `point_in_time_restore_time_in_utc` is not within the retention period, the restore will fail.
 
   7. The format of `point_in_time_restore_time_in_utc` must be `Year-Month-DayTHour:Min:sec+00:00` or the restore will fail, for example `2025-03-14T08:26:31Z`(https://en.wikipedia.org/wiki/ISO_8601).
-
-
 
 ## Get list of PiTRs backups
 
@@ -127,6 +127,7 @@ values:
     public_network_access_enabled: false
     storage_mb: "65536"
     sku_name: "GP_Standard_D2ds_v5"
+    backup_retention_days: 30
     #create_mode: "PointInTimeRestore"
     #source_server_id: "/subscriptions/xxxxxx-xxxx-xxxx-xxxxxx/resourceGroups/example-resource-group/providers/Microsoft.DBforPostgreSQL/flexibleServers/example-flexible-server"
     #point_in_time_restore_time_in_utc: "2025-02-21T09:35:43Z"
