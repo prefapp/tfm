@@ -111,3 +111,25 @@ variable "point_in_time_utc_seconds" {
   type        = number
   default     = null
 }
+
+# Snapshot execution config variables
+variable "snapshot_execution_config" {
+  description = "Configuration for snapshot execution"
+  type = object({
+    reference_hour_of_day    = number
+    reference_minute_of_hour = number
+    restore_window_days      = number
+  })
+}
+
+# Scheduled retention policies for snapshots
+variable "scheduled_retention_policies" {
+  description = "Scheduled retention policies for snapshots"
+  type = object({
+    hourly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    daily    = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    weekly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    monthly  = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    yearly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+  })
+}
