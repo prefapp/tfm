@@ -5,6 +5,12 @@
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.35.0 |
 
+To create the postgresql flexible server you must have:
+ - A resource group.
+ - A virtual network.
+ - A keyvault to store/read a secret with the PostgreSQL admin pass.
+ - The dns and the subnet will be necesary when `public_network_access_enabled=false`.
+
 ## Providers
 
 | Name | Version |
