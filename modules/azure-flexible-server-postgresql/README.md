@@ -34,24 +34,18 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_administrator_password_key_vault_secret_name"></a> [administrator\_password\_key\_vault\_secret\_name](#input\_administrator\_password\_key\_vault\_secret\_name) | n/a | `string` | `null` | no |
-| <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | n/a | `string` | `null` | no |
-| <a name="input_firewall_rule"></a> [firewall\_rule](#input\_firewall\_rule) | n/a | <pre>list(object({<br/>    name             = optional(string)<br/>    start_ip_address = optional(string)<br/>    end_ip_address   = optional(string)<br/>  }))</pre> | `[]` | no |
-| <a name="input_key_vault"></a> [key\_vault](#input\_key\_vault) | n/a | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
-| <a name="input_password_length"></a> [password\_length](#input\_password\_length) | n/a | `number` | `20` | no |
-| <a name="input_postgresql_flexible_server"></a> [postgresql\_flexible\_server](#input\_postgresql\_flexible\_server) | n/a | <pre>object({<br/>    name                              = string<br/>    location                          = string<br/>    version                           = optional(number)<br/>    public_network_access_enabled     = optional(bool)<br/>    administrator_login               = optional(string)<br/>    zone                              = optional(string)<br/>    storage_tier                      = optional(string)<br/>    storage_mb                        = optional(number)<br/>    sku_name                          = optional(string)<br/>    replication_role                  = optional(string)<br/>    create_mode                       = optional(string)<br/>    source_server_id                  = optional(string)<br/>    point_in_time_restore_time_in_utc = optional(string)<br/>    backup_retention_days             = optional(number)<br/>    maintenance_window = optional(object({<br/>      day_of_week  = number<br/>      start_hour   = number<br/>      start_minute = number<br/>    }))<br/>    authentication = optional(object({<br/>      active_directory_auth_enabled = bool<br/>      password_auth_enabled         = bool<br/>      tenant_id                     = optional(string)<br/>    }))<br/>  })</pre> | n/a | yes |
-| <a name="input_postgresql_flexible_server_configuration"></a> [postgresql\_flexible\_server\_configuration](#input\_postgresql\_flexible\_server\_configuration) | n/a | <pre>map(object({<br/>    name  = optional(string)<br/>    value = optional(string)<br/>  }))</pre> | n/a | yes |
-| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | n/a | `string` | n/a | yes |
-| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | n/a | `string` | `null` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
-| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | n/a | `bool` | `false` | no |
-| <a name="input_vnet"></a> [vnet](#input\_vnet) | n/a | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | n/a |
+| <a name="input_administrator_password_key_vault_secret_name"></a> [administrator\_password\_key\_vault\_secret\_name](#input\_administrator\_password\_key\_vault\_secret\_name) | Name of the Key Vault secret containing the administrator password | `string` | `null` | no |
+| <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | Name of the private DNS zone for the PostgreSQL server | `string` | `null` | no |
+| <a name="input_firewall_rule"></a> [firewall\_rule](#input\_firewall\_rule) | List of firewall rules to allow access to the server | <pre>list(object({<br/>    name             = optional(string)<br/>    start_ip_address = optional(string)<br/>    end_ip_address   = optional(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_key_vault"></a> [key\_vault](#input\_key\_vault) | Key Vault configuration object (name, resource group, tags) | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
+| <a name="input_password_length"></a> [password\_length](#input\_password\_length) | Length of the generated administrator password | `number` | `20` | no |
+| <a name="input_postgresql_flexible_server"></a> [postgresql\_flexible\_server](#input\_postgresql\_flexible\_server) | Configuration object for the PostgreSQL Flexible Server | <pre>object({<br/>    name                              = string<br/>    location                          = string<br/>    version                           = optional(number)<br/>    public_network_access_enabled     = optional(bool)<br/>    administrator_login               = optional(string)<br/>    zone                              = optional(string)<br/>    storage_tier                      = optional(string)<br/>    storage_mb                        = optional(number)<br/>    sku_name                          = optional(string)<br/>    replication_role                  = optional(string)<br/>    create_mode                       = optional(string)<br/>    source_server_id                  = optional(string)<br/>    point_in_time_restore_time_in_utc = optional(string)<br/>    backup_retention_days             = optional(number)<br/>    maintenance_window = optional(object({<br/>      day_of_week  = number<br/>      start_hour   = number<br/>      start_minute = number<br/>    }))<br/>    authentication = optional(object({<br/>      active_directory_auth_enabled = bool<br/>      password_auth_enabled         = bool<br/>      tenant_id                     = optional(string)<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_postgresql_flexible_server_configuration"></a> [postgresql\_flexible\_server\_configuration](#input\_postgresql\_flexible\_server\_configuration) | Map of configuration parameters for the PostgreSQL Flexible Server | <pre>map(object({<br/>    name  = optional(string)<br/>    value = optional(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Name of the resource group where resources will be created | `string` | n/a | yes |
+| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of the subnet for the PostgreSQL Flexible Server | `string` | `null` | no |
+| <a name="input_tags"></a> [tags](#input_tags) | Map of tags to assign to resources | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input_tags_from_rg) | Whether to inherit tags from the resource group | `bool` | `false` | no |
+| <a name="input_vnet"></a> [vnet](#input_vnet) | Virtual Network configuration object (name, resource group, tags) | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
 
 ### Notes
 You can create the `administrator_password_key_vault_secret_name` with the `random_password` resource or you can add it as a input. Also, if you create the password with this resource, you will need to do a `terraform apply` on the resource `azurerm_key_vault_secret.password_create` before create the postresql flexible server.
@@ -86,8 +80,6 @@ PointInTimeRestore will do:
   6. If `point_in_time_restore_time_in_utc` is not within the retention period, the restore will fail.
 
   7. The format of `point_in_time_restore_time_in_utc` must be `Year-Month-DayTHour:Min:sec+00:00` or the restore will fail, for example `2025-03-14T08:26:31Z`(https://en.wikipedia.org/wiki/ISO_8601).
-
-
 
 ## Get list of PiTRs backups
 
