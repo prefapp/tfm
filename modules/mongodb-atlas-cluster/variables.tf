@@ -183,8 +183,10 @@ variable "scheduled_retention_policies" {
       (
         !contains(keys(var.scheduled_retention_policies), "monthly") ||
         (
-          var.scheduled_retention_policies.monthly.frequency_interval >= 1 &&
-          var.scheduled_retention_policies.monthly.frequency_interval <= 28 &&
+          (
+        (var.scheduled_retention_policies.monthly.frequency_interval >= 1 && var.scheduled_retention_policies.monthly.frequency_interval <= 28) ||
+        var.scheduled_retention_policies.monthly.frequency_interval == 40
+          ) &&
           contains(["days", "weeks", "months", "years"], var.scheduled_retention_policies.monthly.retention_unit)
         )
       )
