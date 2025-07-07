@@ -22,7 +22,7 @@ This module creates a MongoDB Atlas cluster.
   - Empty
   - From a snapshot (incompatible with the PiTR)
   - From a PiTR (incompatible with the snapshot)
-- It is mandatory to configure snapshot_execution_config even if you do not want to configure backup policies.
+- It is mandatory to configure `snapshot_execution_config` even if you do not want to configure backup policies.
 
 ## Usage
 
