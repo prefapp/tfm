@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.1](https://github.com/prefapp/tfm/compare/mongodb-atlas-cluster-v0.3.0...mongodb-atlas-cluster-v0.3.1) (2025-07-07)
+
+
+### Bug Fixes
+
+* Mongodb atlas cluster module ([#680](https://github.com/prefapp/tfm/issues/680)) ([ac9e1e8](https://github.com/prefapp/tfm/commit/ac9e1e8841654dd1b087dcf983e45b3d7ea7cc1d))
+
+## [0.3.0](https://github.com/prefapp/tfm/compare/mongodb-atlas-cluster-v0.2.1...mongodb-atlas-cluster-v0.3.0) (2025-07-03)
+
+
+### Features
+
+* Add backup policies on mongodb-atlas-cluster module ([#678](https://github.com/prefapp/tfm/issues/678)) ([09fef86](https://github.com/prefapp/tfm/commit/09fef862c69bd2cd50a22e9400765f3d80a62d47))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/mongodb-atlas-cluster-v0.2.0...mongodb-atlas-cluster-v0.2.1) (2025-04-24)
 
 
