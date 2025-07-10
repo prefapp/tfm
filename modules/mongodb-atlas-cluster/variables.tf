@@ -111,3 +111,96 @@ variable "point_in_time_utc_seconds" {
   type        = number
   default     = null
 }
+
+# Snapshot execution config variables
+variable "snapshot_execution_config" {
+  description = "Configuration for snapshot execution"
+  type = object({
+    reference_hour_of_day    = number
+    reference_minute_of_hour = number
+    restore_window_days      = number
+  })
+}
+
+# Scheduled retention policies for snapshots
+variable "scheduled_retention_policies" {
+  description = "Scheduled retention policies for snapshots"
+  type = object({
+    hourly = optional(object({
+      frequency_interval = number
+      retention_unit     = string
+      retention_value    = number
+    }))
+    daily = optional(object({
+      frequency_interval = number
+      retention_unit     = string
+      retention_value    = number
+    }))
+    weekly = optional(object({
+      frequency_interval = number
+      retention_unit     = string
+      retention_value    = number
+    }))
+    monthly = optional(object({
+      frequency_interval = number
+      retention_unit     = string
+      retention_value    = number
+    }))
+    yearly = optional(object({
+      frequency_interval = number
+      retention_unit     = string
+      retention_value    = number
+    }))
+  })
+
+  validation {
+    condition = (
+      (
+        !contains(keys(var.scheduled_retention_policies), "hourly") ||
+        (
+          contains([1, 2, 4, 6, 8, 12], var.scheduled_retention_policies.hourly.frequency_interval) &&
+          contains(["days", "weeks", "months", "years"], var.scheduled_retention_policies.hourly.retention_unit)
+        )
+      )
+      &&
+      (
+        !contains(keys(var.scheduled_retention_policies), "daily") ||
+        (
+          var.scheduled_retention_policies.daily.frequency_interval > 0 &&
+          contains(["days", "weeks", "months", "years"], var.scheduled_retention_policies.daily.retention_unit)
+        )
+      )
+      &&
+      (
+        !contains(keys(var.scheduled_retention_policies), "weekly") ||
+        (
+          var.scheduled_retention_policies.weekly.frequency_interval >= 1 &&
+          var.scheduled_retention_policies.weekly.frequency_interval <= 7 &&
+          contains(["days", "weeks", "months", "years"], var.scheduled_retention_policies.weekly.retention_unit)
+        )
+      )
+      &&
+      (
+        !contains(keys(var.scheduled_retention_policies), "monthly") ||
+        (
+          (
+            (
+              var.scheduled_retention_policies.monthly.frequency_interval >= 1 && var.scheduled_retention_policies.monthly.frequency_interval <= 28) ||
+              var.scheduled_retention_policies.monthly.frequency_interval == 40
+            ) &&
+          contains(["days", "weeks", "months", "years"], var.scheduled_retention_policies.monthly.retention_unit)
+        )
+      )
+      &&
+      (
+        !contains(keys(var.scheduled_retention_policies), "yearly") ||
+        (
+          var.scheduled_retention_policies.yearly.frequency_interval >= 1 &&
+          var.scheduled_retention_policies.yearly.frequency_interval <= 12 &&
+          contains(["days", "weeks", "months", "years"], var.scheduled_retention_policies.yearly.retention_unit)
+        )
+      )
+    )
+    error_message = "Retention policy values are invalid. Check allowed values for frequency_interval and retention_unit for each policy type."
+  }
+}

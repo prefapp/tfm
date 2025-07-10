@@ -22,6 +22,7 @@ This module creates a MongoDB Atlas cluster.
   - Empty
   - From a snapshot (incompatible with the PiTR)
   - From a PiTR (incompatible with the snapshot)
+- It is mandatory to configure `snapshot_execution_config` even if you do not want to configure backup policies.
 
 ## Usage
 
@@ -36,6 +37,30 @@ module "mongodb-atlas-cluster" {
 ### Set a data .tfvars
 
 #### Example clear cluster
+
+
+# Snapshot execution config variables
+variable "snapshot_execution_config" {
+  description = "Configuration for snapshot execution"
+  type = object({
+    reference_hour_of_day    = number
+    reference_minute_of_hour = number
+    restore_window_days      = number
+  })
+}
+
+# Scheduled retention policies for snapshots
+# Scheduled retention policies for snapshots
+variable "scheduled_retention_policies" {
+  description = "Scheduled retention policies for snapshots"
+  type = object({
+    hourly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    daily    = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    weekly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    monthly  = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+    yearly   = optional(object({ frequency_interval = number, retention_unit = string, retention_value = number }))
+  })
+}
 
 ```hcl
 project_id = "XXXXXXXXXXXXXXXXXXXXXXXX"
@@ -55,6 +80,28 @@ cluster_provider_disk_type_name = "PREMIUM"
 cluster_provider_instance_size_name = "M10"
 cluster_num_shards = 1
 cluster_zone = "US_EAST_1A"
+snapshot_execution_config {
+  reference_hour_of_day    = 0
+  reference_minute_of_hour = 0
+  restore_window_days      = 30
+}
+scheduled_retention_policies {
+  hourly = {
+    frequency_interval = 1
+    retention_unit     = "HOURS"
+    retention_value    = 24
+  }
+  daily = {
+    frequency_interval = 1
+    retention_unit     = "DAYS"
+    retention_value    = 7
+  }
+  weekly = {
+    frequency_interval = 1
+    retention_unit     = "WEEKS"
+    retention_value    = 4
+  }
+}
 ```
 
 #### Example cluster from snapshot
@@ -77,6 +124,11 @@ cluster_provider_disk_type_name = "PREMIUM"
 cluster_provider_instance_size_name = "M10"
 cluster_num_shards = 1
 cluster_zone = "US_EAST_1A"
+snapshot_execution_config {
+  reference_hour_of_day    = 0
+  reference_minute_of_hour = 0
+  restore_window_days      = 30
+}
 
 create_cluster_from_snapshot = true
 # create_cluster_from_pit = false
@@ -104,6 +156,11 @@ cluster_provider_disk_type_name = "PREMIUM"
 cluster_provider_instance_size_name = "M10"
 cluster_num_shards = 1
 cluster_zone = "US_EAST_1A"
+snapshot_execution_config {
+  reference_hour_of_day    = 0
+  reference_minute_of_hour = 0
+  restore_window_days      = 30
+}
 
 create_cluster_from_pitr = true
 # create_cluster_from_snapshot = false
@@ -111,143 +168,6 @@ pitr_timestamp = "1734481935" # UNIX timestamp
 ```
 
 ## Inputs
-
-
-<!-- # Global variables
-variable "mongo_region" {
-  description = "The mongo region"
-  type        = string
-}
-
-variable "provider_name" {
-  description = "The provider name"
-  type        = string
-}
-
-variable "project_id" {
-  description = "The project ID"
-  type        = string
-}
-
-# Cluster seccion variables
-variable "cluster_name" {
-  description = "The name of the cluster"
-  type        = string
-}
-
-variable "cluster_type" {
-  description = "The type of the cluster"
-  type        = string
-}
-
-variable "cluster_replication_specs_config_analytics_nodes" {
-  description = "The number of analytics nodes"
-  type        = number
-}
-
-variable "cluster_replication_specs_config_electable_nodes" {
-  description = "The number of electable nodes"
-  type        = number
-}
-
-variable "cluster_replication_specs_config_priority" {
-  description = "Priority value"
-  type        = number
-}
-
-variable "cluster_replication_specs_config_read_only_nodes" {
-  description = "The number of read only nodes"
-  type        = number
-}
-
-variable "cluster_cloud_backup" {
-  description = "Whether or not cloud backup is enabled"
-  type        = bool
-}
-
-variable "cluster_auto_scaling_disk_gb_enabled" {
-  description = "Whether or not disk autoscaling is enabled"
-  type        = bool
-}
-
-variable "cluster_mongo_db_major_version" {
-  description = "MongoDB major version"
-  type        = string
-}
-
-variable "cluster_provider_disk_type_name" {
-  description = "Provider disk type name"
-  type        = string
-}
-
-variable "cluster_provider_instance_size_name" {
-  description = "Provider instance size name"
-  type        = string
-}
-
-variable "cluster_num_shards" {
-  description = "The number of shards"
-  type        = number
-}
-
-variable "cluster_zone" {
-  description = "The zones of the cluster"
-  type        = string
-}
-
-# Restore from snapshot variables
-variable "create_cluster_from_snapshot" {
-  description = "Whether or not to create a cluster from a snapshot"
-  type        = bool
-  default     = false
-  validation {
-    condition     = var.create_cluster_from_pitr == true
-    error_message = "If create_cluster_from_snapshot is true, create_cluster_from_pitr must be false"
-  }
-  validation {
-    condition     = var.origin_project_id == null
-    error_message = "If create_cluster_from_snapshot is true, origin_project_id must be set"
-  }
-  validation {
-    condition     = var.origin_cluster_name == null
-    error_message = "If create_cluster_from_snapshot is true, origin_cluster_name must be set"
-  }
-}
-
-variable "origin_project_id" {
-  description = "The origin project ID"
-  type        = string
-}
-
-variable "origin_cluster_name" {
-  description = "The origin cluster name"
-  type        = string
-}
-
-# Restore from pitr variables
-variable "create_cluster_from_pitr" {
-  description = "Whether or not to create a cluster from a point in time restore"
-  type        = bool
-  default     = false
-  validation {
-    condition     = var.create_cluster_from_snapshot == true
-    error_message = "If create_cluster_from_pi is true, create_cluster_from_snapshot must be false"
-  }
-  validation {
-    condition     = var.point_in_time_utc_seconds == null
-    error_message = "If create_cluster_from_pi is true, point_in_time_utc_seconds must be set"
-  }
-}
-
-variable "point_in_time_utc_seconds" {
-  description = "The point in time to restore from"
-  type        = number
-  default     = null
-} -->
-
-
-
-
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_project_id"></a> [project_id](#input\_project\_id) | The project ID to create the cluster in | `string` | n/a | yes |
@@ -271,3 +191,5 @@ variable "point_in_time_utc_seconds" {
 | <a name="input_origin_cluster_name"></a> [origin_cluster_name](#input\_origin\_cluster\_name) | The origin cluster name | `string` | `null` | yes (only if create_cluster_from_snapshot is true) |
 | <a name="input_create_cluster_from_pitr"></a> [create_cluster_from_pitr](#input\_create\_cluster\_from\_pitr) | Whether or not to create a cluster from a point in time restore (incompatible with the snapshot) | `bool` | `false` | no |
 | <a name="input_pitr_timestamp"></a> [pitr_timestamp](#input\_pitr\_timestamp) | The point in time to restore from | `number` | `null` | yes (only if create_cluster_from_pitr is true) |
+| <a name="input_snapshot_execution_config"></a> [snapshot_execution_config](#input\_snapshot\_execution\_config) | Configuration for snapshot execution | `object` | `{ reference_hour_of_day = 0, reference_minute_of_hour = 0, restore_window_days = 30 }` | yes |
+| <a name="input_scheduled_retention_policies"></a> [scheduled_retention_policies](#input\_scheduled\_retention\_policies) | Scheduled retention policies for snapshots | `object` | `{ hourly = null, daily = null, weekly = null, monthly = null, yearly = null }` | no |

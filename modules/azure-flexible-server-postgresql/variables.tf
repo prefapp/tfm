@@ -56,6 +56,7 @@ variable "postgresql_flexible_server" {
     create_mode                       = optional(string)
     source_server_id                  = optional(string)
     point_in_time_restore_time_in_utc = optional(string)
+    backup_retention_days             = optional(number)
     maintenance_window = optional(object({
       day_of_week  = number
       start_hour   = number
