@@ -1,12 +1,12 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 # Role assignment RG
 resource "azurerm_role_assignment" "this_rg" {
-    scope                = data.azurerm_resource_group.resource_group.id
-    role_definition_name = "Disk Snapshot Contributor" #Inputs
-    principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-    depends_on = [
-      azurerm_data_protection_backup_vault.this
-    ]
+  scope                = data.azurerm_resource_group.resource_group.id
+  role_definition_name = "Disk Snapshot Contributor" #Inputs
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  depends_on = [
+    azurerm_data_protection_backup_vault.this
+  ]
 }
 
 # Role assignment blob
@@ -19,10 +19,10 @@ resource "azurerm_role_assignment" "this_blob" {
 
 # Role assignment Disks
 resource "azurerm_role_assignment" "this_disk" {
-    for_each             = data.azurerm_managed_disk.this
-    scope                = each.value.id
-    role_definition_name = each.value.role_assignment
-    principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  for_each             = data.azurerm_managed_disk.this
+  scope                = each.value.id
+  role_definition_name = each.value.role_assignment
+  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
 }
 
 # Role assignment kubernetes services

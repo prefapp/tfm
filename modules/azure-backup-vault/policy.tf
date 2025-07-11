@@ -1,13 +1,13 @@
 resource "azurerm_data_protection_backup_policy" "this" {
   for_each = { for p in var.policy : p.name => p }
 
-  name                = each.value.name
-  vault_id            = each.value.vault_id
-  time_zone           = each.value.time_zone
-  backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
+  name                                   = each.value.name
+  vault_id                               = each.value.vault_id
+  time_zone                              = each.value.time_zone
+  backup_repeating_time_intervals        = each.value.backup_repeating_time_intervals
   operational_default_retention_duration = each.value.operational_default_retention_duration
-  vault_default_retention_duration = each.value.vault_default_retention_duration
-  retention_duration = each.value.retention_duration
+  vault_default_retention_duration       = each.value.vault_default_retention_duration
+  retention_duration                     = each.value.retention_duration
 
   dynamic "retention_rule" {
     for_each = each.value.retention_rule

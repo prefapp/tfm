@@ -1,38 +1,57 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault
-resource "azurerm_data_protection_backup_vault" "disk" {
-  count               = var.backup_disk != null ? 1 : 0
-  name                = var.backup_disk.vault_name
-  resource_group_name = data.azurerm_resource_group.name
-  location            = data.azurerm_resource_group.resource_group.location
-  datastore_type      = var.backup_disk.datastore_type
-  redundancy          = var.backup_disk.redundancy
-  tags                = local.tags
-  identity {
-    type = "SystemAssigned"
-    }
+# Role assignment: Backup Contributor al vault
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
+resource "azurerm_role_assignment" "vault_backup_contributor" {
+  scope                = azurerm_data_protection_backup_vault.this.id
+  role_definition_name = "Backup Contributor"
+  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+}
 
-  lifecycle {
-    ignore_changes = [tags]
+# Role assignment: Disk Backup Reader a cada disco
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
+resource "azurerm_role_assignment" "disk_backup_reader" {
+  for_each             = var.disk_instances
+  scope                = data.azurerm_managed_disk.this[each.value.instance_disk_name].id
+  role_definition_name = "Disk Backup Reader"
+  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+}
+
+# Disk backup policies
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_disk
+resource "azurerm_data_protection_backup_policy_disk" "this" {
+  for_each                        = var.disk_policies
+  name                            = each.value.policy_name
+  vault_id                        = azurerm_data_protection_backup_vault.this.id
+  backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
+  default_retention_duration      = each.value.default_retention_duration
+  time_zone                       = try(each.value.time_zone, null)
+
+  dynamic "retention_rule" {
+    for_each = each.value.retention_rule
+    content {
+      name     = retention_rule.value.name
+      duration = retention_rule.value.duration
+      priority = retention_rule.value.priority
+      criteria {
+        absolute_criteria = try(retention_rule.value.criteria.absolute_criteria, null)
+      }
+    }
   }
 }
 
-# Disk instance backup
+# Disk instance backups
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_disk
 resource "azurerm_data_protection_backup_instance_disk" "this" {
-  for_each = {
-    for instance in var.backup_disk : instance.disk_name => instance
-  }
+  for_each = var.disk_instances
 
-  name                         = each.key
+  name                         = each.value.instance_disk_name
   location                     = data.azurerm_resource_group.this.location
   vault_id                     = azurerm_data_protection_backup_vault.this.id
-  disk_id                      = data.azurerm_managed_disk.this[each.key].id
+  disk_id                      = data.azurerm_managed_disk.this[each.value.instance_disk_name].id
   snapshot_resource_group_name = data.azurerm_resource_group.resource_group.name
-  backup_policy_id             = azurerm_data_protection_backup_policy_disk.this[each.value.backup_policy_name].id
+  backup_policy_id             = azurerm_data_protection_backup_policy_disk.this[each.value.policy_key].id
 
   depends_on = [
-    azurerm_role_assignment.this_rg,
-    azurerm_role_assignment.this_disk
+    azurerm_role_assignment.vault_backup_contributor,
+    azurerm_role_assignment.disk_backup_reader
   ]
 }
-
