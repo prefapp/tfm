@@ -33,35 +33,6 @@ variable "vault" {
   })
 }
 
-# Backup vault policies
-variable "policy" {
-  description = "List of backup policies"
-  type = list(object({
-    name                                   = string
-    vault_id                               = string
-    backup_repeating_time_intervals        = list(string)
-    operational_default_retention_duration = string
-    retention_rule = list(object({
-      name     = string
-      duration = string
-      criteria = object({
-        days_of_week  = optional(list(string))
-        days_of_month = optional(list(number))
-      })
-      life_cycle = object({
-        data_store_type = string
-        duration        = string
-      })
-      priority = number
-    }))
-    time_zone                        = string
-    vault_default_retention_duration = string
-    retention_duration               = string
-  }))
-  default = []
-}
-
-
 # Disk backup variables
 variable "disk_policies" {
   description = "Map of backup policies for disks"
