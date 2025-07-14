@@ -1,4 +1,5 @@
 # Role assignment: Backup Contributor to the vault
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_backup_contributor" {
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
@@ -6,6 +7,7 @@ resource "azurerm_role_assignment" "vault_backup_contributor" {
 }
 
 # Role assignment: MySQL Flexible Server Backup Contributor to each server
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "mysql_backup_contributor" {
   for_each             = var.mysql_instances
   scope                = each.value.server_id
@@ -14,6 +16,7 @@ resource "azurerm_role_assignment" "mysql_backup_contributor" {
 }
 
 # Role assignment: Reader on the resource group of the server
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "mysql_rg_reader" {
   for_each             = var.mysql_instances
   scope                = each.value.resource_group_id
@@ -59,6 +62,7 @@ resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
 }
 
 # Backup instance for MySQL Flexible Server
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_mysql_flexible_server
 resource "azurerm_data_protection_backup_instance_mysql_flexible_server" "this" {
   for_each         = var.mysql_instances
   name             = each.value.instance_name

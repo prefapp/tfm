@@ -1,4 +1,5 @@
-# Role assignment: Storage Account Backup Contributor para cada storage account usado en blobs
+# Role assignment: Storage Account Backup Contributor for each storage account used in blobs
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
   for_each             = { for k, v in var.blob_instances : v.storage_account_id => v if v.storage_account_id != null }
   scope                = each.key
