@@ -15,3 +15,10 @@ data "azurerm_managed_disk" "this" {
   name                = each.value.disk_name
   resource_group_name = each.value.disk_resource_group
 }
+
+# Data source to get cluster ID by name
+data "azurerm_kubernetes_cluster" "this" {
+  for_each            = var.kubernetes_instances
+  name                = each.value.cluster_name
+  resource_group_name = each.value.resource_group_name
+}

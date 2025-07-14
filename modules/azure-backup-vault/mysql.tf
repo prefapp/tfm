@@ -22,20 +22,31 @@ resource "azurerm_role_assignment" "mysql_rg_reader" {
 }
 
 # Backup policy for MySQL Flexible Server
-resource "azurerm_data_protection_backup_policy_mysql" "this" {
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_mysql_flexible_server
+resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
   for_each                        = var.mysql_policies
   name                            = each.value.policy_name
-  vault_name                      = azurerm_data_protection_backup_vault.this.name
-  resource_group_name             = azurerm_data_protection_backup_vault.this.resource_group_name
-  default_retention_duration      = each.value.default_retention_duration
+  vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
   time_zone                       = try(each.value.time_zone, null)
+  dynamic "default_retention_rule" {
+    for_each = try(each.value.default_retention_rule, [])
+    content {
+      life_cycle {
+        duration        = default_retention_rule.value.life_cycle.duration
+        data_store_type = default_retention_rule.value.life_cycle.data_store_type
+      }
+    }
+  }
   dynamic "retention_rule" {
     for_each = try(each.value.retention_rule, [])
     content {
       name     = retention_rule.value.name
-      duration = retention_rule.value.duration
       priority = retention_rule.value.priority
+      life_cycle {
+        data_store_type = retention_rule.value.life_cycle.data_store_type
+        duration        = retention_rule.value.life_cycle.duration
+      }
       criteria {
         absolute_criteria      = try(retention_rule.value.criteria.absolute_criteria, null)
         days_of_week           = try(retention_rule.value.criteria.days_of_week, null)
@@ -49,17 +60,15 @@ resource "azurerm_data_protection_backup_policy_mysql" "this" {
 
 # Backup instance for MySQL Flexible Server
 resource "azurerm_data_protection_backup_instance_mysql_flexible_server" "this" {
-  for_each           = var.mysql_instances
-  name               = each.value.instance_name
-  location           = data.azurerm_resource_group.resource_group.location
-  vault_id           = azurerm_data_protection_backup_vault.this.id
-  server_id          = each.value.server_id
-  backup_policy_id   = azurerm_data_protection_backup_policy_mysql.this[each.value.policy_key].id
-  depends_on         = [
+  for_each         = var.mysql_instances
+  name             = each.value.instance_name
+  location         = data.azurerm_resource_group.resource_group.location
+  vault_id         = azurerm_data_protection_backup_vault.this.id
+  server_id        = each.value.server_id
+  backup_policy_id = azurerm_data_protection_backup_policy_mysql_flexible_server.this[each.value.policy_key].id
+  depends_on = [
     azurerm_role_assignment.vault_backup_contributor,
     azurerm_role_assignment.mysql_backup_contributor,
     azurerm_role_assignment.mysql_rg_reader
   ]
 }
-
-

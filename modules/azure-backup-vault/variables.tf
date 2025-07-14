@@ -1,9 +1,22 @@
-# Common variables for Azure Backup Vault module
+# Common variables for Backup Vault
 variable "backup_resource_group_name" {
   description = "Name of the resource group for backups"
   type        = string
 }
 
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
+# Backup vault
 variable "vault" {
   description = "Backup vault configuration"
   type = object({
@@ -21,7 +34,36 @@ variable "vault" {
   default = {}
 }
 
-# Disk variables
+# Backup vault policies
+variable "policy" {
+  description = "List of backup policies"
+  type = list(object({
+    name                                   = string
+    vault_id                               = string
+    backup_repeating_time_intervals        = list(string)
+    operational_default_retention_duration = string
+    retention_rule = list(object({
+      name     = string
+      duration = string
+      criteria = object({
+        days_of_week  = optional(list(string))
+        days_of_month = optional(list(number))
+      })
+      life_cycle = object({
+        data_store_type = string
+        duration        = string
+      })
+      priority = number
+    }))
+    time_zone                        = string
+    vault_default_retention_duration = string
+    retention_duration               = string
+  }))
+  default = []
+}
+
+
+# Disk backup variables
 variable "disk_policies" {
   description = "Map of backup policies for disks"
   type = map(object({
@@ -41,6 +83,7 @@ variable "disk_policies" {
   default = {}
 }
 
+# Disk backup instances
 variable "disk_instances" {
   description = "Map of backup instances for disks"
   type = map(object({
@@ -50,22 +93,7 @@ variable "disk_instances" {
   default = {}
 }
 
-# Blob variables
-variable "backup_blob" {
-  description = "Configuration for blob storage backups"
-  type = object({
-    storage_account_id              = string
-    vault_name                      = string
-    datastore_type                  = string
-    redundancy                      = string
-    identity_type                   = string
-    instance_blob_name              = string
-    storage_account_container_names = list(string)
-    role_assignment                 = string
-  })
-  default = {}
-}
-
+# Blob backup policies
 variable "blob_policies" {
   description = "Map of backup policies for blobs"
   type = map(object({
@@ -94,8 +122,9 @@ variable "blob_policies" {
   default = {}
 }
 
+# Blob backup instances
 variable "blob_instances" {
-  description = "Map of blob backup instances"
+  description = "Map of backup instances for blobs"
   type = map(object({
     instance_blob_name              = string
     storage_account_id              = string
@@ -105,7 +134,7 @@ variable "blob_instances" {
   default = {}
 }
 
-# Postgresql flexible server variables
+# Postgresql backup policies
 variable "postgresql_policies" {
   description = "Map of backup policies for PostgreSQL Flexible Server"
   type = map(object({
@@ -122,15 +151,16 @@ variable "postgresql_policies" {
         months_of_year         = optional(list(string))
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
-        days_of_week  = optional(list(string))
+        days_of_week           = optional(list(string))
       })
     }))
   }))
   default = {}
 }
 
+#Postgresql backup instances
 variable "postgresql_instances" {
-  description = "Map of PostgreSQL Flexible Server backup instances"
+  description = "Map of backup instances for PostgreSQL Flexible Server"
   type = map(object({
     instance_name     = string
     server_id         = string
@@ -140,49 +170,27 @@ variable "postgresql_instances" {
   default = {}
 }
 
-# Kubernetes services variables
-variable "backup_kubernetes_services" {
-  description = "Configuration for Kubernetes services backups"
-  type = object({
-    name                     = string
-    datastore_type           = string
-    redundancy               = string
-    instance_kubernetes_name = string
-    cluster_ids              = list(string)
-    role_assignment          = string
-  })
-}
 
-variable "extension" {
-  description = "Configuration for the kubernetes cluster extension"
-  type = object({
-    name           = string
-    extension_type = string
-  })
-}
-
-variable "trusted_role" {
-  description = "Configuration for the cluster access role binding"
-  type = object({
-    name  = string
-    roles = list(string)
-  })
-}
-
-
-
-# MySQL flexible variables
+# MySQL backup policies
 variable "mysql_policies" {
-  description = "Map of backup policies for MySQL Flexible Server. The key is the logical name of the policy."
+  description = "Map of backup policies for MySQL Flexible Server"
   type = map(object({
     policy_name                     = string
     backup_repeating_time_intervals = list(string)
-    default_retention_duration      = string
     time_zone                       = optional(string)
+    default_retention_rule = list(object({
+      life_cycle = object({
+        duration        = string
+        data_store_type = string
+      })
+    }))
     retention_rule = optional(list(object({
       name     = string
-      duration = string
       priority = number
+      life_cycle = object({
+        data_store_type = string
+        duration        = string
+      })
       criteria = object({
         absolute_criteria      = optional(string)
         days_of_week           = optional(list(string))
@@ -195,41 +203,72 @@ variable "mysql_policies" {
   default = {}
 }
 
+# MySQL backup instances
 variable "mysql_instances" {
-  description = "Map of MySQL Flexible Server backup instances. The key is the logical name of the instance."
+  description = "Map of MySQL Flexible Server backup instances"
   type = map(object({
     instance_name     = string
     server_id         = string
-    resource_group_id = string # Resource group of the server, required for Reader role assignment
-    policy_key        = string # Must match a key in mysql_policies
+    resource_group_id = string
+    policy_key        = string
   }))
   default = {}
 }
 
-# Policy variables
-variable "policy" {
-  description = "List of backup policies"
-  type = list(object({
-    name                                   = string
-    vault_id                               = string
-    backup_repeating_time_intervals        = list(string)
-    operational_default_retention_duration = string
-    retention_rule = list(object({
-      name     = string
-      duration = string
-      criteria = object({
-        days_of_week  = optional(list(string))
-        days_of_month = optional(list(number))
+# Kubernetes backup policies
+variable "kubernetes_policies" {
+  description = "Map of backup policies for Kubernetes clusters"
+  type = map(object({
+    policy_name                     = string
+    backup_repeating_time_intervals = list(string)
+    time_zone                       = optional(string)
+    default_retention_rule = object({
+      life_cycle = object({
+        duration        = string
+        data_store_type = string
       })
+    })
+    retention_rule = optional(list(object({
+      name     = string
+      priority = number
       life_cycle = object({
         data_store_type = string
         duration        = string
       })
-      priority = number
-    }))
-    time_zone                        = string
-    vault_default_retention_duration = string
-    retention_duration               = string
+      criteria = object({
+        absolute_criteria      = optional(string)
+        days_of_week           = optional(list(string))
+        months_of_year         = optional(list(string))
+        weeks_of_month         = optional(list(string))
+        scheduled_backup_times = optional(list(string))
+      })
+    })))
   }))
+  default = {}
 }
 
+# Kubernetes backup instances
+variable "kubernetes_instances" {
+  description = "Map of Kubernetes cluster backup instances"
+  type = map(object({
+    instance_name                = string
+    cluster_name                 = string
+    snapshot_resource_group_name = string
+    policy_key                   = string
+    backup_datasource_parameters = object({
+      excluded_namespaces              = optional(list(string))
+      excluded_resource_types          = optional(list(string))
+      cluster_scoped_resources_enabled = optional(bool)
+      included_namespaces              = optional(list(string))
+      included_resource_types          = optional(list(string))
+      label_selectors                  = optional(map(string))
+      volume_snapshot_enabled          = optional(bool)
+    })
+    extension_configuration = optional(object({
+      bucket_name                 = optional(string)
+      bucket_resource_group_name  = optional(string)
+      bucket_storage_account_name = optional(string)
+    }))
+  }))
+  default = {}
+}
