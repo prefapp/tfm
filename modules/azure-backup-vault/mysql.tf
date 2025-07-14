@@ -3,7 +3,7 @@
 resource "azurerm_role_assignment" "vault_backup_contributor_mysql" {
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: MySQL Flexible Server Backup Contributor to each server
@@ -12,7 +12,7 @@ resource "azurerm_role_assignment" "mysql_backup_contributor" {
   for_each             = var.mysql_instances
   scope                = each.value.server_id
   role_definition_name = "MySQL Flexible Server Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: Reader on the resource group of the server
@@ -21,7 +21,7 @@ resource "azurerm_role_assignment" "mysql_rg_reader" {
   for_each             = var.mysql_instances
   scope                = each.value.resource_group_id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Backup policy for MySQL Flexible Server

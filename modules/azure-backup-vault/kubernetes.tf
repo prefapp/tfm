@@ -3,7 +3,7 @@
 resource "azurerm_role_assignment" "vault_backup_contributor_kubernetes" {
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: Kubernetes Backup Contributor to each cluster
@@ -12,7 +12,7 @@ resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
   for_each             = var.kubernetes_instances
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
   role_definition_name = "Kubernetes Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment for restore operations
@@ -21,7 +21,7 @@ resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
   for_each             = var.kubernetes_instances
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
   role_definition_name = "Kubernetes Cluster Admin"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Cluster extension for backup

@@ -3,7 +3,7 @@
 resource "azurerm_role_assignment" "vault_backup_contributor_postgresql" {
   scope                = azurerm_data_protection_backup_vault.postgresql.id
   role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: PostgreSQL Flexible Server Backup Contributor to each server
@@ -12,7 +12,7 @@ resource "azurerm_role_assignment" "postgresql_backup_contributor" {
   for_each             = var.postgresql_instances
   scope                = each.value.server_id
   role_definition_name = "PostgreSQL Flexible Server Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: PostgreSQL Flexible Server Long Term Retention Backup on the server
@@ -21,7 +21,7 @@ resource "azurerm_role_assignment" "postgresql_ltr_backup" {
   for_each             = var.postgresql_instances
   scope                = each.value.server_id
   role_definition_name = "PostgreSQL Flexible Server Long Term Retention Backup"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: Reader on the resource group of the server
@@ -30,7 +30,7 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
   for_each             = var.postgresql_instances
   scope                = each.value.resource_group_id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Backup policy for PostgreSQL Flexible Server

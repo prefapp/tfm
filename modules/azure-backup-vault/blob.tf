@@ -4,7 +4,7 @@ resource "azurerm_role_assignment" "this" {
   for_each             = { for k, v in var.blob_instances : v.storage_account_id => v if v.storage_account_id != null }
   scope                = each.key
   role_definition_name = "Storage Account Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Blob backup policies
