@@ -42,6 +42,7 @@
 | [azurerm_role_assignment.vault_backup_contributor_kubernetes](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.vault_backup_contributor_mysql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.vault_backup_contributor_postgresql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 | [azurerm_kubernetes_cluster.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/kubernetes_cluster) | data source |
 | [azurerm_managed_disk.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/managed_disk) | data source |
 | [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
@@ -64,14 +65,10 @@
 | <a name="input_postgresql_policies"></a> [postgresql\_policies](#input\_postgresql\_policies) | Map of backup policies for PostgreSQL Flexible Server | <pre>map(object({<br/>    policy_name                     = string<br/>    backup_repeating_time_intervals = list(string)<br/>    default_retention_duration      = string<br/>    time_zone                       = optional(string)<br/>    retention_rule = list(object({<br/>      name     = string<br/>      duration = string<br/>      priority = number<br/>      criteria = object({<br/>        absolute_criteria      = optional(string)<br/>        months_of_year         = optional(list(string))<br/>        weeks_of_month         = optional(list(string))<br/>        scheduled_backup_times = optional(list(string))<br/>        days_of_week           = optional(list(string))<br/>      })<br/>    }))<br/>  }))</pre> | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
-| <a name="input_vault"></a> [vault](#input\_vault) | Backup vault configuration | <pre>object({<br/>    name                         = string<br/>    datastore_type               = string<br/>    redundancy                   = string<br/>    cross_region_restore_enabled = optional(bool)<br/>    retention_duration_in_days   = optional(number)<br/>    immutability                 = optional(string)<br/>    soft_delete                  = optional(string)<br/>    identity = optional(object({<br/>      type = string<br/>    }))<br/>  })</pre> | `{}` | no |
+| <a name="input_vault"></a> [vault](#input\_vault) | Backup vault configuration | <pre>object({<br/>    name                         = string<br/>    datastore_type               = string<br/>    redundancy                   = string<br/>    cross_region_restore_enabled = optional(bool)<br/>    retention_duration_in_days   = optional(number)<br/>    immutability                 = optional(string)<br/>    soft_delete                  = optional(string)<br/>    identity = optional(object({<br/>      type = string<br/>    }))<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_vault_blob_id"></a> [vault\_blob\_id](#output\_vault\_blob\_id) | n/a |
-| <a name="output_vault_disk_id"></a> [vault\_disk\_id](#output\_vault\_disk\_id) | n/a |
-| <a name="output_vault_kubernetes_services_id"></a> [vault\_kubernetes\_services\_id](#output\_vault\_kubernetes\_services\_id) | n/a |
-| <a name="output_vault_mysql_flexible_id"></a> [vault\_mysql\_flexible\_id](#output\_vault\_mysql\_flexible\_id) | n/a |
-| <a name="output_vault_postresql_flexible_id"></a> [vault\_postresql\_flexible\_id](#output\_vault\_postresql\_flexible\_id) | n/a |
+| <a name="output_vault_id"></a> [vault\_id](#output\_vault\_id) | n/a |
