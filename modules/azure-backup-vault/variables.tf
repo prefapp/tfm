@@ -31,7 +31,6 @@ variable "vault" {
       type = string
     }))
   })
-  default = {}
 }
 
 # Backup vault policies

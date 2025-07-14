@@ -1,6 +1,6 @@
 # Role assignment: Backup Contributor to the vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "vault_backup_contributor" {
+resource "azurerm_role_assignment" "vault_backup_contributor_postgresql" {
   scope                = azurerm_data_protection_backup_vault.postgresql.id
   role_definition_name = "Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
@@ -70,7 +70,7 @@ resource "azurerm_data_protection_backup_instance_postgresql_flexible_server" "t
   server_id        = each.value.server_id
   backup_policy_id = azurerm_data_protection_backup_policy_postgresql.this[each.value.policy_key].id
   depends_on = [
-    azurerm_role_assignment.vault_backup_contributor,
+    azurerm_role_assignment.vault_backup_contributor_postgresql,
     azurerm_role_assignment.postgresql_backup_contributor,
     azurerm_role_assignment.postgresql_ltr_backup,
     azurerm_role_assignment.postgresql_rg_reader

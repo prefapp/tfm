@@ -1,6 +1,6 @@
 # Role assignment: Backup Contributor to the vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "vault_backup_contributor" {
+resource "azurerm_role_assignment" "vault_backup_contributor_kubernetes" {
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
@@ -113,7 +113,7 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   }
 
   depends_on = [
-    azurerm_role_assignment.vault_backup_contributor,
+    azurerm_role_assignment.vault_backup_contributor_kubernetes,
     azurerm_role_assignment.kubernetes_backup_contributor,
     azurerm_role_assignment.kubernetes_cluster_admin,
     azurerm_kubernetes_cluster_extension.this,

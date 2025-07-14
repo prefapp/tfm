@@ -1,6 +1,6 @@
 # Role assignment: Backup Contributor al vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "vault_backup_contributor" {
+resource "azurerm_role_assignment" "vault_backup_contributor_disk" {
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
@@ -51,7 +51,7 @@ resource "azurerm_data_protection_backup_instance_disk" "this" {
   backup_policy_id             = azurerm_data_protection_backup_policy_disk.this[each.value.policy_key].id
 
   depends_on = [
-    azurerm_role_assignment.vault_backup_contributor,
+    azurerm_role_assignment.vault_backup_contributor_disk,
     azurerm_role_assignment.disk_backup_reader
   ]
 }
