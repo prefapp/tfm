@@ -40,7 +40,6 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.subscriptionId" = data.azurerm_client_config.current.subscription_id
     "credentials.tenantId"                                      = data.azurerm_client_config.current.tenant_id
   }
-  depends_on = [azurerm_data_protection_backup_instance_kubernetes_cluster.this]
 }
 
 # Cluster trusted access role binding
