@@ -66,7 +66,7 @@ resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
 resource "azurerm_data_protection_backup_instance_mysql_flexible_server" "this" {
   for_each         = var.mysql_instances
   name             = each.value.instance_name
-  location         = data.azurerm_resource_group.resource_group.location
+  location         = data.azurerm_resource_group.this.location
   vault_id         = azurerm_data_protection_backup_vault.this.id
   server_id        = each.value.server_id
   backup_policy_id = azurerm_data_protection_backup_policy_mysql_flexible_server.this[each.value.policy_key].id
