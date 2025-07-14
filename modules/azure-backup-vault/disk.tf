@@ -1,6 +1,7 @@
 # Role assignment: Backup Contributor al vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_backup_contributor_disk" {
+  count = length(var.disk_instances) > 0 ? 1 : 0
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -9,7 +10,7 @@ resource "azurerm_role_assignment" "vault_backup_contributor_disk" {
 # Role assignment: Disk Backup Reader a cada disco
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "disk_backup_reader" {
-  for_each             = var.disk_instances
+  count = length(var.disk_instances) > 0 ? 1 : 0
   scope                = data.azurerm_managed_disk.this[each.value.instance_disk_name].id
   role_definition_name = "Disk Backup Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
