@@ -1,10 +1,10 @@
 # Role assignment: Backup Contributor to the vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_backup_contributor_mysql" {
-  count                = length(var.mysql_instances) > 0 ? 1 : 0
-  scope                = azurerm_data_protection_backup_vault.this[0].id
+  count = length(var.mysql_instances) > 0 ? 1 : 0
+  scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: MySQL Flexible Server Backup Contributor to each server
@@ -13,7 +13,7 @@ resource "azurerm_role_assignment" "mysql_backup_contributor" {
   for_each             = var.mysql_instances
   scope                = each.value.server_id
   role_definition_name = "MySQL Flexible Server Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: Reader on the resource group of the server
@@ -22,7 +22,7 @@ resource "azurerm_role_assignment" "mysql_rg_reader" {
   for_each             = var.mysql_instances
   scope                = each.value.resource_group_id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Backup policy for MySQL Flexible Server
@@ -30,7 +30,7 @@ resource "azurerm_role_assignment" "mysql_rg_reader" {
 resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
   for_each                        = var.mysql_policies
   name                            = each.value.policy_name
-  vault_id                        = azurerm_data_protection_backup_vault.this[0].id
+  vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
   time_zone                       = try(each.value.time_zone, null)
   dynamic "default_retention_rule" {
@@ -68,7 +68,7 @@ resource "azurerm_data_protection_backup_instance_mysql_flexible_server" "this" 
   for_each         = var.mysql_instances
   name             = each.value.instance_name
   location         = data.azurerm_resource_group.this.location
-  vault_id         = azurerm_data_protection_backup_vault.this[0].id
+  vault_id         = azurerm_data_protection_backup_vault.this.id
   server_id        = each.value.server_id
   backup_policy_id = azurerm_data_protection_backup_policy_mysql_flexible_server.this[each.value.policy_key].id
   depends_on = [

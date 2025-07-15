@@ -4,7 +4,7 @@ resource "azurerm_role_assignment" "this" {
   for_each             = { for k, v in var.blob_instances : v.storage_account_id => v if v.storage_account_id != null }
   scope                = each.key
   role_definition_name = "Storage Account Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Blob backup policies
@@ -12,7 +12,7 @@ resource "azurerm_role_assignment" "this" {
 resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
   for_each                               = var.blob_policies
   name                                   = each.value.policy_name
-  vault_id                               = azurerm_data_protection_backup_vault.this[0].id
+  vault_id                               = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals        = each.value.backup_repeating_time_intervals
   operational_default_retention_duration = each.value.operational_default_retention_duration
   time_zone                              = each.value.time_zone
@@ -44,7 +44,7 @@ resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
 resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   for_each                        = var.blob_instances
   name                            = each.value.instance_blob_name
-  vault_id                        = azurerm_data_protection_backup_vault.this[0].id
+  vault_id                        = azurerm_data_protection_backup_vault.this.id
   location                        = data.azurerm_resource_group.this.location
   storage_account_id              = each.value.storage_account_id
   backup_policy_id                = azurerm_data_protection_backup_policy_blob_storage.this[each.value.policy_key].id
