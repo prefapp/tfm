@@ -2,6 +2,7 @@
 variable "backup_resource_group_name" {
   description = "Name of the resource group for backups"
   type        = string
+  default     = null
 }
 
 variable "tags_from_rg" {
