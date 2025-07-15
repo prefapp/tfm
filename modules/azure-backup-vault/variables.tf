@@ -31,6 +31,7 @@ variable "vault" {
       type = string
     }))
   })
+  default = null
 }
 
 # Disk backup variables
