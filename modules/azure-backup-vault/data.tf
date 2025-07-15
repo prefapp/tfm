@@ -1,6 +1,6 @@
 # Locals section
 locals {
-  tags = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
+  tags = var.tags_from_rg && length(data.azurerm_resource_group.this) > 0 ? merge(data.azurerm_resource_group.this[0].tags, var.tags) : var.tags
 }
 
 # Data source to get the current Azure client configuration
