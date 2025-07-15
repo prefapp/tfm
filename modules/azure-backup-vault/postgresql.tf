@@ -2,9 +2,9 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_backup_contributor_postgresql" {
   count = length(var.postgresql_instances) > 0 ? 1 : 0
-  scope                = azurerm_data_protection_backup_vault.this.id
+  scope                = azurerm_data_protection_backup_vault.this[0].id
   role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
 }
 
 # Role assignment: PostgreSQL Flexible Server Backup Contributor to each server
@@ -13,7 +13,7 @@ resource "azurerm_role_assignment" "postgresql_backup_contributor" {
   for_each             = var.postgresql_instances
   scope                = each.value.server_id
   role_definition_name = "PostgreSQL Flexible Server Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
 }
 
 # Role assignment: PostgreSQL Flexible Server Long Term Retention Backup on the server
@@ -22,7 +22,7 @@ resource "azurerm_role_assignment" "postgresql_ltr_backup" {
   for_each             = var.postgresql_instances
   scope                = each.value.server_id
   role_definition_name = "PostgreSQL Flexible Server Long Term Retention Backup"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
 }
 
 # Role assignment: Reader on the resource group of the server
@@ -31,7 +31,7 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
   for_each             = var.postgresql_instances
   scope                = each.value.resource_group_id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
 }
 
 # Backup policy for PostgreSQL Flexible Server
@@ -39,8 +39,8 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
 resource "azurerm_data_protection_backup_policy_postgresql" "this" {
   for_each                        = var.postgresql_policies
   name                            = each.value.policy_name
-  vault_name                      = azurerm_data_protection_backup_vault.this.name
-  resource_group_name             = azurerm_data_protection_backup_vault.this.resource_group_name
+  vault_name                      = azurerm_data_protection_backup_vault.this[0].name
+  resource_group_name             = azurerm_data_protection_backup_vault.this[0].resource_group_name
   default_retention_duration      = each.value.default_retention_duration
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
   time_zone                       = try(each.value.time_zone, null)
@@ -67,7 +67,7 @@ resource "azurerm_data_protection_backup_instance_postgresql_flexible_server" "t
   for_each         = var.postgresql_instances
   name             = each.value.instance_name
   location         = data.azurerm_resource_group.this.location
-  vault_id         = azurerm_data_protection_backup_vault.this.id
+  vault_id         = azurerm_data_protection_backup_vault.this[0].id
   server_id        = each.value.server_id
   backup_policy_id = azurerm_data_protection_backup_policy_postgresql.this[each.value.policy_key].id
   depends_on = [
