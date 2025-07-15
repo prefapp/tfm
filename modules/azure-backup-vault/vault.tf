@@ -1,6 +1,7 @@
 # Backup Vault Azure Data Protection
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault
 resource "azurerm_data_protection_backup_vault" "this" {
+  count                        = var.vault != null ? 1 : 0
   name                         = var.vault.name
   resource_group_name          = data.azurerm_resource_group.this.name
   location                     = data.azurerm_resource_group.this.location
