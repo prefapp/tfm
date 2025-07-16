@@ -259,13 +259,16 @@ resource "azurerm_management_group_policy_assignment" "this" {
 
 resource "azurerm_role_assignment" "this" {
   for_each = {
-    for ra in var.policy_identity_role_assignments : "${ra.assignment_name}-${ra.scope}-${ra.role_definition_name}" => ra }
+    for ra in var.policy_identity_role_assignments :
+    "${ra.assignment_name}-${ra.scope}-${ra.role_definition_name}" => ra
+  }
 
-  principal_id = coalesce(
-    try(azurerm_subscription_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null),
-    try(azurerm_resource_group_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null),
-    try(azurerm_management_group_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null),
-    try(azurerm_resource_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null)
+  principal_id = (
+    each.value.scope_type == "subscription" ? try(azurerm_subscription_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null) :
+    each.value.scope_type == "resource group" ? try(azurerm_resource_group_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null) :
+    each.value.scope_type == "management group" ? try(azurerm_management_group_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null) :
+    each.value.scope_type == "resource" ? try(azurerm_resource_policy_assignment.this[each.value.assignment_name].identity[0].principal_id, null) :
+    null
   )
   role_definition_name = each.value.role_definition_name
   scope                = each.value.scope
