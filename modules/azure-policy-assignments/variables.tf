@@ -51,3 +51,13 @@ variable "assignments" {
     error_message = "policy_type can only be 'builtin' or 'custom'."
   }
 }
+
+variable "policy_identity_role_assignments" {
+  description = "List of role assignments for managed identities created by policy assignments"
+  type = list(object({
+    assignment_name     = string
+    scope               = string
+    role_definition_name = string
+  }))
+  default = []
+}
