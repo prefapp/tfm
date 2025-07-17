@@ -169,13 +169,13 @@ variable "maintenance_window" {
 }
 
 locals {
-  default_ssm_prefix   = "${var.engine}.${var.environment}.${var.db_identifier}"
-  db_name_ssm_name     = coalesce(var.db_name_ssm_name, "${local.default_ssm_prefix}.name")
-  db_username_ssm_name = coalesce(var.db_username_ssm_name, "${local.default_ssm_prefix}.username")
-  db_password_ssm_name = coalesce(var.db_password_ssm_name, "${local.default_ssm_prefix}.password")
-  db_endpoint_ssm_name = coalesce(var.db_endpoint_ssm_name, "${local.default_ssm_prefix}.endpoint")
-  db_host_ssm_name     = coalesce(var.db_host_ssm_name, "${local.default_ssm_prefix}.host")
-  db_port_ssm_name     = coalesce(var.db_port_ssm_name, "${local.default_ssm_prefix}.port")
-  security_group_name  = coalesce(var.security_group_name, "${var.db_identifier}-${var.environment}-security-group")
-  subnet_group_name    = coalesce(var.subnet_group_name, "${var.db_identifier}-${var.environment}-subnet-group")
+  default_ssm_prefix   = "${var.engine}/${var.environment}/${var.db_identifier}"
+  db_name_ssm_name     = coalesce(var.db_name_ssm_name, "${local.default_ssm_prefix}/name")
+  db_username_ssm_name = coalesce(var.db_username_ssm_name, "${local.default_ssm_prefix}/username")
+  db_password_ssm_name = coalesce(var.db_password_ssm_name, "${local.default_ssm_prefix}/password")
+  db_endpoint_ssm_name = coalesce(var.db_endpoint_ssm_name, "${local.default_ssm_prefix}/endpoint")
+  db_host_ssm_name     = coalesce(var.db_host_ssm_name, "${local.default_ssm_prefix}/host")
+  db_port_ssm_name     = coalesce(var.db_port_ssm_name, "${local.default_ssm_prefix}/port")
+  security_group_name  = coalesce(var.security_group_name, "${var.engine}-${var.environment}-${var.db_identifier}-security-group")
+  subnet_group_name    = coalesce(var.subnet_group_name, "${var.engine}-${var.environment}-${var.db_identifier}-subnet-group")
 }

@@ -12,12 +12,12 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `db_port`: Port for the database engine (e.g., 5432 for postgres, 3306 for mysql).
 - `db_name`: Name of the database to create (default: "main").
 - `db_username`: Username for the database (default: "admin").
-- `db_name_ssm_name`: SSM parameter name for the database name (default: `<engine>.<environment>.<db_identifier>.name`).
-- `db_username_ssm_name`: SSM parameter name for the database username (default: `<engine>.<environment>.<db_identifier>.username`).
-- `db_password_ssm_name`: SSM parameter name for the database password (default: `<engine>.<environment>.<db_identifier>.password`).
-- `db_endpoint_ssm_name`: SSM parameter name for the database endpoint (default: `<engine>.<environment>.<db_identifier>.endpoint`).
-- `db_host_ssm_name`: SSM parameter name for the database host (default: `<engine>.<environment>.<db_identifier>.host`).
-- `db_port_ssm_name`: SSM parameter name for the database port (default: `<engine>.<environment>.<db_identifier>.port`).
+- `db_name_ssm_name`: SSM parameter name for the database name (default: `<engine>/<environment>/<db_identifier>/name`).
+- `db_username_ssm_name`: SSM parameter name for the database username (default: `<engine>/<environment>/<db_identifier>/username`).
+- `db_password_ssm_name`: SSM parameter name for the database password (default: `<engine>/<environment>/<db_identifier>/password`).
+- `db_endpoint_ssm_name`: SSM parameter name for the database endpoint (default: `<engine>/<environment>/<db_identifier>/endpoint`).
+- `db_host_ssm_name`: SSM parameter name for the database host (default: `<engine>/<environment>/<db_identifier>/host`).
+- `db_port_ssm_name`: SSM parameter name for the database port (default: `<engine>/<environment>/<db_identifier>/port`).
 - `security_group_name`: Name of the security group for the RDS instance (default: `<engine>-<environment>-<db_identifier>-security-group`).
 - `subnet_group_name`: Name of the DB subnet group for the RDS instance (default: `<engine>-<environment>-<db_identifier>-subnet-group`).
 - `engine_version`: Database engine version (e.g., 17.2 for postgres, 8.0 for mysql).
@@ -59,14 +59,14 @@ module "rds_postgres_dev" {
   db_port                               = 5432
   db_name                               = "main"
   db_username                           = "postgres"
-  db_name_ssm_name                      = "/rds/postgres/dev/main/name"
-  db_username_ssm_name                  = "/rds/postgres/dev/main/username"
-  db_password_ssm_name                  = "/rds/postgres/dev/main/password"
-  db_endpoint_ssm_name                  = "/rds/postgres/dev/main/endpoint"
-  db_host_ssm_name                      = "/rds/postgres/dev/main/host"
-  db_port_ssm_name                      = "/rds/postgres/dev/main/port"
-  security_group_name                   = "rds-postgres-dev-main-sg"
-  subnet_group_name                     = "rds-postgres-dev-main-subnet-group"
+  db_name_ssm_name                      = "postgres/dev/main/name"
+  db_username_ssm_name                  = "postgres/dev/main/username"
+  db_password_ssm_name                  = "postgres/dev/main/password"
+  db_endpoint_ssm_name                  = "postgres/dev/main/endpoint"
+  db_host_ssm_name                      = "postgres/dev/main/host"
+  db_port_ssm_name                      = "postgres/dev/main/port"
+  security_group_name                   = "postgres-dev-main-security-group"
+  subnet_group_name                     = "postgres-dev-main-subnet-group"
   engine_version                        = "17.2"
   family                                = "postgres17"
   instance_class                        = "db.t3.micro"
