@@ -168,6 +168,43 @@ variable "maintenance_window" {
   default     = "Mon:00:00-Mon:02:00"
 }
 
+variable "backup_window" {
+  description = "Preferred backup window"
+  type        = string
+  default     = null
+}
+
+variable "storage_type" {
+  description = "Type of storage (e.g., standard, gp2, gp3, io1)"
+  type        = string
+  default     = null
+}
+
+variable "iops" {
+  description = "The amount of provisioned IOPS. Required if storage_type is io1 or gp3"
+  type        = number
+  default     = null
+}
+
+variable "parameters" {
+  description = "List of DB parameters to apply (parameter group will be created automatically)"
+  type        = list(any)
+  default     = []
+}
+
+variable "apply_immediately" {
+  description = "Whether to apply changes immediately"
+  type        = bool
+  default     = false
+}
+
+variable "allow_major_version_upgrade" {
+  description = "Whether to allow major version upgrades"
+  type        = bool
+  default     = false
+}
+
+
 locals {
   default_ssm_prefix   = "${var.engine}/${var.environment}/${var.db_identifier}"
   db_name_ssm_name     = coalesce(var.db_name_ssm_name, "${local.default_ssm_prefix}/name")

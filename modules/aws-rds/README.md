@@ -33,6 +33,13 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `performance_insights_retention_period`: Retention period for Performance Insights in days (default: 7).
 - `publicly_accessible`: Whether the RDS instance should be publicly accessible (default: false).
 - `maintenance_window`: Preferred maintenance window (default: "Mon:00:00-Mon:02:00").
+- `backup_window`: Preferred backup window (default: `null`).
+- `storage_type`: Type of storage (`standard`, `gp2`, `gp3`, `io1`) (default: `null`).
+- `iops`: Provisioned IOPS if using `io1` or `gp3` (default: `null`).
+- `parameters`: List of DB parameters to set in the parameter group (default: `[]`).
+- `apply_immediately`: Whether to apply changes immediately (default: `false`).
+- `allow_major_version_upgrade`: Whether to allow major engine version upgrades (default: `false`).
+
 
 ## Outputs
 - `db_instance_endpoint`: The endpoint of the RDS instance.
@@ -80,4 +87,15 @@ module "rds_postgres_dev" {
   publicly_accessible                   = false
   manage_master_user_password           = false
   maintenance_window                    = "Tue:00:00-Tue:02:00"
+  backup_window                         = "03:00-06:00"
+  parameters                            = [
+                                          {
+                                            name  = "character_set_client"
+                                            value = "utf8mb4"
+                                          },
+                                          {
+                                            name  = "character_set_server"
+                                            value = "utf8mb4"
+                                          }
+                                        ]
 }

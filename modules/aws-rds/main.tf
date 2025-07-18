@@ -123,4 +123,10 @@ module "rds" {
   performance_insights_retention_period = var.performance_insights_retention_period
   publicly_accessible                   = var.publicly_accessible
   maintenance_window                    = var.maintenance_window
+  backup_window                         = var.backup_window
+  storage_type                          = var.storage_type
+  iops                                  = var.iops
+  parameters                            = var.parameters
+  apply_immediately                     = var.apply_immediately
+  allow_major_version_upgrade           = var.allow_major_version_upgrade
 }
