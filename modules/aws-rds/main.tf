@@ -110,8 +110,8 @@ module "rds" {
   vpc_security_group_ids      = [aws_security_group.this.id]
   manage_master_user_password = var.manage_master_user_password
 
-  username = aws_ssm_parameter.db_username.value
-  password = aws_ssm_parameter.db_password.value
+  username = var.manage_master_user_password ? null : aws_ssm_parameter.db_username.value
+  password = var.manage_master_user_password ? null : aws_ssm_parameter.db_password.value
   db_name  = aws_ssm_parameter.db_name.value
   port     = var.db_port
 

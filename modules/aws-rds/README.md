@@ -90,12 +90,16 @@ module "rds_postgres_dev" {
   backup_window                         = "03:00-06:00"
   parameters                            = [
                                           {
-                                            name  = "character_set_client"
-                                            value = "utf8mb4"
+                                            name    = "log_statement"
+                                            value   = "ddl"
                                           },
                                           {
-                                            name  = "character_set_server"
-                                            value = "utf8mb4"
+                                            name    = "log_min_duration_statement"
+                                            value   = "500"
+                                          },
+                                          {
+                                            name    = "max_connections"
+                                            value   = "150"
                                           }
                                         ]
 }
