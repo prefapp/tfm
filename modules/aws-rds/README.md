@@ -1,6 +1,6 @@
 # RDS Database Module
 
-This Terraform module deploys an AWS RDS instance for various database engines (e.g., PostgreSQL, MySQL, MariaDB), along with associated resources like security groups, subnet groups, and SSM parameters for storing credentials and connection details.
+This Terraform module deploys an AWS RDS instance for various database engines (PostgreSQL, MySQL, MariaDB, etc.), along with associated resources like security groups, subnet groups, and SSM parameters for storing credentials and connection details.
 
 ## Inputs
 - `region`: AWS region to deploy resources in.
