@@ -54,8 +54,8 @@ locals {
       # Step 3: Merge configuration_values if exists
       {
         configuration_values = merge(
-          lookup(local.base_addons[addon_name], "configuration_values", {}),
-          lookup(var.cluster_addons[addon_name], "configuration_values", {})
+          lookup(lookup(local.base_addons, addon_name, {}), "configuration_values", {}),
+          lookup(lookup(var.cluster_addons, addon_name, {}), "configuration_values", {})
         )
       }
     )
