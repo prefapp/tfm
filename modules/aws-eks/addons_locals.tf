@@ -51,23 +51,20 @@ locals {
       # Step 2: Override with values from var.cluster_addons (or empty map if not defined)
       lookup(var.cluster_addons, addon_name, {}),
 
-      # Step 3: If configuration_values exists in either base or override, include it as-is
-      contains(keys(lookup(var.cluster_addons, addon_name, {})), "configuration_values") ?
+      # Step 3: Merge configuration_values if exists
       {
-        configuration_values = lookup(var.cluster_addons[addon_name], "configuration_values", {})
-      } :
-      contains(keys(lookup(local.base_addons, addon_name, {})), "configuration_values") ?
-      {
-        configuration_values = lookup(local.base_addons[addon_name], "configuration_values", {})
-      } :
-      {}
+        configuration_values = merge(
+          lookup(local.base_addons[addon_name], "configuration_values", {}),
+          lookup(var.cluster_addons[addon_name], "configuration_values", {})
+        )
+      }
     )
   }
 
   processed_addons = {
     for addon_name, config in local.mixed_addons : addon_name => merge(config, {
       # If configuration_values ​​exists, we convert it to JSON; if not, we leave it as null
-      configuration_values = try(jsonencode(config.configuration_values), null)
+      configuration_values = length(keys(config.configuration_values)) > 0 ? jsonencode(config.configuration_values) : null
     })
   }
 
