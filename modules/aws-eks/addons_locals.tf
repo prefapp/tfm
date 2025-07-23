@@ -53,10 +53,13 @@ locals {
 
       # Step 3: Merge configuration_values if exists
       {
-        configuration_values = merge(
+        configuration_values = length(keys(merge(
           lookup(lookup(local.base_addons, addon_name, {}), "configuration_values", {}),
           lookup(lookup(var.cluster_addons, addon_name, {}), "configuration_values", {})
-        )
+          ))) > 0 ? merge(
+          lookup(lookup(local.base_addons, addon_name, {}), "configuration_values", {}),
+          lookup(lookup(var.cluster_addons, addon_name, {}), "configuration_values", {})
+        ) : null
       }
     )
   }
@@ -64,7 +67,7 @@ locals {
   processed_addons = {
     for addon_name, config in local.mixed_addons : addon_name => merge(config, {
       # If configuration_values ​​exists, we convert it to JSON; if not, we leave it as null
-      configuration_values = length(keys(config.configuration_values)) > 0 ? jsonencode(config.configuration_values) : null
+      configuration_values = config.configuration_values != null && length(keys(config.configuration_values)) > 0 ? jsonencode(config.configuration_values) : null
     })
   }
 
