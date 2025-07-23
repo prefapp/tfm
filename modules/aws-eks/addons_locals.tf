@@ -1,8 +1,8 @@
-
 locals {
 
   /*
-   * Base addons that are always enabled by default
+   * base_addons: Default EKS addons always enabled by default.
+   * These values can be overridden by user-defined cluster_addons.
    */
   base_addons = {
     vpc-cni = {
@@ -38,43 +38,53 @@ locals {
 
   /*
    * mixed_addons: Combines base_addons with var.cluster_addons to produce the final result.
-   * - Iterates over all unique addon names from base_addons and var.cluster_addons.
-   * - Merges default values (from base_addons) with user-defined overrides (from var.cluster_addons).
-   * - Passes configuration_values as-is (freeform object), avoiding assumptions about internal structure.
+   *
+   * - Iterates over all unique addon names from base_addons and cluster_addons.
+   * - Merges default values from base_addons with user-defined overrides from cluster_addons.
+   * - Merges configuration_values separately to avoid assumptions about structure.
    */
   mixed_addons = {
     for addon_name in distinct(concat(keys(local.base_addons), keys(var.cluster_addons))) :
     addon_name => merge(
-      # Step 1: Get default values from base_addons (or empty map if not defined)
+      # Base values
       lookup(local.base_addons, addon_name, {}),
-
-      # Step 2: Override with values from var.cluster_addons (or empty map if not defined)
+      # User override
       lookup(var.cluster_addons, addon_name, {}),
-
-      # Step 3: Merge configuration_values if exists
+      # Merged configuration_values (only if not empty)
       {
-        configuration_values = length(keys(merge(
-          lookup(lookup(local.base_addons, addon_name, {}), "configuration_values", {}),
-          lookup(lookup(var.cluster_addons, addon_name, {}), "configuration_values", {})
-          ))) > 0 ? merge(
-          lookup(lookup(local.base_addons, addon_name, {}), "configuration_values", {}),
-          lookup(lookup(var.cluster_addons, addon_name, {}), "configuration_values", {})
-        ) : null
+        configuration_values = (
+          length(keys(merge(
+            lookup(lookup(local.base_addons, addon_name, {}), "configuration_values", {}),
+            lookup(lookup(var.cluster_addons, addon_name, {}), "configuration_values", {})
+          ))) > 0
+          ? merge(
+            lookup(lookup(local.base_addons, addon_name, {}), "configuration_values", {}),
+            lookup(lookup(var.cluster_addons, addon_name, {}), "configuration_values", {})
+          )
+          : null
+        )
       }
     )
   }
 
+  /*
+   * processed_addons:
+   * - Converts the merged configuration_values into a JSON string (as required by some AWS APIs).
+   * - If configuration_values is null or empty, it remains null.
+   */
   processed_addons = {
     for addon_name, config in local.mixed_addons : addon_name => merge(config, {
-      # If configuration_values ​​exists, we convert it to JSON; if not, we leave it as null
-      configuration_values = config.configuration_values != null && length(keys(config.configuration_values)) > 0 ? jsonencode(config.configuration_values) : null
+      configuration_values = try(length(config.configuration_values) > 0, false) ? jsonencode(config.configuration_values) : null
     })
   }
 
   /*
-    Finally, we set the cluster_addons variable to the configured_addons
-    variable, and we get the addons that are not disabled
-  */
-  cluster_addons = { for key, value in merge(local.processed_addons) : key => value if lookup(value, "enabled", true) == true }
-
+   * cluster_addons:
+   * - Final list of addons that will be deployed.
+   * - Filters out any addons that are explicitly disabled.
+   */
+  cluster_addons = {
+    for key, value in local.processed_addons : key => value
+    if lookup(value, "enabled", true) == true
+  }
 }
