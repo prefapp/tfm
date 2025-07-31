@@ -2,24 +2,21 @@
 
 This Terraform module deploys an AWS RDS instance for various database engines (PostgreSQL, MySQL, MariaDB, etc.), along with associated resources like security groups, subnet groups, and SSM parameters for storing credentials and connection details.
 
-## Inputs
 - `region`: AWS region to deploy resources in.
 - `environment`: Environment name (e.g., dev, pre, pro).
 - `db_identifier`: Unique identifier for the database instance.
-- `vpc_tag_name`: Tag name of the VPC to look up.
+
+### Networking
+- `vpc_id`: ID of the VPC where the RDS instance will be deployed (optional if `vpc_tag_name` is used).
+- `vpc_tag_name`: Tag name of the VPC to look up (used if `vpc_id` is not provided).
+- `subnet_ids`: List of subnet IDs to use (optional if `subnet_tag_name` is used).
 - `subnet_tag_name`: Tag name of the subnets to look up.
+
+### Database
 - `engine`: Database engine (e.g., postgres, mysql, mariadb).
 - `db_port`: Port for the database engine (e.g., 5432 for postgres, 3306 for mysql).
 - `db_name`: Name of the database to create (default: "main").
 - `db_username`: Username for the database (default: "admin").
-- `db_name_ssm_name`: SSM parameter name for the database name (default: `<engine>/<environment>/<db_identifier>/name`).
-- `db_username_ssm_name`: SSM parameter name for the database username (default: `<engine>/<environment>/<db_identifier>/username`).
-- `db_password_ssm_name`: SSM parameter name for the database password (default: `<engine>/<environment>/<db_identifier>/password`).
-- `db_endpoint_ssm_name`: SSM parameter name for the database endpoint (default: `<engine>/<environment>/<db_identifier>/endpoint`).
-- `db_host_ssm_name`: SSM parameter name for the database host (default: `<engine>/<environment>/<db_identifier>/host`).
-- `db_port_ssm_name`: SSM parameter name for the database port (default: `<engine>/<environment>/<db_identifier>/port`).
-- `security_group_name`: Name of the security group for the RDS instance (default: `<engine>-<environment>-<db_identifier>-security-group`).
-- `subnet_group_name`: Name of the DB subnet group for the RDS instance (default: `<engine>-<environment>-<db_identifier>-subnet-group`).
 - `engine_version`: Database engine version (e.g., 17.2 for postgres, 8.0 for mysql).
 - `family`: DB parameter group family (e.g., postgres17, mysql8.0).
 - `manage_master_user_password`: Whether to manage the master user password.
@@ -40,15 +37,19 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `apply_immediately`: Whether to apply changes immediately (default: `false`).
 - `allow_major_version_upgrade`: Whether to allow major engine version upgrades (default: `false`).
 
+### SSM Parameter Store
+- `db_name_ssm_name`: SSM parameter name for the database name (default: `<engine>/<environment>/<db_identifier>/name`).
+- `db_username_ssm_name`: SSM parameter name for the database username (default: `<engine>/<environment>/<db_identifier>/username`).
+- `db_password_ssm_name`: SSM parameter name for the database password (default: `<engine>/<environment>/<db_identifier>/password`).
+- `db_endpoint_ssm_name`: SSM parameter name for the database endpoint (default: `<engine>/<environment>/<db_identifier>/endpoint`).
+- `db_host_ssm_name`: SSM parameter name for the database host (default: `<engine>/<environment>/<db_identifier>/host`).
+- `db_port_ssm_name`: SSM parameter name for the database port (default: `<engine>/<environment>/<db_identifier>/port`).
 
-## Outputs
-- `db_instance_endpoint`: The endpoint of the RDS instance.
-- `db_instance_address`: The address of the RDS instance.
-- `db_instance_port`: The port of the RDS instance.
-- `db_name`: The name of the database.
-- `db_username`: The username for the database.
-- `db_password_ssm_name`: The name of the SSM parameter storing the database password.
-- `security_group_id`: The ID of the security group for the RDS instance.
+### Security Groups
+- `security_group_name`: Name of the security group for the RDS instance (default: `<engine>-<environment>-<db_identifier>-security-group`).
+- `security_group_id`: ID of an existing security group to attach to the instance (optional).
+- `security_group_tag_name`: Tag name to look up an existing security group (optional, used if `security_group_id` is not provided).
+- `extra_security_group_rules`: List of additional security group rules (only applied if the module creates the security group).
 - `subnet_group_name`: The name of the DB subnet group for the RDS instance.
 
 ## Usage
@@ -100,6 +101,16 @@ module "rds_postgres_dev" {
                                           {
                                             name    = "max_connections"
                                             value   = "150"
+                                          }
+                                        ]
+  extra_security_group_rules            = [
+                                          {
+                                            type        = "ingress"
+                                            from_port   = 5432
+                                            to_port     = 5432
+                                            protocol    = "tcp"
+                                            cidr_blocks = ["10.0.0.0/16"]
+                                            description = "Allow access from app"
                                           }
                                         ]
 }

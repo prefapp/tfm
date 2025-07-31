@@ -13,14 +13,37 @@ variable "db_identifier" {
   type        = string
 }
 
+variable "vpc_id" {
+  description = "ID of the VPC where the RDS instance will be deployed. If not set, vpc_tag_name will be used to look up the VPC."
+  type        = string
+  default     = null
+}
+
 variable "vpc_tag_name" {
   description = "Tag name of the VPC to look up"
   type        = string
+  default     = ""
+  validation {
+    condition     = var.vpc_id != null || var.vpc_tag_name != ""
+    error_message = "You must specify either vpc_id or vpc_tag_name."
+  }
 }
+
+variable "subnet_ids" {
+  description = "List of subnet IDs for the RDS subnet group. If not set, subnet_tag_name will be used."
+  type        = list(string)
+  default     = null
+}
+
 
 variable "subnet_tag_name" {
   description = "Tag name of the subnets to look up"
   type        = string
+  default     = ""
+  validation {
+    condition     = var.subnet_ids != null || var.subnet_tag_name != ""
+    error_message = "You must specify either subnet_ids or subnet_tag_name."
+  }
 }
 
 variable "engine" {
@@ -79,6 +102,18 @@ variable "db_port_ssm_name" {
   description = "SSM parameter name for the database port"
   type        = string
   default     = null
+}
+
+variable "security_group_id" {
+  description = "ID of an existing security group. If set, the module will not create a new one."
+  type        = string
+  default     = null
+}
+
+variable "security_group_tag_name" {
+  description = "Tag name of the existing security group to look up (only used if security_group_id is not set)."
+  type        = string
+  default     = ""
 }
 
 variable "security_group_name" {
@@ -204,15 +239,28 @@ variable "allow_major_version_upgrade" {
   default     = false
 }
 
+variable "extra_security_group_rules" {
+  description = <<EOF
+List of extra security group rules to add to the managed security group.
+Only used if the security group is created by the module (i.e. no `security_group_id` or `security_group_tag_name` is given).
+Each rule must include the same arguments used in `aws_security_group_rule`, except `security_group_id`.
+EOF
+  type = list(object({
+    type             = string # "ingress" or "egress"
+    from_port        = number
+    to_port          = number
+    protocol         = string
+    cidr_blocks      = optional(list(string))
+    ipv6_cidr_blocks = optional(list(string))
+    prefix_list_ids  = optional(list(string))
+    description      = optional(string)
+    self             = optional(bool)
+  }))
+  default = []
+}
 
-locals {
-  default_ssm_prefix   = "${var.engine}/${var.environment}/${var.db_identifier}"
-  db_name_ssm_name     = coalesce(var.db_name_ssm_name, "${local.default_ssm_prefix}/name")
-  db_username_ssm_name = coalesce(var.db_username_ssm_name, "${local.default_ssm_prefix}/username")
-  db_password_ssm_name = coalesce(var.db_password_ssm_name, "${local.default_ssm_prefix}/password")
-  db_endpoint_ssm_name = coalesce(var.db_endpoint_ssm_name, "${local.default_ssm_prefix}/endpoint")
-  db_host_ssm_name     = coalesce(var.db_host_ssm_name, "${local.default_ssm_prefix}/host")
-  db_port_ssm_name     = coalesce(var.db_port_ssm_name, "${local.default_ssm_prefix}/port")
-  security_group_name  = coalesce(var.security_group_name, "${var.engine}-${var.environment}-${var.db_identifier}-security-group")
-  subnet_group_name    = coalesce(var.subnet_group_name, "${var.engine}-${var.environment}-${var.db_identifier}-subnet-group")
+variable "use_secrets_manager" {
+  description = "If true, store RDS credentials in AWS Secrets Manager instead of SSM Parameter Store"
+  type        = bool
+  default     = false
 }
