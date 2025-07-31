@@ -1,9 +1,21 @@
 # RDS Database Module
 
-This Terraform module deploys an AWS RDS instance for various database engines (PostgreSQL, MySQL, MariaDB, etc.), along with associated resources like security groups, subnet groups, and SSM parameters for storing credentials and connection details.
+This Terraform module deploys an AWS RDS instance for various database engines (PostgreSQL, MySQL, MariaDB, etc.), along with associated resources like security groups, subnet groups, and optionally stores credentials and connection details in either SSM Parameter Store or AWS Secrets Manager.
 
+## Features
+- Automatic provisioning of RDS resources
+- Support for PostgreSQL, MySQL, MariaDB, and more
+- Configurable SSM Parameter Store integration
+- Optional support for AWS Secrets Manager to store DB credentials
+- Custom security group and subnet group support
+- Additional security group rule injection
+- Backup and performance settings
+
+## Inputs
+
+### General
 - `region`: AWS region to deploy resources in.
-- `environment`: Environment name (e.g., dev, pre, pro).
+- `environment`: Environment name (dev, pre, pro, etc.).
 - `db_identifier`: Unique identifier for the database instance.
 
 ### Networking
@@ -13,13 +25,14 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `subnet_tag_name`: Tag name of the subnets to look up.
 
 ### Database
-- `engine`: Database engine (e.g., postgres, mysql, mariadb).
+- `engine`: Database engine (postgres, mysql, mariadb, etc.).
 - `db_port`: Port for the database engine (e.g., 5432 for postgres, 3306 for mysql).
 - `db_name`: Name of the database to create (default: "main").
 - `db_username`: Username for the database (default: "admin").
-- `engine_version`: Database engine version (e.g., 17.2 for postgres, 8.0 for mysql).
-- `family`: DB parameter group family (e.g., postgres17, mysql8.0).
-- `manage_master_user_password`: Whether to manage the master user password.
+- `engine_version`: Database engine version (17.2 for postgres, 8.0 for mysql, etc.).
+- `family`: DB parameter group family (postgres17, mysql8.0, etc.).
+- `manage_master_user_password`: Whether to manage the master user password with AWS RDS native integration.
+- `use_secrets_manager`: If true, stores and reads credentials from AWS Secrets Manager instead of SSM (default: false).
 - `instance_class`: RDS instance class (default: "db.t3.micro").
 - `allocated_storage`: Allocated storage in GB (default: 50).
 - `max_allocated_storage`: Maximum allocated storage for autoscaling (default: 0).
@@ -38,12 +51,25 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `allow_major_version_upgrade`: Whether to allow major engine version upgrades (default: `false`).
 
 ### SSM Parameter Store
+(Only used if `use_secrets_manager = false`)
 - `db_name_ssm_name`: SSM parameter name for the database name (default: `<engine>/<environment>/<db_identifier>/name`).
 - `db_username_ssm_name`: SSM parameter name for the database username (default: `<engine>/<environment>/<db_identifier>/username`).
 - `db_password_ssm_name`: SSM parameter name for the database password (default: `<engine>/<environment>/<db_identifier>/password`).
 - `db_endpoint_ssm_name`: SSM parameter name for the database endpoint (default: `<engine>/<environment>/<db_identifier>/endpoint`).
 - `db_host_ssm_name`: SSM parameter name for the database host (default: `<engine>/<environment>/<db_identifier>/host`).
 - `db_port_ssm_name`: SSM parameter name for the database port (default: `<engine>/<environment>/<db_identifier>/port`).
+
+### AWS Secrets Manager
+(Only used if use_secrets_manager = true)
+- Automatically creates a secret in AWS Secrets Manager containing:
+  - username
+  - password
+  - engine
+  - host
+  - port
+  - dbname
+  - dbInstanceIdentifier
+The ARN of the created secret is exposed via output `secrets_manager_arn`.
 
 ### Security Groups
 - `security_group_name`: Name of the security group for the RDS instance (default: `<engine>-<environment>-<db_identifier>-security-group`).
@@ -52,65 +78,135 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `extra_security_group_rules`: List of additional security group rules (only applied if the module creates the security group).
 - `subnet_group_name`: The name of the DB subnet group for the RDS instance.
 
+### Outputs
+- `db_instance_endpoint`: The full RDS endpoint
+- `db_instance_address`: The hostname of the RDS instance
+- `db_instance_port`: Port of the instance
+- `db_name`: Name of the DB
+- `db_username`: DB username
+- `db_password_ssm_name`: SSM name of the password (only if not using Secrets Manager)
+- `security_group_id`: Security group ID used
+- `subnet_group_name`: Name of the DB subnet group
+- `secrets_manager_arn`: ARN of the Secrets Manager secret (only if `use_secrets_manager = true`)
+
 ## Usage
-### PostgreSQL Example with Custom SSM, Security Group, and Subnet Group Names
+### Example 1: PostgreSQL using SSM Parameter Store (default)
 ```hcl
-module "rds_postgres_dev" {
+module "rds_postgres_ssm" {
   source = "git::https://github.com/prefapp/tfm.git//modules/aws-rds"
 
-  region                                = "eu-west-1"
-  environment                           = "dev"
-  db_identifier                         = "main"
-  vpc_tag_name                          = "k8s-org-vpc"
-  subnet_tag_name                       = "private"
-  engine                                = "postgres"
-  db_port                               = 5432
-  db_name                               = "main"
-  db_username                           = "postgres"
-  db_name_ssm_name                      = "postgres/dev/main/name"
-  db_username_ssm_name                  = "postgres/dev/main/username"
-  db_password_ssm_name                  = "postgres/dev/main/password"
-  db_endpoint_ssm_name                  = "postgres/dev/main/endpoint"
-  db_host_ssm_name                      = "postgres/dev/main/host"
-  db_port_ssm_name                      = "postgres/dev/main/port"
-  security_group_name                   = "postgres-dev-main-security-group"
-  subnet_group_name                     = "postgres-dev-main-subnet-group"
-  engine_version                        = "17.2"
-  family                                = "postgres17"
-  instance_class                        = "db.t3.micro"
-  allocated_storage                     = 50
-  deletion_protection                   = true
-  max_allocated_storage                 = 100
-  multi_az                              = false
+  region                  = "eu-west-1"
+  environment             = "dev"
+  db_identifier           = "main"
+  vpc_tag_name            = "k8s-org-vpc"
+  subnet_tag_name         = "private"
+
+  engine                  = "postgres"
+  engine_version          = "17.2"
+  family                  = "postgres17"
+  db_port                 = 5432
+  db_name                 = "main"
+  db_username             = "postgres"
+
+  manage_master_user_password = false
+  use_secrets_manager         = false
+
+  db_name_ssm_name      = "postgres/dev/main/name"
+  db_username_ssm_name  = "postgres/dev/main/username"
+  db_password_ssm_name  = "postgres/dev/main/password"
+  db_endpoint_ssm_name  = "postgres/dev/main/endpoint"
+  db_host_ssm_name      = "postgres/dev/main/host"
+  db_port_ssm_name      = "postgres/dev/main/port"
+
+  security_group_name   = "postgres-dev-main-security-group"
+  subnet_group_name     = "postgres-dev-main-subnet-group"
+
+  instance_class        = "db.t3.micro"
+  allocated_storage     = 50
+  max_allocated_storage = 100
+  multi_az              = false
+  deletion_protection   = true
+
   backup_retention_period               = 3
+  backup_window                         = "03:00-06:00"
+  maintenance_window                    = "Tue:00:00-Tue:02:00"
   performance_insights_enabled          = true
   performance_insights_retention_period = 7
   publicly_accessible                   = false
-  manage_master_user_password           = false
-  maintenance_window                    = "Tue:00:00-Tue:02:00"
-  backup_window                         = "03:00-06:00"
-  parameters                            = [
-                                          {
-                                            name    = "log_statement"
-                                            value   = "ddl"
-                                          },
-                                          {
-                                            name    = "log_min_duration_statement"
-                                            value   = "500"
-                                          },
-                                          {
-                                            name    = "max_connections"
-                                            value   = "150"
-                                          }
-                                        ]
-  extra_security_group_rules            = [
-                                          {
-                                            type        = "ingress"
-                                            from_port   = 5432
-                                            to_port     = 5432
-                                            protocol    = "tcp"
-                                            cidr_blocks = ["10.0.0.0/16"]
-                                            description = "Allow access from app"
-                                          }
-                                        ]
+
+  parameters = [
+    {
+      name  = "log_statement"
+      value = "ddl"
+    },
+    {
+      name  = "log_min_duration_statement"
+      value = "500"
+    },
+    {
+      name  = "max_connections"
+      value = "150"
+    }
+  ]
+
+  extra_security_group_rules = [
+    {
+      type        = "ingress"
+      from_port   = 5432
+      to_port     = 5432
+      protocol    = "tcp"
+      cidr_blocks = ["10.0.0.0/16"]
+      description = "Allow access from app"
+    }
+  ]
 }
+```
+### Example 2: MySQL using Secrets Manager
+```hcl
+module "rds_mysql_secrets" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/aws-rds"
+
+  region                  = "eu-west-1"
+  environment             = "pro"
+  db_identifier           = "myapp"
+  vpc_tag_name            = "main-vpc"
+  subnet_tag_name         = "rds"
+
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  family                  = "mysql8.0"
+  db_port                 = 3306
+  db_name                 = "production"
+  db_username             = "admin"
+
+  manage_master_user_password = false
+  use_secrets_manager         = true
+
+  security_group_name   = "mysql-pro-myapp-sg"
+  subnet_group_name     = "mysql-pro-myapp-subnet"
+
+  instance_class        = "db.t3.medium"
+  allocated_storage     = 100
+  max_allocated_storage = 200
+  multi_az              = true
+  deletion_protection   = true
+
+  backup_retention_period               = 7
+  backup_window                         = "04:00-06:00"
+  maintenance_window                    = "Sun:03:00-Sun:04:00"
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 7
+  publicly_accessible                   = false
+
+  extra_security_group_rules = [
+    {
+      type        = "ingress"
+      from_port   = 3306
+      to_port     = 3306
+      protocol    = "tcp"
+      cidr_blocks = ["192.168.0.0/16"]
+      description = "Allow MySQL traffic from internal network"
+    }
+  ]
+}
+```

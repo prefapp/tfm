@@ -15,12 +15,12 @@ output "db_instance_port" {
 
 output "db_name" {
   description = "The name of the database"
-  value       = var.use_secrets_manager ? null : aws_ssm_parameter.db_name[0].value
+  value       = var.db_name
 }
 
 output "db_username" {
   description = "The username for the database"
-  value       = var.use_secrets_manager ? null : aws_ssm_parameter.db_username[0].value
+  value       = var.db_username
 }
 
 output "db_password_ssm_name" {
