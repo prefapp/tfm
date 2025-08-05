@@ -34,13 +34,14 @@
 | tfstate_bucket_name | Name of the S3 Bucket used for storing the Terraform state for the workspaces | string | -- | Y |
 | tfstate_object_prefix | Prefix to the S3 bucket objects | string | -- | Y |
 | locks_table_name | "Name of the locks DynamoDB table. Not needed if Terraform version is 1.11 or newer | string | null | N |
-| aws_region | AWS Region | string | Default provider region (i.e. "us-east-1") | N |
 | tags | Common tags for all resources | map(string) | {} | N |
 | tfstate_force_destroy | Allow destroying the Terraform state bucket even if it contains objects | boolean | false | N |
 | tfstate_enable_versioning | Enable versioning on the bucket | boolean | true | N |
+| aws_account_id | AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
+| readonly_account_id | AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table with read-only access | string | - | N |
 | tfbackend_access_role_name | Terraform backend access role: role name for Terraform Backend | string | - | Y |
 | backend_extra_roles | Additional roles to add to the Terraform backend access role | list(string) | [] | N |
-| aws_account_id | AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
+| readonly_tfstate_access_role_name | Terraform backend access role: role name for Terraform Backend read-only access | string | - | N |
 | cloudformation_admin_role_for_client_account | Role name that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
 | generate_cloudformation_role_for_client_account | Decide whether to generate a cloudformation stack with a iam role to access the S3 bucket and the dynamodb table | boolean | true | N |
 | upload_cloudformation_role | Decide whether to upload to S3 the cloudformation stack | boolean | true | N |

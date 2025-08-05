@@ -14,14 +14,6 @@ variable "locks_table_name" {
   default     = null
 }
 
-data "aws_region" "current" {}
-
-variable "aws_region" {
-  description = "AWS Region"
-  type        = string
-  default     = data.aws_region.current.name
-}
-
 variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)
@@ -41,9 +33,15 @@ variable "tfstate_enable_versioning" {
 }
 
 variable "tfbackend_access_role_name" {
-  description = "Terraform backend access role"
+  description = "Terraform backend access role name"
   type        = string
   default     = "terraform-backend-access-role"
+}
+
+variable "readonly_tfstate_access_role_name" {
+  description = "Readonly Terraform backend access role"
+  type        = string
+  default     = "terraform-backend-readonlyaccess-role"
 }
 
 
@@ -54,7 +52,12 @@ variable "backend_extra_roles" {
 }
 
 variable "aws_account_id" {
-  description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table"
+  description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table as administrator"
+  type        = string
+}
+
+variable "readonly_account_id" {
+  description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table as readonly"
   type        = string
 }
 
