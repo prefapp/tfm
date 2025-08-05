@@ -7,7 +7,7 @@ locals {
     ReadOnlyRole = {
       Type = "AWS::IAM::Role"
       Properties = {
-        RoleName = var.cloudformation_admin_role_for_client_account
+        RoleName = var.cloudformation_readonly_role_for_client_account
         AssumeRolePolicyDocument = {
           Version = "2012-10-17"
           Statement = [

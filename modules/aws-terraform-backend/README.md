@@ -42,7 +42,8 @@
 | tfbackend_access_role_name | Terraform backend access role: role name for Terraform Backend | string | - | Y |
 | backend_extra_roles | Additional roles to add to the Terraform backend access role | list(string) | [] | N |
 | readonly_tfstate_access_role_name | Terraform backend access role: role name for Terraform Backend read-only access | string | - | N |
-| cloudformation_admin_role_for_client_account | Role name that will assume the role to access the S3 bucket and the dynamodb table | string | - | Y |
+| cloudformation_admin_role_for_client_account | Role name that will assume the role to access the S3 bucket and the dynamodb table with admin access | string | - | Y |
+| cloudformation_readonly_role_for_client_account | Role name that will assume the role to access the S3 bucket and the dynamodb table with read-only access | string | - | N |
 | generate_cloudformation_role_for_client_account | Decide whether to generate a cloudformation stack with a iam role to access the S3 bucket and the dynamodb table | boolean | true | N |
 | upload_cloudformation_role | Decide whether to upload to S3 the cloudformation stack | boolean | true | N |
 | s3_bucket_cloudformation_role | Name of the S3 bucket where the cloudformation template will be uploaded | string | "" | Only if "upload_cloudformation_role" is true |

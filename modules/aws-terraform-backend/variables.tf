@@ -62,9 +62,16 @@ variable "readonly_account_id" {
 }
 
 variable "cloudformation_admin_role_for_client_account" {
-  description = "Role name that will assume the role to access the S3 bucket and the dynamodb table"
+  description = "Role name that will assume the role to access the S3 bucket and the dynamodb table with admin access"
   type        = string
 }
+
+variable "cloudformation_readonly_role_for_client_account" {
+  description = "Role name that will assume the role to access the S3 bucket and the dynamodb table with read-only access"
+  type        = string
+  default     = ""
+}
+
 
 variable "generate_cloudformation_role_for_client_account" {
   description = "Decide whether to generate a cloudformation stack with a iam role to access the account with administrative privileges"
