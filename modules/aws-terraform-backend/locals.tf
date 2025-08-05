@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  readonly_role_enabled = var.readonly_account_id ? true : false
+  readonly_role_enabled = var.readonly_account_id != "" ? true : false
 
   readonly_role_resource = {
     ReadOnlyRole = {
