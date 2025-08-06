@@ -204,16 +204,6 @@ resource "aws_iam_role" "readonly_terraform_state" {
           }
         }
       ],
-      # Permissions to assume role
-      [
-        # STS AssumeRole Permissions
-        {
-          Sid      = "AssumeRoleAccess"
-          Action   = "sts:AssumeRole"
-          Effect   = "Allow"
-          Resource = "arn:aws:iam::*:role/${var.cloudformation_readonly_role_for_client_account}"
-        }
-      ],
       var.create_github_iam ? [{
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
