@@ -56,7 +56,7 @@ resource "aws_dynamodb_table" "this" {
 resource "aws_s3_object" "this" {
   count   = local.should_upload ? 1 : 0
   bucket  = var.s3_bucket_cloudformation_role
-  key     = var.s3_bucket_cloudformation_role_key
+  key     = "${var.s3_bucket_cloudformation_role_key}/${var.aws_client_account_id}.cloudformation-roles.yaml"
   content = local.cloudformation_template_yaml
   acl     = "private"
 }
