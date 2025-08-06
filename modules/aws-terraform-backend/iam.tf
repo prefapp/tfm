@@ -309,7 +309,7 @@ resource "aws_iam_policy" "readonly_s3_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_readonly_policy" {
-  count      = var.readonly_account_id ? 1 : 0
+  count      = var.readonly_account_id != "" ? 1 : 0
   role       = aws_iam_role.readonly_terraform_state[0].name
   policy_arn = aws_iam_policy.readonly_s3_policy[0].arn
 }
