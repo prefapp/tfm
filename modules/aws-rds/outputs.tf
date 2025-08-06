@@ -39,11 +39,11 @@ output "subnet_group_name" {
 }
 
 output "secrets_manager_arn" {
-  value       = var.manage_master_user_password || !var.use_secrets_manager ? null : aws_secretsmanager_secret.rds[0].arn
   description = "ARN of the RDS secrets stored in Secrets Manager (null if not used)"
+  value       = var.manage_master_user_password || !var.use_secrets_manager ? null : aws_secretsmanager_secret.rds[0].arn
 }
 
 output "master_user_secret_arn" {
-  description = "ARN del secreto gestionado por RDS (si aplica)"
+  description = "RDS-managed secret ARN (if applicable)"
   value       = var.manage_master_user_password ? module.rds.db_instance_master_user_secret_arn : null
 }
