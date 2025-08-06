@@ -187,7 +187,7 @@ resource "aws_iam_role_policy_attachment" "extra_roles" {
 
 
 resource "aws_iam_role" "readonly_terraform_state" {
-  count = var.readonly_account_id != "" ? 1 : 0
+  count = var.create_readonly_role ? 1 : 0
 
   name = var.readonly_tfstate_access_role_name
   assume_role_policy = jsonencode({
@@ -199,7 +199,7 @@ resource "aws_iam_role" "readonly_terraform_state" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${var.readonly_account_id}:root",
+              "arn:aws:iam::${var.aws_client_account_id}:root",
             ]
           }
         }
@@ -208,7 +208,7 @@ resource "aws_iam_role" "readonly_terraform_state" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          Federated : "arn:aws:iam::${var.readonly_account_id}:oidc-provider/token.actions.githubusercontent.com"
+          Federated : "arn:aws:iam::${var.aws_client_account_id}:oidc-provider/token.actions.githubusercontent.com"
         }
         Condition = {
           StringEquals = {
@@ -224,7 +224,7 @@ resource "aws_iam_role" "readonly_terraform_state" {
 }
 
 resource "aws_iam_policy" "readonly_s3_policy" {
-  count = var.readonly_account_id != "" ? 1 : 0
+  count = var.create_readonly_role ? 1 : 0
 
   name        = var.readonly_tfstate_access_role_name
   description = "Permissions for Terraform state"
@@ -299,7 +299,7 @@ resource "aws_iam_policy" "readonly_s3_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_readonly_policy" {
-  count      = var.readonly_account_id != "" ? 1 : 0
+  count      = var.create_readonly_role ? 1 : 0
   role       = aws_iam_role.readonly_terraform_state[0].name
   policy_arn = aws_iam_policy.readonly_s3_policy[0].arn
 }

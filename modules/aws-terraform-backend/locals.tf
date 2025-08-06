@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  readonly_role_enabled = var.readonly_account_id != "" ? true : false
+  readonly_role_enabled = var.create_readonly_role ? true : false
 
   readonly_role_resource = {
     ReadOnlyRole = {
@@ -15,7 +15,7 @@ locals {
               Effect = "Allow"
               Action = "sts:AssumeRole"
               Principal = {
-                AWS = "arn:aws:iam::${var.readonly_account_id}:role/${var.readonly_tfstate_access_role_name}"
+                AWS = "arn:aws:iam::${var.aws_client_account_id}:role/${var.readonly_tfstate_access_role_name}"
               }
             }
           ]
@@ -37,7 +37,7 @@ locals {
               Effect = "Allow"
               Action = "sts:AssumeRole"
               Principal = {
-                AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.tfbackend_access_role_name}"
+                AWS = "arn:aws:iam::${var.aws_client_account_id}:role/${var.tfbackend_access_role_name}"
               }
             }
           ]

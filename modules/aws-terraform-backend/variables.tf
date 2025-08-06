@@ -51,14 +51,15 @@ variable "backend_extra_roles" {
   default     = []
 }
 
-variable "aws_account_id" {
+variable "aws_client_account_id" {
   description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table as administrator"
   type        = string
 }
 
-variable "readonly_account_id" {
-  description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table as readonly"
-  type        = string
+variable "create_readonly_role" {
+  description = "Decide whether to generate a specific read-only role for the client account"
+  type        = bool
+  default     = false
 }
 
 variable "cloudformation_admin_role_for_client_account" {
