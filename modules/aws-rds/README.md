@@ -7,6 +7,7 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - Support for PostgreSQL, MySQL, MariaDB, and more
 - Configurable SSM Parameter Store integration
 - Optional support for AWS Secrets Manager to store DB credentials
+- Optional support for native RDS-managed Secrets Manager integration with automatic password rotation
 - Custom security group and subnet group support
 - Additional security group rule injection
 - Backup and performance settings
@@ -31,8 +32,6 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `db_username`: Username for the database (default: "admin").
 - `engine_version`: Database engine version (17.2 for postgres, 8.0 for mysql, etc.).
 - `family`: DB parameter group family (postgres17, mysql8.0, etc.).
-- `manage_master_user_password`: Whether to manage the master user password with AWS RDS native integration.
-- `use_secrets_manager`: If true, stores and reads credentials from AWS Secrets Manager instead of SSM (default: false).
 - `instance_class`: RDS instance class (default: "db.t3.micro").
 - `allocated_storage`: Allocated storage in GB (default: 50).
 - `max_allocated_storage`: Maximum allocated storage for autoscaling (default: 0).
@@ -50,8 +49,17 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `apply_immediately`: Whether to apply changes immediately (default: `false`).
 - `allow_major_version_upgrade`: Whether to allow major engine version upgrades (default: `false`).
 
+### Master User Password Management
+- `manage_master_user_password`: Whether to let RDS manage the master password with automatic Secrets Manager integration. If `true`, disables local creation of Secrets Manager or SSM password.
+- `manage_master_user_password_rotation`: Whether to enable automatic password rotation for the master user secret (only applies if `manage_master_user_password = true`) (default: false).
+- `master_user_password_rotate_immediately`: Whether to rotate the master password immediately upon creation (default: `false`).
+- `master_user_password_rotation_automatically_after_days`: Number of days after which to automatically rotate the password (default: `null`).
+- `master_user_password_rotation_duration`: Duration of the rotation process (e.g., `1h`) (default: `null`).
+- `master_user_password_rotation_schedule_expression`: Schedule expression for password rotation (e.g., `rate(30 days)`) (default: `null`).
+
 ### SSM Parameter Store
-(Only used if `use_secrets_manager = false`)
+(Only used if `use_secrets_manager = false` and `manage_master_user_password = false`)
+- `use_secrets_manager`: If true, stores and reads credentials from AWS Secrets Manager instead of SSM (default: false).
 - `db_name_ssm_name`: SSM parameter name for the database name (default: `<engine>/<environment>/<db_identifier>/name`).
 - `db_username_ssm_name`: SSM parameter name for the database username (default: `<engine>/<environment>/<db_identifier>/username`).
 - `db_password_ssm_name`: SSM parameter name for the database password (default: `<engine>/<environment>/<db_identifier>/password`).
@@ -60,16 +68,16 @@ This Terraform module deploys an AWS RDS instance for various database engines (
 - `db_port_ssm_name`: SSM parameter name for the database port (default: `<engine>/<environment>/<db_identifier>/port`).
 
 ### AWS Secrets Manager
-(Only used if use_secrets_manager = true)
+(Only used if `use_secrets_manager = true` and `manage_master_user_password = false`)
 - Automatically creates a secret in AWS Secrets Manager containing:
   - username
   - password
-  - engine
   - host
   - port
   - dbname
-  - dbInstanceIdentifier
 The ARN of the created secret is exposed via output `secrets_manager_arn`.
+
+If `manage_master_user_password = true`, the RDS instance manages its own secret in Secrets Manager, with rotation options. In that case, output `master_user_secret_arn` will contain the ARN.
 
 ### Security Groups
 - `security_group_name`: Name of the security group for the RDS instance (default: `<engine>-<environment>-<db_identifier>-security-group`).
@@ -87,7 +95,8 @@ The ARN of the created secret is exposed via output `secrets_manager_arn`.
 - `db_password_ssm_name`: SSM name of the password (only if not using Secrets Manager)
 - `security_group_id`: Security group ID used
 - `subnet_group_name`: Name of the DB subnet group
-- `secrets_manager_arn`: ARN of the Secrets Manager secret (only if `use_secrets_manager = true`)
+- `secrets_manager_arn`: ARN of the Secrets Manager secret (only if `use_secrets_manager = true` and `manage_master_user_password = false`)
+- `master_user_secret_arn`: ARN of the RDS-managed Secrets Manager secret (only if `manage_master_user_password = true`)
 
 ## Usage
 ### Example 1: PostgreSQL using SSM Parameter Store (default)
@@ -209,4 +218,58 @@ module "rds_mysql_secrets" {
     }
   ]
 }
+```
+### Example 3: PostgreSQL with RDS-managed Secret and Automatic Rotation
+```hcl
+module "rds_postgres_managed_secret" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/aws-rds"
+
+  region                  = "eu-west-1"
+  environment             = "pre"
+  db_identifier           = "rotated"
+  vpc_tag_name            = "core-vpc"
+  subnet_tag_name         = "private"
+
+  engine                  = "postgres"
+  engine_version          = "17.2"
+  family                  = "postgres17"
+  db_port                 = 5432
+  db_name                 = "rotatedb"
+  db_username             = "postgres"
+
+  manage_master_user_password                     = true
+  manage_master_user_password_rotation            = true
+  master_user_password_rotate_immediately         = true
+  master_user_password_rotation_automatically_after_days = 30
+  master_user_password_rotation_duration          = "2h"
+  master_user_password_rotation_schedule_expression = "rate(30 days)"
+
+  instance_class        = "db.t3.small"
+  allocated_storage     = 100
+  max_allocated_storage = 200
+  multi_az              = false
+  deletion_protection   = true
+
+  backup_retention_period               = 5
+  maintenance_window                    = "Wed:01:00-Wed:02:00"
+  backup_window                         = "01:00-03:00"
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 7
+  publicly_accessible                   = false
+
+  subnet_group_name     = "postgres-pre-rotated-subnet"
+  security_group_name   = "postgres-pre-rotated-sg"
+
+  extra_security_group_rules = [
+    {
+      type        = "ingress"
+      from_port   = 5432
+      to_port     = 5432
+      protocol    = "tcp"
+      cidr_blocks = ["172.31.0.0/16"]
+      description = "Allow traffic from internal apps"
+    }
+  ]
+}
+
 ```

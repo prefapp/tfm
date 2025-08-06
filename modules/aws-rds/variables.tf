@@ -19,6 +19,12 @@ variable "vpc_id" {
   default     = null
 }
 
+variable "vpc_tag_key" {
+  description = "Tag key used to search the VPC when vpc_id is not provided"
+  type        = string
+  default     = "Name"
+}
+
 variable "vpc_tag_name" {
   description = "Tag name of the VPC to look up"
   type        = string
@@ -35,6 +41,11 @@ variable "subnet_ids" {
   default     = null
 }
 
+variable "subnet_tag_key" {
+  description = "Tag key used to search the subnets when subnet_ids is not provided"
+  type        = string
+  default     = "type"
+}
 
 variable "subnet_tag_name" {
   description = "Tag name of the subnets to look up"
@@ -263,4 +274,61 @@ variable "use_secrets_manager" {
   description = "If true, store RDS credentials in AWS Secrets Manager instead of SSM Parameter Store"
   type        = bool
   default     = false
+  validation {
+    condition     = !(var.manage_master_user_password && var.use_secrets_manager)
+    error_message = "When manage_master_user_password is true, the module manages the secret. Do not set use_secrets_manager = true."
+  }
+}
+
+variable "manage_master_user_password_rotation" {
+  type    = bool
+  default = false
+  validation {
+    condition     = !var.manage_master_user_password_rotation || (var.manage_master_user_password)
+    error_message = "'manage_master_user_password_rotation' requires 'manage_master_user_password = true'."
+  }
+}
+
+variable "master_user_password_rotate_immediately" {
+  description = "Whether to rotate the master user password immediately upon creation"
+  type        = bool
+  default     = false
+  validation {
+    condition     = !var.master_user_password_rotate_immediately || var.manage_master_user_password_rotation
+    error_message = "'master_user_password_rotate_immediately' requires 'manage_master_user_password_rotation = true'."
+  }
+}
+
+variable "master_user_password_rotation_automatically_after_days" {
+  description = "Number of days after which the master password should be rotated automatically"
+  type        = number
+  default     = null
+  validation {
+    condition     = var.master_user_password_rotation_automatically_after_days == null || var.manage_master_user_password_rotation
+    error_message = "'master_user_password_rotation_automatically_after_days' requires 'manage_master_user_password_rotation = true'."
+  }
+}
+
+variable "master_user_password_rotation_duration" {
+  description = "Duration of the rotation event (e.g., PT5M)"
+  type        = string
+  default     = null
+  validation {
+    condition     = var.master_user_password_rotation_duration == null || var.manage_master_user_password_rotation
+    error_message = "'master_user_password_rotation_duration' requires 'manage_master_user_password_rotation = true'."
+  }
+}
+
+variable "master_user_password_rotation_schedule_expression" {
+  description = "Cron or rate expression defining rotation schedule"
+  type        = string
+  default     = null
+  validation {
+    condition     = var.master_user_password_rotation_schedule_expression == null || var.manage_master_user_password_rotation
+    error_message = "'master_user_password_rotation_schedule_expression' requires 'manage_master_user_password_rotation = true'."
+  }
+  validation {
+    condition     = var.master_user_password_rotation_automatically_after_days == null || var.master_user_password_rotation_schedule_expression == null
+    error_message = "Only one of 'master_user_password_rotation_automatically_after_days' or 'master_user_password_rotation_schedule_expression' should be set."
+  }
 }

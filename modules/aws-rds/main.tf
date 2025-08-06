@@ -1,7 +1,7 @@
 data "aws_vpc" "this" {
   count = var.vpc_id == null && var.vpc_tag_name != "" ? 1 : 0
   filter {
-    name   = "tag:Name"
+    name   = "tag:${var.vpc_tag_key}"
     values = [var.vpc_tag_name]
   }
 }
@@ -18,19 +18,19 @@ data "aws_subnets" "this" {
     values = [local.vpc_id]
   }
   filter {
-    name   = "tag:type"
+    name   = "tag:${var.subnet_tag_key}"
     values = [var.subnet_tag_name]
   }
 }
 
 resource "aws_secretsmanager_secret" "rds" {
-  count       = var.use_secrets_manager ? 1 : 0
+  count       = var.manage_master_user_password || !var.use_secrets_manager ? 0 : 1
   name        = "${var.engine}-${var.environment}-${var.db_identifier}"
   description = "RDS credentials for ${var.engine}-${var.environment}-${var.db_identifier}"
 }
 
 resource "aws_secretsmanager_secret_version" "rds" {
-  count     = var.use_secrets_manager ? 1 : 0
+  count     = var.manage_master_user_password || !var.use_secrets_manager ? 0 : 1
   secret_id = aws_secretsmanager_secret.rds[0].id
   secret_string = jsonencode({
     username = var.db_username
@@ -52,7 +52,7 @@ resource "random_password" "this" {
 }
 
 resource "aws_ssm_parameter" "db_name" {
-  count       = var.use_secrets_manager ? 0 : 1
+  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
   name        = local.db_name_ssm_name
   description = "${var.engine} database name"
   type        = "String"
@@ -60,7 +60,7 @@ resource "aws_ssm_parameter" "db_name" {
 }
 
 resource "aws_ssm_parameter" "db_username" {
-  count       = var.use_secrets_manager ? 0 : 1
+  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
   name        = local.db_username_ssm_name
   description = "${var.engine} database username"
   type        = "String"
@@ -68,7 +68,7 @@ resource "aws_ssm_parameter" "db_username" {
 }
 
 resource "aws_ssm_parameter" "db_password" {
-  count       = var.use_secrets_manager ? 0 : 1
+  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
   name        = local.db_password_ssm_name
   description = "${var.engine} database password"
   type        = "SecureString"
@@ -76,7 +76,7 @@ resource "aws_ssm_parameter" "db_password" {
 }
 
 resource "aws_ssm_parameter" "db_endpoint" {
-  count       = var.use_secrets_manager ? 0 : 1
+  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
   name        = local.db_endpoint_ssm_name
   description = "${var.engine} database endpoint"
   type        = "String"
@@ -84,7 +84,7 @@ resource "aws_ssm_parameter" "db_endpoint" {
 }
 
 resource "aws_ssm_parameter" "db_host" {
-  count       = var.use_secrets_manager ? 0 : 1
+  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
   name        = local.db_host_ssm_name
   description = "${var.engine} database host"
   type        = "String"
@@ -92,7 +92,7 @@ resource "aws_ssm_parameter" "db_host" {
 }
 
 resource "aws_ssm_parameter" "db_port" {
-  count       = var.use_secrets_manager ? 0 : 1
+  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
   name        = local.db_port_ssm_name
   description = "${var.engine} database port"
   type        = "String"
@@ -171,17 +171,22 @@ resource "aws_db_subnet_group" "this" {
 module "rds" {
   source = "terraform-aws-modules/rds/aws"
 
-  identifier                  = var.db_identifier
-  engine                      = var.engine
-  engine_version              = var.engine_version
-  family                      = var.family
-  instance_class              = var.instance_class
-  allocated_storage           = var.allocated_storage
-  db_subnet_group_name        = aws_db_subnet_group.this.name
-  vpc_security_group_ids      = [local.security_group_id]
-  manage_master_user_password = var.manage_master_user_password
+  identifier                                             = var.db_identifier
+  engine                                                 = var.engine
+  engine_version                                         = var.engine_version
+  family                                                 = var.family
+  instance_class                                         = var.instance_class
+  allocated_storage                                      = var.allocated_storage
+  db_subnet_group_name                                   = aws_db_subnet_group.this.name
+  vpc_security_group_ids                                 = [local.security_group_id]
+  manage_master_user_password                            = var.manage_master_user_password
+  manage_master_user_password_rotation                   = var.manage_master_user_password_rotation
+  master_user_password_rotate_immediately                = var.master_user_password_rotate_immediately
+  master_user_password_rotation_automatically_after_days = var.master_user_password_rotation_automatically_after_days
+  master_user_password_rotation_duration                 = var.master_user_password_rotation_duration
+  master_user_password_rotation_schedule_expression      = var.master_user_password_rotation_schedule_expression
 
-  username = var.manage_master_user_password ? null : var.db_username
+  username = var.db_username
   password = var.manage_master_user_password ? null : random_password.this.result
   db_name  = var.db_name
   port     = var.db_port
@@ -200,4 +205,5 @@ module "rds" {
   parameters                            = var.parameters
   apply_immediately                     = var.apply_immediately
   allow_major_version_upgrade           = var.allow_major_version_upgrade
+
 }

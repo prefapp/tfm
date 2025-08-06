@@ -25,7 +25,7 @@ output "db_username" {
 
 output "db_password_ssm_name" {
   description = "The name of the SSM parameter storing the database password"
-  value       = var.use_secrets_manager ? null : aws_ssm_parameter.db_password[0].name
+  value       = var.use_secrets_manager || var.manage_master_user_password ? null : aws_ssm_parameter.db_password[0].name
 }
 
 output "security_group_id" {
@@ -39,7 +39,11 @@ output "subnet_group_name" {
 }
 
 output "secrets_manager_arn" {
-  value       = var.use_secrets_manager ? aws_secretsmanager_secret.rds[0].arn : null
+  value       = var.manage_master_user_password || !var.use_secrets_manager ? null : aws_secretsmanager_secret.rds[0].arn
   description = "ARN of the RDS secrets stored in Secrets Manager (null if not used)"
 }
 
+output "master_user_secret_arn" {
+  description = "ARN del secreto gestionado por RDS (si aplica)"
+  value       = var.manage_master_user_password ? module.rds.db_instance_master_user_secret_arn : null
+}
