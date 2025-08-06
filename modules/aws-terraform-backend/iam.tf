@@ -187,7 +187,7 @@ resource "aws_iam_role_policy_attachment" "extra_roles" {
 
 
 resource "aws_iam_role" "readonly_terraform_state" {
-  count = var.readonly_account_id ? 1 : 0
+  count = var.readonly_account_id != "" ? 1 : 0
 
   name = var.readonly_tfstate_access_role_name
   assume_role_policy = jsonencode({
@@ -234,7 +234,7 @@ resource "aws_iam_role" "readonly_terraform_state" {
 }
 
 resource "aws_iam_policy" "readonly_s3_policy" {
-  count = var.readonly_account_id ? 1 : 0
+  count = var.readonly_account_id != "" ? 1 : 0
 
   name        = var.readonly_tfstate_access_role_name
   description = "Permissions for Terraform state"
