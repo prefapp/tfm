@@ -9,7 +9,7 @@ resource "aws_iam_role" "admin_tfstate_role" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${var.aws_account_id}:root",
+              "arn:aws:iam::${var.aws_client_account_id}:root",
             ]
           }
         }
@@ -18,7 +18,7 @@ resource "aws_iam_role" "admin_tfstate_role" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          Federated : "arn:aws:iam::${var.aws_account_id}:oidc-provider/token.actions.githubusercontent.com"
+          Federated : "arn:aws:iam::${var.aws_client_account_id}:oidc-provider/token.actions.githubusercontent.com"
         }
         Condition = {
           StringEquals = {
