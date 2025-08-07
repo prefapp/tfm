@@ -1,5 +1,5 @@
 locals {
-  default_ssm_prefix   = "${var.engine}/${var.environment}/${var.db_identifier}"
+  default_ssm_prefix   = "/${var.engine}/${var.environment}/${var.db_identifier}"
   db_name_ssm_name     = coalesce(var.db_name_ssm_name, "${local.default_ssm_prefix}/name")
   db_username_ssm_name = coalesce(var.db_username_ssm_name, "${local.default_ssm_prefix}/username")
   db_password_ssm_name = coalesce(var.db_password_ssm_name, "${local.default_ssm_prefix}/password")

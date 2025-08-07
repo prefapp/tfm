@@ -52,7 +52,7 @@ resource "random_password" "this" {
 }
 
 resource "aws_ssm_parameter" "db_name" {
-  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
+  count       = var.manage_master_user_password || !var.use_secrets_manager ? 1 : 0
   name        = local.db_name_ssm_name
   description = "${var.engine} database name"
   type        = "String"
@@ -76,7 +76,7 @@ resource "aws_ssm_parameter" "db_password" {
 }
 
 resource "aws_ssm_parameter" "db_endpoint" {
-  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
+  count       = var.manage_master_user_password || !var.use_secrets_manager ? 1 : 0
   name        = local.db_endpoint_ssm_name
   description = "${var.engine} database endpoint"
   type        = "String"
@@ -84,7 +84,7 @@ resource "aws_ssm_parameter" "db_endpoint" {
 }
 
 resource "aws_ssm_parameter" "db_host" {
-  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
+  count       = var.manage_master_user_password || !var.use_secrets_manager ? 1 : 0
   name        = local.db_host_ssm_name
   description = "${var.engine} database host"
   type        = "String"
@@ -92,7 +92,7 @@ resource "aws_ssm_parameter" "db_host" {
 }
 
 resource "aws_ssm_parameter" "db_port" {
-  count       = var.use_secrets_manager || var.manage_master_user_password ? 0 : 1
+  count       = var.manage_master_user_password || !var.use_secrets_manager ? 1 : 0
   name        = local.db_port_ssm_name
   description = "${var.engine} database port"
   type        = "String"

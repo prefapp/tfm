@@ -92,7 +92,12 @@ If `manage_master_user_password = true`, the RDS instance manages its own secret
 - `db_instance_port`: Port of the instance
 - `db_name`: Name of the DB
 - `db_username`: DB username
-- `db_password_ssm_name`: SSM name of the password (only if not using Secrets Manager)
+- `db_password_ssm_name`: SSM name of the password (only if not using Secrets Manager or RDS-managed password)
+- `db_name_ssm_name`: SSM name of the DB name (only if not using Secrets Manager or RDS-managed password)
+- `db_username_ssm_name`: SSM name of the username (only if not using Secrets Manager or RDS-managed password)
+- `db_endpoint_ssm_name`: SSM name of the full endpoint (only if not using Secrets Manager or RDS-managed password)
+- `db_host_ssm_name`: SSM name of the hostname (only if not using Secrets Manager or RDS-managed password)
+- `db_port_ssm_name`: SSM name of the port (only if not using Secrets Manager or RDS-managed password)
 - `security_group_id`: Security group ID used
 - `subnet_group_name`: Name of the DB subnet group
 - `secrets_manager_arn`: ARN of the Secrets Manager secret (only if `use_secrets_manager = true` and `manage_master_user_password = false`)

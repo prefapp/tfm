@@ -28,6 +28,31 @@ output "db_password_ssm_name" {
   value       = var.use_secrets_manager || var.manage_master_user_password ? null : aws_ssm_parameter.db_password[0].name
 }
 
+output "db_name_ssm_name" {
+  description = "The name of the SSM parameter storing the database name"
+  value       = var.manage_master_user_password || !var.use_secrets_manager ? local.db_name_ssm_name : null
+}
+
+output "db_username_ssm_name" {
+  description = "The name of the SSM parameter storing the database username"
+  value       = var.use_secrets_manager || var.manage_master_user_password ? null : local.db_username_ssm_name
+}
+
+output "db_endpoint_ssm_name" {
+  description = "The name of the SSM parameter storing the database endpoint"
+  value       = var.manage_master_user_password || !var.use_secrets_manager ? local.db_endpoint_ssm_name : null
+}
+
+output "db_host_ssm_name" {
+  description = "The name of the SSM parameter storing the database host"
+  value       = var.manage_master_user_password || !var.use_secrets_manager ? local.db_host_ssm_name : null
+}
+
+output "db_port_ssm_name" {
+  description = "The name of the SSM parameter storing the database port"
+  value       = var.manage_master_user_password || !var.use_secrets_manager ? local.db_port_ssm_name : null
+}
+
 output "security_group_id" {
   description = "The ID of the security group for the RDS instance"
   value       = local.security_group_id
