@@ -43,7 +43,6 @@ variable "storage_account" {
     min_tls_version                  = optional(string, "TLS1_2")
     public_network_access_enabled    = optional(bool, true)
     threat_protection_enabled        = optional(bool, false)
-    last_access_time_enabled         = optional(bool, false)
     tags                             = optional(map(string), {})
     identity = optional(object({
       type         = optional(string, "SystemAssigned")
@@ -52,6 +51,7 @@ variable "storage_account" {
     blob_properties = optional(object({
       versioning_enabled  = optional(bool)
       change_feed_enabled = optional(bool)
+      last_access_time_enabled = optional(bool)
       delete_retention_policy = optional(object({
         days = optional(number)
       }))
