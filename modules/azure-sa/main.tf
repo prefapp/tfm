@@ -156,10 +156,11 @@ resource "azurerm_advanced_threat_protection" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
-  for_each           = var.lifecycle_policy_rules != null ? { for rule in var.lifecycle_policy_rules : rule.name => rule } : {}
+  count = var.lifecycle_policy_rules == null ? 0 : 1
   storage_account_id = azurerm_storage_account.this.id
+
   dynamic "rule" {
-    for_each = var.lifecycle_policy_rules
+    for_each = var.lifecycle_policy_rules != null ? var.lifecycle_policy_rules : []
     content {
       name    = rule.value.name
       enabled = rule.value.enabled
