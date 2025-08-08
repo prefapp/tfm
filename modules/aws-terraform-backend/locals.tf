@@ -52,17 +52,20 @@ locals {
     AWSTemplateFormatVersion = "2010-09-09"
     Description              = "Allows administrator account to assume admin role in client account"
     Resources                = merge(local.admin_role_resource, local.readonly_role_enabled ? local.readonly_role_resource : {})
-    Outputs = {
-      AdminRoleARN = {
-        Description = "ARN of the created admin role"
-        Value       = { "Ref" = "AdminRole" }
+    Outputs = merge(
+      {
+        AdminRoleARN = {
+          Description = "ARN of the created admin role"
+          Value       = { "Ref" = "AdminRole" }
+        }
       },
-      #
-      ReadOnlyRoleARN = {
-        Description = "ARN of the created read-only role"
-        Value       = { "Ref" = "ReadOnlyRole" }
-      }
-    }
+      local.readonly_role_enabled ? {
+        ReadOnlyRoleARN = {
+          Description = "ARN of the created read-only role"
+          Value       = { "Ref" = "ReadOnlyRole" }
+        }
+      } : {}
+    )
   }
 
   # Then convert to YAML
