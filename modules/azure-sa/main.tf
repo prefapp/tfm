@@ -84,7 +84,7 @@ resource "azurerm_storage_account_network_rules" "this" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container.html
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container
 resource "azurerm_storage_container" "this" {
   for_each                          = var.containers != null ? { for container in var.containers : container.name => container } : {}
   name                              = each.value.name
@@ -99,7 +99,7 @@ resource "azurerm_storage_container" "this" {
 resource "azurerm_storage_share" "this" {
   for_each             = var.shares != null ? { for share in var.shares : share.name => share } : {}
   name                 = each.value.name
-  storage_account_name = azurerm_storage_account.this.name
+  storage_account_id   = azurerm_storage_account.this.id
   access_tier          = each.value.access_tier
   enabled_protocol     = each.value.enabled_protocol
   quota                = each.value.quota
