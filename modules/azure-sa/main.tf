@@ -30,13 +30,13 @@ resource "azurerm_storage_account" "this" {
   https_traffic_only_enabled       = var.storage_account.https_traffic_only_enabled
   min_tls_version                  = var.storage_account.min_tls_version
   public_network_access_enabled    = var.storage_account.public_network_access_enabled
-  last_access_time_enabled        = var.storage_account.last_access_time_enabled
   tags                             = var.tags
   dynamic "blob_properties" {
     for_each = var.storage_account.blob_properties != null ? [var.storage_account.blob_properties] : []
     content {
       versioning_enabled  = lookup(blob_properties.value, "versioning_enabled", null)
       change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
+      last_access_time_enabled = lookup(blob_properties.value, "last_access_time_enabled", null)
       dynamic "delete_retention_policy" {
         for_each = blob_properties.value.delete_retention_policy != null ? [blob_properties.value.delete_retention_policy] : []
         content {
