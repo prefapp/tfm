@@ -11,7 +11,7 @@ resource "aws_iam_role" "this" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${var.aws_client_account_id}:${var.external_main_role}",
+              "arn:aws:iam::${var.aws_client_account_id}:root",
             ]
           }
         }
@@ -95,7 +95,6 @@ resource "aws_iam_policy" "full" {
           Resource = aws_dynamodb_table.this[0].arn
         }
       ],
-      # Permissions to assume role
       [
         # STS AssumeRole Permissions
         {
@@ -191,6 +190,8 @@ resource "aws_iam_role_policy_attachment" "limited" {
 # Optional role. This role needs access to the terraform state,
 # and should be referenced in the read-only role in the client account
 # We allow a specific role in the client account to assume this role
+# The trust relationship allows an external account to assume this role
+# but will be limited with an attached policy that specifies an external role in that account.
 resource "aws_iam_role" "that" {
   count = var.create_aux_role ? 1 : 0
 
@@ -204,7 +205,7 @@ resource "aws_iam_role" "that" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${var.aws_client_account_id}:${var.external_aux_role}",
+              "arn:aws:iam::${var.aws_client_account_id}:root",
             ]
           }
         }
@@ -287,6 +288,15 @@ resource "aws_iam_policy" "that" {
             "dynamodb:DeleteItem"
           ]
           Resource = aws_dynamodb_table.this[0].arn
+        }
+      ],
+      [
+        # STS AssumeRole Permissions
+        {
+          Sid      = "AssumeRoleAccess"
+          Action   = "sts:AssumeRole"
+          Effect   = "Allow"
+          Resource = "arn:aws:iam::*:role/${var.external_aux_role}"
         }
       ]
     )
