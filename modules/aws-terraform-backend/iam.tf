@@ -1,5 +1,7 @@
-resource "aws_iam_role" "admin_tfstate_role" {
-  name = var.tfbackend_access_role_name
+# AWS IAM ROLE (principal, always created).
+# We allow a specific role in the client account to assume this role
+resource "aws_iam_role" "this" {
+  name = var.main_role_name
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = concat(
@@ -9,7 +11,7 @@ resource "aws_iam_role" "admin_tfstate_role" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${var.aws_client_account_id}:root",
+              "arn:aws:iam::${var.aws_client_account_id}:${var.external_main_role}",
             ]
           }
         }
@@ -35,7 +37,7 @@ resource "aws_iam_role" "admin_tfstate_role" {
 
 
 resource "aws_iam_policy" "full" {
-  name        = var.tfbackend_access_role_name
+  name        = var.main_role_name
   description = "Permissions for Terraform state"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -100,7 +102,7 @@ resource "aws_iam_policy" "full" {
           Sid      = "AssumeRoleAccess"
           Action   = "sts:AssumeRole"
           Effect   = "Allow"
-          Resource = "arn:aws:iam::*:role/${var.cloudformation_admin_role_for_client_account}"
+          Resource = "arn:aws:iam::*:role/${var.external_main_role}"
         }
       ]
     )
@@ -109,7 +111,7 @@ resource "aws_iam_policy" "full" {
 
 
 resource "aws_iam_policy" "limited" {
-  name        = "${var.tfbackend_access_role_name}-extra"
+  name        = "${var.main_role_name}-extra"
   description = "Permissions for Terraform state"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -172,24 +174,27 @@ resource "aws_iam_policy" "limited" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "client" {
-  role       = aws_iam_role.admin_tfstate_role.name
+resource "aws_iam_role_policy_attachment" "this" {
+  role       = aws_iam_role.this.name
   policy_arn = aws_iam_policy.full.arn
 }
 
 
 
-resource "aws_iam_role_policy_attachment" "extra_roles" {
+resource "aws_iam_role_policy_attachment" "limited" {
   for_each   = toset(var.backend_extra_roles)
   role       = each.key
   policy_arn = aws_iam_policy.limited.arn
 }
 
 
-resource "aws_iam_role" "readonly_terraform_state" {
-  count = var.create_readonly_role ? 1 : 0
+# Optional role. This role needs access to the terraform state,
+# and should be referenced in the read-only role in the client account
+# We allow a specific role in the client account to assume this role
+resource "aws_iam_role" "that" {
+  count = var.create_aux_role ? 1 : 0
 
-  name = var.readonly_tfstate_access_role_name
+  name = var.aux_role_name
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = concat(
@@ -199,7 +204,7 @@ resource "aws_iam_role" "readonly_terraform_state" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${var.aws_client_account_id}:root",
+              "arn:aws:iam::${var.aws_client_account_id}:${var.external_aux_role}",
             ]
           }
         }
@@ -223,11 +228,11 @@ resource "aws_iam_role" "readonly_terraform_state" {
   })
 }
 
-resource "aws_iam_policy" "readonly_s3_policy" {
-  count = var.create_readonly_role ? 1 : 0
+resource "aws_iam_policy" "that" {
+  count = var.create_aux_role ? 1 : 0
 
-  name        = var.readonly_tfstate_access_role_name
-  description = "Permissions for Terraform state"
+  name        = var.aux_role_name
+  description = "Auxiliary permissions for Terraform state"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = concat(
@@ -283,23 +288,13 @@ resource "aws_iam_policy" "readonly_s3_policy" {
           ]
           Resource = aws_dynamodb_table.this[0].arn
         }
-      ],
-      # Permissions to assume role
-      [
-        # STS AssumeRole Permissions
-        {
-          Sid      = "AssumeRoleAccess"
-          Action   = "sts:AssumeRole"
-          Effect   = "Allow"
-          Resource = "arn:aws:iam::*:role/${var.cloudformation_readonly_role_for_client_account}"
-        }
       ]
     )
   })
 }
 
-resource "aws_iam_role_policy_attachment" "attach_readonly_policy" {
-  count      = var.create_readonly_role ? 1 : 0
-  role       = aws_iam_role.readonly_terraform_state[0].name
-  policy_arn = aws_iam_policy.readonly_s3_policy[0].arn
+resource "aws_iam_role_policy_attachment" "that" {
+  count      = var.create_aux_role ? 1 : 0
+  role       = aws_iam_role.that[0].name
+  policy_arn = aws_iam_policy.that[0].arn
 }

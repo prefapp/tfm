@@ -32,16 +32,16 @@ variable "tfstate_enable_versioning" {
   default     = true
 }
 
-variable "tfbackend_access_role_name" {
-  description = "Terraform backend access role name"
+variable "main_role_name" {
+  description = "Terraform backend access role name (main)"
   type        = string
   default     = "terraform-backend-access-role"
 }
 
-variable "readonly_tfstate_access_role_name" {
-  description = "Readonly Terraform backend access role"
+variable "aux_role_name" {
+  description = "Terraform backend access role (auxiliary)"
   type        = string
-  default     = "terraform-backend-readonlyaccess-role"
+  default     = "terraform-backend-aux-access-role"
 }
 
 
@@ -52,22 +52,22 @@ variable "backend_extra_roles" {
 }
 
 variable "aws_client_account_id" {
-  description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table as administrator"
+  description = "AWS Account ID that will assume the role that allows access to the S3 bucket and the dynamodb table"
   type        = string
 }
 
-variable "create_readonly_role" {
-  description = "Decide whether to generate a specific read-only role for the client account"
+variable "create_aux_role" {
+  description = "Decide whether to generate a specific auxiliary role for the client account"
   type        = bool
   default     = false
 }
 
-variable "cloudformation_admin_role_for_client_account" {
+variable "external_main_role" {
   description = "Role name that will assume the role to access the S3 bucket and the dynamodb table with admin access"
   type        = string
 }
 
-variable "cloudformation_readonly_role_for_client_account" {
+variable "external_aux_role" {
   description = "Role name that will assume the role to access the S3 bucket and the dynamodb table with read-only access"
   type        = string
   default     = ""
