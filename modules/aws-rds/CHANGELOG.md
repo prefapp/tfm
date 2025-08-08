@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/aws-rds-v0.1.0...aws-rds-v0.1.1) (2025-08-08)
+
+
+### Features
+
+* add improvements for aws rds module ([#690](https://github.com/prefapp/tfm/issues/690)) ([ff44950](https://github.com/prefapp/tfm/commit/ff44950d20ea3ea9f8f78b68fd0f42b555b1e76e))
+
 ## 0.1.0 (2025-07-21)
 
 
