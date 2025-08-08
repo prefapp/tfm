@@ -156,7 +156,7 @@ resource "azurerm_advanced_threat_protection" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
-  count = var.lifecycle_policy_rules != null && length(var.lifecycle_policy_rules) > 0 ? 1 : 0
+  count = var.lifecycle_policy_rules ? 1 : 0
   storage_account_id = azurerm_storage_account.this.id
 
   dynamic "rule" {
