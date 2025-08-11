@@ -27,7 +27,7 @@ resource "azurerm_data_protection_backup_policy_disk" "this" {
   time_zone                       = try(each.value.time_zone, null)
 
   dynamic "retention_rule" {
-    for_each = each.value.retention_rule
+    for_each = each.value.retention_rule != null ? each.value.retention_rule : []
     content {
       name     = retention_rule.value.name
       duration = retention_rule.value.duration

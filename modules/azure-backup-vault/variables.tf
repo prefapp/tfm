@@ -60,6 +60,7 @@ variable "disk_instances" {
   description = "Map of backup instances for disks"
   type = map(object({
     instance_disk_name = string
+    disk_resource_group = string
     policy_key         = string
   }))
   default = {}
