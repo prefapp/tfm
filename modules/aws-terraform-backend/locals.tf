@@ -56,13 +56,13 @@ locals {
       {
         AdminRoleARN = {
           Description = "ARN of the created admin role"
-          Value       = { "Ref" = "AdministratorAccess" }
+          Value       = { "Ref" = "AdminRole" }
         }
       },
       local.readonly_role_enabled ? {
         ReadOnlyRoleARN = {
           Description = "ARN of the created read-only role"
-          Value       = { "Ref" = "ReadOnlyAccess" }
+          Value       = { "Ref" = "ReadOnlyRole" }
         }
       } : {}
     )
