@@ -44,13 +44,6 @@ variable "aux_role_name" {
   default     = "terraform-backend-aux-access-role"
 }
 
-
-variable "backend_extra_roles" {
-  description = "Additional roles to add to the Terraform backend access role"
-  type        = list(string)
-  default     = []
-}
-
 variable "aws_client_account_id" {
   description = "AWS Account ID that will assume the role that allows access to the S3 bucket and the dynamodb table"
   type        = string

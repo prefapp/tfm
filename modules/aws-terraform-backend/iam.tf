@@ -112,13 +112,6 @@ resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = aws_iam_policy.this.arn
 }
 
-resource "aws_iam_role_policy_attachment" "limited" {
-  for_each   = toset(var.backend_extra_roles)
-  role       = each.key
-  policy_arn = aws_iam_policy.limited.arn
-}
-
-
 # Optional role. This role needs access to the terraform state,
 # and should be referenced in the read-only role in the client account
 # We allow a specific role in the client account to assume this role
@@ -161,82 +154,8 @@ resource "aws_iam_role" "that" {
   })
 }
 
-resource "aws_iam_policy" "that" {
-  count = var.create_aux_role ? 1 : 0
-
-  name        = "TerraformAuxiliaryRole"
-  description = "Auxiliary permissions for Terraform state"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = concat(
-      [
-        # S3 Bucket Permissions
-        {
-          Sid    = "S3BucketAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:ListBucket",
-            "s3:GetBucketVersioning"
-          ]
-          Resource = aws_s3_bucket.tfstate.arn
-          Condition = {
-            StringEquals = {
-              "s3:prefix" = ["${var.tfstate_object_prefix}"]
-            }
-          }
-        },
-        # S3 Object Permissions
-        {
-          Sid    = "S3BucketObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/*"
-        },
-        # S3 Lock File Permissions
-        {
-          Sid    = "S3ObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
-        },
-      ],
-      # If locks_table_name is present, add permissions to locks table
-      var.locks_table_name == null || var.locks_table_name == "" ? [] :
-      [
-        # DynamoDB Table Permissions
-        {
-          Sid    = "DynamoDBLockTableAccess"
-          Effect = "Allow"
-          Action = [
-            "dynamodb:GetItem",
-            "dynamodb:PutItem",
-            "dynamodb:DeleteItem"
-          ]
-          Resource = aws_dynamodb_table.this[0].arn
-        }
-      ],
-      [
-        # STS AssumeRole Permissions
-        {
-          Sid      = "AssumeRoleAccess"
-          Action   = "sts:AssumeRole"
-          Effect   = "Allow"
-          Resource = "arn:aws:iam::*:role/${var.external_aux_role}"
-        }
-      ]
-    )
-  })
-}
-
 resource "aws_iam_role_policy_attachment" "that" {
   count      = var.create_aux_role ? 1 : 0
   role       = aws_iam_role.that[0].name
-  policy_arn = aws_iam_policy.that[0].arn
+  policy_arn = aws_iam_policy.this.arn
 }
