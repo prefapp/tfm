@@ -37,8 +37,8 @@ variable "vault" {
 
 # Disk backup variables
 variable "disk_policies" {
-  description = "Map of backup policies for disks"
-  type = map(object({
+  description = "List of backup policies for disks"
+  type = list(object({
     policy_name                     = string
     backup_repeating_time_intervals = list(string)
     default_retention_duration      = string
@@ -52,7 +52,7 @@ variable "disk_policies" {
       })
     })))
   }))
-  default = {}
+  default = []
 }
 
 # Disk backup instances
