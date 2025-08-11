@@ -19,7 +19,7 @@ resource "azurerm_role_assignment" "disk_backup_reader" {
 # Disk backup policies
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_disk
 resource "azurerm_data_protection_backup_policy_disk" "this" {
-  for_each                        = var.disk_policies
+  for_each                        = { for policy in var.disk_policies : policy.policy_name => policy }
   name                            = each.value.policy_name
   vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
