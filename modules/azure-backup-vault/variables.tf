@@ -57,13 +57,13 @@ variable "disk_policies" {
 
 # Disk backup instances
 variable "disk_instances" {
-  description = "Map of backup instances for disks"
-  type = map(object({
-    instance_disk_name = string
-    disk_resource_group = string
-    policy_key         = string
+  description = "List of backup instances for disks"
+  type = list(object({
+    instance_disk_name   = string
+    disk_resource_group  = string
+    policy_key           = string
   }))
-  default = {}
+  default = []
 }
 
 # Blob backup policies
