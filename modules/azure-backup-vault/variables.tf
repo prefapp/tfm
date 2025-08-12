@@ -39,7 +39,7 @@ variable "vault" {
 variable "disk_policies" {
   description = "List of backup policies for disks"
   type = list(object({
-    policy_name                     = string
+    name                     = string
     backup_repeating_time_intervals = list(string)
     default_retention_duration      = string
     time_zone                       = optional(string)
@@ -59,7 +59,7 @@ variable "disk_policies" {
 variable "disk_instances" {
   description = "List of backup instances for disks"
   type = list(object({
-    instance_disk_name   = string
+    name   = string
     disk_resource_group  = string
     policy_key           = string
   }))
@@ -68,9 +68,9 @@ variable "disk_instances" {
 
 # Blob backup policies
 variable "blob_policies" {
-  description = "Map of backup policies for blobs"
-  type = map(object({
-    policy_name                            = string
+  description = "List of backup policies for blobs"
+  type = list(object({
+    name                                   = string
     backup_repeating_time_intervals        = optional(list(string))
     operational_default_retention_duration = optional(string)
     time_zone                              = optional(string)
@@ -92,19 +92,19 @@ variable "blob_policies" {
       })
     })))
   }))
-  default = {}
+  default = []
 }
 
 # Blob backup instances
 variable "blob_instances" {
-  description = "Map of backup instances for blobs"
-  type = map(object({
-    instance_blob_name              = string
+  description = "List of backup instances for blobs"
+  type = list(object({
+    name                            = string
     storage_account_id              = string
     storage_account_container_names = list(string)
     policy_key                      = string
   }))
-  default = {}
+  default = []
 }
 
 # Postgresql backup policies
