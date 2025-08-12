@@ -25,7 +25,7 @@ resource "azurerm_role_assignment" "disk_backup_reader" {
 # Role assignment: Snapshot RG Contributor a cada disco
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "snapshot_rg_contributor" {
-  for_each = data.azurerm_resource_group.disk_rg
+  for_each             = data.azurerm_resource_group.disk_rg
   scope                = each.value.id
   role_definition_name = "Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -59,10 +59,10 @@ resource "azurerm_data_protection_backup_policy_disk" "this" {
 resource "azurerm_data_protection_backup_instance_disk" "this" {
   for_each                     = { for instance in var.disk_instances : instance.name => instance }
   name                         = each.value.name
-  location                     = data.azurerm_resource_group.disk_rg[each.value.name].location
+  location                     = data.azurerm_resource_group.disk_rg[each.value.disk_resource_group].location
   vault_id                     = azurerm_data_protection_backup_vault.this.id
   disk_id                      = data.azurerm_managed_disk.this[each.value.name].id
-  snapshot_resource_group_name = data.azurerm_resource_group.disk_rg[each.value.name].name
+  snapshot_resource_group_name = data.azurerm_resource_group.disk_rg[each.value.disk_resource_group].name
   backup_policy_id             = azurerm_data_protection_backup_policy_disk.this[each.value.policy_key].id
 
   depends_on = [
