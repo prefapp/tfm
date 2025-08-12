@@ -1,7 +1,7 @@
 # Role assignment: Storage Account Backup Contributor for each storage account used in blobs
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
-  for_each             = { for instance in var.blob_instances : instance.storage_account_id => instance }
+  for_each             = { for id in distinct([for instance in var.blob_instances : instance.storage_account_id]) : id => id }
   scope                = each.key
   role_definition_name = "Storage Account Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -19,7 +19,7 @@ resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
   vault_default_retention_duration       = each.value.vault_default_retention_duration
 
   dynamic "retention_rule" {
-    for_each = each.value.retention_rule
+    for_each = each.value.retention_rule != null ? each.value.retention_rule : []
     content {
       name     = retention_rule.value.name
       priority = retention_rule.value.priority
