@@ -15,8 +15,8 @@ data "azurerm_resource_group" "this" {
 
 # Data source to get the resource group for the disks
 data "azurerm_resource_group" "disk_rg" {
-  for_each = { for instance in var.disk_instances : instance.name => instance }
-  name     = each.value.disk_resource_group
+  for_each = { for rg in local.unique_disk_resource_groups : rg => rg }
+  name     = each.value
 }
 
 # Data source to get the managed disk by name
