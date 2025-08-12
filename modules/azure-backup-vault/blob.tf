@@ -1,7 +1,7 @@
 # Role assignment: Storage Account Backup Contributor for each storage account used in blobs
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
-  for_each             = { for k, v in var.blob_instances : v.storage_account_id => v if v.storage_account_id != null }
+  for_each             = { for instance in var.blob_instances : instance.storage_account_id => instance }
   scope                = each.key
   role_definition_name = "Storage Account Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -10,8 +10,8 @@ resource "azurerm_role_assignment" "this" {
 # Blob backup policies
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage
 resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
-  for_each                               = var.blob_policies
-  name                                   = each.value.policy_name
+  for_each                               = { for policy in var.blob_policies : policy.name => policy }
+  name                                   = each.value.name
   vault_id                               = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals        = each.value.backup_repeating_time_intervals
   operational_default_retention_duration = each.value.operational_default_retention_duration
@@ -42,8 +42,8 @@ resource "azurerm_data_protection_backup_policy_blob_storage" "this" {
 # Blob instance backups
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_blob_storage
 resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
-  for_each                        = var.blob_instances
-  name                            = each.value.instance_blob_name
+  for_each                        = { for instance in var.blob_instances : instance.name => instance }
+  name                            = each.value.instance_name
   vault_id                        = azurerm_data_protection_backup_vault.this.id
   location                        = data.azurerm_resource_group.this.location
   storage_account_id              = each.value.storage_account_id
