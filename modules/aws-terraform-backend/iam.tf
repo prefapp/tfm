@@ -2,55 +2,55 @@
 ## terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc
 
 module "main_oidc_role" {
-  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version     = "5.60.0"
-  create_role = true
-  role_name   = var.main_role.name
-  provider_urls = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
+  source                         = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                        = "5.60.0"
+  create_role                    = true
+  role_name                      = var.main_role.name
+  provider_urls                  = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences), [])
 }
 
 
 module "aux_oidc_role" {
-  count = var.create_aux_role?  1 : 0
-  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version     = "5.60.0"
-  create_role = true
-  role_name   = var.aux_role.name
-  provider_urls = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
+  count                          = var.create_aux_role ? 1 : 0
+  source                         = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                        = "5.60.0"
+  create_role                    = true
+  role_name                      = var.aux_role.name
+  provider_urls                  = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences), [])
 }
 
 # main role for the terraform backend.
 # It can be assumed by the root user of the AWS account
-resource "aws_iam_role" "this" {
-  name = var.main_role.name
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = concat(
-      [
-        {
-          Action = "sts:AssumeRole"
-          Effect = "Allow"
-          Principal = {
-            AWS = [
-              "arn:aws:iam::${local.main_account_id}:root",
-            ]
-          }
-        }
-      ],
-      var.create_oidc_trust_relationship ? [{
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS : try([module.main_oidc_role.cloudformation_external_account_role], [])
-        }
-      }] : []
-    )
-  })
-}
+# resource "aws_iam_role" "this" {
+#   name = var.main_role.name
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = concat(
+#       [
+#         {
+#           Action = "sts:AssumeRole"
+#           Effect = "Allow"
+#           Principal = {
+#             AWS = [
+#               "arn:aws:iam::${local.main_account_id}:root",
+#             ]
+#           }
+#         }
+#       ],
+#       var.create_oidc_trust_relationship ? [{
+#         Action = "sts:AssumeRole"
+#         Effect = "Allow"
+#         Principal = {
+#           AWS : try([module.main_oidc_role.cloudformation_external_account_role], [])
+#         }
+#       }] : []
+#     )
+#   })
+# }
 
 resource "aws_iam_policy" "this" {
   name        = "TerraformBackendPolicy"
@@ -125,7 +125,7 @@ resource "aws_iam_policy" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.this.name
+  role       = module.main_oidc_role.iam_role_name
   policy_arn = aws_iam_policy.this.arn
 }
 
@@ -134,34 +134,34 @@ resource "aws_iam_role_policy_attachment" "this" {
 # We allow a specific role in the client account to assume this role
 # The trust relationship allows an external account to assume this role
 # but will be limited with an attached policy that specifies an external role in that account.
-resource "aws_iam_role" "that" {
-  count = var.create_aux_role ? 1 : 0
-
-  name = var.aux_role.name
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = concat(
-      [
-        {
-          Action = "sts:AssumeRole"
-          Effect = "Allow"
-          Principal = {
-            AWS = [
-              "arn:aws:iam::${local.aux_account_id}:root",
-            ]
-          }
-        }
-      ],
-      var.create_oidc_trust_relationship ? [{
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS : try([module.aux_oidc_role[0].cloudformation_external_account_role], [])
-        }
-      }] : []
-    )
-  })
-}
+# resource "aws_iam_role" "that" {
+#   count = var.create_aux_role ? 1 : 0
+#
+#   name = var.aux_role.name
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = concat(
+#       [
+#         {
+#           Action = "sts:AssumeRole"
+#           Effect = "Allow"
+#           Principal = {
+#             AWS = [
+#               "arn:aws:iam::${local.aux_account_id}:root",
+#             ]
+#           }
+#         }
+#       ],
+#       var.create_oidc_trust_relationship ? [{
+#         Action = "sts:AssumeRole"
+#         Effect = "Allow"
+#         Principal = {
+#           AWS : try([module.aux_oidc_role[0].cloudformation_external_account_role], [])
+#         }
+#       }] : []
+#     )
+#   })
+# }
 
 
 resource "aws_iam_policy" "that" {
@@ -241,6 +241,6 @@ resource "aws_iam_policy" "that" {
 
 resource "aws_iam_role_policy_attachment" "that" {
   count      = var.create_aux_role ? 1 : 0
-  role       = aws_iam_role.that[0].name
+  role       = module.aux_oidc_role[0].iam_role_name
   policy_arn = aws_iam_policy.that[0].arn
 }
