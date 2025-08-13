@@ -121,7 +121,7 @@ resource "aws_iam_policy" "this" {
           Sid      = "AssumeRoleAccess"
           Action   = "sts:AssumeRole"
           Effect   = "Allow"
-          Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_client_account_role}"
+          Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_external_account_role}"
         }
       ]
     )
@@ -235,7 +235,7 @@ resource "aws_iam_policy" "that" {
           Sid      = "AssumeRoleAccess"
           Action   = "sts:AssumeRole"
           Effect   = "Allow"
-          Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.aux_role.cloudformation_client_account_role}"
+          Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.aux_role.cloudformation_external_account_role}"
         }
       ]
     )
