@@ -73,3 +73,8 @@ module "aux_oidc_role" {
   oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences), [])
 }
+
+# Imprimir el valor de combined_policies para depuración
+output "combined_policies" {
+  value = local.combined_policies
+}
