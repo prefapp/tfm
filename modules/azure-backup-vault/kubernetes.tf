@@ -10,7 +10,7 @@ resource "azurerm_role_assignment" "vault_backup_contributor_kubernetes" {
 # Role assignment: Kubernetes Backup Contributor to each cluster
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
-  for_each             = var.kubernetes_instances
+  for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
   role_definition_name = "Kubernetes Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -19,7 +19,7 @@ resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
 # Role assignment for restore operations
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
-  for_each             = var.kubernetes_instances
+  for_each             = { for key, instance in var.kubernetes_instances : key => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
   role_definition_name = "Kubernetes Cluster Admin"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -28,8 +28,8 @@ resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
 # Cluster extension for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension
 resource "azurerm_kubernetes_cluster_extension" "this" {
-  for_each          = var.kubernetes_instances
-  name              = each.value.cluster_name
+  for_each          = { for key, instance in var.kubernetes_instances : key => instance }
+  name              = each.value.name
   cluster_id        = data.azurerm_kubernetes_cluster.this[each.key].id
   extension_type    = "Microsoft.DataProtection.Kubernetes"
   release_train     = "stable"
@@ -46,9 +46,9 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
 # Cluster trusted access role binding
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_trusted_access_role_binding
 resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
-  for_each              = var.kubernetes_instances
+  for_each              = { for key, instance in var.kubernetes_instances : key => instance }
   kubernetes_cluster_id = data.azurerm_kubernetes_cluster.this[each.key].id
-  name                  = "role-binding-${each.value.instance_name}"
+  name                  = "role-binding-${each.value.name}"
   roles                 = ["Microsoft.DataProtection/backupVaults/backup-operator"]
   source_resource_id    = azurerm_data_protection_backup_vault.this.id
 }
@@ -56,8 +56,8 @@ resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
 # Backup policy for Kubernetes cluster
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_kubernetes_cluster
 resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
-  for_each                        = var.kubernetes_policies
-  name                            = each.value.policy_name
+  for_each                        = { for policy in var.kubernetes_policies : policy.name => policy }
+  name                            = each.value.name
   resource_group_name             = data.azurerm_resource_group.this.name
   vault_name                      = azurerm_data_protection_backup_vault.this.name
   time_zone                       = try(each.value.time_zone, null)
@@ -94,8 +94,8 @@ resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
 # Backup instance for Kubernetes cluster
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_kubernetes_cluster
 resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
-  for_each                     = var.kubernetes_instances
-  name                         = each.value.instance_name
+  for_each                     = { for instance in var.kubernetes_instances : instance.name => instance }
+  name                         = each.value.name
   location                     = data.azurerm_resource_group.this.location
   vault_id                     = azurerm_data_protection_backup_vault.this.id
   kubernetes_cluster_id        = each.value.kubernetes_cluster_id
