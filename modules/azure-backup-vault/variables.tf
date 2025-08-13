@@ -101,7 +101,7 @@ variable "blob_instances" {
   type = list(object({
     name                            = string
     storage_account_id              = string
-    storage_account_container_names = list(string)
+    storage_account_container_names = optional(list(string))
     policy_key                      = string
   }))
   default = []
