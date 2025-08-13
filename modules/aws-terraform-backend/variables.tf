@@ -32,17 +32,17 @@ variable "tfstate_enable_versioning" {
   default     = true
 }
 
-variable "main_role_name" {
-  description = "Terraform backend access role name (main)"
-  type        = string
-  default     = "terraform-backend-access-role"
-}
+# variable "main_role_name" {
+#   description = "Terraform backend access role name (main)"
+#   type        = string
+#   default     = "terraform-backend-access-role"
+# }
 
-variable "aux_role_name" {
-  description = "Terraform backend access role (auxiliary)"
-  type        = string
-  default     = "terraform-backend-aux-access-role"
-}
+# variable "aux_role_name" {
+#   description = "Terraform backend access role (auxiliary)"
+#   type        = string
+#   default     = "terraform-backend-aux-access-role"
+# }
 
 variable "aws_client_account_id" {
   description = "AWS Account ID that will assume the role that allows access to the S3 bucket and the dynamodb table"
@@ -66,8 +66,7 @@ variable "external_aux_role" {
   default     = ""
 }
 
-
-variable "generate_cloudformation_role_for_client_account" {
+variable "generate_cloudformation_role_for_external_account" {
   description = "Decide whether to generate a cloudformation stack with a iam role to access the account with administrative privileges"
   type        = bool
   default     = true
@@ -91,14 +90,53 @@ variable "s3_bucket_cloudformation_role_key" {
   description = "Key to use when uploading the template to S3"
 }
 
-variable "create_github_iam" {
-  description = "Create IAM resources for GitHub"
+variable "create_oidc_trust_relationship" {
+  description = "Create IAM resources for GitHub or another OIDC provider"
   type        = bool
   default     = false
 }
 
-variable "github_repository" {
-  description = "Name of the GitHub repository to access the backend"
-  type        = string
-  default     = ""
+
+variable "main_role" {
+  description = "Main role configuration"
+  type = object({
+    name                               = string
+    aws_account_id                     = string
+    cloudformation_client_account_role = string
+    aws_trust_policies = map(object({
+      account_id = string
+      role_name  = string
+    }))
+    oidc_trust_policies = optional(
+      map(object({
+        provider_urls             = list(string)
+        fully_qualified_subjects  = list(string)
+        subjects_with_wildcards   = list(string)
+        fully_qualified_audiences = list(string)
+      })),
+      {}
+    )
+  })
+}
+
+variable "aux_role" {
+  description = "Auxiliary role configuration"
+  type = object({
+    name                    = string
+    aws_account_id          = string
+    pair_with_external_role = bool
+    aws_trust_policies = map(object({
+      account_id = string
+      role_name  = string
+    }))
+    oidc_trust_policies = optional(
+      map(object({
+        provider_urls             = list(string)
+        fully_qualified_subjects  = list(string)
+        subjects_with_wildcards   = list(string)
+        fully_qualified_audiences = list(string)
+      })),
+      {}
+    )
+  })
 }

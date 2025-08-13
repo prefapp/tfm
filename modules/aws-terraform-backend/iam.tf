@@ -1,7 +1,36 @@
+## we will use the official OIDC role module to create the role
+## terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc
+
+module "main_oidc_role" {
+  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version     = "5.60.0"
+  create_role = true
+  role_name   = var.main_role.name
+
+  provider_urls = length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.provider_urls)
+
+  oidc_fully_qualified_subjects  = length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects)
+  oidc_fully_qualified_audiences = length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences)
+}
+
+
+module "aux_oidc_role" {
+  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version     = "5.60.0"
+  create_role = true
+  role_name   = var.aux_role.name
+
+  provider_urls = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.provider_urls)
+
+  role_policy_arns               = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.role_policy_arns)
+  oidc_fully_qualified_subjects  = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects)
+  oidc_fully_qualified_audiences = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences)
+}
+
 # main role for the terraform backend.
 # It can be assumed by the root user of the AWS account
 resource "aws_iam_role" "this" {
-  name = var.main_role_name
+  name = var.main_role.name
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = concat(
@@ -11,24 +40,16 @@ resource "aws_iam_role" "this" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${local.account_id}:root",
+              "arn:aws:iam::${local.main_account_id}:root",
             ]
           }
         }
       ],
-      var.create_github_iam ? [{
-        Action = "sts:AssumeRoleWithWebIdentity"
+      var.create_oidc_trust_relationship ? [{
+        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Federated : "arn:aws:iam::${local.account_id}:oidc-provider/token.actions.githubusercontent.com"
-        }
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
-          }
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:${var.github_repository}:*"
-          }
+          AWS : [module.main_oidc_role.iam_role_arn]
         }
       }] : []
     )
@@ -120,7 +141,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_iam_role" "that" {
   count = var.create_aux_role ? 1 : 0
 
-  name = var.aux_role_name
+  name = var.aux_role.name
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = concat(
@@ -130,24 +151,16 @@ resource "aws_iam_role" "that" {
           Effect = "Allow"
           Principal = {
             AWS = [
-              "arn:aws:iam::${local.account_id}:root",
+              "arn:aws:iam::${local.aux_account_id}:root",
             ]
           }
         }
       ],
-      var.create_github_iam ? [{
-        Action = "sts:AssumeRoleWithWebIdentity"
+      var.create_oidc_trust_relationship ? [{
+        Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Federated : "arn:aws:iam::${local.account_id}:oidc-provider/token.actions.githubusercontent.com"
-        }
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
-          }
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:${var.github_repository}:*"
-          }
+          AWS : [module.aux_oidc_role.iam_role_arn]
         }
       }] : []
     )

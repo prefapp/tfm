@@ -44,10 +44,10 @@ No modules.
 | <a name="input_aws_client_account_id"></a> [aws\_client\_account\_id](#input\_aws\_client\_account\_id) | AWS Account ID that will assume the role that allows access to the S3 bucket and the dynamodb table | `string` | n/a | yes |
 | <a name="input_backend_extra_roles"></a> [backend\_extra\_roles](#input\_backend\_extra\_roles) | Additional roles to add to the Terraform backend access role | `list(string)` | `[]` | no |
 | <a name="input_create_aux_role"></a> [create\_aux\_role](#input\_create\_aux\_role) | Decide whether to generate a specific auxiliary role for the client account | `bool` | `false` | no |
-| <a name="input_create_github_iam"></a> [create\_github\_iam](#input\_create\_github\_iam) | Create IAM resources for GitHub | `bool` | `false` | no |
+| <a name="input_create_oidc_trust_relationship"></a> [create\_github\_iam](#input\_create\_github\_iam) | Create IAM resources for GitHub | `bool` | `false` | no |
 | <a name="input_external_aux_role"></a> [external\_aux\_role](#input\_external\_aux\_role) | Role name that will assume the role to access the S3 bucket and the dynamodb table with read-only access | `string` | `""` | no |
 | <a name="input_external_main_role"></a> [external\_main\_role](#input\_external\_main\_role) | Role name that will assume the role to access the S3 bucket and the dynamodb table with admin access | `string` | n/a | yes |
-| <a name="input_generate_cloudformation_role_for_client_account"></a> [generate\_cloudformation\_role\_for\_client\_account](#input\_generate\_cloudformation\_role\_for\_client\_account) | Decide whether to generate a cloudformation stack with a iam role to access the account with administrative privileges | `bool` | `true` | no |
+| <a name="input_generate_cloudformation_role_for_external_account"></a> [generate\_cloudformation\_role\_for\_client\_account](#input\_generate\_cloudformation\_role\_for\_client\_account) | Decide whether to generate a cloudformation stack with a iam role to access the account with administrative privileges | `bool` | `true` | no |
 | <a name="input_github_repository"></a> [github\_repository](#input\_github\_repository) | Name of the GitHub repository to access the backend | `string` | `""` | no |
 | <a name="input_locks_table_name"></a> [locks\_table\_name](#input\_locks\_table\_name) | Name of the locks DynamoDB table | `string` | `null` | no |
 | <a name="input_main_role_name"></a> [main\_role\_name](#input\_main\_role\_name) | Terraform backend access role name (main) | `string` | `"terraform-backend-access-role"` | no |
