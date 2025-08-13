@@ -81,7 +81,7 @@ locals {
   }
 
   # Then convert to YAML
-  cloudformation_template_yaml = var.generate_cloudformation_role_for_external_account ? yamlencode(local.cf_template[0]) : null
+  cloudformation_template_yaml = var.generate_cloudformation_role_for_external_account ? yamlencode(local.cf_template) : null
 
   # Only create a S3 object if a bucket is specified and the cloudformation for the roles in the external accounit is generated
   should_upload = var.s3_bucket_cloudformation_role != "" && var.generate_cloudformation_role_for_external_account
