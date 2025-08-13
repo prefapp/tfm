@@ -45,7 +45,7 @@ resource "aws_iam_role" "this" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          AWS : [module.main_oidc_role.cloudformation_external_account_role]
+          AWS : try([module.main_oidc_role.cloudformation_external_account_role], [])
         }
       }] : []
     )
