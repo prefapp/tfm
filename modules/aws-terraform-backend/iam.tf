@@ -6,78 +6,14 @@ module "main_oidc_role" {
   version     = "5.60.0"
   create_role = true
   role_name   = var.main_role.name
-  inline_policy_statements = [
-    flatten([
-      [
-        # S3 Bucket Permissions
-        {
-          Sid    = "S3BucketAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:ListBucket",
-            "s3:GetBucketVersioning"
-          ]
-          Resource = aws_s3_bucket.tfstate.arn
-          Condition = {
-            StringEquals = {
-              "s3:prefix" = ["${var.tfstate_object_prefix}"]
-            }
-          }
-        },
-        # S3 Object Permissions
-        {
-          Sid    = "S3BucketObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/*"
-        },
-        # S3 Lock File Permissions
-        {
-          Sid    = "S3ObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
-        },
-      ],
-      # If locks_table_name is present, add permissions to locks table
-      var.locks_table_name == null || var.locks_table_name == "" ? [] :
-      [
-        # DynamoDB Table Permissions
-        {
-          Sid    = "DynamoDBLockTableAccess"
-          Effect = "Allow"
-          Action = [
-            "dynamodb:GetItem",
-            "dynamodb:PutItem",
-            "dynamodb:DeleteItem"
-          ]
-          Resource = aws_dynamodb_table.this[0].arn
-        }
-      ],
-      [
-        # STS AssumeRole Permissions
-        {
-          Sid      = "AssumeRoleAccess"
-          Action   = "sts:AssumeRole"
-          Effect   = "Allow"
-          Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_external_account_role}"
-        }
-      ]
-      ]
-    )
-  ]
+
+  # Políticas simplificadas y validadas
+  inline_policy_statements = local.combined_policies
+
   provider_urls                  = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences), [])
 }
-
 
 module "aux_oidc_role" {
   count       = var.create_aux_role ? 1 : 0
@@ -85,142 +21,61 @@ module "aux_oidc_role" {
   version     = "5.60.0"
   create_role = true
   role_name   = var.aux_role.name
-  inline_policy_statements = flatten([
-    [
-      # S3 Bucket Permissions
-      {
-        Sid    = "S3BucketAccess"
-        Effect = "Allow"
-        Action = [
-          "s3:ListBucket",
-          "s3:GetBucketVersioning"
-        ]
-        Resource = aws_s3_bucket.tfstate.arn
-        Condition = {
-          StringEquals = {
-            "s3:prefix" = ["${var.tfstate_object_prefix}"]
-          }
-        }
-      },
-      # S3 Object Permissions
-      {
-        Sid    = "S3BucketObjectAccess"
-        Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject"
-        ]
-        Resource = "${aws_s3_bucket.tfstate.arn}/*"
-      },
-      # S3 Lock File Permissions
-      {
-        Sid    = "S3ObjectAccess"
-        Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject"
-        ]
-        Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
-      }
-    ],
-    # If locks_table_name is present, add permissions to locks table
-    var.locks_table_name == null || var.locks_table_name == "" ? [] : [
-      {
-        Sid    = "DynamoDBLockTableAccess"
-        Effect = "Allow"
-        Action = [
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem"
-        ]
-        Resource = aws_dynamodb_table.this[0].arn
-      }
-    ],
-    [
-      {
-        Sid      = "AssumeRoleAccess"
-        Action   = "sts:AssumeRole"
-        Effect   = "Allow"
-        Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.aux_role.cloudformation_external_account_role}"
-      }
-    ]
-  ])
+
+  # Usamos las mismas políticas para consistencia
+  inline_policy_statements = local.combined_policies
+
   provider_urls                  = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences), [])
 }
 
-# main role for the terraform backend.
-# It can be assumed by the root user of the AWS account
-# resource "aws_iam_role" "this" {
-#   name = var.main_role.name
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = concat(
-#       [
-#         {
-#           Action = "sts:AssumeRole"
-#           Effect = "Allow"
-#           Principal = {
-#             AWS = [
-#               "arn:aws:iam::${local.main_account_id}:root",
-#             ]
-#           }
-#         }
-#       ],
-#       var.create_oidc_trust_relationship ? [{
-#         Action = "sts:AssumeRole"
-#         Effect = "Allow"
-#         Principal = {
-#           AWS : try([module.main_oidc_role.cloudformation_external_account_role], [])
-#         }
-#       }] : []
-#     )
-#   })
-# }
+locals {
+  base_policies = [
+    {
+      Sid      = "S3BucketAccess",
+      Effect   = "Allow",
+      Action   = ["s3:ListBucket", "s3:GetBucketVersioning"],
+      Resource = aws_s3_bucket.tfstate.arn,
+      Condition = {
+        StringEquals = { "s3:prefix" = [var.tfstate_object_prefix] }
+      }
+    },
+    {
+      Sid      = "S3BucketObjectAccess",
+      Effect   = "Allow",
+      Action   = ["s3:GetObject", "s3:PutObject"],
+      Resource = "${aws_s3_bucket.tfstate.arn}/*"
+    },
+    {
+      Sid      = "S3ObjectAccess",
+      Effect   = "Allow",
+      Action   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+      Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
+    }
+  ]
 
-# resource "aws_iam_role_policy_attachment" "this" {
-#  role       = module.main_oidc_role.iam_role_name
-#  policy_arn = aws_iam_policy.this.arn
-# }
+  dynamodb_policy = var.locks_table_name != null && var.locks_table_name != "" ? [
+    {
+      Sid      = "DynamoDBLockTableAccess",
+      Effect   = "Allow",
+      Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem"],
+      Resource = aws_dynamodb_table.this[0].arn
+    }
+  ] : []
 
-# Optional role. This role needs access to the terraform state,
-# and should be referenced in the read-only role in the client account
-# We allow a specific role in the client account to assume this role
-# The trust relationship allows an external account to assume this role
-# but will be limited with an attached policy that specifies an external role in that account.
-# resource "aws_iam_role" "that" {
-#   count = var.create_aux_role ? 1 : 0
-#
-#   name = var.aux_role.name
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = concat(
-#       [
-#         {
-#           Action = "sts:AssumeRole"
-#           Effect = "Allow"
-#           Principal = {
-#             AWS = [
-#               "arn:aws:iam::${local.aux_account_id}:root",
-#             ]
-#           }
-#         }
-#       ],
-#       var.create_oidc_trust_relationship ? [{
-#         Action = "sts:AssumeRole"
-#         Effect = "Allow"
-#         Principal = {
-#           AWS : try([module.aux_oidc_role[0].cloudformation_external_account_role], [])
-#         }
-#       }] : []
-#     )
-#   })
-# }
+  assume_role_policy = [
+    {
+      Sid      = "AssumeRoleAccess",
+      Effect   = "Allow",
+      Action   = "sts:AssumeRole",
+      Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_external_account_role}"
+    }
+  ]
 
-# resource "aws_iam_role_policy_attachment" "that" {
-#   count      = var.create_aux_role ? 1 : 0
-#   role       = module.aux_oidc_role[0].iam_role_name
-#   policy_arn = aws_iam_policy.that[0].arn
-# }
+  combined_policies = concat(
+    local.base_policies,
+    local.dynamodb_policy,
+    local.assume_role_policy
+  )
+}
