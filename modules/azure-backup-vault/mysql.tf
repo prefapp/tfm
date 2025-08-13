@@ -1,7 +1,7 @@
 # Role assignment: Backup Contributor to the vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_backup_contributor_mysql" {
-  count = length(var.mysql_instances) > 0 ? 1 : 0
+  count                = length(var.mysql_instances) > 0 ? 1 : 0
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id

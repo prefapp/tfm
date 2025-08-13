@@ -39,7 +39,7 @@ variable "vault" {
 variable "disk_policies" {
   description = "List of backup policies for disks"
   type = list(object({
-    name                     = string
+    name                            = string
     backup_repeating_time_intervals = list(string)
     default_retention_duration      = string
     time_zone                       = optional(string)
@@ -59,9 +59,9 @@ variable "disk_policies" {
 variable "disk_instances" {
   description = "List of backup instances for disks"
   type = list(object({
-    name   = string
-    disk_resource_group  = string
-    policy_key           = string
+    name                = string
+    disk_resource_group = string
+    policy_key          = string
   }))
   default = []
 }
@@ -111,7 +111,7 @@ variable "blob_instances" {
 variable "postgresql_policies" {
   description = "List of backup policies for PostgreSQL Flexible Server"
   type = list(object({
-    name                     = string
+    name                            = string
     backup_repeating_time_intervals = list(string)
     default_retention_duration      = string
     time_zone                       = optional(string)
@@ -135,7 +135,7 @@ variable "postgresql_policies" {
 variable "postgresql_instances" {
   description = "List of backup instances for PostgreSQL Flexible Server"
   type = list(object({
-    name     = string
+    name              = string
     server_id         = string
     resource_group_id = string
     policy_key        = string
@@ -148,7 +148,7 @@ variable "postgresql_instances" {
 variable "mysql_policies" {
   description = "List of backup policies for MySQL Flexible Server"
   type = list(object({
-    name                     = string
+    name                            = string
     backup_repeating_time_intervals = list(string)
     time_zone                       = optional(string)
     default_retention_rule = list(object({
@@ -180,7 +180,7 @@ variable "mysql_policies" {
 variable "mysql_instances" {
   description = "List of MySQL Flexible Server backup instances"
   type = list(object({
-    name     = string
+    name              = string
     server_id         = string
     resource_group_id = string
     policy_key        = string
@@ -192,7 +192,7 @@ variable "mysql_instances" {
 variable "kubernetes_policies" {
   description = "List of backup policies for Kubernetes clusters"
   type = list(object({
-    name                     = string
+    name                            = string
     backup_repeating_time_intervals = list(string)
     time_zone                       = optional(string)
     default_retention_rule = object({
@@ -224,7 +224,7 @@ variable "kubernetes_policies" {
 variable "kubernetes_instances" {
   description = "List of Kubernetes cluster backup instances"
   type = list(object({
-    name                        = string
+    name                         = string
     cluster_name                 = string
     snapshot_resource_group_name = string
     policy_key                   = string
