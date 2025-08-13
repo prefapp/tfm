@@ -1,8 +1,8 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  main_account_id  = var.main_role.aws_account_id != "" ? var.main_role.aws_account_id : data.aws_caller_identity.current.account_id
-  aux_account_id   = var.aux_role.aws_account_id != "" ? var.aux_role.aws_account_id : data.aws_caller_identity.current.account_id
+  main_account_id  = var.main_role.aws_account_id != null && var.main_role.aws_account_id != "" ? var.main_role.aws_account_id : data.aws_caller_identity.current.account_id
+  aux_account_id   = var.aux_role.aws_account_id != null && var.aux_role.aws_account_id != "" ? var.aux_role.aws_account_id : data.aws_caller_identity.current.account_id
   aux_role_enabled = var.create_aux_role ? true : false
 
 
