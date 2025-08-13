@@ -6,6 +6,7 @@ module "main_oidc_role" {
   version                        = "5.60.0"
   create_role                    = true
   role_name                      = var.main_role.name
+  inline_policy_statements       = [aws_iam_policy.this]
   provider_urls                  = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences), [])
@@ -18,6 +19,7 @@ module "aux_oidc_role" {
   version                        = "5.60.0"
   create_role                    = true
   role_name                      = var.aux_role.name
+  inline_policy_statements       = try([aws_iam_policy.that[0]], [])
   provider_urls                  = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences), [])
@@ -124,10 +126,10 @@ resource "aws_iam_policy" "this" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "this" {
-  role       = module.main_oidc_role.iam_role_name
-  policy_arn = aws_iam_policy.this.arn
-}
+# resource "aws_iam_role_policy_attachment" "this" {
+#  role       = module.main_oidc_role.iam_role_name
+#  policy_arn = aws_iam_policy.this.arn
+# }
 
 # Optional role. This role needs access to the terraform state,
 # and should be referenced in the read-only role in the client account
@@ -238,9 +240,8 @@ resource "aws_iam_policy" "that" {
   })
 }
 
-
-resource "aws_iam_role_policy_attachment" "that" {
-  count      = var.create_aux_role ? 1 : 0
-  role       = module.aux_oidc_role[0].iam_role_name
-  policy_arn = aws_iam_policy.that[0].arn
-}
+# resource "aws_iam_role_policy_attachment" "that" {
+#   count      = var.create_aux_role ? 1 : 0
+#   role       = module.aux_oidc_role[0].iam_role_name
+#   policy_arn = aws_iam_policy.that[0].arn
+# }
