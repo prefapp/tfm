@@ -104,12 +104,12 @@ variable "main_role" {
     aws_account_id                       = optional(string)
     cloudformation_external_account_role = optional(string)
     oidc_trust_policies = optional(
-      map(object({
+      object({
         provider_urls             = list(string)
         fully_qualified_subjects  = list(string)
         subjects_with_wildcards   = list(string)
         fully_qualified_audiences = list(string)
-      })),
+      }),
       {}
     )
   })
@@ -122,12 +122,12 @@ variable "aux_role" {
     aws_account_id                       = optional(string)
     cloudformation_external_account_role = optional(string)
     oidc_trust_policies = optional(
-      map(object({
+      object({
         provider_urls             = list(string)
         fully_qualified_subjects  = list(string)
         subjects_with_wildcards   = list(string)
         fully_qualified_audiences = list(string)
-      })),
+      }),
       {}
     )
   })
