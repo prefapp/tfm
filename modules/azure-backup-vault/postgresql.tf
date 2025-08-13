@@ -29,7 +29,7 @@ resource "azurerm_role_assignment" "postgresql_ltr_backup" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "postgresql_rg_reader" {
   for_each             = { for instance in var.postgresql_instances : instance.name => instance }
-  scope                = each.value.resource_group_id
+  scope                = data.azurerm_resource_group.postgresql_rg[each.key].id
   role_definition_name = "Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }

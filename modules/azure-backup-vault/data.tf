@@ -34,3 +34,8 @@ data "azurerm_kubernetes_cluster" "this" {
   name                = each.value.name
   resource_group_name = each.value.resource_group_name
 }
+
+data "azurerm_resource_group" "postgresql_rg" {
+  for_each = { for instance in var.postgresql_instances : instance.name => instance }
+  name     = each.value.resource_group_name
+}
