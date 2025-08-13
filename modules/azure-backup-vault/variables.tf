@@ -137,7 +137,6 @@ variable "postgresql_instances" {
   type = list(object({
     name              = string
     server_id         = string
-    resource_group_id = string
     policy_key        = string
   }))
   default = []
