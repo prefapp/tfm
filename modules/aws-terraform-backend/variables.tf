@@ -101,8 +101,8 @@ variable "main_role" {
   description = "Main role configuration"
   type = object({
     name                                 = string
-    aws_account_id                       = string
-    cloudformation_external_account_role = string
+    aws_account_id                       = optional(string)
+    cloudformation_external_account_role = optional(string)
     oidc_trust_policies = optional(
       map(object({
         provider_urls             = list(string)
@@ -119,8 +119,8 @@ variable "aux_role" {
   description = "Auxiliary role configuration"
   type = object({
     name                                 = string
-    aws_account_id                       = string
-    cloudformation_external_account_role = string
+    aws_account_id                       = optional(string)
+    cloudformation_external_account_role = optional(string)
     oidc_trust_policies = optional(
       map(object({
         provider_urls             = list(string)
