@@ -7,7 +7,7 @@ module "main_oidc_role" {
   create_role = true
   role_name   = var.main_role.name
 
-  provider_urls = length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.provider_urls)
+  provider_urls = var.main_role.oidc_trust_policies != null && length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.provider_urls)
 
   oidc_fully_qualified_subjects  = length(var.main_role.oidc_trust_policies) == 0 && length(var.main_role.oidc_trust_policies.fully_qualified_subjects) > 0? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects)
   oidc_fully_qualified_audiences = length(var.main_role.oidc_trust_policies) == 0 && length(var.main_role.oidc_trust_policies.fully_qualified_audiences) > 0 ? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences)
@@ -21,7 +21,7 @@ module "aux_oidc_role" {
   create_role = true
   role_name   = var.aux_role.name
 
-  provider_urls = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.provider_urls)
+  provider_urls = var.aux_role.oidc_trust_policies != null && length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.provider_urls)
 
   oidc_fully_qualified_subjects  = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.fully_qualified_subjects) > 0? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects)
   oidc_fully_qualified_audiences = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.fully_qualified_audiences) > 0 ? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences)
