@@ -109,8 +109,7 @@ variable "main_role" {
         fully_qualified_subjects  = list(string)
         subjects_with_wildcards   = list(string)
         fully_qualified_audiences = list(string)
-      }),
-      {}
+      })
     )
   })
 }
@@ -127,8 +126,7 @@ variable "aux_role" {
         fully_qualified_subjects  = list(string)
         subjects_with_wildcards   = list(string)
         fully_qualified_audiences = list(string)
-      }),
-      {}
+      })
     )
   })
 }
