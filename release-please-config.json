@@ -104,6 +104,9 @@
         },
         "modules/aws-terraform-backend": {
             "package-name": "aws-terraform-backend"
+        },
+        "modules/aws-rds": {
+            "package-name": "aws-rds"
         }
     }
 }
