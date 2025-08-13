@@ -57,8 +57,6 @@ resource "azurerm_data_protection_backup_instance_postgresql_flexible_server" "t
   server_id        = each.value.server_id
   backup_policy_id = azurerm_data_protection_backup_policy_postgresql.this[each.value.policy_key].id
   depends_on = [
-    azurerm_role_assignment.vault_backup_contributor_postgresql,
-    azurerm_role_assignment.postgresql_backup_contributor,
     azurerm_role_assignment.postgresql_ltr_backup,
     azurerm_role_assignment.postgresql_rg_reader
   ]
