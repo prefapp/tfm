@@ -35,7 +35,8 @@ data "azurerm_kubernetes_cluster" "this" {
   resource_group_name = each.value.resource_group_name
 }
 
+# Data source for each unique PostgreSQL resource group
 data "azurerm_resource_group" "postgresql_rg" {
-  for_each = { for instance in var.postgresql_instances : instance.name => instance }
-  name     = each.value.resource_group_name
+  for_each = { for rg in local.unique_postgresql_resource_groups : rg => rg }
+  name     = each.value
 }

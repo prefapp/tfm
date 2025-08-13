@@ -1,19 +1,6 @@
-# Role assignment: Backup Contributor to the vault
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "vault_backup_contributor_postgresql" {
-  count                = length(var.postgresql_instances) > 0 ? 1 : 0
-  scope                = azurerm_data_protection_backup_vault.this.id
-  role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-}
-
-# Role assignment: PostgreSQL Flexible Server Backup Contributor to each server
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "postgresql_backup_contributor" {
-  for_each             = { for instance in var.postgresql_instances : instance.name => instance }
-  scope                = each.value.server_id
-  role_definition_name = "PostgreSQL Flexible Server Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+# Get unique PostgreSQL resource groups
+locals {
+  unique_postgresql_resource_groups = distinct([for instance in var.postgresql_instances : instance.resource_group_name])
 }
 
 # Role assignment: PostgreSQL Flexible Server Long Term Retention Backup on the server
@@ -21,15 +8,14 @@ resource "azurerm_role_assignment" "postgresql_backup_contributor" {
 resource "azurerm_role_assignment" "postgresql_ltr_backup" {
   for_each             = { for instance in var.postgresql_instances : instance.name => instance }
   scope                = each.value.server_id
-  role_definition_name = "PostgreSQL Flexible Server Long Term Retention Backup"
+  role_definition_name = "PostgreSQL Flexible Server Long Term Retention Backup Role"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
-# Role assignment: Reader on the resource group of the server
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
+# Assign Reader role once per unique PostgreSQL resource group
 resource "azurerm_role_assignment" "postgresql_rg_reader" {
-  for_each             = { for instance in var.postgresql_instances : instance.name => instance }
-  scope                = data.azurerm_resource_group.postgresql_rg[each.key].id
+  for_each             = data.azurerm_resource_group.postgresql_rg
+  scope                = each.value.id
   role_definition_name = "Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
