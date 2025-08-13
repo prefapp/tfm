@@ -7,7 +7,7 @@ module "main_oidc_role" {
   create_role = true
   role_name   = var.main_role.name
   inline_policy_statements = [
-    concat(
+    flatten([
       [
         # S3 Bucket Permissions
         {
@@ -70,6 +70,7 @@ module "main_oidc_role" {
           Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_external_account_role}"
         }
       ]
+      ]
     )
   ]
   provider_urls                  = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
@@ -84,7 +85,7 @@ module "aux_oidc_role" {
   version     = "5.60.0"
   create_role = true
   role_name   = var.aux_role.name
-  inline_policy_statements = concat(
+  inline_policy_statements = flatten([
     [
       # S3 Bucket Permissions
       {
@@ -144,7 +145,7 @@ module "aux_oidc_role" {
         Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.aux_role.cloudformation_external_account_role}"
       }
     ]
-  )
+  ])
   provider_urls                  = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences), [])
