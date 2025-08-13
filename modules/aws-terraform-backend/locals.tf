@@ -1,8 +1,8 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  main_account_id       = var.main_role.aws_account_id != "" ? var.main_role.aws_account_id : data.aws_caller_identity.current.account_id
-  aux_account_id        = var.aux_role.aws_account_id != "" ? var.aux_role.aws_account_id : data.aws_caller_identity.current.account_id
+  main_account_id  = var.main_role.aws_account_id != "" ? var.main_role.aws_account_id : data.aws_caller_identity.current.account_id
+  aux_account_id   = var.aux_role.aws_account_id != "" ? var.aux_role.aws_account_id : data.aws_caller_identity.current.account_id
   aux_role_enabled = var.create_aux_role ? true : false
 
 
@@ -60,7 +60,7 @@ locals {
 
     AWSTemplateFormatVersion = "2010-09-09"
     Description              = "Firestartr Admin role"
-    Resources                = merge(
+    Resources = merge(
       local.main_role_resource,
       local.aux_role_enabled ? local.aux_role_resource : tomap({})
     )

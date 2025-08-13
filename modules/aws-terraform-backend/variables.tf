@@ -100,13 +100,9 @@ variable "create_oidc_trust_relationship" {
 variable "main_role" {
   description = "Main role configuration"
   type = object({
-    name                               = string
-    aws_account_id                     = string
+    name                                 = string
+    aws_account_id                       = string
     cloudformation_external_account_role = string
-    aws_trust_policies = map(object({
-      account_id = string
-      role_name  = string
-    }))
     oidc_trust_policies = optional(
       map(object({
         provider_urls             = list(string)
@@ -122,13 +118,9 @@ variable "main_role" {
 variable "aux_role" {
   description = "Auxiliary role configuration"
   type = object({
-    name                    = string
-    aws_account_id          = string
+    name                                 = string
+    aws_account_id                       = string
     cloudformation_external_account_role = string
-    aws_trust_policies = map(object({
-      account_id = string
-      role_name  = string
-    }))
     oidc_trust_policies = optional(
       map(object({
         provider_urls             = list(string)
