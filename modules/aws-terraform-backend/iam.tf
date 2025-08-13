@@ -49,7 +49,7 @@ resource "aws_iam_role" "this" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          AWS : [module.main_oidc_role.iam_role_arn]
+          AWS : [module.main_oidc_role.cloudformation_external_account_role]
         }
       }] : []
     )
@@ -160,7 +160,7 @@ resource "aws_iam_role" "that" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          AWS : [module.aux_oidc_role.iam_role_arn]
+          AWS : [module.aux_oidc_role.cloudformation_external_account_role]
         }
       }] : []
     )

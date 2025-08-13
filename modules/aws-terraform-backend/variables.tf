@@ -102,7 +102,7 @@ variable "main_role" {
   type = object({
     name                               = string
     aws_account_id                     = string
-    cloudformation_client_account_role = string
+    cloudformation_external_account_role = string
     aws_trust_policies = map(object({
       account_id = string
       role_name  = string
@@ -124,7 +124,7 @@ variable "aux_role" {
   type = object({
     name                    = string
     aws_account_id          = string
-    pair_with_external_role = bool
+    cloudformation_external_account_role = string
     aws_trust_policies = map(object({
       account_id = string
       role_name  = string
