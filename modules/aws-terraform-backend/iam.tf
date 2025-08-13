@@ -9,12 +9,13 @@ module "main_oidc_role" {
 
   provider_urls = length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.provider_urls)
 
-  oidc_fully_qualified_subjects  = length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects)
-  oidc_fully_qualified_audiences = length(var.main_role.oidc_trust_policies) == 0 ? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences)
+  oidc_fully_qualified_subjects  = length(var.main_role.oidc_trust_policies) == 0 && length(var.main_role.oidc_trust_policies.fully_qualified_subjects) > 0? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects)
+  oidc_fully_qualified_audiences = length(var.main_role.oidc_trust_policies) == 0 && length(var.main_role.oidc_trust_policies.fully_qualified_audiences) > 0 ? [] : tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences)
 }
 
 
 module "aux_oidc_role" {
+  count = var.create_aux_role?  1 : 0
   source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version     = "5.60.0"
   create_role = true
@@ -22,9 +23,9 @@ module "aux_oidc_role" {
 
   provider_urls = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.provider_urls)
 
-  role_policy_arns               = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.role_policy_arns)
-  oidc_fully_qualified_subjects  = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects)
-  oidc_fully_qualified_audiences = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences)
+  role_policy_arns               = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.role_policy_arns) > 0? [] : tolist(var.aux_role.oidc_trust_policies.role_policy_arns)
+  oidc_fully_qualified_subjects  = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.fully_qualified_subjects) > 0? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects)
+  oidc_fully_qualified_audiences = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.fully_qualified_audiences) > 0 ? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences)
 }
 
 # main role for the terraform backend.
@@ -160,7 +161,7 @@ resource "aws_iam_role" "that" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          AWS : [module.aux_oidc_role.cloudformation_external_account_role]
+          AWS : [module.aux_oidc_role[0].cloudformation_external_account_role]
         }
       }] : []
     )
