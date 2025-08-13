@@ -109,8 +109,8 @@ variable "blob_instances" {
 
 # Postgresql backup policies
 variable "postgresql_policies" {
-  description = "Map of backup policies for PostgreSQL Flexible Server"
-  type = map(object({
+  description = "List of backup policies for PostgreSQL Flexible Server"
+  type = list(object({
     policy_name                     = string
     backup_repeating_time_intervals = list(string)
     default_retention_duration      = string
@@ -128,26 +128,26 @@ variable "postgresql_policies" {
       })
     }))
   }))
-  default = {}
+  default = []
 }
 
 #Postgresql backup instances
 variable "postgresql_instances" {
-  description = "Map of backup instances for PostgreSQL Flexible Server"
-  type = map(object({
+  description = "List of backup instances for PostgreSQL Flexible Server"
+  type = list(object({
     instance_name     = string
     server_id         = string
     resource_group_id = string
     policy_key        = string
   }))
-  default = {}
+  default = []
 }
 
 
 # MySQL backup policies
 variable "mysql_policies" {
-  description = "Map of backup policies for MySQL Flexible Server"
-  type = map(object({
+  description = "List of backup policies for MySQL Flexible Server"
+  type = list(object({
     policy_name                     = string
     backup_repeating_time_intervals = list(string)
     time_zone                       = optional(string)
@@ -173,25 +173,25 @@ variable "mysql_policies" {
       })
     })))
   }))
-  default = {}
+  default = []
 }
 
 # MySQL backup instances
 variable "mysql_instances" {
-  description = "Map of MySQL Flexible Server backup instances"
-  type = map(object({
+  description = "List of MySQL Flexible Server backup instances"
+  type = list(object({
     instance_name     = string
     server_id         = string
     resource_group_id = string
     policy_key        = string
   }))
-  default = {}
+  default = []
 }
 
 # Kubernetes backup policies
 variable "kubernetes_policies" {
-  description = "Map of backup policies for Kubernetes clusters"
-  type = map(object({
+  description = "List of backup policies for Kubernetes clusters"
+  type = list(object({
     policy_name                     = string
     backup_repeating_time_intervals = list(string)
     time_zone                       = optional(string)
@@ -217,13 +217,13 @@ variable "kubernetes_policies" {
       })
     })))
   }))
-  default = {}
+  default = []
 }
 
 # Kubernetes backup instances
 variable "kubernetes_instances" {
-  description = "Map of Kubernetes cluster backup instances"
-  type = map(object({
+  description = "List of Kubernetes cluster backup instances"
+  type = list(object({
     instance_name                = string
     cluster_name                 = string
     snapshot_resource_group_name = string
@@ -243,5 +243,5 @@ variable "kubernetes_instances" {
       bucket_storage_account_name = optional(string)
     }))
   }))
-  default = {}
+  default = []
 }
