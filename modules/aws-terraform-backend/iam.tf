@@ -23,7 +23,6 @@ module "aux_oidc_role" {
 
   provider_urls = length(var.aux_role.oidc_trust_policies) == 0 ? [] : tolist(var.aux_role.oidc_trust_policies.provider_urls)
 
-  role_policy_arns               = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.role_policy_arns) > 0? [] : tolist(var.aux_role.oidc_trust_policies.role_policy_arns)
   oidc_fully_qualified_subjects  = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.fully_qualified_subjects) > 0? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects)
   oidc_fully_qualified_audiences = length(var.aux_role.oidc_trust_policies) == 0 && length(var.aux_role.oidc_trust_policies.fully_qualified_audiences) > 0 ? [] : tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences)
 }
