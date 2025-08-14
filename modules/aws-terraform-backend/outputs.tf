@@ -35,5 +35,5 @@ output "main_role_arn" {
 
 output "aux_role_arn" {
   description = "Auxiliary role ARN"
-  value = module.aux_oidc_role.iam_role_arn
+  value = module.aux_oidc_role[0].iam_role_arn
 }
