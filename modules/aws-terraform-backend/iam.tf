@@ -48,25 +48,25 @@ locals {
   ]
   main_combined_policies = {
     name = "CombinedPolicy"
-    policy = jsonencode({
+    policy = {
       Version = "2012-10-17"
       Statement = concat(
         local.base_policies,
         local.dynamodb_policy,
         local.assume_role_policy
       )
-    })
+    }
   }
   aux_combined_policies = {
     name = "CombinedPolicy"
-    policy = jsonencode({
+    policy = {
       Version = "2012-10-17"
       Statement = concat(
         local.base_policies,
         local.dynamodb_policy,
         local.assume_role_policy_aux
       )
-    })
+    }
   }
 }
 
