@@ -38,7 +38,15 @@ locals {
       Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_external_account_role}"
     }
   ]
-  combined_policies = {
+  assume_role_policy_aux = [
+    {
+      Sid      = "AssumeRoleAccess",
+      Effect   = "Allow",
+      Action   = ["sts:AssumeRole"],
+      Resource = "arn:aws:iam::${var.aws_client_account_id}:role/${var.aux_role.cloudformation_external_account_role}"
+    }
+  ]
+  main_combined_policies = {
     name = "CombinedPolicy"
     policy = jsonencode({
       Version = "2012-10-17"
@@ -49,6 +57,17 @@ locals {
       )
     })
   }
+  aux_combined_policies = {
+    name = "CombinedPolicy"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = concat(
+        local.base_policies,
+        local.dynamodb_policy,
+        local.assume_role_policy_aux
+      )
+    })
+  }
 }
 
 module "main_oidc_role" {
@@ -56,7 +75,7 @@ module "main_oidc_role" {
   version                        = "5.60.0"
   create_role                    = true
   role_name                      = var.main_role.name
-  inline_policy_statements       = [local.combined_policies]
+  inline_policy_statements       = [local.main_combined_policies]
   provider_urls                  = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences), [])
@@ -68,13 +87,16 @@ module "aux_oidc_role" {
   version                        = "5.60.0"
   create_role                    = true
   role_name                      = var.aux_role.name
-  inline_policy_statements       = [local.combined_policies]
+  inline_policy_statements       = [local.aux_combined_policies]
   provider_urls                  = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_fully_qualified_audiences = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences), [])
 }
 
-# Imprimir el valor de combined_policies para depuración
-output "combined_policies" {
-  value = local.combined_policies
+# Debug print combined policies
+output "main_combined_policies" {
+  value = local.main_combined_policies
+}
+output "aux_combined_policies" {
+  value = aux.main_combined_policies
 }
