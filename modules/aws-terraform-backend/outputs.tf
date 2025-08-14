@@ -27,3 +27,13 @@ output "s3_template_url" {
   description = "S3 URL of the uploaded template (only if 'upload_cloudformation_role' is true)"
   value       = local.should_upload ? "s3://${var.s3_bucket_cloudformation_role}/${var.s3_bucket_cloudformation_role_key}" : null
 }
+
+output "main_role_arn" {
+  description = "Main role ARN"
+  value = module.main_oidc_role.iam_role_arn
+}
+
+output "aux_role_arn" {
+  description = "Auxiliary role ARN"
+  value = module.aux_oidc_role.iam_role_arn
+}
