@@ -53,7 +53,7 @@ locals {
       Statement = concat(
         length(local.base_policies) > 0 ? local.base_policies : [],
         length(local.dynamodb_policy) > 0 ? local.dynamodb_policy : [],
-        length(local.local.assume_role_policy) > 0 ? local.assume_role_policy : []
+        length(local.assume_role_policy) > 0 ? local.assume_role_policy : []
       )
     })
   }
@@ -64,7 +64,7 @@ locals {
       Statement = concat(
         length(local.base_policies) > 0 ? local.base_policies : [],
         length(local.dynamodb_policy) > 0 ? local.dynamodb_policy : [],
-        length(local.local.assume_role_policy_aux) > 0 ? local.assume_role_policy_aux : []
+        length(local.assume_role_policy_aux) > 0 ? local.assume_role_policy_aux : []
       )
     })
   }
