@@ -98,5 +98,5 @@ output "main_combined_policies" {
   value = local.main_combined_policies
 }
 output "aux_combined_policies" {
-  value = aux.main_combined_policies
+  value = local.aux_combined_policies
 }
