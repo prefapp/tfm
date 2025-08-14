@@ -51,9 +51,9 @@ locals {
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = concat(
-        local.base_policies,
-        local.dynamodb_policy,
-        local.assume_role_policy
+        length(local.base_policies) > 0 ? local.base_policies : [],
+        length(local.dynamodb_policy) > 0 ? local.dynamodb_policy : [],
+        length(local.local.assume_role_policy) > 0 ? local.assume_role_policy : []
       )
     })
   }
@@ -62,9 +62,9 @@ locals {
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = concat(
-        local.base_policies,
-        local.dynamodb_policy,
-        local.assume_role_policy_aux
+        length(local.base_policies) > 0 ? local.base_policies : [],
+        length(local.dynamodb_policy) > 0 ? local.dynamodb_policy : [],
+        length(local.local.assume_role_policy_aux) > 0 ? local.assume_role_policy_aux : []
       )
     })
   }
