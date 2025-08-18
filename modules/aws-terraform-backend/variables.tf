@@ -32,36 +32,24 @@ variable "tfstate_enable_versioning" {
   default     = true
 }
 
-# variable "main_role_name" {
-#   description = "Terraform backend access role name (main)"
-#   type        = string
-#   default     = "terraform-backend-access-role"
-# }
-
-# variable "aux_role_name" {
-#   description = "Terraform backend access role (auxiliary)"
-#   type        = string
-#   default     = "terraform-backend-aux-access-role"
-# }
-
 variable "aws_client_account_id" {
-  description = "AWS Account ID that will assume the role that allows access to the S3 bucket and the dynamodb table"
+  description = "AWS client account ID"
   type        = string
 }
 
 variable "create_aux_role" {
-  description = "Decide whether to generate a specific auxiliary role for the client account"
+  description = "Decide whether to generate a specific auxiliary role to the backend"
   type        = bool
   default     = false
 }
 
 variable "external_main_role" {
-  description = "Role name that will assume the role to access the S3 bucket and the dynamodb table with admin access"
+  description = "Role name to assume by the main role, in the client account"
   type        = string
 }
 
 variable "external_aux_role" {
-  description = "Role name that will assume the role to access the S3 bucket and the dynamodb table with read-only access"
+  description = "Role name available to be assumed by the auxiliary role, in the client account"
   type        = string
   default     = ""
 }
@@ -89,13 +77,6 @@ variable "s3_bucket_cloudformation_role_key" {
   default     = "cloudformation/rendered-template.yaml"
   description = "Key to use when uploading the template to S3"
 }
-
-variable "create_oidc_trust_relationship" {
-  description = "Create IAM resources for GitHub or another OIDC provider"
-  type        = bool
-  default     = false
-}
-
 
 variable "main_role" {
   description = "Main role configuration"
