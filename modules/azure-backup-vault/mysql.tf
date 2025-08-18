@@ -63,7 +63,6 @@ resource "azurerm_data_protection_backup_instance_mysql_flexible_server" "this" 
   server_id        = each.value.server_id
   backup_policy_id = azurerm_data_protection_backup_policy_mysql_flexible_server.this[each.value.policy_key].id
   depends_on = [
-    azurerm_role_assignment.vault_backup_contributor_mysql,
     azurerm_role_assignment.mysql_backup_contributor,
     azurerm_role_assignment.mysql_rg_reader
   ]
