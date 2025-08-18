@@ -24,13 +24,10 @@ resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
   vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
   time_zone                       = try(each.value.time_zone, null)
-  dynamic "default_retention_rule" {
-    for_each = try(each.value.default_retention_rule, [])
-    content {
-      life_cycle {
-        duration        = default_retention_rule.value.life_cycle.duration
-        data_store_type = try(default_retention_rule.value.life_cycle.data_store_type, "VaultStore")
-      }
+  default_retention_rule {
+    life_cycle {
+      data_store_type = try(each.value.default_retention_rule.life_cycle.data_store_type, "VaultStore")
+      duration        = each.value.default_retention_rule.life_cycle.duration
     }
   }
   dynamic "retention_rule" {
