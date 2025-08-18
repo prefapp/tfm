@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.1](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.0...azure-sa-v0.3.1) (2025-08-08)
+
+
+### Bug Fixes
+
+* only one policy for multiple ([#695](https://github.com/prefapp/tfm/issues/695)) ([cb1cb15](https://github.com/prefapp/tfm/commit/cb1cb1563358ced277684f5b6bd4f8e07c050112))
+
+## [0.3.0](https://github.com/prefapp/tfm/compare/azure-sa-v0.2.1...azure-sa-v0.3.0) (2025-08-08)
+
+
+### Features
+
+* add cold parameters to base rules and last time access feature([#693](https://github.com/prefapp/tfm/issues/693)) ([873b143](https://github.com/prefapp/tfm/commit/873b1439ee9d3d24f60232578c41f917573beca9))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/azure-sa-v0.2.0...azure-sa-v0.2.1) (2025-04-24)
 
 

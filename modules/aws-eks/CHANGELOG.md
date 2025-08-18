@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.1...aws-eks-v1.2.2) (2025-07-23)
+
+
+### Bug Fixes
+
+* modify addons configuration_values structure ([#684](https://github.com/prefapp/tfm/issues/684)) ([d166716](https://github.com/prefapp/tfm/commit/d1667165b5339c512cf81fe37c4d92840339af45))
+
 ## [1.2.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.0...aws-eks-v1.2.1) (2025-06-10)
 
 
