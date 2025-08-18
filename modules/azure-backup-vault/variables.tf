@@ -113,20 +113,28 @@ variable "postgresql_policies" {
   type = list(object({
     name                            = string
     backup_repeating_time_intervals = list(string)
-    default_retention_duration      = string
     time_zone                       = optional(string)
-    retention_rule = list(object({
+    default_retention_rule = object({
+      life_cycle = object({
+        data_store_type = optional(string, "VaultStore")
+        duration        = string
+      })
+    })
+    retention_rule = optional(list(object({
       name     = string
-      duration = string
       priority = number
+      life_cycle = object({
+        data_store_type = optional(string, "VaultStore")
+        duration        = string
+      })
       criteria = object({
         absolute_criteria      = optional(string)
+        days_of_week           = optional(list(string))
         months_of_year         = optional(list(string))
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
-        days_of_week           = optional(list(string))
       })
-    }))
+    })))
   }))
   default = []
 }
@@ -161,7 +169,7 @@ variable "mysql_policies" {
       name     = string
       priority = number
       life_cycle = object({
-        data_store_type = string
+        data_store_type = optional(string, "VaultStore")
         duration        = string
       })
       criteria = object({
@@ -205,7 +213,7 @@ variable "kubernetes_policies" {
       name     = string
       priority = number
       life_cycle = object({
-        data_store_type = string
+        data_store_type = optional(string, "VaultStore")
         duration        = string
       })
       criteria = object({

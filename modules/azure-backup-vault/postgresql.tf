@@ -3,6 +3,11 @@ locals {
   unique_postgresql_resource_groups = distinct([for instance in var.postgresql_instances : instance.resource_group_name])
 }
 
+# Convert the list of policies to a map for easy lookup
+locals {
+  postgresql_policies_by_name = { for policy in var.postgresql_policies : policy.name => policy }
+}
+
 # Role assignment: PostgreSQL Flexible Server Long Term Retention Backup on the server
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "postgresql_ltr_backup" {
@@ -21,9 +26,9 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
 }
 
 # Backup policy for PostgreSQL Flexible Server
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_postgresql_flexible_server
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_pro
 resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "this" {
-  for_each                        = { for policy in var.postgresql_policies : policy.name => policy }
+  for_each                        = local.postgresql_policies_by_name
   name                            = each.value.name
   vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
@@ -35,7 +40,7 @@ resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "thi
     }
   }
   dynamic "retention_rule" {
-    for_each = each.value.retention_rule
+    for_each = try(each.value.retention_rule, [])
     content {
       name     = retention_rule.value.name
       priority = retention_rule.value.priority
@@ -55,18 +60,16 @@ resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "thi
 }
 
 # Backup instance for PostgreSQL Flexible Server
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_postgresql_flexible_server
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_pro
 resource "azurerm_data_protection_backup_instance_postgresql_flexible_server" "this" {
   for_each         = { for instance in var.postgresql_instances : instance.name => instance }
   name             = each.value.name
   location         = data.azurerm_resource_group.this.location
   vault_id         = azurerm_data_protection_backup_vault.this.id
   server_id        = each.value.server_id
-  backup_policy_id = azurerm_data_protection_backup_policy_postgresql.this[each.value.policy_key].id
+  backup_policy_id = azurerm_data_protection_backup_policy_postgresql_flexible_server.this[each.value.policy_key].id
   depends_on = [
     azurerm_role_assignment.postgresql_ltr_backup,
     azurerm_role_assignment.postgresql_rg_reader
   ]
 }
-
-
