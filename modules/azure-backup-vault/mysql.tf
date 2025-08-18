@@ -3,7 +3,7 @@
 resource "azurerm_role_assignment" "mysql_backup_contributor" {
   for_each             = { for instance in var.mysql_instances : instance.name => instance }
   scope                = each.value.server_id
-  role_definition_name = "MySQL Flexible Server Backup Contributor"
+  role_definition_name = "MySQL Backup And Export Operator"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
