@@ -159,12 +159,12 @@ variable "mysql_policies" {
     name                            = string
     backup_repeating_time_intervals = list(string)
     time_zone                       = optional(string)
-    default_retention_rule = list(object({
+    default_retention_rule = object({
       life_cycle = object({
         duration        = string
-        data_store_type = string
+        data_store_type = optional(string, "VaultStore")
       })
-    }))
+    })
     retention_rule = optional(list(object({
       name     = string
       priority = number
@@ -188,10 +188,10 @@ variable "mysql_policies" {
 variable "mysql_instances" {
   description = "List of MySQL Flexible Server backup instances"
   type = list(object({
-    name              = string
-    server_id         = string
-    resource_group_id = string
-    policy_key        = string
+    name                = string
+    server_id           = string
+    policy_key          = string
+    resource_group_name = string
   }))
   default = []
 }
