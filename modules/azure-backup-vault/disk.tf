@@ -1,9 +1,3 @@
-# List of unique disk resource groups from the disk instances
-# This is used to avoid duplicate resource group lookups
-locals {
-  unique_disk_resource_groups = distinct([for instance in var.disk_instances : instance.disk_resource_group])
-}
-
 # Role assignment: Backup Contributor al vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_backup_contributor_disk" {

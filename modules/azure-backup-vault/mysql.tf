@@ -1,12 +1,3 @@
-# Role assignment: Backup Contributor to the vault
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "vault_backup_contributor_mysql" {
-  count                = length(var.mysql_instances) > 0 ? 1 : 0
-  scope                = azurerm_data_protection_backup_vault.this.id
-  role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-}
-
 # Role assignment: MySQL Flexible Server Backup Contributor to each server
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "mysql_backup_contributor" {
@@ -19,8 +10,8 @@ resource "azurerm_role_assignment" "mysql_backup_contributor" {
 # Role assignment: Reader on the resource group of the server
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "mysql_rg_reader" {
-  for_each             = { for instance in var.mysql_instances : instance.name => instance }
-  scope                = each.value.resource_group_id
+  for_each             = data.azurerm_resource_group.mysql_rg
+  scope                = each.value.id
   role_definition_name = "Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
@@ -28,7 +19,7 @@ resource "azurerm_role_assignment" "mysql_rg_reader" {
 # Backup policy for MySQL Flexible Server
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_mysql_flexible_server
 resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
-  for_each                        = { for policy in var.mysql_policies : policy.name => policy }
+  for_each                        = local.mysql_policies_by_name
   name                            = each.value.name
   vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
@@ -38,7 +29,7 @@ resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
     content {
       life_cycle {
         duration        = default_retention_rule.value.life_cycle.duration
-        data_store_type = default_retention_rule.value.life_cycle.data_store_type
+        data_store_type = try(default_retention_rule.value.life_cycle.data_store_type, "VaultStore")
       }
     }
   }
@@ -48,7 +39,7 @@ resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
       name     = retention_rule.value.name
       priority = retention_rule.value.priority
       life_cycle {
-        data_store_type = retention_rule.value.life_cycle.data_store_type
+        data_store_type = try(retention_rule.value.life_cycle.data_store_type, "VaultStore")
         duration        = retention_rule.value.life_cycle.duration
       }
       criteria {
@@ -77,3 +68,6 @@ resource "azurerm_data_protection_backup_instance_mysql_flexible_server" "this" 
     azurerm_role_assignment.mysql_rg_reader
   ]
 }
+
+
+

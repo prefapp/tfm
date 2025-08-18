@@ -1,13 +1,3 @@
-# Get unique PostgreSQL resource groups
-locals {
-  unique_postgresql_resource_groups = distinct([for instance in var.postgresql_instances : instance.resource_group_name])
-}
-
-# Convert the list of policies to a map for easy lookup
-locals {
-  postgresql_policies_by_name = { for policy in var.postgresql_policies : policy.name => policy }
-}
-
 # Role assignment: PostgreSQL Flexible Server Long Term Retention Backup on the server
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "postgresql_ltr_backup" {
@@ -18,6 +8,7 @@ resource "azurerm_role_assignment" "postgresql_ltr_backup" {
 }
 
 # Assign Reader role once per unique PostgreSQL resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "postgresql_rg_reader" {
   for_each             = data.azurerm_resource_group.postgresql_rg
   scope                = each.value.id
@@ -35,7 +26,7 @@ resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "thi
   time_zone                       = try(each.value.time_zone, null)
   default_retention_rule {
     life_cycle {
-      data_store_type = each.value.default_retention_rule.life_cycle.data_store_type
+      data_store_type = try(each.value.default_retention_rule.life_cycle.data_store_type, "VaultStore")
       duration        = each.value.default_retention_rule.life_cycle.duration
     }
   }
@@ -45,7 +36,7 @@ resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "thi
       name     = retention_rule.value.name
       priority = retention_rule.value.priority
       life_cycle {
-        data_store_type = retention_rule.value.life_cycle.data_store_type
+        data_store_type = try(retention_rule.value.life_cycle.data_store_type, "VaultStore")
         duration        = retention_rule.value.life_cycle.duration
       }
       criteria {
