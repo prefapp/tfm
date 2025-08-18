@@ -21,21 +21,28 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
 }
 
 # Backup policy for PostgreSQL Flexible Server
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_postgresql
-resource "azurerm_data_protection_backup_policy_postgresql" "this" {
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_postgresql_flexible_server
+resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "this" {
   for_each                        = { for policy in var.postgresql_policies : policy.name => policy }
   name                            = each.value.name
-  vault_name                      = azurerm_data_protection_backup_vault.this.name
-  resource_group_name             = azurerm_data_protection_backup_vault.this.resource_group_name
-  default_retention_duration      = each.value.default_retention_duration
+  vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
   time_zone                       = try(each.value.time_zone, null)
+  default_retention_rule {
+    life_cycle {
+      data_store_type = each.value.default_retention_rule.life_cycle.data_store_type
+      duration        = each.value.default_retention_rule.life_cycle.duration
+    }
+  }
   dynamic "retention_rule" {
     for_each = each.value.retention_rule
     content {
       name     = retention_rule.value.name
-      duration = retention_rule.value.duration
       priority = retention_rule.value.priority
+      life_cycle {
+        data_store_type = retention_rule.value.life_cycle.data_store_type
+        duration        = retention_rule.value.life_cycle.duration
+      }
       criteria {
         absolute_criteria      = try(retention_rule.value.criteria.absolute_criteria, null)
         days_of_week           = try(retention_rule.value.criteria.days_of_week, null)
