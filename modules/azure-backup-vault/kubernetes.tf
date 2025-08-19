@@ -3,7 +3,7 @@
 resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
-  role_definition_name = "Kubernetes Backup Contributor"
+  role_definition_name = "Backup Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
@@ -12,7 +12,7 @@ resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
 resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
-  role_definition_name = "Kubernetes Cluster Admin"
+  role_definition_name = "Azure Kubernetes Service Cluster Admin Role"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
