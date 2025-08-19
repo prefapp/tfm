@@ -233,7 +233,6 @@ variable "kubernetes_instances" {
   description = "List of Kubernetes cluster backup instances"
   type = list(object({
     name                         = string
-    cluster_name                 = string
     snapshot_resource_group_name = string
     policy_key                   = string
     backup_datasource_parameters = object({
