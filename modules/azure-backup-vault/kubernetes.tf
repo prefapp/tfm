@@ -110,6 +110,7 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
     azurerm_role_assignment.kubernetes_backup_contributor,
     azurerm_role_assignment.kubernetes_cluster_admin,
     azurerm_kubernetes_cluster_extension.this,
-    azurerm_kubernetes_cluster_trusted_access_role_binding.this
+    azurerm_kubernetes_cluster_trusted_access_role_binding.this,
+    azurerm_role_assignment.vault_backup_contributor
   ]
 }

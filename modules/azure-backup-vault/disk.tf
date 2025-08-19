@@ -51,7 +51,8 @@ resource "azurerm_data_protection_backup_instance_disk" "this" {
   backup_policy_id             = azurerm_data_protection_backup_policy_disk.this[each.value.policy_key].id
 
   depends_on = [
-    azurerm_role_assignment.vault_backup_contributor_disk,
-    azurerm_role_assignment.disk_backup_reader
+    azurerm_role_assignment.disk_backup_reader,
+    azurerm_role_assignment.snapshot_rg_contributor,
+    azurerm_role_assignment.vault_backup_contributor
   ]
 }

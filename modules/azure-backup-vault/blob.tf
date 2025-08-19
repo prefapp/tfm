@@ -49,5 +49,8 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   storage_account_id              = each.value.storage_account_id
   backup_policy_id                = azurerm_data_protection_backup_policy_blob_storage.this[each.value.policy_key].id
   storage_account_container_names = each.value.storage_account_container_names
-  depends_on                      = [azurerm_role_assignment.this]
+  depends_on                      = [
+    azurerm_role_assignment.this,
+    azurerm_role_assignment.vault_backup_contributor
+  ]
 }
