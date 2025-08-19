@@ -47,3 +47,8 @@ data "azurerm_resource_group" "kubernetes_rg" {
   for_each = { for rg in local.unique_kubernetes_resource_groups : rg => rg }
   name     = each.value
 }
+
+data "azurerm_resource_group" "snapshot_rg" {
+  for_each = { for instance in var.kubernetes_instances : instance.snapshot_resource_group_name => instance.snapshot_resource_group_name }
+  name     = each.value
+}

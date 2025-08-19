@@ -25,6 +25,22 @@ resource "azurerm_role_assignment" "kubernetes_rg_reader" {
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
+# Contributor para la identidad del AKS cluster
+resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
+  for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
+  scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
+  role_definition_name = "Contributor"
+  principal_id         = data.azurerm_kubernetes_cluster.this[each.key].identity[0].principal_id
+}
+
+# Reader para la identidad del Backup Vault
+resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
+  for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
+  scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+}
+
 # Cluster extension for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension
 resource "azurerm_kubernetes_cluster_extension" "this" {
