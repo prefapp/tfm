@@ -106,7 +106,6 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   }
 
   depends_on = [
-    azurerm_role_assignment.vault_backup_contributor_kubernetes,
     azurerm_role_assignment.kubernetes_backup_contributor,
     azurerm_role_assignment.kubernetes_cluster_admin,
     azurerm_kubernetes_cluster_extension.this,
