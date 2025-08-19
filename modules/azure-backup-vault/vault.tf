@@ -20,7 +20,6 @@ resource "azurerm_data_protection_backup_vault" "this" {
   immutability                 = var.vault.immutability
   soft_delete                  = var.vault.soft_delete
   tags                         = local.tags
-  depends_on                   = [ azurerm_role_assignment.vault_backup_contributor ]
 
   identity {
     type = "SystemAssigned"
