@@ -40,6 +40,6 @@ data "azurerm_resource_group" "mysql_rg" {
 data "azurerm_kubernetes_cluster" "this" {
   for_each            = { for instance in var.kubernetes_instances : instance.name => instance }
   name                = each.value.name
-  resource_group_name = each.value.resource_group_name
+  resource_group_name = each.value.snapshot_resource_group_name
 }
 

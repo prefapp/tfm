@@ -1,5 +1,3 @@
-
-
 # Role assignment: Kubernetes Backup Contributor to each cluster
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
@@ -64,7 +62,7 @@ resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
   }
 
   dynamic "retention_rule" {
-    for_each = try(each.value.retention_rule, [])
+    for_each = each.value.retention_rule != null ? each.value.retention_rule : []
     content {
       name     = retention_rule.value.name
       priority = retention_rule.value.priority
@@ -72,7 +70,6 @@ resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
         data_store_type = retention_rule.value.life_cycle.data_store_type
         duration        = retention_rule.value.life_cycle.duration
       }
-
       criteria {
         absolute_criteria      = try(retention_rule.value.criteria.absolute_criteria, null)
         days_of_week           = try(retention_rule.value.criteria.days_of_week, null)
