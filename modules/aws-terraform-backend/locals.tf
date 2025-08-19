@@ -7,8 +7,6 @@ locals {
 
 
   aux_role_resource = {
-    count = var.generate_cloudformation_role_for_external_account ? 1 : 0
-
     ReadOnlyRole = {
       Type = "AWS::IAM::Role"
       Properties = {
@@ -31,8 +29,6 @@ locals {
   }
 
   main_role_resource = {
-    count = var.generate_cloudformation_role_for_external_account ? 1 : 0
-
     AdminRole = {
       Type = "AWS::IAM::Role"
       Properties = {
@@ -56,8 +52,6 @@ locals {
 
 
   cf_template = {
-    count = var.generate_cloudformation_role_for_external_account ? 1 : 0
-
     AWSTemplateFormatVersion = "2010-09-09"
     Description              = "Firestartr Admin role"
     Resources = merge(
