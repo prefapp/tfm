@@ -213,7 +213,7 @@ variable "kubernetes_policies" {
       name     = string
       priority = number
       life_cycle = object({
-        data_store_type = optional(string, "VaultStore")
+        data_store_type = optional(string, "OperationalStore")
         duration        = string
       })
       criteria = object({
