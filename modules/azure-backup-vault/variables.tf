@@ -206,7 +206,7 @@ variable "kubernetes_policies" {
     default_retention_rule = object({
       life_cycle = object({
         duration        = string
-        data_store_type = string
+        data_store_type = optional(string, "OperationalStore")
       })
     })
     retention_rule = optional(list(object({
