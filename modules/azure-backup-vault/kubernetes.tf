@@ -16,6 +16,15 @@ resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
+# Role assignment: Kubernetes RG Reader for each Kubernetes resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role
+resource "azurerm_role_assignment" "kubernetes_rg_reader" {
+  for_each             = data.azurerm_resource_group.kubernetes_rg
+  scope                = each.value.id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+}
+
 # Cluster extension for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension
 resource "azurerm_kubernetes_cluster_extension" "this" {
@@ -93,16 +102,13 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   backup_policy_id             = azurerm_data_protection_backup_policy_kubernetes_cluster.this[each.value.policy_key].id
 
   backup_datasource_parameters {
-    excluded_namespaces              = try(each.value.backup_datasource_parameters.excluded_namespaces, null)
-    excluded_resource_types          = try(each.value.backup_datasource_parameters.excluded_resource_types, null)
-    cluster_scoped_resources_enabled = try(each.value.backup_datasource_parameters.cluster_scoped_resources_enabled, null)
-    included_namespaces              = try(each.value.backup_datasource_parameters.included_namespaces, null)
-    included_resource_types          = try(each.value.backup_datasource_parameters.included_resource_types, null)
-    label_selectors                  = (
-      each.value.backup_datasource_parameters.label_selectors != null
-      ? each.value.backup_datasource_parameters.label_selectors : {}
-    )
-    volume_snapshot_enabled          = try(each.value.backup_datasource_parameters.volume_snapshot_enabled, null)
+    excluded_namespaces              = try(each.value.backup_datasource_parameters.excluded_namespaces, [])
+    excluded_resource_types          = try(each.value.backup_datasource_parameters.excluded_resource_types, [])
+    cluster_scoped_resources_enabled = try(each.value.backup_datasource_parameters.cluster_scoped_resources_enabled, false)
+    included_namespaces              = try(each.value.backup_datasource_parameters.included_namespaces, [])
+    included_resource_types          = try(each.value.backup_datasource_parameters.included_resource_types, [])
+    label_selectors                  = try(each.value.backup_datasource_parameters.label_selectors, [])
+    volume_snapshot_enabled          = try(each.value.backup_datasource_parameters.volume_snapshot_enabled, false)
   }
 
   depends_on = [

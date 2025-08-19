@@ -241,7 +241,7 @@ variable "kubernetes_instances" {
       cluster_scoped_resources_enabled = optional(bool)
       included_namespaces              = optional(list(string))
       included_resource_types          = optional(list(string))
-      label_selectors                  = optional(map(string))
+      label_selectors                  = optional(list(string))
       volume_snapshot_enabled          = optional(bool)
     })
     extension_configuration = optional(object({

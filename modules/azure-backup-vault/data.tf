@@ -43,3 +43,7 @@ data "azurerm_kubernetes_cluster" "this" {
   resource_group_name = each.value.snapshot_resource_group_name
 }
 
+data "azurerm_resource_group" "kubernetes_rg" {
+  for_each = { for rg in local.unique_kubernetes_resource_groups : rg => rg }
+  name     = each.value
+}

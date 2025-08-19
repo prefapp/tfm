@@ -19,6 +19,9 @@ locals {
   # Get unique PostgreSQL resource groups
   unique_postgresql_resource_groups = distinct([for instance in var.postgresql_instances : instance.resource_group_name])
 
+  ## Kubernetes specific locals ##
+  # Get unique Kubernetes resource groups
+  unique_kubernetes_resource_groups = distinct([for instance in var.kubernetes_instances : instance.snapshot_resource_group_name])
 
 }
 
