@@ -1,19 +1,10 @@
-# Role assignment: Backup Contributor to the vault
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "vault_backup_contributor_disk" {
-  for_each             = { for instance in var.disk_instances : instance.name => instance }
-  scope                = azurerm_data_protection_backup_vault.this.id
-  role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-}
-
 # Role assignment: Disk Backup Reader a cada disco
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "disk_backup_reader" {
   for_each             = { for instance in var.disk_instances : instance.name => instance }
   scope                = data.azurerm_managed_disk.this[each.value.name].id
   role_definition_name = "Disk Backup Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity.principal_id
 }
 
 # Role assignment: Snapshot RG Contributor a cada disco
@@ -22,7 +13,7 @@ resource "azurerm_role_assignment" "snapshot_rg_contributor" {
   for_each             = data.azurerm_resource_group.disk_rg
   scope                = each.value.id
   role_definition_name = "Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity.principal_id
 }
 
 # Disk backup policies
@@ -30,7 +21,7 @@ resource "azurerm_role_assignment" "snapshot_rg_contributor" {
 resource "azurerm_data_protection_backup_policy_disk" "this" {
   for_each                        = { for policy in var.disk_policies : policy.name => policy }
   name                            = each.value.name
-  vault_id                        = azurerm_data_protection_backup_vault.this.id
+  vault_id                        = azurerm_data_protection_backup_vault.this[0].id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
   default_retention_duration      = each.value.default_retention_duration
   time_zone                       = try(each.value.time_zone, null)
@@ -54,7 +45,7 @@ resource "azurerm_data_protection_backup_instance_disk" "this" {
   for_each                     = { for instance in var.disk_instances : instance.name => instance }
   name                         = each.value.name
   location                     = data.azurerm_resource_group.disk_rg[each.value.disk_resource_group].location
-  vault_id                     = azurerm_data_protection_backup_vault.this.id
+  vault_id                     = azurerm_data_protection_backup_vault.this[0].id
   disk_id                      = data.azurerm_managed_disk.this[each.value.name].id
   snapshot_resource_group_name = data.azurerm_resource_group.disk_rg[each.value.disk_resource_group].name
   backup_policy_id             = azurerm_data_protection_backup_policy_disk.this[each.value.policy_key].id

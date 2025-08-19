@@ -1,11 +1,4 @@
-# Role assignment: Backup Contributor to the vault
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
-resource "azurerm_role_assignment" "vault_backup_contributor_kubernetes" {
-  count                = length(var.kubernetes_instances) > 0 ? 1 : 0
-  scope                = azurerm_data_protection_backup_vault.this.id
-  role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-}
+
 
 # Role assignment: Kubernetes Backup Contributor to each cluster
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
@@ -13,7 +6,7 @@ resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
   role_definition_name = "Kubernetes Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
 }
 
 # Role assignment for restore operations
@@ -22,7 +15,7 @@ resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
   for_each             = { for key, instance in var.kubernetes_instances : key => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
   role_definition_name = "Kubernetes Cluster Admin"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this[0].identity[0].principal_id
 }
 
 # Cluster extension for backup
@@ -50,7 +43,7 @@ resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
   kubernetes_cluster_id = data.azurerm_kubernetes_cluster.this[each.key].id
   name                  = "role-binding-${each.value.name}"
   roles                 = ["Microsoft.DataProtection/backupVaults/backup-operator"]
-  source_resource_id    = azurerm_data_protection_backup_vault.this.id
+  source_resource_id    = azurerm_data_protection_backup_vault.this[0].id
 }
 
 # Backup policy for Kubernetes cluster
@@ -59,7 +52,7 @@ resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
   for_each                        = { for policy in var.kubernetes_policies : policy.name => policy }
   name                            = each.value.name
   resource_group_name             = data.azurerm_resource_group.this.name
-  vault_name                      = azurerm_data_protection_backup_vault.this.name
+  vault_name                      = azurerm_data_protection_backup_vault.this[0].name
   time_zone                       = try(each.value.time_zone, null)
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
 
@@ -97,7 +90,7 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   for_each                     = { for instance in var.kubernetes_instances : instance.name => instance }
   name                         = each.value.name
   location                     = data.azurerm_resource_group.this.location
-  vault_id                     = azurerm_data_protection_backup_vault.this.id
+  vault_id                     = azurerm_data_protection_backup_vault.this[0].id
   kubernetes_cluster_id        = each.value.kubernetes_cluster_id
   snapshot_resource_group_name = each.value.snapshot_resource_group_name
   backup_policy_id             = azurerm_data_protection_backup_policy_kubernetes_cluster.this[each.value.policy_key].id
