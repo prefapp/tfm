@@ -10,7 +10,7 @@ resource "azurerm_role_assignment" "kubernetes_backup_contributor" {
 # Role assignment for restore operations
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
-  for_each             = { for key, instance in var.kubernetes_instances : key => instance }
+  for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.key].id
   role_definition_name = "Kubernetes Cluster Admin"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -19,7 +19,7 @@ resource "azurerm_role_assignment" "kubernetes_cluster_admin" {
 # Cluster extension for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension
 resource "azurerm_kubernetes_cluster_extension" "this" {
-  for_each          = { for key, instance in var.kubernetes_instances : key => instance }
+  for_each          = { for instance in var.kubernetes_instances : instance.name => instance }
   name              = each.value.name
   cluster_id        = data.azurerm_kubernetes_cluster.this[each.key].id
   extension_type    = "Microsoft.DataProtection.Kubernetes"
