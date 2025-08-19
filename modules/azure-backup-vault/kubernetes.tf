@@ -37,7 +37,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
 # Cluster trusted access role binding
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_trusted_access_role_binding
 resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
-  for_each              = { for key, instance in var.kubernetes_instances : key => instance }
+  for_each              = { for instance in var.kubernetes_instances : instance.name => instance }
   kubernetes_cluster_id = data.azurerm_kubernetes_cluster.this[each.key].id
   name                  = "role-binding-${each.value.name}"
   roles                 = ["Microsoft.DataProtection/backupVaults/backup-operator"]
