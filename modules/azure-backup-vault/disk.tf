@@ -1,4 +1,4 @@
-# Role assignment: Backup Contributor al vault
+# Role assignment: Backup Contributor to the vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_backup_contributor_disk" {
   for_each             = { for instance in var.disk_instances : instance.name => instance }

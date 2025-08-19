@@ -76,8 +76,8 @@ resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
       name     = retention_rule.value.name
       priority = retention_rule.value.priority
       life_cycle {
-        data_store_type = each.value.default_retention_rule.life_cycle.data_store_type
-        duration        = each.value.default_retention_rule.life_cycle.duration
+        data_store_type = retention_rule.value.life_cycle.data_store_type
+        duration        = retention_rule.value.life_cycle.duration
       }
 
       criteria {
