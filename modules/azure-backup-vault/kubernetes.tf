@@ -98,7 +98,7 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
     cluster_scoped_resources_enabled = try(each.value.backup_datasource_parameters.cluster_scoped_resources_enabled, null)
     included_namespaces              = try(each.value.backup_datasource_parameters.included_namespaces, null)
     included_resource_types          = try(each.value.backup_datasource_parameters.included_resource_types, null)
-    label_selectors                  = try(each.value.backup_datasource_parameters.label_selectors, null)
+    label_selectors                  = try(each.value.backup_datasource_parameters.label_selectors, [])
     volume_snapshot_enabled          = try(each.value.backup_datasource_parameters.volume_snapshot_enabled, null)
   }
 
