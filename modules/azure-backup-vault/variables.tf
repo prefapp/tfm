@@ -235,7 +235,7 @@ variable "kubernetes_instances" {
     name                         = string
     snapshot_resource_group_name = string
     policy_key                   = string
-    backup_datasource_parameters = object({
+    backup_datasource_parameters = optional(object({
       excluded_namespaces              = optional(list(string))
       excluded_resource_types          = optional(list(string))
       cluster_scoped_resources_enabled = optional(bool)
@@ -243,7 +243,7 @@ variable "kubernetes_instances" {
       included_resource_types          = optional(list(string))
       label_selectors                  = optional(list(string))
       volume_snapshot_enabled          = optional(bool)
-    })
+    }))
     extension_configuration = optional(object({
       bucket_name                 = optional(string)
       bucket_resource_group_name  = optional(string)
