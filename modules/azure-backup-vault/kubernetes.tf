@@ -48,7 +48,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
 resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
   for_each              = { for instance in var.kubernetes_instances : instance.name => instance }
   kubernetes_cluster_id = data.azurerm_kubernetes_cluster.this[each.key].id
-  name                  = "rb-${each.value.name}"
+  name                  = each.value.name
   roles                 = ["Microsoft.DataProtection/backupVaults/backup-operator"]
   source_resource_id    = azurerm_data_protection_backup_vault.this.id
 }
