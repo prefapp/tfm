@@ -4,7 +4,7 @@ resource "azurerm_role_assignment" "vault_backup_contributor_kubernetes" {
   count                = azurerm_data_protection_backup_vault.this != null ? 1 : 0
   scope                = azurerm_data_protection_backup_vault.this.id
   role_definition_name = "Backup Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Backup Vault Azure Data Protection

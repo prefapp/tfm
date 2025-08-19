@@ -4,7 +4,7 @@ resource "azurerm_role_assignment" "postgresql_ltr_backup" {
   for_each             = { for instance in var.postgresql_instances : instance.name => instance }
   scope                = each.value.server_id
   role_definition_name = "PostgreSQL Flexible Server Long Term Retention Backup Role"
-  principal_id         = azurerm_data_protection_backup_vault.this[0].identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
 }
 
 # Assign Reader role once per unique PostgreSQL resource group
@@ -13,7 +13,7 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
   for_each             = data.azurerm_resource_group.postgresql_rg
   scope                = each.value.id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this[0].identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
 }
 
 # Backup policy for PostgreSQL Flexible Server
@@ -21,7 +21,7 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
 resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "this" {
   for_each                        = local.postgresql_policies_by_name
   name                            = each.value.name
-  vault_id                        = azurerm_data_protection_backup_vault.this[0].id
+  vault_id                        = azurerm_data_protection_backup_vault.this.id
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
   time_zone                       = try(each.value.time_zone, null)
   default_retention_rule {
@@ -56,7 +56,7 @@ resource "azurerm_data_protection_backup_instance_postgresql_flexible_server" "t
   for_each         = { for instance in var.postgresql_instances : instance.name => instance }
   name             = each.value.name
   location         = data.azurerm_resource_group.this.location
-  vault_id         = azurerm_data_protection_backup_vault.this[0].id
+  vault_id         = azurerm_data_protection_backup_vault.this.id
   server_id        = each.value.server_id
   backup_policy_id = azurerm_data_protection_backup_policy_postgresql_flexible_server.this[each.value.policy_key].id
   depends_on = [
