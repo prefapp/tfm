@@ -4,7 +4,7 @@ resource "azurerm_role_assignment" "postgresql_ltr_backup" {
   for_each             = { for instance in var.postgresql_instances : instance.name => instance }
   scope                = each.value.server_id
   role_definition_name = "PostgreSQL Flexible Server Long Term Retention Backup Role"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Assign Reader role once per unique PostgreSQL resource group
@@ -13,7 +13,7 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
   for_each             = data.azurerm_resource_group.postgresql_rg
   scope                = each.value.id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Backup policy for PostgreSQL Flexible Server

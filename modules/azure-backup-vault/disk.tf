@@ -4,7 +4,7 @@ resource "azurerm_role_assignment" "disk_backup_reader" {
   for_each             = { for instance in var.disk_instances : instance.name => instance }
   scope                = data.azurerm_managed_disk.this[each.value.name].id
   role_definition_name = "Disk Backup Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Role assignment: Snapshot RG Contributor a cada disco
@@ -13,7 +13,7 @@ resource "azurerm_role_assignment" "snapshot_rg_contributor" {
   for_each             = data.azurerm_resource_group.disk_rg
   scope                = each.value.id
   role_definition_name = "Contributor"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Disk backup policies
