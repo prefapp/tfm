@@ -81,6 +81,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
           "ec2:DescribeCoipPools",
           "ec2:GetSecurityGroupsForVpc",
           "ec2:DescribeIpamPools",
+          "ec2:DescribeRouteTables",
           "elasticloadbalancing:DescribeLoadBalancers",
           "elasticloadbalancing:DescribeLoadBalancerAttributes",
           "elasticloadbalancing:DescribeListeners",
