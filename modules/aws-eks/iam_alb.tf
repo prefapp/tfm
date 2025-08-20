@@ -1,5 +1,4 @@
 /*
-
   IAM Role for ALB Ingress Controller
 
   This IAM role is used by the ALB Ingress Controller to manage AWS resources on your behalf.
@@ -11,7 +10,6 @@
     - IAM Role -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
     - IAM Policy -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
     - IAM Role Policy Attachment -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
-
 */
 resource "aws_iam_role" "iam_role_oidc" {
 
