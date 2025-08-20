@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.2...aws-eks-v1.2.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* update aws eks alb policy ([#701](https://github.com/prefapp/tfm/issues/701)) ([e16a443](https://github.com/prefapp/tfm/commit/e16a443bd206ac76055f754404038a2e7fb38588))
+
 ## [1.2.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.1...aws-eks-v1.2.2) (2025-07-23)
 
 
