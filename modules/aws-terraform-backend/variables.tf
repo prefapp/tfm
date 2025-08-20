@@ -87,6 +87,7 @@ variable "main_role" {
     oidc_trust_policies = optional(
       object({
         provider_urls             = list(string)
+        oidc_audiences            = list(string)
         fully_qualified_subjects  = list(string)
         subjects_with_wildcards   = list(string)
         fully_qualified_audiences = list(string)
@@ -104,6 +105,7 @@ variable "aux_role" {
     oidc_trust_policies = optional(
       object({
         provider_urls             = list(string)
+        oidc_audiences            = list(string)
         fully_qualified_subjects  = list(string)
         subjects_with_wildcards   = list(string)
         fully_qualified_audiences = list(string)

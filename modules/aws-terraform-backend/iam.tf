@@ -65,7 +65,7 @@ module "main_oidc_role" {
   )
   provider_urls                  = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
-  oidc_fully_qualified_audiences = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_audiences), [])
+  oidc_audiences = try(tolist(var.main_role.oidc_trust_policies.oidc_audiences), [])
   oidc_subjects_with_wildcards   = try(tolist(var.main_role.oidc_trust_policies.subjects_with_wildcards), [])
 }
 
@@ -82,6 +82,6 @@ module "aux_oidc_role" {
   )
   provider_urls                  = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
   oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
-  oidc_fully_qualified_audiences = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_audiences), [])
+  oidc_audiences = try(tolist(var.aux_role.oidc_trust_policies.oidc_audiences), [])
   oidc_subjects_with_wildcards   = try(tolist(var.aux_role.oidc_trust_policies.subjects_with_wildcards), [])
 }
