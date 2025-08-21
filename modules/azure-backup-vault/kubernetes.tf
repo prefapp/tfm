@@ -20,10 +20,12 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
 # Reader para la identidad del Backup Vault
 resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
   for_each = {
-    for instance in var.kubernetes_instances :
-    "${instance.snapshot_resource_group_name}|${azurerm_data_protection_backup_vault.this.identity[0].principal_id}" => {
-      snapshot_resource_group_name = instance.snapshot_resource_group_name
-      principal_id                 = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+    for key in distinct([
+      for instance in var.kubernetes_instances :
+      "${instance.name}|${azurerm_data_protection_backup_vault.this.identity[0].principal_id}"
+    ]) : key => {
+      snapshot_resource_group_name = split("|", key)[0]
+      principal_id                 = split("|", key)[1]
     }
   }
   scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
