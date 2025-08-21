@@ -150,7 +150,7 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
 resource "null_resource" "wait_for_extension" {
   for_each = { for instance in var.kubernetes_instances : instance.name => instance }
   provisioner "local-exec" {
-    command = "sleep 30"
+    command = "sleep 60"
   }
   depends_on = [
     azurerm_kubernetes_cluster_extension.this,
