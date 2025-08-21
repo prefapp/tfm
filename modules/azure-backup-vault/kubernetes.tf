@@ -136,17 +136,26 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   }
 
   depends_on = [
+    null_resource.wait_for_extension,
     azurerm_role_assignment.kubernetes_reader,
     azurerm_role_assignment.vault_reader_on_snapshot_rg,
     azurerm_role_assignment.aks_contributor_on_snapshot_rg,
     azurerm_role_assignment.extension_storage_blob_data_contributor,
-    azurerm_kubernetes_cluster_extension.this,
-    azurerm_kubernetes_cluster_trusted_access_role_binding.this,
     azurerm_data_protection_backup_policy_kubernetes_cluster.this,
     azurerm_data_protection_backup_vault.this
     # azurerm_role_assignment.vault_backup_contributor # Uncomment if this resource exists
   ]
 }
 
+resource "null_resource" "wait_for_extension" {
+  for_each = { for instance in var.kubernetes_instances : instance.name => instance }
+  provisioner "local-exec" {
+    command = "sleep 120"
+  }
+  depends_on = [
+    azurerm_kubernetes_cluster_extension.this,
+    azurerm_kubernetes_cluster_trusted_access_role_binding.this
+  ]
+}
 
 # add cluster name variable to the instance
