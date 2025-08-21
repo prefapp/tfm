@@ -9,12 +9,12 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
 
 # Role assignment: Kubernetes RG Reader for each Kubernetes resource group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role
-resource "azurerm_role_assignment" "kubernetes_rg_reader" {
-  for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
-  scope                = data.azurerm_resource_group.kubernetes_rg[each.key].id
-  role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-}
+# resource "azurerm_role_assignment" "kubernetes_rg_reader" {
+#   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
+#   scope                = data.azurerm_resource_group.kubernetes_rg[each.value].id
+#   role_definition_name = "Reader"
+#   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+# }
 
 # Role assignment: Backup Vault Contributor for each Kubernetes resource group
 # Reader para la identidad del Backup Vault
@@ -142,3 +142,6 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
     azurerm_role_assignment.vault_backup_contributor
   ]
 }
+
+
+# add cluster name variable to the instance
