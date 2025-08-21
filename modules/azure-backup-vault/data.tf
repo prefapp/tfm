@@ -60,6 +60,8 @@ data "azurerm_storage_account" "backup" {
       name                = instance.extension_configuration.bucket_storage_account_name
       resource_group_name = instance.extension_configuration.bucket_resource_group_name
     }
+    # Solo la primera instancia para cada combinación única será usada
+    if instance.extension_configuration.bucket_storage_account_name != null && instance.extension_configuration.bucket_resource_group_name != null
   }
   name                = each.value.name
   resource_group_name = each.value.resource_group_name
