@@ -52,8 +52,11 @@ resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
 # Cluster extension for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension
 resource "azurerm_kubernetes_cluster_extension" "this" {
-  for_each          = { for instance in var.kubernetes_instances : instance.name => instance }
-  name              = each.value.name
+  for_each = {
+    for instance in var.kubernetes_instances :
+    instance.cluster_name => instance
+  }
+  name              = "backup-extension"
   cluster_id        = data.azurerm_kubernetes_cluster.this[each.key].id
   extension_type    = "Microsoft.DataProtection.Kubernetes"
   release_train     = "stable"
@@ -71,7 +74,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     azurerm_data_protection_backup_instance_blob_storage.this, 
     azurerm_role_assignment.vault_reader_on_snapshot_rg, 
     azurerm_role_assignment.aks_contributor_on_snapshot_rg
-]
+  ]
 }
 
 # Cluster trusted access role binding
