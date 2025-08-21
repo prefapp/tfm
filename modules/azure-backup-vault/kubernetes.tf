@@ -15,6 +15,7 @@ resource "azurerm_role_assignment" "kubernetes_rg_reader" {
   role_definition_name = "Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
+
 # Role assignment: Backup Vault Contributor for each Kubernetes resource group
 # Reader para la identidad del Backup Vault
 resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
@@ -23,7 +24,6 @@ resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
   role_definition_name = "Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
-
 
 # Contributor para la identidad del AKS cluster
 resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
@@ -57,6 +57,8 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.storageAccount" = try(each.value.extension_configuration.bucket_storage_account_name, null)
     "configuration.backupStorageLocation.config.subscriptionId" = data.azurerm_client_config.current.subscription_id
     "credentials.tenantId"                                      = data.azurerm_client_config.current.tenant_id
+    "configuration.backupStorageLocation.config.useAAD"         = true
+    "configuration.backupStorageLocation.config.storageAccountURI" = try(data.azurerm_storage_account.backup.primary_blob_endpoint, null)
   }
 }
 
