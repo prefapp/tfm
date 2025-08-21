@@ -63,9 +63,8 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
   depends_on = [
     azurerm_data_protection_backup_instance_blob_storage.this, 
     azurerm_role_assignment.vault_reader_on_snapshot_rg, 
-    azurerm_role_assignment.aks_contributor_on_snapshot_rg, 
-    azurerm_role_assignment.extension_storage_blob_data_contributor
-  ]
+    azurerm_role_assignment.aks_contributor_on_snapshot_rg
+]
 }
 
 # Cluster trusted access role binding
