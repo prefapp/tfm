@@ -36,7 +36,7 @@ resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
 # Role assignment: Storage Blob Data Contributor for the extension storage account
 resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
-  scope                = data.azurerm_storage_account.backup[each.value.extension_configuration.bucket_storage_account_name].id
+  scope                = data.azurerm_storage_account.backup["${each.value.extension_configuration.bucket_storage_account_name}|${each.value.name}"].id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_kubernetes_cluster_extension.this[each.key].aks_assigned_identity[0].principal_id
 }
