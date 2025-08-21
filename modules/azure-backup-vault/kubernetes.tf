@@ -19,10 +19,16 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
 # Role assignment: Backup Vault Contributor for each Kubernetes resource group
 # Reader para la identidad del Backup Vault
 resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
-  for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
+  for_each = {
+    for instance in var.kubernetes_instances :
+    "${instance.snapshot_resource_group_name}|${azurerm_data_protection_backup_vault.this.identity[0].principal_id}" => {
+      snapshot_resource_group_name = instance.snapshot_resource_group_name
+      principal_id                 = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+    }
+  }
   scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = each.value.principal_id
 }
 
 # Contributor para la identidad del AKS cluster
