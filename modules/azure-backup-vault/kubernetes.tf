@@ -41,7 +41,6 @@ resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
   principal_id         = azurerm_kubernetes_cluster_extension.this[each.key].aks_assigned_identity[0].principal_id
 }
 
-
 # Cluster extension for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension
 resource "azurerm_kubernetes_cluster_extension" "this" {
@@ -157,5 +156,3 @@ resource "null_resource" "wait_for_extension" {
     azurerm_kubernetes_cluster_trusted_access_role_binding.this
   ]
 }
-
-# add cluster name variable to the instance

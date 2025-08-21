@@ -39,8 +39,8 @@ data "azurerm_resource_group" "mysql_rg" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/kubernetes_cluster
 data "azurerm_kubernetes_cluster" "this" {
   for_each            = { for instance in var.kubernetes_instances : instance.name => instance }
-  name                = each.value.name
-  resource_group_name = each.value.snapshot_resource_group_name
+  name                = each.value.cluster_name
+  resource_group_name = each.value.resource_group_name
 }
 
 data "azurerm_resource_group" "kubernetes_rg" {
@@ -49,7 +49,7 @@ data "azurerm_resource_group" "kubernetes_rg" {
 }
 
 data "azurerm_resource_group" "snapshot_rg" {
-  for_each = { for instance in var.kubernetes_instances : instance.snapshot_resource_group_name => instance.snapshot_resource_group_name }
+  for_each = { for instance in local.unique_kubernetes_snapshot_resource_groups : instance => instance }
   name     = each.value
 }
 
