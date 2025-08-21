@@ -22,7 +22,7 @@ resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
   for_each = {
     for key in distinct([
       for instance in var.kubernetes_instances :
-      "${instance.name}|${azurerm_data_protection_backup_vault.this.identity[0].principal_id}"
+      "${instance.snapshot_resource_group_name}|${azurerm_data_protection_backup_vault.this.identity[0].principal_id}"
     ]) : key => {
       snapshot_resource_group_name = split("|", key)[0]
       principal_id                 = split("|", key)[1]
