@@ -58,7 +58,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.subscriptionId" = data.azurerm_client_config.current.subscription_id
     "credentials.tenantId"                                      = data.azurerm_client_config.current.tenant_id
     "configuration.backupStorageLocation.config.useAAD"         = true
-    "configuration.backupStorageLocation.config.storageAccountURI" = try(data.azurerm_storage_account.backup.primary_blob_endpoint, null)
+    "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup.primary_blob_endpoint
   }
 }
 
