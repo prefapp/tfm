@@ -10,7 +10,7 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
 # Role assignment: Kubernetes RG Reader for each Kubernetes resource group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role
 resource "azurerm_role_assignment" "kubernetes_rg_reader" {
-  for_each             = data.azurerm_resource_group.kubernetes_rg
+  for_each             = data.azurerm_resource_group.kubernetes_rg.id
   scope                = each.value.id
   role_definition_name = "Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
@@ -60,6 +60,14 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.useAAD"         = true
     "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup[each.value.extension_configuration.bucket_storage_account_name].primary_blob_endpoint
   }
+  depends_on = [
+    azurerm_role_assignment.kubernetes_reader,
+    azurerm_role_assignment.kubernetes_rg_reader,
+    azurerm_role_assignment.vault_reader_on_snapshot_rg,
+    azurerm_role_assignment.aks_contributor_on_snapshot_rg,
+    azurerm_role_assignment.extension_storage_blob_data_contributor,
+    azurerm_kubernetes_cluster_trusted_access_role_binding.this
+  ]
 }
 
 # Cluster trusted access role binding
