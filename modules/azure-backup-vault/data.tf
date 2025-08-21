@@ -54,7 +54,13 @@ data "azurerm_resource_group" "snapshot_rg" {
 }
 
 data "azurerm_storage_account" "backup" {
-  for_each            = { for instance in var.kubernetes_instances : instance.extension_configuration.bucket_storage_account_name => instance.extension_configuration.bucket_resource_group_name }
-  name                = each.key
-  resource_group_name = each.value
+  for_each = {
+    for instance in var.kubernetes_instances :
+    "${instance.extension_configuration.bucket_storage_account_name}|${instance.extension_configuration.bucket_resource_group_name}" => {
+      name                = instance.extension_configuration.bucket_storage_account_name
+      resource_group_name = instance.extension_configuration.bucket_resource_group_name
+    }
+  }
+  name                = each.value.name
+  resource_group_name = each.value.resource_group_name
 }
