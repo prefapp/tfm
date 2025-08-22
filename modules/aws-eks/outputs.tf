@@ -65,11 +65,12 @@ output "summary" {
      Add-ons
      ----------------------------------------------------------------------------
      ${join("\n", [
-  for addon_key, addon_value in local.cluster_addons :
+  for addon_key, addon_value in module.eks.cluster_addons :
   format(
-    " - %s\n \t- Addon Version: %s\n\t- Advanced configuration:\t%s",
+    " - %s\n \t- Addon Version: %s\n\t- ServiceAccount IAM Role: %s\n\t- Advanced configuration:\t%s",
     addon_key,
-    lookup(addon_value, "addon_version", "latest"),
+    coalesce(lookup(addon_value, "addon_version", null), "latest"),
+    lookup(addon_value, "service_account_role_arn", "none"),
     replace(
       jsonencode(lookup(addon_value, "configuration_values", {})),
       "\n", "\n\t\t\t\t\t"
