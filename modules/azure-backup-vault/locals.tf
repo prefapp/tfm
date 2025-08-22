@@ -22,6 +22,14 @@ locals {
   # Get unique Kubernetes resource groups
   unique_kubernetes_snapshot_resource_groups = distinct([for instance in var.kubernetes_instances : instance.snapshot_resource_group_name])
   unique_kubernetes_resource_groups = distinct([for instance in var.kubernetes_instances : instance.resource_group_name])
-  kubernetes_instances_by_cluster = { for instance in var.kubernetes_instances : instance.cluster_name => instance }
+  # Agrupa solo la primera instancia por cluster_name
+  kubernetes_instances_by_cluster = {
+    for instance in var.kubernetes_instances : instance.cluster_name => instance
+    if length([
+      for i in var.kubernetes_instances : i if i.cluster_name == instance.cluster_name
+    ]) > 0 && instance.name == [
+      for i in var.kubernetes_instances : i.name if i.cluster_name == instance.cluster_name
+    ][0]
+  }
 }
 
