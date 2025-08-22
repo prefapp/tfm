@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.5](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.4...aws-eks-v1.2.5) (2025-08-22)
+
+
+### Bug Fixes
+
+* aws-eks cluster addons default ([#706](https://github.com/prefapp/tfm/issues/706)) ([1f72b5b](https://github.com/prefapp/tfm/commit/1f72b5ba972b8023fdce973579aac11ada2dd70c))
+
 ## [1.2.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.3...aws-eks-v1.2.4) (2025-08-22)
 
 
