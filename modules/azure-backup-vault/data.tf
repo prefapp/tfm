@@ -38,7 +38,7 @@ data "azurerm_resource_group" "mysql_rg" {
 # Data source to get cluster ID by name
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/kubernetes_cluster
 data "azurerm_kubernetes_cluster" "this" {
-  for_each            = { for instance in var.kubernetes_instances : instance.name => instance }
+  for_each            = { for instance in var.kubernetes_instances : instance.cluster_name => instance }
   name                = each.value.cluster_name
   resource_group_name = each.value.resource_group_name
 }
