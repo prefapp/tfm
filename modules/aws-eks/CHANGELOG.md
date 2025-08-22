@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.3...aws-eks-v1.2.4) (2025-08-22)
+
+
+### Bug Fixes
+
+* aws-eks addons output ([#704](https://github.com/prefapp/tfm/issues/704)) ([5a6108c](https://github.com/prefapp/tfm/commit/5a6108c11b3b5f10db830a7a842064a1ddb914d2))
+
 ## [1.2.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.2...aws-eks-v1.2.3) (2025-08-20)
 
 
