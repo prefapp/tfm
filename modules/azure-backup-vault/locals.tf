@@ -1,4 +1,3 @@
-
 locals {
   # Handle tags based on whether to use resource group tags or module-defined tags
   tags = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
@@ -23,6 +22,6 @@ locals {
   # Get unique Kubernetes resource groups
   unique_kubernetes_snapshot_resource_groups = distinct([for instance in var.kubernetes_instances : instance.snapshot_resource_group_name])
   unique_kubernetes_resource_groups = distinct([for instance in var.kubernetes_instances : instance.resource_group_name])
-  kubernetes_instances_by_cluster = {for instance in var.kubernetes_instances : instance.cluster_name => instance}
+  kubernetes_instances_by_cluster = { for instance in var.kubernetes_instances : instance.cluster_name => instance }
 }
 
