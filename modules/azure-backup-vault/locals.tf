@@ -23,6 +23,6 @@ locals {
   # Get unique Kubernetes resource groups
   unique_kubernetes_snapshot_resource_groups = distinct([for instance in var.kubernetes_instances : instance.snapshot_resource_group_name])
   unique_kubernetes_resource_groups = distinct([for instance in var.kubernetes_instances : instance.resource_group_name])
-
+  kubernetes_instances_by_cluster = distinct({for instance in var.kubernetes_instances : instance.cluster_name => instance})
 }
 
