@@ -7,7 +7,6 @@ locals {
   base_addons = {
     vpc-cni = {
       enabled           = true
-      addon_version     = null
       resolve_conflicts = "OVERWRITE"
       configuration_values = {
         env = {
@@ -20,17 +19,14 @@ locals {
     },
     kube-proxy = {
       enabled           = true
-      addon_version     = null
       resolve_conflicts = "OVERWRITE"
     },
     coredns = {
       enabled           = true
-      addon_version     = null
       resolve_conflicts = "OVERWRITE"
     },
     aws-ebs-csi-driver = {
       enabled                  = true
-      addon_version            = null
       resolve_conflicts        = "OVERWRITE"
       service_account_role_arn = local.ebs_arn_role
     }
