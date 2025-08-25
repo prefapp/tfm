@@ -35,7 +35,9 @@ locals {
   ] : []
 
   assume_role_policy = [
-    {
+    for r in(
+      var.main_role.cloudformation_external_account_role == null ? [] : [var.aux_role.cloudformation_external_account_role]
+      ) : {
       sid       = "AssumeRoleAccess"
       effect    = "Allow"
       actions   = ["sts:AssumeRole"]
@@ -44,7 +46,9 @@ locals {
   ]
 
   assume_role_policy_aux = [
-    {
+    for r in(
+      var.aux_role.cloudformation_external_account_role == null ? [] : [var.aux_role.cloudformation_external_account_role]
+      ) : {
       sid       = "AssumeRoleAccess"
       effect    = "Allow"
       actions   = ["sts:AssumeRole"]
@@ -63,14 +67,14 @@ module "main_oidc_role" {
     local.dynamodb_policy,
     local.assume_role_policy
   )
-  provider_urls                  = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
+  provider_urls = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
   provider_trust_policy_conditions = [{
-    test = "StringEquals"
+    test     = "StringEquals"
     variable = "${var.main_role.oidc_trust_policies.provider_urls[0]}:aud"
-    values = try(tolist(var.main_role.oidc_trust_policies.oidc_audiences), [])
+    values   = try(tolist(var.main_role.oidc_trust_policies.oidc_audiences), [])
   }]
-  oidc_fully_qualified_subjects  = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
-  oidc_subjects_with_wildcards   = try(tolist(var.main_role.oidc_trust_policies.subjects_with_wildcards), [])
+  oidc_fully_qualified_subjects = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
+  oidc_subjects_with_wildcards  = try(tolist(var.main_role.oidc_trust_policies.subjects_with_wildcards), [])
 }
 
 module "aux_oidc_role" {
@@ -84,12 +88,12 @@ module "aux_oidc_role" {
     local.dynamodb_policy,
     local.assume_role_policy_aux
   )
-  provider_urls                  = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
-  oidc_fully_qualified_subjects  = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
+  provider_urls                 = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
+  oidc_fully_qualified_subjects = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   provider_trust_policy_conditions = [{
-    test = "StringEquals"
+    test     = "StringEquals"
     variable = "${var.aux_role.oidc_trust_policies.provider_urls[0]}:aud"
-    values = try(tolist(var.aux_role.oidc_trust_policies.oidc_audiences), [])
+    values   = try(tolist(var.aux_role.oidc_trust_policies.oidc_audiences), [])
   }]
-  oidc_subjects_with_wildcards   = try(tolist(var.aux_role.oidc_trust_policies.subjects_with_wildcards), [])
+  oidc_subjects_with_wildcards = try(tolist(var.aux_role.oidc_trust_policies.subjects_with_wildcards), [])
 }
