@@ -1,187 +1,99 @@
-resource "aws_iam_role" "this" {
-  name = var.tfbackend_access_role_name
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = concat(
-      [
-        {
-          Action = "sts:AssumeRole"
-          Effect = "Allow"
-          Principal = {
-            AWS = [
-              "arn:aws:iam::${var.aws_account_id}:root",
-            ]
-          }
-        }
-      ],
-      var.create_github_iam ? [{
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Effect = "Allow"
-        Principal = {
-          Federated : "arn:aws:iam::${var.aws_account_id}:oidc-provider/token.actions.githubusercontent.com"
-        }
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
-          }
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:${var.github_repository}:*"
-          }
-        }
-      }] : []
-    )
-  })
+locals {
+  base_policies = [
+    {
+      sid       = "S3BucketAccess"
+      effect    = "Allow"
+      actions   = ["s3:ListBucket", "s3:GetBucketVersioning"]
+      resources = [aws_s3_bucket.tfstate.arn]
+      condition = {
+        test     = "StringEquals"
+        variable = "s3:prefix"
+        values   = [var.tfstate_object_prefix]
+      }
+    },
+    {
+      sid       = "S3BucketObjectAccess"
+      effect    = "Allow"
+      actions   = ["s3:GetObject", "s3:PutObject"]
+      resources = ["${aws_s3_bucket.tfstate.arn}/*"]
+    },
+    {
+      sid       = "S3ObjectAccess"
+      effect    = "Allow"
+      actions   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
+      resources = ["${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"]
+    }
+  ]
+
+  dynamodb_policy = var.locks_table_name != null && var.locks_table_name != "" ? [
+    {
+      sid       = "DynamoDBLockTableAccess"
+      effect    = "Allow"
+      actions   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem"]
+      resources = [aws_dynamodb_table.this[0].arn]
+    }
+  ] : []
+
+  assume_role_policy = [
+    for r in(
+      var.main_role.cloudformation_external_account_role == null ? [] : [var.aux_role.cloudformation_external_account_role]
+      ) : {
+      sid       = "AssumeRoleAccess"
+      effect    = "Allow"
+      actions   = ["sts:AssumeRole"]
+      resources = ["arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_external_account_role}"]
+    }
+  ]
+
+  assume_role_policy_aux = [
+    for r in(
+      var.aux_role.cloudformation_external_account_role == null ? [] : [var.aux_role.cloudformation_external_account_role]
+      ) : {
+      sid       = "AssumeRoleAccess"
+      effect    = "Allow"
+      actions   = ["sts:AssumeRole"]
+      resources = ["arn:aws:iam::${var.aws_client_account_id}:role/${var.aux_role.cloudformation_external_account_role}"]
+    }
+  ]
 }
 
-
-resource "aws_iam_policy" "full" {
-  name        = var.tfbackend_access_role_name
-  description = "Permissions for Terraform state"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = concat(
-      [
-        # S3 Bucket Permissions
-        {
-          Sid    = "S3BucketAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:ListBucket",
-            "s3:GetBucketVersioning"
-          ]
-          Resource = aws_s3_bucket.tfstate.arn
-          Condition = {
-            StringEquals = {
-              "s3:prefix" = ["${var.tfstate_object_prefix}"]
-            }
-          }
-        },
-        # S3 Object Permissions
-        {
-          Sid    = "S3BucketObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/*"
-        },
-        # S3 Lock File Permissions
-        {
-          Sid    = "S3ObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
-        },
-      ],
-      # If locks_table_name is present, add permissions to locks table
-      var.locks_table_name == null || var.locks_table_name == "" ? [] :
-      [
-        # DynamoDB Table Permissions
-        {
-          Sid    = "DynamoDBLockTableAccess"
-          Effect = "Allow"
-          Action = [
-            "dynamodb:GetItem",
-            "dynamodb:PutItem",
-            "dynamodb:DeleteItem"
-          ]
-          Resource = aws_dynamodb_table.this[0].arn
-        }
-      ],
-      # Permissions to assume role
-      [
-        # STS AssumeRole Permissions
-        {
-          Sid      = "AssumeRoleAccess"
-          Action   = "sts:AssumeRole"
-          Effect   = "Allow"
-          Resource = "arn:aws:iam::*:role/${var.cloudformation_admin_role_for_client_account}"
-        }
-      ]
-    )
-  })
+module "main_oidc_role" {
+  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version     = "5.60.0"
+  create_role = true
+  role_name   = var.main_role.name
+  inline_policy_statements = concat(
+    local.base_policies,
+    local.dynamodb_policy,
+    local.assume_role_policy
+  )
+  provider_urls = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
+  provider_trust_policy_conditions = [{
+    test     = "StringEquals"
+    variable = "${var.main_role.oidc_trust_policies.provider_urls[0]}:aud"
+    values   = try(tolist(var.main_role.oidc_trust_policies.oidc_audiences), [])
+  }]
+  oidc_fully_qualified_subjects = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
+  oidc_subjects_with_wildcards  = try(tolist(var.main_role.oidc_trust_policies.subjects_with_wildcards), [])
 }
 
-
-resource "aws_iam_policy" "limited" {
-  name        = "${var.tfbackend_access_role_name}-extra"
-  description = "Permissions for Terraform state"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = concat(
-      [
-        # S3 Bucket Permissions
-        {
-          Sid    = "S3BucketAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:ListBucket",
-            "s3:GetBucketVersioning"
-          ]
-          Resource = aws_s3_bucket.tfstate.arn
-          Condition = {
-            StringEquals = {
-              "s3:prefix" = ["${var.tfstate_object_prefix}"]
-            }
-          }
-        },
-        # S3 Object Permissions
-        {
-          Sid    = "S3BucketObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/*"
-        },
-        # S3 Lock File Permissions
-        {
-          Sid    = "S3ObjectAccess"
-          Effect = "Allow"
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject"
-          ]
-          Resource = "${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"
-        },
-      ],
-      # If locks_table_name is present, add permissions to locks table
-      var.locks_table_name == null || var.locks_table_name == "" ? [] :
-      [
-        # DynamoDB Table Permissions
-        {
-          Sid    = "DynamoDBLockTableAccess"
-          Effect = "Allow"
-          Action = [
-            "dynamodb:GetItem",
-            "dynamodb:PutItem",
-            "dynamodb:DeleteItem"
-          ]
-          Resource = aws_dynamodb_table.this[0].arn
-        }
-      ]
-    )
-  })
+module "aux_oidc_role" {
+  count       = var.create_aux_role ? 1 : 0
+  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version     = "5.60.0"
+  create_role = true
+  role_name   = var.aux_role.name
+  inline_policy_statements = concat(
+    local.base_policies,
+    local.dynamodb_policy,
+    local.assume_role_policy_aux
+  )
+  provider_urls                 = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
+  oidc_fully_qualified_subjects = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
+  provider_trust_policy_conditions = [{
+    test     = "StringEquals"
+    variable = "${var.aux_role.oidc_trust_policies.provider_urls[0]}:aud"
+    values   = try(tolist(var.aux_role.oidc_trust_policies.oidc_audiences), [])
+  }]
+  oidc_subjects_with_wildcards = try(tolist(var.aux_role.oidc_trust_policies.subjects_with_wildcards), [])
 }
-
-
-resource "aws_iam_role_policy_attachment" "client" {
-  role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.full.arn
-}
-
-
-
-resource "aws_iam_role_policy_attachment" "extra_roles" {
-  for_each   = toset(var.backend_extra_roles)
-  role       = each.key
-  policy_arn = aws_iam_policy.limited.arn
-}
-
