@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.6](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.5...aws-eks-v1.2.6) (2025-08-25)
+
+
+### Bug Fixes
+
+* aws-eks subnet_tags description ([#708](https://github.com/prefapp/tfm/issues/708)) ([f3b09fe](https://github.com/prefapp/tfm/commit/f3b09fea44d05aebf9598ca83b5b5b9637e464f1))
+
 ## [1.2.5](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.4...aws-eks-v1.2.5) (2025-08-22)
 
 
