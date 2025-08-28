@@ -14,14 +14,6 @@ variable "locks_table_name" {
   default     = null
 }
 
-data "aws_region" "current" {}
-
-variable "aws_region" {
-  description = "AWS Region"
-  type        = string
-  default     = data.aws_region.current.name
-}
-
 variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)
@@ -40,30 +32,29 @@ variable "tfstate_enable_versioning" {
   default     = true
 }
 
-variable "tfbackend_access_role_name" {
-  description = "Terraform backend access role"
-  type        = string
-  default     = "terraform-backend-access-role"
-}
-
-
-variable "backend_extra_roles" {
-  description = "Additional roles to add to the Terraform backend access role"
-  type        = list(string)
-  default     = []
-}
-
-variable "aws_account_id" {
-  description = "AWS Account ID that will assume the role to access the S3 bucket and the dynamodb table"
+variable "aws_client_account_id" {
+  description = "AWS client account ID"
   type        = string
 }
 
-variable "cloudformation_admin_role_for_client_account" {
-  description = "Role name that will assume the role to access the S3 bucket and the dynamodb table"
+variable "create_aux_role" {
+  description = "Decide whether to generate a specific auxiliary role to the backend"
+  type        = bool
+  default     = false
+}
+
+variable "external_main_role" {
+  description = "Role name to assume by the main role, in the client account"
   type        = string
 }
 
-variable "generate_cloudformation_role_for_client_account" {
+variable "external_aux_role" {
+  description = "Role name available to be assumed by the auxiliary role, in the client account"
+  type        = string
+  default     = ""
+}
+
+variable "generate_cloudformation_role_for_external_account" {
   description = "Decide whether to generate a cloudformation stack with a iam role to access the account with administrative privileges"
   type        = bool
   default     = true
@@ -87,14 +78,38 @@ variable "s3_bucket_cloudformation_role_key" {
   description = "Key to use when uploading the template to S3"
 }
 
-variable "create_github_iam" {
-  description = "Create IAM resources for GitHub"
-  type        = bool
-  default     = false
+variable "main_role" {
+  description = "Main role configuration"
+  type = object({
+    name                                 = string
+    aws_account_id                       = optional(string)
+    cloudformation_external_account_role = optional(string)
+    oidc_trust_policies = optional(
+      object({
+        provider_urls             = list(string)
+        oidc_audiences            = list(string)
+        fully_qualified_subjects  = list(string)
+        subjects_with_wildcards   = list(string)
+        fully_qualified_audiences = list(string)
+      })
+    )
+  })
 }
 
-variable "github_repository" {
-  description = "Name of the GitHub repository to access the backend"
-  type        = string
-  default     = ""
+variable "aux_role" {
+  description = "Auxiliary role configuration"
+  type = object({
+    name                                 = string
+    aws_account_id                       = optional(string)
+    cloudformation_external_account_role = optional(string)
+    oidc_trust_policies = optional(
+      object({
+        provider_urls             = list(string)
+        oidc_audiences            = list(string)
+        fully_qualified_subjects  = list(string)
+        subjects_with_wildcards   = list(string)
+        fully_qualified_audiences = list(string)
+      })
+    )
+  })
 }
