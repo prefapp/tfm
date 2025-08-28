@@ -68,11 +68,13 @@ module "main_oidc_role" {
     local.assume_role_policy
   )
   provider_urls = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
-  provider_trust_policy_conditions = [{
-    test     = "StringEquals"
-    variable = "${var.main_role.oidc_trust_policies.provider_urls[0]}:aud"
-    values   = try(tolist(var.main_role.oidc_trust_policies.oidc_audiences), [])
-  }]
+  provider_trust_policy_conditions = length(try(var.main_role.oidc_trust_policies.provider_urls, [])) > 0 ? [
+    {
+      test     = "StringEquals"
+      variable = "${var.main_role.oidc_trust_policies.provider_urls[0]}:aud"
+      values   = try(tolist(var.main_role.oidc_trust_policies.oidc_audiences), [])
+    }
+  ] : []
   oidc_fully_qualified_subjects = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
   oidc_subjects_with_wildcards  = try(tolist(var.main_role.oidc_trust_policies.subjects_with_wildcards), [])
 }
@@ -92,7 +94,7 @@ module "aux_oidc_role" {
   oidc_fully_qualified_subjects = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
   provider_trust_policy_conditions = [{
     test     = "StringEquals"
-    variable = "${var.aux_role.oidc_trust_policies.provider_urls[0]}:aud"
+    variable = "${try(var.aux_role.oidc_trust_policies.provider_urls[0], "")}:aud"
     values   = try(tolist(var.aux_role.oidc_trust_policies.oidc_audiences), [])
   }]
   oidc_subjects_with_wildcards = try(tolist(var.aux_role.oidc_trust_policies.subjects_with_wildcards), [])
