@@ -27,9 +27,9 @@ locals {
     for instance in var.kubernetes_instances : instance.cluster_name => instance
     if length([
       for i in var.kubernetes_instances : i if i.cluster_name == instance.cluster_name
-    ]) > 0 && instance.name == [
+    ]) > 0 && instance.name == try([
       for i in var.kubernetes_instances : i.name if i.cluster_name == instance.cluster_name
-    ][0]
+    ][0], null)
   }
 }
 
