@@ -17,7 +17,7 @@ resource "azurerm_role_assignment" "postgresql_rg_reader" {
 }
 
 # Backup policy for PostgreSQL Flexible Server
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_pro
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_postgresql_flexible_server
 resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "this" {
   for_each                        = local.postgresql_policies_by_name
   name                            = each.value.name
@@ -51,7 +51,7 @@ resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "thi
 }
 
 # Backup instance for PostgreSQL Flexible Server
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_pro
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_postgresql_flexible_server
 resource "azurerm_data_protection_backup_instance_postgresql_flexible_server" "this" {
   for_each         = { for instance in var.postgresql_instances : instance.name => instance }
   name             = each.value.name
