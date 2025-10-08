@@ -79,17 +79,13 @@ variable "web_application_firewall_policy" {
 variable "ssl_policy" {
   description = "Application Gateway configuration"
   type = object({
-    ssl_policy = object({
-      policy_type          = string
-      policy_name          = optional(string)
-      cipher_suites        = optional(list(string))
-      min_protocol_version = optional(string)
-    })
+    policy_type          = string
+    policy_name          = optional(string)
+    cipher_suites        = optional(list(string))
+    min_protocol_version = optional(string)
   })
   default = {
-    ssl_policy = {
-      policy_type = "Predefined"
-      policy_name = "AppGwSslPolicy20220101"
-    }
+    policy_type = "Predefined"
+    policy_name = "AppGwSslPolicy20220101"
   }
 }
