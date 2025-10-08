@@ -138,7 +138,7 @@ resource "azurerm_application_gateway" "application_gateway" {
   }
 
   dynamic "ssl_policy" {
-    for_each = [var.ssl_policy.ssl_policy]
+    for_each = [var.ssl_policy]
     content {
       policy_type = ssl_policy.value.policy_type
       policy_name = ssl_policy.value.policy_name
