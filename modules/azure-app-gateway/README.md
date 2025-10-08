@@ -11,6 +11,10 @@
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.16.0 |
 
+## Modules
+
+No modules.
+
 ## Resources
 
 | Name | Type |
@@ -25,10 +29,11 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | Application Gateway configuration | <pre>object({<br/>    ssl_policy = object({<br/>      policy_type          = string<br/>      policy_name          = optional(string)<br/>      cipher_suites        = optional(list(string))<br/>      min_protocol_version = optional(string)<br/>    })<br/>  })</pre> | <pre>{<br/>  "ssl_policy": {<br/>    "policy_name": "AppGwSslPolicy20220101",<br/>    "policy_type": "Predefined"<br/>  }<br/>}</pre> | no |
+| <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | The Application Gateway object. | `any` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The location/region where the Application Gateway should be created. | `string` | `"westeurope"` | no |
 | <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | The Azure Public IP object. | `any` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Application Gateway. | `string` | n/a | yes |
+| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | Application Gateway configuration | <pre>object({<br/>    ssl_policy = object({<br/>      policy_type          = string<br/>      policy_name          = optional(string)<br/>      cipher_suites        = optional(list(string))<br/>      min_protocol_version = optional(string)<br/>    })<br/>  })</pre> | <pre>{<br/>  "ssl_policy": {<br/>    "policy_name": "AppGwSslPolicy20220101",<br/>    "policy_type": "Predefined"<br/>  }<br/>}</pre> | no |
 | <a name="input_subnet"></a> [subnet](#input\_subnet) | The subnet object. | `any` | n/a | yes |
 | <a name="input_user_assigned_identity"></a> [user\_assigned\_identity](#input\_user\_assigned\_identity) | The name of the User Assigned Identity. | `string` | n/a | yes |
 | <a name="input_web_application_firewall_policy"></a> [web\_application\_firewall\_policy](#input\_web\_application\_firewall\_policy) | Configuration for the web application firewall policy | <pre>object({<br/>    name = string<br/>    policy_settings = optional(object({<br/>      enabled                     = optional(bool)<br/>      mode                        = optional(string)<br/>      request_body_check          = optional(bool)<br/>      file_upload_limit_in_mb     = optional(number)<br/>      max_request_body_size_in_kb = optional(number)<br/>      request_body_enforcement    = optional(string)<br/>    }))<br/>    custom_rules = optional(list(object({<br/>      enabled               = optional(bool, true)<br/>      name                  = string<br/>      priority              = number<br/>      rule_type             = string<br/>      action                = string<br/>      rate_limit_duration   = optional(string)<br/>      rate_limit_threshold  = optional(number)<br/>      group_rate_limit_by   = optional(string)<br/>      match_conditions      = list(object({<br/>        operator           = string<br/>        negation_condition = optional(bool, false)<br/>        match_values       = optional(list(string))<br/>        transforms         = optional(list(string))<br/>        match_variables    = list(object({<br/>          variable_name = string<br/>          selector      = optional(string)<br/>        }))<br/>      }))<br/>    })), [])<br/>    managed_rule_set = list(object({<br/>      type                = optional(string)<br/>      version             = string<br/>      rule_group_override = optional(list(object({<br/>        rule_group_name = string<br/>        rule = optional(list(object({<br/>          id      = number<br/>          enabled = optional(bool)<br/>          action  = optional(string)<br/>        })))<br/>      })))<br/>    }))<br/>  })</pre> | n/a | yes |
@@ -37,7 +42,7 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | n/a |
+| <a name="output_id"></a> [id](#output\_id) | The ID of the Application Gateway. |
 
 ## Example
 

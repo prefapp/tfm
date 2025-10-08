@@ -76,7 +76,7 @@ variable "web_application_firewall_policy" {
   })
 }
 
-variable "application_gateway" {
+variable "ssl_policy" {
   description = "Application Gateway configuration"
   type = object({
     ssl_policy = object({
