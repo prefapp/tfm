@@ -15,17 +15,17 @@
 
 | Name | Type |
 |------|------|
-| [azurerm_user_assigned_identity.that](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/user_assigned_identity) | data source |
-| [azurerm_subnet.that](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
-| [azurerm_public_ip.public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
-| [azurerm_application_gateway.application_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway) | resource |
-| [azurerm_web_application_firewall_policy.default_waf_policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/web_application_firewall_policy) | resource |
+| [azurerm_application_gateway.application_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/application_gateway) | resource |
+| [azurerm_public_ip.public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/public_ip) | resource |
+| [azurerm_web_application_firewall_policy.default_waf_policy](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/web_application_firewall_policy) | resource |
+| [azurerm_subnet.that](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/data-sources/subnet) | data source |
+| [azurerm_user_assigned_identity.that](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/data-sources/user_assigned_identity) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | The Application Gateway object. | `any` | n/a | yes |
+| <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | Application Gateway configuration | <pre>object({<br/>    ssl_policy = object({<br/>      policy_type          = string<br/>      policy_name          = optional(string)<br/>      cipher_suites        = optional(list(string))<br/>      min_protocol_version = optional(string)<br/>    })<br/>  })</pre> | <pre>{<br/>  "ssl_policy": {<br/>    "policy_name": "AppGwSslPolicy20220101",<br/>    "policy_type": "Predefined"<br/>  }<br/>}</pre> | no |
 | <a name="input_location"></a> [location](#input\_location) | The location/region where the Application Gateway should be created. | `string` | `"westeurope"` | no |
 | <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | The Azure Public IP object. | `any` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Application Gateway. | `string` | n/a | yes |
@@ -37,7 +37,7 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | The ID of the Application Gateway. |
+| <a name="output_id"></a> [id](#output\_id) | n/a |
 
 ## Example
 
@@ -56,6 +56,11 @@
         name: "example-public-ip"
         sku: "Standard"
         allocation_method: "Static"
+
+      # SSL Policy
+      ssl_policy:
+        policy_type: "Predefined"
+        policy_name: "AppGwSslPolicy20220101"
 
       # WAF
       web_application_firewall_policy:

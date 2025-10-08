@@ -137,6 +137,17 @@ resource "azurerm_application_gateway" "application_gateway" {
     }
   }
 
+  dynamic "ssl_policy" {
+    for_each = [var.application_gateway.ssl_policy]
+    content {
+      policy_type = ssl_policy.value.policy_type
+      policy_name = ssl_policy.value.policy_name
+      # Only include these if they are set and type is Custom
+      cipher_suites        = ssl_policy.value.cipher_suites
+      min_protocol_version = ssl_policy.value.min_protocol_version
+    }
+  }
+
   lifecycle {
     ignore_changes = [tags]
   }
