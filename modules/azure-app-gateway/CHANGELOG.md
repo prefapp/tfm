@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.5.1...azure-app-gateway-v0.6.0) (2025-10-09)
+
+
+### Features
+
+* add ssl policy ([#710](https://github.com/prefapp/tfm/issues/710)) ([f10799c](https://github.com/prefapp/tfm/commit/f10799c09d8911c9140322ad1da746aba257acb2))
+
 ## [0.5.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.5.0...azure-app-gateway-v0.5.1) (2025-04-24)
 
 
