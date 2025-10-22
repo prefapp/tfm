@@ -2,9 +2,9 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "kubernetes_reader" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
-  scope                = data.azurerm_kubernetes_cluster.this[each.key].id
+  scope                = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].id
   role_definition_name = "Reader"
-  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+  principal_id         = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].identity[0].principal_id
 }
 
 # Role assignment: Kubernetes RG Reader for each Kubernetes resource group
@@ -62,7 +62,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
   configuration_settings = {
     "configuration.backupStorageLocation.bucket"                = try(each.value.extension_configuration.bucket_name, null)
     "configuration.backupStorageLocation.config.resourceGroup"  = try(each.value.extension_configuration.bucket_resource_group_name, null)
-    "configuration.backupStorageLocation.config.storageAccount" = try(each.value.extension_configuration.bucket_storage_account_name, null)
+    "configuration.backupStorageLocation.config.storageAccount" = try(instance.extension_configuration.bucket_storage_account_name, null)
     "configuration.backupStorageLocation.config.subscriptionId" = data.azurerm_client_config.current.subscription_id
     "credentials.tenantId"                                      = data.azurerm_client_config.current.tenant_id
     "configuration.backupStorageLocation.config.useAAD"         = true
