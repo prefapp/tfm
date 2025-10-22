@@ -1,5 +1,5 @@
-# Role assignment for restore operations
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
+# Role assignment: Reader for the AKS cluster identity over the Kubernetes cluster
 resource "azurerm_role_assignment" "kubernetes_reader" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].id
@@ -7,25 +7,15 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
   principal_id         = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].identity[0].principal_id
 }
 
-# Role assignment: Kubernetes RG Reader for each Kubernetes resource group
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role
-# resource "azurerm_role_assignment" "kubernetes_rg_reader" {
-#   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
-#   scope                = data.azurerm_resource_group.kubernetes_rg[each.value].id
-#   role_definition_name = "Reader"
-#   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
-# }
-
-# Role assignment: Backup Vault Contributor for each Kubernetes resource group
-# Reader para la identidad del Backup Vault
+# Role assignment: Reader for the Backup Vault identity over the snapshot resource group
 resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
-  for_each = { for instance in var.kubernetes_instances : instance.snapshot_resource_group_name => instance }
+  for_each             = { for instance in var.kubernetes_instances : instance.snapshot_resource_group_name => instance }
   scope                = data.azurerm_resource_group.snapshot_rg[each.key].id
   role_definition_name = "Reader"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
-# Contributor para la identidad del AKS cluster
+# Role assignment: Contributor for the AKS cluster identity over the snapshot resource group
 resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
@@ -33,7 +23,7 @@ resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
   principal_id         = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].identity[0].principal_id
 }
 
-# Role assignment: Storage Blob Data Contributor for the extension storage account
+# Role assignment: Storage Blob Data Contributor for the AKS cluster extension identity over the storage account
 resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_storage_account.backup[each.value.name].id
@@ -67,7 +57,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
   ]
 }
 
-# Cluster trusted access role binding
+# Cluster trusted access role binding for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_trusted_access_role_binding
 resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
   for_each              = { for instance in var.kubernetes_instances : instance.name => instance }
@@ -143,7 +133,6 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
     azurerm_role_assignment.extension_storage_blob_data_contributor,
     azurerm_data_protection_backup_policy_kubernetes_cluster.this,
     azurerm_data_protection_backup_vault.this
-    # azurerm_role_assignment.vault_backup_contributor # Uncomment if this resource exists
   ]
 }
 
