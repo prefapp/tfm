@@ -19,18 +19,10 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
 # Role assignment: Backup Vault Contributor for each Kubernetes resource group
 # Reader para la identidad del Backup Vault
 resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
-  for_each = {
-    for key in distinct([
-      for instance in var.kubernetes_instances :
-      "${instance.snapshot_resource_group_name}|${azurerm_data_protection_backup_vault.this.identity[0].principal_id}"
-    ]) : key => {
-      snapshot_resource_group_name = split("|", key)[0]
-      principal_id                 = split("|", key)[1]
-    }
-  }
-  scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
+  for_each = { for instance in var.kubernetes_instances : instance.snapshot_resource_group_name => instance }
+  scope                = data.azurerm_resource_group.snapshot_rg[each.key].id
   role_definition_name = "Reader"
-  principal_id         = each.value.principal_id
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
 # Contributor para la identidad del AKS cluster
@@ -38,7 +30,7 @@ resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
   role_definition_name = "Contributor"
-  principal_id         = data.azurerm_kubernetes_cluster.this[each.key].identity[0].principal_id
+  principal_id         = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].identity[0].principal_id
 }
 
 # Role assignment: Storage Blob Data Contributor for the extension storage account
@@ -79,7 +71,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_trusted_access_role_binding
 resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
   for_each              = { for instance in var.kubernetes_instances : instance.name => instance }
-  kubernetes_cluster_id = data.azurerm_kubernetes_cluster.this[each.key].id
+  kubernetes_cluster_id = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].id
   name                  = each.value.name
   roles                 = ["Microsoft.DataProtection/backupVaults/backup-operator"]
   source_resource_id    = azurerm_data_protection_backup_vault.this.id
