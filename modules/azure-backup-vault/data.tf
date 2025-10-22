@@ -53,18 +53,19 @@ data "azurerm_resource_group" "snapshot_rg" {
   name     = each.value
 }
 
-data "azurerm_storage_account" "backup" {
-  for_each = {
+locals {
+  valid_storage_instances = [
     for instance in var.kubernetes_instances :
-    instance.name => instance
-    if (
+    instance if (
       instance.extension_configuration != null &&
-      (
-        instance.extension_configuration.bucket_storage_account_name != null &&
-        instance.extension_configuration.bucket_resource_group_name != null
-      )
+      instance.extension_configuration.bucket_storage_account_name != null &&
+      instance.extension_configuration.bucket_resource_group_name != null
     )
-  }
+  ]
+}
+
+data "azurerm_storage_account" "backup" {
+  for_each = { for instance in local.valid_storage_instances : instance.name => instance }
   name                = each.value.extension_configuration.bucket_storage_account_name
   resource_group_name = each.value.extension_configuration.bucket_resource_group_name
 }
