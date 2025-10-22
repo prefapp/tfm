@@ -56,7 +56,7 @@ data "azurerm_resource_group" "snapshot_rg" {
 data "azurerm_storage_account" "backup" {
   for_each = {
     for instance in var.kubernetes_instances :
-    "${instance.extension_configuration.bucket_storage_account_name}|${instance.name}" => instance
+    instance.name => instance
     if (
       instance.extension_configuration != null &&
       instance.extension_configuration.bucket_storage_account_name != null &&
