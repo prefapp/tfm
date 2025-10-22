@@ -58,7 +58,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.subscriptionId" = data.azurerm_client_config.current.subscription_id
     "credentials.tenantId"                                      = data.azurerm_client_config.current.tenant_id
     "configuration.backupStorageLocation.config.useAAD"         = true
-    "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup["${each.value.extension_configuration.bucket_storage_account_name}|${each.value.name}"].primary_blob_endpoint
+    "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup[each.value.name].primary_blob_endpoint
   }
   depends_on = [
     azurerm_data_protection_backup_instance_blob_storage.this, 
