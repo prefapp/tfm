@@ -59,8 +59,10 @@ data "azurerm_storage_account" "backup" {
     instance.name => instance
     if (
       instance.extension_configuration != null &&
-      instance.extension_configuration.bucket_storage_account_name != null &&
-      instance.extension_configuration.bucket_resource_group_name != null
+      (
+        instance.extension_configuration.bucket_storage_account_name != null &&
+        instance.extension_configuration.bucket_resource_group_name != null
+      )
     )
   }
   name                = each.value.extension_configuration.bucket_storage_account_name
