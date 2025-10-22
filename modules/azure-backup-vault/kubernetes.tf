@@ -38,7 +38,7 @@ resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_storage_account.backup[each.value.name].id
   role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_kubernetes_cluster_extension.this[replace(each.key, "-backup", "")].aks_assigned_identity[0].principal_id
+  principal_id         = azurerm_kubernetes_cluster_extension.this[each.value.cluster_name].aks_assigned_identity[0].principal_id
 }
 
 # Cluster extension for backup
