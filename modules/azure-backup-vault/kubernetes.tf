@@ -62,7 +62,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
   configuration_settings = {
     "configuration.backupStorageLocation.bucket"                = try(each.value.extension_configuration.bucket_name, null)
     "configuration.backupStorageLocation.config.resourceGroup"  = try(each.value.extension_configuration.bucket_resource_group_name, null)
-    "configuration.backupStorageLocation.config.storageAccount" = try(instance.extension_configuration.bucket_storage_account_name, null)
+    "configuration.backupStorageLocation.config.storageAccount" = try(each.value.extension_configuration.bucket_storage_account_name, null)
     "configuration.backupStorageLocation.config.subscriptionId" = data.azurerm_client_config.current.subscription_id
     "credentials.tenantId"                                      = data.azurerm_client_config.current.tenant_id
     "configuration.backupStorageLocation.config.useAAD"         = true
