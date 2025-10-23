@@ -56,8 +56,25 @@ variable "web_application_firewall_policy" {
         match_values       = optional(list(string))
         transforms         = optional(list(string))
         match_variables    = list(object({
-          variable_name = string
-          selector      = optional(string)
+		  variable_name = string
+		  selector      = optional(string)
+		}))
+	      }))
+	    })), [])
+	    managed_rule_set = list(object({
+	      type                = optional(string)
+	      version             = string
+	      rule_group_override = optional(list(object({
+	        rule_group_name = string
+	        rule = optional(list(object({
+	          id      = number
+	          enabled = optional(bool)
+	          action  = optional(string)
+	        })))
+	      }))
+	    }))
+	  })
+}
 
 variable "ssl_profiles" {
   description = "List of SSL profiles for Application Gateway."
@@ -83,22 +100,4 @@ variable "trusted_client_certificates" {
     data = string
   }))
   default = []
-}
-
-        }))
-      }))
-    })), [])
-    managed_rule_set = list(object({
-      type                = optional(string)
-      version             = string
-      rule_group_override = optional(list(object({
-        rule_group_name = string
-        rule = optional(list(object({
-          id      = number
-          enabled = optional(bool)
-          action  = optional(string)
-        })))
-      })))
-    }))
-  })
 }
