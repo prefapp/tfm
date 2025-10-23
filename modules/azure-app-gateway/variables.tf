@@ -76,6 +76,8 @@ variable "web_application_firewall_policy" {
       }))
     }))
   })
+}
+
 variable "ssl_profiles" {
   description = "List of SSL profiles for Application Gateway."
   type = list(object({
