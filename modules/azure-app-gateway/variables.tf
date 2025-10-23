@@ -58,6 +58,33 @@ variable "web_application_firewall_policy" {
         match_variables    = list(object({
           variable_name = string
           selector      = optional(string)
+
+variable "ssl_profiles" {
+  description = "List of SSL profiles for Application Gateway."
+  type = list(object({
+    name                                    = string
+    trusted_client_certificate_names         = optional(list(string))
+    verify_client_cert_issuer_dn             = optional(bool, false)
+    verify_client_certificate_revocation     = optional(string)
+    ssl_policy = optional(object({
+      disabled_protocols                     = optional(list(string))
+      min_protocol_version                   = optional(string)
+      policy_name                            = optional(string)
+      cipher_suites                          = optional(list(string))
+    }))
+  }))
+  default = []
+}
+
+variable "trusted_client_certificates" {
+  description = "List of trusted client certificates for Application Gateway. Each object must have a name and base64-encoded data."
+  type = list(object({
+    name = string
+    data = string
+  }))
+  default = []
+}
+
         }))
       }))
     })), [])

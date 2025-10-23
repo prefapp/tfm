@@ -32,6 +32,7 @@
 | <a name="input_subnet"></a> [subnet](#input\_subnet) | The subnet object. | `any` | n/a | yes |
 | <a name="input_user_assigned_identity"></a> [user\_assigned\_identity](#input\_user\_assigned\_identity) | The name of the User Assigned Identity. | `string` | n/a | yes |
 | <a name="input_web_application_firewall_policy"></a> [web\_application\_firewall\_policy](#input\_web\_application\_firewall\_policy) | Configuration for the web application firewall policy | <pre>object({<br/>    name = string<br/>    policy_settings = optional(object({<br/>      enabled                     = optional(bool)<br/>      mode                        = optional(string)<br/>      request_body_check          = optional(bool)<br/>      file_upload_limit_in_mb     = optional(number)<br/>      max_request_body_size_in_kb = optional(number)<br/>      request_body_enforcement    = optional(string)<br/>    }))<br/>    custom_rules = optional(list(object({<br/>      enabled               = optional(bool, true)<br/>      name                  = string<br/>      priority              = number<br/>      rule_type             = string<br/>      action                = string<br/>      rate_limit_duration   = optional(string)<br/>      rate_limit_threshold  = optional(number)<br/>      group_rate_limit_by   = optional(string)<br/>      match_conditions      = list(object({<br/>        operator           = string<br/>        negation_condition = optional(bool, false)<br/>        match_values       = optional(list(string))<br/>        transforms         = optional(list(string))<br/>        match_variables    = list(object({<br/>          variable_name = string<br/>          selector      = optional(string)<br/>        }))<br/>      }))<br/>    })), [])<br/>    managed_rule_set = list(object({<br/>      type                = optional(string)<br/>      version             = string<br/>      rule_group_override = optional(list(object({<br/>        rule_group_name = string<br/>        rule = optional(list(object({<br/>          id      = number<br/>          enabled = optional(bool)<br/>          action  = optional(string)<br/>        })))<br/>      })))<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_trusted_client_certificates"></a> [trusted_client_certificates](#input_trusted_client_certificates) | List of trusted client certificates for Application Gateway.<br><br>Each object supports:<br>- <b>name</b> (Required): The name of the Trusted Client Certificate.<br>- <b>data</b> (Required): The base64-encoded certificate.<br><br>Si no se especifica, se recogerán automáticamente todos los ficheros .crt de la carpeta <code>ca-certs</code> y se convertirán a base64. | <pre>list(object({<br/>  name = string<br/>  data = string<br/>}))</pre> | `[]` | no |
 
 ## Outputs
 
@@ -147,8 +148,28 @@
             pick_host_name_from_backend_address: false
             port: 80
             protocol: "Http"
+            # SSL Profiles
+            ssl_profiles:
+              - name: "example-ssl-profile"
+                trusted_client_certificate_names:
+                  - "example-client-cert"
+                verify_client_cert_issuer_dn: true
+                verify_client_certificate_revocation: "OCSP"
+                ssl_policy:
+                  disabled_protocols:
+                    - "TLSv1_0"
+                    - "TLSv1_1"
+                  min_protocol_version: "TLSv1_2"
+                  policy_name: "AppGwSslPolicy20170401S"
+                  cipher_suites:
+                    - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+                    - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
             request_timeout: 20
             trusted_root_certificate_names: []
+          # Trusted Client Certificates
+          trusted_client_certificates:
+            - name: "example-client-cert"
+              data: "<base64-encoded-certificate>"
           http_listeners:
             https:
               frontend_ip_configuration_name: "appGwPublicFrontendIpIPv4"
