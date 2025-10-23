@@ -29,6 +29,23 @@ variable "subnet" {
   type        = any
 }
 
+variable "ssl_profiles" {
+  description = "List of SSL profiles for Application Gateway."
+  type = list(object({
+    name                                    = string
+    trusted_client_certificate_names         = optional(list(string))
+    verify_client_cert_issuer_dn             = optional(bool, false)
+    verify_client_certificate_revocation     = optional(string)
+    ssl_policy = optional(object({
+      disabled_protocols                     = optional(list(string))
+      min_protocol_version                   = optional(string)
+      policy_name                            = optional(string)
+      cipher_suites                          = optional(list(string))
+    }))
+  }))
+  default = []
+}
+
 variable "web_application_firewall_policy" {
   description = "Configuration for the web application firewall policy"
   type = object({
@@ -56,50 +73,22 @@ variable "web_application_firewall_policy" {
         match_values       = optional(list(string))
         transforms         = optional(list(string))
         match_variables    = list(object({
-		  variable_name = string
-		  selector      = optional(string)
-		}))
-	      }))
-	    })), [])
-	    managed_rule_set = list(object({
-	      type                = optional(string)
-	      version             = string
-	      rule_group_override = optional(list(object({
-	        rule_group_name = string
-	        rule = optional(list(object({
-              id      = number,
-              enabled = optional(bool),
-              action  = optional(string)
-            }))
-          }))
+          variable_name = string
+          selector      = optional(string)
         }))
       }))
+    })), [])
+    managed_rule_set = list(object({
+      type                = optional(string)
+      version             = string
+      rule_group_override = optional(list(object({
+        rule_group_name = string
+        rule = optional(list(object({
+          id      = number
+          enabled = optional(bool)
+          action  = optional(string)
+        })))
+      })))
     }))
   })
-}
-
-variable "ssl_profiles" {
-  description = "List of SSL profiles for Application Gateway."
-  type = list(object({
-    name                                    = string
-    trusted_client_certificate_names         = optional(list(string))
-    verify_client_cert_issuer_dn             = optional(bool, false)
-    verify_client_certificate_revocation     = optional(string)
-    ssl_policy = optional(object({
-      disabled_protocols                     = optional(list(string))
-      min_protocol_version                   = optional(string)
-      policy_name                            = optional(string)
-      cipher_suites                          = optional(list(string))
-    }))
-  }))
-  default = []
-}
-
-variable "trusted_client_certificates" {
-  description = "List of trusted client certificates for Application Gateway. Each object must have a name and base64-encoded data."
-  type = list(object({
-    name = string
-    data = string
-  }))
-  default = []
 }
