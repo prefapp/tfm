@@ -12,13 +12,13 @@ data "azurerm_resource_group" "this" {
 data "azurerm_storage_account" "this" {
   for_each = {
     for instance in var.blob_instances :
-    "${instance.storage_account_name}|${instance.storage_account_resource_group}" => {
-      name = instance.storage_account_name
-      resource_group = instance.storage_account_resource_group
-    }...
+    "${instance.storage_account_name}|${instance.storage_account_resource_group}" => [
+      instance.storage_account_name,
+      instance.storage_account_resource_group
+    ]...
   }
-  name                = each.value.name
-  resource_group_name = each.value.resource_group
+  name                = each.value[0]
+  resource_group_name = each.value[1]
 }
 
 ## Disk specific data sources ##
