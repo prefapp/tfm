@@ -7,6 +7,14 @@ data "azurerm_resource_group" "this" {
   name = var.backup_resource_group_name
 }
 
+## Blob specific data sources ##
+# Data source to get the storage account name
+data "azurerm_storage_account" "this" {
+  for_each            = { for instance in var.blob_instances : instance.storage_account_name => instance }
+  name                = each.value.storage_account_name
+  resource_group_name = each.value.storage_account_resource_group
+}
+
 ## Disk specific data sources ##
 # Data source to get the resource group for the disks
 data "azurerm_resource_group" "disk_rg" {

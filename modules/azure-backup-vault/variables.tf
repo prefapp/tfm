@@ -100,7 +100,8 @@ variable "blob_instances" {
   description = "List of backup instances for blobs"
   type = list(object({
     name                            = string
-    storage_account_id              = string
+    storage_account_name            = string
+    storage_account_resource_group  = string
     storage_account_container_names = optional(list(string))
     policy_key                      = string
   }))
