@@ -15,7 +15,7 @@ data "azurerm_storage_account" "this" {
     "${instance.storage_account_name}|${instance.storage_account_resource_group}" => {
       name = instance.storage_account_name
       resource_group = instance.storage_account_resource_group
-    }
+    }...
   }
   name                = each.value.name
   resource_group_name = each.value.resource_group
