@@ -5,7 +5,7 @@ locals {
   ssl_profiles = var.ssl_profiles
 
   trusted_client_certificates = [
-    for cert_file in fileset(path.module, "ca-certs/*.cer") : {
+    for cert_file in fileset(path.module, "ca-certs/*.pem") : {
       name = cert_file
       data = filebase64("${path.module}/${cert_file}")
     }
