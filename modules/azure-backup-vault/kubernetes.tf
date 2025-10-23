@@ -156,9 +156,3 @@ resource "null_resource" "wait_for_extension" {
     azurerm_kubernetes_cluster_trusted_access_role_binding.this
   ]
 }
-
-# Ensure the Microsoft.KubernetesConfiguration provider is registered
-# https://registry.terraform.io/providers/hashicorp/Azurerm/latest/docs/resources/resource_provider_registration
-resource "azurerm_resource_provider_registration" "this" {
-  name = "Microsoft.KubernetesConfiguration"
-}
