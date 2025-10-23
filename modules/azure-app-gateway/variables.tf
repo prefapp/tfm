@@ -67,15 +67,15 @@ variable "web_application_firewall_policy" {
 	      rule_group_override = optional(list(object({
 	        rule_group_name = string
 	        rule = optional(list(object({
-	          id      = number
-	          enabled = optional(bool)
-	          action  = optional(string)
-	        })))
-	      }))
-	    }))
-	  })
-}
-
+              id      = number,
+              enabled = optional(bool),
+              action  = optional(string)
+            }))
+          }))
+        }))
+      }))
+    }))
+  })
 variable "ssl_profiles" {
   description = "List of SSL profiles for Application Gateway."
   type = list(object({
