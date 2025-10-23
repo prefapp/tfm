@@ -31,6 +31,12 @@ resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
   principal_id         = azurerm_kubernetes_cluster_extension.this[each.value.cluster_name].aks_assigned_identity[0].principal_id
 }
 
+# Ensure the Microsoft.KubernetesConfiguration provider is registered
+# https://registry.terraform.io/providers/hashicorp/Azurerm/latest/docs/resources/resource_provider_registration
+resource "azurerm_resource_provider_registration" "this" {
+  name = "Microsoft.KubernetesConfiguration"
+}
+
 # Cluster extension for backup
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_extension
 resource "azurerm_kubernetes_cluster_extension" "this" {
@@ -51,6 +57,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup[each.value.name].primary_blob_endpoint
   }
   depends_on = [
+    azurerm_resource_provider_registration.this,
     azurerm_data_protection_backup_instance_blob_storage.this, 
     azurerm_role_assignment.vault_reader_on_snapshot_rg, 
     azurerm_role_assignment.aks_contributor_on_snapshot_rg
@@ -65,6 +72,9 @@ resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
   name                  = each.value.name
   roles                 = ["Microsoft.DataProtection/backupVaults/backup-operator"]
   source_resource_id    = azurerm_data_protection_backup_vault.this.id
+  depends_on = [
+    azurerm_kubernetes_cluster_extension.this
+  ]
 }
 
 # Backup policy for Kubernetes cluster
@@ -145,4 +155,10 @@ resource "null_resource" "wait_for_extension" {
     azurerm_kubernetes_cluster_extension.this,
     azurerm_kubernetes_cluster_trusted_access_role_binding.this
   ]
+}
+
+# Ensure the Microsoft.KubernetesConfiguration provider is registered
+# https://registry.terraform.io/providers/hashicorp/Azurerm/latest/docs/resources/resource_provider_registration
+resource "azurerm_resource_provider_registration" "this" {
+  name = "Microsoft.KubernetesConfiguration"
 }
