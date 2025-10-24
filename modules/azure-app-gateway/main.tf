@@ -67,6 +67,7 @@ resource "azurerm_application_gateway" "application_gateway" {
       protocol                            = lookup(backend_http_settings.value, "protocol", null)
       request_timeout                     = lookup(backend_http_settings.value, "request_timeout", null)
       trusted_root_certificate_names      = lookup(backend_http_settings.value, "trusted_root_certificate_names", null)
+      ssl_profile_name                    = lookup(backend_http_settings.value, "ssl_profile", null)
     }
   }
 
