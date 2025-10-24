@@ -4,7 +4,7 @@ locals {
 
   ssl_profiles = var.ssl_profiles
 
-  trusted_client_certificates = [
+  trusted_client_certificates = flatten([
     for ca_dir in var.ca_dirs : {
       for cert_file in fileset("${path.module}/${ca_dir}", "*") : {
         name = "${cert_file}"
@@ -12,6 +12,6 @@ locals {
         dir = "${ca_dir}"
       }
     }
-  ]
+  ])
 
 }
