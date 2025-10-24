@@ -161,7 +161,6 @@ resource "azurerm_application_gateway" "application_gateway" {
     content {
       name = trusted_client_certificate.value.name
       data = trusted_client_certificate.value.data
-      dir = trusted_client_certificate.value.dir
     }
   }
 
