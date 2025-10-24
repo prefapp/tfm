@@ -5,9 +5,9 @@ locals {
   ssl_profiles = var.ssl_profiles
 
   trusted_client_certificates = [
-    for cert_file in fileset("${path.module}/ca-certs", "*.pem") : {
+    for cert_file in fileset("${path.module}/${var.ca-dir}", ".+\.(pem|cer)") : { # File Regex: ".+\.(pem|cer)" catches any file with at least one character name and whose extension is .pem or .cer
       name = "${cert_file}"
-      data = filebase64("${path.module}/ca-certs/${cert_file}")
+      data = filebase64("${path.module}/${var.ca-dir}/${cert_file}")
     }
   ]
 
