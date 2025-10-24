@@ -80,7 +80,7 @@ resource "azurerm_application_gateway" "application_gateway" {
       host_names                     = lookup(http_listener.value ,"host_names", null)
       protocol                       = lookup(http_listener.value ,"protocol", null)
       require_sni                    = lookup(http_listener.value ,"require_sni", null)
-      ssl_certificate_name           = lookup(http_listener.value ,"ssl_certificate_name", null)
+      ssl_profile_name               = lookup(http_listener.value ,"ssl_profile", null)
     }
   }
 
