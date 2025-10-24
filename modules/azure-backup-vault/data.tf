@@ -50,11 +50,13 @@ data "azurerm_resource_group" "mysql_rg" {
 # Data source to get MySQL Flexible Server by name
 data "azurerm_mysql_flexible_server" "this" {
   for_each = {
-    for instance in var.mysql_instances :
-    "${instance.server_name}|${instance.resource_group_name}" => instance
+    for key in toset([
+      for instance in var.mysql_instances :
+      "${instance.server_name}|${instance.resource_group_name}"
+    ]) : key => split("|", key)
   }
-  name                = each.value.server_name
-  resource_group_name = each.value.resource_group_name
+  name                = each.value[0]
+  resource_group_name = each.value[1]
 }
 
 ## Kubernetes specific data sources ##
