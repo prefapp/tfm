@@ -190,9 +190,9 @@ variable "mysql_instances" {
   description = "List of MySQL Flexible Server backup instances"
   type = list(object({
     name                = string
-    server_id           = string
-    policy_key          = string
+    server_name         = string
     resource_group_name = string
+    policy_key          = string
   }))
   default = []
 }
