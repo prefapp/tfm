@@ -51,10 +51,10 @@ data "azurerm_resource_group" "mysql_rg" {
 data "azurerm_mysql_flexible_server" "this" {
   for_each = {
     for instance in var.mysql_instances :
-    "${instance.name}|${instance.resource_group_name}" => instance
+    "${instance.server_name}|${instance.resource_group_name}" => instance
   }
   name                = each.value.server_name
-  resource_group_name  = each.value.resource_group_name
+  resource_group_name = each.value.resource_group_name
 }
 
 ## Kubernetes specific data sources ##
