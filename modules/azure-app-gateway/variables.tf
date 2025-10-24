@@ -29,6 +29,12 @@ variable "subnet" {
   type        = any
 }
 
+variable "ca_dirs" {
+  description = "List of directories where CA root certificates for Application Gateway are stored."
+  type = list(string)
+  default = []
+}
+
 variable "ssl_profiles" {
   description = "List of SSL profiles for Application Gateway."
   type = list(object({
