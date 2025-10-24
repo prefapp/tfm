@@ -3,13 +3,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.16.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.47.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.16.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.47.0 |
 
 ## Resources
 
@@ -57,6 +57,26 @@
         name: "example-public-ip"
         sku: "Standard"
         allocation_method: "Static"
+
+      # CA root file Directories
+      ca_dirs:
+        - "ca-certs"
+
+      # SSL Profiles
+      ssl_profiles:
+        - name: "example-ssl-profile"
+          ca_dir: "ca-certs"
+          verify_client_cert_issuer_dn: true
+          verify_client_certificate_revocation: "OCSP"
+          ssl_policy:
+            disabled_protocols:
+              - "TLSv1_0"
+              - "TLSv1_1"
+            min_protocol_version: "TLSv1_2"
+            policy_name: "AppGwSslPolicy20170401S"
+            cipher_suites:
+              - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+              - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
 
       # WAF
       web_application_firewall_policy:
@@ -148,34 +168,15 @@
             pick_host_name_from_backend_address: false
             port: 80
             protocol: "Http"
-            # SSL Profiles
-            ssl_profiles:
-              - name: "example-ssl-profile"
-                trusted_client_certificate_names:
-                  - "example-client-cert"
-                verify_client_cert_issuer_dn: true
-                verify_client_certificate_revocation: "OCSP"
-                ssl_policy:
-                  disabled_protocols:
-                    - "TLSv1_0"
-                    - "TLSv1_1"
-                  min_protocol_version: "TLSv1_2"
-                  policy_name: "AppGwSslPolicy20170401S"
-                  cipher_suites:
-                    - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-                    - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
             request_timeout: 20
             trusted_root_certificate_names: []
-          # Trusted Client Certificates
-          trusted_client_certificates:
-            - name: "example-client-cert"
-              data: "<base64-encoded-certificate>"
           http_listeners:
             https:
               frontend_ip_configuration_name: "appGwPublicFrontendIpIPv4"
               frontend_port_name: "port_443"
               protocol: "Https"
               ssl_certificate_name: "example-cert-2"
+              ssl_profile_name: "example-ssl-profile"
             http-redirection:
               frontend_ip_configuration_name: "appGwPublicFrontendIpIPv4"
               frontend_port_name: "port_80"
