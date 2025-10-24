@@ -141,7 +141,7 @@ resource "azurerm_application_gateway" "application_gateway" {
     for_each = local.ssl_profiles
     content {
       name                                = lookup(ssl_profile.value, "name", null)
-      trusted_client_certificate_names    = lookup(ssl_profile.value, "trusted_client_certificate_names", null)
+      trusted_client_certificate_names    = [for cert in local.trusted_client_certificates : cert.name]
       verify_client_cert_issuer_dn        = lookup(ssl_profile.value, "verify_client_cert_issuer_dn", false)
       verify_client_certificate_revocation = lookup(ssl_profile.value, "verify_client_certificate_revocation", null)
       dynamic "ssl_policy" {
