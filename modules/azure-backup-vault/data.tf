@@ -40,6 +40,18 @@ data "azurerm_resource_group" "postgresql_rg" {
   name     = each.value
 }
 
+# PostgreSQL Flexible Server data source
+data "azurerm_postgresql_flexible_server" "this" {
+  for_each = {
+    for key in toset([
+      for instance in var.postgresql_instances :
+      "${instance.server_name}|${instance.resource_group_name}"
+    ]) : key => split("|", key)
+  }
+  name                = each.value[0]
+  resource_group_name = each.value[1]
+}
+
 ## MySQL specific data sources ##
 # Data source for each unique MySQL resource group
 data "azurerm_resource_group" "mysql_rg" {
