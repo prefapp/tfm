@@ -47,6 +47,16 @@ data "azurerm_resource_group" "mysql_rg" {
   name     = each.value
 }
 
+# Data source to get MySQL Flexible Server by name
+data "azurerm_mysql_flexible_server" "this" {
+  for_each = {
+    for instance in var.mysql_instances :
+    "${instance.server_name}|${instance.resource_group_name}" => instance
+  }
+  name                = each.value.server_name
+  resource_group_name  = each.value.resource_group_name
+}
+
 ## Kubernetes specific data sources ##
 # Data source to get cluster ID by name
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/kubernetes_cluster
