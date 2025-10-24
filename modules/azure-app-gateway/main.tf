@@ -60,7 +60,6 @@ resource "azurerm_application_gateway" "application_gateway" {
     for_each = local.backend_http_settings
     content {
       name                                = lookup(backend_http_settings.value, "name", null)
-      ca_dir                              = lookup(backend_http_settings.value, "ca_dir", null)
       cookie_based_affinity               = lookup(backend_http_settings.value, "cookie_based_affinity", null)
       pick_host_name_from_backend_address = lookup(backend_http_settings.value, "pick_host_name_from_backend_address", null)
       port                                = lookup(backend_http_settings.value, "port", null)
@@ -142,6 +141,7 @@ resource "azurerm_application_gateway" "application_gateway" {
     for_each = local.ssl_profiles
     content {
       name                                = lookup(ssl_profile.value, "name", null)
+      ca_dir                              = lookup(ssl_profile.value, "ca_dir", null)
       trusted_client_certificate_names    = [for cert in local.trusted_client_certificates : cert.name if cert.dir == ssl_profile.value.ca_dir]
       verify_client_cert_issuer_dn        = lookup(ssl_profile.value, "verify_client_cert_issuer_dn", false)
       verify_client_certificate_revocation = lookup(ssl_profile.value, "verify_client_certificate_revocation", null)
