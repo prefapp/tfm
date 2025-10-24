@@ -32,7 +32,8 @@ variable "subnet" {
 variable "ssl_profiles" {
   description = "List of SSL profiles for Application Gateway."
   type = list(object({
-    name                                    = string
+    name                                     = string
+    ca_dir                                   = string
     trusted_client_certificate_names         = optional(list(string))
     verify_client_cert_issuer_dn             = optional(bool, false)
     verify_client_certificate_revocation     = optional(string)
