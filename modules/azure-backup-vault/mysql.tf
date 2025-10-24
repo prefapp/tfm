@@ -31,7 +31,7 @@ resource "azurerm_data_protection_backup_policy_mysql_flexible_server" "this" {
     }
   }
   dynamic "retention_rule" {
-    for_each = try(each.value.retention_rule, [])
+    for_each = each.value.retention_rule != null ? each.value.retention_rule : []
     content {
       name     = retention_rule.value.name
       priority = retention_rule.value.priority
