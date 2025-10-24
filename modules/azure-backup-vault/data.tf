@@ -11,8 +11,10 @@ data "azurerm_resource_group" "this" {
 # Data source to get the storage account name
 data "azurerm_storage_account" "this" {
   for_each = {
-    for instance in var.blob_instances :
-    "${instance.storage_account_name}|${instance.storage_account_resource_group}" => [instance.storage_account_name, instance.storage_account_resource_group]
+    for key, group in {
+      for instance in var.blob_instances :
+      "${instance.storage_account_name}|${instance.storage_account_resource_group}" => [instance.storage_account_name, instance.storage_account_resource_group]
+    }... : key => group[0]
   }
   name                = each.value[0]
   resource_group_name = each.value[1]
