@@ -45,7 +45,7 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   for_each                        = { for instance in var.blob_instances : instance.name => instance }
   name                            = each.value.name
   vault_id                        = azurerm_data_protection_backup_vault.this.id
-  location                        = data.azurerm_resource_group.this[0].location
+  location                        = data.azurerm_resource_group.this.location
   storage_account_id              = data.azurerm_storage_account.this["${each.value.storage_account_name}|${each.value.storage_account_resource_group}"].id
   backup_policy_id                = azurerm_data_protection_backup_policy_blob_storage.this[each.value.policy_key].id
   storage_account_container_names = each.value.storage_account_container_names

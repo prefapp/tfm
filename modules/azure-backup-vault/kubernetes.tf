@@ -85,7 +85,7 @@ resource "azurerm_kubernetes_cluster_trusted_access_role_binding" "this" {
 resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
   for_each                        = { for policy in var.kubernetes_policies : policy.name => policy }
   name                            = each.value.name
-  resource_group_name             = data.azurerm_resource_group.this[0].name
+  resource_group_name             = data.azurerm_resource_group.this.name
   vault_name                      = azurerm_data_protection_backup_vault.this.name
   time_zone                       = try(each.value.time_zone, null)
   backup_repeating_time_intervals = each.value.backup_repeating_time_intervals
@@ -122,7 +122,7 @@ resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
 resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   for_each                     = { for instance in var.kubernetes_instances : instance.name => instance }
   name                         = each.value.name
-  location                     = data.azurerm_resource_group.this[0].location
+  location                     = data.azurerm_resource_group.this.location
   vault_id                     = azurerm_data_protection_backup_vault.this.id
   kubernetes_cluster_id        = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].id
   snapshot_resource_group_name = each.value.snapshot_resource_group_name
