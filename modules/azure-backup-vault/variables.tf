@@ -1,0 +1,256 @@
+# Common variables for Backup Vault
+variable "backup_resource_group_name" {
+  description = "Name of the resource group for backups"
+  type        = string
+  default     = null
+}
+
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
+# Backup vault
+variable "vault" {
+  description = "Backup vault configuration"
+  type = object({
+    name                         = string
+    datastore_type               = string
+    redundancy                   = string
+    cross_region_restore_enabled = optional(bool)
+    retention_duration_in_days   = optional(number)
+    immutability                 = optional(string)
+    soft_delete                  = optional(string)
+    identity = optional(object({
+      type = string
+    }))
+  })
+  default = null
+}
+
+# Disk backup variables
+variable "disk_policies" {
+  description = "List of backup policies for disks"
+  type = list(object({
+    name                            = string
+    backup_repeating_time_intervals = list(string)
+    default_retention_duration      = string
+    time_zone                       = optional(string)
+    retention_rule = optional(list(object({
+      name     = string
+      duration = string
+      priority = number
+      criteria = object({
+        absolute_criteria = optional(string)
+      })
+    })))
+  }))
+  default = []
+}
+
+# Disk backup instances
+variable "disk_instances" {
+  description = "List of backup instances for disks"
+  type = list(object({
+    name                = string
+    disk_resource_group = string
+    policy_key          = string
+  }))
+  default = []
+}
+
+# Blob backup policies
+variable "blob_policies" {
+  description = "List of backup policies for blobs"
+  type = list(object({
+    name                                   = string
+    backup_repeating_time_intervals        = optional(list(string))
+    operational_default_retention_duration = optional(string)
+    time_zone                              = optional(string)
+    vault_default_retention_duration       = optional(string)
+    retention_rule = optional(list(object({
+      name     = string
+      priority = number
+      criteria = object({
+        absolute_criteria      = optional(string)
+        days_of_week           = optional(list(string))
+        days_of_month          = optional(list(number))
+        months_of_year         = optional(list(string))
+        weeks_of_month         = optional(list(string))
+        scheduled_backup_times = optional(list(string))
+      })
+      life_cycle = object({
+        data_store_type = string
+        duration        = string
+      })
+    })))
+  }))
+  default = []
+}
+
+# Blob backup instances
+variable "blob_instances" {
+  description = "List of backup instances for blobs"
+  type = list(object({
+    name                            = string
+    storage_account_name            = string
+    storage_account_resource_group  = string
+    storage_account_container_names = optional(list(string))
+    policy_key                      = string
+  }))
+  default = []
+}
+
+# Postgresql backup policies
+variable "postgresql_policies" {
+  description = "List of backup policies for PostgreSQL Flexible Server"
+  type = list(object({
+    name                            = string
+    backup_repeating_time_intervals = list(string)
+    time_zone                       = optional(string)
+    default_retention_rule = object({
+      life_cycle = object({
+        data_store_type = optional(string, "VaultStore")
+        duration        = string
+      })
+    })
+    retention_rule = optional(list(object({
+      name     = string
+      priority = number
+      life_cycle = object({
+        data_store_type = optional(string, "VaultStore")
+        duration        = string
+      })
+      criteria = object({
+        absolute_criteria      = optional(string)
+        days_of_week           = optional(list(string))
+        months_of_year         = optional(list(string))
+        weeks_of_month         = optional(list(string))
+        scheduled_backup_times = optional(list(string))
+      })
+    })))
+  }))
+  default = []
+}
+
+#Postgresql backup instances
+variable "postgresql_instances" {
+  description = "List of backup instances for PostgreSQL Flexible Server"
+  type = list(object({
+    name                = string
+    server_name         = string
+    policy_key          = string
+    resource_group_name = string
+  }))
+  default = []
+}
+
+# MySQL backup policies
+variable "mysql_policies" {
+  description = "List of backup policies for MySQL Flexible Server"
+  type = list(object({
+    name                            = string
+    backup_repeating_time_intervals = list(string)
+    time_zone                       = optional(string)
+    default_retention_rule = object({
+      life_cycle = object({
+        duration        = string
+        data_store_type = optional(string, "VaultStore")
+      })
+    })
+    retention_rule = optional(list(object({
+      name     = string
+      priority = number
+      life_cycle = object({
+        data_store_type = optional(string, "VaultStore")
+        duration        = string
+      })
+      criteria = object({
+        absolute_criteria      = optional(string)
+        days_of_week           = optional(list(string))
+        months_of_year         = optional(list(string))
+        weeks_of_month         = optional(list(string))
+        scheduled_backup_times = optional(list(string))
+      })
+    })))
+  }))
+  default = []
+}
+
+# MySQL backup instances
+variable "mysql_instances" {
+  description = "List of MySQL Flexible Server backup instances"
+  type = list(object({
+    name                = string
+    server_name         = string
+    resource_group_name = string
+    policy_key          = string
+  }))
+  default = []
+}
+
+# Kubernetes backup policies
+variable "kubernetes_policies" {
+  description = "List of backup policies for Kubernetes clusters"
+  type = list(object({
+    name                            = string
+    backup_repeating_time_intervals = list(string)
+    time_zone                       = optional(string)
+    default_retention_rule = object({
+      life_cycle = object({
+        duration        = string
+        data_store_type = optional(string, "OperationalStore")
+      })
+    })
+    retention_rule = optional(list(object({
+      name     = string
+      priority = number
+      life_cycle = object({
+        data_store_type = optional(string, "OperationalStore")
+        duration        = string
+      })
+      criteria = object({
+        absolute_criteria      = optional(string)
+        days_of_week           = optional(list(string))
+        months_of_year         = optional(list(string))
+        weeks_of_month         = optional(list(string))
+        scheduled_backup_times = optional(list(string))
+      })
+    })))
+  }))
+  default = []
+}
+
+# Kubernetes backup instances
+variable "kubernetes_instances" {
+  description = "List of Kubernetes cluster backup instances"
+  type = list(object({
+    name                         = string
+    cluster_name                 = string
+    resource_group_name          = string
+    snapshot_resource_group_name = string
+    policy_key                   = string
+    backup_datasource_parameters = optional(object({
+      excluded_namespaces              = optional(list(string))
+      excluded_resource_types          = optional(list(string))
+      cluster_scoped_resources_enabled = optional(bool)
+      included_namespaces              = optional(list(string))
+      included_resource_types          = optional(list(string))
+      label_selectors                  = optional(list(string))
+      volume_snapshot_enabled          = optional(bool)
+    }))
+    extension_configuration = optional(object({
+      bucket_name                 = optional(string)
+      bucket_resource_group_name  = optional(string)
+      bucket_storage_account_name = optional(string)
+    }))
+  }))
+  default = []
+}
