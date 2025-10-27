@@ -152,7 +152,6 @@ variable "postgresql_instances" {
   default = []
 }
 
-
 # MySQL backup policies
 variable "mysql_policies" {
   description = "List of backup policies for MySQL Flexible Server"
@@ -234,8 +233,8 @@ variable "kubernetes_instances" {
   description = "List of Kubernetes cluster backup instances"
   type = list(object({
     name                         = string
-    cluster_name                = string
-    resource_group_name         = string
+    cluster_name                 = string
+    resource_group_name          = string
     snapshot_resource_group_name = string
     policy_key                   = string
     backup_datasource_parameters = optional(object({

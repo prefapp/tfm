@@ -49,7 +49,7 @@ resource "azurerm_data_protection_backup_instance_blob_storage" "this" {
   storage_account_id              = data.azurerm_storage_account.this["${each.value.storage_account_name}|${each.value.storage_account_resource_group}"].id
   backup_policy_id                = azurerm_data_protection_backup_policy_blob_storage.this[each.value.policy_key].id
   storage_account_container_names = each.value.storage_account_container_names
-  depends_on                      = [
+  depends_on = [
     azurerm_role_assignment.this,
     azurerm_role_assignment.vault_backup_contributor
   ]

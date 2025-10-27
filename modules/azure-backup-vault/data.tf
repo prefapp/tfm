@@ -1,14 +1,17 @@
 ## Common and vault data sources ##
 # Data source to get the current Azure client configuration
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config
 data "azurerm_client_config" "current" {}
 
 # Data source to get the resource group for the backup vault
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.backup_resource_group_name
 }
 
 ## Blob specific data sources ##
 # Data source to get the storage account name
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/storage_account
 data "azurerm_storage_account" "this" {
   for_each = {
     for key in toset([
@@ -22,11 +25,13 @@ data "azurerm_storage_account" "this" {
 
 ## Disk specific data sources ##
 # Data source to get the resource group for the disks
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "disk_rg" {
   for_each = { for rg in local.unique_disk_resource_groups : rg => rg }
   name     = each.value
 }
 # Data source to get the managed disk by name
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/managed_disk
 data "azurerm_managed_disk" "this" {
   for_each            = { for instance in var.disk_instances : instance.name => instance }
   name                = each.value.name
@@ -35,12 +40,14 @@ data "azurerm_managed_disk" "this" {
 
 ## PostgreSQL specific data sources ##
 # Data source for each unique PostgreSQL resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "postgresql_rg" {
   for_each = { for rg in local.unique_postgresql_resource_groups : rg => rg }
   name     = each.value
 }
 
 # PostgreSQL Flexible Server data source
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/postgresql_flexible_server
 data "azurerm_postgresql_flexible_server" "this" {
   for_each = {
     for key in toset([
@@ -54,12 +61,14 @@ data "azurerm_postgresql_flexible_server" "this" {
 
 ## MySQL specific data sources ##
 # Data source for each unique MySQL resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "mysql_rg" {
   for_each = { for rg in local.unique_mysql_resource_groups : rg => rg }
   name     = each.value
 }
 
 # Data source to get MySQL Flexible Server by name
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/mysql_flexible_server
 data "azurerm_mysql_flexible_server" "this" {
   for_each = {
     for key in toset([
@@ -80,16 +89,22 @@ data "azurerm_kubernetes_cluster" "this" {
   resource_group_name = each.value.resource_group_name
 }
 
+# Data source for each unique Kubernetes resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "kubernetes_rg" {
   for_each = { for rg in local.unique_kubernetes_resource_groups : rg => rg }
   name     = each.value
 }
 
+# Data source for each unique Kubernetes snapshot resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "snapshot_rg" {
   for_each = { for rg in local.unique_kubernetes_snapshot_resource_groups : rg => rg }
   name     = each.value
 }
 
+# Data source to get storage account for Kubernetes extensions
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/storage_account
 data "azurerm_storage_account" "backup" {
   for_each = {
     for instance in var.kubernetes_instances : instance.name => instance

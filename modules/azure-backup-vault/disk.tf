@@ -1,4 +1,4 @@
-# Role assignment: Disk Backup Reader a cada disco
+# Role assignment: Disk Backup Reader for each managed disk
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "disk_backup_reader" {
   for_each             = { for instance in var.disk_instances : instance.name => instance }
@@ -7,7 +7,7 @@ resource "azurerm_role_assignment" "disk_backup_reader" {
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
-# Role assignment: Snapshot RG Contributor a cada disco
+# Role assignment: Snapshot RG Contributor for each disk snapshot resource group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "snapshot_rg_contributor" {
   for_each             = data.azurerm_resource_group.disk_rg

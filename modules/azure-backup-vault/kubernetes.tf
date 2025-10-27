@@ -1,5 +1,5 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 # Role assignment: Reader for the AKS cluster identity over the Kubernetes cluster
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "kubernetes_reader" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].id
@@ -8,6 +8,7 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
 }
 
 # Role assignment: Reader for the Backup Vault identity over the snapshot resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
   for_each             = { for instance in var.kubernetes_instances : instance.snapshot_resource_group_name => instance }
   scope                = data.azurerm_resource_group.snapshot_rg[each.key].id
@@ -16,6 +17,7 @@ resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
 }
 
 # Role assignment: Contributor for the AKS cluster identity over the snapshot resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_resource_group.snapshot_rg[each.value.snapshot_resource_group_name].id
@@ -24,6 +26,7 @@ resource "azurerm_role_assignment" "aks_contributor_on_snapshot_rg" {
 }
 
 # Role assignment: Storage Blob Data Contributor for the AKS cluster extension identity over the storage account
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
   for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
   scope                = data.azurerm_storage_account.backup[each.value.name].id
@@ -48,18 +51,18 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
   release_train     = "stable"
   release_namespace = "dataprotection-microsoft"
   configuration_settings = {
-    "configuration.backupStorageLocation.bucket"                = try(each.value.extension_configuration.bucket_name, null)
-    "configuration.backupStorageLocation.config.resourceGroup"  = try(each.value.extension_configuration.bucket_resource_group_name, null)
-    "configuration.backupStorageLocation.config.storageAccount" = try(each.value.extension_configuration.bucket_storage_account_name, null)
-    "configuration.backupStorageLocation.config.subscriptionId" = data.azurerm_client_config.current.subscription_id
-    "credentials.tenantId"                                      = data.azurerm_client_config.current.tenant_id
-    "configuration.backupStorageLocation.config.useAAD"         = true
+    "configuration.backupStorageLocation.bucket"                   = try(each.value.extension_configuration.bucket_name, null)
+    "configuration.backupStorageLocation.config.resourceGroup"     = try(each.value.extension_configuration.bucket_resource_group_name, null)
+    "configuration.backupStorageLocation.config.storageAccount"    = try(each.value.extension_configuration.bucket_storage_account_name, null)
+    "configuration.backupStorageLocation.config.subscriptionId"    = data.azurerm_client_config.current.subscription_id
+    "credentials.tenantId"                                         = data.azurerm_client_config.current.tenant_id
+    "configuration.backupStorageLocation.config.useAAD"            = true
     "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup[each.value.name].primary_blob_endpoint
   }
   depends_on = [
     azurerm_resource_provider_registration.this,
-    azurerm_data_protection_backup_instance_blob_storage.this, 
-    azurerm_role_assignment.vault_reader_on_snapshot_rg, 
+    azurerm_data_protection_backup_instance_blob_storage.this,
+    azurerm_role_assignment.vault_reader_on_snapshot_rg,
     azurerm_role_assignment.aks_contributor_on_snapshot_rg
   ]
 }
@@ -146,6 +149,8 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   ]
 }
 
+# Wait for the AKS cluster extension to be fully provisioned
+# https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource
 resource "null_resource" "wait_for_extension" {
   for_each = { for instance in var.kubernetes_instances : instance.name => instance }
   provisioner "local-exec" {
