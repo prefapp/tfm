@@ -35,7 +35,7 @@ resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
 }
 
 # Ensure the Microsoft.KubernetesConfiguration provider is registered
-# https://registry.terraform.io/providers/hashicorp/Azurerm/latest/docs/resources/resource_provider_registration
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_provider_registration
 resource "azurerm_resource_provider_registration" "this" {
   name = "Microsoft.KubernetesConfiguration"
 }
