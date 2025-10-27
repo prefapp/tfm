@@ -11,8 +11,8 @@ resource "azurerm_role_assignment" "vault_backup_contributor" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault
 resource "azurerm_data_protection_backup_vault" "this" {
   name                         = var.vault.name
-  resource_group_name          = data.azurerm_resource_group.this.name
-  location                     = data.azurerm_resource_group.this.location
+  resource_group_name          = data.azurerm_resource_group.this[0].name
+  location                     = data.azurerm_resource_group.this[0].location
   datastore_type               = var.vault.datastore_type
   redundancy                   = var.vault.redundancy
   cross_region_restore_enabled = var.vault.cross_region_restore_enabled

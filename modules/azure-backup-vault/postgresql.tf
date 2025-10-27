@@ -55,7 +55,7 @@ resource "azurerm_data_protection_backup_policy_postgresql_flexible_server" "thi
 resource "azurerm_data_protection_backup_instance_postgresql_flexible_server" "this" {
   for_each         = { for instance in var.postgresql_instances : instance.name => instance }
   name             = each.value.name
-  location         = data.azurerm_resource_group.this.location
+  location         = data.azurerm_resource_group.this[0].location
   vault_id         = azurerm_data_protection_backup_vault.this.id
   server_id        = data.azurerm_postgresql_flexible_server.this["${each.value.server_name}|${each.value.resource_group_name}"].id
   backup_policy_id = azurerm_data_protection_backup_policy_postgresql_flexible_server.this[each.value.policy_key].id
