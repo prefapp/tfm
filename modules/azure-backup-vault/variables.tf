@@ -145,7 +145,7 @@ variable "postgresql_instances" {
   description = "List of backup instances for PostgreSQL Flexible Server"
   type = list(object({
     name                = string
-    server_id           = string
+    server_name         = string
     policy_key          = string
     resource_group_name = string
   }))
