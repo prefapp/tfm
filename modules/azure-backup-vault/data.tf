@@ -6,7 +6,6 @@ data "azurerm_client_config" "current" {}
 # Data source to get the resource group for the backup vault
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
-  count = var.backup_resource_group_name != null ? 1 : 0
   name  = var.backup_resource_group_name
 }
 
