@@ -95,7 +95,7 @@ values:
     redundancy: LocallyRedundant
     retention_duration_in_days: 30
     immutability: Disabled
-    soft_delete: Off
+    soft_delete: On
 
   # POSTGRESQL configuration
   postgresql_policies:
