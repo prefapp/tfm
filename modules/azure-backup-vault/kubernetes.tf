@@ -139,7 +139,8 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   }
 
   depends_on = [
-    null_resource.wait_for_extension,
+    azurerm_kubernetes_cluster_extension.this,
+    azurerm_kubernetes_cluster_trusted_access_role_binding.this,
     azurerm_role_assignment.kubernetes_reader,
     azurerm_role_assignment.vault_reader_on_snapshot_rg,
     azurerm_role_assignment.aks_contributor_on_snapshot_rg,
@@ -147,29 +148,4 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
     azurerm_data_protection_backup_policy_kubernetes_cluster.this,
     azurerm_data_protection_backup_vault.this
   ]
-}
-
-# Wait for the AKS cluster extension to be fully provisioned
-# https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource
-resource "null_resource" "wait_for_extension" {
-  for_each = { for instance in var.kubernetes_instances : instance.name => instance }
-  provisioner "local-exec" {
-    command = <<EOT
-for i in {1..60}; do
-  STATUS=$(az aks extension show --cluster-name "${each.value.cluster_name}" --resource-group "${each.value.resource_group_name}" --name "${each.value.extension_name}" --query "provisioningState" -o tsv 2>/dev/null)
-  if [ "$STATUS" = "Succeeded" ]; then
-    echo "Extension is ready."
-    exit 0
-  fi
-  echo "Waiting for extension to be ready (current state: $STATUS)..."
-  sleep 5
-done
-echo "Timeout waiting for extension to be ready."
-exit 1
-EOT
-  }
-  depends_on = [
-    azurerm_kubernetes_cluster_extension.this,
-    azurerm_kubernetes_cluster_trusted_access_role_binding.this
-]
 }
