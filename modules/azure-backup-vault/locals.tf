@@ -1,10 +1,6 @@
 locals {
   # Handle tags based on whether to use resource group tags or module-defined tags
-  tags = (
-    var.tags_from_rg && length(data.azurerm_resource_group.this) > 0
-    ? merge(data.azurerm_resource_group.this[0].tags, var.tags)
-    : var.tags
-  )
+  tags = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
 
   ## Disk specific locals ##
   # List of unique disk resource groups from the disk instances
@@ -25,13 +21,13 @@ locals {
   ## Kubernetes specific locals ##
   # Get unique Kubernetes resource groups
   unique_kubernetes_snapshot_resource_groups = distinct([for instance in var.kubernetes_instances : instance.snapshot_resource_group_name])
-  unique_kubernetes_resource_groups          = distinct([for instance in var.kubernetes_instances : instance.resource_group_name])
-  # Groups only the first instance by cluster_name
+  unique_kubernetes_resource_groups = distinct([for instance in var.kubernetes_instances : instance.resource_group_name])
+  # Agrupa solo la primera instancia por cluster_name
   kubernetes_instances_by_cluster = {
     for instance in var.kubernetes_instances : instance.cluster_name => instance
     if length([
       for i in var.kubernetes_instances : i if i.cluster_name == instance.cluster_name
-      ]) > 0 && instance.name == try([
+    ]) > 0 && instance.name == try([
       for i in var.kubernetes_instances : i.name if i.cluster_name == instance.cluster_name
     ][0], null)
   }
