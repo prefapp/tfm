@@ -2,7 +2,7 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "postgresql_ltr_backup" {
   for_each             = { for instance in var.postgresql_instances : instance.name => instance }
-  scope                = each.value.server_id
+  scope                = data.azurerm_postgresql_flexible_server.this["${each.value.server_name}|${each.value.resource_group_name}"].id
   role_definition_name = "PostgreSQL Flexible Server Long Term Retention Backup Role"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
