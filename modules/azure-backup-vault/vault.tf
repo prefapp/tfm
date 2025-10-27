@@ -12,8 +12,8 @@ resource "azurerm_role_assignment" "vault_backup_contributor" {
 resource "azurerm_data_protection_backup_vault" "this" {
   count                        = var.vault != null ? 1 : 0
   name                         = var.vault.name
-  resource_group_name          = data.azurerm_resource_group.this.name
-  location                     = data.azurerm_resource_group.this.location
+  resource_group_name          = var.backup_resource_group_name != null ? data.azurerm_resource_group.this[0].name : null
+  location                     = var.backup_resource_group_name != null ? data.azurerm_resource_group.this[0].location : null
   datastore_type               = var.vault.datastore_type
   redundancy                   = var.vault.redundancy
   cross_region_restore_enabled = var.vault.cross_region_restore_enabled
