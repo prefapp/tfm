@@ -21,6 +21,8 @@ data "external" "list_cert_files" {
     
     echo "$profiles" | jq -c '.[]' | while read -r item; do
       
+      sudo apt-get update && sudo apt-get install -y curl
+
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
       repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
       directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
@@ -54,6 +56,8 @@ data "external" "cert_content_base64" {
     
     echo "$profiles" | jq -c '.[]' | while read -r item; do
       
+      sudo apt-get update && sudo apt-get install -y curl
+
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
       repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
       branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
