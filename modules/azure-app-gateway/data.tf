@@ -27,7 +27,7 @@ data "external" "list_cert_files" {
 
       API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
       
-      node -e "import('node:https').then(({get})=>get('$API_URL',res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>{const j=JSON.parse(d);const r=j.filter(x=>/\.(pem|cer)$/i.test(x.name)).reduce((a,x)=>({...a,[x.name]:x.name}),{});console.log(JSON.stringify(r))})}))"
+      node -e "import('node:https').then(({get})=>get('$API_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>{const j=JSON.parse(d);const r=j.filter(x=>/\.(pem|cer)$/i.test(x.name)).reduce((a,x)=>({...a,[x.name]:x.name}),{});console.log(JSON.stringify(r))})}))"
   
     done
   EOF
@@ -56,7 +56,7 @@ data "external" "cert_content_base64" {
 
       RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
     
-      CONTENT_B64=$(node -e "import('node:https').then(({get})=>get('$RAW_URL',res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>console.log(Buffer.from(d).toString('base64')))}))")
+      CONTENT_B64=$(node -e "import('node:https').then(({get})=>get('$RAW_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>console.log(Buffer.from(d).toString('base64')))}))")
 
 
       jq -n --arg b64 "$CONTENT_B64" --arg ca-dir "$directory" '{"content_b64": $b64, "ca-dir": $ca-dir}'
