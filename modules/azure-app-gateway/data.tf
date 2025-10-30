@@ -20,10 +20,10 @@ data "external" "list_cert_files" {
 
     echo "$input" | jq -c '.ssl_profiles[]' | while read -r item; do
 
-      github_owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
-      github_repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
-      github_directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
-    API_URL="https://api.github.com/repos/${github_owner}/${github_repository}/contents/${github_directory}"
+      owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
+      repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
+      directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
+    API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
 
     wget -qO- "$API_URL" | \
       jq -r '.[] 
@@ -58,11 +58,11 @@ data "external" "cert_content_base64" {
 
     echo "$input" | jq -c '.ssl_profiles[]' | while read -r item; do
 
-      github_owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
-      github_repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
-      github_branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
-      github_directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
-    RAW_URL="https://raw.githubusercontent.com/${github_owner}/${github_repository}/${github_branch}/${github_directory}/${each.key}"
+      owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
+      repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
+      branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
+      directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
 
     CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
 
