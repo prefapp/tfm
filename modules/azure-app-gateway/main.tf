@@ -157,14 +157,13 @@ resource "azurerm_application_gateway" "application_gateway" {
     }
   }
 
-dynamic "trusted_client_certificate" {
-  for_each = { for cert in data.external.cert_content_base64.result : cert.name => cert }
-  content {
-    name = trusted_client_certificate.key
-    data = trusted_client_certificate.value.content_b64
+  dynamic "trusted_client_certificate" {
+    for_each = { for cert in data.external.cert_content_base64 : cert.name => cert }
+    content {
+      name = trusted_client_certificate.key
+      data = trusted_client_certificate.value.content_b64
+    }
   }
-}
-
 
   lifecycle {
     ignore_changes = [tags]
