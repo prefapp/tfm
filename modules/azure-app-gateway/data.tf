@@ -45,7 +45,8 @@ data "external" "cert_content_base64" {
     set -euo pipefail
 
     profiles=$(jq -c '.ssl_profiles | fromjson')
-    declare -A certs
+    tmpfile=$(mktemp)
+    echo '{}' > "$tmpfile"
 
     echo "$profiles" | jq -c '.[]' | while read -r item; do
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
@@ -54,17 +55,18 @@ data "external" "cert_content_base64" {
       directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
 
       API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
-      files=$(node -e "import('node:https').then(({get})=>get('$API_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>{const j=JSON.parse(d);const r=j.filter(x=>/\\.(pem|cer)$/i.test(x.name)).map(x=>x.name);console.log(JSON.stringify(r))})}))")
+      files=$(node -e "import('node:https').then(({get})=>get('$API_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>{const j=JSON.parse(d);const r=j.filter(x=>/\.(pem|cer)$/i.test(x.name)).map(x=>x.name);console.log(JSON.stringify(r))})}))")
 
       for file in $(echo "$files" | jq -r '.[]'); do
         RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/$file"
         CONTENT_B64=$(node -e "import('node:https').then(({get})=>get('$RAW_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>console.log(Buffer.from(d).toString('base64')))}))")
-        certs[$file]=$(jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}')
+        jq -n --arg file "$file" --arg b64 "$CONTENT_B64" --arg caDir "$directory" \
+          '{($file): {"content_b64": $b64, "ca-dir": $caDir}}' \
+          | jq -s '.[0] * input' "$tmpfile" > "$tmpfile.new" && mv "$tmpfile.new" "$tmpfile"
       done
     done
 
-    # Print all certs as a single JSON object
-    jq -n --argjson certs "$(printf '%s\n' "${certs[@]}" | jq -s 'reduce .[] as $item ({}; . * $item)')" '$certs'
+    cat "$tmpfile"
   EOF
   ]
 
