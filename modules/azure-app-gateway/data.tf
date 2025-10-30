@@ -17,7 +17,7 @@ data "external" "list_cert_files" {
 
     set -euo pipefail
 
-    input = $(cat)
+    input=$(cat)
     
     echo "$input" | jq -c '.ssl_profiles[]' | while read -r item; do
       
@@ -50,7 +50,7 @@ data "external" "cert_content_base64" {
 
     set -euo pipefail
 
-    input = $(cat)
+    input=$(cat)
     
     echo "$input" | jq -c '.ssl_profiles[]' | while read -r item; do
       
