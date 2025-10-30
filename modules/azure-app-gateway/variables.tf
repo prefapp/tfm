@@ -29,30 +29,6 @@ variable "subnet" {
   type        = any
 }
 
-variable "github_owner" {
-  description = "Owner del repositorio"
-  type        = string
-  default     = "councilbox"
-}
-
-variable "github_repository" {
-  description = "Nombre del repositorio"
-  type        = string
-  default     = "ca-cert-test"
-}
-
-variable "github_branch" {
-  description = "Rama del repositorio"
-  type        = string
-  default     = "master"
-}
-
-variable "github_directory" {
-  description = "Directorio dentro del repositorio con los certificados"
-  type        = string
-  default     = "ca-certs"
-}
-
 variable "ssl_profiles" {
   description = "List of SSL profiles for Application Gateway."
   type = list(object({
@@ -67,6 +43,12 @@ variable "ssl_profiles" {
       policy_name                            = optional(string)
       cipher_suites                          = optional(list(string))
     }))
+    ca_certs_origin = object({
+      github_owner       = string
+      github_repository  = string
+      github_branch      = string
+      github_directory   = string
+    })
   }))
   default = []
 }
@@ -116,6 +98,7 @@ variable "web_application_firewall_policy" {
       })))
     }))
   })
+}
 
   variable "ssl_policy" {
   description = "Application Gateway configuration"
