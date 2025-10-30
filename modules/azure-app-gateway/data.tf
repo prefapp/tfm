@@ -42,27 +42,29 @@ data "external" "cert_content_base64" {
   for_each = data.external.list_cert_files.result
 
   program = ["bash", "-c", <<EOF
-
     set -euo pipefail
 
     profiles=$(jq -c '.ssl_profiles | fromjson')
-    
+    declare -A certs
+
     echo "$profiles" | jq -c '.[]' | while read -r item; do
-      
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
       repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
       branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
       directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
 
-      RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
-    
-      CONTENT_B64=$(node -e "import('node:https').then(({get})=>get('$RAW_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>console.log(Buffer.from(d).toString('base64')))}))")
+      API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
+      files=$(node -e "import('node:https').then(({get})=>get('$API_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>{const j=JSON.parse(d);const r=j.filter(x=>/\\.(pem|cer)$/i.test(x.name)).map(x=>x.name);console.log(JSON.stringify(r))})}))")
 
-
-      jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
-  
+      for file in $(echo "$files" | jq -r '.[]'); do
+        RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/$file"
+        CONTENT_B64=$(node -e "import('node:https').then(({get})=>get('$RAW_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>console.log(Buffer.from(d).toString('base64')))}))")
+        certs[$file]=$(jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}')
+      done
     done
-  
+
+    # Print all certs as a single JSON object
+    jq -n --argjson certs "$(printf '%s\n' "${certs[@]}" | jq -s 'reduce .[] as $item ({}; . * $item)')" '$certs'
   EOF
   ]
 
