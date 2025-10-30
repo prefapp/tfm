@@ -16,9 +16,9 @@ data "external" "list_cert_files" {
   program = ["bash", "-c", <<EOF
     set -euo pipefail
 
-    input = $(cat)
+    profiles=$(jq -c '.ssl_profiles | fromjson')
 
-    echo "$input" | jq -c '.ssl_profiles[]' | while read -r item; do
+    echo "$profiles" | jq -c '.[]' | while read -r item; do
 
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
       repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
@@ -54,9 +54,9 @@ data "external" "cert_content_base64" {
 
     set -euo pipefail
 
-    input = $(cat)
+    profiles=$(jq -c '.ssl_profiles | fromjson')
 
-    echo "$input" | jq -c '.ssl_profiles[]' | while read -r item; do
+    echo "$profiles" | jq -c '.[]' | while read -r item; do
 
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
       repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
