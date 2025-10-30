@@ -39,7 +39,7 @@ data "external" "list_cert_files" {
   ]
 
   query = {
-    ssl_profiles = var.ssl_profiles
+    ssl_profiles = jsonencode(var.ssl_profiles)
   }
 
 }
@@ -72,7 +72,7 @@ data "external" "cert_content_base64" {
   ]
 
   query = {
-    ssl_profiles = var.ssl_profiles
+    ssl_profiles = jsonencode(var.ssl_profiles)
   }
 
 }
