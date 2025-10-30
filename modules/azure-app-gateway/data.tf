@@ -59,7 +59,7 @@ data "external" "cert_content_base64" {
       CONTENT_B64=$(node -e "import('node:https').then(({get})=>get('$RAW_URL',{headers:{'User-Agent':'terraform-external-script'}},res=>{let d='';res.on('data',c=>d+=c);res.on('end',()=>console.log(Buffer.from(d).toString('base64')))}))")
 
 
-      jq -n --arg b64 "$CONTENT_B64" --arg ca-dir "$directory" '{"content_b64": $b64, "ca-dir": $ca-dir}'
+      jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
   
     done
   
