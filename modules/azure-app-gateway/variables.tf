@@ -29,10 +29,28 @@ variable "subnet" {
   type        = any
 }
 
-variable "ca_dirs" {
-  description = "List of directories where CA root certificates for Application Gateway are stored."
-  type = list(string)
-  default = []
+variable "github_owner" {
+  description = "Owner del repositorio"
+  type        = string
+  default     = "councilbox"
+}
+
+variable "github_repository" {
+  description = "Nombre del repositorio"
+  type        = string
+  default     = "ca-cert-test"
+}
+
+variable "github_branch" {
+  description = "Rama del repositorio"
+  type        = string
+  default     = "master"
+}
+
+variable "github_directory" {
+  description = "Directorio dentro del repositorio con los certificados"
+  type        = string
+  default     = "ca-certs"
 }
 
 variable "ssl_profiles" {
@@ -98,4 +116,18 @@ variable "web_application_firewall_policy" {
       })))
     }))
   })
+
+  variable "ssl_policy" {
+  description = "Application Gateway configuration"
+  type = object({
+    policy_type          = string
+    policy_name          = optional(string)
+    cipher_suites        = optional(list(string))
+    min_protocol_version = optional(string)
+  })
+  default = {
+    policy_type = "Predefined"
+    policy_name = "AppGwSslPolicy20220101"
+  }
+  
 }
