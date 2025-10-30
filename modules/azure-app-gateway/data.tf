@@ -66,7 +66,7 @@ data "external" "cert_content_base64" {
 
     CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
 
-    jq -n --arg b64 "$CONTENT_B64" --arg ca-dir "${github_directory}" '{"content_b64": $b64, "ca-dir": $ca-dir}'
+    jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
     done
   EOF
   ]
