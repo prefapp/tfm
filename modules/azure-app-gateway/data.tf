@@ -23,14 +23,14 @@ data "external" "list_cert_files" {
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
       repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
       directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
-    API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
+      API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
 
-    wget -qO- "$API_URL" | \
-      jq -r '.[] 
-        | select(.name | test("\\.(pem|cer)$"; "i")) 
-        | .name' | \
-      jq -R '{(.): .}' | \
-      jq -s 'add'
+      wget -qO- "$API_URL" | \
+        jq -r '.[] 
+          | select(.name | test("\\.(pem|cer)$"; "i")) 
+          | .name' | \
+        jq -R '{(.): .}' | \
+        jq -s 'add'
 
     done
 
@@ -62,11 +62,11 @@ data "external" "cert_content_base64" {
       repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
       branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
       directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
-    RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
+      RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
 
-    CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
+      CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
 
-    jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
+      jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
     done
   EOF
   ]
