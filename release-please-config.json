@@ -2,6 +2,7 @@
     "last-release-sha": "4b33efeea07dc46178950e42dabcf917b9b43436",
     "separate-pull-requests": true,
     "release-type": "terraform-module",
+    "commit-search-depth": 5,
     "packages": {
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
@@ -104,6 +105,12 @@
         },
         "modules/aws-terraform-backend": {
             "package-name": "aws-terraform-backend"
+        },
+        "modules/aws-rds": {
+            "package-name": "aws-rds"
+        },
+        "modules/azure-backup-vault": {
+            "package-name": "azure-backup-vault"
         }
     }
 }

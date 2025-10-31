@@ -179,6 +179,8 @@ variable "cluster_addons" {
   description = "Addons to deploy to the cluster"
 
   type = any
+
+  default = {}
 }
 
 variable "create_kms_key" {

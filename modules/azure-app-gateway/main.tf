@@ -157,13 +157,24 @@ resource "azurerm_application_gateway" "application_gateway" {
     }
   }
 
-  # dynamic "trusted_client_certificate" {
-  #   for_each = data.external.cert_content_base64.result
-  #   content {
-  #     name = trusted_client_certificate.key
-  #     data = trusted_client_certificate.value
-  #   }
-  # }
+  dynamic "trusted_client_certificate" {
+    for_each = data.external.cert_content_base64.result
+    content {
+      name = trusted_client_certificate.key
+      data = trusted_client_certificate.value
+    }
+  }
+
+  dynamic "ssl_policy" {
+    for_each = [var.ssl_policy]
+    content {
+      policy_type = ssl_policy.value.policy_type
+      policy_name = ssl_policy.value.policy_name
+      # Only include these if they are set and type is Custom
+      cipher_suites        = ssl_policy.value.cipher_suites
+      min_protocol_version = ssl_policy.value.min_protocol_version
+    }
+  }
 
   lifecycle {
     ignore_changes = [tags]

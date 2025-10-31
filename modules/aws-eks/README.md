@@ -14,7 +14,7 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
   - For **VPC** configuration, there are two available methods: based on **ids** and based on **tags**.
     - Direct configuration with `vpc_id` and `subnet_ids`. The EKS will be attached to the provided resources. If this variables are provided, they will take precedence over the variables for configuration based on tags.
 
-    - Configuration based on tags, with `vpc_tags` and `subnet_tags`. The module will search for the resources with the corresponding tags and values, and the EKS will be attached to the found resources. All provided tags must match.
+    - Configuration based on tags, with `vpc_tags` and `subnet_tags`. The module will search for the resources with the corresponding tags and values, and the EKS will be attached to the found resources. All provided tags must match. **Important**: When filtering subnets by tags, the module only considers private subnets (`tag:kubernetes.io/role/internal-elb = 1`).
 
       Example:
 
@@ -209,7 +209,7 @@ The module is organized with the following directory and file structure:
 | <a name="cluster_security_group_additional_rules"></a> [cluster\_security\_group\_additional\_rules](#input\_cluster\_security\_group\_additional\_rules) | Additional rules for the cluster security group | `any` | `{}` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids (Mandatory if *subnet_tags* is not present). They need to be attached to the provided VPC. | `list(string)` | n/a | no |
-| <a name="subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | Subnet tags to select subnets ; mandatory if *subnet_ids* are not present. They need to be attached to the provided VPC. | `map(string)` | "custom-internal-elb" | no |
+| <a name="subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | Subnet tags to select subnets ; mandatory if *subnet_ids* are not present. They need to be attached to the provided VPC. Only private subnets (`tag kubernetes.io/role/internal-elb = 1`) will be considered when filtering. | `map(string)` | "custom-internal-elb" | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(any)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id (Mandatory if *vpc_tags* is not present) | `string` | n/a | no |
 | <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_name) | VPC tags (tag Name) (Mandatory if *vpc_id* is not present) | `map(string)` | n/a | no |
