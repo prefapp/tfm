@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.6.0...azure-app-gateway-v0.7.0) (2025-10-31)
+
+
+### Features
+
+* Add trusted client certificate and SSL profile definition ([#712](https://github.com/prefapp/tfm/issues/712)) ([128da94](https://github.com/prefapp/tfm/commit/128da9464ac74c59a441cf0556c709736d9751fb))
+
 ## [0.6.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.5.1...azure-app-gateway-v0.6.0) (2025-10-09)
 
 
