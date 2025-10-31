@@ -33,8 +33,7 @@
 | <a name="input_subnet"></a> [subnet](#input\_subnet) | The subnet object. | `any` | n/a | yes |
 | <a name="input_user_assigned_identity"></a> [user\_assigned\_identity](#input\_user\_assigned\_identity) | The name of the User Assigned Identity. | `string` | n/a | yes |
 | <a name="input_web_application_firewall_policy"></a> [web\_application\_firewall\_policy](#input\_web\_application\_firewall\_policy) | Configuration for the web application firewall policy | <pre>object({<br/>    name = string<br/>    policy_settings = optional(object({<br/>      enabled                     = optional(bool)<br/>      mode                        = optional(string)<br/>      request_body_check          = optional(bool)<br/>      file_upload_limit_in_mb     = optional(number)<br/>      max_request_body_size_in_kb = optional(number)<br/>      request_body_enforcement    = optional(string)<br/>    }))<br/>    custom_rules = optional(list(object({<br/>      enabled               = optional(bool, true)<br/>      name                  = string<br/>      priority              = number<br/>      rule_type             = string<br/>      action                = string<br/>      rate_limit_duration   = optional(string)<br/>      rate_limit_threshold  = optional(number)<br/>      group_rate_limit_by   = optional(string)<br/>      match_conditions      = list(object({<br/>        operator           = string<br/>        negation_condition = optional(bool, false)<br/>        match_values       = optional(list(string))<br/>        transforms         = optional(list(string))<br/>        match_variables    = list(object({<br/>          variable_name = string<br/>          selector      = optional(string)<br/>        }))<br/>      }))<br/>    })), [])<br/>    managed_rule_set = list(object({<br/>      type                = optional(string)<br/>      version             = string<br/>      rule_group_override = optional(list(object({<br/>        rule_group_name = string<br/>        rule = optional(list(object({<br/>          id      = number<br/>          enabled = optional(bool)<br/>          action  = optional(string)<br/>        })))<br/>      })))<br/>    }))<br/>  })</pre> | n/a | yes |
-| <a name="input_ca_dirs"></a> [ca_dirs](#input_ca_dirs) | List of directories where CA root certificates are stored. The base path is the root of this module  | `list(string())` | `[]` | no |
-| <a name="input_ssl_profiles"></a> [ssl_profiles](#input_ssl_profiles) | Configuration of SSL profiles  | <pre>object({<br/>    name = string<br/>    ca_dir = string<br/>    trusted_client_certificate_names = optional(list(string))<br/>    verify_client_cert_issuer_dn = optional(bool, false)<br/>    verify_client_certificate_revocation = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols = optional(list(string))<br/>      min_protocol_version = optional(string)<br/>      policy_name = optional(string)<br/>      cipher_suites = optional(list(string))<br/>    })<br/>})</pre> | `[]` | no |
+| <a name="input_ssl_profiles"></a> [ssl_profiles](#input_ssl_profiles) | Configuration of SSL profiles  | <pre>object({<br/>    name = string<br/>    ca_dir = string<br/>    trusted_client_certificate_names = optional(list(string))<br/>    verify_client_cert_issuer_dn = optional(bool, false)<br/>    verify_client_certificate_revocation = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols = optional(list(string))<br/>      min_protocol_version = optional(string)<br/>      policy_name = optional(string)<br/>      cipher_suites = optional(list(string))<br/>    })<br/>    ca_certs_origin = (object({<br/>      github_owner = string<br/>      github_repository = string<br/>      github_branch = string<br/>      github_directory = string<br/>    })<br/>})</pre> | `[]` | no |
 
 ## Outputs
 
@@ -60,14 +59,9 @@
         sku: "Standard"
         allocation_method: "Static"
         
-      # CA root file Directories
-      ca_dirs:
-        - "ca-certs"
-
       # SSL Profiles
       ssl_profiles:
         - name: "example-ssl-profile"
-          ca_dir: "ca-certs"
           verify_client_cert_issuer_dn: true
           verify_client_certificate_revocation: "OCSP"
           ssl_policy:
@@ -79,6 +73,11 @@
             cipher_suites:
               - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
               - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+          ca_certs_origin:
+            github_owner: "gh-owner"
+            github_repository: "gh-repo"
+            github_branch: "gh-branch"
+            github_directory: "gh-dir"
 
       # WAF
       web_application_firewall_policy:
