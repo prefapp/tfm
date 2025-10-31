@@ -159,8 +159,8 @@ resource "azurerm_application_gateway" "application_gateway" {
 
 dynamic "trusted_client_certificate" {
   for_each = {
-    for k, v in data.external.cert_content_base64 :
-    k => v.result
+    for key, value in data.external.cert_content_base64 :
+    key => value.result
   }
   content {
     name = trusted_client_certificate.key
