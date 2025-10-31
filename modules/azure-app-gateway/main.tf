@@ -80,6 +80,7 @@ resource "azurerm_application_gateway" "application_gateway" {
       protocol                       = lookup(http_listener.value ,"protocol", null)
       require_sni                    = lookup(http_listener.value ,"require_sni", null)
       ssl_certificate_name           = lookup(http_listener.value ,"ssl_certificate_name", null)
+      ssl_profile_name               = lookup(http_listener.value ,"ssl_profile", null)
     }
   }
 
@@ -136,6 +137,36 @@ resource "azurerm_application_gateway" "application_gateway" {
       key_vault_secret_id = lookup(ssl_certificate.value, "key_vault_secret_id", null)
     }
   }
+
+  dynamic "ssl_profile" {
+    for_each = local.ssl_profiles
+    content {
+      name                                 = lookup(ssl_profile.value, "name", null)
+      trusted_client_certificate_names     = [for certName, certData in data.external.cert_content_base64 : certName if certData.result.ca-dir == ssl_profile.value.ca_certs_origin.github_directory]
+      verify_client_cert_issuer_dn         = lookup(ssl_profile.value, "verify_client_cert_issuer_dn", false)
+      verify_client_certificate_revocation = lookup(ssl_profile.value, "verify_client_certificate_revocation", null)
+      dynamic "ssl_policy" {
+        for_each = lookup(ssl_profile.value, "ssl_policy", null) == null ? [] : [ssl_profile.value.ssl_policy]
+        content {
+          disabled_protocols   = lookup(ssl_policy.value, "disabled_protocols", null)
+          min_protocol_version = lookup(ssl_policy.value, "min_protocol_version", null)
+          policy_name          = lookup(ssl_policy.value, "policy_name", null)
+          cipher_suites        = lookup(ssl_policy.value, "cipher_suites", null)
+        }
+      }
+    }
+  }
+
+dynamic "trusted_client_certificate" {
+  for_each = {
+    for key, value in data.external.cert_content_base64 :
+    key => value.result
+  }
+  content {
+    name = trusted_client_certificate.key
+    data = trusted_client_certificate.value.content_b64
+  }
+}
 
   dynamic "ssl_policy" {
     for_each = [var.ssl_policy]

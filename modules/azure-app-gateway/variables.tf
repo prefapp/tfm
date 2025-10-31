@@ -29,6 +29,29 @@ variable "subnet" {
   type        = any
 }
 
+variable "ssl_profiles" {
+  description = "List of SSL profiles for Application Gateway."
+  type = list(object({
+    name                                     = string
+    trusted_client_certificate_names         = optional(list(string))
+    verify_client_cert_issuer_dn             = optional(bool, false)
+    verify_client_certificate_revocation     = optional(string)
+    ssl_policy = optional(object({
+      disabled_protocols                     = optional(list(string))
+      min_protocol_version                   = optional(string)
+      policy_name                            = optional(string)
+      cipher_suites                          = optional(list(string))
+    }))
+    ca_certs_origin = object({
+      github_owner       = string
+      github_repository  = string
+      github_branch      = string
+      github_directory   = string
+    })
+  }))
+  default = []
+}
+
 variable "web_application_firewall_policy" {
   description = "Configuration for the web application firewall policy"
   type = object({
