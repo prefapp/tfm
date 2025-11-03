@@ -17,7 +17,7 @@ resource "azurerm_eventhub_namespace" "this" {
     trusted_service_access_enabled = var.namespace.ruleset.trusted_service_access_enabled
 
     dynamic "ip_rule" {
-      for_each = var.namespace.ruleset.ip_rules
+      for_each = namespace.ruleset.ip_rules
       content {
         ip_mask = ip_rule.value.ip_mask
         action  = ip_rule.value.action
