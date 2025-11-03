@@ -16,6 +16,10 @@ variable "namespace" {
       default_action                 = string
       public_network_access_enabled  = bool
       trusted_service_access_enabled = bool
+      virtual_network_rules = optional(list(object({
+        subnet_id = string
+        ignore_missing_virtual_network_service_endpoint = optional(bool)
+      })))
       ip_rules = list(object({
         ip_mask = string
         action  = string
