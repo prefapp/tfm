@@ -51,10 +51,10 @@ variable "namespace" {
         subnet_id = string
         ignore_missing_virtual_network_service_endpoint = optional(bool)
       })))
-      ip_rules = list(object({
+      ip_rules = optional(list(object({
         ip_mask = string
         action  = string
-      }))
+      })))
     })
   })
 }
