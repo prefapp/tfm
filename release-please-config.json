@@ -111,6 +111,9 @@
         },
         "modules/azure-backup-vault": {
             "package-name": "azure-backup-vault"
+        },
+        "modules/azure-event-hub": {
+            "package-name": "azure-event-hub"
         }
     }
 }
