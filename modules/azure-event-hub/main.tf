@@ -1,4 +1,7 @@
 # Event Hub Namespace
+locals {
+  virtual_network_rules = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
+}
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace
 resource "azurerm_eventhub_namespace" "this" {
   name                 = var.namespace.name
@@ -17,7 +20,7 @@ resource "azurerm_eventhub_namespace" "this" {
     trusted_service_access_enabled = var.namespace.ruleset.trusted_service_access_enabled
 
     dynamic "virtual_network_rule" {
-      for_each = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
+      for_each = local.virtual_network_rules
       content {
         subnet_id = virtual_network_rule.value.subnet_id
         ignore_missing_virtual_network_service_endpoint = try(virtual_network_rule.value.ignore_missing_virtual_network_service_endpoint, null)
