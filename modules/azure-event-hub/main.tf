@@ -29,10 +29,10 @@ resource "azurerm_eventhub_namespace" "this" {
     #     ip_mask = ip_rule.value.ip_mask
     #     action  = ip_rule.value.action
     #   }
-  ip_rule {
-      ip_mask = ip_rule.value.ip_mask
-      action  = ip_rule.value.action
-    }
+    ip_rule {
+        ip_mask = ip_rule.value.ip_mask
+        action  = ip_rule.value.action
+      }
   }
 }
 
