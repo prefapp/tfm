@@ -16,19 +16,13 @@ resource "azurerm_eventhub_namespace" "this" {
     public_network_access_enabled  = var.namespace.ruleset.public_network_access_enabled
     trusted_service_access_enabled = var.namespace.ruleset.trusted_service_access_enabled
 
-    # dynamic "virtual_network_rule" {
-    #   for_each = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
-    #   content {
-    #     subnet_id = virtual_network_rule.value.subnet_id
-    #     ignore_missing_virtual_network_service_endpoint = try(virtual_network_rule.value.ignore_missing_virtual_network_service_endpoint, null)
-    #   }
-    # }
-    # dynamic "ip_rule" {
-    #   for_each = var.namespace.ruleset.ip_rules
-    #   content {
-    #     ip_mask = ip_rule.value.ip_mask
-    #     action  = ip_rule.value.action
-    #   }
+    dynamic "virtual_network_rule" {
+      for_each = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
+      content {
+        subnet_id = virtual_network_rule.value.subnet_id
+        ignore_missing_virtual_network_service_endpoint = try(virtual_network_rule.value.ignore_missing_virtual_network_service_endpoint, null)
+      }
+    }
     dynamic "ip_rule" {
       for_each = var.namespace.ruleset.ip_rules
       content {
