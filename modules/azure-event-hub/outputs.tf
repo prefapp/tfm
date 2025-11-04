@@ -4,5 +4,5 @@ output "eventhub_namespace_id" {
 }
 
 output "eventhub_id" {
-  value = azurerm_eventhub.this.id
+  value = { for k, v in azurerm_eventhub.this : k => v.id }
 }
