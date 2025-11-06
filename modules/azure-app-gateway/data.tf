@@ -33,7 +33,7 @@ data "external" "list_cert_files" {
         jq -s 'add' >> $(echo "$directory" | tr / - ).json
     done
 
-    jq -s 'reduce .[] as $item ({}; . * $item)' *.json
+    jq -c -s 'reduce .[] as $item ({}; . * $item)' *.json
 
   EOF
 
