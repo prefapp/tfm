@@ -16,42 +16,34 @@ data "external" "list_cert_files" {
   program = ["bash", "-c", <<EOF
     set -euo pipefail
 
-    # Recibir perfiles como JSON válido
-    profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+    profiles=$(jq -c '.ssl_profiles | fromjson')
 
-    # Inicializar resultado como objeto vacío
-    result="{}"
+    echo "$profiles" | jq -c '.[]' | while read -r item; do
 
-    # Iterar sobre cada perfil
-    echo "$profiles" | jq -c '.[]' | while read -r profile; do
-      name=$(echo "$profile" | jq -r '.name')
-      owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
-      repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
-      dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+      owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
+      repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
+      directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
+      API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
 
-      API_URL="https://api.github.com/repos/$owner/$repo/contents/$dir"
-
-      # Obtener nombres de archivos .pem/.cer
-      certs_json=$(wget -qO- "$API_URL" 2>/dev/null | \
-        jq -r '[ .[] 
-               | select(.name | test("\\.(pem|cer)$"; "i")) 
-               | .name 
-               | {(.): .} 
-             ] | add // {}')
-
-      # Acumular en $result
-      result=$(echo "$result" | jq --arg name "$name" --argjson certs "$certs_json" '.[$name] = $certs')
+      wget -qO- "$API_URL" | \
+        jq -r '.[] 
+          | select(.name | test("\\.(pem|cer)$"; "i")) 
+          | .name' | \
+        jq -R '{(.): .}' | \
+        jq -s 'add' >> $(echo "$directory" | tr / - ).json
     done
 
-    # Salida final: un solo JSON
-    echo "$result"
+    jq -s 'reduce .[] as $item ({}; . * $item)' *.json
+
   EOF
+
   ]
 
   query = {
     ssl_profiles = jsonencode(var.ssl_profiles)
   }
 }
+
 data "external" "cert_content_base64" {
 
   for_each = data.external.list_cert_files.result
@@ -80,7 +72,4 @@ data "external" "cert_content_base64" {
   query = {
     ssl_profiles = jsonencode(var.ssl_profiles)
   }
-
 }
-
-
