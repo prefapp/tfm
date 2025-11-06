@@ -16,9 +16,9 @@ data "external" "list_cert_files" {
   program = ["bash", "-c", <<EOF
     set -euo pipefail
 
-    profiles=$(jq -r '.ssl_profiles')
+    profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
 
-    result=$(echo "$profiles" | jq -n 'reduce inputs as $item ({}; . + $item)')
+    result="{}"
 
     echo "$profiles" | jq -c '.[]' | while read -r profile; do
       name=$(echo "$profile" | jq -r '.name')
@@ -28,16 +28,17 @@ data "external" "list_cert_files" {
 
       API_URL="https://api.github.com/repos/$owner/$repo/contents/$dir"
 
-      certs=$(wget -qO- "$API_URL" 2>/dev/null | \
-        jq -r '.[] | select(.name | test("\\.(pem|cer)$"; "i")) | .name' | \
-        jq -R '{(.): .}' | \
-        jq -s 'add // {}')
+      certs_json=$(wget -qO- "$API_URL" 2>/dev/null | \
+        jq -r '[ .[] 
+               | select(.name | test("\\.(pem|cer)$"; "i")) 
+               | .name 
+               | {(.): .} 
+             ] | add // {}')
 
-      # Acumular en resultado final
-      result=$(echo "$result" | jq --argjson certs "$certs" --arg name "$name" '.[$name] = $certs')
+      result=$(echo "$result" | jq --arg name "$name" --argjson certs "$certs_json" '.[$name] = $certs')
     done
 
-    echo "$result" | jq -c .
+    echo "$result"
   EOF
   ]
 
@@ -46,35 +47,1047 @@ data "external" "list_cert_files" {
   }
 }
 
-
 data "external" "cert_content_base64" {
-
-  for_each = data.external.list_cert_files.result
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
 
   program = ["bash", "-c", <<EOF
-
     set -euo pipefail
 
-    profiles=$(jq -c '.ssl_profiles | fromjson')
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
 
-    echo "$profiles" | jq -c '.[]' | while read -r item; do
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
 
-      owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
-      repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
-      branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
-      directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
-      RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
 
-      CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
-
-      jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
-    done
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
   EOF
   ]
 
   query = {
     ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
   }
 
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
+}
+
+data "external" "cert_content_base64" {
+  for_each = {
+    for profile_name, files in jsondecode(data.external.list_cert_files.result) :
+    for filename, _ in files :
+    "${profile_name}/${filename}" => {
+      profile_name = profile_name
+      filename     = filename
+    }
+  }
+
+  program = ["bash", "-c", <<EOF
+    set -euo pipefail
+
+    profile_name=$(jq -r '.profile_name')
+    filename=$(jq -r '.filename')
+    ssl_profiles=$(jq -c '.ssl_profiles' < /dev/stdin)
+
+    # Buscar el perfil correcto
+    profile=$(echo "$ssl_profiles" | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
+    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
+    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
+    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
+    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+
+    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
+    content_b64=$(wget -qO- "$RAW_URL" 2>/dev/null | base64 -w 0)
+
+    jq -n \
+      --arg content_b64 "$content_b64" \
+      --arg filename "$filename" \
+      --arg profile "$profile_name" \
+      '{content_b64: $content_b64, filename: $filename, profile: $profile}'
+  EOF
+  ]
+
+  query = {
+    ssl_profiles = jsonencode(var.ssl_profiles)
+    profile_name = each.value.profile_name
+    filename     = each.value.filename
+  }
 }
 
