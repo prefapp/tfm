@@ -26,8 +26,11 @@ data "external" "list_cert_files" {
           | select(.name | test("\\.(pem|cer)$"; "i")) 
           | .name' | \
         jq -R '{(.): .}' | \
-        jq -s 'add'
+        jq -s 'add' >> certs.json
     done
+
+    jq -s 'reduce .[] as $item ({}; . * $item)' certs.json
+
   EOF
 
   ]
