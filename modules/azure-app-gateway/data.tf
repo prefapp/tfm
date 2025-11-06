@@ -46,44 +46,35 @@ data "external" "list_cert_files" {
   }
 }
 
+
 data "external" "cert_content_base64" {
-  for_each = {
-    for profile_name, files in data.external.list_cert_files.result :
-    for filename, _ in jsondecode(files) :
-    "$$ {profile_name}/ $${filename}" => {
-      profile_name = profile_name
-      filename     = filename
-    }
-  }
+
+  for_each = data.external.list_cert_files.result
 
   program = ["bash", "-c", <<EOF
+
     set -euo pipefail
 
-    profile_name=$(jq -r '.profile_name')
-    filename=$(jq -r '.filename')
+    profiles=$(jq -c '.ssl_profiles | fromjson')
 
-    # Extraer datos del perfil desde la variable original
-    profile=$(echo '$profiles' | jq -c --arg name "$profile_name" '.[] | select(.name == $name)')
-    owner=$(echo "$profile" | jq -r '.ca_certs_origin.github_owner')
-    repo=$(echo "$profile" | jq -r '.ca_certs_origin.github_repository')
-    branch=$(echo "$profile" | jq -r '.ca_certs_origin.github_branch')
-    dir=$(echo "$profile" | jq -r '.ca_certs_origin.github_directory')
+    echo "$profiles" | jq -c '.[]' | while read -r item; do
 
-    RAW_URL="https://raw.githubusercontent.com/$owner/$repo/$branch/$dir/$filename"
-    CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
+      owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
+      repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
+      branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
+      directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
+      RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
 
-    jq -n \
-      --arg content "$CONTENT_B64" \
-      --arg filename "$filename" \
-      --arg profile "$profile_name" \
-      '{"content_b64": $content, "filename": $filename, "profile": $profile}'
+      CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
+
+      jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
+    done
   EOF
   ]
 
   query = {
-    ssl_profiles   = jsonencode(var.ssl_profiles)
-    profile_name   = each.value.profile_name
-    filename       = each.value.filename
+    ssl_profiles = jsonencode(var.ssl_profiles)
   }
+
 }
 
