@@ -24,7 +24,7 @@ data "external" "list_cert_files" {
       wget -qO- "$API_URL" | \
         jq --arg caDir "$directory" -r '.[]
           | select(.name | test("\\.(pem|cer)$"; "i"))
-          | {(.name): {"url": .download_url, "ca-dir": $caDir}}' | \
+          | {(.name): .download_url}' | \
         jq -s 'add' >> certs.json
 
     done
@@ -49,7 +49,7 @@ data "external" "cert_content_base64" {
 
   program = ["bash", "-c", <<EOF
     set -euo pipefail
-    CONTENT_B64=$(wget -qO- "${each.value.url}" | base64 -w 0)
+    CONTENT_B64=$(wget -qO- "${each.value}" | base64 -w 0)
     jq -n --arg b64 "$CONTENT_B64" '{"content_b64": $b64}'
   EOF
   ]
