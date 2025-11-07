@@ -49,21 +49,8 @@ data "external" "cert_content_base64" {
 
   program = ["bash", "-c", <<EOF
     set -euo pipefail
-    profiles=$(jq -c '.ssl_profiles | fromjson')
-    echo "$profiles" | jq -c '.[]' | while read -r item; do
-      owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
-      repository=$(echo "$item" | jq -r '.ca_certs_origin.github_repository')
-      branch=$(echo "$item" | jq -r '.ca_certs_origin.github_branch')
-      directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
-      RAW_URL="https://raw.githubusercontent.com/$owner/$repository/$branch/$directory/${each.key}"
-      CONTENT_B64=$(wget -qO- "$RAW_URL" | base64 -w 0)
-      jq -n --arg b64 "$CONTENT_B64" --arg caDir "$directory" '{"content_b64": $b64, "ca-dir": $caDir}'
-    done
+    CONTENT_B64=$(wget -qO- "${each.url}" | base64 -w 0)
+    jq -n --arg b64 "$CONTENT_B64" '{"content_b64": $b64}'
   EOF
   ]
-
-  query = {
-    ssl_profiles = jsonencode(var.ssl_profiles)
-  }
-
 }
