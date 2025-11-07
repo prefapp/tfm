@@ -29,7 +29,7 @@ data "external" "list_cert_files" {
 
     done
 
-    jq -s 'reduce .[] as $item ({}; . * $item)' certs.json
+    jq -c -s 'reduce .[] as $item ({}; . * $item)' certs.json
 
   EOF
 
