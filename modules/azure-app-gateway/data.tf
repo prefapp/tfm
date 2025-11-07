@@ -22,11 +22,11 @@ data "external" "list_cert_files" {
       directory=$(echo "$item" | jq -r '.ca_certs_origin.github_directory')
       API_URL="https://api.github.com/repos/$owner/$repository/contents/$directory"
       wget -qO- "$API_URL" | \
-        jq -r '.[] 
-          | select(.name | test("\\.(pem|cer)$"; "i")) 
-          | .name' | \
-        jq -R '{(.): .}' | \
+        jq --arg caDir "$directory" -r '.[]
+          | select(.name | test("\\.(pem|cer)$"; "i"))
+          | {(.name): {url: .download_url, ca-dir: $caDir}}' | \
         jq -s 'add' >> certs.json
+
     done
 
     jq -s 'reduce .[] as $item ({}; . * $item)' certs.json
