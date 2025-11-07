@@ -24,7 +24,7 @@ data "external" "list_cert_files" {
       wget -qO- "$API_URL" | \
         jq --arg caDir "$directory" -r '.[]
           | select(.name | test("\\.(pem|cer)$"; "i"))
-          | {(.name): {url: .download_url, ca-dir: $caDir}}' | \
+          | {(.name): {"url": .download_url, "ca-dir": $caDir}}' | \
         jq -s 'add' >> certs.json
 
     done
