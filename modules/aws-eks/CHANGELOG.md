@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.7](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.6...aws-eks-v1.2.7) (2025-11-11)
+
+
+### Bug Fixes
+
+* **aws-eks:** remove extra depends-on from iam ([c7b1058](https://github.com/prefapp/tfm/commit/c7b105832f30a0bb844339b3d0971ede714eb5ab))
+
 ## [1.2.6](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.5...aws-eks-v1.2.6) (2025-08-25)
 
 
