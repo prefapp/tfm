@@ -66,8 +66,6 @@ resource "aws_iam_role" "ebs_driver_policy" {
     ]
   })
 
-  depends_on = [module.eks]
-
 }
 
 
