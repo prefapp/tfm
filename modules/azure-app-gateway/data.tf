@@ -37,35 +37,26 @@ data "external" "list_cert_files" {
           .[$item.key] = $item.value
         end
       )
-    )| to_entries | map({key: .key, value: (.value | tostring)}) | from_entries' *.json
-
+    ) | {merged: (. | tostring)}' *.json
   EOF
-
   ]
-
   query = {
     ssl_profiles = jsonencode(var.ssl_profiles)
   }
-
 }
 
-
+locals {
+  cert_data = jsondecode(data.external.list_cert_files.result.merged)
+}
 
 data "external" "cert_content_base64" {
-
-  for_each = data.external.list_cert_files.result
-
+  for_each = local.cert_data
+  
   program = ["bash", "-c", <<EOF
     set -euo pipefail
-    
-    CERT_DATA='${each.value}'
-    URL=$(echo "$CERT_DATA" | jq -r '.url')
-    CA_DIR=$(echo "$CERT_DATA" | jq -r '."ca-dir"')
-    
-    CONTENT_B64=$(wget -qO- "$URL" | base64 -w 0)
-    
-    jq -n --arg b64 "$CONTENT_B64" --arg caDir "$CA_DIR" \
-      '{"content_b64": $b64, "ca-dir": $caDir}'
+    CONTENT_B64=$(wget -qO- "${each.value.url}" | base64 -w 0)
+    jq -n --arg b64 "$CONTENT_B64" --arg caDir "${each.value["ca-dir"]}" \
+      '{"content_b64": $b64, "ca_dir": $caDir}'
   EOF
   ]
 }
