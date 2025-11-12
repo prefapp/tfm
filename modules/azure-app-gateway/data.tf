@@ -32,15 +32,19 @@ data "external" "list_cert_files" {
     
     done
     
-    jq -c -s 'reduce .[1:][] as $file (.[0];
-      reduce ($file | to_entries[]) as $item (.;
-        if .[$item.key] then
-          .[$item.key]["caDir"] = .[$item.key]["caDir"] + "," + $item.value["caDir"]
-        else
-          .[$item.key] = $item.value
-        end
-      )
-    ) | to_entries | map({key: .key, value: (.value | tostring)}) | from_entries' $TEMP_DIR/*.json
+    if ls $TEMP_DIR/*.json 1> /dev/null 2>&1; then
+      jq -c -s 'reduce .[1:][] as $file (.[0];
+        reduce ($file | to_entries[]) as $item (.;
+          if .[$item.key] then
+            .[$item.key]["caDir"] = .[$item.key]["caDir"] + "," + $item.value["caDir"]
+          else
+            .[$item.key] = $item.value
+          end
+        )
+      ) | to_entries | map({key: .key, value: (.value | tostring)}) | from_entries' $TEMP_DIR/*.json
+    else
+      echo '{}'
+    fi
 
     rm -rf $TEMP_DIR
   EOF
