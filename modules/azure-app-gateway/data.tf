@@ -29,7 +29,7 @@ data "external" "list_cert_files" {
     
     done
     
-    jq -s 'reduce .[1:][] as $file (.[0];
+    jq -c -s 'reduce .[1:][] as $file (.[0];
       reduce ($file | to_entries[]) as $item (.;
         if .[$item.key] then
           .[$item.key]["ca-dir"] = .[$item.key]["ca-dir"] + "," + $item.value["ca-dir"]
