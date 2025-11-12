@@ -45,8 +45,20 @@ data "external" "list_cert_files" {
   }
 }
 
+output "debug_raw_result" {
+  value = data.external.list_cert_files.result
+}
+
+output "debug_merged_field" {
+  value = data.external.list_cert_files.result.merged
+}
+
 locals {
   cert_data = jsondecode(data.external.list_cert_files.result.merged)
+}
+
+output "debug_cert_data" {
+  value = local.cert_data
 }
 
 data "external" "cert_content_base64" {
