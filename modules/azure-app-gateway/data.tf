@@ -46,7 +46,8 @@ data "external" "list_cert_files" {
 }
 
 data "external" "cert_content_base64" {
-  for_each = local.cert_data
+
+  for_each = data.external.list_cert_files.result
   
   program = ["bash", "-c", <<EOF
 
