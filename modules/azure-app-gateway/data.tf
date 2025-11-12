@@ -24,7 +24,7 @@ data "external" "list_cert_files" {
       wget -qO- "$API_URL" | \
         jq --arg caDir "$directory" -r '.[]
           | select(.name | test("\\.(pem|cer)$"; "i"))
-          | {(.name): {"url": .download_url, "ca-dir": $caDir}}' | \
+          | {(.name): {"url": .download_url, "caDir": $caDir}}' | \
         jq -s 'add' >> /tmp/$(echo $directory | tr / -).json
     
     done
@@ -32,7 +32,7 @@ data "external" "list_cert_files" {
     jq -c -s 'reduce .[1:][] as $file (.[0];
       reduce ($file | to_entries[]) as $item (.;
         if .[$item.key] then
-          .[$item.key]["ca-dir"] = .[$item.key]["ca-dir"] + "," + $item.value["ca-dir"]
+          .[$item.key]["caDir"] = .[$item.key]["caDir"] + "," + $item.value["caDir"]
         else
           .[$item.key] = $item.value
         end
@@ -55,11 +55,10 @@ data "external" "cert_content_base64" {
 
     CERT_DATA='${each.value}'
     URL=$(echo "$CERT_DATA" | jq -r '.url')
-    CA_DIR=$(echo "$CERT_DATA" | jq -r '."ca-dir"')
+
     CONTENT_B64=$(wget -qO- "$URL" | base64 -w 0)
 
-    jq -n --arg b64 "$CONTENT_B64" --arg caDir "$CA_DIR" \
-      '{"content_b64": $b64, "ca-dir": $caDir}'
+    jq -n --arg b64 "$CONTENT_B64" '{"content_b64": $b64}'
   EOF
   ]
 }
