@@ -54,16 +54,22 @@ data "external" "list_cert_files" {
   }
 }
 
+locals {
+  decoded_cert_data = {
+    for certName, certData in data.external.list_cert_files.result :
+    certName => jsondecode(certData)
+  }
+}
+
 data "external" "cert_content_base64" {
 
-  for_each = data.external.list_cert_files.result
+  for_each = local.decoded_cert_data
   
   program = ["bash", "-c", <<EOF
 
     set -euo pipefail
 
-    CERT_DATA='${each.value}'
-    URL=$(echo "$CERT_DATA" | jq -r '.url')
+    URL="${each.value.url}"
 
     CONTENT_B64=$(wget -qO- "$URL" | base64 -w 0)
 
