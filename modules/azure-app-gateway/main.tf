@@ -7,7 +7,7 @@ resource "azurerm_application_gateway" "application_gateway" {
 
   # Max blocks: 1
   identity {
-    type         = var.application_gateway.identity.type  
+    type         = var.application_gateway.identity.type
     identity_ids = [data.azurerm_user_assigned_identity.that.id]
   }
 
@@ -119,13 +119,13 @@ resource "azurerm_application_gateway" "application_gateway" {
   dynamic "request_routing_rule" {
     for_each = local.request_routing_rules
     content {
-      name                        = lookup(request_routing_rule.value, "name", null) 
-      http_listener_name          = lookup(request_routing_rule.value, "http_listener_name", null) 
-      priority                    = lookup(request_routing_rule.value, "priority", null) 
-      redirect_configuration_name = lookup(request_routing_rule.value, "redirect_configuration_name", null) 
-      rule_type                   = lookup(request_routing_rule.value, "rule_type", null) 
-      backend_address_pool_name   = lookup(request_routing_rule.value, "backend_address_pool_name", null) 
-      backend_http_settings_name  = lookup(request_routing_rule.value, "backend_http_settings_name", null) 
+      name                        = lookup(request_routing_rule.value, "name", null)
+      http_listener_name          = lookup(request_routing_rule.value, "http_listener_name", null)
+      priority                    = lookup(request_routing_rule.value, "priority", null)
+      redirect_configuration_name = lookup(request_routing_rule.value, "redirect_configuration_name", null)
+      rule_type                   = lookup(request_routing_rule.value, "rule_type", null)
+      backend_address_pool_name   = lookup(request_routing_rule.value, "backend_address_pool_name", null)
+      backend_http_settings_name  = lookup(request_routing_rule.value, "backend_http_settings_name", null)
       url_path_map_name           = lookup(request_routing_rule.value, "url_path_map_name", null)
     }
   }
@@ -157,16 +157,68 @@ resource "azurerm_application_gateway" "application_gateway" {
     }
   }
 
-dynamic "trusted_client_certificate" {
-  for_each = {
-    for key, value in data.external.cert_content_base64 :
-    key => value.result
+  dynamic "trusted_client_certificate" {
+    for_each = {
+      for key, value in data.external.cert_content_base64 :
+      key => value.result
+    }
+    content {
+      name = trusted_client_certificate.key
+      data = trusted_client_certificate.value.content_b64
+    }
   }
-  content {
-    name = trusted_client_certificate.key
-    data = trusted_client_certificate.value.content_b64
+
+
+  dynamic "rewrite_rule_set" {
+    for_each = var.rewrite_rule_sets
+    content {
+      name = lookup(rewrite_rule_set.value, "name", null)
+
+      dynamic "rewrite_rule" {
+        for_each = rewrite_rule_set.value.rewrite_rules
+        content {
+          name          = lookup(rewrite_rule.value, "name", null)
+          rule_sequence = lookup(rewrite_rule.value, "rule_sequence", null)
+
+          dynamic "condition" {
+            for_each = rewrite_rule.value.conditions
+            content {
+              variable    = lookup(condition.value, "variable", null)
+              pattern     = lookup(condition.value, "pattern", null)
+              ignore_case = lookup(condition.value, "ignore_case", false)
+              negate      = lookup(condition.value, "negate", false)
+            }
+          }
+
+          dynamic "request_header_configuration" {
+            for_each = rewrite_rule.value.request_header_configurations
+            content {
+              header_name  = lookup(request_header_configuration.value, "header_name", null)
+              header_value = lookup(request_header_configuration.value, "header_value", null)
+            }
+          }
+
+          dynamic "response_header_configuration" {
+            for_each = rewrite_rule.value.response_header_configurations
+            content {
+              header_name  = lookup(response_header_configuration.value, "header_name", null)
+              header_value = lookup(response_header_configuration.value, "header_value", null)
+            }
+          }
+
+          dynamic "url" {
+            for_each = rewrite_rule.value.url_rewrite
+            content {
+              path = lookup(url.value, "source_path", null)
+              query_string = lookup(url.value, "query_string", null)
+              components = lookup(url.value, "components", null)
+              reroute = lookup(url.value, "reroute", false)
+            }
+          }
+        }
+      }
+    }
   }
-}
 
   dynamic "ssl_policy" {
     for_each = [var.ssl_policy]
