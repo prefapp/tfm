@@ -37,7 +37,7 @@ data "external" "list_cert_files" {
           .[$item.key] = $item.value
         end
       )
-    )' *.json
+    )| to_entries | map({key: .key, value: (.value | tostring)}) | from_entries' *.json
 
   EOF
 
@@ -57,8 +57,15 @@ data "external" "cert_content_base64" {
 
   program = ["bash", "-c", <<EOF
     set -euo pipefail
-    CONTENT_B64=$(wget -qO- "${each.value.url}" | base64 -w 0)
-    jq -n --arg b64 "$CONTENT_B64" '{"content_b64": $b64}'
+    
+    CERT_DATA='${each.value}'
+    URL=$(echo "$CERT_DATA" | jq -r '.url')
+    CA_DIR=$(echo "$CERT_DATA" | jq -r '."ca-dir"')
+    
+    CONTENT_B64=$(wget -qO- "$URL" | base64 -w 0)
+    
+    jq -n --arg b64 "$CONTENT_B64" --arg caDir "$CA_DIR" \
+      '{"content_b64": $b64, "ca-dir": $caDir}'
   EOF
   ]
 }
