@@ -25,7 +25,7 @@ data "external" "list_cert_files" {
         jq --arg caDir "$directory" -r '.[]
           | select(.name | test("\\.(pem|cer)$"; "i"))
           | {(.name): {"url": .download_url, "ca-dir": $caDir}}' | \
-        jq -s 'add' >> $(echo $directory | tr / -).json
+        jq -s 'add' >> /tmp/$(echo $directory | tr / -).json
     
     done
     
@@ -37,7 +37,7 @@ data "external" "list_cert_files" {
           .[$item.key] = $item.value
         end
       )
-    ) | {merged: (. | tojson)}' *.json
+    ) | to_entries | map({key: .key, value: (.value | tostring)}) | from_entries' /tmp/*.json
   EOF
   ]
   query = {
@@ -45,30 +45,20 @@ data "external" "list_cert_files" {
   }
 }
 
-output "debug_raw_result" {
-  value = data.external.list_cert_files.result
-}
-
-output "debug_merged_field" {
-  value = data.external.list_cert_files.result.merged
-}
-
-locals {
-  cert_data = jsondecode(data.external.list_cert_files.result.merged)
-}
-
-output "debug_cert_data" {
-  value = local.cert_data
-}
-
 data "external" "cert_content_base64" {
   for_each = local.cert_data
   
   program = ["bash", "-c", <<EOF
+
     set -euo pipefail
-    CONTENT_B64=$(wget -qO- "${each.value.url}" | base64 -w 0)
-    jq -n --arg b64 "$CONTENT_B64" --arg caDir "${each.value["ca-dir"]}" \
-      '{"content_b64": $b64, "ca_dir": $caDir}'
+
+    CERT_DATA='${each.value}'
+    URL=$(echo "$CERT_DATA" | jq -r '.url')
+    CA_DIR=$(echo "$CERT_DATA" | jq -r '."ca-dir"')
+    CONTENT_B64=$(wget -qO- "$URL" | base64 -w 0)
+
+    jq -n --arg b64 "$CONTENT_B64" --arg caDir "$CA_DIR" \
+      '{"content_b64": $b64, "ca-dir": $caDir}'
   EOF
   ]
 }
