@@ -37,7 +37,7 @@ data "external" "list_cert_files" {
           .[$item.key] = $item.value
         end
       )
-    ) | {merged: (. | tostring)}' *.json
+    ) | {merged: (. | tojson)}' *.json
   EOF
   ]
   query = {
