@@ -15,6 +15,9 @@ data "azurerm_subnet" "that" {
 data "external" "list_cert_files" {
   program = ["bash", "-c", <<EOF
     set -euo pipefail
+
+    TEMP_DIR=$(mktemp -d)
+
     profiles=$(jq -c '.ssl_profiles | fromjson')
     echo "$profiles" | jq -c '.[]' | while read -r item; do
       owner=$(echo "$item" | jq -r '.ca_certs_origin.github_owner')
@@ -25,7 +28,7 @@ data "external" "list_cert_files" {
         jq --arg caDir "$directory" -r '.[]
           | select(.name | test("\\.(pem|cer)$"; "i"))
           | {(.name): {"url": .download_url, "caDir": $caDir}}' | \
-        jq -s 'add' >> /tmp/$(echo $directory | tr / -).json
+        jq -s 'add' >> $TEMP_DIR/$(echo $directory | tr / -).json
     
     done
     
@@ -37,7 +40,9 @@ data "external" "list_cert_files" {
           .[$item.key] = $item.value
         end
       )
-    ) | to_entries | map({key: .key, value: (.value | tostring)}) | from_entries' /tmp/*.json
+    ) | to_entries | map({key: .key, value: (.value | tostring)}) | from_entries' $TEMP_DIR/*.json
+
+    rm -rf $TEMP_DIR
   EOF
   ]
   query = {
