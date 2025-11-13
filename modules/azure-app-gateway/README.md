@@ -34,6 +34,7 @@
 | <a name="input_user_assigned_identity"></a> [user\_assigned\_identity](#input\_user\_assigned\_identity) | The name of the User Assigned Identity. | `string` | n/a | yes |
 | <a name="input_web_application_firewall_policy"></a> [web\_application\_firewall\_policy](#input\_web\_application\_firewall\_policy) | Configuration for the web application firewall policy | <pre>object({<br/>    name = string<br/>    policy_settings = optional(object({<br/>      enabled                     = optional(bool)<br/>      mode                        = optional(string)<br/>      request_body_check          = optional(bool)<br/>      file_upload_limit_in_mb     = optional(number)<br/>      max_request_body_size_in_kb = optional(number)<br/>      request_body_enforcement    = optional(string)<br/>    }))<br/>    custom_rules = optional(list(object({<br/>      enabled               = optional(bool, true)<br/>      name                  = string<br/>      priority              = number<br/>      rule_type             = string<br/>      action                = string<br/>      rate_limit_duration   = optional(string)<br/>      rate_limit_threshold  = optional(number)<br/>      group_rate_limit_by   = optional(string)<br/>      match_conditions      = list(object({<br/>        operator           = string<br/>        negation_condition = optional(bool, false)<br/>        match_values       = optional(list(string))<br/>        transforms         = optional(list(string))<br/>        match_variables    = list(object({<br/>          variable_name = string<br/>          selector      = optional(string)<br/>        }))<br/>      }))<br/>    })), [])<br/>    managed_rule_set = list(object({<br/>      type                = optional(string)<br/>      version             = string<br/>      rule_group_override = optional(list(object({<br/>        rule_group_name = string<br/>        rule = optional(list(object({<br/>          id      = number<br/>          enabled = optional(bool)<br/>          action  = optional(string)<br/>        })))<br/>      })))<br/>    }))<br/>  })</pre> | n/a | yes |
 | <a name="input_ssl_profiles"></a> [ssl_profiles](#input_ssl_profiles) | Configuration of SSL profiles  | <pre>object({<br/>    name = string<br/>    ca_dir = string<br/>    trusted_client_certificate_names = optional(list(string))<br/>    verify_client_cert_issuer_dn = optional(bool, false)<br/>    verify_client_certificate_revocation = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols = optional(list(string))<br/>      min_protocol_version = optional(string)<br/>      policy_name = optional(string)<br/>      cipher_suites = optional(list(string))<br/>    })<br/>    ca_certs_origin = (object({<br/>      github_owner = string<br/>      github_repository = string<br/>      github_branch = string<br/>      github_directory = string<br/>    })<br/>})</pre> | `[]` | no |
+| <a name="input_rewrite_rule_sets"></a> [rewrite_rule_sets](#input_rewrite_rule_sets) | Configuration of Rewrite Rule Sets  | <pre>list(object({<br/>    name = string<br/>    rewrite_rules = list(object({<br/>      name = string<br/>      rule_sequence = number<br/>      conditions = optional(list(object({<br/>        variable = string<br/>        pattern = string<br/>        ignore_case = optional(bool, false)<br/>        negate = optional(bool, false)<br/>      })), [])<br/>      request_header_configurations = optional(list(object({<br/>        header_name = string<br/>        header_value = string<br/>      })), [])<br/>      response_header_configurations = optional(list(object({<br/>        header_name = string<br/>        header_value = string<br/>      })), [])<br/>      url_rewrite = optional(object({<br/>        source_path = optional(string)<br/>        query_string = optional(string)<br/>        components = optional(string)<br/>        reroute = optional(bool, false)<br/>      }))<br/>    }))<br/>}))</pre> | `[]` | no |
 
 ## Outputs
 
@@ -78,6 +79,34 @@
             github_repository: "gh-repo"
             github_branch: "gh-branch"
             github_directory: "gh-dir"
+
+      # Rewrite Rule Sets
+      rewrite_rule_sets:
+        - name: example-rewrite
+          rewrite_rules:
+            - name: example-rule
+              rule_sequence: 300
+              conditions:
+                - variable: http_request_uri
+                  pattern: '.*\.html$'
+                  ignore_case: true
+                  negate: false
+                - variable: http_request_method
+                  pattern: '^POST$'
+                  ignore_case: true
+                  negate: true
+              request_header_configurations:
+                - header_name: X-Rewrite-Rule
+                  header_value: applied
+              response_header_configurations:
+                - header_name: X-Cache-Control
+                  header_value: max-age=3600
+                - header_name: X-Server
+                  header_value: custom-app
+              url_rewrite:
+                source_path: '^/api/v1/(.*)'
+                components: path_only # Only possible values "path_only" or "query_string_only", if using both leave null
+                reroute: false
 
       # WAF
       web_application_firewall_policy:
@@ -201,8 +230,10 @@
           request_routing_rules:
             http-redirection:
               rule_type: "Basic"
+              rewrite_rule_set_name: example-rewrite
             https:
               rule_type: "Basic"
+              rewrite_rule_set_name: example-rewrite
 
         # Custom blocks configuration
         blocks:
