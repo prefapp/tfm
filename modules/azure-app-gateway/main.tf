@@ -207,7 +207,7 @@ resource "azurerm_application_gateway" "application_gateway" {
           }
 
           dynamic "url" {
-            for_each = rewrite_rule.value.url_rewrite
+            for_each = rewrite_rule.value.url_rewrite != null ? [rewrite_rule.value.url_rewrite] : []
             content {
               path = lookup(url.value, "source_path", null)
               query_string = lookup(url.value, "query_string", null)
