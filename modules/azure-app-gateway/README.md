@@ -82,9 +82,9 @@
 
       # Rewrite Rule Sets
       rewrite_rule_sets:
-        - name: rewrite-complex-set
+        - name: example-rewrite
           rewrite_rules:
-            - name: example-rewrite
+            - name: example-rule
               rule_sequence: 300
               conditions:
                 - variable: http_request_uri
