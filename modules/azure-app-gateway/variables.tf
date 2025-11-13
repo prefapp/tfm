@@ -84,8 +84,6 @@ variable "rewrite_rule_sets" {
   default = []
 }
 
-
-
 variable "web_application_firewall_policy" {
   description = "Configuration for the web application firewall policy"
   type = object({
