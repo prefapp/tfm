@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.7.0...azure-app-gateway-v0.7.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* Solve multiple ssl-profiles definition ([#724](https://github.com/prefapp/tfm/issues/724)) ([c645dba](https://github.com/prefapp/tfm/commit/c645dba19e23ef71de1330047aa275161a360d43))
+
 ## [0.7.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.6.0...azure-app-gateway-v0.7.0) (2025-10-31)
 
 
