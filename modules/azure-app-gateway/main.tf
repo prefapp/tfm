@@ -169,7 +169,6 @@ resource "azurerm_application_gateway" "application_gateway" {
     }
   }
 
-
   dynamic "rewrite_rule_set" {
     for_each = var.rewrite_rule_sets
     content {
