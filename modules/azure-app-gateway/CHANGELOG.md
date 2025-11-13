@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.7.1...azure-app-gateway-v0.8.0) (2025-11-13)
+
+
+### Features
+
+* Add definition of rewrite_rule_sets for Azure App Gateway module ([#728](https://github.com/prefapp/tfm/issues/728)) ([afeaf4c](https://github.com/prefapp/tfm/commit/afeaf4c41bde6c0806e9c4143521f39f008341cb))
+
 ## [0.7.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.7.0...azure-app-gateway-v0.7.1) (2025-11-13)
 
 
