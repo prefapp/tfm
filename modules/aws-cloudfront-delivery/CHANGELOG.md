@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.2...aws-cloudfront-delivery-v0.2.3) (2025-11-17)
+
+
+### Bug Fixes
+
+* **aws-cloudfront-delivery:** bucket S3 delivery encryption ([#737](https://github.com/prefapp/tfm/issues/737)) ([f826b35](https://github.com/prefapp/tfm/commit/f826b357719993d4049733505a419d5b4357eae6))
+
 ## [0.2.2](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.1...aws-cloudfront-delivery-v0.2.2) (2025-11-17)
 
 
