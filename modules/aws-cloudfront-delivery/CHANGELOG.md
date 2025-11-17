@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.0...aws-cloudfront-delivery-v0.2.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* **aws-cloudfront-delivery:** add outputs ([#733](https://github.com/prefapp/tfm/issues/733)) ([554893f](https://github.com/prefapp/tfm/commit/554893fd4abb0345e8019e319111788e7fbf2fc1))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.1.0...aws-cloudfront-delivery-v0.2.0) (2025-11-17)
 
 
