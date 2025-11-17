@@ -52,4 +52,13 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_cloudfront_distribution_arn"></a> [cloudfront\_distribution\_arn](#output\_cloudfront\_distribution\_arn) | The ARN of the CloudFront distribution |
+| <a name="output_cloudfront_distribution_domain_name"></a> [cloudfront\_distribution\_domain\_name](#output\_cloudfront\_distribution\_domain\_name) | The domain name of the CloudFront distribution |
+| <a name="output_cloudfront_distribution_id"></a> [cloudfront\_distribution\_id](#output\_cloudfront\_distribution\_id) | The ID of the CloudFront distribution |
+| <a name="output_iam_gh_delivery_gh_role_arn"></a> [iam\_gh\_delivery\_gh\_role\_arn](#output\_iam\_gh\_delivery\_gh\_role\_arn) | The ARN of the IAM role for GitHub Actions delivery |
+| <a name="output_iam_gh_delivery_gh_role_name"></a> [iam\_gh\_delivery\_gh\_role\_name](#output\_iam\_gh\_delivery\_gh\_role\_name) | The name of the IAM role for GitHub Actions delivery |
+| <a name="output_s3_bucket_delivery_arn"></a> [s3\_bucket\_delivery\_arn](#output\_s3\_bucket\_delivery\_arn) | The ARN of the S3 bucket used for CloudFront delivery |
+| <a name="output_s3_bucket_delivery_domain_name"></a> [s3\_bucket\_delivery\_domain\_name](#output\_s3\_bucket\_delivery\_domain\_name) | The domain name of the S3 bucket used for CloudFront delivery |
+| <a name="output_s3_bucket_delivery_id"></a> [s3\_bucket\_delivery\_id](#output\_s3\_bucket\_delivery\_id) | The ID of the S3 bucket used for CloudFront delivery |
