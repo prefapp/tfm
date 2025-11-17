@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.1...aws-cloudfront-delivery-v0.2.2) (2025-11-17)
+
+
+### Bug Fixes
+
+* **aws-cloudfront-delivery:** move policies bucket S3 definitions ([#735](https://github.com/prefapp/tfm/issues/735)) ([d26822e](https://github.com/prefapp/tfm/commit/d26822ead4d75b445ba8926f4798a03f514ad7c0))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.0...aws-cloudfront-delivery-v0.2.1) (2025-11-17)
 
 
