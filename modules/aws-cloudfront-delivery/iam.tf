@@ -7,7 +7,8 @@ data "aws_iam_policy_document" "gh_delivery_gh_policy" {
       "s3:*"
     ]
     resources = [
-      "arn:aws:s3:::${var.name_prefix}-bucket/*"
+      module.s3-bucket-delivery.s3_bucket_arn,
+      "${module.s3-bucket-delivery.s3_bucket_arn}/*"
     ]
   }
 
