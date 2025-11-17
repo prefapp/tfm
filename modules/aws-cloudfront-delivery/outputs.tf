@@ -37,3 +37,13 @@ output "iam_gh_delivery_gh_role_name" {
   description = "The name of the IAM role for GitHub Actions delivery"
   value       = var.gh_delivery_gh_role_enable ? aws_iam_role.gh_delivery_gh_role[0].name : null
 }
+
+output "cloudfront_origin_access_controls" {
+  description = "The CloudFront Origin Access Controls created"
+  value       = module.cloudfront-delivery.cloudfront_origin_access_controls
+}
+
+output "cloudfront_origin_access_controls_ids" {
+  description = "The IDs of the CloudFront Origin Access Controls created"
+  value       = module.cloudfront-delivery.cloudfront_origin_access_controls_ids
+}

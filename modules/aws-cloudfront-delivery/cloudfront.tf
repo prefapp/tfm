@@ -10,10 +10,21 @@ module "cloudfront-delivery" {
   price_class      = var.price_class
   retain_on_delete = var.retain_on_delete
 
+  create_origin_access_control = true
+  origin_access_control = {
+    s3_oac = {
+      description      = "CloudFront access to S3 bucket delivery ${var.name_prefix}"
+      origin_type      = "s3"
+      signing_behavior = "always"
+      signing_protocol = "sigv4"
+    }
+  }
+
   origin = {
     s3_delivery = {
-      domain_name = module.s3-bucket-delivery.s3_bucket_bucket_regional_domain_name
-      origin_id   = "s3_delivery"
+      domain_name              = module.s3-bucket-delivery.s3_bucket_bucket_regional_domain_name
+      origin_id                = "s3_delivery"
+      origin_access_control = "s3_oac"
     }
   }
 
@@ -32,6 +43,9 @@ module "cloudfront-delivery" {
     response_headers_policy_name = "Managed-SimpleCORS"
 
     function_association = local.function_association
+
+    compress     = true
+    query_string = true
   }
 
   viewer_certificate = length(module.acm) > 0 ? {
@@ -42,7 +56,6 @@ module "cloudfront-delivery" {
     cloudfront_default_certificate = true
     minimum_protocol_version       = "TLSv1"
   }
-
 }
 
 locals {
