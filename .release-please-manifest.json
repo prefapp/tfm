@@ -36,5 +36,5 @@
     "modules/aws-rds": "0.1.1",
     "modules/azure-backup-vault": "0.1.0",
     "modules/azure-event-hub": "0.1.0",
-    "modules/aws-cloudfront-delivery": "0.1.0"
+    "modules/aws-cloudfront-delivery": "0.2.0"
 }
