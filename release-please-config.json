@@ -114,6 +114,9 @@
         },
         "modules/azure-event-hub": {
             "package-name": "azure-event-hub"
+        },
+        "modules/aws-cloudfront-delivery": {
+            "package-name": "aws-cloudfront-delivery"
         }
     }
 }
