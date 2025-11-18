@@ -8,6 +8,10 @@ data "aws_iam_policy_document" "s3_policy" {
       module.s3-bucket-delivery.s3_bucket_arn,
       "${module.s3-bucket-delivery.s3_bucket_arn}/*"
     ]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
     condition {
       test     = "NumericLessThan"
       variable = "s3:TlsVersion"
@@ -24,6 +28,10 @@ data "aws_iam_policy_document" "s3_policy" {
       module.s3-bucket-delivery.s3_bucket_arn,
       "${module.s3-bucket-delivery.s3_bucket_arn}/*"
     ]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
     condition {
       test     = "Bool"
       variable = "aws:SecureTransport"
@@ -60,8 +68,8 @@ module "s3-bucket-delivery" {
 
   bucket = "${var.name_prefix}-delivery"
 
-  attach_policy = true
-  policy        = data.aws_iam_policy_document.s3_policy.json
+  # attach_policy = true # moved to data aws_iam_policy_document
+  # policy        = data.aws_iam_policy_document.s3_policy.json # moved to data aws_iam_policy_document
   # attach_deny_insecure_transport_policy = true # moved to data aws_iam_policy_document
   # attach_require_latest_tls_policy      = true # moved to data aws_iam_policy_document
   versioning = var.bucket_versioning_enabled ? {
