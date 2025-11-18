@@ -62,6 +62,12 @@ variable "custom_response_script" {
   default     = null
 }
 
+variable "bucket_versioning_enabled" {
+  description = "Whether to enable versioning on the S3 bucket used for CloudFront delivery."
+  type        = bool
+  default     = true
+}
+
 variable "gh_delivery_gh_role_enable" {
   description = "Whether to enable the GitHub Actions role for S3 delivery and CloudFront."
   type        = bool
