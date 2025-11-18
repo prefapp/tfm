@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.3...aws-cloudfront-delivery-v0.2.4) (2025-11-18)
+
+
+### Bug Fixes
+
+* **aws-cloudfront-delivery:** add version variable in bucket S3 delivery ([#739](https://github.com/prefapp/tfm/issues/739)) ([6b9be6b](https://github.com/prefapp/tfm/commit/6b9be6bca3209ce4cc322df1275ae2d63d161dc9))
+
 ## [0.2.3](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.2...aws-cloudfront-delivery-v0.2.3) (2025-11-17)
 
 
