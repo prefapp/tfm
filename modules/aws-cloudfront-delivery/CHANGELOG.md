@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.4...aws-cloudfront-delivery-v0.2.5) (2025-11-19)
+
+
+### Bug Fixes
+
+* **aws-cloudfront-delivery:** add support of custom response script content by var ([#741](https://github.com/prefapp/tfm/issues/741)) ([08fc305](https://github.com/prefapp/tfm/commit/08fc305ad91d17000e23dd1d60cd7d13ee33fa2c))
+
 ## [0.2.4](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.3...aws-cloudfront-delivery-v0.2.4) (2025-11-18)
 
 
