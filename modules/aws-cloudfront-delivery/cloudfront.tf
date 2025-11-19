@@ -22,8 +22,8 @@ module "cloudfront-delivery" {
 
   origin = {
     s3_delivery = {
-      domain_name              = module.s3-bucket-delivery.s3_bucket_bucket_regional_domain_name
-      origin_id                = "s3_delivery"
+      domain_name           = module.s3-bucket-delivery.s3_bucket_bucket_regional_domain_name
+      origin_id             = "s3_delivery"
       origin_access_control = "s3_oac"
     }
   }
@@ -69,9 +69,9 @@ locals {
 }
 
 resource "aws_cloudfront_function" "custom_response" {
-  count = var.custom_response_script != null ? 1 : 0
+  count = var.custom_response_script_path != null ? 1 : var.custom_response_script != null ? 1 : 0
 
   name    = "${var.name_prefix}-custom-response"
   runtime = "cloudfront-js-1.0"
-  code    = file(var.custom_response_script)
+  code    = var.custom_response_script_path != null ? file(var.custom_response_script_path) : var.custom_response_script
 }

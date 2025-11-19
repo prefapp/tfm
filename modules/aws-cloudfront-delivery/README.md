@@ -42,7 +42,8 @@
 | <a name="input_bucket_versioning_enabled"></a> [bucket\_versioning\_enabled](#input\_bucket\_versioning\_enabled) | Whether to enable versioning on the S3 bucket used for CloudFront delivery. | `bool` | `true` | no |
 | <a name="input_cdn_aliases"></a> [cdn\_aliases](#input\_cdn\_aliases) | A list of CNAMEs (alternate domain names) to associate with the CloudFront distribution. | `list(string)` | `[]` | no |
 | <a name="input_cdn_comment"></a> [cdn\_comment](#input\_cdn\_comment) | A comment to describe the CloudFront distribution. | `string` | `"CloudFront Distribution for S3 Delivery"` | no |
-| <a name="input_custom_response_script"></a> [custom\_response\_script](#input\_custom\_response\_script) | Path to a custom CloudFront Function script for custom responses. | `string` | `null` | no |
+| <a name="input_custom_response_script"></a> [custom\_response\_script](#input\_custom\_response\_script) | Content of a custom CloudFront Function script for custom responses. | `string` | `null` | no |
+| <a name="input_custom_response_script_path"></a> [custom\_response\_script\_path](#input\_custom\_response\_script\_path) | Path to a custom CloudFront Function script for custom responses. | `string` | `null` | no |
 | <a name="input_gh_delivery_gh_repositories"></a> [gh\_delivery\_gh\_repositories](#input\_gh\_delivery\_gh\_repositories) | A list of GitHub repositories to grant access to the S3 delivery and CloudFront resources. | `list(string)` | `[]` | no |
 | <a name="input_gh_delivery_gh_role_enable"></a> [gh\_delivery\_gh\_role\_enable](#input\_gh\_delivery\_gh\_role\_enable) | Whether to enable the GitHub Actions role for S3 delivery and CloudFront. | `bool` | `false` | no |
 | <a name="input_http_version"></a> [http\_version](#input\_http\_version) | The HTTP version to use for requests to your distribution. | `string` | `"http2and3"` | no |
