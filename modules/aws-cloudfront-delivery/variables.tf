@@ -55,8 +55,15 @@ variable "is_ipv6_enabled" {
   default     = true
 }
 
-variable "custom_response_script" {
+variable "custom_response_script_path" {
   description = "Path to a custom CloudFront Function script for custom responses."
+  type        = string
+  nullable    = true
+  default     = null
+}
+
+variable "custom_response_script" {
+  description = "Content of a custom CloudFront Function script for custom responses."
   type        = string
   nullable    = true
   default     = null
