@@ -3,13 +3,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.1.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.38.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.1.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.38.1 |
 
 ## Modules
 
@@ -19,15 +19,16 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
-| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_advanced_threat_protection.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/advanced_threat_protection) | resource |
 | [azurerm_storage_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_storage_account_network_rules.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules) | resource |
-| [azurerm_storage_container.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container.html) | resource |
-| [azurerm_storage_share.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share.html) | resource |
-| [azurerm_storage_queue.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue.html) | resource |
-| [azurerm_storage_table.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_table.html) | resource |
+| [azurerm_storage_container.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) | resource |
 | [azurerm_storage_management_policy.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy) | resource |
+| [azurerm_storage_queue.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_queue) | resource |
+| [azurerm_storage_share.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share) | resource |
+| [azurerm_storage_table.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_table) | resource |
+| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
 
@@ -43,7 +44,8 @@ No modules.
 | <a name="input_shares"></a> [shares](#input\_shares) | Specifies the storage shares | <pre>list(object({<br/>    name             = string<br/>    access_tier      = optional(string)<br/>    enabled_protocol = optional(string)<br/>    quota            = number<br/>    metadata         = optional(map(string))<br/>    acl = optional(list(object({<br/>      id = string<br/>      access_policy = optional(object({<br/>        permissions = string<br/>        start       = optional(string)<br/>        expiry      = optional(string)<br/>      }))<br/>    })))<br/>  }))</pre> | `null` | no |
 | <a name="input_storage_account"></a> [storage\_account](#input\_storage\_account) | Configuration for the Azure Storage Account | <pre>object({<br/>    name                             = string<br/>    account_tier                     = string<br/>    account_replication_type         = string<br/>    account_kind                     = optional(string, "StorageV2")<br/>    access_tier                      = optional(string, "Hot")<br/>    cross_tenant_replication_enabled = optional(bool, false)<br/>    edge_zone                        = optional(string)<br/>    allow_nested_items_to_be_public  = optional(bool, true)<br/>    https_traffic_only_enabled       = optional(bool, true)<br/>    min_tls_version                  = optional(string, "TLS1_2")<br/>    public_network_access_enabled    = optional(bool, true)<br/>    threat_protection_enabled        = optional(bool, false)<br/>    tags                             = optional(map(string), {})<br/>    identity = optional(object({<br/>      type         = optional(string, "SystemAssigned")<br/>      identity_ids = optional(list(string), [])<br/>    }))<br/>    blob_properties = optional(object({<br/>      versioning_enabled  = optional(bool)<br/>      change_feed_enabled = optional(bool)<br/>      last_access_time_enabled = optional(bool)<br/>      delete_retention_policy = optional(object({<br/>        days = optional(number)<br/>      }))<br/>      container_delete_retention_policy = optional(object({<br/>        days = optional(number)<br/>      }))<br/>      restore_policy = optional(object({<br/>        days = optional(number)<br/>      }))<br/>    }))<br/>  })</pre> | n/a | yes |
 | <a name="input_tables"></a> [tables](#input\_tables) | Specifies the storage tables | <pre>list(object({<br/>    name = string<br/>    acl = optional(object({<br/>      id = string<br/>      access_policy = optional(object({<br/>        permissions = string<br/>        start       = optional(string)<br/>        expiry      = optional(string)<br/>      }))<br/>    }))<br/>  }))</pre> | `null` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | The tags to associate with your resources | `map(string)` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
 
 ## Outputs
 
