@@ -48,14 +48,14 @@ resource "azurerm_eventhub_consumer_group" "this" {
 # Event Hub Authorization Rule (SAS)
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_authorization_rule
 resource "azurerm_eventhub_authorization_rule" "this" {
-  for_each            = var.eventhub
-  name                = each.value.auth_rule_name
+  for_each            = var.eventhub.auth_rules
+  name                = each.value.name
   namespace_name      = azurerm_eventhub_namespace.this.name
   eventhub_name       = azurerm_eventhub.this[each.key].name
   resource_group_name = var.namespace.resource_group_name
-  listen              = each.value.auth_rule.listen
-  send                = each.value.auth_rule.send
-  manage              = each.value.auth_rule.manage
+  listen              = each.value.listen
+  send                = each.value.send
+  manage              = each.value.manage
 }
 
 # System Topic

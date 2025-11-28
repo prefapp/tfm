@@ -8,13 +8,13 @@ variable "eventhub" {
     name                = string
     partition_count     = number
     message_retention   = number
-    auth_rule_name      = string
     consumer_group_name = string
-    auth_rule = object({
+    auth_rules = list(object({
+      name   = string
       listen = bool
       send   = bool
       manage = bool
-    })
+    }))
     event_subscription = object({
       name                 = string
       included_event_types = list(string)
