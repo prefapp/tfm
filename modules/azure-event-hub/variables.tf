@@ -21,7 +21,7 @@ variable "eventhub" {
       retry_ttl            = number
       max_attempts         = number
     })
-    system_topic_name = string
+    system_topic_name = optional(string)
   }))
 }
 
