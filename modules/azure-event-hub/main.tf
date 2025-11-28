@@ -39,13 +39,10 @@ resource "azurerm_eventhub" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_consumer_group
 resource "azurerm_eventhub_consumer_group" "this" {
   for_each = {
-    for eh_key, eh_value in var.eventhub :
-    for cg in eh_value.consumer_group_names :
-    "${eh_key}.${cg}" => {
-      eventhub_key = eh_key
-      name         = cg
-    }
+    for item in local.consumer_groups :
+    item.key => item
   }
+
   name                = each.value.name
   namespace_name      = azurerm_eventhub_namespace.this.name
   eventhub_name       = azurerm_eventhub.this[each.value.eventhub_key].name
@@ -56,23 +53,18 @@ resource "azurerm_eventhub_consumer_group" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_authorization_rule
 resource "azurerm_eventhub_authorization_rule" "this" {
   for_each = {
-    for eh_key, eh_value in var.eventhub :
-    for ar in eh_value.auth_rules :
-    "${eh_key}.${ar.name}" => {
-      eventhub_key = eh_key
-      name         = ar.name
-      listen       = ar.listen
-      send         = ar.send
-      manage       = ar.manage
-    }
+    for item in local.authorization_rules :
+    item.key => item
   }
+
   name                = each.value.name
   namespace_name      = azurerm_eventhub_namespace.this.name
   eventhub_name       = azurerm_eventhub.this[each.value.eventhub_key].name
   resource_group_name = var.namespace.resource_group_name
-  listen              = each.value.listen
-  send                = each.value.send
-  manage              = each.value.manage
+
+  listen = each.value.listen
+  send   = each.value.send
+  manage = each.value.manage
 }
 
 # System Topic
