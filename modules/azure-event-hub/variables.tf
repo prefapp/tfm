@@ -8,7 +8,7 @@ variable "eventhub" {
     name                = string
     partition_count     = number
     message_retention   = number
-    consumer_group_name = string
+    consumer_group_names = list(string)
     auth_rules = list(object({
       name   = string
       listen = bool

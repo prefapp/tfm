@@ -38,8 +38,8 @@ resource "azurerm_eventhub" "this" {
 # Consumer Group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_consumer_group
 resource "azurerm_eventhub_consumer_group" "this" {
-  for_each            = var.eventhub
-  name                = each.value.consumer_group_name
+  for_each            = var.eventhub.consumer_group_names
+  name                = each.value
   namespace_name      = azurerm_eventhub_namespace.this.name
   eventhub_name       = azurerm_eventhub.this[each.key].name
   resource_group_name = var.namespace.resource_group_name
