@@ -61,7 +61,7 @@ resource "azurerm_eventhub_authorization_rule" "this" {
 # System Topic
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventgrid_system_topic
 resource "azurerm_eventgrid_system_topic" "this" {
-  for_each            = var.system_topic
+  for_each = var.system_topic != null ? var.system_topic : {}
   name                = each.value.name
   location            = each.value.location
   resource_group_name = var.namespace.resource_group_name
@@ -76,18 +76,18 @@ resource "azurerm_eventgrid_system_topic" "this" {
 # Event Subscription for Event Hub (System Topic)
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventgrid_system_topic_event_subscription
 resource "azurerm_eventgrid_system_topic_event_subscription" "this" {
-  for_each             = var.eventhub
-  name                 = each.value.event_subscription.name
+  for_each             = var.eventhub.event_subscription != null ? var.eventhub.event_subscription : {}
+  name                 = each.valu.name
   system_topic         = azurerm_eventgrid_system_topic.this[each.value.system_topic_name].name
   resource_group_name  = azurerm_eventgrid_system_topic.this[each.value.system_topic_name].resource_group_name
   eventhub_endpoint_id = azurerm_eventhub.this[each.key].id
-  included_event_types = each.value.event_subscription.included_event_types
+  included_event_types = each.value.included_event_types
   delivery_identity {
     type = "SystemAssigned"
   }
   retry_policy {
-    event_time_to_live    = each.value.event_subscription.retry_ttl
-    max_delivery_attempts = each.value.event_subscription.max_attempts
+    event_time_to_live    = each.value.retry_ttl
+    max_delivery_attempts = each.value.max_attempts
   }
   depends_on = [
     azurerm_eventhub.this,
@@ -97,7 +97,10 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "this" {
 
 # Role Assignment for Event Grid -> Event Hub
 resource "azurerm_role_assignment" "this" {
-  for_each             = var.eventhub
+  for_each = {
+    for k, v in var.eventhub : k => v
+    if contains(keys(v), "system_topic_name")
+  }
   scope                = azurerm_eventhub.this[each.key].id
   role_definition_name = "Azure Event Hubs Data Sender"
   principal_id         = try(azurerm_eventgrid_system_topic.this[each.value.system_topic_name].identity[0].principal_id, null)
