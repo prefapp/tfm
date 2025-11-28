@@ -15,12 +15,12 @@ variable "eventhub" {
       send   = bool
       manage = bool
     }))
-    event_subscription = object({
+    event_subscription = optional(object({
       name                 = string
       included_event_types = list(string)
       retry_ttl            = number
       max_attempts         = number
-    })
+    }))
     system_topic_name = optional(string)
   }))
 }
