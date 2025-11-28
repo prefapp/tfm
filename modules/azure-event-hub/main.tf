@@ -12,7 +12,7 @@ resource "azurerm_eventhub_namespace" "this" {
   sku                  = var.namespace.sku
   capacity             = var.namespace.capacity
   auto_inflate_enabled = var.namespace.auto_inflate_enabled
-  tags                 = var.tags
+  tags                 = local.tags
   identity {
     type = var.namespace.identity_type
   }
@@ -38,20 +38,37 @@ resource "azurerm_eventhub" "this" {
 # Consumer Group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_consumer_group
 resource "azurerm_eventhub_consumer_group" "this" {
-  for_each            = var.eventhub.consumer_group_names
-  name                = each.value
+  for_each = {
+    for eh_key, eh_value in var.eventhub :
+    for cg in eh_value.consumer_group_names :
+    "${eh_key}.${cg}" => {
+      eventhub_key = eh_key
+      name         = cg
+    }
+  }
+  name                = each.value.name
   namespace_name      = azurerm_eventhub_namespace.this.name
-  eventhub_name       = azurerm_eventhub.this[each.key].name
+  eventhub_name       = azurerm_eventhub.this[each.value.eventhub_key].name
   resource_group_name = var.namespace.resource_group_name
 }
 
 # Event Hub Authorization Rule (SAS)
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_authorization_rule
 resource "azurerm_eventhub_authorization_rule" "this" {
-  for_each            = var.eventhub.auth_rules
+  for_each = {
+    for eh_key, eh_value in var.eventhub :
+    for ar in eh_value.auth_rules :
+    "${eh_key}.${ar.name}" => {
+      eventhub_key = eh_key
+      name         = ar.name
+      listen       = ar.listen
+      send         = ar.send
+      manage       = ar.manage
+    }
+  }
   name                = each.value.name
   namespace_name      = azurerm_eventhub_namespace.this.name
-  eventhub_name       = azurerm_eventhub.this[each.key].name
+  eventhub_name       = azurerm_eventhub.this[each.value.eventhub_key].name
   resource_group_name = var.namespace.resource_group_name
   listen              = each.value.listen
   send                = each.value.send
@@ -67,7 +84,7 @@ resource "azurerm_eventgrid_system_topic" "this" {
   resource_group_name = var.namespace.resource_group_name
   source_resource_id  = each.value.source_resource_id
   topic_type          = each.value.topic_type
-  tags                = var.tags
+  tags                = local.tags
   identity {
     type = "SystemAssigned"
   }
