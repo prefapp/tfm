@@ -1,10 +1,9 @@
-# Event Hub Namespace
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace
-locals {
-  virtual_network_rules = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
-  ip_rules              = var.namespace.ruleset.ip_rules != null ? var.namespace.ruleset.ip_rules : []
+data "azurerm_resource_group" "this" {
+  name = var.namespace.resource_group_name
 }
 
+# Event Hub Namespace
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace
 resource "azurerm_eventhub_namespace" "this" {
   name                 = var.namespace.name
   location             = var.namespace.location

@@ -4,6 +4,9 @@ locals {
 }
 
 locals {
+  virtual_network_rules = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
+  ip_rules              = var.namespace.ruleset.ip_rules != null ? var.namespace.ruleset.ip_rules : []
+
   consumer_groups = flatten([
     for eh_key, eh_value in var.eventhub : [
       for cg in try(eh_value.consumer_group_names, []) : {
@@ -13,6 +16,7 @@ locals {
       }
     ]
   ])
+
   authorization_rules = flatten([
     for eh_key, eh_value in var.eventhub : [
       for ar in try(eh_value.auth_rules, []) : {
