@@ -1,3 +1,5 @@
+# Data Source: Resource Group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.namespace.resource_group_name
 }
@@ -108,6 +110,7 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "this" {
 }
 
 # Role Assignment for Event Grid -> Event Hub
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
   for_each = {
     for k, v in var.eventhub : k => v

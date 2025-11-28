@@ -1,4 +1,4 @@
-# Variables
+# VARIABLES SECTION
 variable "tags_from_rg" {
   description = "Use resource group tags as base for module tags"
   type        = bool

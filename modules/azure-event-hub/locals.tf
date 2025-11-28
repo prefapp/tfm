@@ -1,12 +1,12 @@
+# LOCALS SECTION
 locals {
   # Handle tags based on whether to use resource group tags or module-defined tags
   tags = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
-}
-
-locals {
+  # Virtual Network Rules
   virtual_network_rules = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
+  # IP Rules
   ip_rules              = var.namespace.ruleset.ip_rules != null ? var.namespace.ruleset.ip_rules : []
-
+  # Consumer Groups
   consumer_groups = flatten([
     for eh_key, eh_value in var.eventhub : [
       for cg in try(eh_value.consumer_group_names, []) : {
@@ -16,7 +16,7 @@ locals {
       }
     ]
   ])
-
+  # Authorization Rules
   authorization_rules = flatten([
     for eh_key, eh_value in var.eventhub : [
       for ar in try(eh_value.auth_rules, []) : {
