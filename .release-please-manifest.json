@@ -4,7 +4,7 @@
     "modules/azure-resource-group": "1.5.1",
     "modules/azure-oidc": "1.4.1",
     "modules/azure-flexible-server-postgresql": "3.1.2",
-    "modules/aws-eks": "1.2.6",
+    "modules/aws-eks": "1.2.7",
     "modules/aws-parameter-store": "0.4.1",
     "modules/azure-vnet-peering": "1.3.1",
     "modules/azure-aks": "1.9.2",
@@ -13,8 +13,8 @@
     "modules/azure-vnet-and-subnet": "2.1.1",
     "modules/azure-sa-backup": "0.3.1",
     "modules/azuread-group": "1.2.0",
-    "modules/azure-app-gateway": "0.5.1",
-    "modules/azure-sa": "0.3.1",
+    "modules/azure-app-gateway": "0.8.0",
+    "modules/azure-sa": "0.3.2",
     "modules/azure-kv": "1.5.1",
     "modules/azure-mi": "1.3.1",
     "modules/mongodb-atlas-cluster": "0.3.1",
@@ -33,5 +33,8 @@
     "modules/azure-role-assignment": "0.2.0",
     "modules/azure-application": "1.0.0",
     "modules/aws-terraform-backend": "1.0.0",
-    "modules/aws-rds": "0.1.1"
+    "modules/aws-rds": "0.1.1",
+    "modules/azure-backup-vault": "0.1.0",
+    "modules/azure-event-hub": "0.1.1",
+    "modules/aws-cloudfront-delivery": "0.2.5"
 }

@@ -108,6 +108,15 @@
         },
         "modules/aws-rds": {
             "package-name": "aws-rds"
+        },
+        "modules/azure-backup-vault": {
+            "package-name": "azure-backup-vault"
+        },
+        "modules/azure-event-hub": {
+            "package-name": "azure-event-hub"
+        },
+        "modules/aws-cloudfront-delivery": {
+            "package-name": "aws-cloudfront-delivery"
         }
     }
 }

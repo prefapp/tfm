@@ -29,6 +29,61 @@ variable "subnet" {
   type        = any
 }
 
+variable "ssl_profiles" {
+  description = "List of SSL profiles for Application Gateway."
+  type = list(object({
+    name                                     = string
+    trusted_client_certificate_names         = optional(list(string))
+    verify_client_cert_issuer_dn             = optional(bool, false)
+    verify_client_certificate_revocation     = optional(string)
+    ssl_policy = optional(object({
+      disabled_protocols                     = optional(list(string))
+      min_protocol_version                   = optional(string)
+      policy_name                            = optional(string)
+      cipher_suites                          = optional(list(string))
+    }))
+    ca_certs_origin = object({
+      github_owner       = string
+      github_repository  = string
+      github_branch      = string
+      github_directory   = string
+    })
+  }))
+  default = []
+}
+
+variable "rewrite_rule_sets" {
+  description = "List of Rewrite Rule Sets for Application Gateway"
+  type = list(object({
+    name = string
+    rewrite_rules = list(object({
+      name          = string
+      rule_sequence = number
+      conditions = optional(list(object({
+        variable    = string
+        pattern     = string
+        ignore_case = optional(bool, false)
+        negate      = optional(bool, false)
+      })), [])
+      request_header_configurations = optional(list(object({
+        header_name  = string
+        header_value = string
+      })), [])
+      response_header_configurations = optional(list(object({
+        header_name  = string
+        header_value = string
+      })), [])
+      url_rewrite = optional(object({
+        source_path = optional(string)
+        query_string = optional(string)
+        components = optional(string)
+        reroute = optional(bool)
+      }))
+    }))
+  }))
+  default = []
+}
+
 variable "web_application_firewall_policy" {
   description = "Configuration for the web application firewall policy"
   type = object({
@@ -74,4 +129,18 @@ variable "web_application_firewall_policy" {
       })))
     }))
   })
+}
+
+variable "ssl_policy" {
+  description = "Application Gateway configuration"
+  type = object({
+    policy_type          = string
+    policy_name          = optional(string)
+    cipher_suites        = optional(list(string))
+    min_protocol_version = optional(string)
+  })
+  default = {
+    policy_type = "Predefined"
+    policy_name = "AppGwSslPolicy20220101"
+  }
 }

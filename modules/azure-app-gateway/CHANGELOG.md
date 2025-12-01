@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.8.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.7.1...azure-app-gateway-v0.8.0) (2025-11-13)
+
+
+### Features
+
+* Add definition of rewrite_rule_sets for Azure App Gateway module ([#728](https://github.com/prefapp/tfm/issues/728)) ([afeaf4c](https://github.com/prefapp/tfm/commit/afeaf4c41bde6c0806e9c4143521f39f008341cb))
+
+## [0.7.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.7.0...azure-app-gateway-v0.7.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* Solve multiple ssl-profiles definition ([#724](https://github.com/prefapp/tfm/issues/724)) ([c645dba](https://github.com/prefapp/tfm/commit/c645dba19e23ef71de1330047aa275161a360d43))
+
+## [0.7.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.6.0...azure-app-gateway-v0.7.0) (2025-10-31)
+
+
+### Features
+
+* Add trusted client certificate and SSL profile definition ([#712](https://github.com/prefapp/tfm/issues/712)) ([128da94](https://github.com/prefapp/tfm/commit/128da9464ac74c59a441cf0556c709736d9751fb))
+
+## [0.6.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.5.1...azure-app-gateway-v0.6.0) (2025-10-09)
+
+
+### Features
+
+* add ssl policy ([#710](https://github.com/prefapp/tfm/issues/710)) ([f10799c](https://github.com/prefapp/tfm/commit/f10799c09d8911c9140322ad1da746aba257acb2))
+
 ## [0.5.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.5.0...azure-app-gateway-v0.5.1) (2025-04-24)
 
 

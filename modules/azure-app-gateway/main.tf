@@ -7,7 +7,7 @@ resource "azurerm_application_gateway" "application_gateway" {
 
   # Max blocks: 1
   identity {
-    type         = var.application_gateway.identity.type  
+    type         = var.application_gateway.identity.type
     identity_ids = [data.azurerm_user_assigned_identity.that.id]
   }
 
@@ -80,6 +80,7 @@ resource "azurerm_application_gateway" "application_gateway" {
       protocol                       = lookup(http_listener.value ,"protocol", null)
       require_sni                    = lookup(http_listener.value ,"require_sni", null)
       ssl_certificate_name           = lookup(http_listener.value ,"ssl_certificate_name", null)
+      ssl_profile_name               = lookup(http_listener.value ,"ssl_profile", null)
     }
   }
 
@@ -118,14 +119,15 @@ resource "azurerm_application_gateway" "application_gateway" {
   dynamic "request_routing_rule" {
     for_each = local.request_routing_rules
     content {
-      name                        = lookup(request_routing_rule.value, "name", null) 
-      http_listener_name          = lookup(request_routing_rule.value, "http_listener_name", null) 
-      priority                    = lookup(request_routing_rule.value, "priority", null) 
-      redirect_configuration_name = lookup(request_routing_rule.value, "redirect_configuration_name", null) 
-      rule_type                   = lookup(request_routing_rule.value, "rule_type", null) 
-      backend_address_pool_name   = lookup(request_routing_rule.value, "backend_address_pool_name", null) 
-      backend_http_settings_name  = lookup(request_routing_rule.value, "backend_http_settings_name", null) 
+      name                        = lookup(request_routing_rule.value, "name", null)
+      http_listener_name          = lookup(request_routing_rule.value, "http_listener_name", null)
+      priority                    = lookup(request_routing_rule.value, "priority", null)
+      redirect_configuration_name = lookup(request_routing_rule.value, "redirect_configuration_name", null)
+      rule_type                   = lookup(request_routing_rule.value, "rule_type", null)
+      backend_address_pool_name   = lookup(request_routing_rule.value, "backend_address_pool_name", null)
+      backend_http_settings_name  = lookup(request_routing_rule.value, "backend_http_settings_name", null)
       url_path_map_name           = lookup(request_routing_rule.value, "url_path_map_name", null)
+      rewrite_rule_set_name       = lookup(request_routing_rule.value, "rewrite_rule_set_name", null)
     }
   }
 
@@ -134,6 +136,98 @@ resource "azurerm_application_gateway" "application_gateway" {
     content {
       name               = lookup(ssl_certificate.value, "name", null)
       key_vault_secret_id = lookup(ssl_certificate.value, "key_vault_secret_id", null)
+    }
+  }
+
+  dynamic "ssl_profile" {
+    for_each = local.ssl_profiles
+    content {
+      name                                 = lookup(ssl_profile.value, "name", null)
+      trusted_client_certificate_names     = [for certName, certData in local.decoded_cert_data : certName if strcontains(certData.caDir, ssl_profile.value.ca_certs_origin.github_directory)]
+      verify_client_cert_issuer_dn         = lookup(ssl_profile.value, "verify_client_cert_issuer_dn", false)
+      verify_client_certificate_revocation = lookup(ssl_profile.value, "verify_client_certificate_revocation", null)
+      dynamic "ssl_policy" {
+        for_each = lookup(ssl_profile.value, "ssl_policy", null) == null ? [] : [ssl_profile.value.ssl_policy]
+        content {
+          disabled_protocols   = lookup(ssl_policy.value, "disabled_protocols", null)
+          min_protocol_version = lookup(ssl_policy.value, "min_protocol_version", null)
+          policy_name          = lookup(ssl_policy.value, "policy_name", null)
+          cipher_suites        = lookup(ssl_policy.value, "cipher_suites", null)
+        }
+      }
+    }
+  }
+
+  dynamic "trusted_client_certificate" {
+    for_each = {
+      for key, value in data.external.cert_content_base64 :
+      key => value.result
+    }
+    content {
+      name = trusted_client_certificate.key
+      data = trusted_client_certificate.value.content_b64
+    }
+  }
+
+  dynamic "rewrite_rule_set" {
+    for_each = var.rewrite_rule_sets
+    content {
+      name = lookup(rewrite_rule_set.value, "name", null)
+
+      dynamic "rewrite_rule" {
+        for_each = rewrite_rule_set.value.rewrite_rules
+        content {
+          name          = lookup(rewrite_rule.value, "name", null)
+          rule_sequence = lookup(rewrite_rule.value, "rule_sequence", null)
+
+          dynamic "condition" {
+            for_each = rewrite_rule.value.conditions
+            content {
+              variable    = lookup(condition.value, "variable", null)
+              pattern     = lookup(condition.value, "pattern", null)
+              ignore_case = lookup(condition.value, "ignore_case", false)
+              negate      = lookup(condition.value, "negate", false)
+            }
+          }
+
+          dynamic "request_header_configuration" {
+            for_each = rewrite_rule.value.request_header_configurations
+            content {
+              header_name  = lookup(request_header_configuration.value, "header_name", null)
+              header_value = lookup(request_header_configuration.value, "header_value", null)
+            }
+          }
+
+          dynamic "response_header_configuration" {
+            for_each = rewrite_rule.value.response_header_configurations
+            content {
+              header_name  = lookup(response_header_configuration.value, "header_name", null)
+              header_value = lookup(response_header_configuration.value, "header_value", null)
+            }
+          }
+
+          dynamic "url" {
+            for_each = rewrite_rule.value.url_rewrite != null ? [rewrite_rule.value.url_rewrite] : []
+            content {
+              path = lookup(url.value, "source_path", null)
+              query_string = lookup(url.value, "query_string", null)
+              components = lookup(url.value, "components", null)
+              reroute = lookup(url.value, "reroute", false)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  dynamic "ssl_policy" {
+    for_each = [var.ssl_policy]
+    content {
+      policy_type = ssl_policy.value.policy_type
+      policy_name = ssl_policy.value.policy_name
+      # Only include these if they are set and type is Custom
+      cipher_suites        = ssl_policy.value.cipher_suites
+      min_protocol_version = ssl_policy.value.min_protocol_version
     }
   }
 

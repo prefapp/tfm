@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.1...azure-sa-v0.3.2) (2025-11-26)
+
+
+### Bug Fixes
+
+* add tags_from_rg value ([#744](https://github.com/prefapp/tfm/issues/744)) ([341b961](https://github.com/prefapp/tfm/commit/341b96109f5a66b55b8dedcb29b082d9700eacf0))
+
 ## [0.3.1](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.0...azure-sa-v0.3.1) (2025-08-08)
 
 
