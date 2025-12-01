@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "tfstate" {
+resource "aws_s3_bucket" "this" {
   bucket        = var.tfstate_bucket_name
   force_destroy = var.tfstate_force_destroy
 
@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "tfstate" {
 }
 
 resource "aws_s3_bucket_versioning" "this" {
-  bucket = aws_s3_bucket.tfstate.id
+  bucket = aws_s3_bucket.this.id
 
   versioning_configuration {
     status = var.tfstate_enable_versioning ? "Enabled" : "Disabled"
@@ -14,7 +14,7 @@ resource "aws_s3_bucket_versioning" "this" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  bucket = aws_s3_bucket.tfstate.id
+  bucket = aws_s3_bucket.this.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {
-  bucket = aws_s3_bucket.tfstate.id
+  bucket = aws_s3_bucket.this.id
 
   block_public_acls       = true
   block_public_policy     = true

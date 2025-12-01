@@ -4,7 +4,7 @@ locals {
       sid       = "S3BucketAccess"
       effect    = "Allow"
       actions   = ["s3:ListBucket", "s3:GetBucketVersioning"]
-      resources = [aws_s3_bucket.tfstate.arn]
+      resources = [aws_s3_bucket.this.arn]
       condition = {
         test     = "StringEquals"
         variable = "s3:prefix"
@@ -15,13 +15,13 @@ locals {
       sid       = "S3BucketObjectAccess"
       effect    = "Allow"
       actions   = ["s3:GetObject", "s3:PutObject"]
-      resources = ["${aws_s3_bucket.tfstate.arn}/*"]
+      resources = ["${aws_s3_bucket.this.arn}/*"]
     },
     {
       sid       = "S3ObjectAccess"
       effect    = "Allow"
       actions   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
-      resources = ["${aws_s3_bucket.tfstate.arn}/${var.tfstate_object_prefix}.tflock"]
+      resources = ["${aws_s3_bucket.this.arn}/${var.tfstate_object_prefix}.tflock"]
     }
   ]
 

@@ -1,11 +1,11 @@
 output "tfstate_bucket_arn" {
   description = "ARN of the Terraform State S3 bucket"
-  value       = aws_s3_bucket.tfstate.arn
+  value       = aws_s3_bucket.this.arn
 }
 
 output "tfstate_bucket_name" {
   description = "Name of the Terraform State S3 bucket"
-  value       = aws_s3_bucket.tfstate.id
+  value       = aws_s3_bucket.this.id
 }
 
 output "dynamodb_locks_table_arn" {
