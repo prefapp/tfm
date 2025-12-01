@@ -1,5 +1,6 @@
 locals {
-  base_policies = [
+  # Base S3 policies for backend access
+  s3_base_policies = [
     {
       sid       = "S3BucketAccess"
       effect    = "Allow"
@@ -12,20 +13,15 @@ locals {
       }
     },
     {
-      sid       = "S3BucketObjectAccess"
-      effect    = "Allow"
-      actions   = ["s3:GetObject", "s3:PutObject"]
-      resources = ["${aws_s3_bucket.this.arn}/*"]
-    },
-    {
-      sid       = "S3ObjectAccess"
+      sid       = "S3ObjectReadWrite"
       effect    = "Allow"
       actions   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
-      resources = ["${aws_s3_bucket.this.arn}/${var.tfstate_object_prefix}.tflock"]
+      resources = ["${aws_s3_bucket.this.arn}/${var.tfstate_object_prefix}/*"]
     }
   ]
 
-  dynamodb_policy = var.locks_table_name != null && var.locks_table_name != "" ? [
+  # DynamoDB policy (only if table exists)
+  dynamodb_policies = var.locks_table_name != null && var.locks_table_name != "" ? [
     {
       sid       = "DynamoDBLockTableAccess"
       effect    = "Allow"
@@ -34,68 +30,98 @@ locals {
     }
   ] : []
 
-  assume_role_policy = [
-    for r in(
-      var.main_role.cloudformation_external_account_role == null ? [] : [var.aux_role.cloudformation_external_account_role]
-      ) : {
-      sid       = "AssumeRoleAccess"
-      effect    = "Allow"
-      actions   = ["sts:AssumeRole"]
-      resources = ["arn:aws:iam::${var.aws_client_account_id}:role/${var.main_role.cloudformation_external_account_role}"]
-    }
-  ]
-
-  assume_role_policy_aux = [
-    for r in(
-      var.aux_role.cloudformation_external_account_role == null ? [] : [var.aux_role.cloudformation_external_account_role]
-      ) : {
-      sid       = "AssumeRoleAccess"
-      effect    = "Allow"
-      actions   = ["sts:AssumeRole"]
-      resources = ["arn:aws:iam::${var.aws_client_account_id}:role/${var.aux_role.cloudformation_external_account_role}"]
-    }
-  ]
-}
-
-module "main_oidc_role" {
-  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version     = "5.60.0"
-  create_role = true
-  role_name   = var.main_role.name
-  inline_policy_statements = concat(
-    local.base_policies,
-    local.dynamodb_policy,
-    local.assume_role_policy
-  )
-  provider_urls = try(tolist(var.main_role.oidc_trust_policies.provider_urls), [])
-  provider_trust_policy_conditions = length(try(var.main_role.oidc_trust_policies.provider_urls, [])) > 0 ? [
+  # AssumeRole policy for admin role
+  admin_assume_role_policy = var.roles.admin.external_role_name != null && var.roles.admin.external_role_name != "" ? [
     {
-      test     = "StringEquals"
-      variable = "${var.main_role.oidc_trust_policies.provider_urls[0]}:aud"
-      values   = try(tolist(var.main_role.oidc_trust_policies.oidc_audiences), [])
+      sid       = "AssumeExternalAdminRole"
+      effect    = "Allow"
+      actions   = ["sts:AssumeRole"]
+      resources = ["arn:aws:iam::${var.aws_client_account_id}:role/${var.roles.admin.external_role_name}"]
     }
   ] : []
-  oidc_fully_qualified_subjects = try(tolist(var.main_role.oidc_trust_policies.fully_qualified_subjects), [])
-  oidc_subjects_with_wildcards  = try(tolist(var.main_role.oidc_trust_policies.subjects_with_wildcards), [])
+
+  # AssumeRole policy for readwrite role
+  readwrite_assume_role_policy = var.roles.readwrite != null && var.roles.readwrite.external_role_name != null && var.roles.readwrite.external_role_name != "" ? [
+    {
+      sid       = "AssumeExternalReadWriteRole"
+      effect    = "Allow"
+      actions   = ["sts:AssumeRole"]
+      resources = ["arn:aws:iam::${var.aws_client_account_id}:role/${var.roles.readwrite.external_role_name}"]
+    }
+  ] : []
+
+  # Combined policies for each role
+  admin_policies     = concat(local.s3_base_policies, local.dynamodb_policies, local.admin_assume_role_policy)
+  readwrite_policies = concat(local.s3_base_policies, local.dynamodb_policies, local.readwrite_assume_role_policy)
+
+  # Determine if OIDC is configured
+  oidc_enabled = var.oidc_provider_url != null && var.oidc_provider_url != ""
+
+  # Extract provider URL without https://
+  oidc_provider = local.oidc_enabled ? replace(var.oidc_provider_url, "https://", "") : ""
+
+  # OIDC subjects for admin role
+  admin_oidc_subjects = try(var.oidc_subjects["admin"], { exact = [], wildcard = [] })
+
+  # OIDC subjects for readwrite role
+  readwrite_oidc_subjects = try(var.oidc_subjects["readwrite"], { exact = [], wildcard = [] })
 }
 
-module "aux_oidc_role" {
-  count       = var.create_aux_role ? 1 : 0
-  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version     = "5.60.0"
+#
+# Admin Role
+#
+module "admin_oidc_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version = "5.60.0"
+
   create_role = true
-  role_name   = var.aux_role.name
-  inline_policy_statements = concat(
-    local.base_policies,
-    local.dynamodb_policy,
-    local.assume_role_policy_aux
-  )
-  provider_urls                 = try(tolist(var.aux_role.oidc_trust_policies.provider_urls), [])
-  oidc_fully_qualified_subjects = try(tolist(var.aux_role.oidc_trust_policies.fully_qualified_subjects), [])
-  provider_trust_policy_conditions = [{
-    test     = "StringEquals"
-    variable = "${try(var.aux_role.oidc_trust_policies.provider_urls[0], "")}:aud"
-    values   = try(tolist(var.aux_role.oidc_trust_policies.oidc_audiences), [])
-  }]
-  oidc_subjects_with_wildcards = try(tolist(var.aux_role.oidc_trust_policies.subjects_with_wildcards), [])
+  role_name   = var.roles.admin.name
+
+  # Inline policies for S3, DynamoDB, and AssumeRole
+  inline_policy_statements = local.admin_policies
+
+  # OIDC configuration
+  provider_urls                 = local.oidc_enabled ? [var.oidc_provider_url] : []
+  oidc_fully_qualified_subjects = local.admin_oidc_subjects.exact
+  oidc_subjects_with_wildcards  = local.admin_oidc_subjects.wildcard
+
+  provider_trust_policy_conditions = local.oidc_enabled ? [
+    {
+      test     = "StringEquals"
+      variable = "${local.oidc_provider}:aud"
+      values   = var.oidc_audiences
+    }
+  ] : []
+
+  tags = var.tags
+}
+
+#
+# ReadWrite Role (optional)
+#
+module "readwrite_oidc_role" {
+  count   = var.roles.readwrite != null ? 1 : 0
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version = "5.60.0"
+
+  create_role = true
+  role_name   = var.roles.readwrite.name
+
+  # Inline policies for S3, DynamoDB, and AssumeRole
+  inline_policy_statements = local.readwrite_policies
+
+  # OIDC configuration
+  provider_urls                 = local.oidc_enabled ? [var.oidc_provider_url] : []
+  oidc_fully_qualified_subjects = local.readwrite_oidc_subjects.exact
+  oidc_subjects_with_wildcards  = local.readwrite_oidc_subjects.wildcard
+
+  provider_trust_policy_conditions = local.oidc_enabled ? [
+    {
+      test     = "StringEquals"
+      variable = "${local.oidc_provider}:aud"
+      values   = var.oidc_audiences
+    }
+  ] : []
+
+  tags = var.tags
 }

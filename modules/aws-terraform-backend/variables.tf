@@ -33,83 +33,98 @@ variable "tfstate_enable_versioning" {
 }
 
 variable "aws_client_account_id" {
-  description = "AWS client account ID"
+  description = "AWS client account ID where the CloudFormation roles will be created"
   type        = string
 }
 
-variable "create_aux_role" {
-  description = "Decide whether to generate a specific auxiliary role to the backend"
-  type        = bool
-  default     = false
-}
-
-variable "external_main_role" {
-  description = "Role name to assume by the main role, in the client account"
-  type        = string
-}
-
-variable "external_aux_role" {
-  description = "Role name available to be assumed by the auxiliary role, in the client account"
-  type        = string
-  default     = ""
-}
-
-variable "generate_cloudformation_role_for_external_account" {
-  description = "Decide whether to generate a cloudformation stack with a iam role to access the account with administrative privileges"
+# Simplified CloudFormation configuration
+variable "generate_cloudformation_roles" {
+  description = "Generate CloudFormation template with IAM roles for external account access"
   type        = bool
   default     = true
 }
 
-variable "upload_cloudformation_role" {
-  description = "Decide whether to upload to S3 the cloudformation stack"
+variable "upload_cloudformation_template" {
+  description = "Upload the CloudFormation template to S3"
   type        = bool
   default     = true
 }
 
-variable "s3_bucket_cloudformation_role" {
-  description = "Name of the S3 bucket where the cloudformation template will be uploaded"
+variable "cloudformation_s3_bucket" {
+  description = "S3 bucket where the CloudFormation template will be uploaded"
   type        = string
   default     = ""
 }
 
-variable "s3_bucket_cloudformation_role_key" {
+variable "cloudformation_s3_key" {
+  description = "S3 key for the CloudFormation template"
   type        = string
-  default     = "cloudformation/rendered-template.yaml"
-  description = "Key to use when uploading the template to S3"
+  default     = "cloudformation/terraform-backend-roles.yaml"
 }
 
-variable "main_role" {
-  description = "Main role configuration"
+# Simplified roles configuration
+variable "roles" {
+  description = <<-EOT
+    Configuration for IAM roles in the backend account.
+    Each role can assume a corresponding role in the client account via CloudFormation.
+
+    Structure:
+    - admin: Full admin access role (required)
+      - name: Role name in backend account
+      - external_role_name: Role name to create in client account via CloudFormation
+      - aws_account_id: Backend account ID (defaults to current account)
+    - readwrite: Read-write S3 access role (optional)
+      - name: Role name in backend account
+      - external_role_name: Role name to create in client account via CloudFormation
+      - aws_account_id: Backend account ID (defaults to current account)
+  EOT
+
   type = object({
-    name                                 = string
-    aws_account_id                       = optional(string)
-    cloudformation_external_account_role = optional(string)
-    oidc_trust_policies = optional(
-      object({
-        provider_urls             = list(string)
-        oidc_audiences            = list(string)
-        fully_qualified_subjects  = list(string)
-        subjects_with_wildcards   = list(string)
-        fully_qualified_audiences = list(string)
-      })
-    )
+    admin = object({
+      name               = string
+      external_role_name = string
+      aws_account_id     = optional(string)
+    })
+    readwrite = optional(object({
+      name               = string
+      external_role_name = string
+      aws_account_id     = optional(string)
+    }))
   })
 }
 
-variable "aux_role" {
-  description = "Auxiliary role configuration"
-  type = object({
-    name                                 = string
-    aws_account_id                       = optional(string)
-    cloudformation_external_account_role = optional(string)
-    oidc_trust_policies = optional(
-      object({
-        provider_urls             = list(string)
-        oidc_audiences            = list(string)
-        fully_qualified_subjects  = list(string)
-        subjects_with_wildcards   = list(string)
-        fully_qualified_audiences = list(string)
-      })
-    )
-  })
+# Simplified OIDC configuration - applies to all roles
+variable "oidc_provider_url" {
+  description = "OIDC provider URL (e.g., token.actions.githubusercontent.com). If not provided, roles won't have OIDC trust"
+  type        = string
+  default     = ""
+}
+
+variable "oidc_audiences" {
+  description = "List of allowed OIDC audiences (e.g., ['sts.amazonaws.com'])"
+  type        = list(string)
+  default     = ["sts.amazonaws.com"]
+}
+
+variable "oidc_subjects" {
+  description = <<-EOT
+    Map of OIDC subjects for each role. Supports both exact matches and wildcards.
+    Example:
+    {
+      admin = {
+        exact    = ["repo:myorg/myrepo:ref:refs/heads/main"]
+        wildcard = ["repo:myorg/myrepo:*"]
+      }
+      readwrite = {
+        exact    = ["repo:myorg/myrepo:ref:refs/heads/develop"]
+        wildcard = ["repo:myorg/*:pull_request"]
+      }
+    }
+  EOT
+
+  type = map(object({
+    exact    = optional(list(string), [])
+    wildcard = optional(list(string), [])
+  }))
+  default = {}
 }
