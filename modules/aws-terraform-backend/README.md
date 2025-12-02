@@ -36,7 +36,7 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_client_account_id"></a> [aws\_client\_account\_id](#input\_aws\_client\_account\_id) | AWS client account ID where the CloudFormation roles will be created | `string` | n/a | yes |
-| <a name="input_cloudformation_s3_bucket"></a> [cloudformation\_s3\_bucket](#input\_cloudformation\_s3\_bucket) | S3 bucket where the CloudFormation template will be uploaded | `string` | `""` | no |
+| <a name="input_cloudformation_s3_bucket"></a> [cloudformation\_s3\_bucket](#input\_cloudformation\_s3\_bucket) | S3 bucket where the CloudFormation template will be uploaded. Prerequisites: The bucket must exist , AWS credentials configured in the terminal (aws configure or temporary credentials), and IAM permissions: s3:PutObject on the target bucket. | `string` | `""` | no |
 | <a name="input_cloudformation_s3_key"></a> [cloudformation\_s3\_key](#input\_cloudformation\_s3\_key) | S3 key for the CloudFormation template | `string` | `"cloudformation/terraform-backend-roles.yaml"` | no |
 | <a name="input_generate_cloudformation_roles"></a> [generate\_cloudformation\_roles](#input\_generate\_cloudformation\_roles) | Generate CloudFormation template with IAM roles for external account access | `bool` | `true` | no |
 | <a name="input_locks_table_name"></a> [locks\_table\_name](#input\_locks\_table\_name) | Name of the locks DynamoDB table | `string` | `null` | no |
