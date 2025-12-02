@@ -1,0 +1,87 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: karpenter-on-demand-default
+spec:
+  template:
+    metadata:
+      labels:
+        billing-team: platform
+        type: runners
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values:
+          - m6a.large
+          - m6a.xlarge
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["m"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["5"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: karpenter-on-demand-default
+      expireAfter: 1m # 7 * 24h = 168h
+  limits:
+    cpu: 40
+    memory: "160Gi"
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 5m
+  weight: 10
+
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: karpenter-on-demand-default
+spec:
+  amiFamily: AL2023 # Amazon Linux 2023
+  role: "Karpenter-kubernetes-my-org-dev"
+  subnetSelectorTerms:
+    - tags:
+        Name: "*private*"
+        kubernetes.io/role/internal-elb: "1"
+  securityGroupSelectorTerms:
+    - tags:
+        Name: "kubernetes-my-org-dev-node"
+  amiSelectorTerms:
+  - name: "amazon-eks-node-al2023-x86_64-standard-1.33-*" # Amis for eks 1.33 with al2023 amis
+  # Tags que se aplicarán a todas las instancias EC2 y volúmenes creadas por Karpenter
+  # Útiles para cost tracking, organización y compliance en AWS
+  tags:
+    # Tags para identificar el proyecto/cluster
+    Project: "kubernetes-cluster"
+    Cluster: "kubernetes-my-org-dev"
+    ManagedBy: "karpenter"
+    # Tags para cost tracking (según tu configuración actual)
+    billing-team: "platform"
+    # Tags para organización
+    GithubRepo: "infra"
+    GithubOrg: "prefapp"
+    Environment: "dev-worker"
+    # Tags operacionales
+    Backup: "enabled"
+    Monitoring: "enabled"
+  blockDeviceMappings:
+  - deviceName: /dev/xvda
+    ebs:
+      volumeSize: 100Gi
+      volumeType: gp3
+      encrypted: true
+#   - id: "${GPU_AMI_ID}" # <- GPU Optimized AMD AMI 
+#   - name: "amazon-eks-node-${K8S_VERSION}-*" # <- automatically upgrade when a new AL2 EKS Optimized AMI is released. This is unsafe for production workloads. Validate AMIs in lower environments before deploying them to production.
+

@@ -1,11 +1,11 @@
 # Eks module subnets
-subnet_ids: ["subnet-xxxxxxx", "subnet-xxxxxxx", "subnet-xxxxxxx"]
+subnet_ids: ["subnet-xxxxxxxxxxx", "subnet-xxxxxxxxxxx", "subnet-xxxxxxxxxxx"]
 
 # Eks cluster config
 cluster_endpoint_private_access: true
 cluster_endpoint_public_access: true
-cluster_security_group_id: sg-xxxxxxx
-cluster_iam_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/eks-xxxxxxx-cluster-xxxxxxx"
+cluster_security_group_id: sg-xxxxxxxxxxx
+cluster_iam_role_arn: "arn:aws:iam::xxxxxxxxxxx:role/kubernetes-my-org-dev-cluster-xxxxxxxxxxx"
 create_cluster_iam_role: true
 create_kms_key: true
 cluster_encryption_config: {}
@@ -19,7 +19,7 @@ create_external_dns_iam: true
 create_parameter_store_iam: true
 
 # Security Group Ids
-security_groups_ids: ["sg-xxxxxxx", "sg-xxxxxxx"]
+security_groups_ids: ["sg-xxxxxxxxxxx", "sg-xxxxxxxxxxx"]
 
 # EKS Cluster addons
 cluster_addons:
@@ -106,26 +106,28 @@ node_groups:
     # iam_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/worker-eks-node-group-XXXXXXXXXXXXXXXXXXXXXXXX"
     labels:
       GithubRepo: "infra"
-      GithubOrg: "xxxxxxx"
+      GithubOrg: "prefapp"
       Environment: "dev-worker"
+      # environment: NO se pone aquí - los nodos del node group inicial son "comunes"
+      # Solo los nodos creados por Karpenter tendrán labels de entorno (dev/pre)
 
 # EKS Cluster Tags
 tags:
-  project: "xxxxxxx"
+  project: "prefapp"
   env: "dev"
 
 # Vpc config
 vpc_config: {}
 
 # Eks Cluster VPC Id
-vpc_id: "vpc-xxxxxx"
+vpc_id: "vpc-xxxxxxxxxxx"
 
 # Region
 region: eu-west-1
 
 # Vpc config
 cluster_name: kubernetes-my-org-dev
-cluster_version: 1.32
+cluster_version: 1.33
 
 # EKS IAM Role Arn
 # iam_role_arn: arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-dev-cluster-XXXXXXXXXXXXXXXXXXXXXXXX
@@ -136,10 +138,10 @@ create_cluster_security_group: true
 access_entries:
   # Acceso de administrador para tu usuario SSO
   adminAccess:
-    principal_arn: "arn:aws:iam::xxxxxxxx:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AdministratorAccess_xxxxx"
+    principal_arn: "arn:aws:iam::xxxxxxxxxxx:role/aws-reserved/sso.amazonaws.com/eu-west-1/xxxxxxxxxxx"
     policy_associations:
       clusterAdmin:
-        policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+        policy_arn: "arn:aws:eks::aws:cluster-access-policy/xxxxxxxxxxx"
         access_scope:
           type: "cluster"
   # Allow administrator access to an IAM role
@@ -199,4 +201,4 @@ access_entries:
   #         type: "namespace"
   #         namespace: "my-namespace"
 
-enable_karpenter: false
+enable_karpenter: true
