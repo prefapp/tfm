@@ -7,6 +7,13 @@
 
 * update module and tags ([#753](https://github.com/prefapp/tfm/issues/753)) ([e741490](https://github.com/prefapp/tfm/commit/e741490ffd813ffff6b5a4326e8e8938d71c2d74))
 
+## [1.1.2](https://github.com/prefapp/tfm/compare/azure-disks-v1.1.1...azure-disks-v1.1.2) (2025-12-03)
+
+
+### Bug Fixes
+
+* update module and tags ([#753](https://github.com/prefapp/tfm/issues/753)) ([e741490](https://github.com/prefapp/tfm/commit/e741490ffd813ffff6b5a4326e8e8938d71c2d74))
+
 ## [1.1.1](https://github.com/prefapp/tfm/compare/azure-disks-v1.1.0...azure-disks-v1.1.1) (2025-04-24)
 
 
