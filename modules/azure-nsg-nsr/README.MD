@@ -33,6 +33,7 @@
 | `name` | The name of the Network Security Group. | `string` | - | yes |
 | `location` | The Azure region where the NSG will be created. | `string` | - | yes |
 | `resource_group_name` | The name of the resource group in which to create the NSG. | `string` | - | yes |
+| `tags_from_rg` | Boolean to indicate if tags should be inherited from the resource group. | `bool` | `true` | no |
 | `tags` | A map of tags to assign to the NSG. | `map(string)` | `{}` | no |
 
 ### Network Security Rules
@@ -63,12 +64,14 @@
 
 ## Example Usage
 
+### HCL
 ```hcl
 
 nsg = {
   name                = "example-nsg"
   location            = "East US"
   resource_group_name = "example-rg"
+  tags_from_rg        = false
   tags = {
     env = "Production"
   }
@@ -98,4 +101,38 @@ rules = {
     destination_address_prefix = "*"
   }
 } 
+```
+
+### YAML
+```yaml
+values:
+  nsg:
+    name: "example-nsg"
+    location: "East US"
+    resource_group_name: "example-rg"
+    tags_from_rg: false
+    tags:
+      env: "Production"
+
+  rules:
+    rule1:
+      name: "AllowSSH"
+      priority: 100
+      direction: "Inbound"
+      access: "Allow"
+      protocol: "Tcp"
+      source_port_range: "*"
+      destination_port_range: "22"
+      source_address_prefix: "10.0.0.0/24"
+      destination_address_prefix: "*"
+    rule2:
+      name: "AllowHTTP"
+      priority: 200
+      direction: "Inbound"
+      access: "Allow"
+      protocol: "Tcp"
+      source_port_range: "*"
+      destination_port_range: "80"
+      source_address_prefix: "0.0.0.0/0"
+      destination_address_prefix: "*"
 ```
