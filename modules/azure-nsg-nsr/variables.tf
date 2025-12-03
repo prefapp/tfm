@@ -5,7 +5,6 @@ variable "nsg" {
     name                = string
     location            = string
     resource_group_name = string
-    tags                = optional(map(string))
   })
 }
 
@@ -62,4 +61,16 @@ variable "rules" {
     ])
     error_message = "Only one of 'destination_adress_prefix' or 'destination_adress_prefixes' can be specified for each rule."
   }
+}
+
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
 }
