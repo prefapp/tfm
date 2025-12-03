@@ -3,7 +3,6 @@ variable "common" {
   type = object({
     resource_group_name = string
     location            = string
-    tags                = map(string)
   })
 }
 
@@ -86,4 +85,16 @@ variable "vmss" {
     ) ? (var.vmss.identity_ids != null) : true
     error_message = "identity_ids must be provided when identity_type is 'UserAssigned' or 'SystemAssigned, UserAssigned'."
   }
+}
+
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
 }
