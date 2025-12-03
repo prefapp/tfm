@@ -230,8 +230,5 @@ resource "azurerm_application_gateway" "application_gateway" {
       min_protocol_version = ssl_policy.value.min_protocol_version
     }
   }
-
-  lifecycle {
-    ignore_changes = [tags]
-  }
+  tags = local.tags
 }

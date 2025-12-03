@@ -1,4 +1,9 @@
 # Data section
+# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
+data "azurerm_resource_group" "this" {
+  name = var.resource_group_name
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/user_assigned_identity
 data "azurerm_user_assigned_identity" "that" {
   name                = var.user_assigned_identity #"appgw-management-certs"
