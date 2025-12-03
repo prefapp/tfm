@@ -5,6 +5,11 @@ data "azurerm_subnet" "this" {
   resource_group_name  = var.vmss.virtual_network_resource_group_name
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
+data "azurerm_resource_group" "this" {
+  name = var.vmss.resource_group_name
+}
+
 # RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.3.0/docs/resources/linux_virtual_machine_scale_set
 resource "azurerm_linux_virtual_machine_scale_set" "this" {
@@ -14,7 +19,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "this" {
   sku                         = var.vmss.sku
   instances                   = var.vmss.instances
   admin_username              = var.vmss.admin_username
-  tags                        = var.common.tags
+  tags                        = local.tags
   edge_zone                   = var.vmss.edge_zone
   eviction_policy             = var.vmss.eviction_policy
   encryption_at_host_enabled  = var.vmss.encryption_at_host_enabled
