@@ -3,49 +3,50 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.3.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.6.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.3.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.6.0 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group) | data source |
-| [azurerm_recovery_services_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/recovery_services_vault) | resource |
 | [azurerm_backup_container_storage_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_container_storage_account) | resource |
 | [azurerm_backup_policy_file_share.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_policy_file_share) | resource |
 | [azurerm_backup_protected_file_share.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_protected_file_share) | resource |
-| [azurerm_data_protection_backup_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault) | resource |
-| [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_data_protection_backup_policy_blob_storage.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage) | resource |
 | [azurerm_data_protection_backup_instance_blob_storage.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_blob_storage) | resource |
+| [azurerm_data_protection_backup_policy_blob_storage.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy_blob_storage) | resource |
+| [azurerm_data_protection_backup_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault) | resource |
+| [azurerm_recovery_services_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/recovery_services_vault) | resource |
+| [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_backup_blob"></a> [backup\_blob](#input\_backup\_blob) | Specifies the backup configuration for the storage blob | <pre>object({<br/>    vault_name                      = string<br/>    datastore_type                  = string<br/>    redundancy                      = string<br/>    identity_type                   = optional(string)<br/>    role_assignment                 = string<br/>    instance_blob_name              = string<br/>    storage_account_container_names = optional(list(string))<br/>    policy = object({<br/>      name                                   = string<br/>      backup_repeating_time_intervals        = optional(list(string))<br/>      operational_default_retention_duration = optional(string)<br/>      retention_rule = optional(list(object({<br/>        name     = string<br/>        duration = string<br/>        criteria = object({<br/>          absolute_criteria      = optional(string)<br/>          days_of_month          = optional(list(number))<br/>          days_of_week           = optional(list(string))<br/>          months_of_year         = optional(list(string))<br/>          scheduled_backup_times = optional(list(string))<br/>          weeks_of_month         = optional(list(string))<br/>        })<br/>        life_cycle = object({<br/>          data_store_type = string<br/>          duration        = string<br/>        })<br/>        priority = number<br/>      })))<br/>      time_zone                        = optional(string)<br/>      vault_default_retention_duration = optional(string)<br/>      retention_duration               = optional(string)<br/>    })<br/>  })</pre> | `null` | no |
 | <a name="input_backup_resource_group_name"></a> [backup\_resource\_group\_name](#input\_backup\_resource\_group\_name) | The name for the resource group for the backups | `string` | n/a | yes |
+| <a name="input_backup_share"></a> [backup\_share](#input\_backup\_share) | Specifies the backup configuration for the storage share | <pre>object({<br/>    policy_name                  = string<br/>    recovery_services_vault_name = string<br/>    sku                          = string<br/>    soft_delete_enabled          = optional(bool)<br/>    storage_mode_type            = optional(string, "GeoRedundant")<br/>    cross_region_restore_enabled = optional(bool)<br/>    source_file_share_name       = list(string)<br/>    identity = optional(object({<br/>      type         = optional(string, "SystemAssigned")<br/>      identity_ids = optional(list(string), [])<br/>    }))<br/>    encryption = optional(object({<br/>      key_id                            = optional(string, null)<br/>      infrastructure_encryption_enabled = optional(bool, false)<br/>      user_assigned_identity_id         = optional(string, null)<br/>      use_system_assigned_identity      = optional(bool, false)<br/>    }))<br/>    timezone = optional(string)<br/>    backup = object({<br/>      frequency = string<br/>      time      = string<br/>    })<br/>    retention_daily = object({<br/>      count = number<br/>    })<br/>    retention_weekly = optional(object({<br/>      count    = number<br/>      weekdays = optional(list(string), ["Sunday"])<br/>    }))<br/>    retention_monthly = optional(object({<br/>      count    = number<br/>      weekdays = optional(list(string), ["Sunday"])<br/>      weeks    = optional(list(string), ["First"])<br/>      days     = optional(list(number))<br/>    }))<br/>    retention_yearly = optional(object({<br/>      count    = number<br/>      months   = optional(list(string), ["January"])<br/>      weekdays = optional(list(string), ["Sunday"])<br/>      weeks    = optional(list(string), ["First"])<br/>      days     = optional(list(number))<br/>    }))<br/>  })</pre> | `null` | no |
+| <a name="input_lifecycle_policy_rule"></a> [lifecycle\_policy\_rule](#input\_lifecycle\_policy\_rule) | n/a | <pre>list(object({<br/>    name    = string<br/>    enabled = bool<br/>    filters = object({<br/>      prefix_match = list(string)<br/>      blob_types   = list(string)<br/>    })<br/>    actions = object({<br/>      base_blob = object({ delete_after_days_since_creation_greater_than = number })<br/>      snapshot  = object({ delete_after_days_since_creation_greater_than = number })<br/>      version   = object({ delete_after_days_since_creation = number })<br/>    })<br/>  }))</pre> | `null` | no |
 | <a name="input_storage_account_id"></a> [storage\_account\_id](#input\_storage\_account\_id) | The ID of the storage account | `string` | n/a | yes |
-| <a name="input_backup_share"></a> [backup\_share](#input\_backup\_share) | Specifies the backup configuration for the storage share | `object({ policy_name = string, recovery_services_vault_name = string, sku = string, soft_delete_enabled = optional(bool), storage_mode_type = optional(string, "GeoRedundant"), cross_region_restore_enabled = optional(bool), source_file_share_name = list(string), identity = optional(object({ type = optional(string, "SystemAssigned"), identity_ids = optional(list(string), []) })), encryption = optional(object({ key_id = optional(string, null), infrastructure_encryption_enabled = optional(bool, false), user_assigned_identity_id = optional(string, null), use_system_assigned_identity = optional(bool, false) })), timezone = optional(string), backup = object({ frequency = string, time = string }), retention_daily = object({ count = number }), retention_weekly = optional(object({ count = number, weekdays = optional(list(string), ["Sunday"]) })), retention_monthly = optional(object({ count = number, weekdays = optional(list(string), ["Sunday"]), weeks = optional(list(string), ["First"]), days = optional(list(number)) })), retention_yearly = optional(object({ count = number, months = optional(list(string), ["January"]), weekdays = optional(list(string), ["Sunday"]), weeks = optional(list(string), ["First"]), days = optional(list(number)) })) })` | null | no |
-| <a name="input_backup_blob"></a> [backup\_blob](#input\_backup\_blob) | Specifies the backup configuration for the storage blob | `object({ vault_name = string, datastore_type = string, redundancy = string, identity_type = optional(string), role_assignment = string, instance_blob_name = string, storage_account_container_names = optional(list(string)), policy = object({ name = string, backup_repeating_time_intervals = optional(list(string)), operational_default_retention_duration = optional(string), retention_rule = optional(list(object({ name = string, duration = string, criteria = object({ absolute_criteria = optional(string), days_of_month = optional(list(number)), days_of_week = optional(list(string)), months_of_year = optional(list(string)), scheduled_backup_times = optional(list(string)), weeks_of_month = optional(list(string)) }), life_cycle = object({ data_store_type = string, duration = string }), priority = number }))), time_zone = optional(string), vault_default_retention_duration = optional(string), retention_duration = optional(string) }) })` | null | no |
-| <a name="input_lifecycle_policy_rule"></a> [lifecycle\_policy\_rule](#input\_lifecycle\_policy\_rule) | Specifies the lifecycle policy rule for the storage account | `list(object({ name = string, enabled = bool, filters = object({ prefix_match = list(string), blob_types = list(string) }), actions = object({ base_blob = object({ delete_after_days_since_creation_greater_than = number }), snapshot = object({ delete_after_days_since_creation_greater_than = number }), version = object({ delete_after_days_since_creation = number }) }) }))` | null | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg
 
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="none"></a> [none](#none) | n/a |
+No outputs.
 
 ## Example
 
 ```yaml
     values:
+      tags_from_rg: true
       # General values
       backup_resource_group_name: "backup-test-rg"
       storage_account_id: "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.Storage/storageAccounts/xxx" # can use refs ${{tfworkspace:claim-name:outputs.id}}
