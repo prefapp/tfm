@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.3.1...azure-sa-backup-v0.3.2) (2025-12-03)
+
+
+### Bug Fixes
+
+* update module and tags ([#754](https://github.com/prefapp/tfm/issues/754)) ([fbb9050](https://github.com/prefapp/tfm/commit/fbb905004e91b00da4d75d77cb758cdc44fda0ae))
+
 ## [0.3.1](https://github.com/prefapp/tfm/compare/azure-sa-backup-v0.3.0...azure-sa-backup-v0.3.1) (2025-04-24)
 
 
