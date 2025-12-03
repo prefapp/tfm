@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.8.0...azure-app-gateway-v0.8.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* add tags_from_rg ([#749](https://github.com/prefapp/tfm/issues/749)) ([0975dcc](https://github.com/prefapp/tfm/commit/0975dccf107749b82c9074d8bd14cd6593b2abb3))
+
 ## [0.8.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.7.1...azure-app-gateway-v0.8.0) (2025-11-13)
 
 
