@@ -94,6 +94,27 @@ variable "externaldns_tags" {
   default = {}
 }
 
+variable "ebs_csi_driver_role_name" {
+  description = "Name for the EBS CSI Driver IAM role. Must be unique per AWS account when creating multiple clusters."
+
+  type    = string
+  default = "AmazonEKS_EBS_CSI_DriverRole"
+}
+
+variable "external_dns_policy_name" {
+  description = "Name for the External DNS IAM policy. Must be unique per AWS account when creating multiple clusters."
+
+  type    = string
+  default = "external_dns_policy"
+}
+
+variable "external_dns_role_name" {
+  description = "Name for the External DNS IAM role. Must be unique per AWS account when creating multiple clusters."
+
+  type    = string
+  default = "external-dns-Kubernetes"
+}
+
 variable "create_parameter_store_iam" {
   description = "Create IAM resources for parameter-store"
 
