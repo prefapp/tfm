@@ -236,3 +236,11 @@ variable "access_entries" {
 
   default = {}
 }
+
+variable "enable_karpenter" {
+  description = "Enable Karpenter provisioning"
+
+  type = bool
+
+  default = false
+}

@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-dev
+  namespace: default
+  labels:
+    app: nginx
+    environment: dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      environment: dev
+  template:
+    metadata:
+      labels:
+        app: nginx
+        environment: dev
+    spec:
+      # Node selector para dirigir los pods al nodo dev
+      nodeSelector:
+        environment: dev
+      # Tolerations para poder ejecutarse en nodos con taint environment=dev
+      tolerations:
+        - key: environment
+          operator: Equal
+          value: dev
+          effect: NoSchedule
+      containers:
+      - name: nginx
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "1000m"
+            memory: "512Mi"
+
+---
+# Ejemplo usando Node Affinity (más flexible)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-dev-affinity
+  namespace: default
+  labels:
+    app: nginx
+    environment: dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+      environment: dev
+  template:
+    metadata:
+      labels:
+        app: nginx
+        environment: dev
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: environment
+                operator: In
+                values:
+                - dev
+      # Tolerations para poder ejecutarse en nodos con taint environment=dev
+      tolerations:
+        - key: environment
+          operator: Equal
+          value: dev
+          effect: NoSchedule
+      containers:
+      - name: nginx
+        image: nginx:1.25-alpine
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "1000m"
+            memory: "512Mi"
+
