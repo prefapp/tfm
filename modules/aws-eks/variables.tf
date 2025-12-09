@@ -94,6 +94,13 @@ variable "externaldns_tags" {
   default = {}
 }
 
+variable "external_dns_role_name" {
+  description = "Nombre del IAM role para external-dns. Deja null para que se genere con el nombre del cluster. Pon \"external-dns-Kubernetes\" para compatibilidad hacia atrás."
+
+  type    = string
+  default = null
+}
+
 variable "create_parameter_store_iam" {
   description = "Create IAM resources for parameter-store"
 

@@ -53,6 +53,10 @@ module "eks_prefapp" {
   
   enable_karpenter = local.values.enable_karpenter
 
+  # IAM Resource Names (optional - for multiple clusters support)
+  # Solo se expone external_dns_role_name; el resto se generan por cluster.
+  external_dns_role_name = lookup(local.values, "external_dns_role_name", null)
+
 
 }
 

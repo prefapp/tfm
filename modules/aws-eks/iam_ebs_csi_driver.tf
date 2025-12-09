@@ -21,7 +21,8 @@ locals {
    * Get the EBS ARN role
    */
 
-  ebs_iam_role_name = "AmazonEKS_EBS_CSI_DriverRole"
+  # Nombre único por cluster para evitar colisiones entre múltiples EKS en la misma cuenta.
+  ebs_iam_role_name = "AmazonEKS_EBS_CSI_DriverRole-${var.cluster_name}"
 
   ebs_arn_role = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_iam_role_name}"
 
