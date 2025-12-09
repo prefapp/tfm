@@ -21,7 +21,7 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
 
   count = var.create_parameter_store_iam ? 1 : 0
 
-  name = "iam_policy_parameter_store"
+  name = coalesce(var.parameter_store_policy_name, format("iam_policy_parameter_store-%s", var.cluster_name))
 
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -41,7 +41,7 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
 
   count = var.create_parameter_store_iam ? 1 : 0
 
-  name = "iam_role_parameter_store_all"
+  name = coalesce(var.parameter_store_role_name, format("iam_role_parameter_store_all-%s", var.cluster_name))
 
   description = "IAM role to access to the parameter store"
 
