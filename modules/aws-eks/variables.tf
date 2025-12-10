@@ -94,11 +94,25 @@ variable "externaldns_tags" {
   default = {}
 }
 
-variable "external_dns_role_name" {
-  description = "Nombre del IAM role para external-dns. Deja null para que se genere con el nombre del cluster. Pon \"external-dns-Kubernetes\" para compatibilidad hacia atrás."
+variable "ebs_csi_driver_role_name" {
+  description = "Name for the EBS CSI Driver IAM role. Defaults to 'AmazonEKS_EBS_CSI_DriverRole' for backward compatibility."
 
   type    = string
-  default = null
+  default = "AmazonEKS_EBS_CSI_DriverRole"
+}
+
+variable "external_dns_policy_name" {
+  description = "Name for the External DNS IAM policy. Defaults to 'external_dns_policy' for backward compatibility."
+
+  type    = string
+  default = "external_dns_policy"
+}
+
+variable "external_dns_role_name" {
+  description = "Name for the External DNS IAM role. Defaults to 'external-dns-Kubernetes' for backward compatibility."
+
+  type    = string
+  default = "external-dns-Kubernetes"
 }
 
 variable "create_parameter_store_iam" {
@@ -244,8 +258,9 @@ variable "access_entries" {
   default = {}
 }
 
+# Karpenter Configuration
 variable "enable_karpenter" {
-  description = "Enable Karpenter provisioning"
+  description = "Enable Karpenter autoscaler for the EKS cluster"
 
   type = bool
 
