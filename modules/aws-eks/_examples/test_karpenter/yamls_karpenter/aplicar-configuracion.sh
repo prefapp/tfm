@@ -23,12 +23,15 @@ sleep 10
 
 # Paso 2: Aplicar EC2NodeClass y NodePool
 echo ""
-echo "📦 Paso 2/3: Aplicando NodePools y EC2NodeClass..."
-echo "   Aplicando karpenter-on-demand-default (incluye EC2NodeClass)..."
-kubectl apply -f karpenter-on-demand-default-v1.yaml
+echo "📦 Paso 2/3: Aplicando EC2NodeClass y NodePools..."
+echo "   Aplicando EC2NodeClass on-demand por defecto..."
+kubectl apply -f ec2nodeclass-on-demand-default.yaml
 
-echo "   Aplicando karpenter-dev (NodePool para dev)..."
-kubectl apply -f karpenter-dev-v1.yaml
+echo "   Aplicando NodePool on-demand por defecto..."
+kubectl apply -f nodepool-on-demand-default.yaml
+
+echo "   Aplicando NodePool on-demand dev..."
+kubectl apply -f nodepool-on-demand-dev.yaml
 
 echo ""
 echo "⏳ Esperando 5 segundos..."

@@ -1,3 +1,4 @@
+<!-- BEGIN_TF_DOCS -->
 # EKS Module
 
 This Terraform module simplifies the creation and configuration of an **Amazon Elastic Kubernetes Service (EKS)** cluster on AWS. Below is a description of the main features and components of the module:
@@ -5,8 +6,8 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 - **EKS Configuration**: Allows the creation of an EKS cluster with custom options such as the _Kubernetes_ version, API access, and efficient node management.
 - **Node Group Management**: Facilitates the creation and management of node groups with various configurations, such as instance types, desired, minimum, and maximum capacity, and tags.
 - **IAM Authentication and Authorization**: Offers flexibility in managing IAM users and roles for authentication in the EKS cluster, allowing the addition of additional IAM users and roles.
-- **Addon Configuration**: Includes options to enable essential addons such as _CoreDNS_, _kube-proxy_, and _VPC CNI_, as well as the ability to add custom addons.
-- **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like _ALB Ingress Controller_, _CloudWatch_, _EFS CSI Driver_, and _ExternalDNS_.
+- **Addon Configuration**: Includes options to enable essential addons such as \_CoreDNS\_, \_kube-proxy\_, and \_VPC CNI\_, as well as the ability to add custom addons.
+- **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like \_ALB Ingress Controller\_, \_CloudWatch\_, \_EFS CSI Driver\_, and \_ExternalDNS\_.
 
 ## Module Usage
 
@@ -44,8 +45,6 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
       }
 
       ```
-
-
 
 - **Terraform Execution**: Run `terraform init` and `terraform apply` to create and configure the EKS cluster. Terraform will manage the creation of resources on AWS based on the provided configuration.
 
@@ -128,30 +127,28 @@ The module is organized with the following directory and file structure:
 - Terraform-aws-modules/eks/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
 - Terraform-aws-modules/vpc/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
 
-
-<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.67 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.23 |
-| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.9 |
-| <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.83 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.35 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.12 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.67 |
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.83 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 19.20.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 20.33.1 |
+| <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 20.33.1 |
 
 ## Resources
 
@@ -160,6 +157,7 @@ The module is organized with the following directory and file structure:
 | [aws_iam_policy.external_dns_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_EFS_CSI_DriverRole](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_iam_policy.iam_policy_extra_karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_parameter_store](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.policy_additional_cloudwatch](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.ebs_driver_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -175,22 +173,27 @@ The module is organized with the following directory and file structure:
 | [aws_iam_role_policy_attachment.iam_role_fluentd_CloudWatchAgentServerPolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam_role_parameter_store_all_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam_role_scm_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [null_resource.prefix_delegation](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_eks_cluster_auth.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster_auth) | data source |
+| [aws_subnets.filtered](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
+| [aws_vpc.by_tags](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
+| [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
+| <a name="input_alb_ingress_policy_name"></a> [alb\_ingress\_policy\_name](#input\_alb\_ingress\_policy\_name) | Nombre de la IAM policy para ALB Ingress. Deja null para generar una por cluster. | `string` | `null` | no |
+| <a name="input_alb_ingress_role_name"></a> [alb\_ingress\_role\_name](#input\_alb\_ingress\_role\_name) | Nombre del IAM role para ALB Ingress. Deja null para generar uno único por cluster. | `string` | `null` | no |
 | <a name="input_cloudwatch_log_group_retention_in_days"></a> [cloudwatch\_log\_group\_retention\_in\_days](#input\_cloudwatch\_log\_group\_retention\_in\_days) | Number of days to retain log events | `number` | `14` | no |
-| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addons to deploy to the cluster | <pre>map(object({<br><br>    addon_version = optional(string)<br><br>    enabled = optional(bool)<br><br>    resolve_conflicts = optional(string)<br><br>    configuration_values = optional(object({<br><br>      env = optional(map(string))<br><br>    }))<br><br>    service_account_role_arn = optional(string)<br><br>  }))</pre> | n/a | yes |
+| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addons to deploy to the cluster | `any` | `{}` | no |
 | <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster encryption config | `any` | `{}` | no |
 | <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is true. | `bool` | `true` | no |
 | <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is false. | `bool` | `false` | no |
 | <a name="input_cluster_iam_role_arn"></a> [cluster\_iam\_role\_arn](#input\_cluster\_iam\_role\_arn) | n/a | `string` | `null` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | n/a | `string` | n/a | yes |
-| <a name="input_cluster_security_group_id"></a> [cluster\_security\_group\_id](#input\_cluster\_security\_group\_id) | n/a | `string` | n/a | yes |
+| <a name="input_cluster_security_group_additional_rules"></a> [cluster\_security\_group\_additional\_rules](#input\_cluster\_security\_group\_additional\_rules) | Additional rules for the cluster security group | `any` | `{}` | no |
+| <a name="input_cluster_security_group_id"></a> [cluster\_security\_group\_id](#input\_cluster\_security\_group\_id) | n/a | `string` | `""` | no |
 | <a name="input_cluster_tags"></a> [cluster\_tags](#input\_cluster\_tags) | Tags to apply to the EKS cluster | `map(string)` | `{}` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | n/a | `string` | n/a | yes |
 | <a name="input_create_alb_ingress_iam"></a> [create\_alb\_ingress\_iam](#input\_create\_alb\_ingress\_iam) | Create IAM resources for alb-ingress | `bool` | `false` | no |
@@ -201,19 +204,21 @@ The module is organized with the following directory and file structure:
 | <a name="input_create_external_dns_iam"></a> [create\_external\_dns\_iam](#input\_create\_external\_dns\_iam) | Create IAM resources for external-dns | `bool` | `false` | no |
 | <a name="input_create_kms_key"></a> [create\_kms\_key](#input\_create\_kms\_key) | Create KMS key for cluster | `bool` | `true` | no |
 | <a name="input_create_parameter_store_iam"></a> [create\_parameter\_store\_iam](#input\_create\_parameter\_store\_iam) | Create IAM resources for parameter-store | `bool` | `false` | no |
-| <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Enable IRSA | `bool` | `false` | no |
+| <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Enable IRSA | `bool` | `true` | no |
+| <a name="input_enable_karpenter"></a> [enable\_karpenter](#input\_enable\_karpenter) | Enable Karpenter provisioning | `bool` | `false` | no |
+| <a name="input_external_dns_role_name"></a> [external\_dns\_role\_name](#input\_external\_dns\_role\_name) | Nombre del IAM role para external-dns. Deja null para que se genere con el nombre del cluster. Pon "external-dns-Kubernetes" para compatibilidad hacia atrás. | `string` | `null` | no |
 | <a name="input_externaldns_tags"></a> [externaldns\_tags](#input\_externaldns\_tags) | n/a | `map(any)` | `{}` | no |
-| <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br><br>    name = string<br><br>    selectors = list(object({<br><br>      namespace = string<br><br>      labels = map(string)<br><br>    }))<br><br>    tags = map(string)<br><br>  }))</pre> | `[]` | no |
-| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | n/a | yes |
+| <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | `{}` | no |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | `any` | n/a | yes |
-| <a name="cluster_security_group_additional_rules"></a> [cluster\_security\_group\_additional\_rules](#input\_cluster\_security\_group\_additional\_rules) | Additional rules for the cluster security group | `any` | `{}` | no |
+| <a name="input_parameter_store_policy_name"></a> [parameter\_store\_policy\_name](#input\_parameter\_store\_policy\_name) | Nombre de la IAM policy para Parameter Store. Deja null para generar una única por cluster. | `string` | `null` | no |
+| <a name="input_parameter_store_role_name"></a> [parameter\_store\_role\_name](#input\_parameter\_store\_role\_name) | Nombre del IAM role para Parameter Store. Deja null para generar uno único por cluster. | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids (Mandatory if *subnet_tags* is not present). They need to be attached to the provided VPC. | `list(string)` | n/a | no |
-| <a name="subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | Subnet tags to select subnets ; mandatory if *subnet_ids* are not present. They need to be attached to the provided VPC. Only private subnets (`tag kubernetes.io/role/internal-elb = 1`) will be considered when filtering. | `map(string)` | "custom-internal-elb" | no |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids | `list(string)` | `null` | no |
+| <a name="input_subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | Map of subnet tags to filter which subnets we want | `map(string)` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(any)` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id (Mandatory if *vpc_tags* is not present) | `string` | n/a | no |
-| <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_name) | VPC tags (tag Name) (Mandatory if *vpc_id* is not present) | `map(string)` | n/a | no |
-| <a name="access_entries"></a> [access\_entries](#input\access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | `null` | no |
+| <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_tags) | Map of VPC tags to filter which VPC we want | `map(string)` | `null` | no |
 
 ## Outputs
 

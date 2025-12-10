@@ -1,7 +1,7 @@
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: karpenter-dev
+  name: karpenter-on-demand-dev
 spec:
   template:
     metadata:
@@ -9,7 +9,6 @@ spec:
         environment: dev
         billing-team: platform
     spec:
-      # Taints para que solo pods con toleration puedan ejecutarse
       taints:
         - key: environment
           value: dev

@@ -23,11 +23,14 @@ sleep 20
 # Paso 2: Eliminar NodePools y EC2NodeClass usando los archivos YAML
 echo ""
 echo "📦 Paso 2/3: Eliminando NodePools y EC2NodeClass..."
-kubectl delete -n kube-system -f karpenter-dev-v1.yaml --ignore-not-found=true || true
-echo "   ✅ NodePool karpenter-dev eliminado"
+kubectl delete -n kube-system -f nodepool-on-demand-dev.yaml --ignore-not-found=true || true
+echo "   ✅ NodePool karpenter-on-demand-dev eliminado"
 
-kubectl delete -n kube-system -f karpenter-on-demand-default-v1.yaml --ignore-not-found=true || true
-echo "   ✅ NodePool y EC2NodeClass karpenter-on-demand-default eliminados"
+kubectl delete -n kube-system -f nodepool-on-demand-default.yaml --ignore-not-found=true || true
+echo "   ✅ NodePool karpenter-on-demand-default eliminado"
+
+kubectl delete -n kube-system -f ec2nodeclass-on-demand-default.yaml --ignore-not-found=true || true
+echo "   ✅ EC2NodeClass karpenter-on-demand-default eliminado"
 
 echo ""
 echo "⏳ Esperando a que los nodos se eliminen..."

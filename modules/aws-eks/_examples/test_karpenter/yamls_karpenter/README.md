@@ -1,109 +1,194 @@
-# 🚀 Karpenter - Auto-scaling de Nodos en EKS
+# 🚀 Karpenter - Node Autoscaling on EKS
 
-Este directorio contiene la configuración completa para instalar y usar Karpenter en tu cluster EKS.
-
----
-
-## 📚 ¿Qué es Karpenter?
-
-**Karpenter** es un auto-scaler de nodos para Kubernetes que:
-- ✅ **Crea nodos automáticamente** cuando hay pods pendientes
-- ✅ **Elimina nodos** cuando están vacíos o subutilizados (consolidation)
-- ✅ **Optimiza costos** eligiendo el tipo de instancia más adecuado
-- ✅ **Reacciona rápido** (segundos, no minutos como Cluster Autoscaler)
+This directory contains the full configuration to install and use Karpenter in your EKS cluster.
 
 ---
 
-``
+## 📚 What is Karpenter?
 
-### Componentes Clave
-
-| Componente | Descripción | Archivo |
-|------------|-------------|---------|
-| **Karpenter Controller** | Pod que gestiona el auto-scaling | Instalado con Helm |
-| **NodePool** | Define qué nodos puede crear (labels, taints, tipos de instancia) | `karpenter-dev-v1.yaml` |
-| **EC2NodeClass** | Define infraestructura AWS (AMI, subnets, security groups) | `karpenter-on-demand-default-v1.yaml` |
-| **Pod** | Tu aplicación que necesita recursos | `deployment-dev.yaml` |
+**Karpenter** is a node autoscaler for Kubernetes that:
+- ✅ **Creates nodes automatically** when there are pending pods
+- ✅ **Removes nodes** when they are empty or underutilized (consolidation)
+- ✅ **Optimizes costs** by choosing the right instance type
+- ✅ **Reacts fast** (seconds, not minutes like Cluster Autoscaler)
 
 ---
 
-## 📦 Instalación
+### Key Components
 
-### Paso 1: Instalar Karpenter con Helm
+| Component | Description | File |
+|-----------|-------------|------|
+| **Karpenter Controller** | Pod that manages autoscaling | Installed via Helm |
+| **EC2NodeClass** | AWS infra (AMI, subnets, security groups) | `ec2nodeclass-on-demand-default.yaml` |
+| **NodePool (base)** | Generic on-demand pool (no taints) | `nodepool-on-demand-default.yaml` |
+| **NodePool (dev)** | Pool for dev nodes (taint/label dev, on-demand) | `nodepool-on-demand-dev.yaml` |
+| **NodePool (dev spot)** | Pool for dev nodes on spot (lower weight) | `nodepool-spot-dev.yaml` |
+| **Pod** | Your app that needs capacity | `deployment-dev.yaml` |
 
+---
+
+## 📦 Installation
+
+### Option A (scripts)
+Run everything in one shot:
 ```bash
 cd /home/pablo/prefapp/tfm/modules/aws-eks/_examples/test_karpenter/yamls_karpenter
 chmod +x *.sh
-./instalar-karpenter.sh
+./aplicar-configuracion.sh
 ```
+- What the script does:
+  1) Verifies the SQS queue exists (created by Terraform)
+  2) Installs Karpenter with Helm using `values.yaml`
+  3) Configures the ServiceAccount with the correct IAM role
+  4) Sets the cluster name and SQS queue
 
-**¿Qué hace este script?**
-1. Verifica que la cola SQS existe (creada por Terraform)
-2. Instala Karpenter con Helm usando `values.yaml`
-3. Configura el ServiceAccount con el IAM role correcto
-4. Configura el nombre del cluster y la cola SQS
+### Option B (manual, no scripts)
+Apply each component separately (useful if you want to review/edit manifests first).
 
-**Archivos usados:**
-- `values.yaml` → Configuración del chart de Helm
-- `instalar-karpenter.sh` → Script de instalación
-
-### Paso 2: Aplicar NodePools
-
-Los **NodePools** le dicen a Karpenter qué tipo de nodos puede crear.
-
+1) Install the Karpenter chart with your `values.yaml`
 ```bash
-# Aplicar EC2NodeClass y NodePool base (requerido)
-kubectl apply -f karpenter-on-demand-default-v1.yaml
-
-# Aplicar NodePool para dev
-kubectl apply -f karpenter-dev-v1.yaml
+helm upgrade --install karpenter \
+  oci://public.ecr.aws/karpenter/karpenter \
+  --namespace karpenter --create-namespace \
+  -f values.yaml
 ```
+- Adjust in `values.yaml`:
+  - `serviceAccount.annotations.eks.amazonaws.com/role-arn`: IAM role ARN for Karpenter.
+  - `settings.clusterName`: EKS cluster name.
+  - `settings.interruptionQueue`: SQS queue name created by Terraform.
 
-**¿Qué hace cada archivo?**
+2) Apply infra (EC2NodeClass)
+```bash
+kubectl apply -f ec2nodeclass-on-demand-default.yaml
+```
+- Edit before applying if needed:
+  - `subnetSelectorTerms` / `securityGroupSelectorTerms`: tags (or IDs) for your subnets/SG.
+  - `amiSelectorTerms` or a specific `ami`.
+  - `role`: IAM role for Karpenter nodes.
 
-#### `karpenter-on-demand-default-v1.yaml`
-- Define el **EC2NodeClass** (infraestructura AWS compartida)
-- Define un **NodePool** genérico sin taints
-- **Requerido** porque otros NodePools lo referencian
+3) Apply NodePools
+```bash
+kubectl apply -f nodepool-on-demand-default.yaml
+kubectl apply -f nodepool-on-demand-dev.yaml
+```
+- Base pool: generic on-demand capacity.
+- Dev pool: label `environment: dev` and taint `environment=dev:NoSchedule` to isolate dev nodes.
+- Optional spot pool for dev:
+```bash
+kubectl apply -f nodepool-spot-dev.yaml
+```
+- Spot pool uses `capacity-type: spot`, lower weight (5) so Karpenter will prefer it when available/cost-effective.
 
-#### `karpenter-dev-v1.yaml`
-- Define un **NodePool** específico para desarrollo
-- Tiene **taint** `environment=dev:NoSchedule`
-- Solo pods con toleration pueden ejecutarse aquí
-
-### Paso 3: (Opcional) Aplicar Deployment de Ejemplo
-
+4) (Optional) Example deployment
 ```bash
 kubectl apply -f deployment-dev.yaml
 ```
+- Includes `nodeSelector: environment: dev` and the matching toleration.
 
-Este deployment tiene:
-- **nodeSelector**: `environment: dev` → Dirige el pod a nodos con ese label
-- **tolerations**: Permite ejecutarse en nodos con taint `environment=dev:NoSchedule`
+5) Quick checks
+```bash
+kubectl get nodepool -n kube-system
+kubectl get ec2nodeclass
+kubectl get pods -n default -o wide
+kubectl get nodes --show-labels
+kubectl logs -n karpenter -l app.kubernetes.io/name=karpenter --tail=50
+```
+
+6) Manual uninstall (no scripts)
+```bash
+kubectl delete -f deployment-dev.yaml      # if applied
+kubectl delete -f nodepool-on-demand-dev.yaml
+kubectl delete -f nodepool-spot-dev.yaml   # if applied
+kubectl delete -f nodepool-on-demand-default.yaml
+kubectl delete -f ec2nodeclass-on-demand-default.yaml
+helm uninstall karpenter -n karpenter
+```
 
 ---
 
-## 🔄 ¿Cómo Funciona el Auto-scaling?
+## 🚧 Multiple environments (dev / pre) and NodeClasses
 
-### Escenario: Desplegar un Pod que Necesita un Nodo
+To split nodes per environment:
+- Create one NodePool per env (e.g., `karpenter-dev`, `karpenter-pre`), each with:
+  - `labels`: `environment: dev` / `environment: pre`
+  - `taints`: `environment=dev:NoSchedule` / `environment=pre:NoSchedule`
+  - Pods must set matching `nodeSelector` + `tolerations`.
+- Infrastructure (EC2NodeClass):
+  - You can **reuse the same** `EC2NodeClass` if subnets/SG/AMI/role are shared.
+  - Or create **one per env** (change `name` and point `nodeClassRef` to it).
 
-#### 1. Ejemplo de un Pod
+Quick example for a “pre” NodePool (reusing the existing EC2NodeClass):
+```yaml
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: karpenter-pre
+spec:
+  template:
+    metadata:
+      labels:
+        environment: pre
+    spec:
+      taints:
+        - key: environment
+          value: pre
+          effect: NoSchedule
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: ["m6a.large","m6a.xlarge"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["m"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["5"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: karpenter-on-demand-default  # or your env-specific NodeClass
+  limits:
+    cpu: 20
+    memory: "80Gi"
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
+  weight: 10
+```
 
+Reminder: “pre” pods must set `nodeSelector: {environment: pre}` and toleration `environment=pre:NoSchedule`.
+
+---
+
+## 🔄 How Autoscaling Works
+
+### Scenario: Deploy a Pod that needs a node
+
+1) Example pod
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mi-app
+  name: my-app
 spec:
   replicas: 3
   template:
     spec:
       nodeSelector:
-        environment: dev  # ← Requiere nodo con este label
+        environment: dev  # requires a node with this label
       tolerations:
         - key: environment
           value: dev
-          effect: NoSchedule  # ← Permite ejecutarse en nodos con este taint
+          effect: NoSchedule  # allows running on nodes with this taint
       containers:
       - name: app
         resources:
@@ -112,182 +197,136 @@ spec:
             memory: "1Gi"
 ```
 
+2) Karpenter sees the pending pod
+- Continuously watches Pending pods and their requirements: CPU, memory, nodeSelector, tolerations.
 
-#### 2. Karpenter Detecta el Pod Pendiente
+3) Karpenter picks a NodePool
+- Evaluates NodePools by:
+  1. **Weight** (priority)
+  2. **Requirements** (can it create nodes that satisfy the pod?)
+  3. **Cost** (chooses the cheapest valid option)
+- Here:
+  - Pod: `environment: dev` + toleration `environment=dev:NoSchedule`
+  - NodePool `karpenter-dev`: label `environment: dev`, taint `environment=dev:NoSchedule`, instance types `m6a.large|m6a.xlarge`
+  - Result: Karpenter selects `karpenter-dev`.
 
-Karpenter escanea continuamente los pods en estado `Pending` y analiza:
-- **Requisitos del pod**: CPU, memoria, nodeSelector, tolerations
+4) Karpenter creates the EC2 instance
+- Uses the referenced **EC2NodeClass**:
+  - AMI: Amazon Linux 2023 (`amiSelectorTerms`)
+  - Subnets: private subnets (`subnetSelectorTerms`)
+  - Security Groups: `kubernetes-my-org-dev-node` (`securityGroupSelectorTerms`)
+  - IAM Role: `Karpenter-kubernetes-my-org-dev`
+  - Storage: 100Gi gp3 encrypted
+- Chooses the smallest fitting instance (e.g., `m6a.large` for 1 CPU / 1Gi).
 
-#### 3. Karpenter Selecciona un NodePool
+5) Instance joins the cluster
+- Bootstraps EKS, joins, gets labels/taints from the NodePool:
+  - Label: `environment: dev`
+  - Taint: `environment=dev:NoSchedule`
 
-Karpenter evalúa los NodePools según:
-1. **Weight** (prioridad): Mayor = más prioridad
-2. **Requirements**: ¿El NodePool puede crear nodos que cumplan los requisitos del pod?
-3. **Costo**: Entre opciones válidas, elige la más económica
-
-En nuestro caso:
-- Pod requiere: `environment: dev` + toleration para `environment=dev:NoSchedule`
-- NodePool `karpenter-dev` tiene:
-  - Label: `environment: dev` ✅
-  - Taint: `environment=dev:NoSchedule` ✅
-  - Tipos de instancia: `m6a.large`, `m6a.xlarge` (suficiente para 1 CPU, 1Gi RAM) ✅
-- **Resultado**: Karpenter selecciona `karpenter-dev`
-
-#### 4. Karpenter Crea una Instancia EC2
-
-Karpenter usa el **EC2NodeClass** referenciado por el NodePool:
-- **AMI**: Amazon Linux 2023 (según `amiSelectorTerms`)
-- **Subnets**: Subnets privadas (según `subnetSelectorTerms`)
-- **Security Groups**: `kubernetes-my-org-dev-node` (según `securityGroupSelectorTerms`)
-- **IAM Role**: `Karpenter-kubernetes-my-org-dev`
-- **Storage**: 100Gi gp3 encrypted
-
-Karpenter elige el tipo de instancia más pequeño que pueda alojar el pod:
-- Pod necesita: 1 CPU, 1Gi RAM
-- Opciones: `m6a.large` (2 vCPU, 8Gi RAM) o `m6a.xlarge` (4 vCPU, 16Gi RAM)
-- **Elige**: `m6a.large` (más económico y suficiente)
-
-#### 5. La Instancia se Une al Cluster
-
-La instancia EC2:
-1. Se inicia con el script de bootstrap de EKS
-2. Se une al cluster como nodo
-3. Recibe los labels y taints del NodePool:
-   - Label: `environment: dev`
-   - Taint: `environment=dev:NoSchedule`
-
-#### 6. Kubernetes Programa el Pod
-
+6) Kubernetes schedules the pod
 ```bash
 kubectl get pods
-# NAME      READY   STATUS    NODES
-# mi-app-1  1/1     Running   ip-10-1-19-235.eu-west-1.compute.internal  ← En el nuevo nodo
+# NAME      READY   STATUS    NODE
+# my-app-1  1/1     Running   ip-10-1-19-235.eu-west-1.compute.internal
 ```
 
 ---
 
-## 🎯 Configuración de NodePools
+## 🎯 NodePool Configuration Notes
 
-### ¿Cómo Configurar un NodePool para que Karpenter lo Use?
-
-Un NodePool debe cumplir los requisitos del pod para ser seleccionado:
-
-#### 1. Labels y Taints
-
+1) Labels & taints
 ```yaml
-apiVersion: karpenter.sh/v1
-kind: NodePool
 metadata:
   name: karpenter-dev
 spec:
   template:
     metadata:
       labels:
-        environment: dev  # ← Los pods con nodeSelector "environment: dev" irán aquí
+        environment: dev  # pods with nodeSelector "environment: dev" land here
     spec:
       taints:
         - key: environment
           value: dev
-          effect: NoSchedule  # ← Solo pods con toleration pueden ejecutarse
+          effect: NoSchedule  # only pods with toleration can run here
 ```
 
-#### 2. Requirements (Tipos de Instancia)
-
+2) Requirements (instance types, capacity type, etc.)
 ```yaml
-spec:
-  template:
-    spec:
-      requirements:
-        - key: node.kubernetes.io/instance-type
-          operator: In
-          values:
-          - m6a.large
-          - m6a.xlarge
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["on-demand"]
+requirements:
+  - key: node.kubernetes.io/instance-type
+    operator: In
+    values: ["m6a.large","m6a.xlarge"]
+  - key: karpenter.sh/capacity-type
+    operator: In
+    values: ["on-demand"]
 ```
 
-#### 3. NodeClassRef (Infraestructura)
-
+3) NodeClassRef (infra binding)
 ```yaml
-spec:
-  template:
-    spec:
-      nodeClassRef:
-        group: karpenter.k8s.aws
-        kind: EC2NodeClass
-        name: karpenter-on-demand-default  # ← Referencia al EC2NodeClass
+nodeClassRef:
+  group: karpenter.k8s.aws
+  kind: EC2NodeClass
+  name: karpenter-on-demand-default  # reference to the NodeClass
 ```
 
-#### 4. Weight (Prioridad)
-
+4) Weight (priority)
 ```yaml
-spec:
-  weight: 10  # ← Mayor = más prioridad cuando varios NodePools pueden satisfacer el pod
+weight: 10  # higher = more priority if multiple NodePools match
 ```
+
 ---
 
-## 🗑️ Desinstalación
+## 🗑️ Uninstall
 
 ```bash
 ./desinstalar-karpenter.sh
 ```
 
-Este script:
-1. Elimina los deployments de ejemplo
-2. Elimina los NodePools (esto hace que Karpenter elimine los nodos)
-3. Desinstala Karpenter con Helm
+The script:
+1. Deletes the example deployments
+2. Deletes the NodePools (Karpenter then drains/removes nodes)
+3. Uninstalls Karpenter via Helm
 
 ---
 
-## 📋 Archivos del Directorio
+## 📋 Directory Files
 
-| Archivo | Descripción |
-|---------|-------------|
-| `values.yaml` | Configuración del chart de Helm para Karpenter |
-| `instalar-karpenter.sh` | Script para instalar Karpenter |
-| `aplicar-configuracion.sh` | Script que instala todo (Karpenter + NodePools + Deployment) |
-| `desinstalar-karpenter.sh` | Script para desinstalar Karpenter |
-| `karpenter-on-demand-default-v1.yaml` | EC2NodeClass + NodePool base |
-| `karpenter-dev-v1.yaml` | NodePool para nodos de desarrollo |
-| `deployment-dev.yaml` | Deployment de ejemplo que usa nodos de dev |
+| File | Description |
+|------|-------------|
+| `values.yaml` | Helm values for Karpenter |
+| `instalar-karpenter.sh` | Install script |
+| `aplicar-configuracion.sh` | One-shot install (Karpenter + NodePools + Deployment) |
+| `desinstalar-karpenter.sh` | Uninstall script |
+| `ec2nodeclass-on-demand-default.yaml` | EC2NodeClass (on-demand) |
+| `nodepool-on-demand-default.yaml` | Base on-demand NodePool |
+| `nodepool-on-demand-dev.yaml` | Dev NodePool (on-demand) |
+| `nodepool-spot-dev.yaml` | Dev NodePool (spot, lower weight) |
+| `deployment-dev.yaml` | Example deployment targeting dev nodes |
 
 ---
 
-## 💡 Conceptos Clave
+## 💡 Key Concepts
 
 ### NodePool vs EC2NodeClass
+- **NodePool**: defines **what** to create (labels, taints, instance types, limits).
+- **EC2NodeClass**: defines **how** to create nodes (AMI, subnets, security groups, IAM, storage).
+- You can have:
+  - Multiple NodePools sharing one EC2NodeClass (shared infra)
+  - A dedicated EC2NodeClass per NodePool (isolated infra)
 
-- **NodePool**: Define **qué** nodos puede crear (labels, taints, tipos de instancia, límites)
-- **EC2NodeClass**: Define **cómo** crear los nodos (AMI, subnets, security groups, IAM, storage)
-
-**Puedes tener:**
-- Múltiples NodePools usando el mismo EC2NodeClass (comparten infraestructura)
-- Un NodePool usando un EC2NodeClass específico
-
-### Taints y Tolerations
-
-- **Taint**: "Este nodo solo acepta pods con toleration específica"
-- **Toleration**: "Este pod puede ejecutarse en nodos con este taint"
-
-**Ejemplo:**
-- NodePool tiene taint: `environment=dev:NoSchedule`
-- Pod necesita toleration: `environment=dev:NoSchedule`
-- **Resultado**: El pod puede ejecutarse en el nodo
+### Taints and Tolerations
+- **Taint**: “only pods with this toleration can run here.”
+- **Toleration**: “this pod accepts that taint.”
+- Example: NodePool taint `environment=dev:NoSchedule`, pod toleration `environment=dev:NoSchedule`.
 
 ### NodeSelector vs NodeAffinity
-
-- **NodeSelector**: Simple, solo igualdad exacta
-- **NodeAffinity**: Más flexible, permite operadores (`In`, `NotIn`, `Exists`, etc.)
-
-**Ejemplo NodeSelector:**
+- **NodeSelector**: simple equals match.
+- **NodeAffinity**: more flexible (`In`, `NotIn`, `Exists`, etc.).
 ```yaml
 nodeSelector:
   environment: dev
 ```
-
-**Ejemplo NodeAffinity:**
 ```yaml
 affinity:
   nodeAffinity:
@@ -296,25 +335,23 @@ affinity:
       - matchExpressions:
         - key: environment
           operator: In
-          values: ["dev", "pre"]
+          values: ["dev","pre"]
 ```
 
 ---
 
-## 🚀 Uso Rápido
-
+## 🚀 Quick Use
 ```bash
-# Instalar todo
+# Install everything
 ./aplicar-configuracion.sh
 
-# Desinstalar
+# Uninstall
 ./desinstalar-karpenter.sh
 ```
 
 ---
 
-## 📚 Más Información
-
-- [Documentación oficial de Karpenter](https://karpenter.sh/)
+## 📚 More Info
+- [Karpenter docs](https://karpenter.sh/)
 - [NodePools](https://karpenter.sh/docs/concepts/nodepools/)
 - [EC2NodeClass](https://karpenter.sh/docs/concepts/nodeclasses/)
