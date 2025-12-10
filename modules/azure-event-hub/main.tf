@@ -1,10 +1,11 @@
-# Event Hub Namespace
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace
-locals {
-  virtual_network_rules = var.namespace.ruleset.virtual_network_rules != null ? var.namespace.ruleset.virtual_network_rules : []
-  ip_rules              = var.namespace.ruleset.ip_rules != null ? var.namespace.ruleset.ip_rules : []
+# Data Source: Resource Group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
+data "azurerm_resource_group" "this" {
+  name = var.namespace.resource_group_name
 }
 
+# Event Hub Namespace
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace
 resource "azurerm_eventhub_namespace" "this" {
   name                 = var.namespace.name
   location             = var.namespace.location
@@ -12,7 +13,7 @@ resource "azurerm_eventhub_namespace" "this" {
   sku                  = var.namespace.sku
   capacity             = var.namespace.capacity
   auto_inflate_enabled = var.namespace.auto_inflate_enabled
-  tags                 = var.tags
+  tags                 = local.tags
   identity {
     type = var.namespace.identity_type
   }
@@ -38,36 +39,45 @@ resource "azurerm_eventhub" "this" {
 # Consumer Group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_consumer_group
 resource "azurerm_eventhub_consumer_group" "this" {
-  for_each            = var.eventhub
-  name                = each.value.consumer_group_name
+  for_each = {
+    for item in local.consumer_groups :
+    item.key => item
+  }
+
+  name                = each.value.name
   namespace_name      = azurerm_eventhub_namespace.this.name
-  eventhub_name       = azurerm_eventhub.this[each.key].name
+  eventhub_name       = azurerm_eventhub.this[each.value.eventhub_key].name
   resource_group_name = var.namespace.resource_group_name
 }
 
 # Event Hub Authorization Rule (SAS)
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_authorization_rule
 resource "azurerm_eventhub_authorization_rule" "this" {
-  for_each            = var.eventhub
-  name                = each.value.auth_rule_name
+  for_each = {
+    for item in local.authorization_rules :
+    item.key => item
+  }
+
+  name                = each.value.name
   namespace_name      = azurerm_eventhub_namespace.this.name
-  eventhub_name       = azurerm_eventhub.this[each.key].name
+  eventhub_name       = azurerm_eventhub.this[each.value.eventhub_key].name
   resource_group_name = var.namespace.resource_group_name
-  listen              = each.value.auth_rule.listen
-  send                = each.value.auth_rule.send
-  manage              = each.value.auth_rule.manage
+
+  listen = each.value.listen
+  send   = each.value.send
+  manage = each.value.manage
 }
 
 # System Topic
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventgrid_system_topic
 resource "azurerm_eventgrid_system_topic" "this" {
-  for_each            = var.system_topic
+  for_each = var.system_topic != null ? var.system_topic : {}
   name                = each.value.name
   location            = each.value.location
   resource_group_name = var.namespace.resource_group_name
   source_resource_id  = each.value.source_resource_id
   topic_type          = each.value.topic_type
-  tags                = var.tags
+  tags                = local.tags
   identity {
     type = "SystemAssigned"
   }
@@ -76,7 +86,11 @@ resource "azurerm_eventgrid_system_topic" "this" {
 # Event Subscription for Event Hub (System Topic)
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventgrid_system_topic_event_subscription
 resource "azurerm_eventgrid_system_topic_event_subscription" "this" {
-  for_each             = var.eventhub
+  for_each = {
+    for k, v in var.eventhub :
+    k => v
+    if v.event_subscription != null && v.system_topic_name != null
+  }
   name                 = each.value.event_subscription.name
   system_topic         = azurerm_eventgrid_system_topic.this[each.value.system_topic_name].name
   resource_group_name  = azurerm_eventgrid_system_topic.this[each.value.system_topic_name].resource_group_name
@@ -96,8 +110,12 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "this" {
 }
 
 # Role Assignment for Event Grid -> Event Hub
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "this" {
-  for_each             = var.eventhub
+  for_each = {
+    for k, v in var.eventhub : k => v
+    if v.system_topic_name != null
+  }
   scope                = azurerm_eventhub.this[each.key].id
   role_definition_name = "Azure Event Hubs Data Sender"
   principal_id         = try(azurerm_eventgrid_system_topic.this[each.value.system_topic_name].identity[0].principal_id, null)

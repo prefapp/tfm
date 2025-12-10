@@ -1,3 +1,8 @@
+# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
+data "azurerm_resource_group" "this" {
+  name = var.resource_group_name
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_disk
 resource "azurerm_managed_disk" "disks" {
   for_each             = { for disk in var.disks : disk.name => disk }
@@ -8,11 +13,11 @@ resource "azurerm_managed_disk" "disks" {
   create_option        = lookup(each.value, "create_option", "Empty")
   source_resource_id   = lookup(each.value, "source_resource_id", null)
   disk_size_gb         = lookup(each.value, "disk_size_gb", 4)
+  tags                 = local.tags
 
   lifecycle {
     ignore_changes = [
-      tags,
-      disk_size_gb
+      disk_size_gb # CSI Driver may resize the disk outside of Terraform
     ]
   }
 }

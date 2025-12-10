@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.3](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.2...azure-aks-v1.9.3) (2025-12-03)
+
+
+### Bug Fixes
+
+* update module and tags ([#760](https://github.com/prefapp/tfm/issues/760)) ([daa987b](https://github.com/prefapp/tfm/commit/daa987b6d0d3d31233a8ca2e76f9580ca54449af))
+
 ## [1.9.2](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.1...azure-aks-v1.9.2) (2025-04-25)
 
 

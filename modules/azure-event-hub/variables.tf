@@ -1,6 +1,14 @@
-# Variables
+# VARIABLES SECTION
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
-  type = map(string)
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
 }
 
 variable "eventhub" {
@@ -8,20 +16,20 @@ variable "eventhub" {
     name                = string
     partition_count     = number
     message_retention   = number
-    auth_rule_name      = string
-    consumer_group_name = string
-    auth_rule = object({
+    consumer_group_names = list(string)
+    auth_rules = list(object({
+      name   = string
       listen = bool
       send   = bool
       manage = bool
-    })
-    event_subscription = object({
+    }))
+    event_subscription = optional(object({
       name                 = string
       included_event_types = list(string)
       retry_ttl            = number
       max_attempts         = number
-    })
-    system_topic_name = string
+    }))
+    system_topic_name = optional(string)
   }))
 }
 
