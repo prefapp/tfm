@@ -6,7 +6,7 @@
 set -e
 
 # Variables
-export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::816069157330:role/kubernetes-my-org-dev-karpenter-role"
+export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::xxxxxxxxxxx:role/kubernetes-my-org-dev-karpenter-role"
 export CLUSTER_NAME="kubernetes-my-org-dev"
 
 echo "🚀 Instalando/Actualizando Karpenter..."

@@ -20,7 +20,7 @@ spec:
     ManagedBy: "karpenter"
     billing-team: "platform"
     GithubRepo: "infra"
-    GithubOrg: "prefapp"
+    GithubOrg: "ORGNAME"
     Environment: "dev-worker"
     Backup: "enabled"
     Monitoring: "enabled"

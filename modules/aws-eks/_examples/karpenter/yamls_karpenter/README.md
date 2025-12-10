@@ -32,7 +32,7 @@ This directory contains the full configuration to install and use Karpenter in y
 ### Option A (scripts)
 Run everything in one shot:
 ```bash
-cd /home/pablo/prefapp/tfm/modules/aws-eks/_examples/test_karpenter/yamls_karpenter
+cd /tfm/modules/aws-eks/_examples/karpenter/yamls_karpenter
 chmod +x *.sh
 ./aplicar-configuracion.sh
 ```

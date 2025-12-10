@@ -8,7 +8,7 @@ serviceAccount:
   # -- Additional annotations for the ServiceAccount.
   annotations:
     # eks.amazonaws.com/role-arn: arn:aws:iam::816069157330:role/kubernetes-my-org-dev-karpenter-role
-    eks.amazonaws.com/role-arn: arn:aws:iam::816069157330:role/kubernetes-my-org-dev-karpenter-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxx:role/kubernetes-my-org-dev-karpenter-role
 
 dnsConfig:
  options:
