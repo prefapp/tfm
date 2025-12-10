@@ -7,7 +7,7 @@ spec:
   role: "Karpenter-kubernetes-my-org-dev"
   subnetSelectorTerms:
     - tags:
-        Name: "firestartr-beginners-private"
+        Name: "xxxxxx-xxxx-private"
         kubernetes.io/role/internal-elb: "1"
   securityGroupSelectorTerms:
     - tags:
