@@ -18,7 +18,7 @@ resource "aws_ecs_service" "this" {
   cluster         = aws_ecs_cluster.this.name
   task_definition = aws_ecs_task_definition.this.arn
   launch_type     = var.launch_type
-  desired_count   = 1
+  desired_count   = var.desired_count
   network_configuration {
     subnets          = aws_subnet.public[*].id
     security_groups  = var.security_groups
