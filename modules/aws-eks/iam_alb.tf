@@ -52,7 +52,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
 
   count = var.create_alb_ingress_iam ? 1 : 0
 
-  name = coalesce(var.alb_ingress_policy_name, format("k8s-%s-%s-alb-policy-%s", var.tags["project"], var.tags["env"], var.cluster_name))
+  name = format("k8s-%s-%s-alb-policy-%s", var.tags["project"], var.tags["env"], var.cluster_name)
 
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -308,10 +308,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
 
   tags = merge(
     {
-      "Name" = coalesce(
-        var.alb_ingress_policy_name,
-        format("k8s-%s-%s-alb-policy-%s", var.tags["project"], var.tags["env"], var.cluster_name)
-      )
+      "Name" = format("k8s-%s-%s-alb-policy-%s", var.tags["project"], var.tags["env"], var.cluster_name)
     },
     var.tags
   )

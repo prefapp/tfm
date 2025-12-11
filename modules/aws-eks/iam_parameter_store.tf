@@ -21,7 +21,7 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
 
   count = var.create_parameter_store_iam ? 1 : 0
 
-  name = coalesce(var.parameter_store_policy_name, format("iam_policy_parameter_store-%s", var.cluster_name))
+  name = format("iam_policy_parameter_store-%s", var.cluster_name)
 
   policy = jsonencode({
     "Version" : "2012-10-17",

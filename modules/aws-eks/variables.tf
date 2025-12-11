@@ -115,20 +115,8 @@ variable "alb_ingress_role_name" {
   default     = null
 }
 
-variable "alb_ingress_policy_name" {
-  description = "IAM policy name for ALB Ingress. Leave null to generate one per cluster (composed with project/env/cluster). For compatibility, use: k8s-<myapp>-<env>-alb-policy."
-  type        = string
-  default     = null
-}
-
 variable "parameter_store_role_name" {
   description = "IAM role name for Parameter Store. Leave null to generate one per cluster. For backward compatibility, use the legacy name without suffix: iam_role_parameter_store_all."
-  type        = string
-  default     = null
-}
-
-variable "parameter_store_policy_name" {
-  description = "IAM policy name for Parameter Store. Leave null to generate one per cluster. For backward compatibility, use the legacy name without suffix: iam_policy_parameter_store."
   type        = string
   default     = null
 }
