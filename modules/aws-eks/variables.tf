@@ -116,7 +116,7 @@ variable "alb_ingress_role_name" {
 }
 
 variable "parameter_store_role_name" {
-  description = "IAM role name for Parameter Store. Leave null to generate one per cluster. For backward compatibility, use the legacy name without suffix: iam_role_parameter_store_all."
+  description = "IAM role name for Parameter Store. Leave null to auto-generate per cluster (format: iam_role_parameter_store_all-<cluster_name>). For backward compatibility, use: iam_role_parameter_store_all."
   type        = string
   default     = null
 }
