@@ -23,7 +23,6 @@ resource "aws_iam_policy" "external_dns_policy" {
 
   count = var.create_external_dns_iam ? 1 : 0
 
-  # Nombre determinístico único por cluster para evitar colisiones
   name = "external-dns-policy-${var.cluster_name}"
 
   policy = <<POLICY
@@ -61,8 +60,6 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
 
   count = var.create_external_dns_iam ? 1 : 0
 
-  # Si external_dns_role_name es null, generamos un nombre único por cluster.
-  # Para compatibilidad con despliegues antiguos, establece external_dns_role_name = "external-dns-Kubernetes".
   name = coalesce(var.external_dns_role_name, "external-dns-${var.cluster_name}")
 
   assume_role_policy = jsonencode({
