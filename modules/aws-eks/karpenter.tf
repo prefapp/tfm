@@ -6,7 +6,7 @@ module "karpenter" {
   version      = "20.33.1"
   cluster_name = var.cluster_name
 
-  iam_role_name         = format("%s-karpenter-role", var.cluster_name) # Usamos este para generar el instance profile
+  iam_role_name         = format("%s-karpenter-role", var.cluster_name) # Used to generate the instance profile
   create_iam_role       = true
   enable_v1_permissions = true
   enable_irsa           = true
