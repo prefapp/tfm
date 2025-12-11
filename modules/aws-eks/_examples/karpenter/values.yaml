@@ -108,8 +108,8 @@ node_groups:
       GithubRepo: "infra"
       GithubOrg: "ORGNAME"
       Environment: "dev-worker"
-      # environment: NO se pone aquí - los nodos del node group inicial son "comunes"
-      # Solo los nodos creados por Karpenter tendrán labels de entorno (dev/pre)
+      # environment: Not set here - initial node group nodes are "common"
+      # Only nodes created by Karpenter will have environment labels (dev/pre)
 
 # EKS Cluster Tags
 tags:
