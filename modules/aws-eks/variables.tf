@@ -95,7 +95,7 @@ variable "externaldns_tags" {
 }
 
 variable "external_dns_role_name" {
-  description = "IAM role name for external-dns. Leave null to generate it with the cluster name. For backward compatibility set \"external-dns-Kubernetes\"."
+  description = "IAM role name for external-dns. Leave null to auto-generate using the cluster name. For backward compatibility, set to 'external-dns-Kubernetes'."
 
   type    = string
   default = null
