@@ -95,7 +95,7 @@ variable "externaldns_tags" {
 }
 
 variable "external_dns_role_name" {
-  description = "Nombre del IAM role para external-dns. Deja null para que se genere con el nombre del cluster. Pon \"external-dns-Kubernetes\" para compatibilidad hacia atrás."
+  description = "IAM role name for external-dns. Leave null to generate it with the cluster name. For backward compatibility set \"external-dns-Kubernetes\"."
 
   type    = string
   default = null
@@ -110,25 +110,25 @@ variable "create_parameter_store_iam" {
 }
 
 variable "alb_ingress_role_name" {
-  description = "Nombre del IAM role para ALB Ingress. Deja null para generar uno único por cluster."
+  description = "IAM role name for ALB Ingress. Leave null to generate one per cluster (composed with project/env/cluster). For backward compatibility, set a name like: k8s-<myapp>-<env>-oidc-role."
   type        = string
   default     = null
 }
 
 variable "alb_ingress_policy_name" {
-  description = "Nombre de la IAM policy para ALB Ingress. Deja null para generar una por cluster."
+  description = "IAM policy name for ALB Ingress. Leave null to generate one per cluster (composed with project/env/cluster). For compatibility, use: k8s-<myapp>-<env>-alb-policy."
   type        = string
   default     = null
 }
 
 variable "parameter_store_role_name" {
-  description = "Nombre del IAM role para Parameter Store. Deja null para generar uno único por cluster."
+  description = "IAM role name for Parameter Store. Leave null to generate one per cluster. For backward compatibility, use the legacy name without suffix: iam_role_parameter_store_all."
   type        = string
   default     = null
 }
 
 variable "parameter_store_policy_name" {
-  description = "Nombre de la IAM policy para Parameter Store. Deja null para generar una única por cluster."
+  description = "IAM policy name for Parameter Store. Leave null to generate one per cluster. For backward compatibility, use the legacy name without suffix: iam_policy_parameter_store."
   type        = string
   default     = null
 }

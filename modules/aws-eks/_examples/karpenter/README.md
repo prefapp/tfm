@@ -1,6 +1,6 @@
 # 🚀 Karpenter - Node Autoscaling on EKS
 
-This directory contains the full configuration to install and use Karpenter in your EKS cluster.
+The directory karpenter_config contains the full configuration to install and use Karpenter in your EKS cluster.
 
 ---
 
@@ -32,7 +32,7 @@ This directory contains the full configuration to install and use Karpenter in y
 ### Option A (scripts)
 Run everything in one shot:
 ```bash
-cd /tfm/modules/aws-eks/_examples/karpenter/yamls_karpenter
+cd /tfm/modules/aws-eks/_examples/karpenter/karpenter_config
 chmod +x *.sh
 ./aplicar-configuracion.sh
 ```
