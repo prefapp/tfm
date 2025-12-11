@@ -94,12 +94,31 @@ variable "externaldns_tags" {
   default = {}
 }
 
+variable "external_dns_role_name" {
+  description = "IAM role name for external-dns. Leave null to auto-generate using the cluster name. For backward compatibility, set to 'external-dns-Kubernetes'."
+
+  type    = string
+  default = null
+}
+
 variable "create_parameter_store_iam" {
   description = "Create IAM resources for parameter-store"
 
   type = bool
 
   default = false
+}
+
+variable "alb_ingress_role_name" {
+  description = "IAM role name for ALB Ingress. Leave null to auto-generate per cluster (format: k8s-<project>-<env>-oidc-role-<cluster_name>). For backward compatibility, use: k8s-<tags.project>-<tags.env>-oidc-role."
+  type        = string
+  default     = null
+}
+
+variable "parameter_store_role_name" {
+  description = "IAM role name for Parameter Store. Leave null to auto-generate per cluster (format: iam_role_parameter_store_all-<cluster_name>). For backward compatibility, use: iam_role_parameter_store_all."
+  type        = string
+  default     = null
 }
 
 variable "subnet_ids" {
@@ -235,4 +254,12 @@ variable "access_entries" {
   type = any
 
   default = {}
+}
+
+variable "enable_karpenter" {
+  description = "Enable Karpenter provisioning"
+
+  type = bool
+
+  default = false
 }
