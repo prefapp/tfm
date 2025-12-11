@@ -34,7 +34,7 @@ spec:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
         name: karpenter-on-demand-default
-      expireAfter: 1m # 7 * 24h = 168h
+      expireAfter: 168h # 7 * 24h = 168h
   limits:
     cpu: 40
     memory: "160Gi"
