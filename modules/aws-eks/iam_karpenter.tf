@@ -11,7 +11,7 @@ resource "aws_iam_policy" "iam_policy_extra_karpenter" {
           "ec2:RunInstances",
           "ec2:DeleteLaunchTemplate"
         ],
-        "Resource" : "*"
+        "Resource" : "*",
         "Sid" : "Karpenter"
 
       },
