@@ -110,7 +110,7 @@ variable "create_parameter_store_iam" {
 }
 
 variable "alb_ingress_role_name" {
-  description = "IAM role name for ALB Ingress. Leave null to generate one per cluster (composed with project/env/cluster). For backward compatibility, set a name like: k8s-<tags.project>-<tags.env>-oidc-role."
+  description = "IAM role name for ALB Ingress. Leave null to auto-generate per cluster (format: k8s-<project>-<env>-oidc-role-<cluster_name>). For backward compatibility, use: k8s-<tags.project>-<tags.env>-oidc-role."
   type        = string
   default     = null
 }
