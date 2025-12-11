@@ -18,7 +18,7 @@ resource "aws_ecs_service" "this" {
   cluster         = aws_ecs_cluster.this.name
   task_definition = aws_ecs_task_definition.this.arn
   launch_type     = var.launch_type
-  desired_count   = var.desired_count
+  desired_count   = lookup(var.ecs_autoscaling, var.service_name, {}) != {} && lookup(var.ecs_autoscaling[var.service_name], "stop", null) != null ? 0 : var.desired_count
   network_configuration {
     subnets          = aws_subnet.public[*].id
     security_groups  = var.security_groups

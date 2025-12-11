@@ -236,7 +236,13 @@ variable "sg_egress" {
 
 ### ECS Autoscaling
 variable "ecs_autoscaling" {
-  description = "ECS service autoscaling configuration"
+  description = <<EOT
+  ECS service autoscaling configuration.
+
+  Special fields:
+  - halt: If present, disables autoscaling resources for this service.
+  - stop: If present, sets desired_count to 0, stopping the service.
+  EOT
   type = map(object({
     autoscaling_enabled = bool
     min_capacity        = number
