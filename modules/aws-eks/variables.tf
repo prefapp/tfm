@@ -94,25 +94,11 @@ variable "externaldns_tags" {
   default = {}
 }
 
-variable "ebs_csi_driver_role_name" {
-  description = "Name for the EBS CSI Driver IAM role. Defaults to 'AmazonEKS_EBS_CSI_DriverRole' for backward compatibility."
-
-  type    = string
-  default = "AmazonEKS_EBS_CSI_DriverRole"
-}
-
-variable "external_dns_policy_name" {
-  description = "Name for the External DNS IAM policy. Defaults to 'external_dns_policy' for backward compatibility."
-
-  type    = string
-  default = "external_dns_policy"
-}
-
 variable "external_dns_role_name" {
-  description = "Name for the External DNS IAM role. Defaults to 'external-dns-Kubernetes' for backward compatibility."
+  description = "Nombre del IAM role para external-dns. Deja null para que se genere con el nombre del cluster. Pon \"external-dns-Kubernetes\" para compatibilidad hacia atrás."
 
   type    = string
-  default = "external-dns-Kubernetes"
+  default = null
 }
 
 variable "create_parameter_store_iam" {
@@ -121,6 +107,30 @@ variable "create_parameter_store_iam" {
   type = bool
 
   default = false
+}
+
+variable "alb_ingress_role_name" {
+  description = "Nombre del IAM role para ALB Ingress. Deja null para generar uno único por cluster."
+  type        = string
+  default     = null
+}
+
+variable "alb_ingress_policy_name" {
+  description = "Nombre de la IAM policy para ALB Ingress. Deja null para generar una por cluster."
+  type        = string
+  default     = null
+}
+
+variable "parameter_store_role_name" {
+  description = "Nombre del IAM role para Parameter Store. Deja null para generar uno único por cluster."
+  type        = string
+  default     = null
+}
+
+variable "parameter_store_policy_name" {
+  description = "Nombre de la IAM policy para Parameter Store. Deja null para generar una única por cluster."
+  type        = string
+  default     = null
 }
 
 variable "subnet_ids" {
@@ -258,9 +268,8 @@ variable "access_entries" {
   default = {}
 }
 
-# Karpenter Configuration
 variable "enable_karpenter" {
-  description = "Enable Karpenter autoscaler for the EKS cluster"
+  description = "Enable Karpenter provisioning"
 
   type = bool
 
