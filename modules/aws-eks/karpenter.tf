@@ -21,7 +21,7 @@ module "karpenter" {
   create_access_entry = true
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    Ec2ExtraPolicy             = aws_iam_policy.iam_policy_extra_karpenter[0].arn
+    Ec2ExtraPolicy               = aws_iam_policy.iam_policy_extra_karpenter[0].arn
   }
 
   queue_name = format("karpenter-%s", var.cluster_name)
