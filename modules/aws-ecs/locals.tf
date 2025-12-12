@@ -1,20 +1,3 @@
-resource "null_resource" "debug_vpc_and_subnets" {
-  provisioner "local-exec" {
-    command = <<EOT
-      echo "[DEBUG] VPC_ID: ${local.vpc_id}"
-      echo "[DEBUG] DATA_SUBNET_IDS: ${join(",", try(data.aws_subnets.this[0].ids, []))}"
-    EOT
-  }
-  triggers = {
-    vpc_id         = local.vpc_id
-    data_subnet_ids = join(",", try(data.aws_subnets.this[0].ids, []))
-  }
-}
-resource "null_resource" "debug_subnet_ids" {
-  provisioner "local-exec" {
-    command = "echo SUBNET_IDS: ${join(",", local.subnet_ids)}"
-  }
-}
 locals {
   default_assume_role_policy = jsonencode({
     Version = "2012-10-17"
