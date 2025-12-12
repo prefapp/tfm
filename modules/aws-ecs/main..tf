@@ -14,6 +14,7 @@ resource "aws_ecs_task_definition" "this" {
 
 
 resource "aws_ecs_service" "this" {
+    depends_on = [aws_lb_target_group.this]
   name            = var.service_name
   cluster         = aws_ecs_cluster.this.name
   task_definition = aws_ecs_task_definition.this.arn
