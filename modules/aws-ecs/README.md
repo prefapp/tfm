@@ -31,8 +31,9 @@ No modules.
 | [aws_lb_listener.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_target_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+| [aws_subnets.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
+| [aws_vpc.by_id](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
+| [aws_vpc.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ### Inputs
 
@@ -60,12 +61,19 @@ No modules.
 | <a name="input_sg_egress"></a> [sg\_egress](#input\_sg\_egress) | List of egress rules for the security group | <pre>list(object({<br/>    from_port   = number<br/>    to_port     = number<br/>    protocol    = string<br/>    cidr_blocks = list(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_blocks": [<br/>      "0.0.0.0/0"<br/>    ],<br/>    "from_port": 0,<br/>    "protocol": "-1",<br/>    "to_port": 0<br/>  }<br/>]</pre> | no |
 | <a name="input_sg_ingress"></a> [sg\_ingress](#input\_sg\_ingress) | List of ingress rules for the security group | <pre>list(object({<br/>    from_port   = number<br/>    to_port     = number<br/>    protocol    = string<br/>    cidr_blocks = list(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_blocks": [<br/>      "0.0.0.0/0"<br/>    ],<br/>    "from_port": 80,<br/>    "protocol": "tcp",<br/>    "to_port": 80<br/>  }<br/>]</pre> | no |
 | <a name="input_sg_name"></a> [sg\_name](#input\_sg\_name) | Name of the security group | `string` | `"ecs-service-sg"` | no |
-| <a name="input_subnet_cidr_blocks"></a> [subnet\_cidr\_blocks](#input\_subnet\_cidr\_blocks) | List of CIDR blocks for the public subnets. | `list(string)` | <pre>[<br/>  "172.31.1.0/24",<br/>  "172.31.2.0/24"<br/>]</pre> | no |
-| <a name="input_subnet_names"></a> [subnet\_names](#input\_subnet\_names) | List of names for the public subnets. | `list(string)` | <pre>[<br/>  "public-subnet-1",<br/>  "public-subnet-2"<br/>]</pre> | no |
+| <a name="input_subnet_filter_name"></a> [subnet\_filter\_name](#input\_subnet\_filter\_name) | Name of the subnet filter (e.g., 'tag:Name'). Used if subnet\_ids are not provided. | `string` | `""` | no |
+| <a name="input_subnet_filter_value"></a> [subnet\_filter\_value](#input\_subnet\_filter\_value) | Value for the subnet filter. Used if subnet\_ids are not provided. | `string` | `""` | no |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet\_filter\_name and subnet\_filter\_value (e.g., tag:Name). | `list(string)` | `[]` | no |
+| <a name="input_subnet_tag_key"></a> [subnet\_tag\_key](#input\_subnet\_tag\_key) | Tag key used to search the subnets when subnet\_ids is not provided | `string` | `"type"` | no |
+| <a name="input_subnet_tag_name"></a> [subnet\_tag\_name](#input\_subnet\_tag\_name) | Tag name of the subnets to look up | `string` | `""` | no |
 | <a name="input_target_group_name"></a> [target\_group\_name](#input\_target\_group\_name) | Name of the target group | `string` | `"ecs-alb-tg"` | no |
 | <a name="input_target_group_port"></a> [target\_group\_port](#input\_target\_group\_port) | Port for the target group | `number` | `80` | no |
 | <a name="input_target_group_protocol"></a> [target\_group\_protocol](#input\_target\_group\_protocol) | Protocol for the target group | `string` | `"HTTP"` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID where resources will be created | `string` | n/a | yes |
+| <a name="input_vpc_filter_name"></a> [vpc\_filter\_name](#input\_vpc\_filter\_name) | Name of the VPC filter (e.g., 'tag:Name'). Used if vpc\_id is not provided. | `string` | `""` | no |
+| <a name="input_vpc_filter_value"></a> [vpc\_filter\_value](#input\_vpc\_filter\_value) | Value for the VPC filter. Used if vpc\_id is not provided. | `string` | `""` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where resources will be created. If not set, vpc\_tag\_name will be used to look up the VPC. | `string` | `null` | no |
+| <a name="input_vpc_tag_key"></a> [vpc\_tag\_key](#input\_vpc\_tag\_key) | Tag key used to search the VPC when vpc\_id is not provided | `string` | `"Name"` | no |
+| <a name="input_vpc_tag_name"></a> [vpc\_tag\_name](#input\_vpc\_tag\_name) | Tag name of the VPC to look up | `string` | `""` | no |
 
 ### Outputs
 
@@ -77,7 +85,6 @@ No modules.
 | <a name="output_ecs_service_arn"></a> [ecs\_service\_arn](#output\_ecs\_service\_arn) | ARN of the ECS service |
 | <a name="output_ecs_service_name"></a> [ecs\_service\_name](#output\_ecs\_service\_name) | Name of the ECS service |
 | <a name="output_ecs_task_definition_arn"></a> [ecs\_task\_definition\_arn](#output\_ecs\_task\_definition\_arn) | ARN of the ECS task definition |
-| <a name="output_public_subnet_ids"></a> [public\_subnet\_ids](#output\_public\_subnet\_ids) | IDs of the public subnets created by the module |
 | <a name="output_scale_down_alarm_arns"></a> [scale\_down\_alarm\_arns](#output\_scale\_down\_alarm\_arns) | n/a |
 | <a name="output_scale_down_policy_arns"></a> [scale\_down\_policy\_arns](#output\_scale\_down\_policy\_arns) | n/a |
 | <a name="output_scale_up_alarm_arns"></a> [scale\_up\_alarm\_arns](#output\_scale\_up\_alarm\_arns) | n/a |
