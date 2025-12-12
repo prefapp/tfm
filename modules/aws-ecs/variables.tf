@@ -131,7 +131,12 @@ variable "security_groups" {
 }
 
 variable "load_balancer" {
-  description = "List of load balancer configurations for the ECS service. Each object should include target_group_arn, container_name, and container_port."
+  description = <<EOT
+List of load balancer configurations for the ECS service. Each object should include:
+- target_group_arn (optional): ARN of the target group. If not provided or empty, the module will use the ARN of the target group it creates internally.
+- container_name: Name of the container to associate with the load balancer.
+- container_port: Port on the container to associate with the load balancer.
+EOT
   type = list(object({
     target_group_arn = string
     container_name   = string
