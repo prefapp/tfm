@@ -17,9 +17,8 @@ data "aws_subnets" "this" {
     name   = "vpc-id"
     values = [local.vpc_id]
   }
-  # Filtro de etiqueta comentado temporalmente para depuración
-  # filter {
-  #   name   = "tag:${var.subnet_tag_key}"
-  #   values = [var.subnet_tag_name]
-  # }
+  filter {
+    name   = "tag:${var.subnet_tag_key}"
+    values = [var.subnet_tag_name]
+  }
 }
