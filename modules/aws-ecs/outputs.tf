@@ -23,10 +23,6 @@ output "ecs_task_definition_arn" {
   value       = aws_ecs_task_definition.this.arn
 }
 
-output "public_subnet_ids" {
-  description = "IDs of the public subnets created by the module"
-  value       = aws_subnet.public[*].id
-}
 
 output "security_group_id" {
   description = "ID of the security group used by the ECS service"

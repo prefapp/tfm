@@ -1,14 +1,45 @@
-variable "subnet_cidr_blocks" {
-  description = "List of CIDR blocks for the public subnets."
-  type        = list(string)
-  default     = ["172.31.1.0/24", "172.31.2.0/24"]
+## VPC
+variable "vpc_id" {
+  description = <<EOT
+VPC ID where resources will be created. If not set, the module will try to locate the VPC using vpc_filter_name and vpc_filter_value (e.g., tag:Name).
+EOT
+  type        = string
+  default     = ""
 }
 
-variable "subnet_names" {
-  description = "List of names for the public subnets."
+variable "subnet_ids" {
+  description = <<EOT
+List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet_filter_name and subnet_filter_value (e.g., tag:Name).
+EOT
   type        = list(string)
-  default     = ["public-subnet-1", "public-subnet-2"]
+  default     = []
 }
+
+# VPC and Subnet filters
+variable "vpc_filter_name" {
+  description = "Name of the VPC filter (e.g., 'tag:Name'). Used if vpc_id is not provided."
+  type        = string
+  default     = ""
+}
+
+variable "vpc_filter_value" {
+  description = "Value for the VPC filter. Used if vpc_id is not provided."
+  type        = string
+  default     = ""
+}
+
+variable "subnet_filter_name" {
+  description = "Name of the subnet filter (e.g., 'tag:Name'). Used if subnet_ids are not provided."
+  type        = string
+  default     = ""
+}
+
+variable "subnet_filter_value" {
+  description = "Value for the subnet filter. Used if subnet_ids are not provided."
+  type        = string
+  default     = ""
+}
+
 ## ECS Cluster
 variable "cluster_name" {
   description = "Name of the ECS cluster"
@@ -177,13 +208,6 @@ variable "health_check" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
-}
-
-
-## VPC
-variable "vpc_id" {
-  description = "VPC ID where resources will be created"
-  type        = string
 }
 
 
