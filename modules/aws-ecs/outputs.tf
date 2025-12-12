@@ -1,3 +1,7 @@
+output "debug_subnet_ids" {
+  value = local.subnet_ids
+  description = "DEBUG: Subnet IDs used by the ALB/ECS. Remove after debugging."
+}
 output "ecs_cluster_arn" {
   description = "ARN of the ECS cluster"
   value       = aws_ecs_cluster.this.arn
