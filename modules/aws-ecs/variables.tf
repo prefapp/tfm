@@ -133,7 +133,7 @@ List of load balancer configurations for the ECS service. Each object should inc
 - container_port: Port on the container to associate with the load balancer.
 EOT
   type = list(object({
-    target_group_arn = string
+    target_group_arn = optional(string)
     container_name   = string
     container_port   = number
   }))
