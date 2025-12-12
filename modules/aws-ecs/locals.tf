@@ -41,7 +41,7 @@ locals {
     }
   ]
 
-  ecs_load_balancer_valid = all([
+  ecs_load_balancer_valid = anytrue([
     for lb in local.ecs_load_balancer : lb.target_group_arn != null && lb.target_group_arn != ""
   ])
 }
