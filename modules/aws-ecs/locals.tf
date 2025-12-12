@@ -31,7 +31,7 @@ locals {
 locals {
   ecs_load_balancer = [
     for lb in var.load_balancer : {
-      target_group_arn = lb.target_group_arn != "" ? lb.target_group_arn : aws_lb_target_group.this.arn
+      target_group_arn = try(lb.target_group_arn, "") != "" ? lb.target_group_arn : aws_lb_target_group.this.arn
       container_name   = lb.container_name
       container_port   = lb.container_port
     }
