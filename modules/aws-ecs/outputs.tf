@@ -1,3 +1,7 @@
+output "debug_ecs_load_balancer" {
+  description = "Contenido de local.ecs_load_balancer que se pasa al ECS service"
+  value       = local.ecs_load_balancer
+}
 output "debug_vpc_id" {
   description = "VPC ID realmente usado por el módulo"
   value       = local.vpc_id
