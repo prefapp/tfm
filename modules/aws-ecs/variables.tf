@@ -21,11 +21,6 @@ variable "vpc_tag_name" {
   }
 }
 
-variable "subnet_ids" {
-  description = "List of subnet IDs to use for the ECS service and ALB. If not set, subnet_tag_name will be used."
-  type        = list(string)
-  default     = null
-}
 
 variable "subnet_tag_key" {
   description = "Tag key used to search the subnets when subnet_ids is not provided"
