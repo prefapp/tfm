@@ -31,11 +31,19 @@ locals {
 locals {
   ecs_load_balancer = [
     for lb in var.load_balancer : {
-      target_group_arn = try(lb.target_group_arn, "") != "" ? lb.target_group_arn : aws_lb_target_group.this.arn
+      target_group_arn = (
+        try(lb.target_group_arn, "") != ""
+        ? lb.target_group_arn
+        : try(aws_lb_target_group.this.arn, "")
+      )
       container_name   = lb.container_name
       container_port   = lb.container_port
     }
   ]
+
+  ecs_load_balancer_valid = all([
+    for lb in local.ecs_load_balancer : lb.target_group_arn != null && lb.target_group_arn != ""
+  ])
 }
 locals {
   vpc_by_id  = var.vpc_id != null && var.vpc_id != "" ? data.aws_vpc.by_id[0] : null
