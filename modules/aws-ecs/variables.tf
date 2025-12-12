@@ -1,10 +1,46 @@
 ## VPC
 variable "vpc_id" {
-  description = <<EOT
-VPC ID where resources will be created. If not set, the module will try to locate the VPC using vpc_filter_name and vpc_filter_value (e.g., tag:Name).
-EOT
+  description = "ID of the VPC where resources will be created. If not set, vpc_tag_name will be used to look up the VPC."
+  type        = string
+  default     = null
+}
+
+variable "vpc_tag_key" {
+  description = "Tag key used to search the VPC when vpc_id is not provided"
+  type        = string
+  default     = "Name"
+}
+
+variable "vpc_tag_name" {
+  description = "Tag name of the VPC to look up"
   type        = string
   default     = ""
+  validation {
+    condition     = var.vpc_id != null || var.vpc_tag_name != ""
+    error_message = "You must specify either vpc_id or vpc_tag_name."
+  }
+}
+
+variable "subnet_ids" {
+  description = "List of subnet IDs to use for the ECS service and ALB. If not set, subnet_tag_name will be used."
+  type        = list(string)
+  default     = null
+}
+
+variable "subnet_tag_key" {
+  description = "Tag key used to search the subnets when subnet_ids is not provided"
+  type        = string
+  default     = "type"
+}
+
+variable "subnet_tag_name" {
+  description = "Tag name of the subnets to look up"
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.subnet_ids != null || var.subnet_tag_name != ""
+    error_message = "You must specify either subnet_ids or subnet_tag_name."
+  }
 }
 
 variable "subnet_ids" {

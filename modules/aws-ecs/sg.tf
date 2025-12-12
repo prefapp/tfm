@@ -1,7 +1,7 @@
 resource "aws_security_group" "this" {
   name        = var.sg_name
   description = var.sg_description
-  vpc_id      = var.vpc_id
+  vpc_id      = local.vpc_id
 
   dynamic "ingress" {
     for_each = var.sg_ingress

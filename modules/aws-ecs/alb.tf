@@ -3,14 +3,14 @@ resource "aws_lb" "this" {
   internal           = var.alb_internal
   load_balancer_type = "application"
   security_groups    = [aws_security_group.this.id]
-  subnets            = length(var.subnet_ids) > 0 ? var.subnet_ids : (length(data.aws_subnets.this) > 0 ? data.aws_subnets.this[0].ids : [])
+  subnets            = local.subnet_ids
 }
 
 resource "aws_lb_target_group" "this" {
   name        = var.target_group_name
   port        = var.target_group_port
   protocol    = var.target_group_protocol
-  vpc_id      = var.vpc_id != "" ? var.vpc_id : (length(data.aws_vpc.this) > 0 ? data.aws_vpc.this[0].id : null)
+  vpc_id      = local.vpc_id
   target_type = "ip"
 
   health_check {

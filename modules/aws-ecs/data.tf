@@ -1,15 +1,24 @@
 data "aws_vpc" "this" {
-  count = var.vpc_id != "" ? 0 : 1
+  count = var.vpc_id == null && var.vpc_tag_name != "" ? 1 : 0
   filter {
-    name   = var.vpc_filter_name
-    values = [var.vpc_filter_value]
+    name   = "tag:${var.vpc_tag_key}"
+    values = [var.vpc_tag_name]
   }
 }
 
+data "aws_vpc" "by_id" {
+  count = var.vpc_id != null && var.vpc_id != "" ? 1 : 0
+  id    = var.vpc_id
+}
+
 data "aws_subnets" "this" {
-  count = length(var.subnet_ids) > 0 ? 0 : 1
+  count = var.subnet_ids == null ? 1 : 0
   filter {
-    name   = var.subnet_filter_name
-    values = [var.subnet_filter_value]
+    name   = "vpc-id"
+    values = [local.vpc_id]
+  }
+  filter {
+    name   = "tag:${var.subnet_tag_key}"
+    values = [var.subnet_tag_name]
   }
 }
