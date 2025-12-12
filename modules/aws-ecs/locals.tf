@@ -1,3 +1,8 @@
+resource "null_resource" "debug_subnet_ids" {
+  provisioner "local-exec" {
+    command = "echo SUBNET_IDS: ${join(",", local.subnet_ids)}"
+  }
+}
 locals {
   default_assume_role_policy = jsonencode({
     Version = "2012-10-17"
