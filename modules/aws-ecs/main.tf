@@ -27,21 +27,9 @@ resource "aws_ecs_service" "this" {
   }
 
   dynamic "load_balancer" {
-    for_each = [
-      for lb in var.load_balancer :
-      {
-        target_group_arn = (
-          try(lb.target_group_arn, "") != "" ? lb.target_group_arn : try(aws_lb_target_group.this.arn, "")
-        )
-        container_name   = lb.container_name
-        container_port   = lb.container_port
-      }
-      if (
-        (try(lb.target_group_arn, "") != "" ? lb.target_group_arn : try(aws_lb_target_group.this.arn, "")) != ""
-      )
-    ]
+    for_each = var.load_balancer
     content {
-      target_group_arn = load_balancer.value.target_group_arn
+      target_group_arn = coalesce(load_balancer.value.target_group_arn, aws_lb_target_group.this.arn)
       container_name   = load_balancer.value.container_name
       container_port   = load_balancer.value.container_port
     }

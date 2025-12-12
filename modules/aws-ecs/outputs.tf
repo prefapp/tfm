@@ -1,20 +1,3 @@
-output "debug_target_group_arn" {
-  description = "ARN real del target group creado por el módulo"
-  value       = try(aws_lb_target_group.this.arn, null)
-}
-
-output "debug_final_load_balancer" {
-  description = "Objeto final que se pasa al bloque load_balancer del ECS service"
-  value = [
-    for lb in var.load_balancer : {
-      target_group_arn = (
-        try(lb.target_group_arn, "") != "" ? lb.target_group_arn : try(aws_lb_target_group.this.arn, "")
-      )
-      container_name   = lb.container_name
-      container_port   = lb.container_port
-    }
-  ]
-}
 output "debug_vpc_id" {
   description = "VPC ID realmente usado por el módulo"
   value       = local.vpc_id
