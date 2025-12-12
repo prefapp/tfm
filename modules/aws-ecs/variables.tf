@@ -43,7 +43,7 @@ variable "subnet_ids" {
 List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet_filter_name and subnet_filter_value (e.g., tag:Name).
 EOT
   type        = list(string)
-  default     = []
+  default     = null
 }
 
 # VPC and Subnet filters
@@ -198,18 +198,30 @@ variable "alb_internal" {
 
 
 variable "target_group_name" {
+    validation {
+      condition     = var.target_group_name != ""
+      error_message = "target_group_name must not be empty."
+    }
   description = "Name of the target group"
   type        = string
   default     = "ecs-alb-tg"
 }
 
 variable "target_group_port" {
+    validation {
+      condition     = var.target_group_port != null
+      error_message = "target_group_port must not be null."
+    }
   description = "Port for the target group"
   type        = number
   default     = 80
 }
 
 variable "target_group_protocol" {
+    validation {
+      condition     = var.target_group_protocol != ""
+      error_message = "target_group_protocol must not be empty."
+    }
   description = "Protocol for the target group"
   type        = string
   default     = "HTTP"
