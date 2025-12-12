@@ -1,3 +1,12 @@
+output "debug_vpc_id" {
+  description = "VPC ID realmente usado por el módulo"
+  value       = local.vpc_id
+}
+
+output "debug_data_subnet_ids" {
+  description = "IDs de subredes devueltos por data.aws_subnets.this"
+  value       = try(data.aws_subnets.this[0].ids, [])
+}
 output "debug_subnet_ids" {
   value = local.subnet_ids
   description = "DEBUG: Subnet IDs used by the ALB/ECS. Remove after debugging."
