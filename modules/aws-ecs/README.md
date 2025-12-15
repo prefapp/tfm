@@ -1,4 +1,3 @@
-| <a name="input_load_balancer"></a> [load\_balancer](#input\_load_balancer) | List of load balancer configurations for the ECS service. Each object should include:<br/>- <b>target_group_arn</b> (optional): ARN of the target group. If not provided or empty, the module will use the ARN of the target group it creates internally.<br/>- <b>container_name</b>: Name of the container to associate with the load balancer.<br/>- <b>container_port</b>: Port on the container to associate with the load balancer. | <pre>list(object({<br/>    target_group_arn = string<br/>    container_name   = string<br/>    container_port   = number<br/>  }))</pre> | `[]` | no |
 <!-- BEGIN_TF_DOCS -->
 ### Requirements
 
