@@ -189,8 +189,8 @@ variable "target_group_protocol" {
   type        = string
   default     = "HTTP"
   validation {
-      condition     = var.target_group_protocol != ""
-      error_message = "target_group_protocol must not be empty."
+      condition     = contains(["HTTP", "HTTPS"], var.target_group_protocol)
+      error_message = "target_group_protocol must be one of: HTTP, HTTPS."
   }
 }
 
