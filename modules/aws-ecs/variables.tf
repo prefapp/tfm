@@ -182,10 +182,6 @@ variable "target_group_port" {
   description = "Port for the target group"
   type        = number
   default     = 80
-  validation {
-      condition     = var.target_group_port != null
-      error_message = "target_group_port must not be null."
-  }
 }
 
 variable "target_group_protocol" {
