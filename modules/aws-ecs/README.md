@@ -86,10 +86,10 @@ No modules.
 | <a name="output_ecs_service_arn"></a> [ecs\_service\_arn](#output\_ecs\_service\_arn) | ARN of the ECS service |
 | <a name="output_ecs_service_name"></a> [ecs\_service\_name](#output\_ecs\_service\_name) | Name of the ECS service |
 | <a name="output_ecs_task_definition_arn"></a> [ecs\_task\_definition\_arn](#output\_ecs\_task\_definition\_arn) | ARN of the ECS task definition |
-| <a name="output_scale_down_alarm_arns"></a> [scale\_down\_alarm\_arns](#output\_scale\_down\_alarm\_arns) | n/a |
-| <a name="output_scale_down_policy_arns"></a> [scale\_down\_policy\_arns](#output\_scale\_down\_policy\_arns) | n/a |
-| <a name="output_scale_up_alarm_arns"></a> [scale\_up\_alarm\_arns](#output\_scale\_up\_alarm\_arns) | n/a |
-| <a name="output_scale_up_policy_arns"></a> [scale\_up\_policy\_arns](#output\_scale\_up\_policy\_arns) | n/a |
+| <a name="output_scale_down_alarm_arns"></a> [scale\_down\_alarm\_arns](#output\_scale\_down\_alarm\_arns) | ARNs of the scale down CloudWatch alarms for each ECS service. |
+| <a name="output_scale_down_policy_arns"></a> [scale\_down\_policy\_arns](#output\_scale\_down\_policy\_arns) | ARNs of the scale down policies for each ECS service. |
+| <a name="output_scale_up_alarm_arns"></a> [scale\_up\_alarm\_arns](#output\_scale\_up\_alarm\_arns) | ARNs of the scale up CloudWatch alarms for each ECS service. |
+| <a name="output_scale_up_policy_arns"></a> [scale\_up\_policy\_arns](#output\_scale\_up\_policy\_arns) | ARNs of the scale up policies for each ECS service. |
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | ID of the security group used by the ECS service |
 | <a name="output_target_group_arn"></a> [target\_group\_arn](#output\_target\_group\_arn) | ARN of the target group |
 <!-- END_TF_DOCS -->

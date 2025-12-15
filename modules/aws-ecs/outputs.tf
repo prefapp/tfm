@@ -39,17 +39,21 @@ output "target_group_arn" {
 }
 
 output "scale_up_policy_arns" {
+  description = "ARNs of the scale up policies for each ECS service."
   value = { for k, v in aws_appautoscaling_policy.scale_up : k => v.arn }
 }
 
 output "scale_down_policy_arns" {
+  description = "ARNs of the scale down policies for each ECS service."
   value = { for k, v in aws_appautoscaling_policy.scale_down : k => v.arn }
 }
 
 output "scale_up_alarm_arns" {
+  description = "ARNs of the scale up CloudWatch alarms for each ECS service."
   value = { for k, v in aws_cloudwatch_metric_alarm.scale_up_alarm : k => v.arn }
 }
 
 output "scale_down_alarm_arns" {
+  description = "ARNs of the scale down CloudWatch alarms for each ECS service."
   value = { for k, v in aws_cloudwatch_metric_alarm.scale_down_alarm : k => v.arn }
 }
