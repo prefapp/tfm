@@ -58,7 +58,7 @@ resource "aws_appautoscaling_policy" "scale_down" {
     metric_aggregation_type = try(var.ecs_autoscaling[each.key].custom_metric.metric_aggregation_type, "Average")
 
     step_adjustment {
-      metric_interval_upper_bound = var.ecs_autoscaling[each.key].scale.down.threshold
+      metric_interval_upper_bound = 0
       scaling_adjustment          = var.ecs_autoscaling[each.key].scale.down.scaling_adjustment
     }
     step_adjustment {
