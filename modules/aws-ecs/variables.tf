@@ -291,9 +291,11 @@ variable "ecs_autoscaling" {
   ECS service autoscaling configuration.
 
   Special fields:
-  - halt: If present, disables autoscaling resources for this service.
-  - stop: If present, sets desired_count to 0, stopping the service.
-  EOT
+  - halt: If present, disables all autoscaling resources for this service, but the ECS service will continue running with the current desired_count. Use this if you want to keep the service running but temporarily suspend autoscaling actions (no scaling up or down will occur).
+  - stop: If present, sets desired_count to 0, stopping all running tasks for the service. Use this if you want to fully stop the ECS service (no tasks running), regardless of autoscaling settings. Autoscaling resources will also be disabled.
+
+  Use halt to pause scaling but keep the service alive; use stop to fully stop the service and all its tasks.
+EOT
   type = map(object({
     autoscaling_enabled = bool
     min_capacity        = number
