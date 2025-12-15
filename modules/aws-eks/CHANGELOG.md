@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.0...aws-eks-v1.3.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* **aws-eks:** update doc config ([#775](https://github.com/prefapp/tfm/issues/775)) ([ee43ca1](https://github.com/prefapp/tfm/commit/ee43ca13c959971b29adf6f09bd81674cc58ba43))
+
+## [1.3.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.7...aws-eks-v1.3.0) (2025-12-11)
+
+
+### Features
+
+* add karpenter ([#746](https://github.com/prefapp/tfm/issues/746)) ([591ef8a](https://github.com/prefapp/tfm/commit/591ef8a33b49b5f619a9fdfe87ec4a2abfc59745))
+
 ## [1.2.7](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.6...aws-eks-v1.2.7) (2025-11-11)
 
 

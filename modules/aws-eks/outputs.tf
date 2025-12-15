@@ -70,7 +70,7 @@ output "summary" {
     " - %s\n \t- Addon Version: %s\n\t- ServiceAccount IAM Role: %s\n\t- Advanced configuration:\t%s",
     addon_key,
     coalesce(lookup(addon_value, "addon_version", null), "latest"),
-    lookup(addon_value, "service_account_role_arn", "none"),
+    coalesce(lookup(addon_value, "service_account_role_arn", null), "none"),
     replace(
       jsonencode(lookup(addon_value, "configuration_values", {})),
       "\n", "\n\t\t\t\t\t"
