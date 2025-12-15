@@ -20,7 +20,7 @@ resource "aws_ecs_service" "this" {
   depends_on     = [aws_lb_target_group.this]
   name           = var.service_name
   cluster        = aws_ecs_cluster.this.name
-  task_definition = aws_ecs_task_definition.this.arn
+  task_definition = "${aws_ecs_task_definition.this.family}:${aws_ecs_task_definition.this.revision}"
   launch_type    = var.launch_type
   desired_count  = local.should_stop_service ? 0 : var.desired_count
   network_configuration {
