@@ -1,8 +1,12 @@
 ## VPC
 variable "vpc_id" {
   description = "ID of the VPC where resources will be created. If not set, the module will look up the VPC using vpc_tag_key and vpc_tag_name."
+}
+
+variable "vpc_tag_key" {
+  description = "Tag key used to search the VPC when vpc_id is not provided. Default is 'Name'."
   type        = string
-  default     = null
+  default     = "Name"
 }
 
 variable "vpc_tag_name" {
