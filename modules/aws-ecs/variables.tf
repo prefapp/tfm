@@ -1,12 +1,12 @@
 ## VPC
 variable "vpc_id" {
-  description = "ID of the VPC where resources will be created. If not set, vpc_filter_name and vpc_tag_name will be used to look up the VPC."
+  description = "ID of the VPC where resources will be created. If not set, vpc_tag_name will be used to look up the VPC."
   type        = string
   default     = null
 }
 
 variable "vpc_tag_name" {
-  description = "Tag value of the VPC to look up (used with vpc_filter_name, e.g., filter 'tag:Name' and value 'my-vpc')"
+  description = "Tag value of the VPC to look up (e.g., value for tag 'Name' = 'my-vpc')"
   type        = string
   default     = ""
   validation {
@@ -34,36 +34,13 @@ variable "subnet_tag_name" {
 
 variable "subnet_ids" {
   description = <<EOT
-List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet_filter_name and subnet_filter_value (e.g., tag:Name).
+List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet_tag_key and subnet_tag_name (e.g., tag:Name).
 EOT
   type        = list(string)
   default     = null
 }
 
 # VPC and Subnet filters
-variable "vpc_filter_name" {
-  description = "Name of the VPC filter (e.g., 'tag:Name'). Used if vpc_id is not provided."
-  type        = string
-  default     = ""
-}
-
-variable "vpc_filter_value" {
-  description = "Value for the VPC filter. Used if vpc_id is not provided."
-  type        = string
-  default     = ""
-}
-
-variable "subnet_filter_name" {
-  description = "Name of the subnet filter (e.g., 'tag:Name'). Used if subnet_ids are not provided."
-  type        = string
-  default     = ""
-}
-
-variable "subnet_filter_value" {
-  description = "Value for the subnet filter. Used if subnet_ids are not provided."
-  type        = string
-  default     = ""
-}
 
 ## ECS Cluster
 variable "cluster_name" {

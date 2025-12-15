@@ -15,7 +15,7 @@ data "aws_subnets" "this" {
   count = (var.subnet_ids == null || length(var.subnet_ids) == 0) ? 1 : 0
   filter {
     name   = "vpc-id"
-    values = [var.vpc_id]
+    values = [local.vpc_id]
   }
   filter {
     name   = "tag:${var.subnet_tag_key}"

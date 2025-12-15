@@ -62,19 +62,14 @@ No modules.
 | <a name="input_sg_egress"></a> [sg\_egress](#input\_sg\_egress) | List of egress rules for the security group | <pre>list(object({<br/>    from_port   = number<br/>    to_port     = number<br/>    protocol    = string<br/>    cidr_blocks = list(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_blocks": [<br/>      "0.0.0.0/0"<br/>    ],<br/>    "from_port": 0,<br/>    "protocol": "-1",<br/>    "to_port": 0<br/>  }<br/>]</pre> | no |
 | <a name="input_sg_ingress"></a> [sg\_ingress](#input\_sg\_ingress) | List of ingress rules for the security group | <pre>list(object({<br/>    from_port   = number<br/>    to_port     = number<br/>    protocol    = string<br/>    cidr_blocks = list(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_blocks": [<br/>      "0.0.0.0/0"<br/>    ],<br/>    "from_port": 80,<br/>    "protocol": "tcp",<br/>    "to_port": 80<br/>  }<br/>]</pre> | no |
 | <a name="input_sg_name"></a> [sg\_name](#input\_sg\_name) | Name of the security group | `string` | `"ecs-service-sg"` | no |
-| <a name="input_subnet_filter_name"></a> [subnet\_filter\_name](#input\_subnet\_filter\_name) | Name of the subnet filter (e.g., 'tag:Name'). Used if subnet\_ids are not provided. | `string` | `""` | no |
-| <a name="input_subnet_filter_value"></a> [subnet\_filter\_value](#input\_subnet\_filter\_value) | Value for the subnet filter. Used if subnet\_ids are not provided. | `string` | `""` | no |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet\_filter\_name and subnet\_filter\_value (e.g., tag:Name). | `list(string)` | `null` | no |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet\_tag\_key and subnet\_tag\_name (e.g., tag:Name). | `list(string)` | `null` | no |
 | <a name="input_subnet_tag_key"></a> [subnet\_tag\_key](#input\_subnet\_tag\_key) | Tag key used to search the subnets when subnet\_ids is not provided | `string` | `"type"` | no |
 | <a name="input_subnet_tag_name"></a> [subnet\_tag\_name](#input\_subnet\_tag\_name) | Tag name of the subnets to look up | `string` | `""` | no |
 | <a name="input_target_group_name"></a> [target\_group\_name](#input\_target\_group\_name) | Name of the target group | `string` | `"ecs-alb-tg"` | no |
 | <a name="input_target_group_port"></a> [target\_group\_port](#input\_target\_group\_port) | Port for the target group | `number` | `80` | no |
 | <a name="input_target_group_protocol"></a> [target\_group\_protocol](#input\_target\_group\_protocol) | Protocol for the target group | `string` | `"HTTP"` | no |
-| <a name="input_vpc_filter_name"></a> [vpc\_filter\_name](#input\_vpc\_filter\_name) | Name of the VPC filter (e.g., 'tag:Name'). Used if vpc\_id is not provided. | `string` | `""` | no |
-| <a name="input_vpc_filter_value"></a> [vpc\_filter\_value](#input\_vpc\_filter\_value) | Value for the VPC filter. Used if vpc\_id is not provided. | `string` | `""` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where resources will be created. If not set, vpc\_tag\_name will be used to look up the VPC. | `string` | `null` | no |
-| <a name="input_vpc_tag_key"></a> [vpc\_tag\_key](#input\_vpc\_tag\_key) | Tag key used to search the VPC when vpc\_id is not provided | `string` | `"Name"` | no |
-| <a name="input_vpc_tag_name"></a> [vpc\_tag\_name](#input\_vpc\_tag\_name) | Tag name of the VPC to look up | `string` | `""` | no |
+| <a name="input_vpc_tag_name"></a> [vpc\_tag\_name](#input\_vpc\_tag\_name) | Tag value of the VPC to look up (e.g., value for tag 'Name' = 'my-vpc') | `string` | `""` | no |
 
 ### Outputs
 
