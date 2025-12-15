@@ -3,7 +3,7 @@ resource "aws_lb" "this" {
   internal           = var.alb_internal
   load_balancer_type = "application"
   security_groups    = [aws_security_group.this.id]
-  subnets            = local.subnet_ids
+  subnets            = local.resolved_subnets
 }
 
 resource "aws_lb_target_group" "this" {

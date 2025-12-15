@@ -12,13 +12,14 @@ data "aws_vpc" "by_id" {
 }
 
 data "aws_subnets" "this" {
-  count = var.subnet_ids == null ? 1 : 0
+  count = (var.subnet_ids == null || length(var.subnet_ids) == 0) ? 1 : 0
   filter {
     name   = "vpc-id"
-    values = [local.vpc_id]
+    values = [var.vpc_id]
   }
   filter {
     name   = "tag:${var.subnet_tag_key}"
     values = [var.subnet_tag_name]
   }
 }
+

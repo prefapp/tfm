@@ -12,7 +12,9 @@ locals {
   ecs_assume_role_policy = var.assume_role_policy != "" ? var.assume_role_policy : local.default_assume_role_policy
 }
 locals {
-  # Eliminado: la lógica de load_balancer se mueve al recurso para evitar problemas de dependencias
+  resolved_subnets = (
+    var.subnet_ids != null && length(var.subnet_ids) > 0
+  ) ? var.subnet_ids : data.aws_subnets.this[0].ids
 }
 locals {
   vpc_by_id  = var.vpc_id != null && var.vpc_id != "" ? data.aws_vpc.by_id[0] : null

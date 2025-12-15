@@ -21,7 +21,7 @@ resource "aws_ecs_service" "this" {
   launch_type     = var.launch_type
   desired_count   = lookup(var.ecs_autoscaling, var.service_name, null) != null && try(var.ecs_autoscaling[var.service_name].stop, null) != null ? 0 : var.desired_count
   network_configuration {
-    subnets          = local.subnet_ids
+    subnets          = local.resolved_subnets
     security_groups  = var.security_groups
     assign_public_ip = true
   }
