@@ -175,6 +175,7 @@ variable "alb_internal" {
 variable "target_group_name" {
   description = "Name of the target group"
   type        = string
+  default     = "ecs-alb-tg"
 }
 
 variable "target_group_port" {
