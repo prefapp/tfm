@@ -1,16 +1,3 @@
-output "debug_vpc_id" {
-  description = "VPC ID realmente usado por el módulo"
-  value       = local.vpc_id
-}
-
-output "debug_data_subnet_ids" {
-  description = "IDs de subredes devueltos por data.aws_subnets.this"
-  value       = try(data.aws_subnets.this[0].ids, [])
-}
-output "debug_subnet_ids" {
-  value = local.subnet_ids
-  description = "DEBUG: Subnet IDs used by the ALB/ECS. Remove after debugging."
-}
 output "ecs_cluster_arn" {
   description = "ARN of the ECS cluster"
   value       = aws_ecs_cluster.this.arn
@@ -36,7 +23,6 @@ output "ecs_task_definition_arn" {
   value       = aws_ecs_task_definition.this.arn
 }
 
-
 output "security_group_id" {
   description = "ID of the security group used by the ECS service"
   value       = aws_security_group.this.id
@@ -51,7 +37,6 @@ output "target_group_arn" {
   description = "ARN of the target group"
   value       = aws_lb_target_group.this.arn
 }
-
 
 output "scale_up_policy_arns" {
   value = { for k, v in aws_appautoscaling_policy.scale_up : k => v.arn }
