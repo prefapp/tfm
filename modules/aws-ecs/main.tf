@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 locals {
-  should_stop_service = lookup(var.ecs_autoscaling, var.service_name, null) != null && try(var.ecs_autoscaling[var.service_name].stop, null) != null
+  should_stop_service = lookup(var.ecs_autoscaling, var.service_name, null) != null && try(var.ecs_autoscaling[var.service_name].scale.stop, null) != null
 }
 
 resource "aws_ecs_service" "this" {
