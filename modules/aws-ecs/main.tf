@@ -12,14 +12,17 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions    = var.container_definitions
 }
 
+locals {
+  should_stop_service = lookup(var.ecs_autoscaling, var.service_name, null) != null && try(var.ecs_autoscaling[var.service_name].stop, null) != null
+}
 
 resource "aws_ecs_service" "this" {
-    depends_on = [aws_lb_target_group.this]
-  name            = var.service_name
-  cluster         = aws_ecs_cluster.this.name
+  depends_on     = [aws_lb_target_group.this]
+  name           = var.service_name
+  cluster        = aws_ecs_cluster.this.name
   task_definition = aws_ecs_task_definition.this.arn
-  launch_type     = var.launch_type
-  desired_count   = lookup(var.ecs_autoscaling, var.service_name, null) != null && try(var.ecs_autoscaling[var.service_name].stop, null) != null ? 0 : var.desired_count
+  launch_type    = var.launch_type
+  desired_count  = local.should_stop_service ? 0 : var.desired_count
   network_configuration {
     subnets          = local.resolved_subnets
     security_groups  = var.security_groups
