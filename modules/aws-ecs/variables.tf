@@ -26,6 +26,7 @@ variable "subnet_tag_key" {
   default     = "type"
 }
 
+# The name of this variable complies with other modules we have.
 variable "subnet_tag_name" {
   description = "Tag name of the subnets to look up"
   type        = string
@@ -113,10 +114,6 @@ EOT
     container_port   = number
   }))
   default = []
-  validation {
-      condition     = length(var.load_balancer) > 0
-      error_message = "You must provide at least one load_balancer object with container_name and container_port for the ECS service."
-  }
 }
 
 

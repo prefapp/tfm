@@ -61,6 +61,7 @@ resource "aws_appautoscaling_policy" "scale_down" {
 
     # DO NOT leave metric_interval_upper_bound = 0 or metric_interval_lower_bound = 0
     # AWS will not validate them properly, because there can be no gaps in the scaling policy intervals.
+    # They are not the same
     step_adjustment {
       metric_interval_upper_bound = var.ecs_autoscaling[each.key].scale.down.threshold
       scaling_adjustment          = var.ecs_autoscaling[each.key].scale.down.scaling_adjustment
