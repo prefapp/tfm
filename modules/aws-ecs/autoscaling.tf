@@ -5,7 +5,7 @@
 resource "aws_appautoscaling_target" "ecs" {
   for_each = {
     for k, v in var.ecs_autoscaling : k => v
-    if v.autoscaling_enabled && try(v.halt, null) == null && try(v.stop, null) == null
+    if v.autoscaling_enabled && try(v.halt, null) == null
   }
 
   depends_on = [aws_ecs_service.this]
@@ -58,7 +58,7 @@ resource "aws_appautoscaling_policy" "scale_down" {
     metric_aggregation_type = try(var.ecs_autoscaling[each.key].custom_metric.metric_aggregation_type, "Average")
 
     step_adjustment {
-      metric_interval_upper_bound = 0
+      metric_interval_upper_bound = var.ecs_autoscaling[each.key].scale.down.threshold
       scaling_adjustment          = var.ecs_autoscaling[each.key].scale.down.scaling_adjustment
     }
     step_adjustment {
