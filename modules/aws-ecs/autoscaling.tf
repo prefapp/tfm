@@ -5,7 +5,7 @@
 resource "aws_appautoscaling_target" "ecs" {
   for_each = {
     for k, v in var.ecs_autoscaling : k => v
-    if v.autoscaling_enabled && try(v.halt, null) == null
+    if v.autoscaling_enabled && try(v.halt, null) == null && try(v.stop, null) == null
   }
 
   depends_on = [aws_ecs_service.this]
