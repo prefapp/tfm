@@ -1,18 +1,12 @@
 ## VPC
 variable "vpc_id" {
-  description = "ID of the VPC where resources will be created. If not set, vpc_tag_name will be used to look up the VPC."
+  description = "ID of the VPC where resources will be created. If not set, vpc_filter_name and vpc_tag_name will be used to look up the VPC."
   type        = string
   default     = null
 }
 
-variable "vpc_tag_key" {
-  description = "Tag key used to search the VPC when vpc_id is not provided"
-  type        = string
-  default     = "Name"
-}
-
 variable "vpc_tag_name" {
-  description = "Tag name of the VPC to look up"
+  description = "Tag value of the VPC to look up (used with vpc_filter_name, e.g., filter 'tag:Name' and value 'my-vpc')"
   type        = string
   default     = ""
   validation {
