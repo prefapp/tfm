@@ -101,10 +101,6 @@ variable "security_groups" {
 }
 
 variable "load_balancer" {
-    validation {
-      condition     = length(var.load_balancer) > 0
-      error_message = "You must provide at least one load_balancer object with container_name and container_port for the ECS service."
-    }
   description = <<EOT
 List of load balancer configurations for the ECS service. Each object should include:
 - target_group_arn (optional): ARN of the target group. If not provided or empty, the module will use the ARN of the target group it creates internally.
@@ -117,6 +113,10 @@ EOT
     container_port   = number
   }))
   default = []
+  validation {
+      condition     = length(var.load_balancer) > 0
+      error_message = "You must provide at least one load_balancer object with container_name and container_port for the ECS service."
+  }
 }
 
 
@@ -173,33 +173,28 @@ variable "alb_internal" {
 
 
 variable "target_group_name" {
-    validation {
-      condition     = var.target_group_name != ""
-      error_message = "target_group_name must not be empty."
-    }
   description = "Name of the target group"
   type        = string
-  default     = "ecs-alb-tg"
 }
 
 variable "target_group_port" {
-    validation {
-      condition     = var.target_group_port != null
-      error_message = "target_group_port must not be null."
-    }
   description = "Port for the target group"
   type        = number
   default     = 80
+  validation {
+      condition     = var.target_group_port != null
+      error_message = "target_group_port must not be null."
+  }
 }
 
 variable "target_group_protocol" {
-    validation {
-      condition     = var.target_group_protocol != ""
-      error_message = "target_group_protocol must not be empty."
-    }
   description = "Protocol for the target group"
   type        = string
   default     = "HTTP"
+  validation {
+      condition     = var.target_group_protocol != ""
+      error_message = "target_group_protocol must not be empty."
+  }
 }
 
 
