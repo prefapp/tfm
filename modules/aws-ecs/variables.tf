@@ -47,7 +47,6 @@ EOT
   default     = null
 }
 
-# VPC and Subnet filters
 
 ## ECS Cluster
 variable "cluster_name" {
