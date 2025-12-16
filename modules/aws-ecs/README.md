@@ -67,7 +67,7 @@ No modules.
 | <a name="input_target_group_name"></a> [target\_group\_name](#input\_target\_group\_name) | Name of the target group | `string` | `"ecs-alb-tg"` | no |
 | <a name="input_target_group_port"></a> [target\_group\_port](#input\_target\_group\_port) | Port for the target group | `number` | `80` | no |
 | <a name="input_target_group_protocol"></a> [target\_group\_protocol](#input\_target\_group\_protocol) | Protocol for the target group | `string` | `"HTTP"` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where resources will be created. **At least one of `vpc_id` or `vpc_tag_name` must be specified.** If not set, the module will look up the VPC using `vpc_tag_key` and `vpc_tag_name`. | `any` | n/a | yes (conditional) |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where resources will be created. **At least one of `vpc_id` or `vpc_tag_name` must be specified.** If not set, the module will look up the VPC using `vpc_tag_key` and `vpc_tag_name`. | `string` | n/a | yes (conditional) |
 | <a name="input_vpc_tag_key"></a> [vpc\_tag\_key](#input\_vpc\_tag\_key) | Tag key used to search the VPC when `vpc_id` is not provided. Default is 'Name'. | `string` | `"Name"` | no |
 | <a name="input_vpc_tag_name"></a> [vpc\_tag\_name](#input\_vpc\_tag\_name) | Tag value of the VPC to look up (e.g., value for tag 'Name' = 'my-vpc'). **At least one of `vpc_id` or `vpc_tag_name` must be specified.** | `string` | `""` | yes (conditional) |
 
