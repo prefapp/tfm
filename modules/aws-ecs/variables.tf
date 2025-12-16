@@ -325,4 +325,5 @@ EOT
       stop = optional(object({}))
     })
   }))
+  default = {}
 }
