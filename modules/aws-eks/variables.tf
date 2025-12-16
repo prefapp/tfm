@@ -271,3 +271,11 @@ variable "create_cloudwatch_log_group" {
 
   default = true
 }
+
+variable "cloudwatch_log_group_class" {
+  description = "The class of the CloudWatch log group to create, e.g., 'STANDARD' or 'INFREQUENT_ACCESS'."
+
+  type = string
+
+  default = null
+}

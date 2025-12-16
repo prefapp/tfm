@@ -184,6 +184,7 @@ The module is organized with the following directory and file structure:
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
 | <a name="input_alb_ingress_role_name"></a> [alb\_ingress\_role\_name](#input\_alb\_ingress\_role\_name) | IAM role name for ALB Ingress. Leave null to auto-generate per cluster (format: k8s-<project>-<env>-oidc-role-<cluster\_name>). For backward compatibility, use: k8s-<tags.project>-<tags.env>-oidc-role. | `string` | `null` | no |
+| <a name="input_cloudwatch_log_group_class"></a> [cloudwatch\_log\_group\_class](#input\_cloudwatch\_log\_group\_class) | The class of the CloudWatch log group to create, e.g., 'STANDARD' or 'INFREQUENT\_ACCESS'. | `string` | `null` | no |
 | <a name="input_cloudwatch_log_group_retention_in_days"></a> [cloudwatch\_log\_group\_retention\_in\_days](#input\_cloudwatch\_log\_group\_retention\_in\_days) | Number of days to retain log events | `number` | `14` | no |
 | <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addons to deploy to the cluster | `any` | `{}` | no |
 | <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster encryption config | `any` | `{}` | no |
