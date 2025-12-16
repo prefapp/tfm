@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.1...aws-eks-v1.4.0) (2025-12-16)
+
+
+### Features
+
+* **aws-eks:** added cloudwatch_log_group_class and option for disable cloudwatch ([#780](https://github.com/prefapp/tfm/issues/780)) ([c6e6d11](https://github.com/prefapp/tfm/commit/c6e6d113c9cc8f3ba79996ff52c9e4d9e70984d7))
+
 ## [1.3.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.0...aws-eks-v1.3.1) (2025-12-11)
 
 
