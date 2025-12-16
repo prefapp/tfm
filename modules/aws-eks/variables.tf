@@ -263,3 +263,25 @@ variable "enable_karpenter" {
 
   default = false
 }
+
+variable "create_cloudwatch_log_group" {
+  description = "Create CloudWatch log group for the EKS cluster"
+
+  type = bool
+
+  default = true
+}
+
+variable "cloudwatch_log_group_class" {
+  description = "The class of the CloudWatch log group to create, e.g., 'STANDARD' or 'INFREQUENT_ACCESS'."
+
+  type = string
+
+  default = null
+}
+
+variable "enabled_log_types" {
+  description = "A list of the desired control plane logs to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
+  type        = list(string)
+  default     = ["audit", "api", "authenticator"]
+}

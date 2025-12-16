@@ -184,6 +184,7 @@ The module is organized with the following directory and file structure:
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
 | <a name="input_alb_ingress_role_name"></a> [alb\_ingress\_role\_name](#input\_alb\_ingress\_role\_name) | IAM role name for ALB Ingress. Leave null to auto-generate per cluster (format: k8s-<project>-<env>-oidc-role-<cluster\_name>). For backward compatibility, use: k8s-<tags.project>-<tags.env>-oidc-role. | `string` | `null` | no |
+| <a name="input_cloudwatch_log_group_class"></a> [cloudwatch\_log\_group\_class](#input\_cloudwatch\_log\_group\_class) | The class of the CloudWatch log group to create, e.g., 'STANDARD' or 'INFREQUENT\_ACCESS'. | `string` | `null` | no |
 | <a name="input_cloudwatch_log_group_retention_in_days"></a> [cloudwatch\_log\_group\_retention\_in\_days](#input\_cloudwatch\_log\_group\_retention\_in\_days) | Number of days to retain log events | `number` | `14` | no |
 | <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addons to deploy to the cluster | `any` | `{}` | no |
 | <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster encryption config | `any` | `{}` | no |
@@ -197,6 +198,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | n/a | `string` | n/a | yes |
 | <a name="input_create_alb_ingress_iam"></a> [create\_alb\_ingress\_iam](#input\_create\_alb\_ingress\_iam) | Create IAM resources for alb-ingress | `bool` | `false` | no |
 | <a name="input_create_cloudwatch_iam"></a> [create\_cloudwatch\_iam](#input\_create\_cloudwatch\_iam) | Create IAM resources for cloudwatch | `bool` | `false` | no |
+| <a name="input_create_cloudwatch_log_group"></a> [create\_cloudwatch\_log\_group](#input\_create\_cloudwatch\_log\_group) | Create CloudWatch log group for the EKS cluster | `bool` | `true` | no |
 | <a name="input_create_cluster_iam_role"></a> [create\_cluster\_iam\_role](#input\_create\_cluster\_iam\_role) | Create IAM role for cluster | `bool` | `true` | no |
 | <a name="input_create_cluster_security_group"></a> [create\_cluster\_security\_group](#input\_create\_cluster\_security\_group) | Create cluster security group | `bool` | `true` | no |
 | <a name="input_create_efs_driver_iam"></a> [create\_efs\_driver\_iam](#input\_create\_efs\_driver\_iam) | Create IAM resources for efs-driver | `bool` | `false` | no |
@@ -205,6 +207,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_create_parameter_store_iam"></a> [create\_parameter\_store\_iam](#input\_create\_parameter\_store\_iam) | Create IAM resources for parameter-store | `bool` | `false` | no |
 | <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Enable IRSA | `bool` | `true` | no |
 | <a name="input_enable_karpenter"></a> [enable\_karpenter](#input\_enable\_karpenter) | Enable Karpenter provisioning | `bool` | `false` | no |
+| <a name="input_enabled_log_types"></a> [enabled\_log\_types](#input\_enabled\_log\_types) | A list of the desired control plane logs to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) | `list(string)` | <pre>[<br/>  "audit",<br/>  "api",<br/>  "authenticator"<br/>]</pre> | no |
 | <a name="input_external_dns_role_name"></a> [external\_dns\_role\_name](#input\_external\_dns\_role\_name) | IAM role name for external-dns. Leave null to auto-generate using the cluster name. For backward compatibility, set to 'external-dns-Kubernetes'. | `string` | `null` | no |
 | <a name="input_externaldns_tags"></a> [externaldns\_tags](#input\_externaldns\_tags) | n/a | `map(any)` | `{}` | no |
 | <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `[]` | no |
