@@ -197,6 +197,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | n/a | `string` | n/a | yes |
 | <a name="input_create_alb_ingress_iam"></a> [create\_alb\_ingress\_iam](#input\_create\_alb\_ingress\_iam) | Create IAM resources for alb-ingress | `bool` | `false` | no |
 | <a name="input_create_cloudwatch_iam"></a> [create\_cloudwatch\_iam](#input\_create\_cloudwatch\_iam) | Create IAM resources for cloudwatch | `bool` | `false` | no |
+| <a name="input_create_cloudwatch_log_group"></a> [create\_cloudwatch\_log\_group](#input\_create\_cloudwatch\_log\_group) | Create CloudWatch log group for the EKS cluster | `bool` | `true` | no |
 | <a name="input_create_cluster_iam_role"></a> [create\_cluster\_iam\_role](#input\_create\_cluster\_iam\_role) | Create IAM role for cluster | `bool` | `true` | no |
 | <a name="input_create_cluster_security_group"></a> [create\_cluster\_security\_group](#input\_create\_cluster\_security\_group) | Create cluster security group | `bool` | `true` | no |
 | <a name="input_create_efs_driver_iam"></a> [create\_efs\_driver\_iam](#input\_create\_efs\_driver\_iam) | Create IAM resources for efs-driver | `bool` | `false` | no |

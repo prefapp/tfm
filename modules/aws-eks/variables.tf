@@ -263,3 +263,11 @@ variable "enable_karpenter" {
 
   default = false
 }
+
+variable "create_cloudwatch_log_group" {
+  description = "Create CloudWatch log group for the EKS cluster"
+
+  type = bool
+
+  default = true
+}
