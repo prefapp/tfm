@@ -25,7 +25,7 @@
     "modules/azure-customrole": "0.2.1",
     "modules/azure-policy-definitions": "0.2.1",
     "modules/azure-public-prefix": "0.3.2",
-    "modules/azure-nsg-nsr": "0.2.2",
+    "modules/azure-nsg-nsr": "0.2.3",
     "modules/azure-vmss": "0.3.2",
     "modules/azure-policy-assignments": "0.2.1",
     "modules/azure-public-ip": "0.3.1",
