@@ -67,14 +67,15 @@
 ### HCL
 ```hcl
 
-nsg = {
+tags_from_rg        = false
+tags = {
+  env = "Production"
+}
+
+nsg = { 
   name                = "example-nsg"
   location            = "East US"
   resource_group_name = "example-rg"
-  tags_from_rg        = false
-  tags = {
-    env = "Production"
-  }
 }
 
 rules = {
@@ -106,13 +107,13 @@ rules = {
 ### YAML
 ```yaml
 values:
+  tags_from_rg: false
+  tags:
+    env: "Production"
   nsg:
     name: "example-nsg"
     location: "East US"
     resource_group_name: "example-rg"
-    tags_from_rg: false
-    tags:
-      env: "Production"
 
   rules:
     rule1:
