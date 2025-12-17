@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/prefapp/tfm/compare/azure-nsg-nsr-v0.2.2...azure-nsg-nsr-v0.2.3) (2025-12-17)
+
+
+### Bug Fixes
+
+* update module ([#782](https://github.com/prefapp/tfm/issues/782)) ([2a7e121](https://github.com/prefapp/tfm/commit/2a7e1210f89c89403be73f04ece19b3d9c9da771))
+
 ## [0.2.2](https://github.com/prefapp/tfm/compare/azure-nsg-nsr-v0.2.1...azure-nsg-nsr-v0.2.2) (2025-12-03)
 
 
