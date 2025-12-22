@@ -123,14 +123,6 @@ The module is organized with the following directory and file structure:
 - **`data.tf`**: VPC and subnet discovery using IDs or tags.
 - **`_examples/`**: Example configurations demonstrating different use cases.
 
-## Useful Links
-
-- Terraform: https://www.terraform.io/
-- Amazon Elastic Container Service (ECS): https://aws.amazon.com/ecs/
-- Terraform AWS Provider: https://registry.terraform.io/providers/hashicorp/aws/latest
-- Application Load Balancer: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/
-- Application Auto Scaling: https://docs.aws.amazon.com/autoscaling/application/
-
 ## Requirements
 
 No requirements.
@@ -229,6 +221,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with\_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 
 ## Remote resources
+- Terraform: https://www.terraform.io/
 - Amazon ECS: [https://aws.amazon.com/ecs/](https://aws.amazon.com/ecs/)
 - Terraform AWS Provider: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
 - Application Auto Scaling: [https://docs.aws.amazon.com/autoscaling/application/](https://docs.aws.amazon.com/autoscaling/application/)

@@ -127,11 +127,3 @@ The module is organized with the following directory and file structure:
 - **`data.tf`**: VPC and subnet discovery using IDs or tags.
 - **`_examples/`**: Example configurations demonstrating different use cases.
 
-## Useful Links
-
-- Terraform: https://www.terraform.io/
-- Amazon Elastic Container Service (ECS): https://aws.amazon.com/ecs/
-- Terraform AWS Provider: https://registry.terraform.io/providers/hashicorp/aws/latest
-- Application Load Balancer: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/
-- Application Auto Scaling: https://docs.aws.amazon.com/autoscaling/application/
-

@@ -7,6 +7,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 
 ## Remote resources
+- Terraform: https://www.terraform.io/
 - Amazon ECS: [https://aws.amazon.com/ecs/](https://aws.amazon.com/ecs/)
 - Terraform AWS Provider: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
 - Application Auto Scaling: [https://docs.aws.amazon.com/autoscaling/application/](https://docs.aws.amazon.com/autoscaling/application/)
