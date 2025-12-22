@@ -2,15 +2,15 @@
 
 ## Overview
 
-This Terraform module provisions and manages a complete Amazon ECS(Elastic Container Service) infrastructure for running containerized applications on AWS. It provides a comprehensive solution for deploying production-ready services using either Fargate serverless compute or EC2 instances, handling all necessary networking, load balancing, and scaling configurations.
+This Terraform module provisions and manages a complete Amazon ECS (Elastic Container Service) infrastructure for running containerized applications on AWS using Fargate serverless compute. It provides a comprehensive solution for deploying production-ready services without managing underlying infrastructure, handling all necessary networking, load balancing, and scaling configurations.
 
 The module simplifies the complexity of ECS deployments by automating the setup of essential components while maintaining flexibility for customization. It integrates seamlessly with existing AWS infrastructures through support for both direct resource IDs and tag-based discovery, making it suitable for greenfield projects and brownfield integrations alike.
 
-This module provisions an **Amazon ECS service running on Fargate or EC2**, including:
+This module provisions an **Amazon ECS service running on Fargate**, including:
 
 - ECS cluster
 - Task definition
-- ECS service
+- ECS service (Fargate launch type)
 - Application Load Balancer (ALB)
 - Target group and listener
 - Autoscaling policies (optional)
@@ -32,7 +32,6 @@ It is designed to be flexible, production‑ready, and easy to integrate into ex
 ## Basic Usage
 
 ### Minimal Example (Fargate)
-
 
 ```hcl
 module "ecs" {
@@ -76,8 +75,6 @@ module "ecs" {
 }
 ```
 
-
-
 ### Using VPC and Subnet Tag Discovery
 
 ```hcl
@@ -94,8 +91,6 @@ module "ecs" {
   subnet_tag_name = "private"
 }
 ```
-
-
 
 ## File Structure
 
@@ -130,4 +125,3 @@ The module is organized with the following directory and file structure:
 - **`security_group.tf`**: Security group creation and rules.
 - **`data.tf`**: VPC and subnet discovery using IDs or tags.
 - **`_examples/`**: Example configurations demonstrating different use cases.
-
