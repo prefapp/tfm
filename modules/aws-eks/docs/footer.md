@@ -13,9 +13,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - **EKS**: [https://aws.amazon.com/eks/](https://aws.amazon.com/eks/)
 - **Terraform-aws-modules/eks/aws**: [https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)
 - **Terraform-aws-modules/eks/aws/latest/submodules/karpenter**: [https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest/submodules/karpenter](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest/submodules/karpenter)
-- **Terraform-aws-modules/vpc/aws**: [https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest)
 - **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
-
 
 ## Support
 
