@@ -1,4 +1,6 @@
-# EKS Module
+# AWS EKS Terraform Module
+
+## Overview
 
 This Terraform module simplifies the creation and configuration of an **Amazon Elastic Kubernetes Service (EKS)** cluster on AWS. Below is a description of the main features and components of the module:
 
@@ -8,7 +10,21 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 - **Addon Configuration**: Includes options to enable essential addons such as _CoreDNS_, _kube-proxy_, and _VPC CNI_, as well as the ability to add custom addons.
 - **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like _ALB Ingress Controller_, _CloudWatch_, _EFS CSI Driver_, and _ExternalDNS_.
 
-## Module Usage
+## Key Features
+
+- **EKS Cluster Provisioning**: Automatically provisions an Amazon EKS cluster for scalable and managed Kubernetes workloads.
+
+- **Karpenter Integration (Optional)**: Generates required data and IAM roles for seamless integration with Karpenter, an open-source Kubernetes autoscaler.
+
+- **IAM Roles Creation for Addons**:
+  - **EBS (Elastic Block Store)**: Enables dynamic provisioning and management of EBS volumes via the EBS CSI driver.
+  - **EFS (Elastic File System)**: Supports EFS CSI driver for persistent, scalable file storage in Kubernetes pods.
+  - **External DNS**: Allows ExternalDNS to manage DNS records in Route53 automatically from Kubernetes resources.
+  - **Parameter Store**: Grants access to AWS Systems Manager Parameter Store for secure configuration and secrets management in workloads.
+
+## Basic Usage
+
+### Module Usage
 
 - **Variable Configuration**: Fill in the variables in the `variables.tf` file according to the specific requirements of your environment, such as the AWS region, _Kubernetes_ version, and VPC configuration.
   - For **VPC** configuration, there are two available methods: based on **ids** and based on **tags**.
@@ -118,13 +134,4 @@ The module is organized with the following directory and file structure:
 - **`versions.tf`**: Configuration file specifying required Terraform and provider versions.
 
 - **`README.md`**: Project documentation containing information on module usage, prerequisites, and a directory structure overview.
-
-## Useful Links
-- Terraform: https://www.terraform.io/
-- Amazon Elastic Kubernetes Service (EKS): https://aws.amazon.com/eks/
-- Terraform AWS Provider: https://registry.terraform.io/providers/hashicorp/aws/latest
-- Terraform Kubernetes Provider: https://registry.terraform.io/providers/hashicorp/kubernetes/latest
-- Kubernetes: https://kubernetes.io/
-- Terraform-aws-modules/eks/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
-- Terraform-aws-modules/vpc/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
 
