@@ -1,0 +1,226 @@
+# Contributing to Prefapp TFM
+
+Thank you for your interest in contributing to the Terraform Modules(TFM) repository! This guide will help you understand the standards and requirements for contributing new modules or updating existing ones.
+
+## Module Documentation Standards
+
+All Terraform modules in this repository must follow a standardized documentation structure to ensure consistency and ease of use. This section outlines the minimum requirements for module documentation as defined in [issue #786](https://github.com/prefapp/tfm/issues/786).
+
+### Required Files and Structure
+
+Each module must contain the following structure:
+
+```
+modules/<module-name>/
+├── .terraform-docs.yml       # terraform-docs configuration
+├── README.md                 # Auto-generated documentation
+├── main.tf                   # Main module resources
+├── variables.tf              # Input variables
+├── outputs.tf                # Output values
+├── docs/
+│   ├── header.md             # Module overview and usage
+│   └── footer.md             # Examples and resources
+└── _examples/                # Usage examples
+    └── <example-name>/       # At least one example
+        └── main.tf
+```
+
+### 1. terraform-docs Configuration
+
+Create a `.terraform-docs.yml` file in the module root with the following configuration:
+
+```yaml
+formatter: "markdown"
+
+version: ""
+
+header-from: docs/header.md
+footer-from: docs/footer.md
+
+recursive:
+  enabled: false
+  path: modules
+  include-main: true
+
+sections:
+  hide: []
+  show: []
+
+content: ""
+
+output:
+  file: "README.md"
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+output-values:
+  enabled: false
+  from: ""
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true
+```
+
+### 2. Header Documentation (`docs/header.md`)
+
+The `header.md` file must contain at minimum the following sections:
+
+````markdown
+# **<Cloud Provider> <Resource Name> Terraform Module**
+
+## Overview
+
+<Provide a comprehensive description of what the module provisions and manages.
+Include 2-3 paragraphs explaining:
+
+- What resources are created
+- Key capabilities and integrations
+- Target use cases (dev, staging, production)>
+
+## Key Features
+
+- **<Feature 1>**: <Description of the feature>
+- **<Feature 2>**: <Description of the feature>
+- **<Feature 3>**: <Description of the feature>
+- **<Feature N>**: <Description of the feature>
+
+## Basic Usage
+
+### <Usage Example 1 Description>
+
+```hcl
+module "example" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/<module-name>"
+
+  # Configuration parameters
+  parameter1 = "value1"
+  parameter2 = "value2"
+}
+```
+
+### <Usage Example 2 Description>
+
+```hcl
+module "example2" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/<module-name>"
+
+  # Configuration parameters
+  parameter1 = "value1"
+  parameter2 = "value2"
+}
+```
+
+````
+
+**Guidelines for header.md**:
+- Use bold `**` for module name in the title
+- Overview should be 2-3 paragraphs minimum
+- Include at least 3-5 key features with bold titles: `**Feature Name**: Description`
+- Provide at least 2 basic usage examples showing different configurations
+- Keep examples minimal and focused on core functionality
+- Use proper HCL syntax highlighting with triple backticks
+
+### 3. Footer Documentation (`docs/footer.md`)
+
+The `footer.md` file must contain the following sections:
+
+```markdown
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/<module-name>/_examples):
+
+- [<Example 1>](https://github.com/prefapp/tfm/tree/main/modules/<module-name>/_examples/<example1>) - <Example 1 description>
+- [<Example 2>](https://github.com/prefapp/tfm/tree/main/modules/<module-name>/_examples/<example2>) - <Example 2 description>
+
+## Resources
+
+- **<Resource 1 Name>**: [<URL to official documentation>]
+- **<Resource 2 Name>**: [<URL to official documentation>]
+- **Terraform AWS/Azure Provider**: [<URL to provider documentation>]
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+````
+
+**Guidelines for footer.md**:
+
+- Link to all examples in the `_examples/` directory
+- Provide brief, descriptive summaries for each example
+- Include relevant resources (cloud provider docs, Terraform provider docs)
+- Maintain consistent formatting and structure
+
+### 4. Usage Examples (`_examples/`)
+
+Each module must include at least one practical example in the `_examples/` directory:
+
+```
+_examples/
+├── basic/                    # Minimal configuration example
+│   └── main.tf
+├── advanced/                 # Advanced features example
+│   └── main.tf
+└── <specific-use-case>/      # Use case specific example
+    └── main.tf
+```
+
+**Guidelines for examples**:
+
+- Each example should be in its own subdirectory
+- Examples must be functional and demonstrate real-world usage
+- Include comments explaining key configuration choices
+- Ensure examples align with the Basic Usage section in header.md
+
+### 5. README.md Generation
+
+The `README.md` file is auto-generated by terraform-docs and should not be edited manually. To generate or update it:
+
+```bash
+cd modules/<module-name>
+terraform-docs markdown . --output-file README.md
+```
+
+The generated README will include:
+
+- Content from `docs/header.md`
+- Auto-generated documentation for inputs, outputs, resources, and providers
+- Content from `docs/footer.md`
+
+### Reference Implementations
+
+For examples of properly documented modules, refer to:
+
+- [aws-rds](modules/aws-rds/) - Multi-engine database module
+- [aws-ecs](modules/aws-ecs/) - ECS Fargate service module
+- [aws-cloudfront-delivery](modules/aws-cloudfront-delivery/) - CloudFront distribution module
+
+## Pull Request Process
+
+1. Ensure your module follows the documentation structure outlined above
+2. Run `terraform-docs` to generate the README.md
+3. Test your module with the provided examples
+4. Submit a pull request with a clear description of changes
+5. Reference any related issues (e.g., #786)
+
+## Questions or Issues
+
+If you have questions about the contribution process or documentation standards, please open an issue on the repository: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
