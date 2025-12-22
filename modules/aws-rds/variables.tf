@@ -150,7 +150,7 @@ variable "family" {
 }
 
 variable "manage_master_user_password" {
-  description = "Whether to manage the master user password"
+  description = "Whether to let RDS manage the master password with automatic Secrets Manager integration. If `true`, disables local creation of Secrets Manager or SSM password."
   type        = bool
 }
 
@@ -281,6 +281,7 @@ variable "use_secrets_manager" {
 }
 
 variable "manage_master_user_password_rotation" {
+  description = "Whether to enable automatic password rotation for the master user secret (only applies if `manage_master_user_password = true`)"
   type    = bool
   default = false
   validation {
@@ -310,7 +311,7 @@ variable "master_user_password_rotation_automatically_after_days" {
 }
 
 variable "master_user_password_rotation_duration" {
-  description = "Duration of the rotation event (e.g., PT5M)"
+  description = "Duration of the rotation event (e.g., 1h, PT5M, ...)"
   type        = string
   default     = null
   validation {
@@ -320,7 +321,7 @@ variable "master_user_password_rotation_duration" {
 }
 
 variable "master_user_password_rotation_schedule_expression" {
-  description = "Cron or rate expression defining rotation schedule"
+  description = "Schedule expression for password rotation (e.g., `rate(30 days)`)"
   type        = string
   default     = null
   validation {
