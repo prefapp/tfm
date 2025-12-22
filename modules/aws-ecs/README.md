@@ -228,7 +228,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [Autoscaling enabled](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/autoscaling) - ECS Service with CPU-Based Autoscaling
 - [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with\_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 
-## Resources
+## Remote resources
 - Amazon ECS: [https://aws.amazon.com/ecs/](https://aws.amazon.com/ecs/)
 - Terraform AWS Provider: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
 - Application Auto Scaling: [https://docs.aws.amazon.com/autoscaling/application/](https://docs.aws.amazon.com/autoscaling/application/)
