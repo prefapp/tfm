@@ -217,13 +217,80 @@ For examples of properly documented modules, refer to:
 - [aws-ecs](modules/aws-ecs/) - ECS Fargate service module
 - [aws-cloudfront-delivery](modules/aws-cloudfront-delivery/) - CloudFront distribution module
 
+## Commit Message Guidelines
+
+This repository uses [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning and changelog generation through [Release Please](https://github.com/googleapis/release-please-action).
+
+### Conventional Commit Format
+
+All commit messages must follow the Conventional Commits specification. The most important prefixes are:
+
+- **`fix:`** - Bug fixes (correlates to a PATCH version bump)
+  ```
+  fix: correct variable validation in aws-rds module
+  ```
+
+- **`feat:`** - New features (correlates to a MINOR version bump)
+  ```
+  feat: add support for Multi-AZ deployment in aws-rds
+  ```
+
+- **Breaking changes** - Use `!` after the type to indicate breaking changes (correlates to a MAJOR version bump)
+  ```
+  feat!: change default instance_class to db.t3.small
+  fix!: remove deprecated parameter
+  refactor!: restructure module outputs
+  ```
+
+### Other Useful Prefixes
+
+- **`docs:`** - Documentation changes
+- **`style:`** - Code style changes (formatting, no functional changes)
+- **`refactor:`** - Code refactoring without changing functionality
+- **`test:`** - Adding or updating tests
+- **`chore:`** - Maintenance tasks (dependencies, build config, etc.)
+
+### Commit Message Examples
+
+```bash
+# Adding a new feature
+git commit -m "feat: add RDS-managed password rotation support"
+
+# Fixing a bug
+git commit -m "fix: resolve subnet group naming conflict"
+
+# Breaking change
+git commit -m "feat!: require vpc_tag_name instead of vpc_id
+
+BREAKING CHANGE: vpc_id parameter has been removed in favor of vpc_tag_name"
+
+# Documentation update
+git commit -m "docs: update header.md with new usage examples"
+```
+
+### How Release Please Works
+
+Release Please automatically:
+1. Parses commit messages following Conventional Commits
+2. Determines the next version number based on commit types
+3. Creates and maintains Release PRs with updated changelogs
+4. Generates GitHub releases when Release PRs are merged
+
+When you're ready to release, simply merge the Release PR created by the bot.
+
+For more information, see:
+- [Conventional Commits](https://www.conventionalcommits.org/)
+- [Release Please Documentation](https://github.com/googleapis/release-please-action)
+- [SemVer](https://semver.org/)
+
 ## Pull Request Process
 
 1. Ensure your module follows the documentation structure outlined above
 2. Run `terraform-docs` to generate the README.md
 3. Test your module with the provided examples
-4. Submit a pull request with a clear description of changes
-5. Reference any related issues (e.g., #786)
+4. **Write commits using Conventional Commit format** (see above)
+5. Submit a pull request with a clear description of changes
+6. Reference any related issues (e.g., #786)
 
 ## Questions or Issues
 
