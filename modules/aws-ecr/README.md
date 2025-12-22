@@ -303,7 +303,7 @@ For detailed examples, refer to the [official module examples](https://github.co
 - [Complete](https://github.com/terraform-aws-modules/terraform-aws-ecr/tree/master/examples/complete) - Comprehensive example with multiple features
 - [Repository Template](https://github.com/terraform-aws-modules/terraform-aws-ecr/tree/master/examples/repository-template) - Template for creating multiple similar repositories
 
-## Resources
+## Remote resources
 
 - **Official Module**: [terraform-aws-modules/ecr/aws](https://registry.terraform.io/modules/terraform-aws-modules/ecr/aws/latest)
 - **GitHub Repository**: [terraform-aws-modules/terraform-aws-ecr](https://github.com/terraform-aws-modules/terraform-aws-ecr)
