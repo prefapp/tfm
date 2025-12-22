@@ -219,8 +219,6 @@ No modules.
 | <a name="output_scale_up_policy_arns"></a> [scale\_up\_policy\_arns](#output\_scale\_up\_policy\_arns) | ARNs of the scale up policies for each ECS service. |
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | ID of the security group used by the ECS service |
 | <a name="output_target_group_arn"></a> [target\_group\_arn](#output\_target\_group\_arn) | ARN of the target group |
-<!-- END_TF_DOCS -->
-
 
 ## Examples
 
@@ -228,7 +226,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/basic) - Basic ECS Service with ALB + Fargate
 - [Autoscaling enabled](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/autoscaling) - ECS Service with CPU-Based Autoscaling
-- [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
+- [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with\_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 
 ## Resources
 - Amazon ECS: [https://aws.amazon.com/ecs/](https://aws.amazon.com/ecs/)
@@ -239,3 +237,4 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 ## Support
 
 For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->
