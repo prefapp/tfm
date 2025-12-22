@@ -7,7 +7,6 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Resources
 
-- **EKS**: [https://docs.aws.amazon.com/eks/](https://docs.aws.amazon.com/eks/)
 - **Parameter store**: [https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
 - **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
 
