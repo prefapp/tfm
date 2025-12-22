@@ -1,5 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# EKS Module
+# AWS EKS Terraform Module
+
+## Overview
 
 This Terraform module simplifies the creation and configuration of an **Amazon Elastic Kubernetes Service (EKS)** cluster on AWS. Below is a description of the main features and components of the module:
 
@@ -9,7 +11,21 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 - **Addon Configuration**: Includes options to enable essential addons such as \_CoreDNS\_, \_kube-proxy\_, and \_VPC CNI\_, as well as the ability to add custom addons.
 - **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like \_ALB Ingress Controller\_, \_CloudWatch\_, \_EFS CSI Driver\_, and \_ExternalDNS\_.
 
-## Module Usage
+## Key Features
+
+- **EKS Cluster Provisioning**: Automatically provisions an Amazon EKS cluster for scalable and managed Kubernetes workloads.
+
+- **Karpenter Integration (Optional)**: Generates required data and IAM roles for seamless integration with Karpenter, an open-source Kubernetes autoscaler.
+
+- **IAM Roles Creation for Addons**:
+  - **EBS (Elastic Block Store)**: Enables dynamic provisioning and management of EBS volumes via the EBS CSI driver.
+  - **EFS (Elastic File System)**: Supports EFS CSI driver for persistent, scalable file storage in Kubernetes pods.
+  - **External DNS**: Allows ExternalDNS to manage DNS records in Route53 automatically from Kubernetes resources.
+  - **Parameter Store**: Grants access to AWS Systems Manager Parameter Store for secure configuration and secrets management in workloads.
+
+## Basic Usage
+
+### Module Usage
 
 - **Variable Configuration**: Fill in the variables in the `variables.tf` file according to the specific requirements of your environment, such as the AWS region, _Kubernetes_ version, and VPC configuration.
   - For **VPC** configuration, there are two available methods: based on **ids** and based on **tags**.
@@ -118,15 +134,6 @@ The module is organized with the following directory and file structure:
 
 - **`README.md`**: Project documentation containing information on module usage, prerequisites, and a directory structure overview.
 
-## Useful Links
-- Terraform: https://www.terraform.io/
-- Amazon Elastic Kubernetes Service (EKS): https://aws.amazon.com/eks/
-- Terraform AWS Provider: https://registry.terraform.io/providers/hashicorp/aws/latest
-- Terraform Kubernetes Provider: https://registry.terraform.io/providers/hashicorp/kubernetes/latest
-- Kubernetes: https://kubernetes.io/
-- Terraform-aws-modules/eks/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
-- Terraform-aws-modules/vpc/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
-
 ## Requirements
 
 | Name | Version |
@@ -229,4 +236,23 @@ The module is organized with the following directory and file structure:
 | <a name="output_debug"></a> [debug](#output\_debug) | n/a |
 | <a name="output_eks"></a> [eks](#output\_eks) | n/a |
 | <a name="output_summary"></a> [summary](#output\_summary) | n/a |
+
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples):
+
+- [karpenter](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/karpenter) - Configuration with karpenter module.
+- [with\_import](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with\_import) - Import existing eks.
+- [with\_vpc](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with\_vpc) - We generate an EKS specifying the VPC name, not its tags.
+
+## Resources
+
+- **EKS**: [https://aws.amazon.com/eks/](https://aws.amazon.com/eks/)
+- **Terraform-aws-modules/eks/aws**: [https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)
+- **Terraform-aws-modules/eks/aws/latest/submodules/karpenter**: [https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest/submodules/karpenter](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest/submodules/karpenter)
+- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
 <!-- END_TF_DOCS -->
