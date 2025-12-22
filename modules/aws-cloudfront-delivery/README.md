@@ -61,7 +61,7 @@ module "cloudfront" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.10 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
@@ -139,7 +139,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - **S3**: [https://docs.aws.amazon.com/s3/](https://docs.aws.amazon.com/s3/)
 - **ACM**: [https://docs.aws.amazon.com/acm/](https://docs.aws.amazon.com/acm/)
 - **Route53**:  [https://docs.aws.amazon.com/route53/](https://docs.aws.amazon.com/route53/)
-- Terraform AWS Provider: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
+- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
 
 ## Support
 

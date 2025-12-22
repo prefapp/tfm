@@ -12,7 +12,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - **S3**: [https://docs.aws.amazon.com/s3/](https://docs.aws.amazon.com/s3/)
 - **ACM**: [https://docs.aws.amazon.com/acm/](https://docs.aws.amazon.com/acm/)
 - **Route53**:  [https://docs.aws.amazon.com/route53/](https://docs.aws.amazon.com/route53/)
-- Terraform AWS Provider: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
+- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
 
 
 ## Support
