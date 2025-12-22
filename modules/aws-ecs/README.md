@@ -3,6 +3,10 @@
 
 ## Overview
 
+This Terraform module provisions and manages a complete Amazon ECS(Elastic Container Service) infrastructure for running containerized applications on AWS. It provides a comprehensive solution for deploying production-ready services using either Fargate serverless compute or EC2 instances, handling all necessary networking, load balancing, and scaling configurations.
+
+The module simplifies the complexity of ECS deployments by automating the setup of essential components while maintaining flexibility for customization. It integrates seamlessly with existing AWS infrastructures through support for both direct resource IDs and tag-based discovery, making it suitable for greenfield projects and brownfield integrations alike.
+
 This module provisions an **Amazon ECS service running on Fargate or EC2**, including:
 
 - ECS cluster
