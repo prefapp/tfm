@@ -1,19 +1,151 @@
 <!-- BEGIN_TF_DOCS -->
-### Requirements
+# **AWS ECS Terraform Module**
+
+## Overview
+
+This module provisions an **Amazon ECS service running on Fargate or EC2**, including:
+
+- ECS cluster
+- Task definition
+- ECS service
+- Application Load Balancer (ALB)
+- Target group and listener
+- Autoscaling policies (optional)
+- IAM execution role
+- Security group
+- VPC and subnet discovery by ID or tags
+
+It is designed to be flexible, production‑ready, and easy to integrate into existing infrastructures.
+
+## Key Features
+
+- **ECS Cluster & Service**: Creates a fully managed ECS cluster and service with configurable launch type.
+- **Task Definition**: Supports custom container definitions, CPU/memory sizing, and IAM execution roles.
+- **Autoscaling**: Built‑in support for CloudWatch alarms and App Auto Scaling policies, including `halt` and `stop` modes.
+- **Load Balancing**: Optional ALB with listener, target group, health checks, and container port mapping.
+- **Flexible Networking**: VPC and subnet selection via IDs or tag discovery.
+- **Security Group Management**: Customizable ingress/egress rules.
+
+## Basic Usage
+
+### Minimal Example (Fargate)
+
+```hcl
+module "ecs" {
+  source = "github.com/prefapp/tfm/modules/ecs"
+
+  cluster_name           = "demo-cluster"
+  service_name           = "demo-service"
+  container_definitions  = file("container.json")
+  security_groups        = ["sg-1234567890abcdef0"]
+
+  ecs_autoscaling = {
+    demo = {
+      autoscaling_enabled = false
+      min_capacity        = 1
+      max_capacity        = 1
+      metric_type         = "CPUUtilization"
+      metric_statistic    = "Average"
+
+      scale = {
+        up = {
+          threshold           = 70
+          comparison_operator = "GreaterThanThreshold"
+          evaluation_periods  = 2
+          period              = 60
+          cooldown            = 60
+          adjustment_type     = "ChangeInCapacity"
+          scaling_adjustment  = 1
+        }
+        down = {
+          threshold           = 30
+          comparison_operator = "LessThanThreshold"
+          evaluation_periods  = 2
+          period              = 60
+          cooldown            = 60
+          adjustment_type     = "ChangeInCapacity"
+          scaling_adjustment  = -1
+        }
+      }
+    }
+  }
+}
+```
+
+### Using VPC and Subnet Tag Discovery
+
+```hcl
+module "ecs" {
+  source = "github.com/prefapp/tfm/modules/ecs"
+
+  cluster_name          = "demo"
+  service_name          = "demo-service"
+  container_definitions = file("container.json")
+  security_groups       = ["sg-1234567890abcdef0"]
+
+  vpc_tag_name = "shared-vpc"
+  subnet_tag_key  = "type"
+  subnet_tag_name = "private"
+}
+```
+
+## File Structure
+
+The module is organized with the following directory and file structure:
+
+```
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── providers.tf
+├── versions.tf
+├── data.tf
+├── autoscaling.tf
+├── alb.tf
+├── ecs.tf
+├── iam.tf
+├── security_group.tf
+├── _examples
+│   ├── basic
+│   ├── autoscaling
+│   └── with_tags
+├── README.md
+└── docs
+└── header.md
+```
+
+- **`main.tf`**: Entry point that wires together all module components.
+- **`ecs.tf`**: ECS cluster, task definition, and service configuration.
+- **`alb.tf`**: Application Load Balancer, listener, and target group.
+- **`autoscaling.tf`**: CloudWatch alarms and scaling policies.
+- **`iam.tf`**: IAM role and policy attachments for ECS task execution.
+- **`security_group.tf`**: Security group creation and rules.
+- **`data.tf`**: VPC and subnet discovery using IDs or tags.
+- **`_examples/`**: Example configurations demonstrating different use cases.
+
+## Useful Links
+
+- Terraform: https://www.terraform.io/
+- Amazon Elastic Container Service (ECS): https://aws.amazon.com/ecs/
+- Terraform AWS Provider: https://registry.terraform.io/providers/hashicorp/aws/latest
+- Application Load Balancer: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/
+- Application Auto Scaling: https://docs.aws.amazon.com/autoscaling/application/
+
+## Requirements
 
 No requirements.
 
-### Providers
+## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 
-### Modules
+## Modules
 
 No modules.
 
-### Resources
+## Resources
 
 | Name | Type |
 |------|------|
@@ -35,7 +167,7 @@ No modules.
 | [aws_vpc.by_id](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 | [aws_vpc.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
-### Inputs
+## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -46,7 +178,7 @@ No modules.
 | <a name="input_container_definitions"></a> [container\_definitions](#input\_container\_definitions) | Container definitions in JSON format | `string` | n/a | yes |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU units for the task | `number` | `256` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | Number of desired tasks for the ECS service | `number` | `1` | no |
-| <a name="input_ecs_autoscaling"></a> [ecs\_autoscaling](#input\_ecs\_autoscaling) | ECS service autoscaling configuration.<br/><br/>  Special fields (within <code>scale</code>):<br/>  - <code>scale.halt</code>: If present, disables all autoscaling resources for this service, but the ECS service will continue running with the current desired\_count. Use this if you want to keep the service running but temporarily suspend autoscaling actions (no scaling up or down will occur).<br/>  - <code>scale.stop</code>: If present, sets desired\_count to 0, stopping all running tasks for the service. Use this if you want to fully stop the ECS service (no tasks running), regardless of autoscaling settings. Autoscaling resources will also be disabled.<br/><br/>  Use <code>scale.halt</code> to pause scaling but keep the service alive; use <code>scale.stop</code> to fully stop the service and all its tasks. | <pre>map(object({<br/>    autoscaling_enabled = bool<br/>    min_capacity        = number<br/>    max_capacity        = number<br/><br/>    metric_type      = string<br/>    metric_statistic = string<br/><br/>    custom_metric = optional(object({<br/>      namespace               = string<br/>      name                    = string<br/>      dimensions              = map(string)<br/>      metric_aggregation_type = optional(string)<br/>      treat_missing_data      = optional(string)<br/>      datapoints_to_alarm     = optional(number)<br/>    }))<br/><br/>    scale = object({<br/>      up = object({<br/>        threshold           = number<br/>        comparison_operator = string<br/>        evaluation_periods  = number<br/>        period              = number<br/>        cooldown            = number<br/>        adjustment_type     = string<br/>        scaling_adjustment  = number<br/>      })<br/>      down = object({<br/>        threshold           = number<br/>        comparison_operator = string<br/>        evaluation_periods  = number<br/>        period              = number<br/>        cooldown            = number<br/>        adjustment_type     = string<br/>        scaling_adjustment  = number<br/>      })<br/>      halt = optional(object({}))<br/>      stop = optional(object({}))<br/>    })<br/>  }))</pre> | n/a | yes |
+| <a name="input_ecs_autoscaling"></a> [ecs\_autoscaling](#input\_ecs\_autoscaling) | ECS service autoscaling configuration.<br/><br/>  Special fields:<br/>  - halt: If present, disables all autoscaling resources for this service. The ECS service will use the value of var.desired\_count (the variable's value), not the runtime value that may have been set by autoscaling. Setting halt prevents new autoscaling actions and the service will revert to the value of var.desired\_count. Use this if you want to keep the service running but temporarily suspend autoscaling actions (no scaling up or down will occur).<br/>  - stop: If present, sets desired\_count to 0, stopping all running tasks for the service. Use this if you want to fully stop the ECS service (no tasks running), regardless of autoscaling settings. Autoscaling resources will also be disabled.<br/><br/>  Use halt to pause scaling but keep the service alive; use stop to fully stop the service and all its tasks. | <pre>map(object({<br/>    autoscaling_enabled = bool<br/>    min_capacity        = number<br/>    max_capacity        = number<br/><br/>    metric_type      = string<br/>    metric_statistic = string<br/><br/>    custom_metric = optional(object({<br/>      namespace               = string<br/>      name                    = string<br/>      dimensions              = map(string)<br/>      metric_aggregation_type = optional(string)<br/>      treat_missing_data      = optional(string)<br/>      datapoints_to_alarm     = optional(number)<br/>    }))<br/><br/>    scale = object({<br/>      up = object({<br/>        threshold           = number<br/>        comparison_operator = string<br/>        evaluation_periods  = number<br/>        period              = number<br/>        cooldown            = number<br/>        adjustment_type     = string<br/>        scaling_adjustment  = number<br/>      })<br/>      down = object({<br/>        threshold           = number<br/>        comparison_operator = string<br/>        evaluation_periods  = number<br/>        period              = number<br/>        cooldown            = number<br/>        adjustment_type     = string<br/>        scaling_adjustment  = number<br/>      })<br/>      halt = optional(object({}))<br/>      stop = optional(object({}))<br/>    })<br/>  }))</pre> | `{}` | no |
 | <a name="input_health_check"></a> [health\_check](#input\_health\_check) | Health check configuration for the target group | <pre>object({<br/>    path                = string<br/>    protocol            = string<br/>    matcher             = string<br/>    interval            = number<br/>    timeout             = number<br/>    healthy_threshold   = number<br/>    unhealthy_threshold = number<br/>  })</pre> | <pre>{<br/>  "healthy_threshold": 2,<br/>  "interval": 30,<br/>  "matcher": "200",<br/>  "path": "/",<br/>  "protocol": "HTTP",<br/>  "timeout": 5,<br/>  "unhealthy_threshold": 2<br/>}</pre> | no |
 | <a name="input_iam_role_name"></a> [iam\_role\_name](#input\_iam\_role\_name) | Name for the ECS task execution IAM role | `string` | `"ecsTaskExecutionRole"` | no |
 | <a name="input_launch_type"></a> [launch\_type](#input\_launch\_type) | Launch type for the ECS service (e.g., EC2 or FARGATE) | `string` | `"FARGATE"` | no |
@@ -67,11 +199,11 @@ No modules.
 | <a name="input_target_group_name"></a> [target\_group\_name](#input\_target\_group\_name) | Name of the target group | `string` | `"ecs-alb-tg"` | no |
 | <a name="input_target_group_port"></a> [target\_group\_port](#input\_target\_group\_port) | Port for the target group | `number` | `80` | no |
 | <a name="input_target_group_protocol"></a> [target\_group\_protocol](#input\_target\_group\_protocol) | Protocol for the target group | `string` | `"HTTP"` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where resources will be created. **At least one of `vpc_id` or `vpc_tag_name` must be specified.** If not set, the module will look up the VPC using `vpc_tag_key` and `vpc_tag_name`. | `string` | n/a | yes (conditional) |
-| <a name="input_vpc_tag_key"></a> [vpc\_tag\_key](#input\_vpc\_tag\_key) | Tag key used to search the VPC when `vpc_id` is not provided. Default is 'Name'. | `string` | `"Name"` | no |
-| <a name="input_vpc_tag_name"></a> [vpc\_tag\_name](#input\_vpc\_tag\_name) | Tag value of the VPC to look up (e.g., value for tag 'Name' = 'my-vpc'). **At least one of `vpc_id` or `vpc_tag_name` must be specified.** | `string` | `""` | yes (conditional) |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where resources will be created. If not set, the module will look up the VPC using vpc\_tag\_key and vpc\_tag\_name. | `string` | `null` | no |
+| <a name="input_vpc_tag_key"></a> [vpc\_tag\_key](#input\_vpc\_tag\_key) | Tag key used to search the VPC when vpc\_id is not provided. Default is 'Name'. | `string` | `"Name"` | no |
+| <a name="input_vpc_tag_name"></a> [vpc\_tag\_name](#input\_vpc\_tag\_name) | Tag value of the VPC to look up (e.g., value for tag 'Name' = 'my-vpc') | `string` | `""` | no |
 
-### Outputs
+## Outputs
 
 | Name | Description |
 |------|-------------|
@@ -88,3 +220,22 @@ No modules.
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | ID of the security group used by the ECS service |
 | <a name="output_target_group_arn"></a> [target\_group\_arn](#output\_target\_group\_arn) | ARN of the target group |
 <!-- END_TF_DOCS -->
+
+
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples):
+
+- [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/basic) - Basic ECS Service with ALB + Fargate
+- [Autoscaling enabled](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/autoscaling) - ECS Service with CPU-Based Autoscaling
+- [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
+
+## Resources
+- Amazon ECS: [https://aws.amazon.com/ecs/](https://aws.amazon.com/ecs/)
+- Terraform AWS Provider: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
+- Application Auto Scaling: [https://docs.aws.amazon.com/autoscaling/application/](https://docs.aws.amazon.com/autoscaling/application/)
+- Elastic Load Balancing (ALB): [https://docs.aws.amazon.com/elasticloadbalancing/latest/application/](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
