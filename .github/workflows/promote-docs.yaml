@@ -80,10 +80,12 @@ jobs:
 
             PROMOTION_FAILED=false
 
-            # Copy README.md if it exists
-            if [ -f "$module_dir/README.md" ]; then
-              if cp "$module_dir/README.md" "$MODULE_DEST/README.md" 2>/dev/null; then
-                echo "  ✓ Copied README.md"
+            # Find README.md (case-insensitive)
+            README_FILE=$(find "$module_dir" -maxdepth 1 -iname "readme.md" | head -n 1)
+
+            if [ -n "$README_FILE" ] && [ -f "$README_FILE" ]; then
+              if cp "$README_FILE" "$MODULE_DEST/README.md" 2>/dev/null; then
+                echo "  ✓ Copied $(basename "$README_FILE")"
 
                 # Read external links if .external-links file exists
                 EXTERNAL_LINKS_JSON="[]"
