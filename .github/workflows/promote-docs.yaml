@@ -87,10 +87,21 @@ jobs:
               if cp "$README_FILE" "$MODULE_DEST/README.md" 2>/dev/null; then
                 echo "  ✓ Copied $(basename "$README_FILE")"
 
+                # Read external links if .external-links file exists
+                EXTERNAL_LINKS_JSON="[]"
+                EXTERNAL_LINKS_FILE="$module_dir/.external-links"
+                if [ -f "$EXTERNAL_LINKS_FILE" ]; then
+                  # Read file line by line and create JSON array
+                  EXTERNAL_LINKS_JSON=$(jq -R -s 'split("\n") | map(select(length > 0))' < "$EXTERNAL_LINKS_FILE")
+                  echo "  ✓ Found $(echo "$EXTERNAL_LINKS_JSON" | jq 'length') external link(s)"
+                fi
+
                 # Add module to index.json
                 MODULE_URL="https://raw.githubusercontent.com/firestartr-pro/docs/main/site/raw/tfm/${MODULE_NAME}/README.md"
-                jq --arg name "$MODULE_NAME" --arg url "$MODULE_URL" \
-                  '.modules += [{"name": $name, "url": $url}]' \
+                jq --arg name "$MODULE_NAME" \
+                   --arg url "$MODULE_URL" \
+                   --argjson links "$EXTERNAL_LINKS_JSON" \
+                  '.modules += [{"name": $name, "url": $url, "external-links": $links}]' \
                   "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
               else
                 echo "  ✗ Failed to copy README.md"
