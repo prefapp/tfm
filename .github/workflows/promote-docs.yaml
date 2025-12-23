@@ -50,8 +50,6 @@ jobs:
 
       - name: Promote Terraform Modules
         run: |
-          set -e
-
           # Prepare pro-docs path
           mkdir -p "$PRO_DOCS_TFM_PATH"
 
