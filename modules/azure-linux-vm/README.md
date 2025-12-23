@@ -36,9 +36,6 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_cloud_init"></a> [cloud\_init](#output\_cloud\_init) | Output section |
-| <a name="output_run_script"></a> [run\_script](#output\_run\_script) | n/a |
-| <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | n/a |
 | <a name="output_vm_id"></a> [vm\_id](#output\_vm\_id) | Outputs for linux\_virtual\_machine\_scale\_set |
 
 ## Example Usage
