@@ -1,0 +1,174 @@
+name: Promote Terraform Modules Documentation to Docs Repo
+
+on:
+  release:
+    types: [published]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    name: Promote Documentation
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          path: tfm
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.FIRESTARTER_DOCS_APP_ID }}
+          private-key: ${{ secrets.FIRESTARTR_DOCS_APP_PEM_FILE }}
+          owner: firestartr-pro
+          repositories: docs
+
+      - name: Checkout docs repo
+        uses: actions/checkout@v5
+        with:
+          repository: firestartr-pro/docs
+          path: pro-docs
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Setup environment variables
+        run: |
+          echo "PRO_DOCS_TFM_PATH=$GITHUB_WORKSPACE/pro-docs/site/raw/tfm" >> "$GITHUB_ENV"
+          echo "PROMOTION_SUMMARY=$GITHUB_WORKSPACE/promotion-summary.md" >> "$GITHUB_ENV"
+
+          # Initialize summary file
+          cat > "$GITHUB_WORKSPACE/promotion-summary.md" << EOF
+          # Documentation Promotion Summary
+
+          ## Promoted Terraform Modules
+
+          EOF
+
+      - name: Promote Terraform Modules
+        run: |
+          # Prepare pro-docs path
+          mkdir -p "$PRO_DOCS_TFM_PATH"
+
+          # Track promotion status
+          TOTAL_MODULES=0
+          SUCCESSFUL_MODULES=0
+          FAILED_MODULES=0
+
+          # Initialize index.json
+          INDEX_JSON="$PRO_DOCS_TFM_PATH/index.json"
+          echo '{"modules":[]}' > "$INDEX_JSON"
+
+          modules_path="${GITHUB_WORKSPACE}/tfm/modules"
+
+          # Process each module
+          for module_dir in "${modules_path}"/*; do
+            if [ ! -d "$module_dir" ]; then
+              continue
+            fi
+
+            MODULE_NAME=$(basename "$module_dir")
+            TOTAL_MODULES=$((TOTAL_MODULES + 1))
+
+            echo "Processing module: $MODULE_NAME"
+
+            MODULE_DEST="$PRO_DOCS_TFM_PATH/$MODULE_NAME"
+            mkdir -p "$MODULE_DEST"
+
+            PROMOTION_FAILED=false
+
+            # Find README.md (case-insensitive)
+            README_FILE=$(find "$module_dir" -maxdepth 1 -iname "readme.md" | head -n 1)
+
+            if [ -n "$README_FILE" ] && [ -f "$README_FILE" ]; then
+              if cp "$README_FILE" "$MODULE_DEST/README.md" 2>/dev/null; then
+                echo "  ✓ Copied $(basename "$README_FILE")"
+
+                # Read external links if .external-links file exists
+                EXTERNAL_LINKS_JSON="[]"
+                EXTERNAL_LINKS_FILE="$module_dir/.external-links"
+                if [ -f "$EXTERNAL_LINKS_FILE" ]; then
+                  # Read file line by line and create JSON array
+                  EXTERNAL_LINKS_JSON=$(jq -R -s 'split("\n") | map(select(length > 0))' < "$EXTERNAL_LINKS_FILE")
+                  echo "  ✓ Found $(echo "$EXTERNAL_LINKS_JSON" | jq 'length') external link(s)"
+                fi
+
+                # Add module to index.json
+                MODULE_URL="https://raw.githubusercontent.com/firestartr-pro/docs/main/site/raw/tfm/${MODULE_NAME}/README.md"
+                jq --arg name "$MODULE_NAME" \
+                   --arg url "$MODULE_URL" \
+                   --argjson links "$EXTERNAL_LINKS_JSON" \
+                  '.modules += [{"name": $name, "url": $url, "external-links": $links}]' \
+                  "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
+              else
+                echo "  ✗ Failed to copy README.md"
+                PROMOTION_FAILED=true
+              fi
+            else
+              echo "  ⚠ No README.md found"
+              PROMOTION_FAILED=true
+            fi
+
+            # Update summary
+            if [ "$PROMOTION_FAILED" = true ]; then
+              echo "- ✗ **$MODULE_NAME**: Failed to promote" >> "$PROMOTION_SUMMARY"
+              FAILED_MODULES=$((FAILED_MODULES + 1))
+            else
+              echo "- ✓ **$MODULE_NAME**: Successfully promoted" >> "$PROMOTION_SUMMARY"
+              SUCCESSFUL_MODULES=$((SUCCESSFUL_MODULES + 1))
+            fi
+          done
+
+          # Pretty print index.json
+          jq --indent 2 '.' "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
+          echo "✓ Generated index.json with $SUCCESSFUL_MODULES modules"
+
+          # Add index.json to summary
+          echo "" >> "$PROMOTION_SUMMARY"
+          echo "## Index File" >> "$PROMOTION_SUMMARY"
+          echo "- ✓ **index.json**: Generated with $SUCCESSFUL_MODULES modules" >> "$PROMOTION_SUMMARY"
+
+          # Add summary statistics
+          {
+            echo ""
+            echo "## Summary Statistics"
+            echo "- **Total modules processed**: $TOTAL_MODULES"
+            echo "- **Successfully promoted**: $SUCCESSFUL_MODULES"
+            echo "- **Failed**: $FAILED_MODULES"
+          } >> "$PROMOTION_SUMMARY"
+
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: |
+          USER_ID=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)
+          echo "user-id=${USER_ID}" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Commit and push changes to docs repo
+        working-directory: pro-docs
+        run: |
+          set -e
+          git config user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
+          git config user.email "${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "" >> "$PROMOTION_SUMMARY"
+            echo "ℹ️ **Status**: No changes to commit" >> "$PROMOTION_SUMMARY"
+          else
+            git commit -m "docs: update tfm modules"
+            git push origin main
+            echo "" >> "$PROMOTION_SUMMARY"
+            echo "✅ **Status**: Changes committed and pushed to firestartr-pro/docs" >> "$PROMOTION_SUMMARY"
+          fi
+
+      - name: Display final summary
+        if: always()
+        run: |
+          echo "---"
+          cat "$PROMOTION_SUMMARY"
+          cat "$PROMOTION_SUMMARY" > "$GITHUB_STEP_SUMMARY"

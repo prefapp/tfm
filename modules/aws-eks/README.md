@@ -1,7 +1,13 @@
 <!-- BEGIN_TF_DOCS -->
-# EKS Module
+# AWS EKS Terraform Module
 
-This Terraform module simplifies the creation and configuration of an **Amazon Elastic Kubernetes Service (EKS)** cluster on AWS. Below is a description of the main features and components of the module:
+## Overview
+
+This Terraform module provides a comprehensive and production-ready solution for deploying and managing **Amazon Elastic Kubernetes Service (EKS)** clusters on AWS. It abstracts the complexity of EKS infrastructure provisioning while maintaining flexibility and following AWS best practices for security, networking, and operational excellence.
+
+The module is designed to handle both simple and complex EKS deployments, from basic development clusters to enterprise-grade production environments with advanced networking, security, and observability requirements. It seamlessly integrates with existing VPC infrastructure through flexible resource discovery mechanisms and provides extensive customization options for nodes, addons, IAM roles, and security policies.
+
+Below is a description of the main features and components of the module:
 
 - **EKS Configuration**: Allows the creation of an EKS cluster with custom options such as the _Kubernetes_ version, API access, and efficient node management.
 - **Node Group Management**: Facilitates the creation and management of node groups with various configurations, such as instance types, desired, minimum, and maximum capacity, and tags.
@@ -9,10 +15,24 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 - **Addon Configuration**: Includes options to enable essential addons such as \_CoreDNS\_, \_kube-proxy\_, and \_VPC CNI\_, as well as the ability to add custom addons.
 - **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like \_ALB Ingress Controller\_, \_CloudWatch\_, \_EFS CSI Driver\_, and \_ExternalDNS\_.
 
-## Module Usage
+## Key Features
+
+- **EKS Cluster Provisioning**: Automatically provisions an Amazon EKS cluster for scalable and managed Kubernetes workloads.
+- **Karpenter Integration (Optional)**: Generates required data and IAM roles for seamless integration with Karpenter, an open-source Kubernetes autoscaler.
+- **IAM Roles Creation for Addons**:
+  - **EBS (Elastic Block Store)**: Enables dynamic provisioning and management of EBS volumes via the EBS CSI driver.
+  - **EFS (Elastic File System)**: Supports EFS CSI driver for persistent, scalable file storage in Kubernetes pods.
+  - **External DNS**: Allows ExternalDNS to manage DNS records in Route53 automatically from Kubernetes resources.
+  - **Parameter Store**: Grants access to AWS Systems Manager Parameter Store for secure configuration and secrets management in workloads.
+
+## Basic Usage
+
+### Module Usage
 
 - **Variable Configuration**: Fill in the variables in the `variables.tf` file according to the specific requirements of your environment, such as the AWS region, _Kubernetes_ version, and VPC configuration.
+
   - For **VPC** configuration, there are two available methods: based on **ids** and based on **tags**.
+
     - Direct configuration with `vpc_id` and `subnet_ids`. The EKS will be attached to the provided resources. If this variables are provided, they will take precedence over the variables for configuration based on tags.
 
     - Configuration based on tags, with `vpc_tags` and `subnet_tags`. The module will search for the resources with the corresponding tags and values, and the EKS will be attached to the found resources. All provided tags must match. **Important**: When filtering subnets by tags, the module only considers private subnets (`tag:kubernetes.io/role/internal-elb = 1`).
@@ -55,6 +75,7 @@ This Terraform module simplifies the creation and configuration of an **Amazon E
 ## File Structure
 
 The module is organized with the following directory and file structure:
+
 ```
 .
 ├── addons_locals.tf
@@ -79,53 +100,25 @@ The module is organized with the following directory and file structure:
 ```
 
 - **`addons_locals.tf`**: Configuration file for local variables related to addons.
-
 - **`checks_addons.tf`**: Configuration file for checking and validating addons.
-
 - **`data.tf`**: Data source definitions for retrieving existing information from the infrastructure.
-
 - **`eks_prefix_delegation.tf`**: Configuration file for prefix delegation in EKS.
-
 - **`_examples`**: Directory containing examples of module usage.
-
   - **`with_import`**: Example using module import.
-
   - **`with_vpc`**: Example integrating with an existing VPC.
-
   - **`with_yaml_file`**: Example utilizing a YAML file for configuration.
-
 - **`iam_alb.tf`**: Configuration file for IAM roles related to Application Load Balancer (ALB).
-
 - **`iam_cloudwatch.tf`**: Configuration file for IAM roles related to CloudWatch.
-
 - **`iam_ebs_csi_driver.tf`**: Configuration file for IAM roles related to Elastic Block Store (EBS) CSI driver.
-
 - **`iam_efs_csi_driver.tf`**: Configuration file for IAM roles related to Elastic File System (EFS) CSI driver.
-
 - **`iam_external_dns.tf`**: Configuration file for IAM roles related to ExternalDNS.
-
 - **`iam_parameter_store.tf`**: Configuration file for IAM roles related to Parameter Store.
-
 - **`main.tf`**: Main Terraform configuration file where the primary resources and modules are defined.
-
 - **`outputs.tf`**: Configuration file for defining Terraform outputs.
-
 - **`providers.tf`**: Configuration file specifying Terraform providers and associated configurations.
-
 - **`variables.tf`**: Configuration file containing variable definitions used in `main.tf` and modules.
-
 - **`versions.tf`**: Configuration file specifying required Terraform and provider versions.
-
 - **`README.md`**: Project documentation containing information on module usage, prerequisites, and a directory structure overview.
-
-## Useful Links
-- Terraform: https://www.terraform.io/
-- Amazon Elastic Kubernetes Service (EKS): https://aws.amazon.com/eks/
-- Terraform AWS Provider: https://registry.terraform.io/providers/hashicorp/aws/latest
-- Terraform Kubernetes Provider: https://registry.terraform.io/providers/hashicorp/kubernetes/latest
-- Kubernetes: https://kubernetes.io/
-- Terraform-aws-modules/eks/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
-- Terraform-aws-modules/vpc/aws Module: https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
 
 ## Requirements
 
@@ -190,12 +183,12 @@ The module is organized with the following directory and file structure:
 | <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Cluster encryption config | `any` | `{}` | no |
 | <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Indicates whether or not the Amazon EKS private API server endpoint is enabled. Default is true. | `bool` | `true` | no |
 | <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Indicates whether or not the Amazon EKS public API server endpoint is enabled. Default is false. | `bool` | `false` | no |
-| <a name="input_cluster_iam_role_arn"></a> [cluster\_iam\_role\_arn](#input\_cluster\_iam\_role\_arn) | n/a | `string` | `null` | no |
-| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | n/a | `string` | n/a | yes |
+| <a name="input_cluster_iam_role_arn"></a> [cluster\_iam\_role\_arn](#input\_cluster\_iam\_role\_arn) | ARN of an existing IAM role to use for the EKS cluster. If not provided and create\_cluster\_iam\_role is true, a new IAM role will be created. | `string` | `null` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | n/a | yes |
 | <a name="input_cluster_security_group_additional_rules"></a> [cluster\_security\_group\_additional\_rules](#input\_cluster\_security\_group\_additional\_rules) | Additional rules for the cluster security group | `any` | `{}` | no |
-| <a name="input_cluster_security_group_id"></a> [cluster\_security\_group\_id](#input\_cluster\_security\_group\_id) | n/a | `string` | `""` | no |
+| <a name="input_cluster_security_group_id"></a> [cluster\_security\_group\_id](#input\_cluster\_security\_group\_id) | Existing cluster security group ID to use. If not provided, a new security group will be created. | `string` | `""` | no |
 | <a name="input_cluster_tags"></a> [cluster\_tags](#input\_cluster\_tags) | Tags to apply to the EKS cluster | `map(string)` | `{}` | no |
-| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | n/a | `string` | n/a | yes |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version for the EKS cluster | `string` | n/a | yes |
 | <a name="input_create_alb_ingress_iam"></a> [create\_alb\_ingress\_iam](#input\_create\_alb\_ingress\_iam) | Create IAM resources for alb-ingress | `bool` | `false` | no |
 | <a name="input_create_cloudwatch_iam"></a> [create\_cloudwatch\_iam](#input\_create\_cloudwatch\_iam) | Create IAM resources for cloudwatch | `bool` | `false` | no |
 | <a name="input_create_cloudwatch_log_group"></a> [create\_cloudwatch\_log\_group](#input\_create\_cloudwatch\_log\_group) | Create CloudWatch log group for the EKS cluster | `bool` | `true` | no |
@@ -209,24 +202,43 @@ The module is organized with the following directory and file structure:
 | <a name="input_enable_karpenter"></a> [enable\_karpenter](#input\_enable\_karpenter) | Enable Karpenter provisioning | `bool` | `false` | no |
 | <a name="input_enabled_log_types"></a> [enabled\_log\_types](#input\_enabled\_log\_types) | A list of the desired control plane logs to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) | `list(string)` | <pre>[<br/>  "audit",<br/>  "api",<br/>  "authenticator"<br/>]</pre> | no |
 | <a name="input_external_dns_role_name"></a> [external\_dns\_role\_name](#input\_external\_dns\_role\_name) | IAM role name for external-dns. Leave null to auto-generate using the cluster name. For backward compatibility, set to 'external-dns-Kubernetes'. | `string` | `null` | no |
-| <a name="input_externaldns_tags"></a> [externaldns\_tags](#input\_externaldns\_tags) | n/a | `map(any)` | `{}` | no |
+| <a name="input_externaldns_tags"></a> [externaldns\_tags](#input\_externaldns\_tags) | Tags to apply to the ExternalDNS IAM resources | `map(any)` | `{}` | no |
 | <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | `{}` | no |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | `any` | n/a | yes |
 | <a name="input_parameter_store_role_name"></a> [parameter\_store\_role\_name](#input\_parameter\_store\_role\_name) | IAM role name for Parameter Store. Leave null to auto-generate per cluster (format: iam\_role\_parameter\_store\_all-<cluster\_name>). For backward compatibility, use: iam\_role\_parameter\_store\_all. | `string` | `null` | no |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Subnet ids | `list(string)` | `null` | no |
+| <a name="input_region"></a> [region](#input\_region) | AWS region where the EKS cluster will be deployed | `string` | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs for the EKS cluster | `list(string)` | `null` | no |
 | <a name="input_subnet_tags"></a> [subnet\_tags](#input\_subnet\_tags) | Map of subnet tags to filter which subnets we want | `map(string)` | `null` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(any)` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID | `string` | `null` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(any)` | n/a | yes |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID for the EKS cluster | `string` | `null` | no |
 | <a name="input_vpc_tags"></a> [vpc\_tags](#input\_vpc\_tags) | Map of VPC tags to filter which VPC we want | `map(string)` | `null` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_account_id"></a> [account\_id](#output\_account\_id) | n/a |
-| <a name="output_debug"></a> [debug](#output\_debug) | n/a |
-| <a name="output_eks"></a> [eks](#output\_eks) | n/a |
-| <a name="output_summary"></a> [summary](#output\_summary) | n/a |
+| <a name="output_account_id"></a> [account\_id](#output\_account\_id) | AWS Account ID where the EKS cluster is deployed |
+| <a name="output_debug"></a> [debug](#output\_debug) | Debug information for mixed addons |
+| <a name="output_eks"></a> [eks](#output\_eks) | EKS module details |
+| <a name="output_summary"></a> [summary](#output\_summary) | Summary of the EKS cluster configuration |
+
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples):
+
+- [karpenter](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/karpenter) - Configuration with karpenter module.
+- [with\_import](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with\_import) - Import existing eks.
+- [with\_vpc](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with\_vpc) - We generate an EKS specifying the VPC name, not its tags.
+
+## Remote resources
+
+- **EKS**: [https://aws.amazon.com/eks/](https://aws.amazon.com/eks/)
+- **Terraform-aws-modules/eks/aws**: [https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)
+- **Terraform-aws-modules/eks/aws/latest/submodules/karpenter**: [https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest/submodules/karpenter](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest/submodules/karpenter)
+- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest](https://registry.terraform.io/providers/hashicorp/aws/latest)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
 <!-- END_TF_DOCS -->

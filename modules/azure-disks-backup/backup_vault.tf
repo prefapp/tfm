@@ -7,6 +7,7 @@ resource "azurerm_data_protection_backup_vault" "this" {
   redundancy                 = var.redundancy
   soft_delete                = var.soft_delete
   retention_duration_in_days = var.retention_duration_in_days
+  tags                       = local.tags
   identity {
     type = "SystemAssigned"
   }
