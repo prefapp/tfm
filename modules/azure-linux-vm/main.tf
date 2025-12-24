@@ -47,9 +47,12 @@ resource "azurerm_linux_virtual_machine" "this" {
   # template_cloudinit_config
   custom_data = base64encode(var.vm.custom_data != null ? var.vm.custom_data : var.vm.custom_data)
 
-  admin_ssh_key {
-    username   = var.vm.admin_ssh_key.usernamecd 
-    public_key = var.vm.admin_ssh_key.public_key
+  dynamic "admin_ssh_key" {
+    for_each = var.vm.admin_ssh_key != null ? [var.vm.admin_ssh_key] : []
+    content {
+      username   = admin_ssh_key.value.username
+      public_key = admin_ssh_key.value.public_key
+    }
   }
 
   source_image_reference {
