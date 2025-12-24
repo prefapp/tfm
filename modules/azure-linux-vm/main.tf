@@ -31,7 +31,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   location                        = var.common.location
   size                            = var.vm.size
   admin_username                  = var.vm.admin_username
-  admin_password                  = data.azurerm_key_vault_secret.this.value
+  admin_password                  = data.azurerm_key_vault_secret.this[0].value
   edge_zone                       = var.vm.edge_zone
   eviction_policy                 = var.vm.eviction_policy
   encryption_at_host_enabled      = var.vm.encryption_at_host_enabled
@@ -41,7 +41,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   tags                            = local.tags
 
   network_interface_ids = [
-    azurerm_network_interface.cbx-qa-nic-windows.id,
+    azurerm_network_interface.this.id,
   ]
 
   # template_cloudinit_config
