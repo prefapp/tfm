@@ -104,7 +104,7 @@ resource "azurerm_network_interface" "this" {
   tags                           = local.tags
 
   ip_configuration {
-    name                                               = var.vm.name + "-ipconfig"
+    name                                               = tostring(var.vm.name) + "-ipconfig"
     gateway_load_balancer_frontend_ip_configuration_id = var.nic.gateway_load_balancer_frontend_ip_configuration_id
     subnet_id                                          = data.azurerm_subnet.this[0].id
     private_ip_address_version                         = var.nic.private_ip_address_version
