@@ -91,9 +91,9 @@ resource "azurerm_linux_virtual_machine" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
 resource "azurerm_network_interface" "this" {
-  name                           = azurerm_linux_virtual_machine.this.name + "-nic"
-  location                       = azurerm_linux_virtual_machine.this.location
-  resource_group_name            = azurerm_linux_virtual_machine.this.resource_group_name
+  name                           = var.vm.name != null ? var.vm.name : "vm"  # O usa var.nic.name si lo tienes
+  location                       = var.common.location
+  resource_group_name            = var.common.resource_group_name
   auxiliary_mode                 = var.nic.auxiliary_mode
   auxiliary_sku                  = var.nic.auxiliary_sku
   accelerated_networking_enabled = var.nic.accelerated_networking_enabled
@@ -104,7 +104,7 @@ resource "azurerm_network_interface" "this" {
   tags                           = local.tags
 
   ip_configuration {
-    name                                               = azurerm_linux_virtual_machine.this.name + "-ipconfig"
+    name                                               = var.vm.name + "-ipconfig"
     gateway_load_balancer_frontend_ip_configuration_id = var.nic.gateway_load_balancer_frontend_ip_configuration_id
     subnet_id                                          = data.azurerm_subnet.this[0].id
     private_ip_address_version                         = var.nic.private_ip_address_version
