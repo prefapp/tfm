@@ -113,5 +113,4 @@ resource "azurerm_network_interface" "this" {
     primary                                            = var.nic.primary
     private_ip_address                                 = var.nic.private_ip_address
   }
-  depends_on = [ azurerm_linux_virtual_machine.this ]
 }
