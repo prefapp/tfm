@@ -48,7 +48,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   custom_data = base64encode(var.vm.custom_data != null ? var.vm.custom_data : var.vm.custom_data)
 
   admin_ssh_key {
-    username   = var.vm.admin_ssh_key.username
+    username   = var.vm.admin_ssh_key.usernamecd 
     public_key = var.vm.admin_ssh_key.public_key
   }
 
@@ -110,4 +110,5 @@ resource "azurerm_network_interface" "this" {
     primary                                            = var.nic.primary
     private_ip_address                                 = var.nic.private_ip_address
   }
+  depends_on = [ azurerm_linux_virtual_machine.this ]
 }

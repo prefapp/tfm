@@ -1,4 +1,11 @@
 # VARIABLES SECTION
+variable "common" {
+  type = object({
+    resource_group_name = string
+    location            = string
+  })
+}
+
 variable "admin_password" {
   description = "Admin password for the VM. If not provided, it will be fetched from Key Vault."
   type        = optional(object({
@@ -11,8 +18,6 @@ variable "admin_password" {
 variable "vm" {
   type = object({
     name                            = string
-    resource_group_name             = string
-    location                        = string
     size                            = string
     admin_username                  = string
     admin_password                  = optional(string)
