@@ -64,7 +64,7 @@ variable "vm" {
   })
 
   validation {
-    condition     = contains(["SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned"], var.vm.identity_type)
+    condition     = contains(["SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned"], var.vm.identity.type)
     error_message = "identity_type must be one of 'SystemAssigned', 'UserAssigned', or 'SystemAssigned, UserAssigned'."
   }
 
