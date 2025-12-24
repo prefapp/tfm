@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/prefapp/tfm/compare/azure-disks-backup-v1.2.1...azure-disks-backup-v1.2.2) (2025-12-23)
+
+
+### Bug Fixes
+
+* add tags inheritance ([#809](https://github.com/prefapp/tfm/issues/809)) ([0ae24c1](https://github.com/prefapp/tfm/commit/0ae24c12cf81f8797333f7231b5315a0369e9211))
+
 ## [1.2.1](https://github.com/prefapp/tfm/compare/azure-disks-backup-v1.2.0...azure-disks-backup-v1.2.1) (2025-04-24)
 
 

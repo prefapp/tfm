@@ -13,18 +13,17 @@
 */
 
 output "account_id" {
-
-  value = data.aws_caller_identity.current.account_id
-
+  description = "AWS Account ID where the EKS cluster is deployed"
+  value       = data.aws_caller_identity.current.account_id
 }
 
 output "eks" {
-
-  value = module.eks
-
+  description = "EKS module details"
+  value       = module.eks
 }
 
 output "summary" {
+  description = "Summary of the EKS cluster configuration"
   value = <<-SUMMARY
 
      ############################################################################
@@ -109,7 +108,7 @@ output "summary" {
    SUMMARY
 }
 
-
 output "debug" {
-  value = local.mixed_addons
+  description = "Debug information for mixed addons"
+  value       = local.mixed_addons
 }

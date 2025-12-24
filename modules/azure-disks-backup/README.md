@@ -39,6 +39,15 @@ resource_group_name = "bk-disks"
 # The name of the Recovery Services vault
 vault_name          = "bk-disks"
 
+# Whether to use resource group  tags as base for module tags
+tags_from_rg      = true
+
+# Tags to apply to resources
+tags = {
+  Environment = "Production"
+  Project     = "Azure Disks Backup"  
+}
+
 # The type of datastore to use for backups (Possible values are ArchiveStore, OperationalStore, SnapshotStore and VaultStore)
 datastore_type      = "VaultStore"
 
@@ -154,6 +163,8 @@ backup_instances = [
 | <a name="input_retention_duration_in_days"></a> [retention_duration_in_days](#input_retention_duration_in_days) | Default retention duration in days. | `number` | `14` | no |
 | <a name="input_backup_policies"></a> [backup_policies](#input_backup_policies) | List of backup policies. | `list(object({ name = string, backup_repeating_time_intervals = list(string), default_retention_duration = string, time_zone = string, retention_rules = list(object({ name = string, duration = string, priority = number, criteria = object({ absolute_criteria = string }) })) }))` | n/a | yes |
 | <a name="input_backup_instances"></a> [backup_instances](#input_backup_instances) | List of backup instances. | `list(object({ disk_name = string, disk_resource_group = string, snapshot_resource_group_name = string, backup_policy_name = string }))` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
 
 ## Outputs
 

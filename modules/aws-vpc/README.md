@@ -137,7 +137,7 @@ For detailed examples, refer to the [official module examples](https://github.co
 - [VPC with IPAM](https://github.com/terraform-aws-modules/terraform-aws-vpc/tree/master/examples/ipam) - CIDR allocation from IPAM
 - [VPC with Flow Logs](https://github.com/terraform-aws-modules/terraform-aws-vpc/tree/master/examples/flow-log) - Flow logs configuration
 
-## Resources
+## Remote resources
 
 - **Official Module**: [terraform-aws-modules/vpc/aws](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest)
 - **GitHub Repository**: [terraform-aws-modules/terraform-aws-vpc](https://github.com/terraform-aws-modules/terraform-aws-vpc)
