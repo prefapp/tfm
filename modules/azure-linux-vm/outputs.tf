@@ -1,12 +1,6 @@
 # Output section
-output "cloud_init" {
-  value = base64encode(var.vm.cloud_init)
-}
-
-output "run_script" {
-  value = jsonencode({
-    "script" = base64encode(var.vm.run_script)
-  })
+output "custom_data" {
+  value = base64encode(var.vm.custom_data)  
 }
 
 # Outputs for linux_virtual_machine_scale_set

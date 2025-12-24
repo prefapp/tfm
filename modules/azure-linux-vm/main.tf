@@ -8,7 +8,7 @@ data "azurerm_subnet" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
-  name = var.vm.resource_group_name
+  name = var.common.resource_group_name
 }
 
 data "azurerm_key_vault" "this" {
