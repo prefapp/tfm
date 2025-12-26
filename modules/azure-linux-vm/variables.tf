@@ -27,7 +27,6 @@ variable "vm" {
     secure_boot_enabled             = optional(bool)
     vtpm_enabled                    = optional(bool)
     disable_password_authentication = optional(bool)
-    network_interface_ids           = list(string)
     custom_data                     = optional(string)
 
     admin_ssh_key = object({
