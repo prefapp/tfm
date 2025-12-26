@@ -77,6 +77,7 @@ variable "nic" {
     auxiliary_sku                                      = optional(string)
     accelerated_networking_enabled                     = optional(bool)
     ip_forwarding_enabled                              = optional(bool)
+    ip_configuration_name                              = optional(string)
     edge_zone                                          = optional(string)
     dns_servers                                        = optional(list(string))
     internal_dns_name_label                            = optional(string)
