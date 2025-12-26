@@ -81,7 +81,7 @@ variable "nic" {
     internal_dns_name_label                            = optional(string)
     gateway_load_balancer_frontend_ip_configuration_id = optional(string)
     private_ip_address_version                         = optional(string)
-    private_ip_address_allocation                      = optional(string)
+    private_ip_address_allocation                      = optional(string, "Dynamic")
     public_ip_address_id                               = optional(string)
     primary                                            = optional(bool)
     private_ip_address                                 = optional(string)

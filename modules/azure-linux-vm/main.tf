@@ -45,7 +45,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   ]
 
   # template_cloudinit_config
-  custom_data = base64encode(var.vm.custom_data != null ? var.vm.custom_data : var.vm.custom_data)
+  custom_data = var.vm.custom_data != null ? base64encode(var.vm.custom_data) : null
 
   dynamic "admin_ssh_key" {
     for_each = var.vm.admin_ssh_key != null ? [var.vm.admin_ssh_key] : []
