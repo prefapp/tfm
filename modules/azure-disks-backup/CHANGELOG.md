@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/prefapp/tfm/compare/azure-disks-backup-v1.2.2...azure-disks-backup-v1.2.3) (2025-12-26)
+
+
+### Bug Fixes
+
+* Update README.md ([#811](https://github.com/prefapp/tfm/issues/811)) ([cb9e9c5](https://github.com/prefapp/tfm/commit/cb9e9c5936e7eeeca2c1425ed7094729b6c59089))
+
 ## [1.2.2](https://github.com/prefapp/tfm/compare/azure-disks-backup-v1.2.1...azure-disks-backup-v1.2.2) (2025-12-23)
 
 
