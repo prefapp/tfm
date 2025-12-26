@@ -69,9 +69,6 @@ variable "vm" {
 
 variable "nic" {
   type = object({
-    name                                               = string
-    location                                           = string
-    resource_group_name                                = string
     subnet_name                                        = optional(string)
     virtual_network_name                               = optional(string)
     virtual_network_resource_group_name                = optional(string)
