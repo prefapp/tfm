@@ -7,7 +7,3 @@ output "custom_data" {
 output "vm_id" {
   value = azurerm_linux_virtual_machine.this
 }
-
-output "unique_id" {
-  value = azurerm_linux_virtual_machine.this.unique_id
-}
