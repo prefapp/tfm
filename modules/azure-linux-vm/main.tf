@@ -75,18 +75,6 @@ resource "azurerm_linux_virtual_machine" "this" {
       identity_ids = identity.value.identity_ids
     }
   }
-
-  dynamic "data_disk" {
-    for_each = var.vm.data_disk != null ? [var.vm.data_disk] : []
-    content {
-      name                 = data_disk.value.name
-      caching              = data_disk.value.disk_caching
-      create_option        = data_disk.value.create_option
-      disk_size_gb         = data_disk.value.disk_size_gb
-      lun                  = data_disk.value.lun
-      storage_account_type = data_disk.value.storage_account_type
-    }
-  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
