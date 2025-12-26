@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module creates and configures Azure Backup for managed disks. It sets up a Recovery Services vault, backup policies, and backup instances for specified disks.
+This module creates and configures Azure Backup for managed disks. It sets up a Recovery Services vault, backup policies, and backup instances for specified disks. 
 
 ## DOC
 
