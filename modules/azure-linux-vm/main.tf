@@ -75,6 +75,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       identity_ids = identity.value.identity_ids
     }
   }
+  depends_on = [ azurerm_network_interface.this ]
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
