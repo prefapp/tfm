@@ -5,5 +5,5 @@ output "custom_data" {
 
 # Outputs for linux_virtual_machine_scale_set
 output "vm_id" {
-  value = azurerm_linux_virtual_machine.this
+  value = azurerm_linux_virtual_machine.this.id
 }
