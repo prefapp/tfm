@@ -80,7 +80,7 @@ resource "azurerm_linux_virtual_machine" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
 resource "azurerm_network_interface" "this" {
-  name                           = var.vm.name != null ? var.vm.name : "vm"  # O usa var.nic.name si lo tienes
+  name                           = var.nic.name != null ? var.nic.name : "${var.vm.name}-nic"  # O usa var.nic.name si lo tienes
   location                       = var.common.location
   resource_group_name            = var.common.resource_group_name
   auxiliary_mode                 = var.nic.auxiliary_mode
