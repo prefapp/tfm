@@ -54,17 +54,25 @@ variable "vm" {
   })
 
   validation {
-    condition     = contains(["SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned"], var.vm.identity.type)
+    condition = var.vm.identity == null ? true : contains(
+      ["SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned"],
+      var.vm.identity.type
+    )
     error_message = "identity_type must be one of 'SystemAssigned', 'UserAssigned', or 'SystemAssigned, UserAssigned'."
   }
 
   validation {
-    condition = (
-      var.vm.identity.type == "UserAssigned" || var.vm.identity.type == "SystemAssigned, UserAssigned"
-    ) ? (var.vm.identity_ids != null) : true
+    condition = var.vm.identity == null ? true : (
+      (
+        var.vm.identity.type == "UserAssigned" ||
+        var.vm.identity.type == "SystemAssigned, UserAssigned"
+      ) ? (var.vm.identity.identity_ids != null) : true
+    )
     error_message = "identity_ids must be provided when identity_type is 'UserAssigned' or 'SystemAssigned, UserAssigned'."
   }
 }
+
+
 
 variable "nic" {
   type = object({

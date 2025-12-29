@@ -12,15 +12,15 @@ data "azurerm_resource_group" "this" {
 }
 
 data "azurerm_key_vault" "this" {
-  count               = var.admin_password != null && var.admin_password.key_vault_name != null && var.admin_password.resource_group_name != null ? 1 : 0
-  name                = var.admin_password.key_vault_name
-  resource_group_name = var.admin_password.resource_group_name
+  count               = var.admin_password != null ? 1 : 0
+  name                = try(var.admin_password.key_vault_name, null)
+  resource_group_name = try(var.admin_password.resource_group_name, null)
 }
 
 data "azurerm_key_vault_secret" "this" {
-  count      = var.admin_password != null && var.admin_password.secret_name != null ? 1 : 0
-  name       = var.admin_password.secret_name
-  key_vault_id = data.azurerm_key_vault.this[0].id
+  count      = var.admin_password != null ? 1 : 0
+  name       = try(var.admin_password.secret_name, null)
+  key_vault_id = try(data.azurerm_key_vault.this[0].id, null)
 }
 
 # RESOURCES SECTION
@@ -31,7 +31,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   location                        = var.common.location
   size                            = var.vm.size
   admin_username                  = var.vm.admin_username
-  admin_password                  = data.azurerm_key_vault_secret.this[0].value
+  admin_password                  = var.vm.disable_password_authentication ? null : try(data.azurerm_key_vault_secret.this[0].value, var.vm.admin_password)
   edge_zone                       = var.vm.edge_zone
   eviction_policy                 = var.vm.eviction_policy
   encryption_at_host_enabled      = var.vm.encryption_at_host_enabled
@@ -75,7 +75,6 @@ resource "azurerm_linux_virtual_machine" "this" {
       identity_ids = identity.value.identity_ids
     }
   }
-  depends_on = [ azurerm_network_interface.this ]
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
@@ -95,7 +94,7 @@ resource "azurerm_network_interface" "this" {
   ip_configuration {
     name                                               = var.nic.ip_configuration_name != null ? var.nic.ip_configuration_name : "${var.vm.name}-ipconfig"
     gateway_load_balancer_frontend_ip_configuration_id = var.nic.gateway_load_balancer_frontend_ip_configuration_id
-    subnet_id                                          = data.azurerm_subnet.this[0].id
+    subnet_id                                          = var.nic.subnet_id != null ? var.nic.subnet_id : data.azurerm_subnet.this[0].id
     private_ip_address_version                         = var.nic.private_ip_address_version
     private_ip_address_allocation                      = var.nic.private_ip_address_allocation
     public_ip_address_id                               = var.nic.public_ip_address_id
