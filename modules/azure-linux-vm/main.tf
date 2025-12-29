@@ -31,7 +31,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   location                        = var.common.location
   size                            = var.vm.size
   admin_username                  = var.vm.admin_username
-  admin_password                  = var.vm.disable_password_authentication ? false : try(data.azurerm_key_vault_secret.this[0].value, var.vm.admin_password)
+  admin_password                  = coalesce(var.vm.disable_password_authentication, false) ? null : try(data.azurerm_key_vault_secret.this[0].value, var.vm.admin_password)
   edge_zone                       = var.vm.edge_zone
   eviction_policy                 = var.vm.eviction_policy
   encryption_at_host_enabled      = var.vm.encryption_at_host_enabled
