@@ -38,13 +38,11 @@ resource "azurerm_linux_virtual_machine" "this" {
   secure_boot_enabled             = var.vm.secure_boot_enabled
   vtpm_enabled                    = var.vm.vtpm_enabled
   disable_password_authentication = var.vm.disable_password_authentication
+  custom_data                     = var.vm.custom_data != null ? base64encode(var.vm.custom_data) : null
   tags                            = local.tags
-
   network_interface_ids = [
     azurerm_network_interface.this.id,
   ]
-
-  custom_data = var.vm.custom_data != null ? base64encode(var.vm.custom_data) : null
 
   dynamic "admin_ssh_key" {
     for_each = var.vm.admin_ssh_key != null ? [var.vm.admin_ssh_key] : []
