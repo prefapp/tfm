@@ -160,7 +160,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [with\_custom\_data](https://github.com/prefapp/tfm/tree/main/modules/azure-linux-vm/_examples/with\_custom\_data) - Example provisioning a VM with custom cloud-init data.
 - [with\_vault\_admin\_pass](https://github.com/prefapp/tfm/tree/main/modules/azure-linux-vm/_examples/with\_vault\_admin\_pass) - Example using Key Vault to securely provide the VM admin password.
 
-## Resources
+## Remote resources
 
 - **Azure Linux Virtual Machine**: [azurerm\_linux\_virtual\_machine documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine)
 - **Azure Network Interface**: [azurerm\_network\_interface documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface)
