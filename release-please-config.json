@@ -120,6 +120,9 @@
         },
         "modules/aws-cloudfront-delivery": {
             "package-name": "aws-cloudfront-delivery"
+        },
+        "modules/azure-linux-vm": {
+            "package-name": "azure-linux-vm"
         }
     }
 }
