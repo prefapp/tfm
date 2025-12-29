@@ -44,7 +44,6 @@ resource "azurerm_linux_virtual_machine" "this" {
     azurerm_network_interface.this.id,
   ]
 
-  # template_cloudinit_config
   custom_data = var.vm.custom_data != null ? base64encode(var.vm.custom_data) : null
 
   dynamic "admin_ssh_key" {
