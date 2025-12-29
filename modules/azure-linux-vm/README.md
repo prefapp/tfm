@@ -160,7 +160,7 @@ No modules.
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-linux-vm/_examples):
 
-- [vault\_with\_nic](https://github.com/prefapp/tfm/tree/main/modules/azure-linux-vm/_examples/vault\_with\_nic) - Example using Azure Key Vault for admin password and custom network interface configuration.
+- [with\_nic](https://github.com/prefapp/tfm/tree/main/modules/azure-linux-vm/_examples/with\_nic) - Example using Azure Key Vault for admin password and custom network interface configuration.
 - [with\_custom\_data](https://github.com/prefapp/tfm/tree/main/modules/azure-linux-vm/_examples/with\_custom\_data) - Example provisioning a VM with custom cloud-init data.
 - [with\_vault\_admin\_pass](https://github.com/prefapp/tfm/tree/main/modules/azure-linux-vm/_examples/with\_vault\_admin\_pass) - Example using Key Vault to securely provide the VM admin password.
 
