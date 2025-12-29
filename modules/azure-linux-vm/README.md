@@ -35,7 +35,7 @@ module "linux_vm" {
     admin_username = "azureuser"
     source_image_reference = {
       publisher = "Canonical"
-      offer     = "ubuntu-20.04-lts"
+      offer     = "0001-com-ubuntu-server-jammy"
       sku       = "server"
       version   = "latest"
     }
@@ -51,8 +51,6 @@ module "linux_vm" {
   }
   nic = {
     name                = "my-linux-vm-nic"
-    location            = "westeurope"
-    resource_group_name = "my-rg"
     subnet_name         = "default"
     virtual_network_name = "my-vnet"
     virtual_network_resource_group_name = "my-rg"
@@ -81,7 +79,7 @@ module "linux_vm" {
     admin_username = "azureuser"
     source_image_reference = {
       publisher = "Canonical"
-      offer     = "ubuntu-20.04-lts"
+      offer     = "0001-com-ubuntu-server-jammy"
       sku       = "server"
       version   = "latest"
     }
@@ -100,8 +98,6 @@ module "linux_vm" {
   }
   nic = {
     name                = "my-linux-vm-nic"
-    location            = "westeurope"
-    resource_group_name = "my-rg"
     subnet_name         = "default"
     virtual_network_name = "my-vnet"
     virtual_network_resource_group_name = "my-rg"
