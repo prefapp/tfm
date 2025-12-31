@@ -15,10 +15,7 @@ variable "vpc_tag_name" {
   description = "Tag value of the VPC to look up (e.g., value for tag 'Name' = 'my-vpc')"
   type        = string
   default     = ""
-
 }
-
-
 variable "subnet_tag_key" {
   description = "Tag key used to search the subnets when subnet_ids is not provided"
   type        = string
