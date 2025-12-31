@@ -18,6 +18,14 @@ With this module, you can easily configure core AKS resources such as the cluste
 
 To get started, add the module to your Terraform configuration and provide the required variables, such as resource group, location, and network details. You can further customize the deployment by specifying additional options for node pools, autoscaling, and integrations. Refer to the minimal example below for a quick start, and explore the examples directory for more advanced scenarios.
 
+## Key Features
+
+- **AKS Cluster & Node Pools**: Creates a managed AKS cluster and allows custom node pool definitions.
+- **Autoscaling**: Supports autoscaling profiles and advanced node pool configuration.
+- **ACR Integration**: Allows associating one or more Azure Container Registries to the cluster.
+- **Flexible Networking**: Selection of existing VNet and Subnet.
+- **Advanced Configuration**: Supports OIDC, Workload Identity, security profiles, and more.
+
 ## Requirements
 
 - Resource group created
@@ -36,22 +44,36 @@ For more details, see the [Terraform AKS module documentation](https://registry.
 
 It is designed to be flexible, production-ready, and easy to integrate into existing infrastructures.
 
-## Key Features
-
-- **AKS Cluster & Node Pools**: Creates a managed AKS cluster and allows custom node pool definitions.
-- **Autoscaling**: Supports autoscaling profiles and advanced node pool configuration.
-- **ACR Integration**: Allows associating one or more Azure Container Registries to the cluster.
-- **Flexible Networking**: Selection of existing VNet and Subnet.
-- **Advanced Configuration**: Supports OIDC, Workload Identity, security profiles, and more.
-
 ## Basic Usage
 
 ### Minimal Example
 
 ```hcl
-module "azure-aks" {
-	source = "github.com/prefapp/tfm/modules/azure-aks"
-	# ...module variables...
+module "azure_aks" {
+	source                  = "github.com/prefapp/tfm/modules/azure-aks"
+	location                = "westeurope"
+	resource_group_name     = "example-rg"
+	vnet_name               = "example-vnet"
+	vnet_resource_group_name = "example-rg"
+	subnet_name             = "example-subnet"
+	aks_prefix              = "example"
+	aks_kubernetes_version  = "1.28.3"
+	aks_agents_count        = 2
+	aks_agents_size         = "Standard_DS2_v2"
+	aks_agents_pool_name    = "default"
+	aks_agents_max_pods     = 30
+	aks_agents_pool_max_surge = "33%"
+	aks_sku_tier            = "Free"
+	aks_network_plugin      = "azure"
+	aks_network_policy      = "azure"
+	aks_orchestrator_version = "1.28.3"
+	aks_os_disk_size_gb     = 30
+	oidc_issuer_enabled     = true
+	workload_identity_enabled = true
+	key_vault_secrets_provider_enabled = true
+	secret_rotation_enabled = false
+	public_ip_name          = "example-public-ip"
+	tags                    = { environment = "dev" }
 }
 ```
 
