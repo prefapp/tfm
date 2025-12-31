@@ -217,7 +217,7 @@ No modules.
 | <a name="output_ecs_cluster_name"></a> [ecs\_cluster\_name](#output\_ecs\_cluster\_name) | Name of the ECS cluster |
 | <a name="output_ecs_service_arn"></a> [ecs\_service\_arn](#output\_ecs\_service\_arn) | ARN of the ECS service |
 | <a name="output_ecs_service_name"></a> [ecs\_service\_name](#output\_ecs\_service\_name) | Name of the ECS service |
-| <a name="output_ecs_task_definition"></a> [ecs\_task\_definition](#output\_ecs\_task\_definition) | ARN of the ECS task definition |
+| <a name="output_ecs_task_definition"></a> [ecs\_task\_definition](#output\_ecs\_task\_definition) | ECS task definition resource object |
 | <a name="output_ecs_task_definition_arn"></a> [ecs\_task\_definition\_arn](#output\_ecs\_task\_definition\_arn) | ARN of the ECS task definition |
 | <a name="output_scale_down_alarm_arns"></a> [scale\_down\_alarm\_arns](#output\_scale\_down\_alarm\_arns) | ARNs of the scale down CloudWatch alarms for each ECS service. |
 | <a name="output_scale_down_policy_arns"></a> [scale\_down\_policy\_arns](#output\_scale\_down\_policy\_arns) | ARNs of the scale down policies for each ECS service. |
@@ -232,8 +232,8 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/basic) - Basic ECS Service with ALB + Fargate
 - [Autoscaling enabled](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/autoscaling) - ECS Service with CPU-Based Autoscaling
-- [Only cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/only\_cluster) - ECS Cluster without services atached
-- [Atach service to cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/atach\_service\_to-cluster) - ECS services that need a existent cluster
+- [Only cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/only\_cluster) - ECS Cluster without services attached
+- [Attach service to cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/atach\_service\_to-cluster) - ECS services that need a existent cluster
 - [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with\_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 
 ## Remote resources
