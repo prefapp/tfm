@@ -1,46 +1,110 @@
-# Azure aks module
+<!-- BEGIN_TF_DOCS -->
+# **Azure AKS Terraform Module**
 
 ## Overview
 
-This module uses the official AKS module and allows you to create an AKS with some configurations like creating extra node groups, active and define node autoscaling profile or attaching acrs..
+This module enables you to provision and manage Azure Kubernetes Service (AKS) clusters on Microsoft Azure using Terraform. It is designed for both simple and complex scenarios, making it suitable for production environments as well as development and testing setups. By leveraging the official AKS module, it ensures compatibility with the latest Azure features and best practices.
+
+This module provisions an **AKS cluster on Azure**, including:
+
+- AKS cluster
+- Node pools (including extra pools)
+- Autoscaling profile
+- Azure Container Registry (ACR) integration
+- Network configuration (VNet/Subnet)
+- Optional public IP assignment
+
+With this module, you can easily configure core AKS resources such as the cluster itself, node pools (including multiple and custom pools), and network integration with existing or new VNets and subnets. It also supports advanced options like autoscaling profiles, Azure Container Registry (ACR) integration, OIDC, Workload Identity, and security settings, allowing you to tailor the deployment to your organization’s needs.
+
+To get started, add the module to your Terraform configuration and provide the required variables, such as resource group, location, and network details. You can further customize the deployment by specifying additional options for node pools, autoscaling, and integrations. Refer to the minimal example below for a quick start, and explore the examples directory for more advanced scenarios.
+
+## Key Features
+
+- **AKS Cluster & Node Pools**: Creates a managed AKS cluster and allows custom node pool definitions.
+- **Autoscaling**: Supports autoscaling profiles and advanced node pool configuration.
+- **ACR Integration**: Allows associating one or more Azure Container Registries to the cluster.
+- **Flexible Networking**: Selection of existing VNet and Subnet.
+- **Advanced Configuration**: Supports OIDC, Workload Identity, security profiles, and more.
+
+## Infrastructure Prerequisites
+
+- Resource group created
+- Subnet created (VNet)
+- ACR(s) (optional)
+- If you set a Public IP, you need to create a public IP resource
+
+For more details, see the [Terraform AKS module documentation](https://registry.terraform.io/modules/Azure/aks/azurerm/latest).
+
+> **Note:**
+> The following values are not configurable:
+> - `log_analytics_workspace_enabled`: `false`
+> - `rbac_aad_azure_rbac_enabled`: `true`
+> - `rbac_aad_managed`: `true`
+> - `role_based_access_control_enabled`: `true`
+
+It is designed to be flexible, production-ready, and easy to integrate into existing infrastructures.
+
+## Basic Usage
+
+### Minimal Example
+
+```hcl
+module "azure_aks" {
+	source                  = "github.com/prefapp/tfm/modules/azure-aks"
+	location                = "westeurope"
+	resource_group_name     = "example-rg"
+	vnet_name               = "example-vnet"
+	vnet_resource_group_name = "example-rg"
+	subnet_name             = "example-subnet"
+	aks_prefix              = "example"
+	aks_kubernetes_version  = "1.28.3"
+	aks_agents_count        = 2
+	aks_agents_size         = "Standard_DS2_v2"
+	aks_agents_pool_name    = "default"
+	aks_agents_max_pods     = 30
+	aks_agents_pool_max_surge = "33%"
+	aks_sku_tier            = "Free"
+	aks_network_plugin      = "azure"
+	aks_network_policy      = "azure"
+	aks_orchestrator_version = "1.28.3"
+	aks_os_disk_size_gb     = 30
+	oidc_issuer_enabled     = true
+	workload_identity_enabled = true
+	key_vault_secrets_provider_enabled = true
+	secret_rotation_enabled = false
+	public_ip_name          = "example-public-ip"
+	tags                    = { environment = "dev" }
+}
+```
 
 ## Requirements
 
-- Resource group created.
-- Subnet created (VNet).
-- ACR/s (optional).
-- If you set a Public IP, you need to create a public IP resource.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.1 |
 
-## DOC
+## Providers
 
-- [Resource terraform - AKS module](https://registry.terraform.io/modules/Azure/aks/azurerm/latest).
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | n/a |
 
-## Usage
+## Modules
 
-### Set a module
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_aks"></a> [aks](#module\_aks) | github.com/Azure/terraform-azurerm-aks | 9.1.0 |
 
-```terraform
-module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-aks?ref=<version>"
-}
-```
+## Resources
 
-#### Example
+| Name | Type |
+|------|------|
+| [azurerm_role_assignment.role_assignment_network_contributor_over_public_ip_aks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_public_ip.aks_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
+| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_subnet.aks_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
-```terraform
-module "azure-aks" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-aks?ref=v1.2.3"
-}
-```
-
-## Note
-
-The following values are not configurable:
-
-- `log_analytics_workspace_enabled`: `false`
-- `rbac_aad_azure_rbac_enabled`: `true`
-- `rbac_aad_managed`: `true`
-- `role_based_access_control_enabled`: `true`
+## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -100,80 +164,39 @@ The following values are not configurable:
 
 | Name | Description |
 |------|-------------|
-| <a name="output_aks_id"></a> [aks\_id](#output_aks_id) | The ID of the AKS cluster. |
-| <a name="output_aks_name"></a> [aks\_name](#output_aks_name) | The name of the AKS cluster. |
-| <a name="output_cluster_fqdn"></a> [cluster\_fqdn](#output_cluster_fqdn) | The FQDN of the AKS cluster. |
-| <a name="output_cluster_identity"></a> [cluster\_identity](#output_cluster_identity) | The cluster identity of the AKS cluster. |
-| <a name="output_cluster_issuer"></a> [cluster\_issuer](#output_cluster_issuer) | The OIDC issuer URL of the AKS cluster. |
-| <a name="output_kubelet_identity_client_id"></a> [kubelet\_identity](#output_kubelet_identity) | The client ID of the kubelet identity of the AKS cluster. |
-| <a name="output_kubelet_identity_object_id"></a> [kubelet\_identity](#output_kubelet_identity) | The object ID of the kubelet identity of the AKS cluster. |
-| <a name="output_network_profile"></a> [network\_profile](#output_network_profile) | The network profile of the AKS cluster. |
-| <a name="output_node_resource_group"></a> [node\_resource\_group](#output_node_resource_group) | The node resource group of the AKS cluster. |
-| <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output_oidc_issuer_url) | The OIDC issuer URL of the AKS cluster. |
-| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output_outbound_ip_address) | The outbound IP address of the AKS cluster. |
-| <a name="output_subnet_id"></a> [subnet\_id](#output_subnet_id) | The subnet ID of the AKS cluster. |
-| <a name="output_vnet"></a> [vnet](#output_vnet) | The virtual network name of the AKS cluster. |
+| <a name="output_aks_id"></a> [aks\_id](#output\_aks\_id) | The ID of the AKS cluster. Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/xxxx-common-predev/providers/Microsoft.ContainerService/managedClusters/xxxx-predev-aks` |
+| <a name="output_aks_name"></a> [aks\_name](#output\_aks\_name) | The name of the AKS cluster. Example: `xxxx-predev-aks` |
+| <a name="output_cluster_fqdn"></a> [cluster\_fqdn](#output\_cluster\_fqdn) | The FQDN of the AKS cluster. Example: `xxxx-predev-xxxxxxxx.hcp.westeurope.azmk8s.io` |
+| <a name="output_cluster_identity"></a> [cluster\_identity](#output\_cluster\_identity) | The cluster identity of the AKS cluster. See README for structure. |
+| <a name="output_cluster_issuer"></a> [cluster\_issuer](#output\_cluster\_issuer) | The OIDC issuer URL of the AKS cluster. |
+| <a name="output_kubelet_identity_client_id"></a> [kubelet\_identity\_client\_id](#output\_kubelet\_identity\_client\_id) | The kubelet identity of the AKS cluster. See README for structure. |
+| <a name="output_kubelet_identity_object_id"></a> [kubelet\_identity\_object\_id](#output\_kubelet\_identity\_object\_id) | The network profile of the AKS cluster. See README for structure. |
+| <a name="output_network_profile"></a> [network\_profile](#output\_network\_profile) | The node resource group of the AKS cluster. |
+| <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | The OIDC issuer URL of the AKS cluster. |
+| <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | The outbound IP address of the AKS cluster. |
+| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | The outbound IP address of the AKS cluster. |
+| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The subnet ID of the AKS cluster. |
+| <a name="output_vnet"></a> [vnet](#output\_vnet) | The virtual network name of the AKS cluster. |
 
-### Explanation description of the outputs
+## Examples
 
-### Explanation description of the outputs
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples):
 
-- **aks_id**: The ID of the AKS cluster. Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/xxxx-common-predev/providers/Microsoft.ContainerService/managedClusters/xxxx-predev-aks` (string)
-- **aks_name**: The name of the AKS cluster. Example: `xxxx-predev-aks` (string)
-- **cluster_fqdn**: The FQDN of the AKS cluster. Example: `xxxx-predev-xxxxxxxx.hcp.westeurope.azmk8s.io` (string)
-- **cluster_identity**: The cluster identity of the AKS cluster. This is a complex object with the following fields:
-  - **identity_ids**: A set of identity IDs. (set of strings)
-  - **principal_id**: The principal ID of the cluster identity. (string)
-  - **tenant_id**: The tenant ID of the cluster identity. (string)
-  - **type**: The type of the cluster identity. Example: `SystemAssigned` (string)
-- **cluster_issuer**: The OIDC issuer URL of the AKS cluster. Example: `https://westeurope.oic.prod-aks.azure.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/` (string)
-- **kubelet_identity**: The kubelet identity of the AKS cluster. This is a list of objects with the following fields:
-  - **client_id**: The client ID of the kubelet identity. (string)
-  - **object_id**: The object ID of the kubelet identity. (string)
-  - **user_assigned_identity_id**: The user-assigned identity ID of the kubelet identity. (string)
-- **network_profile**: The network profile of the AKS cluster. This is a list of objects with the following fields:
-  - **dns_service_ip**: The DNS service IP. (string)
-  - **docker_bridge_cidr**: The Docker bridge CIDR. (string)
-  - **ebpf_data_plane**: The eBPF data plane. (string)
-  - **ip_versions**: A list of IP versions. (list of strings)
-  - **load_balancer_profile**: A list of load balancer profiles with the following fields:
-    - **effective_outbound_ips**: A set of effective outbound IPs. (set of strings)
-    - **idle_timeout_in_minutes**: The idle timeout in minutes. (number)
-    - **managed_outbound_ip_count**: The managed outbound IP count. (number)
-    - **managed_outbound_ipv6_count**: The managed outbound IPv6 count. (number)
-    - **outbound_ip_address_ids**: A set of outbound IP address IDs. (set of strings)
-    - **outbound_ip_prefix_ids**: A set of outbound IP prefix IDs. (set of strings)
-    - **outbound_ports_allocated**: The number of outbound ports allocated. (number)
-  - **load_balancer_sku**: The SKU of the load balancer. (string)
-  - **nat_gateway_profile**: A list of NAT gateway profiles. (list of objects)
-  - **network_data_plane**: The network data plane. (string)
-  - **network_mode**: The network mode. (string)
-  - **network_plugin**: The network plugin. (string)
-  - **network_plugin_mode**: The network plugin mode. (string)
-  - **network_policy**: The network policy. (string)
-  - **outbound_ip_address_ids**: A set of outbound IP address IDs. (set of strings)
-  - **outbound_ip_prefix_ids**: A set of outbound IP prefix IDs. (set of strings)
-  - **outbound_type**: The outbound type. (string)
-  - **pod_cidr**: The pod CIDR. (string)
-  - **pod_cidrs**: A list of pod CIDRs. (list of strings)
-  - **service_cidr**: The service CIDR. (string)
-  - **service_cidrs**: A list of service CIDRs. (list of strings)
+- [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/basic) – Minimal AKS cluster deployment
+- [With VNet](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/with\_vnet) – AKS cluster using a custom VNet/Subnet
+- [Extra node pools](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/extra\_node\_pools) – AKS with additional node pools
+- [Autoscaling](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/autoscaling) – AKS with autoscaler profile enabled
 
-### Set a data .tfvars
-
-#### Example whitout additional node pools
+### Example .tfvars
 
 ```yaml
----
-# Global variables
+# Example variables for AKS module
 location: "westeurope"
 resource_group_name: "my-rg"
 tags_from_rg: false
 tags:
-  application: "common"
-  env: "predev"
-# AKS variables
-# aks_agents_count: "1" | not needed when enable_auto_scaling is true
+	application: "common"
+	env: "predev"
 aks_agents_count: "2"
 aks_agents_max_pods: "110"
 aks_agents_pool_max_surge: "10%"
@@ -191,9 +214,7 @@ key_vault_secrets_provider_enabled: true
 secret_rotation_enabled: true
 secret_rotation_interval: 30s
 aks_default_pool_custom_labels:
-  nodepool-group: "myng"
-
-# AKS autoscaler variables
+	nodepool-group: "myng"
 auto_scaler_profile_enabled: true
 auto_scaler_profile_expander: "least-waste"
 auto_scaler_profile_max_graceful_termination_sec: "1800"
@@ -210,45 +231,46 @@ auto_scaler_profile_scale_down_utilization_threshold: "0.7"
 auto_scaler_profile_scan_interval: "10s"
 auto_scaler_profile_skip_nodes_with_local_storage: false
 auto_scaler_profile_skip_nodes_with_system_pods: false
-
-# Extra node pools
 extra_node_pools :
-  - name: "foo"
-    pool_name: "captpre"
-    vm_size: "Standard_F8s_v2"
-    # node_count: "1"
-    enable_auto_scaling: true
-    max_count: 5
-    min_count: 2
-    max_pod_per_node: 30
-    os_disk_type: "Managed"
-    custom_labels:
-      nodepool-group: "foo"
-  - name: "bar"
-    pool_name: "genhpa"
-    vm_size: "Standard_D4as_v5"
-    # node_count: "1"
-    enable_auto_scaling: true
-    min_count: 2
-    max_count: 20
-    max_pod_per_node: 110
-    os_disk_type: "Managed"
-    custom_labels:
-      nodepool-group: "bar"
-
-# Network variables
+	- name: "foo"
+		pool_name: "captpre"
+		vm_size: "Standard_F8s_v2"
+		enable_auto_scaling: true
+		max_count: 5
+		min_count: 2
+		max_pod_per_node: 30
+		os_disk_type: "Managed"
+		custom_labels:
+			nodepool-group: "foo"
+	- name: "bar"
+		pool_name: "genhpa"
+		vm_size: "Standard_D4as_v5"
+		enable_auto_scaling: true
+		min_count: 2
+		max_count: 20
+		max_pod_per_node: 110
+		os_disk_type: "Managed"
+		custom_labels:
+			nodepool-group: "bar"
 subnet_name: "internal"
 vnet_name: "spoke-common-predev-vnet"
 vnet_resource_group_name: "my-rg"
 public_ip_name: "my-output-aks-public-ip"
 aks_network_profile: "foo"
-
-# ACR variable
 acr_map:
-  acrxxx: "/xxx/xxx/xxx"
-  acryyy: "/yyy/yyy/yyy"
-
-# Access control variables
+	acrxxx: "/xxx/xxx/xxx"
+	acryyy: "/yyy/yyy/yyy"
 oidc_issuer_enabled: "true"
 workload_identity_enabled: "true"
 ```
+
+## Remote resources
+ - Terraform: https://www.terraform.io/
+ - Azure Kubernetes Service: https://azure.microsoft.com/en-us/services/kubernetes-service/
+ - Terraform Azure Provider: https://registry.terraform.io/providers/hashicorp/azurerm/latest
+ - Azure Container Registry: https://azure.microsoft.com/en-us/services/container-registry/
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository’s issue tracker](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->
