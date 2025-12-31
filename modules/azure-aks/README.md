@@ -28,10 +28,9 @@ To get started, add the module to your Terraform configuration and provide the r
 
 ## Requirements
 
-- Resource group created
-- Subnet created (VNet)
-- ACR(s) (optional)
-- If you set a Public IP, you need to create a public IP resource
+| Name | Version |
+|------|---------|
+| <a name="requirement\_terraform"></a> [terraform](#requirement\\_terraform) | >= 1.7.1 |
 
 For more details, see the [Terraform AKS module documentation](https://registry.terraform.io/modules/Azure/aks/azurerm/latest).
 
@@ -289,5 +288,5 @@ workload_identity_enabled: "true"
 
 ## Support
 
-For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the [repository’s issue tracker](https://github.com/prefapp/tfm/issues)
 <!-- END_TF_DOCS -->
