@@ -26,7 +26,7 @@ To get started, add the module to your Terraform configuration and provide the r
 - **Flexible Networking**: Selection of existing VNet and Subnet.
 - **Advanced Configuration**: Supports OIDC, Workload Identity, security profiles, and more.
 
-## Terraform Requirements
+## Infrastructure Prerequisites
 
 | Name | Version |
 |------|---------|
