@@ -9,23 +9,6 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [Autoscaling](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/autoscaling) – AKS with autoscaler profile enabled
 
 
-## Outputs
-
-See the module documentation for a full list of outputs. Some key outputs include:
-
-- **aks_id**: The ID of the AKS cluster. Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/xxxx-common-predev/providers/Microsoft.ContainerService/managedClusters/xxxx-predev-aks`
-- **aks_name**: The name of the AKS cluster. Example: `xxxx-predev-aks`
-- **cluster_fqdn**: The FQDN of the AKS cluster. Example: `xxxx-predev-xxxxxxxx.hcp.westeurope.azmk8s.io`
-- **cluster_identity**: The cluster identity of the AKS cluster. See README for structure.
-- **cluster_issuer**: The OIDC issuer URL of the AKS cluster.
-- **kubelet_identity**: The kubelet identity of the AKS cluster. See README for structure.
-- **network_profile**: The network profile of the AKS cluster. See README for structure.
-- **node_resource_group**: The node resource group of the AKS cluster.
-- **oidc_issuer_url**: The OIDC issuer URL of the AKS cluster.
-- **outbound_ip_address**: The outbound IP address of the AKS cluster.
-- **subnet_id**: The subnet ID of the AKS cluster.
-- **vnet**: The virtual network name of the AKS cluster.
-
 ### Example .tfvars
 
 ```yaml

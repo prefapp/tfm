@@ -164,19 +164,19 @@ module "azure_aks" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_aks_id"></a> [aks\_id](#output\_aks\_id) | AKS section |
-| <a name="output_aks_name"></a> [aks\_name](#output\_aks\_name) | n/a |
-| <a name="output_cluster_fqdn"></a> [cluster\_fqdn](#output\_cluster\_fqdn) | n/a |
-| <a name="output_cluster_identity"></a> [cluster\_identity](#output\_cluster\_identity) | n/a |
-| <a name="output_cluster_issuer"></a> [cluster\_issuer](#output\_cluster\_issuer) | n/a |
-| <a name="output_kubelet_identity_client_id"></a> [kubelet\_identity\_client\_id](#output\_kubelet\_identity\_client\_id) | n/a |
-| <a name="output_kubelet_identity_object_id"></a> [kubelet\_identity\_object\_id](#output\_kubelet\_identity\_object\_id) | n/a |
-| <a name="output_network_profile"></a> [network\_profile](#output\_network\_profile) | n/a |
-| <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | n/a |
-| <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | n/a |
-| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | n/a |
-| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | Data section |
-| <a name="output_vnet"></a> [vnet](#output\_vnet) | n/a |
+| <a name="output_aks_id"></a> [aks\_id](#output\_aks\_id) | The ID of the AKS cluster. Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/xxxx-common-predev/providers/Microsoft.ContainerService/managedClusters/xxxx-predev-aks` |
+| <a name="output_aks_name"></a> [aks\_name](#output\_aks\_name) | The name of the AKS cluster. Example: `xxxx-predev-aks` |
+| <a name="output_cluster_fqdn"></a> [cluster\_fqdn](#output\_cluster\_fqdn) | The FQDN of the AKS cluster. Example: `xxxx-predev-xxxxxxxx.hcp.westeurope.azmk8s.io` |
+| <a name="output_cluster_identity"></a> [cluster\_identity](#output\_cluster\_identity) | The cluster identity of the AKS cluster. See README for structure. |
+| <a name="output_cluster_issuer"></a> [cluster\_issuer](#output\_cluster\_issuer) | The OIDC issuer URL of the AKS cluster. |
+| <a name="output_kubelet_identity_client_id"></a> [kubelet\_identity\_client\_id](#output\_kubelet\_identity\_client\_id) | The kubelet identity of the AKS cluster. See README for structure. |
+| <a name="output_kubelet_identity_object_id"></a> [kubelet\_identity\_object\_id](#output\_kubelet\_identity\_object\_id) | The network profile of the AKS cluster. See README for structure. |
+| <a name="output_network_profile"></a> [network\_profile](#output\_network\_profile) | The node resource group of the AKS cluster. |
+| <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | The OIDC issuer URL of the AKS cluster. |
+| <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | The outbound IP address of the AKS cluster. |
+| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | The outbound IP address of the AKS cluster. |
+| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The subnet ID of the AKS cluster. |
+| <a name="output_vnet"></a> [vnet](#output\_vnet) | The virtual network name of the AKS cluster. |
 
 ## Examples
 
@@ -186,23 +186,6 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [With VNet](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/with\_vnet) – AKS cluster using a custom VNet/Subnet
 - [Extra node pools](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/extra\_node\_pools) – AKS with additional node pools
 - [Autoscaling](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/autoscaling) – AKS with autoscaler profile enabled
-
-## Outputs
-
-See the module documentation for a full list of outputs. Some key outputs include:
-
-- **aks\_id**: The ID of the AKS cluster. Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/xxxx-common-predev/providers/Microsoft.ContainerService/managedClusters/xxxx-predev-aks`
-- **aks\_name**: The name of the AKS cluster. Example: `xxxx-predev-aks`
-- **cluster\_fqdn**: The FQDN of the AKS cluster. Example: `xxxx-predev-xxxxxxxx.hcp.westeurope.azmk8s.io`
-- **cluster\_identity**: The cluster identity of the AKS cluster. See README for structure.
-- **cluster\_issuer**: The OIDC issuer URL of the AKS cluster.
-- **kubelet\_identity**: The kubelet identity of the AKS cluster. See README for structure.
-- **network\_profile**: The network profile of the AKS cluster. See README for structure.
-- **node\_resource\_group**: The node resource group of the AKS cluster.
-- **oidc\_issuer\_url**: The OIDC issuer URL of the AKS cluster.
-- **outbound\_ip\_address**: The outbound IP address of the AKS cluster.
-- **subnet\_id**: The subnet ID of the AKS cluster.
-- **vnet**: The virtual network name of the AKS cluster.
 
 ### Example .tfvars
 
