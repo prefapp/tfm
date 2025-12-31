@@ -2,16 +2,8 @@
 
 ## Overview
 
-This Terraform module leverages the official AKS module to provision and manage production-ready Azure Kubernetes Service (AKS) clusters. It supports advanced configurations such as extra node pools, autoscaling profiles, Azure Container Registry (ACR) integration, and flexible networking, making it suitable for a wide range of deployment scenarios on Microsoft Azure.
 
-### Requirements
-
-- Resource group created
-- Subnet created (VNet)
-- ACR(s) (optional)
-- If you set a Public IP, you need to create a public IP resource
-
-For more details, see the [Terraform AKS module documentation](https://registry.terraform.io/modules/Azure/aks/azurerm/latest).
+This module enables you to provision and manage Azure Kubernetes Service (AKS) clusters on Microsoft Azure using Terraform. It is designed for both simple and complex scenarios, making it suitable for production environments as well as development and testing setups. By leveraging the official AKS module, it ensures compatibility with the latest Azure features and best practices.
 
 This module provisions an **AKS cluster on Azure**, including:
 
@@ -21,6 +13,20 @@ This module provisions an **AKS cluster on Azure**, including:
 - Azure Container Registry (ACR) integration
 - Network configuration (VNet/Subnet)
 - Optional public IP assignment
+
+With this module, you can easily configure core AKS resources such as the cluster itself, node pools (including multiple and custom pools), and network integration with existing or new VNets and subnets. It also supports advanced options like autoscaling profiles, Azure Container Registry (ACR) integration, OIDC, Workload Identity, and security settings, allowing you to tailor the deployment to your organization’s needs.
+
+To get started, add the module to your Terraform configuration and provide the required variables, such as resource group, location, and network details. You can further customize the deployment by specifying additional options for node pools, autoscaling, and integrations. Refer to the minimal example below for a quick start, and explore the examples directory for more advanced scenarios.
+
+
+## Requirements
+
+- Resource group created
+- Subnet created (VNet)
+- ACR(s) (optional)
+- If you set a Public IP, you need to create a public IP resource
+
+For more details, see the [Terraform AKS module documentation](https://registry.terraform.io/modules/Azure/aks/azurerm/latest).
 
 > **Note:**
 > The following values are not configurable:
