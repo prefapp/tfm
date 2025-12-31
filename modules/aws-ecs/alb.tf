@@ -50,7 +50,7 @@ resource "aws_lb_listener" "this" {
   }
 }
 
-# If LD exists, we use this
+# If an existing ALB is specified, use this
 
 data "aws_lb" "this" {
   count = var.service_name != null ? var.name_existing_alb != null ? 1 : 0 : 0
