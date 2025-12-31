@@ -29,9 +29,10 @@ To get started, add the module to your Terraform configuration and provide the r
 
 ## Infrastructure Prerequisites
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.1 |
+- Resource group created
+- Subnet created (VNet)
+- ACR(s) (optional)
+- If you set a Public IP, you need to create a public IP resource
 
 For more details, see the [Terraform AKS module documentation](https://registry.terraform.io/modules/Azure/aks/azurerm/latest).
 
