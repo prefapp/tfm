@@ -24,7 +24,7 @@ output "ecs_task_definition_arn" {
 }
 
 output "ecs_task_definition" {
-  description = "ARN of the ECS task definition"
+  description = "ECS task definition resource object"
   value       = try(aws_ecs_task_definition.this[0], "")
 }
 
