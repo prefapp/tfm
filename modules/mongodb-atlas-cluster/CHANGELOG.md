@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/prefapp/tfm/compare/mongodb-atlas-cluster-v0.3.1...mongodb-atlas-cluster-v0.4.0) (2025-11-13)
+
+
+### Features
+
+* Add trusted client certificate and SSL profile definition ([#712](https://github.com/prefapp/tfm/issues/712)) ([128da94](https://github.com/prefapp/tfm/commit/128da9464ac74c59a441cf0556c709736d9751fb))
+
 ## [0.3.1](https://github.com/prefapp/tfm/compare/mongodb-atlas-cluster-v0.3.0...mongodb-atlas-cluster-v0.3.1) (2025-07-07)
 
 
