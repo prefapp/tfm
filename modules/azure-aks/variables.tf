@@ -7,9 +7,16 @@ variable "resource_group_name" {
   description = "The name of the resource group in which to create the resources"
 }
 
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
-  description = "The tags to associate with your resources"
+  description = "Tags to apply to resources"
   type        = map(string)
+  default     = {}
 }
 
 # Data section public IP variables

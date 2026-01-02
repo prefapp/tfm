@@ -1,8 +1,15 @@
 # VARIABLES SECTION
 ## General
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
-  description = "The tags to associate with your resources"
+  description = "Tags to apply to resources"
   type        = map(string)
+  default     = {}
 }
 
 variable "resource_group_name" {

@@ -106,6 +106,9 @@
         "modules/aws-terraform-backend": {
             "package-name": "aws-terraform-backend"
         },
+        "modules/aws-ecs": {
+            "package-name": "aws-ecs"
+        },
         "modules/aws-rds": {
             "package-name": "aws-rds"
         },
@@ -114,6 +117,12 @@
         },
         "modules/azure-event-hub": {
             "package-name": "azure-event-hub"
+        },
+        "modules/aws-cloudfront-delivery": {
+            "package-name": "aws-cloudfront-delivery"
+        },
+        "modules/azure-linux-vm": {
+            "package-name": "azure-linux-vm"
         }
     }
 }

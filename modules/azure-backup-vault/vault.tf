@@ -24,8 +24,4 @@ resource "azurerm_data_protection_backup_vault" "this" {
   identity {
     type = "SystemAssigned"
   }
-
-  lifecycle {
-    ignore_changes = [tags]
-  }
 }

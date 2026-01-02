@@ -39,4 +39,7 @@ module "eks" {
   cluster_encryption_config               = var.cluster_encryption_config
   access_entries                          = var.access_entries
   fargate_profiles                        = var.fargate_profiles
+  create_cloudwatch_log_group             = var.create_cloudwatch_log_group
+  cloudwatch_log_group_class              = var.cloudwatch_log_group_class
+  cluster_enabled_log_types               = var.create_cloudwatch_log_group ? var.enabled_log_types : []
 }

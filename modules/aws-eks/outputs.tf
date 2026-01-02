@@ -13,18 +13,17 @@
 */
 
 output "account_id" {
-
-  value = data.aws_caller_identity.current.account_id
-
+  description = "AWS Account ID where the EKS cluster is deployed"
+  value       = data.aws_caller_identity.current.account_id
 }
 
 output "eks" {
-
-  value = module.eks
-
+  description = "EKS module details"
+  value       = module.eks
 }
 
 output "summary" {
+  description = "Summary of the EKS cluster configuration"
   value = <<-SUMMARY
 
      ############################################################################
@@ -70,7 +69,7 @@ output "summary" {
     " - %s\n \t- Addon Version: %s\n\t- ServiceAccount IAM Role: %s\n\t- Advanced configuration:\t%s",
     addon_key,
     coalesce(lookup(addon_value, "addon_version", null), "latest"),
-    lookup(addon_value, "service_account_role_arn", "none"),
+    coalesce(lookup(addon_value, "service_account_role_arn", null), "none"),
     replace(
       jsonencode(lookup(addon_value, "configuration_values", {})),
       "\n", "\n\t\t\t\t\t"
@@ -109,7 +108,7 @@ output "summary" {
    SUMMARY
 }
 
-
 output "debug" {
-  value = local.mixed_addons
+  description = "Debug information for mixed addons"
+  value       = local.mixed_addons
 }

@@ -1,3 +1,15 @@
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "location" {
   description = "The location/region where the Application Gateway should be created."
   type        = string
@@ -48,6 +60,38 @@ variable "ssl_profiles" {
       github_branch      = string
       github_directory   = string
     })
+  }))
+  default = []
+}
+
+variable "rewrite_rule_sets" {
+  description = "List of Rewrite Rule Sets for Application Gateway"
+  type = list(object({
+    name = string
+    rewrite_rules = list(object({
+      name          = string
+      rule_sequence = number
+      conditions = optional(list(object({
+        variable    = string
+        pattern     = string
+        ignore_case = optional(bool, false)
+        negate      = optional(bool, false)
+      })), [])
+      request_header_configurations = optional(list(object({
+        header_name  = string
+        header_value = string
+      })), [])
+      response_header_configurations = optional(list(object({
+        header_name  = string
+        header_value = string
+      })), [])
+      url_rewrite = optional(object({
+        source_path = optional(string)
+        query_string = optional(string)
+        components = optional(string)
+        reroute = optional(bool)
+      }))
+    }))
   }))
   default = []
 }

@@ -30,7 +30,7 @@ resource "azurerm_storage_account" "this" {
   https_traffic_only_enabled       = var.storage_account.https_traffic_only_enabled
   min_tls_version                  = var.storage_account.min_tls_version
   public_network_access_enabled    = var.storage_account.public_network_access_enabled
-  tags                             = var.tags
+  tags                             = local.tags
   dynamic "blob_properties" {
     for_each = var.storage_account.blob_properties != null ? [var.storage_account.blob_properties] : []
     content {
@@ -63,9 +63,6 @@ resource "azurerm_storage_account" "this" {
       type         = lookup(identity.value, "type", null)
       identity_ids = lookup(identity.value, "identity_ids", null)
     }
-  }
-  lifecycle {
-    ignore_changes = [tags]
   }
 }
 
