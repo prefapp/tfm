@@ -1,6 +1,10 @@
 # DATA SECTION
 data "azurerm_subnet" "this" {
-  count = var.nic != null && var.nic.subnet_name != null && var.nic.virtual_network_name != null && var.nic.virtual_network_resource_group_name != null ? 1 : 0
+  count = var.nic != null && (
+    var.nic.subnet_name != null &&
+    var.nic.virtual_network_name != null &&
+    var.nic.virtual_network_resource_group_name != null
+  ) ? 1 : 0
   name                 = var.nic != null ? var.nic.subnet_name : null
   virtual_network_name = var.nic != null ? var.nic.virtual_network_name : null
   resource_group_name  = var.nic != null ? var.nic.virtual_network_resource_group_name : null
