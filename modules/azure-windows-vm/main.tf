@@ -1,13 +1,9 @@
 # DATA SECTION
 data "azurerm_subnet" "this" {
-  count = var.nic != null && (
-    var.nic.subnet_name != null &&
-    var.nic.virtual_network_name != null &&
-    var.nic.virtual_network_resource_group_name != null
-  ) ? 1 : 0
-  name                 = var.nic != null ? var.nic.subnet_name : null
-  virtual_network_name = var.nic != null ? var.nic.virtual_network_name : null
-  resource_group_name  = var.nic != null ? var.nic.virtual_network_resource_group_name : null
+  count = var.nic != null ? 1 : 0
+  name                 = var.nic.subnet_name
+  virtual_network_name = var.nic.virtual_network_name
+  resource_group_name  = var.nic.virtual_network_resource_group_name
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
