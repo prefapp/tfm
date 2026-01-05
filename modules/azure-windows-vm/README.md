@@ -1,25 +1,26 @@
 <!-- BEGIN_TF_DOCS -->
-# **Azure Linux Virtual Machine Terraform Module**
+# **Azure Windows Virtual Machine Terraform Module**
 
 ## Overview
 
-This module provisions and manages a complete Azure Linux Virtual Machine (VM) environment, including the Network Interface resources.
+This module provisions and manages a complete Azure Windows Virtual Machine (VM) environment, including Network Interface resources, Key Vault integration, boot diagnostics, WinRM, patch mode, license type, timezone, and support for additional unmanaged data disks.
 
-The module creates a Linux VM with support for SSH key authentication, optional admin password from Azure Key Vault, managed disks, and advanced networking options. It integrates seamlessly with Azure Resource Groups, Virtual Networks, Subnets, and Key Vault for secret management.
-
-The module is suitable for development, staging, and production environments, and can be easily extended or embedded in larger Terraform projects.
+It is suitable for development, staging, and production environments, and can be easily extended or embedded in larger Terraform projects.
 
 ## Key Features
 
-- **Complete VM Provisioning**: Deploys a fully managed Azure Linux Virtual Machine with customizable size, OS image, and disk configuration.
-- **Integrated Networking**: Automatically creates and attaches a Network Interface (NIC) with support to custom subnets, public IPs, and advanced options.
+- **Complete VM Provisioning**: Deploys a fully managed Azure Windows Virtual Machine with customizable size, OS image, disk configuration, and additional data disks.
+- **Integrated Networking**: Automatically creates and attaches a Network Interface (NIC) with support for custom subnets, public IPs, and advanced options.
 - **Key Vault Integration**: Optionally retrieves the VM admin password securely from Azure Key Vault, supporting best practices for secret management.
-- **SSH and Password Authentication**: Supports both SSH key and password authentication, with the ability to disable password login for enhanced security.
+- **Password Authentication**: Supports password authentication, with the ability to securely provide the admin password from Azure Key Vault.
+- **Boot Diagnostics**: Optionally enables boot diagnostics with a custom storage account URI.
+- **WinRM Listener**: Supports WinRM configuration for remote management.
+- **Patch Mode, License Type, Timezone**: Configure patching, licensing, and timezone for the VM.
 - **Flexible Tagging and Resource Group Inheritance**: Inherits tags from the resource group or allows custom tags for all resources.
 
 ## Basic Usage
 
-### Minimal Example: SSH Authentication Only
+### Example 1: Basic Windows VM with Password
 
 ```hcl
 module "windows_vm" {
@@ -33,20 +34,17 @@ module "windows_vm" {
     name       = "my-windows-vm"
     size       = "Standard_B2s"
     admin_username = "azureuser"
+    admin_password = "SuperSecretPassword123!"
     source_image_reference = {
-      publisher = "Canonical"
+      publisher = "MicrosoftWindowsServer"
       offer     = "WindowsServer"
-      sku       = "server"
+      sku       = "2019-Datacenter"
       version   = "latest"
     }
     os_disk = {
       caching              = "ReadWrite"
       disk_size_gb         = 64
       storage_account_type = "Standard_LRS"
-    }
-    admin_ssh_key = {
-      username   = "azureuser"
-      public_key = "<your-ssh-public-key>"
     }
   }
   nic = {
@@ -58,7 +56,7 @@ module "windows_vm" {
 }
 ```
 
-### Example: Admin Password from Key Vault
+### Example 2: Admin Password from Key Vault
 
 ```hcl
 module "windows_vm" {
@@ -78,9 +76,9 @@ module "windows_vm" {
     size       = "Standard_B2s"
     admin_username = "azureuser"
     source_image_reference = {
-      publisher = "Canonical"
-      offer     = "0001-com-ubuntu-server-jammy"
-      sku       = "server"
+      publisher = "MicrosoftWindowsServer"
+      offer     = "WindowsServer"
+      sku       = "2019-Datacenter"
       version   = "latest"
     }
     os_disk = {
@@ -88,13 +86,61 @@ module "windows_vm" {
       disk_size_gb         = 128
       storage_account_type = "Standard_LRS"
     }
-    admin_ssh_key = {
-      username   = "azureuser"
-      public_key = "<your-ssh-public-key>"
-    }
     identity = {
       type = "SystemAssigned"
     }
+  }
+  nic = {
+    name                = "my-windows-vm-nic"
+    subnet_name         = "default"
+    virtual_network_name = "my-vnet"
+    virtual_network_resource_group_name = "my-rg"
+  }
+}
+```
+
+### Example 3: Windows VM with Additional Data Disks
+
+```hcl
+module "windows_vm" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-windows-vm"
+
+  common = {
+    resource_group_name = "my-rg"
+    location            = "westeurope"
+  }
+  vm = {
+    name       = "my-windows-vm"
+    size       = "Standard_B2s"
+    admin_username = "azureuser"
+    admin_password = "SuperSecretPassword123!"
+    source_image_reference = {
+      publisher = "MicrosoftWindowsServer"
+      offer     = "WindowsServer"
+      sku       = "2019-Datacenter"
+      version   = "latest"
+    }
+    os_disk = {
+      caching              = "ReadWrite"
+      disk_size_gb         = 64
+      storage_account_type = "Standard_LRS"
+    }
+    data_disks = [
+      {
+        lun            = 0
+        vhd_uri        = "https://myaccount.blob.core.windows.net/vhds/disk1.vhd"
+        caching        = "ReadOnly"
+        disk_size_gb   = 128
+        name           = "datadisk1"
+      },
+      {
+        lun            = 1
+        vhd_uri        = "https://myaccount.blob.core.windows.net/vhds/disk2.vhd"
+        caching        = "ReadWrite"
+        disk_size_gb   = 256
+        name           = "datadisk2"
+      }
+    ]
   }
   nic = {
     name                = "my-windows-vm-nic"
@@ -126,8 +172,8 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [azurerm_windows_virtual_machine.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.57.0/docs/resources/windows_virtual_machine) | resource |
 | [azurerm_network_interface.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.57.0/docs/resources/network_interface) | resource |
+| [azurerm_windows_virtual_machine.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.57.0/docs/resources/windows_virtual_machine) | resource |
 | [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.57.0/docs/data-sources/key_vault) | data source |
 | [azurerm_key_vault_secret.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.57.0/docs/data-sources/key_vault_secret) | data source |
 | [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.57.0/docs/data-sources/resource_group) | data source |
@@ -137,12 +183,12 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_admin_password"></a> [admin\_password](#input\_admin\_password) | Admin password for the VM. If not provided, it will be fetched from Key Vault. | <pre>object({<br/>    key_vault_name        = string<br/>    resource_group_name   = string<br/>    secret_name          = string<br/>  })</pre> | n/a | yes |
+| <a name="input_admin_password"></a> [admin\_password](#input\_admin\_password) | Admin password for the VM. If not provided, it will be fetched from Key Vault. | <pre>object({<br/>    key_vault_name        = string<br/>    resource_group_name   = string<br/>    secret_name          = string<br/>  })</pre> | `null` | no |
 | <a name="input_common"></a> [common](#input\_common) | VARIABLES SECTION | <pre>object({<br/>    resource_group_name = string<br/>    location            = string<br/>  })</pre> | n/a | yes |
-| <a name="input_nic"></a> [nic](#input\_nic) | n/a | <pre>object({<br/>    name                                               = optional(string)<br/>    subnet_name                                        = optional(string)<br/>    virtual_network_name                               = optional(string)<br/>    virtual_network_resource_group_name                = optional(string)<br/>    subnet_id                                          = optional(string)<br/>    auxiliary_mode                                     = optional(string)<br/>    auxiliary_sku                                      = optional(string)<br/>    accelerated_networking_enabled                     = optional(bool)<br/>    ip_forwarding_enabled                              = optional(bool)<br/>    ip_configuration_name                              = optional(string)<br/>    edge_zone                                          = optional(string)<br/>    dns_servers                                        = optional(list(string))<br/>    internal_dns_name_label                            = optional(string)<br/>    gateway_load_balancer_frontend_ip_configuration_id = optional(string)<br/>    private_ip_address_version                         = optional(string)<br/>    private_ip_address_allocation                      = optional(string, "Dynamic")<br/>    public_ip_address_id                               = optional(string)<br/>    primary                                            = optional(bool)<br/>    private_ip_address                                 = optional(string)<br/>  })</pre> | n/a | yes |
+| <a name="input_nic"></a> [nic](#input\_nic) | n/a | <pre>object({<br/>    name                                               = optional(string)<br/>    subnet_name                                        = optional(string)<br/>    virtual_network_name                               = optional(string)<br/>    virtual_network_resource_group_name                = optional(string)<br/>    subnet_id                                          = optional(string)<br/>    auxiliary_mode                                     = optional(string)<br/>    auxiliary_sku                                      = optional(string)<br/>    accelerated_networking_enabled                     = optional(bool)<br/>    ip_forwarding_enabled                              = optional(bool)<br/>    ip_configuration_name                              = optional(string)<br/>    edge_zone                                          = optional(string)<br/>    dns_servers                                        = optional(list(string))<br/>    internal_dns_name_label                            = optional(string)<br/>    gateway_load_balancer_frontend_ip_configuration_id = optional(string)<br/>    private_ip_address_version                         = optional(string)<br/>    private_ip_address_allocation                      = optional(string, "Dynamic")<br/>    public_ip_address_id                               = optional(string)<br/>    primary                                            = optional(bool)<br/>    private_ip_address                                 = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
-| <a name="input_vm"></a> [vm](#input\_vm) | n/a | <pre>object({<br/>    name                            = string<br/>    size                            = string<br/>    admin_username                  = string<br/>    admin_password                  = optional(string)<br/>    edge_zone                       = optional(string)<br/>    eviction_policy                 = optional(string)<br/>    encryption_at_host_enabled      = optional(bool)<br/>    secure_boot_enabled             = optional(bool)<br/>    vtpm_enabled                    = optional(bool)<br/>    disable_password_authentication = optional(bool)<br/>    custom_data                     = optional(string)<br/><br/>    admin_ssh_key = object({<br/>      username   = string<br/>      public_key = string<br/>    })<br/><br/>    source_image_reference = object({<br/>      publisher = string<br/>      offer     = string<br/>      sku       = string<br/>      version   = string<br/>    })<br/><br/>    os_disk = object({<br/>      caching              = string<br/>      disk_size_gb         = number<br/>      storage_account_type = string<br/>    })<br/><br/>    identity = optional(object({<br/>      type         = string<br/>      identity_ids = optional(list(string))<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_vm"></a> [vm](#input\_vm) | n/a | <pre>object({<br/>    name                            = string<br/>    size                            = string<br/>    admin_username                  = string<br/>    admin_password                  = optional(string)<br/>    network_interface_ids           = optional(list(string))<br/>    edge_zone                       = optional(string)<br/>    eviction_policy                 = optional(string)<br/>    encryption_at_host_enabled      = optional(bool)<br/>    secure_boot_enabled             = optional(bool)<br/>    vtpm_enabled                    = optional(bool)<br/>    custom_data                     = optional(string)<br/>    provision_vm_agent              = optional(bool)<br/>    enable_automatic_updates        = optional(bool)<br/>    license_type                    = optional(string)<br/>    timezone                        = optional(string)<br/>    patch_mode                      = optional(string)<br/>    boot_diagnostics_storage_uri    = optional(string)<br/>    winrm_certificate_url           = optional(string)<br/>    winrm_protocol                  = optional(string)<br/><br/>    source_image_reference = object({<br/>      publisher = string<br/>      offer     = string<br/>      sku       = string<br/>      version   = string<br/>    })<br/><br/>    os_disk = object({<br/>      caching              = string<br/>      disk_size_gb         = number<br/>      storage_account_type = string<br/>    })<br/><br/>    identity = optional(object({<br/>      type         = string<br/>      identity_ids = optional(list(string))<br/>    }))<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
@@ -157,12 +203,13 @@ No modules.
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples):
 
 - [with\_nic](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples/with\_nic) - Example using Azure Key Vault for admin password and custom network interface configuration.
-- [with\_custom\_data](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples/with\_custom\_data) - Example provisioning a VM with custom cloud-init data.
+- [with\_custom\_data](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples/with\_custom\_data) - Example provisioning a VM with custom PowerShell data.
 - [with\_vault\_admin\_pass](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples/with\_vault\_admin\_pass) - Example using Key Vault to securely provide the VM admin password.
+- You can also use the module to attach additional unmanaged data disks to your VM (see documentation for details).
 
 ## Remote resources
 
-- **Azure Linux Virtual Machine**: [azurerm\_windows\_virtual\_machine documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/windows_virtual_machine)
+- **Azure Windows Virtual Machine**: [azurerm\_windows\_virtual\_machine documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/windows_virtual_machine)
 - **Azure Network Interface**: [azurerm\_network\_interface documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface)
 - **Azure Key Vault**: [azurerm\_key\_vault documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault)
 - **Terraform Azure Provider**: [Terraform Provider documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
