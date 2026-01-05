@@ -54,14 +54,6 @@ variable "vm" {
       type         = string
       identity_ids = optional(list(string))
     }))
-
-    data_disks = optional(list(object({
-      lun            = number
-      vhd_uri        = string
-      caching        = string
-      disk_size_gb   = number
-      name           = string
-    })))
   })
 
   validation {

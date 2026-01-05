@@ -60,16 +60,6 @@ resource "azurerm_windows_virtual_machine" "this" {
     }
   }
 
-  dynamic "additional_unmanaged_disks" {
-    for_each = var.vm.data_disks != null ? var.vm.data_disks : []
-    content {
-      lun                  = additional_unmanaged_disks.value.lun
-      vhd_uri              = additional_unmanaged_disks.value.vhd_uri
-      caching              = additional_unmanaged_disks.value.caching
-      disk_size_gb         = additional_unmanaged_disks.value.disk_size_gb
-      name                 = additional_unmanaged_disks.value.name
-    }
-  }
   source_image_reference {
     publisher = var.vm.source_image_reference.publisher
     offer     = var.vm.source_image_reference.offer
