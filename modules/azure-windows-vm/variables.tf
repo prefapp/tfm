@@ -13,6 +13,7 @@ variable "admin_password" {
     resource_group_name   = string
     secret_name          = string
   })
+  default     = null
 }
 
 variable "vm" {
@@ -104,6 +105,7 @@ variable "nic" {
     primary                                            = optional(bool)
     private_ip_address                                 = optional(string)
   })
+  default = null
 }
 
 variable "tags_from_rg" {
