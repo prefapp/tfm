@@ -39,7 +39,7 @@ resource "azurerm_windows_virtual_machine" "this" {
   vtpm_enabled                    = var.vm.vtpm_enabled
   custom_data                     = var.vm.custom_data != null ? base64encode(var.vm.custom_data) : null
   tags                            = local.tags
-  network_interface_ids = var.nic != null ? [azurerm_network_interface.this.id] : var.vm.network_interface_ids
+  network_interface_ids = var.nic != null ? [azurerm_network_interface.this[0].id] : var.vm.network_interface_ids
   provision_vm_agent              = var.vm.provision_vm_agent != null ? var.vm.provision_vm_agent : true
   license_type                    = var.vm.license_type != null ? var.vm.license_type : null
   timezone                        = var.vm.timezone != null ? var.vm.timezone : null
