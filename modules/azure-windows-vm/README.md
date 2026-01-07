@@ -20,21 +20,22 @@ It is suitable for development, staging, and production environments, and can be
 
 ## Basic Usage
 
-### Example 1: Basic Windows VM with Password
+### Example 1: Basic Windows VM with NIC
 
 ```hcl
 module "windows_vm" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-windows-vm"
 
   common = {
-    resource_group_name = "my-rg"
+    resource_group_name = "example-resource-group"
     location            = "westeurope"
   }
+
   vm = {
-    name       = "my-windows-vm"
+    name       = "example-vm"
     size       = "Standard_B2s"
     admin_username = "azureuser"
-    admin_password = "SuperSecretPassword123!"
+    admin_password = "ExamplePassword123!" # Replace with a secure password
     source_image_reference = {
       publisher = "MicrosoftWindowsServer"
       offer     = "WindowsServer"
@@ -48,10 +49,9 @@ module "windows_vm" {
     }
   }
   nic = {
-    name                = "my-windows-vm-nic"
-    subnet_name         = "default"
-    virtual_network_name = "my-vnet"
-    virtual_network_resource_group_name = "my-rg"
+    subnet_name = "example-subnet"
+    virtual_network_name = "example-vnet"
+    virtual_network_resource_group_name = "example-resource-group"
   }
 }
 ```
@@ -75,6 +75,7 @@ module "windows_vm" {
     name       = "my-windows-vm"
     size       = "Standard_B2s"
     admin_username = "azureuser"
+    network_interface_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-group/providers/Microsoft.Network/networkInterfaces/example-nic"]
     source_image_reference = {
       publisher = "MicrosoftWindowsServer"
       offer     = "WindowsServer"
@@ -89,64 +90,6 @@ module "windows_vm" {
     identity = {
       type = "SystemAssigned"
     }
-  }
-  nic = {
-    name                = "my-windows-vm-nic"
-    subnet_name         = "default"
-    virtual_network_name = "my-vnet"
-    virtual_network_resource_group_name = "my-rg"
-  }
-}
-```
-
-### Example 3: Windows VM with Additional Data Disks
-
-```hcl
-module "windows_vm" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-windows-vm"
-
-  common = {
-    resource_group_name = "my-rg"
-    location            = "westeurope"
-  }
-  vm = {
-    name       = "my-windows-vm"
-    size       = "Standard_B2s"
-    admin_username = "azureuser"
-    admin_password = "SuperSecretPassword123!"
-    source_image_reference = {
-      publisher = "MicrosoftWindowsServer"
-      offer     = "WindowsServer"
-      sku       = "2019-Datacenter"
-      version   = "latest"
-    }
-    os_disk = {
-      caching              = "ReadWrite"
-      disk_size_gb         = 64
-      storage_account_type = "Standard_LRS"
-    }
-    data_disks = [
-      {
-        lun            = 0
-        vhd_uri        = "https://myaccount.blob.core.windows.net/vhds/disk1.vhd"
-        caching        = "ReadOnly"
-        disk_size_gb   = 128
-        name           = "datadisk1"
-      },
-      {
-        lun            = 1
-        vhd_uri        = "https://myaccount.blob.core.windows.net/vhds/disk2.vhd"
-        caching        = "ReadWrite"
-        disk_size_gb   = 256
-        name           = "datadisk2"
-      }
-    ]
-  }
-  nic = {
-    name                = "my-windows-vm-nic"
-    subnet_name         = "default"
-    virtual_network_name = "my-vnet"
-    virtual_network_resource_group_name = "my-rg"
   }
 }
 ```

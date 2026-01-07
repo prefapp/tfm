@@ -1,21 +1,23 @@
-# Example: Vault with NIC
+# Example: With Network Interface Card (NIC)
 
 module "windows_vm" {
   source = "../../"
 
   common = {
-    resource_group_name = "example-rg"
+    resource_group_name = "example-resource-group"
     location            = "westeurope"
   }
+
   vm = {
     name       = "example-vm"
     size       = "Standard_B2s"
     admin_username = "azureuser"
-    admin_password = "ChangeMe123!" # Replace with a secure password
+    admin_password = "ExamplePassword123!" # Replace with a secure password
+    network_interface_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-group/providers/Microsoft.Network/networkInterfaces/example-nic"] # Replace with the actual NIC resource ID or reference
     source_image_reference = {
-      publisher = "Canonical"
+      publisher = "MicrosoftWindowsServer"
       offer     = "WindowsServer"
-      sku       = "server"
+      sku       = "2019-Datacenter"
       version   = "latest"
     }
     os_disk = {
@@ -23,15 +25,10 @@ module "windows_vm" {
       disk_size_gb         = 64
       storage_account_type = "Standard_LRS"
     }
-    admin_ssh_key = {
-      username   = "azureuser"
-      public_key = "<your-ssh-public-key>"
-    }
   }
   nic = {
-    name                = "example-vm-nic"
-    subnet_name         = "default"
+    subnet_name = "example-subnet"
     virtual_network_name = "example-vnet"
-    virtual_network_resource_group_name = "example-rg"
+    virtual_network_resource_group_name = "example-resource-group"
   }
 }
