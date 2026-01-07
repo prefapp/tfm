@@ -1,0 +1,103 @@
+# --- Project Metadata ---
+variable "project_name" {
+  description = "Generic project identifier used for resource naming (e.g., 'messaging-hub')"
+  type        = string
+}
+
+variable "environment" {
+  description = "Target environment for the deployment (e.g., 'prod', 'staging')"
+  type        = string
+}
+
+# --- Credentials ---
+variable "mq_username" {
+  description = "Administrative username for the RabbitMQ broker"
+  type        = string
+  sensitive   = true
+}
+
+variable "mq_password" {
+  description = "Administrative password for the RabbitMQ broker"
+  type        = string
+  sensitive   = true
+}
+
+# --- Network Discovery ---
+variable "vpc_id" {
+  description = "ID of the target VPC. Takes precedence over 'vpc_name'."
+  type        = string
+  default     = null
+}
+
+variable "vpc_name" {
+  description = "Value of the 'Name' tag for VPC lookup if 'vpc_id' is null."
+  type        = string
+  default     = null
+}
+
+variable "broker_subnet_ids" {
+  description = "List of private subnet IDs for the Broker. Takes precedence over filters."
+  type        = list(string)
+  default     = []
+}
+
+variable "broker_subnet_filter_tags" {
+  description = "Tags used to discover subnets for the Broker (e.g., { 'NetworkTier' = 'Private' })."
+  type        = map(string)
+  default     = {}
+}
+
+variable "lb_subnet_ids" {
+  description = "List of subnet IDs for the NLB. Takes precedence over filters."
+  type        = list(string)
+  default     = []
+}
+
+variable "lb_subnet_filter_tags" {
+  description = "Tags used to discover subnets for the NLB (e.g., { 'NetworkTier' = 'Public' })."
+  type        = map(string)
+  default     = {}
+}
+
+# --- Broker Specs ---
+variable "host_instance_type" {
+  description = "Instance class for the broker (e.g., mq.t3.micro)"
+  type        = string
+  default     = "mq.t3.micro"
+}
+
+variable "engine_version" {
+  description = "Version of the RabbitMQ engine"
+  type        = string
+  default     = "3.13"
+}
+
+variable "deployment_mode" {
+  description = "Broker deployment strategy: SINGLE_INSTANCE or CLUSTER_MULTI_AZ"
+  type        = string
+  default     = "SINGLE_INSTANCE"
+}
+
+variable "enable_cloudwatch_logs" {
+  description = "Toggle for CloudWatch logging"
+  type        = bool
+  default     = true
+}
+
+# --- Load Balancer & Security ---
+variable "lb_certificate_arn" {
+  description = "ARN of the ACM certificate for the TLS listener"
+  type        = string
+}
+
+variable "allowed_ingress_cidrs" {
+  description = "CIDR ranges allowed to connect to the AMQPS/HTTPS ports"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "tags" {
+  description = "Additional metadata tags to apply to all resources"
+  type        = map(string)
+  default     = {}
+}
