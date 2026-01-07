@@ -326,7 +326,7 @@ variable "create_cluster" {
   default     = true
 }
 
-variable "name_existing_alb" {
+variable "existing_alb_name" {
   description = "Name of existing alb"
   type        = string
   default     = null

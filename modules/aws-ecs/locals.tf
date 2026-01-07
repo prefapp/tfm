@@ -29,7 +29,7 @@ locals {
     var.service_name != null &&
     (
       var.create_alb ||
-      var.name_existing_alb != null
+      var.existing_alb_name != null
     )
   )
 
