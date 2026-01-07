@@ -27,7 +27,7 @@ module "service" {
   vpc_id     = "vpc-0123456789abcdef0"
   subnet_ids = ["subnet-11111111", "subnet-22222222"]
 
-  name_existing_alb = "ecs-alb-example"
+  existing_alb_name = "ecs-alb-example"
   static_content_path_pattern = "/api/*"
   create_alb = false
 
