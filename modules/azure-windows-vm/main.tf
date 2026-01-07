@@ -12,6 +12,7 @@ resource "azurerm_windows_virtual_machine" "this" {
   encryption_at_host_enabled = var.vm.encryption_at_host_enabled
   secure_boot_enabled        = var.vm.secure_boot_enabled
   vtpm_enabled               = var.vm.vtpm_enabled
+  os_managed_disk_id         = var.vm.os_managed_disk_id
   custom_data                = var.vm.custom_data != null ? base64encode(var.vm.custom_data) : null
   tags                       = local.tags
   network_interface_ids      = var.nic != null ? [azurerm_network_interface.this[0].id] : var.vm.network_interface_ids

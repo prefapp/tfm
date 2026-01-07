@@ -27,6 +27,7 @@ variable "vm" {
     eviction_policy              = optional(string)
     encryption_at_host_enabled   = optional(bool)
     secure_boot_enabled          = optional(bool)
+    os_managed_disk_id           = optional(string)
     vtpm_enabled                 = optional(bool)
     custom_data                  = optional(string)
     provision_vm_agent           = optional(bool)
