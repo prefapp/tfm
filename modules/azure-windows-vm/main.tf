@@ -19,6 +19,7 @@ resource "azurerm_windows_virtual_machine" "this" {
   license_type               = var.vm.license_type != null ? var.vm.license_type : null
   timezone                   = var.vm.timezone != null ? var.vm.timezone : null
   patch_mode                 = var.vm.patch_mode != null ? var.vm.patch_mode : null
+  os_managed_disk_id         = var.vm.os_managed_disk_id != null ? var.vm.os_managed_disk_id : null 
 
   dynamic "boot_diagnostics" {
     for_each = var.vm.boot_diagnostics_storage_uri != null ? [var.vm.boot_diagnostics_storage_uri] : []
