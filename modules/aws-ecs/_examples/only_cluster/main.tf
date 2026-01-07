@@ -1,4 +1,4 @@
-# Example: ECS Service with CPU-Based Autoscaling
+# Example: ECS Cluster Only (no services)
 
 terraform {
   required_version = ">= 1.5"
