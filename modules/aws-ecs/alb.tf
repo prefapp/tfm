@@ -19,7 +19,7 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "this" {
-  count       = var.service_name != null && (var.create_alb || var.name_existing_alb != null) ? 1 : 0
+  count       = var.service_name != null && (var.create_alb || var.existing_alb_name != null) ? 1 : 0
   name        = "${var.target_group_name}-${var.service_name}"
   port        = var.listener_port
   protocol    = var.listener_protocol
@@ -53,19 +53,19 @@ resource "aws_lb_listener" "this" {
 # If an existing ALB is specified, use this
 
 data "aws_lb" "this" {
-  count = var.service_name != null ? var.name_existing_alb != null ? 1 : 0 : 0
-  name  = var.name_existing_alb
+  count = var.service_name != null ? var.existing_alb_name != null ? 1 : 0 : 0
+  name  = var.existing_alb_name
 }
 
 data "aws_lb_listener" "this" {
-  count             = var.service_name != null ? var.name_existing_alb != null ? 1 : 0 : 0
+  count             = var.service_name != null ? var.existing_alb_name != null ? 1 : 0 : 0
   load_balancer_arn = data.aws_lb.this[0].arn
   port              = var.listener_port
 }
 
 
-resource "aws_lb_listener_rule" "static" {
-  count        = var.service_name != null ? var.name_existing_alb != null ? 1 : 0 : 0
+resource "aws_lb_listener_rule" "this" {
+  count        = var.service_name != null ? var.existing_alb_name != null ? 1 : 0 : 0
   listener_arn = data.aws_lb_listener.this[0].arn
   priority     = var.alb_listener_priority
 
