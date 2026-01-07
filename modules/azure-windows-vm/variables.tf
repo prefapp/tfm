@@ -8,35 +8,35 @@ variable "common" {
 
 variable "admin_password" {
   description = "Admin password for the VM. If not provided, it will be fetched from Key Vault."
-  type        = object({
-    key_vault_name        = string
-    resource_group_name   = string
-    secret_name          = string
+  type = object({
+    key_vault_name      = string
+    resource_group_name = string
+    secret_name         = string
   })
-  default     = null
+  default = null
 }
 
 variable "vm" {
   type = object({
-    name                            = string
-    size                            = string
-    admin_username                  = string
-    admin_password                  = optional(string)
-    network_interface_ids           = optional(list(string))
-    edge_zone                       = optional(string)
-    eviction_policy                 = optional(string)
-    encryption_at_host_enabled      = optional(bool)
-    secure_boot_enabled             = optional(bool)
-    vtpm_enabled                    = optional(bool)
-    custom_data                     = optional(string)
-    provision_vm_agent              = optional(bool)
-    enable_automatic_updates        = optional(bool)
-    license_type                    = optional(string)
-    timezone                        = optional(string)
-    patch_mode                      = optional(string)
-    boot_diagnostics_storage_uri    = optional(string)
-    winrm_certificate_url           = optional(string)
-    winrm_protocol                  = optional(string)
+    name                         = string
+    size                         = string
+    admin_username               = string
+    admin_password               = optional(string)
+    network_interface_ids        = optional(list(string))
+    edge_zone                    = optional(string)
+    eviction_policy              = optional(string)
+    encryption_at_host_enabled   = optional(bool)
+    secure_boot_enabled          = optional(bool)
+    vtpm_enabled                 = optional(bool)
+    custom_data                  = optional(string)
+    provision_vm_agent           = optional(bool)
+    enable_automatic_updates     = optional(bool)
+    license_type                 = optional(string)
+    timezone                     = optional(string)
+    patch_mode                   = optional(string)
+    boot_diagnostics_storage_uri = optional(string)
+    winrm_certificate_url        = optional(string)
+    winrm_protocol               = optional(string)
 
     source_image_reference = object({
       publisher = string
@@ -97,6 +97,14 @@ variable "nic" {
     public_ip_address_id                               = optional(string)
     primary                                            = optional(bool)
     private_ip_address                                 = optional(string)
+    nsg = optional(object({
+      name                = optional(string)
+      resource_group_name = optional(string)
+    }))
+    public_ip = optional(object({
+      name                = optional(string)
+      resource_group_name = optional(string)
+    }))
   })
   default = null
 }
