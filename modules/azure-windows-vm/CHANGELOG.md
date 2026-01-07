@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.8...azure-windows-vm-v0.1.9) (2026-01-07)
+
+
+### Bug Fixes
+
+* change additional capabilities ([f6f34f9](https://github.com/prefapp/tfm/commit/f6f34f9080d87f5581474d45d89b5ada9f2b06a4))
+
 ## [0.1.8](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.7...azure-windows-vm-v0.1.8) (2026-01-07)
 
 
