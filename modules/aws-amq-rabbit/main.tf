@@ -58,7 +58,7 @@ locals {
 # Security Configuration
 # -------------------------------------------------------------------------
 
-resource "aws_security_group" "broker" {
+resource "aws_security_group" "this" {
   name        = "${local.name_prefix}-sg"
   description = "Access control for MQ Broker"
   vpc_id      = local.vpc_id
@@ -101,7 +101,7 @@ resource "aws_mq_broker" "this" {
   host_instance_type  = var.host_instance_type
   deployment_mode     = var.deployment_mode
   subnet_ids          = local.broker_subnet_ids
-  security_groups     = [aws_security_group.broker.id]
+  security_groups     = [aws_security_group.this.id]
   publicly_accessible = false
   storage_type        = "ebs"
 

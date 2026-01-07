@@ -25,5 +25,5 @@ output "nlb_arn" {
 
 output "broker_security_group_id" {
   description = "ID of the security group protecting the broker"
-  value       = aws_security_group.broker.id
+  value       = aws_security_group.this.id
 }
