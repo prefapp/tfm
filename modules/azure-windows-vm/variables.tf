@@ -20,7 +20,7 @@ variable "vm" {
   type = object({
     name                         = string
     size                         = string
-    admin_username               = string
+    admin_username               = optional(string)
     admin_password               = optional(string)
     network_interface_ids        = optional(list(string))
     edge_zone                    = optional(string)

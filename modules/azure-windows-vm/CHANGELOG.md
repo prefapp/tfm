@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.1...azure-windows-vm-v0.1.2) (2026-01-07)
+
+
+### Bug Fixes
+
+* change admin optiona var ([#832](https://github.com/prefapp/tfm/issues/832)) ([aa5ac0d](https://github.com/prefapp/tfm/commit/aa5ac0d2fb7e9e92f3ee3be8bc4ba822f76597f6))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.0...azure-windows-vm-v0.1.1) (2026-01-07)
 
 
