@@ -35,11 +35,14 @@ resource "azurerm_windows_virtual_machine" "this" {
     }
   }
 
-  source_image_reference {
-    publisher = var.vm.source_image_reference.publisher
-    offer     = var.vm.source_image_reference.offer
-    sku       = var.vm.source_image_reference.sku
-    version   = var.vm.source_image_reference.version
+  dynamic "source_image_reference" {
+    for_each = var.vm.source_image_reference != null ? [var.vm.source_image_reference] : []
+    content {
+      publisher = source_image_reference.value.publisher
+      offer     = source_image_reference.value.offer
+      sku       = source_image_reference.value.sku
+      version   = source_image_reference.value.version
+    }
   }
   os_disk {
     caching              = var.vm.os_disk.caching
