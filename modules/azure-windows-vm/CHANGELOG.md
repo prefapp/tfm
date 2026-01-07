@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.2...azure-windows-vm-v0.1.3) (2026-01-07)
+
+
+### Bug Fixes
+
+* change source_image optional var ([#834](https://github.com/prefapp/tfm/issues/834)) ([25a0f3d](https://github.com/prefapp/tfm/commit/25a0f3d2eeac1f5184962765bf70704c1dd3ad99))
+
 ## [0.1.2](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.1...azure-windows-vm-v0.1.2) (2026-01-07)
 
 
