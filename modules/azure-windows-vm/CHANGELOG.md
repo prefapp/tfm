@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.5...azure-windows-vm-v0.1.6) (2026-01-07)
+
+
+### Bug Fixes
+
+* change osdisk ([#840](https://github.com/prefapp/tfm/issues/840)) ([fde1d21](https://github.com/prefapp/tfm/commit/fde1d21ca0e117efc37a95c40f8a333577b401fa))
+
 ## [0.1.5](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.4...azure-windows-vm-v0.1.5) (2026-01-07)
 
 
