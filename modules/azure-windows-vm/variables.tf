@@ -47,8 +47,8 @@ variable "vm" {
 
     os_disk = object({
       caching              = string
-      disk_size_gb         = number
-      storage_account_type = string
+      disk_size_gb         = optional(number)
+      storage_account_type = optional(string)
     })
 
     identity = optional(object({
