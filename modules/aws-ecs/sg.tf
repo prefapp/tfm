@@ -1,5 +1,7 @@
 resource "aws_security_group" "this" {
-  name        = var.sg_name
+  count = var.service_name != null ? var.create_alb ? 1 : 0 : 0
+
+  name        = "${var.sg_name}-${var.service_name}"
   description = var.sg_description
   vpc_id      = local.vpc_id
 
@@ -12,7 +14,13 @@ resource "aws_security_group" "this" {
       cidr_blocks = ingress.value.cidr_blocks
     }
   }
-
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
   dynamic "egress" {
     for_each = var.sg_egress
     content {

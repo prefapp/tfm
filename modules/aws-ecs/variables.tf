@@ -1,8 +1,8 @@
 ## VPC
 variable "vpc_id" {
   description = "ID of the VPC where resources will be created. If not set, the module will look up the VPC using vpc_tag_key and vpc_tag_name."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "vpc_tag_key" {
@@ -15,13 +15,7 @@ variable "vpc_tag_name" {
   description = "Tag value of the VPC to look up (e.g., value for tag 'Name' = 'my-vpc')"
   type        = string
   default     = ""
-  validation {
-    condition     = var.vpc_id != null || var.vpc_tag_name != ""
-    error_message = "You must specify either vpc_id or vpc_tag_name."
-  }
 }
-
-
 variable "subnet_tag_key" {
   description = "Tag key used to search the subnets when subnet_ids is not provided"
   type        = string
@@ -33,10 +27,6 @@ variable "subnet_tag_name" {
   description = "Tag name of the subnets to look up"
   type        = string
   default     = ""
-  validation {
-    condition     = var.subnet_ids != null || var.subnet_tag_name != ""
-    error_message = "You must specify either subnet_ids or subnet_tag_name."
-  }
 }
 
 variable "subnet_ids" {
@@ -44,7 +34,7 @@ variable "subnet_ids" {
 List of subnet IDs to use for the ECS service and ALB. If not set, the module will try to locate subnets using subnet_tag_key and subnet_tag_name (e.g., tag:Name).
 EOT
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 
@@ -59,6 +49,7 @@ variable "cluster_name" {
 variable "container_definitions" {
   description = "Container definitions in JSON format"
   type        = string
+  default     = null
 }
 
 variable "cpu" {
@@ -78,6 +69,7 @@ variable "memory" {
 variable "service_name" {
   description = "Name of the ECS service"
   type        = string
+  default     = null
 }
 
 variable "desired_count" {
@@ -100,6 +92,7 @@ variable "launch_type" {
 variable "security_groups" {
   description = "List of security group IDs to associate with the ECS service"
   type        = list(string)
+  default     = null
 }
 
 variable "load_balancer" {
@@ -117,7 +110,11 @@ EOT
   default = []
 }
 
-
+variable "container_port" {
+  description = "Port on the container to register with the load balancer and expose via the ECS service."
+  type        = number
+  default     = 80
+}
 ### IAM Roles
 variable "iam_role_name" {
   description = "Name for the ECS task execution IAM role"
@@ -176,23 +173,6 @@ variable "target_group_name" {
   default     = "ecs-alb-tg"
 }
 
-variable "target_group_port" {
-  description = "Port for the target group"
-  type        = number
-  default     = 80
-}
-
-variable "target_group_protocol" {
-  description = "Protocol for the target group"
-  type        = string
-  default     = "HTTP"
-  validation {
-      condition     = contains(["HTTP", "HTTPS"], var.target_group_protocol)
-      error_message = "target_group_protocol must be one of: HTTP, HTTPS."
-  }
-}
-
-
 variable "listener_port" {
   description = "Port for the ALB listener"
   type        = number
@@ -227,7 +207,17 @@ variable "health_check" {
   }
 }
 
+variable "create_alb" {
+  description = "Whether to create an Application Load Balancer for the ECS service"
+  type        = bool
+  default     = true
+}
 
+variable "listener_certificate_arn" {
+  description = "ARN of the SSL certificate for the ALB listener (required if listener_protocol is HTTPS)"
+  type        = string
+  default     = null
+}
 ### Security group
 variable "sg_name" {
   description = "Name of the security group"
@@ -327,4 +317,35 @@ EOT
     })
   }))
   default = {}
+}
+
+
+variable "create_cluster" {
+  description = "Whether to create the ECS cluster. If false, the module assumes the cluster already exists."
+  type        = bool
+  default     = true
+}
+
+variable "existing_alb_name" {
+  description = "Name of existing alb"
+  type        = string
+  default     = null
+}
+
+variable "static_content_host_header" {
+  description = "Host header value for static content listener rule, example 'static.example.com'"
+  type        = string
+  default     = null
+}
+
+variable "static_content_path_pattern" {
+  description = "Path pattern for static content listener rule, example '/api/*'"
+  type        = string
+  default     = null
+}
+
+variable "alb_listener_priority" {
+  description = "Priority for the ALB listener rule"
+  type        = number
+  default     = 100
 }

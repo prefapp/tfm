@@ -12,7 +12,7 @@ resource "aws_appautoscaling_target" "ecs" {
 
   max_capacity       = each.value.max_capacity
   min_capacity       = each.value.min_capacity
-  resource_id        = "service/${aws_ecs_cluster.this.name}/${each.key}"
+  resource_id        = "service/${aws_ecs_cluster.this[0].name}/${each.key}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
@@ -52,8 +52,8 @@ resource "aws_appautoscaling_policy" "scale_down" {
   scalable_dimension = each.value.scalable_dimension
   service_namespace  = each.value.service_namespace
 
-# NOTE: Do not set adjustment to 0 for metric_interval_lower_bound or metric_interval_upper_bound
-#       Otherwise, AWS validation fails because it finds gaps.
+  # NOTE: Do not set adjustment to 0 for metric_interval_lower_bound or metric_interval_upper_bound
+  #       Otherwise, AWS validation fails because it finds gaps.
   step_scaling_policy_configuration {
     adjustment_type         = var.ecs_autoscaling[each.key].scale.down.adjustment_type
     cooldown                = var.ecs_autoscaling[each.key].scale.down.cooldown
