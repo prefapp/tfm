@@ -97,14 +97,14 @@ variable "nic" {
     public_ip_address_id                               = optional(string)
     primary                                            = optional(bool)
     private_ip_address                                 = optional(string)
-    nsg = object({
+    nsg = optional(object({
       name                = optional(string)
       resource_group_name = optional(string)
-    })
-    public_ip = object({
+    }))
+    public_ip = optional(object({
       name                = optional(string)
       resource_group_name = optional(string)
-    })
+    }))
   })
   default = null
 }
