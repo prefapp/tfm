@@ -123,6 +123,9 @@
         },
         "modules/azure-linux-vm": {
             "package-name": "azure-linux-vm"
+        },
+        "modules/azure-windows-vm": {
+            "package-name": "azure-windows-vm"
         }
     }
 }
