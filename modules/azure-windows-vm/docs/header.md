@@ -17,6 +17,7 @@ It is suitable for development, staging, and production environments, and can be
 - **Patch Mode, License Type, Timezone**: Configure patching, licensing, and timezone for the VM.
 - **Flexible Tagging and Resource Group Inheritance**: Inherits tags from the resource group or allows custom tags for all resources.
 - **Network Security Group (NSG) Integration**: Optionally associates an existing NSG with the VM's NIC for enhanced security.
+- **Public IP Configuration**: Optionally associates a public IP address with the VM's NIC for external access.
 
 ## Basic Usage
 
