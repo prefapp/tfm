@@ -19,7 +19,7 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "this" {
-  count       = var.service_name != null ? var.create_alb ? 1 : var.name_existing_alb != null ? 1 : 0 : 0
+  count       = var.service_name != null && (var.create_alb || var.name_existing_alb != null) ? 1 : 0
   name        = "${var.target_group_name}-${var.service_name}"
   port        = var.listener_port
   protocol    = var.listener_protocol
