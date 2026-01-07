@@ -38,6 +38,7 @@ variable "vm" {
     boot_diagnostics_storage_uri = optional(string)
     winrm_certificate_url        = optional(string)
     winrm_protocol               = optional(string)
+    os_managed_disk_id           = optional(string)
 
     source_image_reference = optional(object({
       publisher = string
@@ -48,8 +49,8 @@ variable "vm" {
 
     os_disk = object({
       caching              = string
-      disk_size_gb         = number
-      storage_account_type = string
+      disk_size_gb         = optional(number)
+      storage_account_type = optional(string)
     })
 
     identity = optional(object({

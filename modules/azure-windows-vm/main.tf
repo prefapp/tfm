@@ -16,10 +16,11 @@ resource "azurerm_windows_virtual_machine" "this" {
   custom_data                = var.vm.custom_data != null ? base64encode(var.vm.custom_data) : null
   tags                       = local.tags
   network_interface_ids      = var.nic != null ? [azurerm_network_interface.this[0].id] : var.vm.network_interface_ids
-  provision_vm_agent         = var.vm.provision_vm_agent != null ? var.vm.provision_vm_agent : true
+  provision_vm_agent         = var.vm.provision_vm_agent
   license_type               = var.vm.license_type != null ? var.vm.license_type : null
   timezone                   = var.vm.timezone != null ? var.vm.timezone : null
   patch_mode                 = var.vm.patch_mode != null ? var.vm.patch_mode : null
+  os_managed_disk_id         = var.vm.os_managed_disk_id != null ? var.vm.os_managed_disk_id : null
 
   dynamic "boot_diagnostics" {
     for_each = var.vm.boot_diagnostics_storage_uri != null ? [var.vm.boot_diagnostics_storage_uri] : []
