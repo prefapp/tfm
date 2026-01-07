@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.3...azure-windows-vm-v0.1.4) (2026-01-07)
+
+
+### Bug Fixes
+
+* change source_image dynamic ([#836](https://github.com/prefapp/tfm/issues/836)) ([07452f5](https://github.com/prefapp/tfm/commit/07452f5fdb0545c46272cdcc125024bae075730a))
+
 ## [0.1.3](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.2...azure-windows-vm-v0.1.3) (2026-01-07)
 
 
