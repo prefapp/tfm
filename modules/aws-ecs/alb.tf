@@ -91,5 +91,12 @@ resource "aws_lb_listener_rule" "this" {
       }
     }
   }
+  lifecycle {
+    precondition {
+      condition     = var.static_content_path_pattern != null || var.static_content_host_header != null
+      error_message = "You must specify either static_content_path_pattern or static_content_host_header."
+    }
+  }
+
 }
 
