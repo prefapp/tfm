@@ -233,7 +233,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/basic) - Basic ECS Service with ALB + Fargate
 - [Autoscaling enabled](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/autoscaling) - ECS Service with CPU-Based Autoscaling
 - [Only cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/only\_cluster) - ECS Cluster without services attached
-- [Attach service to cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/atach\_service\_to-cluster) - ECS services that need a existent cluster
+- [Attach service to cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/attach\_service\_to-cluster) - ECS services that need a existent cluster
 - [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with\_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 
 ## Remote resources
