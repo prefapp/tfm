@@ -56,6 +56,11 @@ variable "vm" {
       type         = string
       identity_ids = optional(list(string))
     }))
+
+    additional_capabilities = optional(object({
+      ultra_ssd_enabled   = optional(bool)
+      hibernation_enabled = optional(bool)
+    }))
   })
 
   validation {
