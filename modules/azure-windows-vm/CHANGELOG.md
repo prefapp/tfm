@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.0...azure-windows-vm-v0.1.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* add nsg and nic support ([#830](https://github.com/prefapp/tfm/issues/830)) ([71c6304](https://github.com/prefapp/tfm/commit/71c6304a3a59aef74b5c09bd68b1d727e44ab007))
+
 ## 0.1.0 (2026-01-07)
 
 
