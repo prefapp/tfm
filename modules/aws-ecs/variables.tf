@@ -111,8 +111,9 @@ EOT
 }
 
 variable "container_port" {
-  type    = number
-  default = 80
+  description = "Port on the container to register with the load balancer and expose via the ECS service."
+  type        = number
+  default     = 80
 }
 ### IAM Roles
 variable "iam_role_name" {
