@@ -38,12 +38,12 @@ variable "vm" {
     winrm_certificate_url        = optional(string)
     winrm_protocol               = optional(string)
 
-    source_image_reference = object({
+    source_image_reference = optional(object({
       publisher = string
       offer     = string
       sku       = string
       version   = string
-    })
+    }))
 
     os_disk = object({
       caching              = string
