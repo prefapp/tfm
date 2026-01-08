@@ -106,13 +106,12 @@ jobs:
               if cp "$README_FILE" "$MODULE_DEST/README.md" 2>/dev/null; then
                 echo "  ✓ Copied $(basename "$README_FILE")"
 
-                # Read external links if .external-links file exists
-                EXTERNAL_LINKS_JSON="[]"
+                # Read external link if .external-links file exists
                 EXTERNAL_LINKS_FILE="$module_dir/.external-links"
                 if [ -f "$EXTERNAL_LINKS_FILE" ]; then
-                  # Read file line by line and create JSON array
-                  EXTERNAL_LINKS_JSON=$(jq -R -s 'split("\n") | map(select(length > 0))' < "$EXTERNAL_LINKS_FILE")
-                  echo "  ✓ Found $(echo "$EXTERNAL_LINKS_JSON" | jq 'length') external link(s)"
+                  # Read first line as the external link
+                  EXTERNAL_LINK=$(head -n 1 "$EXTERNAL_LINKS_FILE" | tr -d '[:space:]')
+                  echo "  ✓ Found external link: $EXTERNAL_LINK"
                 fi
 
                 # Determine module type and build source URL
@@ -152,21 +151,20 @@ jobs:
 
                 # Use different jq commands based on module type
                 if [ -f "$EXTERNAL_LINKS_FILE" ]; then
-                  # External module - no version field
+                  # External module - include external-link field, no version
                   jq --arg name "$MODULE_NAME" \
                      --arg url "$MODULE_URL" \
-                     --argjson links "$EXTERNAL_LINKS_JSON" \
+                     --arg link "$EXTERNAL_LINK" \
                      --arg source "$SOURCE_URL" \
-                    '.modules += [{"name": $name, "url": $url, "external-links": $links, "source": $source}]' \
+                    '.modules += [{"name": $name, "url": $url, "external-link": $link, "source": $source}]' \
                     "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
                 else
-                  # Internal module - include version field
+                  # Internal module - include version field, no external-link
                   jq --arg name "$MODULE_NAME" \
                      --arg url "$MODULE_URL" \
-                     --argjson links "$EXTERNAL_LINKS_JSON" \
                      --arg version "$VERSION" \
                      --arg source "$SOURCE_URL" \
-                    '.modules += [{"name": $name, "url": $url, "external-links": $links, "version": $version, "source": $source}]' \
+                    '.modules += [{"name": $name, "url": $url, "version": $version, "source": $source}]' \
                     "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
                 fi
               else
