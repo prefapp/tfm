@@ -163,7 +163,7 @@ resource "aws_lb_listener" "this" {
 # -------------------------------------------------------------------------
 
 data "aws_network_interface" "broker_eni" {
-  for_each = toset(aws_mq_broker.this.instances[*].ip_address)
+  count = length(aws_mq_broker.this.instances) > 0 ? 1 : 0
 
   filter {
     name   = "description"
@@ -172,14 +172,15 @@ data "aws_network_interface" "broker_eni" {
 
   filter {
     name   = "private-ip-address"
-    values = [each.value]
+    values = [aws_mq_broker.this.instances[0].ip_address]
   }
 }
 
 resource "aws_lb_target_group_attachment" "this" {
-  for_each = data.aws_network_interface.broker_eni
-
+  count = length(data.aws_network_interface.broker_eni) > 0 ? 1 : 0
   target_group_arn = aws_lb_target_group.this.arn
-  target_id        = each.value.private_ip
+  target_id        = data.aws_network_interface.broker_eni[0].private_ip
   port             = 5671
 }
+
+# NOTE: This only attaches the first broker instance to the NLB. For multi-AZ/HA, extend this logic to handle all instances.
