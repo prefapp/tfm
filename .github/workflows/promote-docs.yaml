@@ -106,12 +106,18 @@ jobs:
               if cp "$README_FILE" "$MODULE_DEST/README.md" 2>/dev/null; then
                 echo "  ✓ Copied $(basename "$README_FILE")"
 
-                # Read external link if .external-links file exists
+                # Read external links if .external-links file exists
                 EXTERNAL_LINKS_FILE="$module_dir/.external-links"
                 if [ -f "$EXTERNAL_LINKS_FILE" ]; then
-                  # Read first line as the external link
-                  EXTERNAL_LINK=$(head -n 1 "$EXTERNAL_LINKS_FILE" | tr -d '[:space:]')
-                  echo "  ✓ Found external link: $EXTERNAL_LINK"
+                  # Read all lines and build JSON array
+                  EXTERNAL_LINKS_JSON="[]"
+                  while IFS= read -r line; do
+                    line=$(echo "$line" | tr -d '[:space:]')
+                    if [ -n "$line" ]; then
+                      EXTERNAL_LINKS_JSON=$(echo "$EXTERNAL_LINKS_JSON" | jq --arg link "$line" '. += [$link]')
+                    fi
+                  done < "$EXTERNAL_LINKS_FILE"
+                  echo "  ✓ Found external links: $(echo "$EXTERNAL_LINKS_JSON" | jq -c '.')"
                 fi
 
                 # Determine module type and build source URL
@@ -151,12 +157,12 @@ jobs:
 
                 # Use different jq commands based on module type
                 if [ -f "$EXTERNAL_LINKS_FILE" ]; then
-                  # External module - include external-link field, no version
+                  # External module - include external-links array field, no version
                   jq --arg name "$MODULE_NAME" \
                      --arg url "$MODULE_URL" \
-                     --arg link "$EXTERNAL_LINK" \
+                     --argjson links "$EXTERNAL_LINKS_JSON" \
                      --arg source "$SOURCE_URL" \
-                    '.modules += [{"name": $name, "url": $url, "external-link": $link, "source": $source}]' \
+                    '.modules += [{"name": $name, "url": $url, "external-links": $links, "source": $source}]' \
                     "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
                 else
                   # Internal module - include version field, no external-link
