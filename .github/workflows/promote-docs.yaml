@@ -149,13 +149,26 @@ jobs:
 
                 # Add module to index.json
                 MODULE_URL="https://raw.githubusercontent.com/firestartr-pro/docs/main/site/raw/tfm/${MODULE_NAME}/README.md"
-                jq --arg name "$MODULE_NAME" \
-                   --arg url "$MODULE_URL" \
-                   --argjson links "$EXTERNAL_LINKS_JSON" \
-                   --arg version "$VERSION" \
-                   --arg source "$SOURCE_URL" \
-                  '.modules += [{"name": $name, "url": $url, "external-links": $links, "version": $version, "source": $source}]' \
-                  "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
+
+                # Use different jq commands based on module type
+                if [ -f "$EXTERNAL_LINKS_FILE" ]; then
+                  # External module - no version field
+                  jq --arg name "$MODULE_NAME" \
+                     --arg url "$MODULE_URL" \
+                     --argjson links "$EXTERNAL_LINKS_JSON" \
+                     --arg source "$SOURCE_URL" \
+                    '.modules += [{"name": $name, "url": $url, "external-links": $links, "source": $source}]' \
+                    "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
+                else
+                  # Internal module - include version field
+                  jq --arg name "$MODULE_NAME" \
+                     --arg url "$MODULE_URL" \
+                     --argjson links "$EXTERNAL_LINKS_JSON" \
+                     --arg version "$VERSION" \
+                     --arg source "$SOURCE_URL" \
+                    '.modules += [{"name": $name, "url": $url, "external-links": $links, "version": $version, "source": $source}]' \
+                    "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
+                fi
               else
                 echo "  ✗ Failed to copy README.md"
                 PROMOTION_FAILED=true
