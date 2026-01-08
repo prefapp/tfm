@@ -64,6 +64,16 @@ jobs:
 
           modules_path="${GITHUB_WORKSPACE}/tfm/modules"
 
+          # Load release manifest
+          MANIFEST_FILE="${GITHUB_WORKSPACE}/tfm/.release-please-manifest.json"
+          if [ ! -f "$MANIFEST_FILE" ]; then
+            echo "⚠ Warning: Release manifest not found at $MANIFEST_FILE"
+            MANIFEST_JSON="{}"
+          else
+            MANIFEST_JSON=$(cat "$MANIFEST_FILE")
+            echo "✓ Loaded release manifest with $(echo "$MANIFEST_JSON" | jq 'length') modules"
+          fi
+
           # Process each module
           for module_dir in "${modules_path}"/*; do
             if [ ! -d "$module_dir" ]; then
@@ -79,6 +89,15 @@ jobs:
             mkdir -p "$MODULE_DEST"
 
             PROMOTION_FAILED=false
+
+            # Extract version from manifest
+            VERSION=$(echo "$MANIFEST_JSON" | jq -r --arg key "modules/$MODULE_NAME" '.[$key] // "unknown"')
+
+            if [ "$VERSION" = "unknown" ]; then
+              echo "  ⚠ No version found in manifest for $MODULE_NAME"
+            else
+              echo "  ✓ Version: $VERSION"
+            fi
 
             # Find README.md (case-insensitive)
             README_FILE=$(find "$module_dir" -maxdepth 1 -iname "readme.md" | head -n 1)
@@ -96,12 +115,46 @@ jobs:
                   echo "  ✓ Found $(echo "$EXTERNAL_LINKS_JSON" | jq 'length') external link(s)"
                 fi
 
+                # Determine module type and build source URL
+                SOURCE_URL=""
+
+                if [ -f "$EXTERNAL_LINKS_FILE" ]; then
+                  # External wrapper module - parse org/repo from .external-links
+                  EXTERNAL_URL=$(head -n 1 "$EXTERNAL_LINKS_FILE" | tr -d '[:space:]')
+
+                  if [ -n "$EXTERNAL_URL" ]; then
+                    # Extract org/repo from: https://raw.githubusercontent.com/{org}/{repo}/...
+                    ORG_REPO=$(echo "$EXTERNAL_URL" | sed -n 's|https://raw.githubusercontent.com/\([^/]*/[^/]*\)/.*|\1|p')
+
+                    if [ -n "$ORG_REPO" ]; then
+                      SOURCE_URL="git::https://github.com/${ORG_REPO}.git"
+                      echo "  ✓ External module source: $SOURCE_URL"
+                    else
+                      echo "  ⚠ Could not parse external URL: $EXTERNAL_URL"
+                      SOURCE_URL="unknown"
+                    fi
+                  else
+                    SOURCE_URL="unknown"
+                  fi
+                else
+                  # Internal module - build from tfm repo with version ref
+                  if [ "$VERSION" != "unknown" ]; then
+                    SOURCE_URL="git::https://github.com/prefapp/tfm.git//modules/${MODULE_NAME}?ref=${MODULE_NAME}-v${VERSION}"
+                    echo "  ✓ Internal module source: $SOURCE_URL"
+                  else
+                    SOURCE_URL="unknown"
+                    echo "  ⚠ Cannot construct source URL without version"
+                  fi
+                fi
+
                 # Add module to index.json
                 MODULE_URL="https://raw.githubusercontent.com/firestartr-pro/docs/main/site/raw/tfm/${MODULE_NAME}/README.md"
                 jq --arg name "$MODULE_NAME" \
                    --arg url "$MODULE_URL" \
                    --argjson links "$EXTERNAL_LINKS_JSON" \
-                  '.modules += [{"name": $name, "url": $url, "external-links": $links}]' \
+                   --arg version "$VERSION" \
+                   --arg source "$SOURCE_URL" \
+                  '.modules += [{"name": $name, "url": $url, "external-links": $links, "version": $version, "source": $source}]' \
                   "$INDEX_JSON" > "${INDEX_JSON}.tmp" && mv "${INDEX_JSON}.tmp" "$INDEX_JSON"
               else
                 echo "  ✗ Failed to copy README.md"
