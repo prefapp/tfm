@@ -1,3 +1,15 @@
+# --- Access Mode ---
+# It governs whether the broker is publicly accessible, private, or private behind an NLB.
+variable "access_mode" {
+  description = "Access mode for the broker: 'public', 'private', or 'private_with_nlb'."
+  type        = string
+  default     = "private"
+  validation {
+    condition     = contains(["public", "private", "private_with_nlb"], var.access_mode)
+    error_message = "access_mode must be one of: public, private, private_with_nlb."
+  }
+}
+
 # --- Project Metadata ---
 variable "project_name" {
   description = "Generic project identifier used for resource naming (e.g., 'messaging-hub')"

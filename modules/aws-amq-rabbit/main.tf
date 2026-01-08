@@ -107,6 +107,7 @@ resource "aws_security_group" "this" {
 # -------------------------------------------------------------------------
 
 resource "aws_mq_broker" "this" {
+  count = contains(["public", "private"], var.access_mode) ? 1 : 0
   broker_name = local.name_prefix
 
   engine_type         = "RabbitMQ"
@@ -115,7 +116,7 @@ resource "aws_mq_broker" "this" {
   deployment_mode     = var.deployment_mode
   subnet_ids          = local.broker_subnet_ids
   security_groups     = [aws_security_group.this.id]
-  publicly_accessible = false
+  publicly_accessible = var.access_mode == "public" ? true : false
   storage_type        = "ebs"
 
   auto_minor_version_upgrade = true
@@ -137,15 +138,16 @@ resource "aws_mq_broker" "this" {
 # -------------------------------------------------------------------------
 
 resource "aws_lb" "this" {
-  name               = "${local.name_prefix}-nlb"
-  internal           = false
-  load_balancer_type = "network"
-  subnets            = local.lb_subnet_ids
-
-  tags = local.common_tags
+  count               = var.access_mode == "private_with_nlb" ? 1 : 0
+  name                = "${local.name_prefix}-nlb"
+  internal            = false
+  load_balancer_type  = "network"
+  subnets             = local.lb_subnet_ids
+  tags                = local.common_tags
 }
 
 resource "aws_lb_target_group" "this" {
+  count       = var.access_mode == "private_with_nlb" ? 1 : 0
   name        = "${local.name_prefix}-tg"
   port        = 5671
   protocol    = "TLS"
@@ -161,7 +163,8 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener" "this" {
-  load_balancer_arn = aws_lb.this.arn
+  count             = var.access_mode == "private_with_nlb" ? 1 : 0
+  load_balancer_arn = aws_lb.this[0].arn
   port              = 5671
   protocol          = "TLS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
@@ -169,7 +172,7 @@ resource "aws_lb_listener" "this" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.this.arn
+    target_group_arn = aws_lb_target_group.this[0].arn
   }
 }
 

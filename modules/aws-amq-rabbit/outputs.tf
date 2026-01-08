@@ -1,35 +1,26 @@
-output "broker_private_ips" {
-  description = "List of private IPs of the broker instances"
-  value       = aws_mq_broker.this.instances[*].ip_address
-}
-
-output "target_group_arn" {
-  description = "ARN of the NLB target group"
-  value       = aws_lb_target_group.this.arn
-}
 output "broker_id" {
   description = "Identifier for the Amazon MQ Broker"
-  value       = aws_mq_broker.this.id
+  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].id : null
 }
 
 output "broker_arn" {
   description = "ARN for the Amazon MQ Broker"
-  value       = aws_mq_broker.this.arn
+  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].arn : null
 }
 
 output "broker_console_url" {
   description = "Direct web console endpoint for the broker"
-  value       = aws_mq_broker.this.instances[0].console_url
+  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].instances[0].console_url : null
+}
+
+output "broker_private_ips" {
+  description = "List of private IPs of the broker instances"
+  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].instances[*].ip_address : []
 }
 
 output "nlb_dns_name" {
   description = "Static DNS name provided by the Network Load Balancer"
-  value       = aws_lb.this.dns_name
-}
-
-output "nlb_arn" {
-  description = "ARN for the Network Load Balancer"
-  value       = aws_lb.this.arn
+  value       = length(aws_lb.this) > 0 ? aws_lb.this[0].dns_name : null
 }
 
 output "broker_security_group_id" {
