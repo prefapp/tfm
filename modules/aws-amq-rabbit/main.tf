@@ -105,6 +105,8 @@ resource "aws_mq_broker" "this" {
   publicly_accessible = false
   storage_type        = "ebs"
 
+  auto_minor_version_upgrade = true
+
   user {
     username = var.mq_username
     password = var.mq_password
