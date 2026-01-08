@@ -158,29 +158,3 @@ resource "aws_lb_listener" "this" {
   }
 }
 
-# -------------------------------------------------------------------------
-# Broker-NLB Glue Logic (ENI Association)
-# -------------------------------------------------------------------------
-
-data "aws_network_interface" "broker_eni" {
-  count = length(aws_mq_broker.this.instances) > 0 ? 1 : 0
-
-  filter {
-    name   = "description"
-    values = ["DO NOT DELETE - Amazon MQ Broker ${aws_mq_broker.this.id} Interface*"]
-  }
-
-  filter {
-    name   = "private-ip-address"
-    values = [aws_mq_broker.this.instances[0].ip_address]
-  }
-}
-
-resource "aws_lb_target_group_attachment" "this" {
-  count = length(data.aws_network_interface.broker_eni) > 0 ? 1 : 0
-  target_group_arn = aws_lb_target_group.this.arn
-  target_id        = data.aws_network_interface.broker_eni[0].private_ip
-  port             = 5671
-}
-
-# NOTE: This only attaches the first broker instance to the NLB. For multi-AZ/HA, extend this logic to handle all instances.
