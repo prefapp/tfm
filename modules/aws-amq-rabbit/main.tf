@@ -41,9 +41,22 @@ data "aws_subnets" "lb" {
 }
 
 locals {
-  vpc_id            = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.this[*].id)
-  broker_subnet_ids = length(var.broker_subnet_ids) > 0 ? var.broker_subnet_ids : one(data.aws_subnets.broker[*].ids)
-  lb_subnet_ids     = length(var.lb_subnet_ids) > 0 ? var.lb_subnet_ids : one(data.aws_subnets.lb[*].ids)
+  vpc_id = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.this[*].id)
+  single_broker_subnet_id = (
+    length(var.broker_subnet_ids) > 0
+    ? var.broker_subnet_ids[0]
+    : (
+        length(one(data.aws_subnets.broker[*].ids)) > 0
+        ? one(data.aws_subnets.broker[*].ids)[0]
+        : null
+      )
+  )
+  broker_subnet_ids = (
+    var.deployment_mode == "SINGLE_INSTANCE"
+    ? [local.single_broker_subnet_id]
+    : (length(var.broker_subnet_ids) > 0 ? var.broker_subnet_ids : one(data.aws_subnets.broker[*].ids))
+  )
+  lb_subnet_ids = length(var.lb_subnet_ids) > 0 ? var.lb_subnet_ids : one(data.aws_subnets.lb[*].ids)
 
   name_prefix = "mq-service-${var.project_name}-${var.environment}"
 
