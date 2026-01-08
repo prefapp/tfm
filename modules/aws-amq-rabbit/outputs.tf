@@ -1,3 +1,12 @@
+output "broker_private_ips" {
+  description = "List of private IPs of the broker instances"
+  value       = aws_mq_broker.this.instances[*].ip_address
+}
+
+output "target_group_arn" {
+  description = "ARN of the NLB target group"
+  value       = aws_lb_target_group.this.arn
+}
 output "broker_id" {
   description = "Identifier for the Amazon MQ Broker"
   value       = aws_mq_broker.this.id
