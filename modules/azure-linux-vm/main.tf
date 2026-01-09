@@ -39,6 +39,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       offer     = source_image_reference.value.offer
       sku       = source_image_reference.value.sku
       version   = source_image_reference.value.version
+    }
   }
 
   os_disk {
@@ -62,6 +63,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       ultra_ssd_enabled   = additional_capabilities.value.ultra_ssd_enabled
       hibernation_enabled = additional_capabilities.value.hibernation_enabled
     }
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
