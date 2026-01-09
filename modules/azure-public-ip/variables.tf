@@ -29,7 +29,6 @@ variable "public_ip_allocation_method" {
 variable "public_ip_domain_name_label" {
   description = "Label for the Domain Name"
   type = "string"
-  default = null
 }
 
 variable "tags" {
