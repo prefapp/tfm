@@ -93,6 +93,7 @@ resource "azurerm_network_interface" "this" {
     primary                                            = var.nic.primary
     private_ip_address                                 = var.nic.private_ip_address
   }
+}
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association
 resource "azurerm_network_interface_security_group_association" "this" {
