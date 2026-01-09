@@ -1,3 +1,21 @@
+variable "existing_security_group_id" {
+  description = "ID of an existing Security Group to use. If not set, a new one will be created."
+  type        = string
+  default     = null
+}
+
+variable "existing_lb_arn" {
+  description = "ARN of an existing Load Balancer to use. If not set, a new one will be created."
+  type        = string
+  default     = null
+}
+
+variable "existing_target_group_arn" {
+  description = "ARN of an existing Target Group to use. If not set, a new one will be created."
+  type        = string
+  default     = null
+}
+
 # --- Access Mode ---
 # It governs whether the broker is publicly accessible, private, or private behind an NLB.
 variable "access_mode" {
