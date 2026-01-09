@@ -134,7 +134,7 @@ resource "aws_mq_broker" "this" {
   host_instance_type  = var.host_instance_type
   deployment_mode     = var.deployment_mode
   subnet_ids          = local.broker_subnet_ids
-  security_groups     = var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]
+  security_groups     = var.access_mode == "private" ? (var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]) : null
   publicly_accessible = var.access_mode == "public" ? true : false
   storage_type        = "ebs"
 
