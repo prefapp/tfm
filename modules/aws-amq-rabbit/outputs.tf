@@ -32,7 +32,3 @@ output "nlb_dns_name" {
   value = var.existing_lb_arn != null ? (length(data.aws_lb.existing) > 0 ? data.aws_lb.existing[0].dns_name : null) : (length(aws_lb.this) > 0 ? aws_lb.this[0].dns_name : null)
 }
 
-output "broker_security_group_id" {
-  description = "ID of the security group protecting the broker"
-  value = var.existing_security_group_id != null ? (length(data.aws_security_group.existing) > 0 ? data.aws_security_group.existing[0].id : null) : aws_security_group.this[0].id
-}
