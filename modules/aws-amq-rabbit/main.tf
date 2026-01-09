@@ -1,22 +1,4 @@
 # -------------------------------------------------------------------------
-# Optional Data Sources for Existing Resources
-# -------------------------------------------------------------------------
-
-data "aws_security_group" "existing" {
-  count = var.existing_security_group_id != null ? 1 : 0
-  id    = var.existing_security_group_id
-}
-
-data "aws_lb" "existing" {
-  count = var.existing_lb_arn != null ? 1 : 0
-  arn   = var.existing_lb_arn
-}
-
-data "aws_lb_target_group" "existing" {
-  count = var.existing_target_group_arn != null ? 1 : 0
-  arn   = var.existing_target_group_arn
-}
-# -------------------------------------------------------------------------
 # Networking Resolution
 # -------------------------------------------------------------------------
 
@@ -157,7 +139,7 @@ resource "aws_mq_broker" "this" {
 # -------------------------------------------------------------------------
 
 resource "aws_lb" "this" {
-  count               = var.existing_lb_arn == null && var.access_mode == "private_with_nlb" ? 1 : 0
+  count               = var.access_mode == "private_with_nlb" ? 1 : 0
   name                = "${local.name_prefix}-nlb"
   internal            = false
   load_balancer_type  = "network"
@@ -166,7 +148,7 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "this" {
-  count       = var.existing_target_group_arn == null && var.access_mode == "private_with_nlb" ? 1 : 0
+  count       = var.access_mode == "private_with_nlb" ? 1 : 0
   name        = "${local.name_prefix}-tg"
   port        = 5671
   protocol    = "TLS"
@@ -182,8 +164,8 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener" "this" {
-  count             = var.existing_lb_arn == null && var.existing_target_group_arn == null && var.access_mode == "private_with_nlb" ? 1 : 0
-  load_balancer_arn = var.existing_lb_arn != null ? var.existing_lb_arn : aws_lb.this[0].arn
+  count             = var.access_mode == "private_with_nlb" ? 1 : 0
+  load_balancer_arn = aws_lb.this[0].arn
   port              = 5671
   protocol          = "TLS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
@@ -191,7 +173,7 @@ resource "aws_lb_listener" "this" {
 
   default_action {
     type             = "forward"
-    target_group_arn = var.existing_target_group_arn != null ? var.existing_target_group_arn : aws_lb_target_group.this[0].arn
+    target_group_arn = aws_lb_target_group.this[0].arn
   }
 }
 
