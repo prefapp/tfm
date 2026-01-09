@@ -4,7 +4,7 @@
 
 This module provisions and manages a complete Azure Linux Virtual Machine (VM) environment, including the Network Interface resources.
 
-The module creates a Linux VM with support for SSH key authentication, optional admin password from Azure Key Vault, managed disks, and advanced networking options. It integrates seamlessly with Azure Resource Groups, Virtual Networks, Subnets, and Key Vault for secret management. 
+The module creates a Linux VM with support for SSH key authentication, optional admin password from Azure Key Vault, managed disks, and advanced networking options. It integrates seamlessly with Azure Resource Groups, Virtual Networks, Subnets, and Key Vault for secret management.
 
 The module is suitable for development, staging, and production environments, and can be easily extended or embedded in larger Terraform projects.
 
@@ -15,6 +15,8 @@ The module is suitable for development, staging, and production environments, an
 - **Key Vault Integration**: Optionally retrieves the VM admin password securely from Azure Key Vault, supporting best practices for secret management.
 - **SSH and Password Authentication**: Supports both SSH key and password authentication, with the ability to disable password login for enhanced security.
 - **Flexible Tagging and Resource Group Inheritance**: Inherits tags from the resource group or allows custom tags for all resources.
+- **Network Security Group (NSG) Integration**: Optionally associates an existing NSG with the VM's NIC for enhanced security.
+- **Public IP Configuration**: Optionally associates a public IP address with the VM's NIC for external access.
 
 ## Basic Usage
 
