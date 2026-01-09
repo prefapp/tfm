@@ -27,11 +27,6 @@ output "broker_console_url" {
   value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].instances[0].console_url : null
 }
 
-output "broker_private_ips" {
-  description = "List of private IPs of the broker instances"
-  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].instances[*].ip_address : []
-}
-
 output "nlb_dns_name" {
   description = "Static DNS name provided by the Network Load Balancer"
   value = var.existing_lb_arn != null ? (length(data.aws_lb.existing) > 0 ? data.aws_lb.existing[0].dns_name : null) : (length(aws_lb.this) > 0 ? aws_lb.this[0].dns_name : null)

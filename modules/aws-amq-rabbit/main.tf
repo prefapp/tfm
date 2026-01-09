@@ -126,7 +126,7 @@ resource "aws_security_group" "this" {
 # -------------------------------------------------------------------------
 
 resource "aws_mq_broker" "this" {
-  count = contains(["public", "private"], var.access_mode) ? 1 : 0
+  count = 1
   broker_name = local.name_prefix
 
   engine_type         = "RabbitMQ"
@@ -134,7 +134,7 @@ resource "aws_mq_broker" "this" {
   host_instance_type  = var.host_instance_type
   deployment_mode     = var.deployment_mode
   subnet_ids          = local.broker_subnet_ids
-  security_groups     = var.access_mode == "private" ? (var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]) : null
+  security_groups     = contains(["private", "private_with_nlb"], var.access_mode) ? (var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]) : null
   publicly_accessible = var.access_mode == "public" ? true : false
   storage_type        = "ebs"
 
