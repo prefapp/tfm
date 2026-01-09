@@ -8,11 +8,12 @@ variable "common" {
 
 variable "admin_password" {
   description = "Admin password for the VM. If not provided, it will be fetched from Key Vault."
-  type        = optional(object({
+  type        = object({
     key_vault_name        = string
     resource_group_name   = string
     secret_name          = string
-  }))
+  })
+  default = null
 }
 
 variable "vm" {
