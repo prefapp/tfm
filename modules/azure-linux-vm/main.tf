@@ -69,31 +69,31 @@ resource "azurerm_linux_virtual_machine" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
 resource "azurerm_network_interface" "this" {
   count                          = var.nic != null ? 1 : 0
-  name                           = var.nic.name != null ? var.nic.name : "${var.vm.name}-nic"  # O usa var.nic.name si lo tienes
+  name                           = var.nic != null && var.nic.name != null ? var.nic.name : "${var.vm.name}-nic"
   location                       = var.common.location
   resource_group_name            = var.common.resource_group_name
-  auxiliary_mode                 = var.nic.auxiliary_mode
-  auxiliary_sku                  = var.nic.auxiliary_sku
-  accelerated_networking_enabled = var.nic.accelerated_networking_enabled
-  ip_forwarding_enabled          = var.nic.ip_forwarding_enabled
-  edge_zone                      = var.nic.edge_zone
-  dns_servers                    = var.nic.dns_servers
-  internal_dns_name_label        = var.nic.internal_dns_name_label
+  auxiliary_mode                 = var.nic != null ? var.nic.auxiliary_mode : null
+  auxiliary_sku                  = var.nic != null ? var.nic.auxiliary_sku : null
+  accelerated_networking_enabled = var.nic != null ? var.nic.accelerated_networking_enabled : null
+  ip_forwarding_enabled          = var.nic != null ? var.nic.ip_forwarding_enabled : null
+  edge_zone                      = var.nic != null ? var.nic.edge_zone : null
+  dns_servers                    = var.nic != null ? var.nic.dns_servers : null
+  internal_dns_name_label        = var.nic != null ? var.nic.internal_dns_name_label : null
   tags                           = local.tags
 
   ip_configuration {
-    name                                               = var.nic.ip_configuration_name != null ? var.nic.ip_configuration_name : "${var.vm.name}-ipconfig"
-    gateway_load_balancer_frontend_ip_configuration_id = var.nic.gateway_load_balancer_frontend_ip_configuration_id
-    subnet_id                                          = var.nic.subnet_id != null ? var.nic.subnet_id : data.azurerm_subnet.this[0].id
-    private_ip_address_version                         = var.nic.private_ip_address_version
-    private_ip_address_allocation                      = var.nic.private_ip_address_allocation
+    name                                               = var.nic != null && var.nic.ip_configuration_name != null ? var.nic.ip_configuration_name : "${var.vm.name}-ipconfig"
+    gateway_load_balancer_frontend_ip_configuration_id = var.nic != null ? var.nic.gateway_load_balancer_frontend_ip_configuration_id : null
+    subnet_id                                          = var.nic != null && var.nic.subnet_id != null ? var.nic.subnet_id : (var.nic != null ? data.azurerm_subnet.this[0].id : null)
+    private_ip_address_version                         = var.nic != null ? var.nic.private_ip_address_version : null
+    private_ip_address_allocation                      = var.nic != null ? var.nic.private_ip_address_allocation : null
     public_ip_address_id = (
       var.nic != null && var.nic.public_ip != null ? data.azurerm_public_ip.this[0].id :
       var.nic != null ? var.nic.public_ip_address_id :
       null
     )
-    primary                                            = var.nic.primary
-    private_ip_address                                 = var.nic.private_ip_address
+    primary            = var.nic != null ? var.nic.primary : null
+    private_ip_address = var.nic != null ? var.nic.private_ip_address : null
   }
 }
 
