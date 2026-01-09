@@ -19,10 +19,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   license_type                    = var.vm.license_type != null ? var.vm.license_type : null
   patch_mode                      = var.vm.patch_mode != null ? var.vm.patch_mode : null
   tags                            = local.tags
-
-  network_interface_ids = [
-    azurerm_network_interface.this.id,
-  ]
+  network_interface_ids           = var.nic != null ? [azurerm_network_interface.this[0].id] : var.vm.network_interface_ids
 
   dynamic "admin_ssh_key" {
     for_each = var.vm.admin_ssh_key != null ? [var.vm.admin_ssh_key] : []
