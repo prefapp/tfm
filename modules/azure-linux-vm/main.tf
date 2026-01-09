@@ -42,6 +42,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   }
 
   os_disk {
+    name                 = var.vm.os_disk.name
     caching              = var.vm.os_disk.caching
     disk_size_gb         = var.vm.os_disk.disk_size_gb
     storage_account_type = var.vm.os_disk.storage_account_type
