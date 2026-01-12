@@ -106,7 +106,12 @@ resource "aws_security_group" "this" {
 # -------------------------------------------------------------------------
 # Amazon MQ Broker (RabbitMQ)
 # -------------------------------------------------------------------------
-
+# Creates the RabbitMQ broker with the specified configuration.
+# -------------------------------------------------------------------------
+# NOTE: count is set to 1 to ensure subsequent executions of terraform apply with this module
+# doesn't destroy the broker if not present, for example, if we use the module to attach
+# a NLB to an existing broker.
+# -------------------------------------------------------------------------
 resource "aws_mq_broker" "this" {
   count = 1
   broker_name = local.name_prefix
@@ -137,7 +142,9 @@ resource "aws_mq_broker" "this" {
 # -------------------------------------------------------------------------
 # Infrastructure Connectivity (NLB)
 # -------------------------------------------------------------------------
-
+#
+# This part is only needed if access_mode is set to "private_with_nlb"
+#
 resource "aws_lb" "this" {
   count               = var.access_mode == "private_with_nlb" ? 1 : 0
   name                = "${local.name_prefix}-nlb"
