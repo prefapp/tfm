@@ -58,15 +58,15 @@ locals {
     length(var.broker_subnet_ids) > 0
     ? var.broker_subnet_ids[0]
     : (
-        length(one(data.aws_subnets.broker[*].ids)) > 0
-        ? one(data.aws_subnets.broker[*].ids)[0]
+        length(try(one(data.aws_subnets.broker[*].ids), [])) > 0
+        ? try(one(data.aws_subnets.broker[*].ids)[0], null)
         : null
       )
   )
   broker_subnet_ids = (
     var.deployment_mode == "SINGLE_INSTANCE"
-    ? [local.single_broker_subnet_id]
-    : (length(var.broker_subnet_ids) > 0 ? var.broker_subnet_ids : one(data.aws_subnets.broker[*].ids))
+    ? (local.single_broker_subnet_id != null ? [local.single_broker_subnet_id] : [])
+    : (length(var.broker_subnet_ids) > 0 ? var.broker_subnet_ids : try(one(data.aws_subnets.broker[*].ids), []))
   )
 
   lb_subnet_ids = length(var.lb_subnet_ids) > 0 ? var.lb_subnet_ids : one(data.aws_subnets.lb[*].ids)
