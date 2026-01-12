@@ -26,6 +26,12 @@ variable "public_ip_allocation_method" {
   default = "Static"
 }
 
+variable "public_ip_domain_name_label" {
+  description = "Label for the Domain Name"
+  type = string
+  default = null
+}
+
 variable "tags" {
   description = "A map of tags to add to the public IP"
   type = map(string)

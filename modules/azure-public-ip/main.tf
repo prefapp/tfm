@@ -9,6 +9,7 @@ resource "azurerm_public_ip" "this" {
   location            = var.location
   sku                 = var.public_ip_sku
   allocation_method   = var.public_ip_allocation_method
+  domain_name_label   = var.public_ip_domain_name_label
 
   tags = var.tags_from_rg ? data.azurerm_resource_group.resource_group.tags : var.tags
 
