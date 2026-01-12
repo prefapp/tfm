@@ -1,11 +1,18 @@
 # -------------------------------------------------------------------------
+# Fetch Broker Private IPs after creation
+# -------------------------------------------------------------------------
+data "aws_mq_broker" "this" {
+  broker_id = aws_mq_broker.this[0].id
+  depends_on = [aws_mq_broker.this]
+}
+# -------------------------------------------------------------------------
 # Register Broker Private IPs as NLB Targets
 # -------------------------------------------------------------------------
 resource "aws_lb_target_group_attachment" "broker" {
-  for_each = var.access_mode == "private_with_nlb" && length(aws_mq_broker.this) > 0 ? merge([
+  for_each = var.access_mode == "private_with_nlb" && length(data.aws_mq_broker.this.instances) > 0 ? merge([
     for tg_key, tg in aws_lb_target_group.this : {
       # compact removes null/empty IPs
-      for ip in compact(aws_mq_broker.this[0].instances[*].ip_address) :
+      for ip in compact(data.aws_mq_broker.this.instances[*].ip_address) :
       "${tg_key}-${ip}" => {
         tg_arn = tg.arn
         port   = tg.port
