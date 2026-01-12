@@ -7,6 +7,6 @@ module "public_ip" {
     location            = "westeurope"
     sku                 = "Standard"
     allocation_method   = "Static"
-    zones               = ["1","2","3"]
+    public_ip_zones     = ["1","2","3"]
     tags_from_rg        = true
 }
