@@ -19,10 +19,6 @@ output "nlb_arn" {
   value = length(aws_lb.this) > 0 ? aws_lb.this[0].arn : null
 }
 
-output "target_group_arn" {
-  description = "ARN of the Target Group used for the broker."
-  value = length(aws_lb_target_group.this) > 0 ? aws_lb_target_group.this[0].arn : null
-}
 
 output "target_group_arn" {
   value       = length(aws_lb_target_group.this) > 0 ? values(aws_lb_target_group.this)[0].arn : null
