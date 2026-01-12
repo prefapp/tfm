@@ -1,3 +1,13 @@
+# --- Port Exposure ---
+variable "exposed_ports" {
+  description = "List of ports to expose for RabbitMQ broker (AMQPS, management, etc.). Default is [5671]."
+  type        = list(number)
+  default     = [5671]
+  validation {
+    condition     = length(var.exposed_ports) > 0 && alltrue([for p in var.exposed_ports : p >= 1 && p <= 65535])
+    error_message = "You must specify at least one port in exposed_ports, and all ports must be in the range 1-65535."
+  }
+}
 variable "existing_security_group_id" {
   description = "ID of an existing Security Group to use. If not set, a new one will be created."
   type        = string

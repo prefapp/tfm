@@ -41,6 +41,18 @@ data "aws_subnets" "lb" {
 }
 
 locals {
+  # AWS Target Group name limit is 32 chars. AWS appends a 6-char random suffix, so we have 26 chars for our prefix.
+  # We use up to 21 chars for the base prefix and 5 for the port (max 65535), e.g. 'prefix-p65535-'.
+  tg_name_prefix = "${substr(local.name_prefix, 0, 21)}-p"
+  # Map well-known RabbitMQ ports to service names for SG descriptions
+  rabbitmq_port_names = {
+    5671  = "AMQPS"
+    5672  = "AMQP"
+    15672 = "Management UI"
+    61613 = "STOMP"
+    1883  = "MQTT"
+    8883  = "MQTT SSL"
+  }
   vpc_id = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.this[*].id)
   single_broker_subnet_id = (
     length(var.broker_subnet_ids) > 0
@@ -56,9 +68,12 @@ locals {
     ? [local.single_broker_subnet_id]
     : (length(var.broker_subnet_ids) > 0 ? var.broker_subnet_ids : one(data.aws_subnets.broker[*].ids))
   )
+
   lb_subnet_ids = length(var.lb_subnet_ids) > 0 ? var.lb_subnet_ids : one(data.aws_subnets.lb[*].ids)
 
+
   name_prefix = "mq-service-${var.project_name}-${var.environment}"
+
 
   common_tags = merge(var.tags, {
     Project     = var.project_name
@@ -77,20 +92,16 @@ resource "aws_security_group" "this" {
   description = "Access control for MQ Broker"
   vpc_id      = local.vpc_id
 
-  ingress {
-    description = "AMQPS-Traffic"
-    from_port   = 5671
-    to_port     = 5671
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_ingress_cidrs
-  }
 
-  ingress {
-    description = "Management-UI"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_ingress_cidrs
+  dynamic "ingress" {
+    for_each = var.exposed_ports
+    content {
+      description = "RabbitMQ ${ingress.value == 443 ? "Management UI" : lookup(local.rabbitmq_port_names, ingress.value, "Custom Port")} (${ingress.value})"
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = var.allowed_ingress_cidrs
+    }
   }
 
   egress {
@@ -154,10 +165,22 @@ resource "aws_lb" "this" {
   tags                = local.common_tags
 }
 
+
+
+locals {
+  # Convert the list of exposed ports into a map with string keys so it can be
+  # used with for_each in the NLB target group and listener resources. Terraform
+  # requires stable string keys for for_each to maintain consistent resource addresses,
+  # and the string key (tostring(p)) is later used as each.key in references such as
+  # aws_lb_target_group.this[each.key] and aws_lb_listener.this[each.key].
+  exposed_ports_map = { for p in var.exposed_ports : tostring(p) => p }
+}
+
 resource "aws_lb_target_group" "this" {
-  count       = var.access_mode == "private_with_nlb" ? 1 : 0
-  name        = "${local.name_prefix}-tg"
-  port        = 5671
+  for_each = var.access_mode == "private_with_nlb" ? local.exposed_ports_map : {}
+  # Target group names must be <=32 chars. We build the full name and truncate to 32 to avoid AWS-appended suffixes exceeding the limit.
+  name        = substr("${local.tg_name_prefix}${each.value}-", 0, 32)
+  port        = each.value
   protocol    = "TLS"
   vpc_id      = local.vpc_id
   target_type = "ip"
@@ -171,16 +194,16 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener" "this" {
-  count             = var.access_mode == "private_with_nlb" ? 1 : 0
+  for_each          = var.access_mode == "private_with_nlb" ? local.exposed_ports_map : {}
   load_balancer_arn = aws_lb.this[0].arn
-  port              = 5671
+  port              = each.value
   protocol          = "TLS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
   certificate_arn   = var.lb_certificate_arn
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.this[0].arn
+    target_group_arn = aws_lb_target_group.this[each.key].arn
   }
 }
 
