@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/azure-linux-vm-v0.1.0...azure-linux-vm-v0.1.1) (2026-01-12)
+
+
+### Bug Fixes
+
+* Add new variables to linux VM module ([#847](https://github.com/prefapp/tfm/issues/847)) ([fb177c2](https://github.com/prefapp/tfm/commit/fb177c29f2018e9412621f3809e3524ad7f9e073))
+
 ## 0.1.0 (2025-12-29)
 
 
