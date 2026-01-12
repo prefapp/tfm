@@ -13,44 +13,59 @@ variable "admin_password" {
     resource_group_name   = string
     secret_name          = string
   })
+  default = null
 }
 
 variable "vm" {
   type = object({
     name                            = string
     size                            = string
-    admin_username                  = string
+    admin_username                  = optional(string)
     admin_password                  = optional(string)
+    network_interface_ids           = optional(list(string))
     edge_zone                       = optional(string)
     eviction_policy                 = optional(string)
     encryption_at_host_enabled      = optional(bool)
     secure_boot_enabled             = optional(bool)
+    os_managed_disk_id              = optional(string)
     vtpm_enabled                    = optional(bool)
     disable_password_authentication = optional(bool)
     custom_data                     = optional(string)
+    provision_vm_agent              = optional(bool)
+    license_type                    = optional(string)
+    patch_mode                      = optional(string)
+
+
 
     admin_ssh_key = object({
       username   = string
       public_key = string
     })
 
-    source_image_reference = object({
+    source_image_reference = optional(object({
       publisher = string
       offer     = string
       sku       = string
       version   = string
-    })
+    }))
 
     os_disk = object({
+      name                 = optional(string)
       caching              = string
-      disk_size_gb         = number
-      storage_account_type = string
+      disk_size_gb         = optional(number)
+      storage_account_type = optional(string)
     })
 
     identity = optional(object({
       type         = string
       identity_ids = optional(list(string))
     }))
+
+    additional_capabilities = optional(object({
+      ultra_ssd_enabled   = optional(bool)
+      hibernation_enabled = optional(bool)
+    }))
+
   })
 
   validation {
@@ -95,7 +110,16 @@ variable "nic" {
     public_ip_address_id                               = optional(string)
     primary                                            = optional(bool)
     private_ip_address                                 = optional(string)
+    nsg = optional(object({
+      name                = optional(string)
+      resource_group_name = optional(string)
+    }))
+    public_ip = optional(object({
+      name                = optional(string)
+      resource_group_name = optional(string)
+    }))
   })
+  default = null
 }
 
 variable "tags_from_rg" {
