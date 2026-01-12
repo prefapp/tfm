@@ -8,11 +8,13 @@ It is suitable for development, staging, and production environments, and can be
 
 ## Key Features
 
-- **Public IP Provisioning**: Deploys a fully managed Azure Public Ip resource with customizable name, SKU, allocation method and domain name.
+- **Public IP Provisioning**: Deploys a fully managed Azure Public Ip resource with customizable name, SKU, allocation method.
+- **Domain Name Label Definition**: Capacity to define a custom domain name label
+- **Availability zone allocation**: Define in which availability zones deploy the public ip
 
 ## Basic Usage
 
-### Example 1: Public IP without domain name label
+### Example 1: Base Public IP
 
 ```hcl
 module "public_ip" {
@@ -41,6 +43,23 @@ module "public_ip" {
     sku                 = "Standard"
     allocation_method   = "Static"
     domain_name_label   = "domain-name"
+    tags_from_rg        = true
+}
+```
+
+### Example 3: Public IP with availability zone
+
+```hcl
+module "public_ip" {
+  source = "../../"
+
+  public_ip = {
+    name                = "public-ip-name"
+    resource_group_name = "resource-group-name"
+    location            = "westeurope"
+    sku                 = "Standard"
+    allocation_method   = "Static"
+    zones               = ["1","2","3"]
     tags_from_rg        = true
 }
 ```
