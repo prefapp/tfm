@@ -4,7 +4,8 @@
 resource "aws_lb_target_group_attachment" "broker" {
   for_each = var.access_mode == "private_with_nlb" && length(aws_mq_broker.this) > 0 ? merge([
     for tg_key, tg in aws_lb_target_group.this : {
-      for ip in aws_mq_broker.this[0].instances[*].ip_address :
+      # compact removes null/empty IPs
+      for ip in compact(aws_mq_broker.this[0].instances[*].ip_address) :
       "${tg_key}-${ip}" => {
         tg_arn = tg.arn
         port   = tg.port
