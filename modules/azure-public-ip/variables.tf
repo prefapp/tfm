@@ -35,7 +35,7 @@ variable "public_ip_domain_name_label" {
 variable "public_ip_zones" {
   description = "Availability zones where the Public IP should be deployed"
   type = list(string)
-  default = null
+  default = []
 }
 
 variable "tags" {
