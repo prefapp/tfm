@@ -178,8 +178,8 @@ locals {
 
 resource "aws_lb_target_group" "this" {
   for_each = var.access_mode == "private_with_nlb" ? local.exposed_ports_map : {}
-  # Target group names must be <=32 chars. We build the full name and truncate to 32 to avoid AWS-appended suffixes exceeding the limit.
-  name        = substr("${local.tg_name_prefix}${each.value}-", 0, 32)
+  # Target group names must be <=32 chars and cannot end with a hyphen.
+  name = substr("${local.tg_name_prefix}${each.value}", 0, 32)
   port        = each.value
   protocol    = "TLS"
   vpc_id      = local.vpc_id
