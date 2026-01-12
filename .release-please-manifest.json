@@ -10,7 +10,7 @@
     "modules/azure-aks": "1.9.3",
     "modules/cloudamqp-vpc": "1.1.1",
     "modules/aws-oidc": "1.4.1",
-    "modules/azure-vnet-and-subnet": "2.1.1",
+    "modules/azure-vnet-and-subnet": "2.1.2",
     "modules/azure-sa-backup": "0.3.2",
     "modules/azuread-group": "1.2.0",
     "modules/azure-app-gateway": "0.8.1",
@@ -38,6 +38,6 @@
     "modules/azure-event-hub": "0.1.1",
     "modules/aws-cloudfront-delivery": "0.2.5",
     "modules/aws-ecs": "1.0.0",
-    "modules/azure-linux-vm": "0.1.0",
+    "modules/azure-linux-vm": "0.1.1",
     "modules/azure-windows-vm": "0.1.9"
 }
