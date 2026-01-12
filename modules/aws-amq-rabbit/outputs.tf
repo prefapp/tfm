@@ -13,12 +13,10 @@ output "broker_console_url" {
   value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].instances[0].console_url : null
 }
 
-
 output "nlb_arn" {
   description = "ARN of the Network Load Balancer used for the broker."
   value = length(aws_lb.this) > 0 ? aws_lb.this[0].arn : null
 }
-
 
 output "target_group_arn" {
   value       = length(aws_lb_target_group.this) > 0 ? values(aws_lb_target_group.this)[0].arn : null
@@ -38,5 +36,9 @@ output "target_group_arns" {
 output "target_group_names" {
   value       = [for tg in values(aws_lb_target_group.this) : tg.name]
   description = "List of all Target Group names used for the broker."
+}
+
+output "broker_ips" {
+  value = aws_mq_broker.this[0].instances[*].ip_address
 }
 

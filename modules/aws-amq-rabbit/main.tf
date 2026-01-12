@@ -17,6 +17,8 @@ resource "aws_lb_target_group_attachment" "broker" {
   target_group_arn = each.value.tg_arn
   target_id        = each.value.ip
   port             = each.value.port
+
+  depends_on = [aws_mq_broker.this]
 }
 # -------------------------------------------------------------------------
 # Networking Resolution
