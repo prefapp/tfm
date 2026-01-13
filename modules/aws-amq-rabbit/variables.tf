@@ -1,3 +1,12 @@
+# --- NLB Listener IPs ---
+variable "nlb_listener_ips" {
+  description = <<EOT
+    Map of port numbers to lists of IP addresses for NLB listeners. If provided for a port, a listener will be created for that port and the specified IPs will be registered as targets. If not provided for a port, no listener will be created for that port.
+    Example: { "5671" = ["10.0.1.10", "10.0.2.10"], "15672" = ["10.0.1.11"] }
+  EOT
+  type        = map(list(string))
+  default     = {}
+}
 # --- Port Exposure ---
 variable "exposed_ports" {
   description = "List of ports to expose for RabbitMQ broker (AMQPS, management, etc.). Default is [5671]."

@@ -9,10 +9,10 @@ data "aws_mq_broker" "this" {
 # Register Broker Private IPs as NLB Targets
 # -------------------------------------------------------------------------
 resource "aws_lb_target_group_attachment" "broker" {
-  for_each = var.access_mode == "private_with_nlb" && length(data.aws_mq_broker.this.instances) > 0 ? merge([
+  for_each = var.access_mode == "private_with_nlb" ? merge([
     for tg_key, tg in aws_lb_target_group.this : {
-      # compact removes null/empty IPs
-      for ip in compact(data.aws_mq_broker.this.instances[*].ip_address) :
+      # Use only the IPs provided for this port in nlb_listener_ips
+      for ip in try(var.nlb_listener_ips[each.key], []) :
       "${tg_key}-${ip}" => {
         tg_arn = tg.arn
         port   = tg.port
@@ -197,18 +197,14 @@ resource "aws_lb" "this" {
 
 
 locals {
-  # Convert the list of exposed ports into a map with string keys so it can be
-  # used with for_each in the NLB target group and listener resources. Terraform
-  # requires stable string keys for for_each to maintain consistent resource addresses,
-  # and the string key (tostring(p)) is later used as each.key in references such as
-  # aws_lb_target_group.this[each.key] and aws_lb_listener.this[each.key].
-  exposed_ports_map = { for p in var.exposed_ports : tostring(p) => p }
+  # Only create listeners/target groups for ports with provided IPs in nlb_listener_ips
+  nlb_listener_ports_map = var.access_mode == "private_with_nlb" ? { for port, ips in var.nlb_listener_ips : tostring(port) => port if length(ips) > 0 } : {}
 }
 
 resource "aws_lb_target_group" "this" {
-  for_each = var.access_mode == "private_with_nlb" ? local.exposed_ports_map : {}
+  for_each = var.access_mode == "private_with_nlb" ? local.nlb_listener_ports_map : {}
   # Target group names must be <=32 chars and cannot end with a hyphen.
-  name = substr("${local.tg_name_prefix}${each.value}", 0, 32)
+  name        = substr("${local.tg_name_prefix}${each.value}", 0, 32)
   port        = each.value
   protocol    = "TLS"
   vpc_id      = local.vpc_id
@@ -223,7 +219,7 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener" "this" {
-  for_each          = var.access_mode == "private_with_nlb" ? local.exposed_ports_map : {}
+  for_each          = var.access_mode == "private_with_nlb" ? local.nlb_listener_ports_map : {}
   load_balancer_arn = aws_lb.this[0].arn
   port              = each.value
   protocol          = "TLS"
