@@ -1,31 +1,3 @@
-## Resolving Broker IPs for NLB Registration
-
-When using `access_mode = "private_with_nlb"`, you must provide the private IP addresses of the broker instances to the module so that the NLB can register them as targets. The module outputs a list of broker URLs (hostnames) and their private IPs:
-
-* `broker_urls`: The DNS hostnames for each broker instance (e.g., `b-xxxx.mq.us-east-1.amazonaws.com`).
-* `broker_ips`: The private IP addresses for each broker instance.
-
-To resolve the private IPs from the broker URLs, you can use the `dig` or `nslookup` command:
-
-```sh
-dig +short b-xxxx.mq.us-east-1.amazonaws.com
-# or
-nslookup b-xxxx.mq.us-east-1.amazonaws.com
-```
-
-You can then provide these IPs to the module using the `nlb_listener_ips` variable, mapping each port to the list of broker IPs you want to register for that port:
-
-```hcl
-nlb_listener_ips = {
-  "5671"  = ["10.0.1.10", "10.0.2.10"] # AMQPS
-  "15672" = ["10.0.1.11"]               # Management UI
-}
-```
-
-If you do not provide IPs for a port, no NLB listener or target group will be created for that port.
-
-This approach allows you to run the module multiple times: first to create the broker and get the URLs, then to resolve the IPs and configure the NLB listeners as needed, without destroying or recreating the NLB.
-
 # **AWS Amazon MQ (RabbitMQ) Terraform Module**
 
 
@@ -76,6 +48,38 @@ This is a limitation of how AWS and Terraform handle resource dependencies for d
 ---
 
 The following examples demonstrate common ways to use this module to provision an Amazon MQ RabbitMQ broker, including default settings and optional configuration patterns such as custom port exposure.
+
+
+
+## Resolving Broker IPs for NLB Registration
+
+When using `access_mode = "private_with_nlb"`, you must provide the private IP addresses of the broker instances to the module so that the NLB can register them as targets. The module outputs a list of broker URLs (hostnames) and their private IPs:
+
+* `broker_urls`: The DNS hostnames for each broker instance (e.g., `b-xxxx.mq.us-east-1.amazonaws.com`).
+* `broker_ips`: The private IP addresses for each broker instance.
+
+To resolve the private IPs from the broker URLs, you can use the `dig` or `nslookup` command:
+
+```sh
+dig +short b-xxxx.mq.us-east-1.amazonaws.com
+# or
+nslookup b-xxxx.mq.us-east-1.amazonaws.com
+```
+
+You can then provide these IPs to the module using the `nlb_listener_ips` variable, mapping each port to the list of broker IPs you want to register for that port:
+
+```hcl
+nlb_listener_ips = {
+  "5671"  = ["10.0.1.10", "10.0.2.10"] # AMQPS
+  "15672" = ["10.0.1.11"]               # Management UI
+}
+```
+
+If you do not provide IPs for a port, no NLB listener or target group will be created for that port.
+
+This approach allows you to run the module multiple times: first to create the broker and get the URLs, then to resolve the IPs and configure the NLB listeners as needed, without destroying or recreating the NLB.
+
+
 
 ## Basic Usage
 
