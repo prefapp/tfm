@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/prefapp/tfm/compare/azure-public-ip-v0.3.2...azure-public-ip-v0.3.3) (2026-01-13)
+
+
+### Bug Fixes
+
+* Add availability zones definition ([#853](https://github.com/prefapp/tfm/issues/853)) ([b2d8e96](https://github.com/prefapp/tfm/commit/b2d8e962f86a0f5bdc000c42cb78acbf80a616ed))
+
 ## [0.3.2](https://github.com/prefapp/tfm/compare/azure-public-ip-v0.3.1...azure-public-ip-v0.3.2) (2026-01-12)
 
 
