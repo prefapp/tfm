@@ -11,6 +11,7 @@ resource "azurerm_linux_virtual_machine" "this" {
   eviction_policy                 = var.vm.eviction_policy
   encryption_at_host_enabled      = var.vm.encryption_at_host_enabled
   secure_boot_enabled             = var.vm.secure_boot_enabled
+  zone                            = var.vm.zone
   vtpm_enabled                    = var.vm.vtpm_enabled
   os_managed_disk_id              = var.vm.os_managed_disk_id
   disable_password_authentication = var.vm.disable_password_authentication
@@ -40,10 +41,11 @@ resource "azurerm_linux_virtual_machine" "this" {
   }
 
   os_disk {
-    name                 = var.vm.os_disk.name
-    caching              = var.vm.os_disk.caching
-    disk_size_gb         = var.vm.os_disk.disk_size_gb
-    storage_account_type = var.vm.os_disk.storage_account_type
+    name                     = var.vm.os_disk.name
+    caching                  = var.vm.os_disk.caching
+    disk_size_gb             = var.vm.os_disk.disk_size_gb
+    storage_account_type     = var.vm.os_disk.storage_account_type
+    security_encryption_type = var.vm.os_disk.security_encryption_type
   }
 
   dynamic "identity" {
