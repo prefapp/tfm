@@ -27,6 +27,7 @@ variable "vm" {
     eviction_policy              = optional(string)
     encryption_at_host_enabled   = optional(bool)
     secure_boot_enabled          = optional(bool)
+    zone                         = optional(string)
     os_managed_disk_id           = optional(string)
     vtpm_enabled                 = optional(bool)
     custom_data                  = optional(string)
@@ -47,9 +48,11 @@ variable "vm" {
     }))
 
     os_disk = object({
-      caching              = string
-      disk_size_gb         = optional(number)
-      storage_account_type = optional(string)
+      name                     = optional(string)
+      caching                  = string
+      disk_size_gb             = optional(number)
+      storage_account_type     = optional(string)
+      security_encryption_type = optional(string)
     })
 
     identity = optional(object({
