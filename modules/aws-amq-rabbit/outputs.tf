@@ -42,7 +42,4 @@ output "target_group_names" {
   description = "List of all Target Group names used for the broker."
 }
 
-output "broker_ips" {
-  value = aws_mq_broker.this[0].instances[*].ip_address
-}
 
