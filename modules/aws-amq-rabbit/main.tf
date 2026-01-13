@@ -12,7 +12,7 @@ resource "aws_lb_target_group_attachment" "broker" {
   for_each = var.access_mode == "private_with_nlb" ? merge([
     for tg_key, tg in aws_lb_target_group.this : {
       # Use only the IPs provided for this port in nlb_listener_ips
-      for ip in try(var.nlb_listener_ips[each.key], []) :
+      for ip in try(var.nlb_listener_ips[tg_key], []) :
       "${tg_key}-${ip}" => {
         tg_arn = tg.arn
         port   = tg.port
