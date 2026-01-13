@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.10](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.9...azure-windows-vm-v0.1.10) (2026-01-13)
+
+
+### Bug Fixes
+
+* Add new parameters to windows vm ([#854](https://github.com/prefapp/tfm/issues/854)) ([9a98a36](https://github.com/prefapp/tfm/commit/9a98a36289a9c137f7a80c37276a850dbf919303))
+
 ## [0.1.9](https://github.com/prefapp/tfm/compare/azure-windows-vm-v0.1.8...azure-windows-vm-v0.1.9) (2026-01-07)
 
 
