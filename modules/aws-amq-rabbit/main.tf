@@ -147,7 +147,8 @@ resource "aws_security_group" "this" {
 resource "random_password" "mq_password" {
   length           = 30
   special          = true
-  override_special = "!#$%&()*+,-.:;<=>?@[]^_{|}~"
+  # Exclude invalid Amazon MQ password characters: [, ], :, =
+  override_special = "!#$%&()*+,-.;<>?@^_{|}~"
 }
 
 resource "aws_ssm_parameter" "mq_password" {
