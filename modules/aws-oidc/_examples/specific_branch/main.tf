@@ -1,4 +1,4 @@
-# Example: Basic ECS Service with ALB + Fargate
+# Example: OIDC authentication configuration for a specific Git branch
 
 terraform {
   required_version = ">= 1.5"
