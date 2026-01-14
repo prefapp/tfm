@@ -7,15 +7,6 @@ This Terraform module provisions and manages an Amazon MQ (RabbitMQ) broker on A
 
 The module is designed for production-ready messaging infrastructure, supporting secure credential management, VPC/subnet discovery, and customizable tagging. It is suitable for both new and existing AWS environments, and can be integrated into larger cloud architectures.
 
-This module provisions an **Amazon MQ RabbitMQ broker**, including:
-
-- RabbitMQ broker (Amazon MQ)
-- VPC and subnet selection (by ID or tags)
-- Security group (custom or managed)
-- Optional Network Load Balancer (NLB) for private access
-- Flexible access modes: public, private, or private with NLB
-- Tagging and environment metadata
-
 It is designed to be flexible, secure, and easy to integrate into existing AWS infrastructures.
 
 ## Key Features
@@ -38,20 +29,17 @@ When deploying a private RabbitMQ broker with a Network Load Balancer (NLB), you
 
 **Why is this necessary?**
 
-The NLB target group uses `target_type = "ip"` and requires the broker's private IP addresses to register as targets. These IPs are not available until the broker is fully created. If you try to create both the broker and the NLB in a single Terraform run, the apply will fail because the broker's IPs do not exist yet. The two-step process ensures the broker is ready before the NLB is attached.
-
-This is a limitation of how AWS and Terraform handle resource dependencies for dynamic IP targets.
+For Amazon MQ brokers with the RabbitMQ engine type, AWS does not expose the private IP addresses of the broker instances. This means you cannot directly register the broker’s private IPs as targets in a Network Load Balancer (NLB) target group using `target_type = "ip"`. As a result, it is not possible to attach the NLB to the broker in a single Terraform run, since the required IP addresses are never made available. This is a restriction imposed by AWS for RabbitMQ brokers, as documented in the [Amazon MQ documentation](https://aws.amazon.com/documentation-overview/amazon-mq/).
 
 ---
 
 The following examples demonstrate common ways to use this module to provision an Amazon MQ RabbitMQ broker, including default settings and optional configuration patterns such as custom port exposure.
 
-## Resolving Broker IPs for NLB Registration
+### Resolving Broker IPs for NLB Registration
 
-When using `access_mode = "private_with_nlb"`, you must provide the private IP addresses of the broker instances to the module so that the NLB can register them as targets. The module outputs a list of broker URLs (hostnames) and their private IPs:
+When using `access_mode = "private_with_nlb"`, you must provide the private IP addresses of the broker instances to the module so that the NLB can register them as targets. The module outputs a list of broker URLs (hostnames):
 
 * `broker_urls`: The DNS hostnames for each broker instance (e.g., `b-xxxx.mq.us-east-1.amazonaws.com`).
-* `broker_ips`: The private IP addresses for each broker instance.
 
 To resolve the private IPs from the broker URLs, you can use the `dig` or `nslookup` command:
 
@@ -93,13 +81,22 @@ module "rabbitmq" {
 
 ```hcl
 module "rabbitmq" {
-  source        = "github.com/prefapp/tfm/modules/aws-amq-rabbit"
-  project_name  = "demo-project"
-  environment   = "dev"
-  mq_username   = "admin"
-  mq_password   = "supersecret"
-  vpc_id        = "vpc-xxxxxxxx"
-  broker_subnet_ids = ["subnet-xxxxxxxx"]
+  source                 = "github.com/prefapp/tfm/modules/aws-amq-rabbit"
+  project_name           = "demo-project"
+  environment            = "dev"
+  mq_username            = "admin"
+  mq_password            = "supersecret"
+  vpc_id                 = "vpc-xxxxxxxx"
+  broker_subnet_ids      = ["subnet-xxxxxxxx"]
+  exposed_ports          = [5671]
+  host_instance_type     = "mq.t3.micro"
+  engine_version         = "3.13"
+  deployment_mode        = "SINGLE_INSTANCE"
+  enable_cloudwatch_logs = true
+  tags = {
+    Owner      = "DevOps"
+    CostCenter = "IT"
+  }
 }
 ```
 
@@ -107,16 +104,29 @@ module "rabbitmq" {
 
 ```hcl
 module "rabbitmq" {
-  source        = "github.com/prefapp/tfm/modules/aws-amq-rabbit"
-  project_name  = "demo-project"
-  environment   = "dev"
-  mq_username   = "admin"
-  mq_password   = "supersecret"
-  vpc_id        = "vpc-xxxxxxxx"
-  broker_subnet_ids = ["subnet-xxxxxxxx"]
-  access_mode   = "private_with_nlb"
-  lb_subnet_ids = ["subnet-yyyyyyyy"]
-  lb_certificate_arn = "arn:aws:acm:..."
+  source                 = "github.com/prefapp/tfm/modules/aws-amq-rabbit"
+  project_name           = "demo-project"
+  environment            = "dev"
+  mq_username            = "admin"
+  mq_password            = "supersecret"
+  vpc_id                 = "vpc-xxxxxxxx"
+  broker_subnet_ids      = ["subnet-xxxxxxxx"]
+  access_mode            = "private_with_nlb"
+  lb_subnet_ids          = ["subnet-yyyyyyyy"]
+  lb_certificate_arn     = "arn:aws:acm:..."
+  exposed_ports          = [5671, 15672]
+  nlb_listener_ips = {
+    "5671"  = ["10.0.1.10", "10.0.2.10"] # AMQPS
+    "15672" = ["10.0.1.11"]               # Management UI
+  }
+  host_instance_type     = "mq.t3.micro"
+  engine_version         = "3.13"
+  deployment_mode        = "SINGLE_INSTANCE"
+  enable_cloudwatch_logs = true
+  tags = {
+    Owner      = "DevOps"
+    CostCenter = "IT"
+  }
 }
 ```
 
