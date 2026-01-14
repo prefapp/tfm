@@ -217,7 +217,8 @@ locals {
 resource "aws_lb_target_group" "this" {
   for_each = var.access_mode == "private_with_nlb" ? local.nlb_listener_ports_map : {}
   # Target group names must be <=32 chars and cannot end with a hyphen.
-  name        = substr("${local.tg_name_prefix}${each.value}", 0, 32)
+  # Ensure the name does not end with a hyphen after truncation
+  name = trimend(substr("${local.tg_name_prefix}${each.value}", 0, 32), "-")
   port        = each.value
   protocol    = "TLS"
   vpc_id      = local.vpc_id
