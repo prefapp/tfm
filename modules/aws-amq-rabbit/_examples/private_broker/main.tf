@@ -4,7 +4,6 @@ module "amq_rabbit" {
   project_name            = "myproject"
   environment             = "dev"
   mq_username             = "admin"
-  mq_password             = "SuperSecretPassword123!"
   vpc_name                = "my-vpc-name"
   broker_subnet_filter_tags = {
     Tier = "private"

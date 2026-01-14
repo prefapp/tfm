@@ -4,7 +4,6 @@ module "amq_rabbit" {
   project_name            = "myproject"
   environment             = "dev"
   mq_username             = "admin"
-  mq_password             = "SuperSecretPassword123!"
   vpc_id                  = "vpc-xxxxxxxx"
   broker_subnet_ids       = ["subnet-xxxxxxxx"]
   exposed_ports           = [5671]

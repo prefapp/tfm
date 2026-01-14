@@ -18,7 +18,23 @@ It is designed to be flexible, secure, and easy to integrate into existing AWS i
 - **Network Load Balancer (NLB)**: Optionally deploys an NLB for private brokers, with target group and listener configuration.
 - **Tagging and Metadata**: Apply custom tags, project, and environment labels to all resources.
 - **Sensitive Credentials**: Securely manage RabbitMQ admin username and password via Terraform variables.
-- **Custom Port Exposure**: Expose one or more ports for RabbitMQ (default: 5671). All security group rules are generated for the specified ports. For NLB, a listener and target group will be created for each port in the list, so all specified ports are exposed through the load balancer.
+
+## Broker Password Generation
+
+This module automatically generates a secure, random password for the Amazon MQ broker using Terraform's `random_password` resource. The generated password:
+
+- Is 30 characters long and includes upper/lowercase letters, numbers, and a restricted set of special characters.
+- Excludes characters not allowed by Amazon MQ: `[`, `]`, `:`, `=`, and `,`.
+- Is stored securely in AWS SSM Parameter Store as a `SecureString` under the path: `/${project_name}/${environment}/mq/broker_password`.
+- Is referenced automatically by the broker resource; you do not need to supply it manually.
+
+To retrieve the password, you can use the AWS Console or AWS CLI:
+
+```sh
+aws ssm get-parameter --name "/<project_name>/<environment>/mq/broker_password" --with-decryption
+```
+
+If you wish to override this behavior, you can modify the module to accept a custom password as a variable.
 
 ## Important Note: Two-Step NLB Setup
 
@@ -85,7 +101,6 @@ module "rabbitmq" {
   project_name           = "demo-project"
   environment            = "dev"
   mq_username            = "admin"
-  mq_password            = "supersecret"
   vpc_id                 = "vpc-xxxxxxxx"
   broker_subnet_ids      = ["subnet-xxxxxxxx"]
   exposed_ports          = [5671]
@@ -108,7 +123,6 @@ module "rabbitmq" {
   project_name           = "demo-project"
   environment            = "dev"
   mq_username            = "admin"
-  mq_password            = "supersecret"
   vpc_id                 = "vpc-xxxxxxxx"
   broker_subnet_ids      = ["subnet-xxxxxxxx"]
   access_mode            = "private_with_nlb"
