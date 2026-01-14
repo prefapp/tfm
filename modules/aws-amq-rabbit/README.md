@@ -219,7 +219,7 @@ No modules.
 | <a name="input_existing_security_group_id"></a> [existing\_security\_group\_id](#input\_existing\_security\_group\_id) | ID of an existing Security Group to use. If not set, a new one will be created. | `string` | `null` | no |
 | <a name="input_exposed_ports"></a> [exposed\_ports](#input\_exposed\_ports) | List of ports to expose for RabbitMQ broker (AMQPS, management, etc.). Default is [5671]. | `list(number)` | <pre>[<br/>  5671<br/>]</pre> | no |
 | <a name="input_host_instance_type"></a> [host\_instance\_type](#input\_host\_instance\_type) | Instance class for the broker (e.g., mq.t3.micro) | `string` | `"mq.t3.micro"` | no |
-| <a name="input_lb_certificate_arn"></a> [lb\_certificate\_arn](#input\_lb\_certificate\_arn) | ARN of the ACM certificate for the TLS listener | `string` | n/a | yes |
+| <a name="input_lb_certificate_arn"></a> [lb\_certificate\_arn](#input\_lb\_certificate\_arn) | ARN of the ACM certificate for the TLS listener. Required only if access\_mode is 'private\_with\_nlb'. | `string` | `null` | no |
 | <a name="input_lb_subnet_filter_tags"></a> [lb\_subnet\_filter\_tags](#input\_lb\_subnet\_filter\_tags) | Tags used to discover subnets for the NLB (e.g., { 'NetworkTier' = 'Public' }). | `map(string)` | `{}` | no |
 | <a name="input_lb_subnet_ids"></a> [lb\_subnet\_ids](#input\_lb\_subnet\_ids) | List of subnet IDs for the NLB. Takes precedence over filters. | `list(string)` | `[]` | no |
 | <a name="input_mq_username"></a> [mq\_username](#input\_mq\_username) | Administrative username for the RabbitMQ broker | `string` | n/a | yes |

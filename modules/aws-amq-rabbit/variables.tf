@@ -115,8 +115,9 @@ variable "enable_cloudwatch_logs" {
 
 # --- Load Balancer & Security ---
 variable "lb_certificate_arn" {
-  description = "ARN of the ACM certificate for the TLS listener"
+  description = "ARN of the ACM certificate for the TLS listener. Required only if access_mode is 'private_with_nlb'."
   type        = string
+  default     = null
 }
 
 variable "allowed_ingress_cidrs" {
