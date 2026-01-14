@@ -51,12 +51,6 @@ variable "mq_username" {
   sensitive   = true
 }
 
-variable "mq_password" {
-  description = "Administrative password for the RabbitMQ broker"
-  type        = string
-  sensitive   = true
-}
-
 # --- Network Discovery ---
 variable "vpc_id" {
   description = "ID of the target VPC. Takes precedence over 'vpc_name'."

@@ -167,6 +167,7 @@ The module is organized with the following directory and file structure:
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
 
@@ -182,6 +183,8 @@ No modules.
 | [aws_lb_target_group_attachment.broker](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group_attachment) | resource |
 | [aws_mq_broker.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/mq_broker) | resource |
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_ssm_parameter.mq_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
+| [random_password.mq_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [aws_mq_broker.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/mq_broker) | data source |
 | [aws_subnets.broker](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_subnets.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
@@ -205,7 +208,6 @@ No modules.
 | <a name="input_lb_certificate_arn"></a> [lb\_certificate\_arn](#input\_lb\_certificate\_arn) | ARN of the ACM certificate for the TLS listener | `string` | n/a | yes |
 | <a name="input_lb_subnet_filter_tags"></a> [lb\_subnet\_filter\_tags](#input\_lb\_subnet\_filter\_tags) | Tags used to discover subnets for the NLB (e.g., { 'NetworkTier' = 'Public' }). | `map(string)` | `{}` | no |
 | <a name="input_lb_subnet_ids"></a> [lb\_subnet\_ids](#input\_lb\_subnet\_ids) | List of subnet IDs for the NLB. Takes precedence over filters. | `list(string)` | `[]` | no |
-| <a name="input_mq_password"></a> [mq\_password](#input\_mq\_password) | Administrative password for the RabbitMQ broker | `string` | n/a | yes |
 | <a name="input_mq_username"></a> [mq\_username](#input\_mq\_username) | Administrative username for the RabbitMQ broker | `string` | n/a | yes |
 | <a name="input_nlb_listener_ips"></a> [nlb\_listener\_ips](#input\_nlb\_listener\_ips) | Map of port numbers to lists of IP addresses for NLB listeners. If provided for a port, a listener will be created for that port and the specified IPs will be registered as targets. If not provided for a port, no listener will be created for that port.<br/>    Example: { "5671" = ["10.0.1.10", "10.0.2.10"], "15672" = ["10.0.1.11"] } | `map(list(string))` | `{}` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Generic project identifier used for resource naming (e.g., 'messaging-hub') | `string` | n/a | yes |

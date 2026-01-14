@@ -143,6 +143,25 @@ resource "aws_security_group" "this" {
   tags = local.common_tags
 }
 
+## Password for Amazon MQ Broker
+resource "random_password" "mq_password" {
+  length           = 30
+  special          = true
+  override_special = "!#$%&()*+,-.:;<=>?@[]^_{|}~"
+}
+
+resource "aws_ssm_parameter" "mq_password" {
+  name        = "/${var.project_name}/${var.environment}/mq/broker_password"
+  description = "Password for Amazon MQ Broker in project ${var.project_name} and environment ${var.environment}"
+  type        = "SecureString"
+  value       = random_password.mq_password.result
+  tags        = local.common_tags
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
+
 # -------------------------------------------------------------------------
 # Amazon MQ Broker (RabbitMQ)
 # -------------------------------------------------------------------------
@@ -169,7 +188,7 @@ resource "aws_mq_broker" "this" {
 
   user {
     username = var.mq_username
-    password = var.mq_password
+    password = aws_ssm_parameter.mq_password.value
   }
 
   logs {
