@@ -1,3 +1,10 @@
+# --- NLB Internal/External ---
+variable "nlb_internal" {
+  description = "Whether the NLB should be internal (private). Default: true. Set to false to make the NLB internet-facing."
+  type        = bool
+  default     = true
+}
+
 # --- NLB Listener IPs ---
 variable "nlb_listener_ips" {
   description = <<EOT

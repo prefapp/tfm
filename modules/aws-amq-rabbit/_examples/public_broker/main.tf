@@ -11,6 +11,7 @@ module "amq_rabbit" {
   engine_version          = "3.13"
   deployment_mode         = "SINGLE_INSTANCE"
   enable_cloudwatch_logs  = true
+  nlb_internal            = false
   allowed_ingress_cidrs   = ["0.0.0.0/0"]
   tags = {
     Owner      = "DevOps"
