@@ -1,11 +1,4 @@
 # -------------------------------------------------------------------------
-# Fetch Broker Private IPs after creation
-# -------------------------------------------------------------------------
-data "aws_mq_broker" "this" {
-  broker_id = aws_mq_broker.this[0].id
-  depends_on = [aws_mq_broker.this]
-}
-# -------------------------------------------------------------------------
 # Register Broker Private IPs as NLB Targets
 # -------------------------------------------------------------------------
 resource "aws_lb_target_group_attachment" "broker" {
