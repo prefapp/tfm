@@ -1,6 +1,6 @@
 resource "aws_lb" "this" {
   count              = var.create_alb ? 1 : 0
-  name               = var.alb_name
+  name               = var.alb_name == "" ? "ecs-${var.cluster_name}" : var.alb_name
   internal           = var.alb_internal
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb[0].id]
