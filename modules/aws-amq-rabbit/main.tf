@@ -1,26 +1,4 @@
 # -------------------------------------------------------------------------
-# Register Broker Private IPs as NLB Targets
-# -------------------------------------------------------------------------
-resource "aws_lb_target_group_attachment" "broker" {
-  for_each = var.access_mode == "private_with_nlb" ? merge([
-    for tg_key, tg in aws_lb_target_group.this : {
-      # Use only the IPs provided for this port in nlb_listener_ips
-      for ip in try(var.nlb_listener_ips[tg_key], []) :
-      "${tg_key}-${ip}" => {
-        tg_arn = tg.arn
-        port   = tg.port
-        ip     = ip
-      }
-    }
-  ]...) : {}
-
-  target_group_arn = each.value.tg_arn
-  target_id        = each.value.ip
-  port             = each.value.port
-
-  depends_on = [aws_mq_broker.this]
-}
-# -------------------------------------------------------------------------
 # Networking Resolution
 # -------------------------------------------------------------------------
 
@@ -250,3 +228,25 @@ resource "aws_lb_listener" "this" {
   }
 }
 
+# -------------------------------------------------------------------------
+# Register Broker Private IPs as NLB Targets
+# -------------------------------------------------------------------------
+resource "aws_lb_target_group_attachment" "broker" {
+  for_each = var.access_mode == "private_with_nlb" ? merge([
+    for tg_key, tg in aws_lb_target_group.this : {
+      # Use only the IPs provided for this port in nlb_listener_ips
+      for ip in try(var.nlb_listener_ips[tg_key], []) :
+      "${tg_key}-${ip}" => {
+        tg_arn = tg.arn
+        port   = tg.port
+        ip     = ip
+      }
+    }
+  ]...) : {}
+
+  target_group_arn = each.value.tg_arn
+  target_id        = each.value.ip
+  port             = each.value.port
+
+  depends_on = [aws_mq_broker.this]
+}

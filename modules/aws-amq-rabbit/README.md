@@ -7,8 +7,6 @@ This Terraform module provisions and manages an Amazon MQ (RabbitMQ) broker on A
 
 The module is designed for production-ready messaging infrastructure, supporting secure credential management, VPC/subnet discovery, and customizable tagging. It is suitable for both new and existing AWS environments, and can be integrated into larger cloud architectures.
 
-It is designed to be flexible, secure, and easy to integrate into existing AWS infrastructures.
-
 ## Key Features
 
 - **Amazon MQ RabbitMQ Broker**: Deploys a managed RabbitMQ broker with configurable engine version and instance type.
