@@ -16,7 +16,6 @@ provider "aws" {
 
 module "oidc" {
   source = "../../"
-  organization = "1111111111111"
   subs = [
     "repo:ORG/repo-a:*",
     "repo:ORG/repo-b:*",
