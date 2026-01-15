@@ -39,5 +39,6 @@
     "modules/aws-cloudfront-delivery": "0.2.5",
     "modules/aws-ecs": "1.1.0",
     "modules/azure-linux-vm": "0.1.2",
-    "modules/azure-windows-vm": "0.1.10"
+    "modules/azure-windows-vm": "0.1.10",
+    "modules/dummy": "0.1.0"
 }
