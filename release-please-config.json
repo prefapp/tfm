@@ -64,6 +64,9 @@
         "modules/azure-vmss": {
             "package-name": "azure-vmss"
         },
+        "modules/dummy": {
+            "package-name": "dummy"
+        },
         "modules/mongodb-atlas-project": {
             "package-name": "mongodb-atlas-project"
         },

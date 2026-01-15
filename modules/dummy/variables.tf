@@ -25,7 +25,7 @@ variable "crash_on_apply" {
   default     = false
 }
 
-# 4. Crash during 'terraform plan' (handled by data.external/script)
+# 4. Crash during 'terraform plan' (handled by data.external/script) 
 variable "crash_on_plan" {
   description = "Set to true to force a non-zero exit code during the 'plan' phase."
   type        = bool
