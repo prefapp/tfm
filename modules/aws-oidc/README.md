@@ -108,9 +108,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_organization"></a> [organization](#input\_organization) | n/a | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | `"eu-west-1"` | no |
-| <a name="input_subs"></a> [subs](#input\_subs) | n/a | `list(string)` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | Region to deploy resources | `string` | `"eu-west-1"` | no |
+| <a name="input_subs"></a> [subs](#input\_subs) | List of GitHub OIDC subject claims allowed to assume the role | `list(string)` | n/a | yes |
 
 ## Outputs
 
@@ -123,8 +122,8 @@ No modules.
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-oidc/_examples):
 
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/aws-oidc/_examples/basic) - Simple configuration.
-- [specific\_tags](https://github.com/prefapp/tfm/tree/main/modules/aws-oidc/_examples/specific-tags) - Import existing eks.
-- [specific\_branch](https://github.com/prefapp/tfm/tree/main/modules/aws-oidc/_examples/specific-branch) - We generate an EKS specifying the VPC name, not its tags.
+- [specific\_tags](https://github.com/prefapp/tfm/tree/main/modules/aws-oidc/_examples/specific-tags) - Demonstrates tag-based filtering for OIDC-authenticated ECR access.
+- [specific\_branch](https://github.com/prefapp/tfm/tree/main/modules/aws-oidc/_examples/specific-branch) - Demonstrates branch-based filtering for OIDC-authenticated ECR access.
 
 ## Remote resources
 
