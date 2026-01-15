@@ -63,6 +63,10 @@ data "aws_subnets" "lb" {
 }
 
 locals {
+  broker_security_groups = contains(["private", "private_with_nlb"], var.access_mode) ? (
+      var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]
+    ) : null
+
   # AWS Target Group name limit is 32 chars. AWS appends a 6-char random suffix, so we have 26 chars for our prefix.
   # We use up to 21 chars for the base prefix and 5 for the port (max 65535), e.g. 'prefix-p65535-'.
   tg_name_prefix = "${substr(local.name_prefix, 0, 21)}-p"
@@ -174,7 +178,7 @@ resource "aws_mq_broker" "this" {
   host_instance_type  = var.host_instance_type
   deployment_mode     = var.deployment_mode
   subnet_ids          = local.broker_subnet_ids
-  security_groups     = contains(["private", "private_with_nlb"], var.access_mode) ? (var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]) : null
+  security_groups     = local.broker_security_groups
   publicly_accessible = var.access_mode == "public" ? true : false
   storage_type        = "ebs"
 
