@@ -1,5 +1,5 @@
 output "broker_urls" {
-  description = "List of broker endpoints (hostnames) for the Amazon MQ Broker. Use these to resolve the private IPs for NLB registration."
+  description = "Nested list of broker endpoints for the Amazon MQ Broker. Each element is a list of endpoints for a broker instance (e.g., [[hostname1, hostname2, ...], ...]). Use these to resolve the private IPs for NLB registration."
   value = aws_mq_broker.this[0].instances[*].endpoints
 }
 output "broker_id" {
