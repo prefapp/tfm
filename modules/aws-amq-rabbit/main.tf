@@ -205,7 +205,7 @@ resource "aws_mq_broker" "this" {
 resource "aws_lb" "this" {
   count               = var.access_mode == "private_with_nlb" ? 1 : 0
   name                = "${local.name_prefix}-nlb"
-    internal            = contains(["private", "private_with_nlb"], var.access_mode)
+  internal            = contains(["private", "private_with_nlb"], var.access_mode)
   load_balancer_type  = "network"
   subnets             = local.lb_subnet_ids
   tags                = local.common_tags
