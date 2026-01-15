@@ -42,4 +42,3 @@ output "target_group_names" {
   description = "List of all Target Group names used for the broker."
 }
 
-
