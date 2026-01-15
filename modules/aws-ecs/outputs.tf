@@ -62,3 +62,16 @@ output "scale_down_alarm_arns" {
   description = "ARNs of the scale down CloudWatch alarms for each ECS service."
   value       = try({ for k, v in aws_cloudwatch_metric_alarm.scale_down_alarm : k => v.arn }, {})
 }
+
+
+output "testing" {
+  value = local.resolved_subnets
+}
+
+output "search" {
+  value = data.aws_subnets.this[0].ids
+}
+
+output "localvpc_id" {
+  value = local.vpc_id
+}

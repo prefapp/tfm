@@ -210,7 +210,7 @@ variable "health_check" {
 variable "create_alb" {
   description = "Whether to create an Application Load Balancer for the ECS service"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "listener_certificate_arn" {

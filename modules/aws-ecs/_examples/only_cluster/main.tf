@@ -15,6 +15,14 @@ provider "aws" {
 }
 
 module "ecs" {
-  source = "../../"
-  cluster_name          = "example-autoscaling-cluster"
+  source       = "../../"
+  cluster_name = "example-autoscaling-cluster"
+  #  create_alb      = true
+  #  subnet_tag_key  = "Network"
+  #  subnet_tag_name = "public"
+  vpc_tag_name = "beginners-mq-vpc"
+}
+
+output "proba" {
+  value = module.ecs
 }
