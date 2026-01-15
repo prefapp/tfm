@@ -38,6 +38,11 @@ output "alb_arn" {
   value       = try(aws_lb.this[0].arn, "")
 }
 
+output "alb_name" {
+  description = "Name of the Application Load Balancer"
+  value       = try(aws_lb.this[0].name, "")
+}
+
 output "target_group_arn" {
   description = "ARN of the target group"
   value       = try(aws_lb_target_group.this[0].arn, "")
@@ -61,17 +66,4 @@ output "scale_up_alarm_arns" {
 output "scale_down_alarm_arns" {
   description = "ARNs of the scale down CloudWatch alarms for each ECS service."
   value       = try({ for k, v in aws_cloudwatch_metric_alarm.scale_down_alarm : k => v.arn }, {})
-}
-
-
-output "testing" {
-  value = local.resolved_subnets
-}
-
-output "search" {
-  value = data.aws_subnets.this[0].ids
-}
-
-output "localvpc_id" {
-  value = local.vpc_id
 }
