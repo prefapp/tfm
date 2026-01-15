@@ -39,7 +39,7 @@ resource "aws_ecs_service" "this" {
   desired_count   = local.should_stop_service ? 0 : var.desired_count
   network_configuration {
     subnets          = local.resolved_subnets
-    security_groups  = var.security_groups
+    security_groups  = concat(var.security_groups, [aws_security_group.this[0].id])
     assign_public_ip = true
   }
 
@@ -60,10 +60,6 @@ resource "aws_ecs_service" "this" {
     }
   }
   lifecycle {
-    precondition {
-      condition     = var.security_groups != null
-      error_message = "You must specify security_groups."
-    }
 
     precondition {
       condition     = var.service_name != null
