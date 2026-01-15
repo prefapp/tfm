@@ -236,6 +236,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [Autoscaling enabled](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/autoscaling) - ECS Service with CPU-Based Autoscaling
 - [Only cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/only\_cluster) - ECS Cluster without services attached
 - [Only cluster with alb](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/only\_cluster\_with\_alb) - ECS Cluster without services attached and with alb for services
+- [Service to existing cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/service\_to\_existing\_cluster) - Attach service to existing cluster with created alb
 - [Attach service to cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/attach\_service\_to-cluster) - ECS services that need a existent cluster
 - [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with\_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 
