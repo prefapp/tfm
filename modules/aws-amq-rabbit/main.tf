@@ -122,7 +122,7 @@ resource "aws_security_group" "this" {
   dynamic "ingress" {
     for_each = var.exposed_ports
     content {
-      description = "RabbitMQ ${ingress.value == 443 ? "Management UI" : lookup(local.rabbitmq_port_names, ingress.value, "Custom Port")} (${ingress.value})"
+      description = "RabbitMQ ${lookup(local.rabbitmq_port_names, ingress.value, "Custom Port")} (${ingress.value})"
       from_port   = ingress.value
       to_port     = ingress.value
       protocol    = "tcp"
