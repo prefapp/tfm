@@ -121,7 +121,7 @@ variable "lb_certificate_arn" {
 }
 
 variable "allowed_ingress_cidrs" {
-  description = "CIDR ranges allowed to connect to the AMQPS/HTTPS ports"
+  description = "CIDR ranges allowed to connect to all exposed ports (e.g., AMQPS, AMQP, STOMP, MQTT, Management UI, etc.)"
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
