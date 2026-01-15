@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/prefapp/tfm/compare/aws-ecs-v1.0.0...aws-ecs-v1.1.0) (2026-01-15)
+
+
+### Features
+
+* **aws-ecs:** fix issue networks by tags and added alb in cluster ([#859](https://github.com/prefapp/tfm/issues/859)) ([91e08b4](https://github.com/prefapp/tfm/commit/91e08b47dd8f4b271d0040998232f53b33955c54))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/aws-ecs-v0.2.0...aws-ecs-v1.0.0) (2026-01-07)
 
 
