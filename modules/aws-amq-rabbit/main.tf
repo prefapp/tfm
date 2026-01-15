@@ -215,15 +215,15 @@ resource "aws_lb" "this" {
 
 locals {
   # Only create listeners/target groups for ports with provided IPs in nlb_listener_ips
-  nlb_listener_ports_map = var.access_mode == "private_with_nlb" ? { for port, ips in var.nlb_listener_ips : tostring(port) => port if length(ips) > 0 } : {}
+  nlb_listener_ports = var.access_mode == "private_with_nlb" ? [for port, ips in var.nlb_listener_ips : port if length(ips) > 0] : []
 }
 
 resource "aws_lb_target_group" "this" {
-  for_each = var.access_mode == "private_with_nlb" ? local.nlb_listener_ports_map : {}
+  for_each = var.access_mode == "private_with_nlb" ? toset(local.nlb_listener_ports) : toset([])
   # Target group names must be <=32 chars and cannot end with a hyphen.
   # Ensure the name does not end with a hyphen after truncation
-  name = trimend(substr("${local.tg_name_prefix}${each.value}", 0, 32), "-")
-  port        = each.value
+  name = trimend(substr("${local.tg_name_prefix}${each.key}", 0, 32), "-")
+  port        = tonumber(each.key)
   protocol    = "TLS"
   vpc_id      = local.vpc_id
   target_type = "ip"
@@ -237,9 +237,9 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener" "this" {
-  for_each          = var.access_mode == "private_with_nlb" ? local.nlb_listener_ports_map : {}
+  for_each          = var.access_mode == "private_with_nlb" ? toset(local.nlb_listener_ports) : toset([])
   load_balancer_arn = aws_lb.this[0].arn
-  port              = each.value
+  port              = tonumber(each.key)
   protocol          = "TLS"
   ssl_policy        = var.lb_ssl_policy
   certificate_arn   = var.lb_certificate_arn
