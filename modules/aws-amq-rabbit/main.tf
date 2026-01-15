@@ -140,7 +140,7 @@ resource "aws_security_group" "this" {
 resource "random_password" "mq_password" {
   length           = 30
   special          = true
-  # Exclude invalid Amazon MQ password characters: [, ], :, =
+  # Exclude invalid Amazon MQ password characters: [, ], :, =, , (comma)
   override_special = "!#$%&()*+-.;<>?@^_{|}~"
 }
 
@@ -237,7 +237,7 @@ resource "aws_lb_listener" "this" {
   load_balancer_arn = aws_lb.this[0].arn
   port              = each.value
   protocol          = "TLS"
-  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  ssl_policy        = var.lb_ssl_policy
   certificate_arn   = var.lb_certificate_arn
 
   default_action {

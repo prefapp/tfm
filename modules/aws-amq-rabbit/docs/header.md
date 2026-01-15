@@ -50,12 +50,7 @@ When deploying a private RabbitMQ broker with a Network Load Balancer (NLB), you
 **Why is this necessary?**
 
 
-For Amazon MQ brokers with the RabbitMQ engine type, AWS does not expose the private IP addresses of the broker instances. This means you cannot directly register the broker’s private IPs as targets in a Network Load Balancer (NLB) target group using `target_type = "ip"`. As a result, it is not possible to attach the NLB to the broker in a single Terraform run, since the required IP addresses are never made available. This is a restriction imposed by AWS for RabbitMQ brokers, as documented in the [Amazon MQ documentation](https://aws.amazon.com/documentation-overview/amazon-mq/).
-
----
-
-The following examples demonstrate common ways to use this module to provision an Amazon MQ RabbitMQ broker, including default settings and optional configuration patterns such as custom port exposure.
-
+For Amazon MQ brokers with the RabbitMQ engine type, AWS does not expose the broker's private IP addresses as Terraform resource attributes. However, these IPs do exist and can be resolved via DNS lookups on the broker hostnames (e.g., using `dig` or `nslookup`). Because Terraform cannot access these IPs directly, you must manually resolve and provide them to the module using the `nlb_listener_ips` variable if you want to register the broker with an NLB. This is a limitation of the AWS provider and the Amazon MQ API, as documented in the [Amazon MQ documentation](https://aws.amazon.com/documentation-overview/amazon-mq/).
 
 
 ### Resolving Broker IPs for NLB Registration
@@ -102,6 +97,9 @@ module "rabbitmq" {
 ```
 
 > **Note:** If using a Network Load Balancer (NLB), a listener and target group will be created for each port in `exposed_ports`. All specified ports will be open in the security group and accessible through the NLB.
+
+---
+The following examples demonstrate common ways to use this module to provision an Amazon MQ RabbitMQ broker, including default settings and optional configuration patterns such as custom port exposure.
 
 ### Minimal Example (Private Broker)
 

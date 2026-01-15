@@ -1,3 +1,9 @@
+# --- NLB TLS Policy ---
+variable "lb_ssl_policy" {
+  description = "TLS policy for the NLB listener. Default is 'ELBSecurityPolicy-TLS-1-2-2017-01' for compatibility with TLS 1.2 and 1.3. See AWS documentation for available policies."
+  type        = string
+  default     = "ELBSecurityPolicy-TLS-1-2-2017-01"
+}
 # --- NLB Listener IPs ---
 variable "nlb_listener_ips" {
   description = <<EOT

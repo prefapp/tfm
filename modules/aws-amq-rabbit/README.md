@@ -45,11 +45,7 @@ When deploying a private RabbitMQ broker with a Network Load Balancer (NLB), you
 
 **Why is this necessary?**
 
-For Amazon MQ brokers with the RabbitMQ engine type, AWS does not expose the private IP addresses of the broker instances. This means you cannot directly register the broker’s private IPs as targets in a Network Load Balancer (NLB) target group using `target_type = "ip"`. As a result, it is not possible to attach the NLB to the broker in a single Terraform run, since the required IP addresses are never made available. This is a restriction imposed by AWS for RabbitMQ brokers, as documented in the [Amazon MQ documentation](https://aws.amazon.com/documentation-overview/amazon-mq/).
-
----
-
-The following examples demonstrate common ways to use this module to provision an Amazon MQ RabbitMQ broker, including default settings and optional configuration patterns such as custom port exposure.
+For Amazon MQ brokers with the RabbitMQ engine type, AWS does not expose the broker's private IP addresses as Terraform resource attributes. However, these IPs do exist and can be resolved via DNS lookups on the broker hostnames (e.g., using `dig` or `nslookup`). Because Terraform cannot access these IPs directly, you must manually resolve and provide them to the module using the `nlb_listener_ips` variable if you want to register the broker with an NLB. This is a limitation of the AWS provider and the Amazon MQ API, as documented in the [Amazon MQ documentation](https://aws.amazon.com/documentation-overview/amazon-mq/).
 
 ### Resolving Broker IPs for NLB Registration
 
@@ -93,6 +89,9 @@ module "rabbitmq" {
 
 > **Note:** If using a Network Load Balancer (NLB), a listener and target group will be created for each port in `exposed_ports`. All specified ports will be open in the security group and accessible through the NLB.
 
+---
+The following examples demonstrate common ways to use this module to provision an Amazon MQ RabbitMQ broker, including default settings and optional configuration patterns such as custom port exposure.
+
 ### Minimal Example (Private Broker)
 
 ```hcl
@@ -108,7 +107,6 @@ module "rabbitmq" {
   engine_version         = "3.13"
   deployment_mode        = "SINGLE_INSTANCE"
   enable_cloudwatch_logs = true
-  nlb_internal           = true
   tags = {
     Owner      = "DevOps"
     CostCenter = "IT"
@@ -209,7 +207,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_mode"></a> [access\_mode](#input\_access\_mode) | Access mode for the broker: 'public', 'private', or 'private\_with\_nlb'. | `string` | `"private"` | no |
-| <a name="input_allowed_ingress_cidrs"></a> [allowed\_ingress\_cidrs](#input\_allowed\_ingress\_cidrs) | CIDR ranges allowed to connect to the AMQPS/HTTPS ports | `list(string)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
+| <a name="input_allowed_ingress_cidrs"></a> [allowed\_ingress\_cidrs](#input\_allowed\_ingress\_cidrs) | CIDR ranges allowed to connect to all exposed ports (e.g., AMQPS, AMQP, STOMP, MQTT, Management UI, etc.) | `list(string)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
 | <a name="input_broker_subnet_filter_tags"></a> [broker\_subnet\_filter\_tags](#input\_broker\_subnet\_filter\_tags) | Tags used to discover subnets for the Broker (e.g., { 'NetworkTier' = 'Private' }). | `map(string)` | `{}` | no |
 | <a name="input_broker_subnet_ids"></a> [broker\_subnet\_ids](#input\_broker\_subnet\_ids) | List of private subnet IDs for the Broker. Takes precedence over filters. | `list(string)` | `[]` | no |
 | <a name="input_deployment_mode"></a> [deployment\_mode](#input\_deployment\_mode) | Broker deployment strategy: SINGLE\_INSTANCE or CLUSTER\_MULTI\_AZ | `string` | `"SINGLE_INSTANCE"` | no |
@@ -220,10 +218,10 @@ No modules.
 | <a name="input_exposed_ports"></a> [exposed\_ports](#input\_exposed\_ports) | List of ports to expose for RabbitMQ broker (AMQPS, management, etc.). Default is [5671]. | `list(number)` | <pre>[<br/>  5671<br/>]</pre> | no |
 | <a name="input_host_instance_type"></a> [host\_instance\_type](#input\_host\_instance\_type) | Instance class for the broker (e.g., mq.t3.micro) | `string` | `"mq.t3.micro"` | no |
 | <a name="input_lb_certificate_arn"></a> [lb\_certificate\_arn](#input\_lb\_certificate\_arn) | ARN of the ACM certificate for the TLS listener. Required only if access\_mode is 'private\_with\_nlb'. | `string` | `null` | no |
+| <a name="input_lb_ssl_policy"></a> [lb\_ssl\_policy](#input\_lb\_ssl\_policy) | TLS policy for the NLB listener. Default is 'ELBSecurityPolicy-TLS-1-2-2017-01' for compatibility with TLS 1.2 and 1.3. See AWS documentation for available policies. | `string` | `"ELBSecurityPolicy-TLS-1-2-2017-01"` | no |
 | <a name="input_lb_subnet_filter_tags"></a> [lb\_subnet\_filter\_tags](#input\_lb\_subnet\_filter\_tags) | Tags used to discover subnets for the NLB (e.g., { 'NetworkTier' = 'Public' }). | `map(string)` | `{}` | no |
 | <a name="input_lb_subnet_ids"></a> [lb\_subnet\_ids](#input\_lb\_subnet\_ids) | List of subnet IDs for the NLB. Takes precedence over filters. | `list(string)` | `[]` | no |
 | <a name="input_mq_username"></a> [mq\_username](#input\_mq\_username) | Administrative username for the RabbitMQ broker | `string` | n/a | yes |
-| <a name="input_nlb_internal"></a> [nlb\_internal](#input\_nlb\_internal) | Whether the NLB should be internal (private). Default: true. Set to false to make the NLB internet-facing. | `bool` | `true` | no |
 | <a name="input_nlb_listener_ips"></a> [nlb\_listener\_ips](#input\_nlb\_listener\_ips) | Map of port numbers to lists of IP addresses for NLB listeners. If provided for a port, a listener will be created for that port and the specified IPs will be registered as targets. If not provided for a port, no listener will be created for that port.<br/>    Example: { "5671" = ["10.0.1.10", "10.0.2.10"], "15672" = ["10.0.1.11"] } | `map(list(string))` | `{}` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Generic project identifier used for resource naming (e.g., 'messaging-hub') | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional metadata tags to apply to all resources | `map(string)` | `{}` | no |
@@ -237,7 +235,7 @@ No modules.
 | <a name="output_broker_arn"></a> [broker\_arn](#output\_broker\_arn) | ARN for the Amazon MQ Broker |
 | <a name="output_broker_console_url"></a> [broker\_console\_url](#output\_broker\_console\_url) | Direct web console endpoint for the broker |
 | <a name="output_broker_id"></a> [broker\_id](#output\_broker\_id) | Identifier for the Amazon MQ Broker |
-| <a name="output_broker_urls"></a> [broker\_urls](#output\_broker\_urls) | List of broker endpoints (hostnames) for the Amazon MQ Broker. Use these to resolve the private IPs for NLB registration. |
+| <a name="output_broker_urls"></a> [broker\_urls](#output\_broker\_urls) | Nested list of broker endpoints for the Amazon MQ Broker. Each element is a list of endpoints for a broker instance (e.g., [[hostname1, hostname2, ...], ...]). Use these to resolve the private IPs for NLB registration. |
 | <a name="output_nlb_arn"></a> [nlb\_arn](#output\_nlb\_arn) | ARN of the Network Load Balancer used for the broker. |
 | <a name="output_target_group_arn"></a> [target\_group\_arn](#output\_target\_group\_arn) | ARN of the first Target Group used for the broker. If multiple ports are exposed, this is the first. |
 | <a name="output_target_group_arns"></a> [target\_group\_arns](#output\_target\_group\_arns) | List of all Target Group ARNs used for the broker. |
