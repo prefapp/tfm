@@ -1,12 +1,9 @@
 variable "region" {
-  type    = string
-  default = "eu-west-1"
+  description = "Region to deploy resources"
+  type        = string
+  default     = "eu-west-1"
 }
-
-variable "organization" {
-  type = string
-}
-
 variable "subs" {
-  type = list(string)
+  description = "List of GitHub OIDC subject claims allowed to assume the role"
+  type        = list(string)
 }
