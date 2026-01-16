@@ -1,20 +1,20 @@
 output "broker_urls" {
   description = "Nested list of broker endpoints for the Amazon MQ Broker. Each element is a list of endpoints for a broker instance (e.g., [[hostname1, hostname2, ...], ...]). Use these to resolve the private IPs for NLB registration."
-  value = aws_mq_broker.this[0].instances[*].endpoints
+  value = aws_mq_broker.this.instances[*].endpoints
 }
 output "broker_id" {
   description = "Identifier for the Amazon MQ Broker"
-  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].id : null
+  value       = aws_mq_broker.this.id
 }
 
 output "broker_arn" {
   description = "ARN for the Amazon MQ Broker"
-  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].arn : null
+  value       = aws_mq_broker.this.arn
 }
 
 output "broker_console_url" {
   description = "Direct web console endpoint for the broker"
-  value       = length(aws_mq_broker.this) > 0 ? aws_mq_broker.this[0].instances[0].console_url : null
+  value       = aws_mq_broker.this.instances[0].console_url
 }
 
 output "nlb_arn" {
