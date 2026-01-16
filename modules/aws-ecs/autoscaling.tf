@@ -160,7 +160,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_down_alarm" {
         period      = var.ecs_autoscaling[each.key].scale.down.period
         stat        = var.ecs_autoscaling[each.key].metric_statistic
         dimensions = {
-          ClusterName = aws_ecs_cluster.this.name
+          ClusterName = var.create_cluster ? aws_ecs_cluster.this[0].name : var.cluster_name
           ServiceName = each.key
         }
       }
