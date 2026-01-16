@@ -140,15 +140,17 @@ resource "aws_lb_listener" "this" {
 # -------------------------------------------------------------------------
 resource "aws_lb_target_group_attachment" "broker" {
   for_each = var.access_mode == "private_with_nlb" ? merge([
-    for cfg in local.nlb_listener_configs : [
-      for ip in cfg.ips : {
-        "${cfg.port_key}-${ip}" = {
-          tg_arn = aws_lb_target_group.this[cfg.port_key].arn
-          port   = cfg.target_port
-          ip     = ip
+    for pair in flatten([
+      for cfg in local.nlb_listener_configs : [
+        for ip in cfg.ips : {
+          "${cfg.port_key}-${ip}" = {
+            tg_arn = aws_lb_target_group.this[cfg.port_key].arn
+            port   = cfg.target_port
+            ip     = ip
+          }
         }
-      }
-    ]
+      ]
+    ]) : pair
   ]...) : {}
 
   target_group_arn = each.value.tg_arn
