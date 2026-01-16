@@ -7,11 +7,31 @@ variable "lb_ssl_policy" {
 # --- NLB Listener IPs ---
 variable "nlb_listener_ips" {
   description = <<EOT
-    Map of port numbers to lists of IP addresses for NLB listeners. If provided for a port, a listener will be created for that port and the specified IPs will be registered as targets. If not provided for a port, no listener will be created for that port.
-    Example: { "5671" = ["10.0.1.10", "10.0.2.10"], "15672" = ["10.0.1.11"] }
+    List of objects to define NLB listeners and targets. Each object can specify:
+      - ips: List of broker IPs to register as targets
+      - target_port: Port number or name (e.g., 5671, 15672, "AMQPS", "Management UI")
+      - listener_port: (Optional) Port number for the NLB listener. If not set, uses target_port.
+    Example:
+      [
+        {
+          ips = ["10.0.1.10", "10.0.2.10"]
+          target_port = 5671
+          listener_port = 8081
+        },
+        {
+          ips = ["10.0.1.11"]
+          target_port = "Management UI"
+          listener_port = 8080
+        }
+      ]
   EOT
-  type        = map(list(string))
-  default     = {}
+  type = list(object({
+    ips             = list(string)
+    target_port     = optional(any) # number or string (name)
+    listener_port   = optional(number)
+    expose_all_ports = optional(bool)
+  }))
+  default = []
 }
 # --- Port Exposure ---
 variable "exposed_ports" {
@@ -129,7 +149,7 @@ variable "lb_certificate_arn" {
 variable "allowed_ingress_cidrs" {
   description = "CIDR ranges allowed to connect to all exposed ports (e.g., AMQPS, AMQP, STOMP, MQTT, Management UI, etc.)"
   type        = list(string)
-  default     = ["0.0.0.0/0"]
+  default     = []
 }
 
 variable "tags" {

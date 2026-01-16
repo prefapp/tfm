@@ -62,10 +62,23 @@ nslookup b-xxxx.mq.us-east-1.amazonaws.com
 You can then provide these IPs to the module using the `nlb_listener_ips` variable, mapping each port to the list of broker IPs you want to register for that port:
 
 ```hcl
-nlb_listener_ips = {
-  "5671"  = ["10.0.1.10", "10.0.2.10"] # AMQPS
-  "15672" = ["10.0.1.11"]               # Management UI
-}
+nlb_listener_ips = [
+  {
+    ips = ["10.0.1.10", "10.0.2.10"]
+    target_port = 5671 # AMQPS
+    listener_port = 8081 # Optional, NLB will listen on 8081 and forward to 5671
+  },
+  {
+    ips = ["10.0.1.11"]
+    target_port = "Management UI" # You can use the port number or the name
+    listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+  }
+  # Or, to expose all RabbitMQ ports (AMQPS and Management UI) for the same set of IPs:
+  {
+    ips = ["10.0.1.10", "10.0.2.10"]
+    expose_all_ports = true # Optional, will expose all RabbitMQ ports (5671 and 15672)
+  }
+]
 ```
 
 If you do not provide IPs for a port, no NLB listener or target group will be created for that port.
@@ -126,10 +139,18 @@ module "rabbitmq" {
   lb_subnet_ids          = ["subnet-yyyyyyyy"]
   lb_certificate_arn     = "arn:aws:acm:..."
   exposed_ports          = [5671, 15672]
-  nlb_listener_ips = {
-    "5671"  = ["10.0.1.10", "10.0.2.10"] # AMQPS
-    "15672" = ["10.0.1.11"]               # Management UI
-  }
+  nlb_listener_ips = [
+    {
+      ips = ["10.0.1.10", "10.0.2.10"]
+      target_port = 5671 # AMQPS
+      listener_port = 8081 # Optional, NLB will listen on 8081 and forward to 5671
+    },
+    {
+      ips = ["10.0.1.11"]
+      target_port = "Management UI" # You can use the port number or the name
+      listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+    }
+  ]
   host_instance_type     = "mq.t3.micro"
   engine_version         = "3.13"
   deployment_mode        = "SINGLE_INSTANCE"
@@ -198,6 +219,7 @@ No modules.
 | [random_password.mq_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [aws_subnets.broker](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_subnets.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
+| [aws_vpc.by_name](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 | [aws_vpc.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
@@ -205,7 +227,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_access_mode"></a> [access\_mode](#input\_access\_mode) | Access mode for the broker: 'public', 'private', or 'private\_with\_nlb'. | `string` | `"private"` | no |
-| <a name="input_allowed_ingress_cidrs"></a> [allowed\_ingress\_cidrs](#input\_allowed\_ingress\_cidrs) | CIDR ranges allowed to connect to all exposed ports (e.g., AMQPS, AMQP, STOMP, MQTT, Management UI, etc.) | `list(string)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
+| <a name="input_allowed_ingress_cidrs"></a> [allowed\_ingress\_cidrs](#input\_allowed\_ingress\_cidrs) | CIDR ranges allowed to connect to all exposed ports (e.g., AMQPS, AMQP, STOMP, MQTT, Management UI, etc.) | `list(string)` | `[]` | no |
 | <a name="input_broker_subnet_filter_tags"></a> [broker\_subnet\_filter\_tags](#input\_broker\_subnet\_filter\_tags) | Tags used to discover subnets for the Broker (e.g., { 'NetworkTier' = 'Private' }). | `map(string)` | `{}` | no |
 | <a name="input_broker_subnet_ids"></a> [broker\_subnet\_ids](#input\_broker\_subnet\_ids) | List of private subnet IDs for the Broker. Takes precedence over filters. | `list(string)` | `[]` | no |
 | <a name="input_deployment_mode"></a> [deployment\_mode](#input\_deployment\_mode) | Broker deployment strategy: SINGLE\_INSTANCE or CLUSTER\_MULTI\_AZ | `string` | `"SINGLE_INSTANCE"` | no |
@@ -220,7 +242,7 @@ No modules.
 | <a name="input_lb_subnet_filter_tags"></a> [lb\_subnet\_filter\_tags](#input\_lb\_subnet\_filter\_tags) | Tags used to discover subnets for the NLB (e.g., { 'NetworkTier' = 'Public' }). | `map(string)` | `{}` | no |
 | <a name="input_lb_subnet_ids"></a> [lb\_subnet\_ids](#input\_lb\_subnet\_ids) | List of subnet IDs for the NLB. Takes precedence over filters. | `list(string)` | `[]` | no |
 | <a name="input_mq_username"></a> [mq\_username](#input\_mq\_username) | Administrative username for the RabbitMQ broker | `string` | n/a | yes |
-| <a name="input_nlb_listener_ips"></a> [nlb\_listener\_ips](#input\_nlb\_listener\_ips) | Map of port numbers to lists of IP addresses for NLB listeners. If provided for a port, a listener will be created for that port and the specified IPs will be registered as targets. If not provided for a port, no listener will be created for that port.<br/>    Example: { "5671" = ["10.0.1.10", "10.0.2.10"], "15672" = ["10.0.1.11"] } | `map(list(string))` | `{}` | no |
+| <a name="input_nlb_listener_ips"></a> [nlb\_listener\_ips](#input\_nlb\_listener\_ips) | List of objects to define NLB listeners and targets. Each object can specify:<br/>      - ips: List of broker IPs to register as targets<br/>      - target\_port: Port number or name (e.g., 5671, 15672, "AMQPS", "Management UI")<br/>      - listener\_port: (Optional) Port number for the NLB listener. If not set, uses target\_port.<br/>    Example:<br/>      [<br/>        {<br/>          ips = ["10.0.1.10", "10.0.2.10"]<br/>          target\_port = 5671<br/>          listener\_port = 8081<br/>        },<br/>        {<br/>          ips = ["10.0.1.11"]<br/>          target\_port = "Management UI"<br/>          listener\_port = 8080<br/>        }<br/>      ] | <pre>list(object({<br/>    ips             = list(string)<br/>    target_port     = optional(any) # number or string (name)<br/>    listener_port   = optional(number)<br/>    expose_all_ports = optional(bool)<br/>  }))</pre> | `[]` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Generic project identifier used for resource naming (e.g., 'messaging-hub') | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional metadata tags to apply to all resources | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the target VPC. Takes precedence over 'vpc\_name'. | `string` | `null` | no |

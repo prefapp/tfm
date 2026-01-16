@@ -1,44 +1,3 @@
-# -------------------------------------------------------------------------
-# Networking Resolution
-# -------------------------------------------------------------------------
-
-data "aws_vpc" "this" {
-  count = var.vpc_id == null && var.vpc_name != null ? 1 : 0
-  filter {
-    name   = "tag:Name"
-    values = [var.vpc_name]
-  }
-}
-
-data "aws_subnets" "broker" {
-  count = length(var.broker_subnet_ids) == 0 && length(var.broker_subnet_filter_tags) > 0 ? 1 : 0
-  filter {
-    name   = "vpc-id"
-    values = [local.vpc_id]
-  }
-  dynamic "filter" {
-    for_each = var.broker_subnet_filter_tags
-    content {
-      name   = "tag:${filter.key}"
-      values = [filter.value]
-    }
-  }
-}
-
-data "aws_subnets" "lb" {
-  count = length(var.lb_subnet_ids) == 0 && length(var.lb_subnet_filter_tags) > 0 ? 1 : 0
-  filter {
-    name   = "vpc-id"
-    values = [local.vpc_id]
-  }
-  dynamic "filter" {
-    for_each = var.lb_subnet_filter_tags
-    content {
-      name   = "tag:${filter.key}"
-      values = [filter.value]
-    }
-  }
-}
 
 locals {
   broker_security_groups = contains(["private", "private_with_nlb"], var.access_mode) ? (
@@ -51,13 +10,10 @@ locals {
   # Map well-known RabbitMQ ports to service names for SG descriptions
   rabbitmq_port_names = {
     5671  = "AMQPS"
-    5672  = "AMQP"
     15672 = "Management UI"
-    61613 = "STOMP"
-    1883  = "MQTT"
-    8883  = "MQTT SSL"
   }
-  vpc_id = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.this[*].id)
+  vpc_id = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.by_name[*].id)
+  vpc_cidr_block = var.vpc_id != null ? one(data.aws_vpc.this[*].cidr_block) : one(data.aws_vpc.by_name[*].cidr_block)
   single_broker_subnet_id = (
     length(var.broker_subnet_ids) > 0
     ? var.broker_subnet_ids[0]
@@ -86,15 +42,12 @@ locals {
   })
 }
 
-# -------------------------------------------------------------------------
-# Security Configuration
-# -------------------------------------------------------------------------
-
 resource "aws_security_group" "this" {
   count       = var.existing_security_group_id == null ? 1 : 0
   name        = "${local.name_prefix}-sg"
   description = "Access control for MQ Broker"
   vpc_id      = local.vpc_id
+
 
 
   dynamic "ingress" {
@@ -106,6 +59,22 @@ resource "aws_security_group" "this" {
       protocol    = "tcp"
       cidr_blocks = var.allowed_ingress_cidrs
     }
+  }
+
+  # Allow RabbitMQ (5671) and HTTPS (443) from within the VPC
+  ingress {
+    from_port   = 5671
+    to_port     = 5671
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.this[0].cidr_block]
+    description = "Allow RabbitMQ (5671) from VPC CIDR"
+  }
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.this[0].cidr_block]
+    description = "Allow HTTPS (443) from VPC CIDR"
   }
 
   egress {
@@ -192,16 +161,32 @@ resource "aws_lb" "this" {
 
 
 locals {
-  # Only create listeners/target groups for ports with provided IPs in nlb_listener_ips
-  nlb_listener_ports = var.access_mode == "private_with_nlb" ? [for port, ips in var.nlb_listener_ips : port if length(ips) > 0] : []
+  # Build a list of listener/target group configs from nlb_listener_ips
+  nlb_listener_configs = var.access_mode == "private_with_nlb" ? flatten([
+    for entry in var.nlb_listener_ips : (
+      (lookup(entry, "expose_all_ports", false)) ? [
+        for port, name in local.rabbitmq_port_names : {
+          target_port   = port
+          listener_port = port
+          ips           = entry.ips
+          port_key      = tostring(port)
+        }
+      ] : [
+        {
+          target_port   = (can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : lookup(local.rabbitmq_port_names, entry.target_port, null))
+          listener_port = lookup(entry, "listener_port", null) != null ? entry.listener_port : (can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : lookup(local.rabbitmq_port_names, entry.target_port, null))
+          ips           = entry.ips
+          port_key      = tostring(lookup(entry, "listener_port", null) != null ? entry.listener_port : entry.target_port)
+        }
+      ]
+    )
+  ]) : []
 }
 
 resource "aws_lb_target_group" "this" {
-  for_each = var.access_mode == "private_with_nlb" ? toset(local.nlb_listener_ports) : toset([])
-  # Target group names must be <=32 chars and cannot end with a hyphen.
-  # Ensure the name does not end with a hyphen after truncation
-  name = trimend(substr("${local.tg_name_prefix}${each.key}", 0, 32), "-")
-  port        = tonumber(each.key)
+  for_each = var.access_mode == "private_with_nlb" ? { for cfg in local.nlb_listener_configs : cfg.port_key => cfg } : {}
+  name        = trimend(substr("${local.tg_name_prefix}${each.key}", 0, 32), "-")
+  port        = each.value.target_port
   protocol    = "TLS"
   vpc_id      = local.vpc_id
   target_type = "ip"
@@ -215,9 +200,9 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener" "this" {
-  for_each          = var.access_mode == "private_with_nlb" ? toset(local.nlb_listener_ports) : toset([])
+  for_each          = var.access_mode == "private_with_nlb" ? { for cfg in local.nlb_listener_configs : cfg.port_key => cfg } : {}
   load_balancer_arn = aws_lb.this[0].arn
-  port              = tonumber(each.key)
+  port              = each.value.listener_port
   protocol          = "TLS"
   ssl_policy        = var.lb_ssl_policy
   certificate_arn   = var.lb_certificate_arn
@@ -233,15 +218,15 @@ resource "aws_lb_listener" "this" {
 # -------------------------------------------------------------------------
 resource "aws_lb_target_group_attachment" "broker" {
   for_each = var.access_mode == "private_with_nlb" ? merge([
-    for tg_key, tg in aws_lb_target_group.this : {
-      # Use only the IPs provided for this port in nlb_listener_ips
-      for ip in try(var.nlb_listener_ips[tg_key], []) :
-      "${tg_key}-${ip}" => {
-        tg_arn = tg.arn
-        port   = tg.port
-        ip     = ip
+    for cfg in local.nlb_listener_configs : [
+      for ip in cfg.ips : {
+        "${cfg.port_key}-${ip}" = {
+          tg_arn = aws_lb_target_group.this[cfg.port_key].arn
+          port   = cfg.target_port
+          ip     = ip
+        }
       }
-    }
+    ]
   ]...) : {}
 
   target_group_arn = each.value.tg_arn

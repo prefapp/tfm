@@ -67,10 +67,23 @@ nslookup b-xxxx.mq.us-east-1.amazonaws.com
 You can then provide these IPs to the module using the `nlb_listener_ips` variable, mapping each port to the list of broker IPs you want to register for that port:
 
 ```hcl
-nlb_listener_ips = {
-  "5671"  = ["10.0.1.10", "10.0.2.10"] # AMQPS
-  "15672" = ["10.0.1.11"]               # Management UI
-}
+nlb_listener_ips = [
+  {
+    ips = ["10.0.1.10", "10.0.2.10"]
+    target_port = 5671 # AMQPS
+    listener_port = 8081 # Optional, NLB will listen on 8081 and forward to 5671
+  },
+  {
+    ips = ["10.0.1.11"]
+    target_port = "Management UI" # You can use the port number or the name
+    listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+  }
+  # Or, to expose all RabbitMQ ports (AMQPS and Management UI) for the same set of IPs:
+  {
+    ips = ["10.0.1.10", "10.0.2.10"]
+    expose_all_ports = true # Optional, will expose all RabbitMQ ports (5671 and 15672)
+  }
+]
 ```
 
 If you do not provide IPs for a port, no NLB listener or target group will be created for that port.
@@ -135,10 +148,18 @@ module "rabbitmq" {
   lb_subnet_ids          = ["subnet-yyyyyyyy"]
   lb_certificate_arn     = "arn:aws:acm:..."
   exposed_ports          = [5671, 15672]
-  nlb_listener_ips = {
-    "5671"  = ["10.0.1.10", "10.0.2.10"] # AMQPS
-    "15672" = ["10.0.1.11"]               # Management UI
-  }
+  nlb_listener_ips = [
+    {
+      ips = ["10.0.1.10", "10.0.2.10"]
+      target_port = 5671 # AMQPS
+      listener_port = 8081 # Optional, NLB will listen on 8081 and forward to 5671
+    },
+    {
+      ips = ["10.0.1.11"]
+      target_port = "Management UI" # You can use the port number or the name
+      listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+    }
+  ]
   host_instance_type     = "mq.t3.micro"
   engine_version         = "3.13"
   deployment_mode        = "SINGLE_INSTANCE"
