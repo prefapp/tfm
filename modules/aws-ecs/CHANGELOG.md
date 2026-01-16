@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.0...aws-ecs-v1.1.1) (2026-01-16)
+
+
+### Bug Fixes
+
+* **aws-ecs:** set correct version of tag and name ([#864](https://github.com/prefapp/tfm/issues/864)) ([d02d63f](https://github.com/prefapp/tfm/commit/d02d63f7a5fd18a0474edcc3871b19fee09b9966))
+
 ## [1.1.0](https://github.com/prefapp/tfm/compare/aws-ecs-v1.0.0...aws-ecs-v1.1.0) (2026-01-15)
 
 
