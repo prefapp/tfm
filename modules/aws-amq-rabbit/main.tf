@@ -40,14 +40,14 @@ resource "aws_security_group" "this" {
     from_port   = 5671
     to_port     = 5671
     protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.this[0].cidr_block]
+    cidr_blocks = [var.vpc_id != null ? data.aws_vpc.this[0].cidr_block : data.aws_vpc.by_name[0].cidr_block]
     description = "Allow RabbitMQ (5671) from VPC CIDR"
   }
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.this[0].cidr_block]
+    cidr_blocks = [var.vpc_id != null ? data.aws_vpc.this[0].cidr_block : data.aws_vpc.by_name[0].cidr_block]
     description = "Allow HTTPS (443) from VPC CIDR"
   }
 
