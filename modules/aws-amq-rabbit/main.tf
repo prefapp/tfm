@@ -1,3 +1,21 @@
+resource "random_password" "mq_password" {
+  length  = 30
+  special = true
+  upper   = true
+  lower   = true
+  numeric = true
+  # Amazon MQ does not allow: [, ], :, =, ,
+  override_special = "!#$%&()*+-.;<>?@^_{|}~"
+}
+
+resource "aws_ssm_parameter" "mq_password" {
+  name        = "/${var.project_name}/${var.environment}/mq/broker_password"
+  description = "Amazon MQ broker password for ${var.project_name} (${var.environment})"
+  type        = "SecureString"
+  value       = random_password.mq_password.result
+  overwrite   = true
+  tags        = local.common_tags
+}
 resource "aws_security_group" "this" {
   count       = var.existing_security_group_id == null ? 1 : 0
   name        = "${local.name_prefix}-sg"
@@ -89,7 +107,7 @@ resource "aws_lb" "this" {
 
 resource "aws_lb_target_group" "this" {
   for_each = var.access_mode == "private_with_nlb" ? { for cfg in local.nlb_listener_configs : cfg.port_key => cfg } : {}
-  name        = regexreplace(substr("${local.tg_name_prefix}${each.key}", 0, 32), "-+$", "")
+  name        = regex_replace(substr("${local.tg_name_prefix}${each.key}", 0, 32), "-+$", "")
   port        = each.value.target_port
   protocol    = "TLS"
   vpc_id      = local.vpc_id
