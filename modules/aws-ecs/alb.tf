@@ -1,9 +1,9 @@
 resource "aws_lb" "this" {
-  count              = var.service_name != null ? var.create_alb ? 1 : 0 : 0
-  name               = "${var.alb_name}-${var.service_name}"
+  count              = var.create_alb ? 1 : 0
+  name               = var.alb_name == "" ? "ecs-${var.cluster_name}" : var.alb_name
   internal           = var.alb_internal
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.this[0].id]
+  security_groups    = [aws_security_group.alb[0].id]
   subnets            = local.resolved_subnets
   lifecycle {
     precondition {
@@ -17,6 +17,36 @@ resource "aws_lb" "this" {
     }
   }
 }
+
+resource "aws_lb_listener" "this" {
+  count             = var.create_alb ? 1 : 0
+  load_balancer_arn = aws_lb.this[0].arn
+  port              = var.listener_port
+  protocol          = var.listener_protocol
+
+  certificate_arn = var.listener_certificate_arn
+  dynamic "default_action" {
+    for_each = var.service_name != null && (var.create_alb || var.existing_alb_name != null) ? [1] : []
+    content {
+      type             = "forward"
+      target_group_arn = aws_lb_target_group.this[0].arn
+    }
+  }
+
+  dynamic "default_action" {
+    for_each = var.service_name != null && (var.create_alb || var.existing_alb_name != null) ? [] : [1]
+    content {
+      type = "fixed-response"
+
+      fixed_response {
+        content_type = "text/plain"
+        message_body = "Fixed response content"
+        status_code  = "200"
+      }
+    }
+  }
+}
+
 
 resource "aws_lb_target_group" "this" {
   count       = var.service_name != null && (var.create_alb || var.existing_alb_name != null) ? 1 : 0
@@ -37,18 +67,6 @@ resource "aws_lb_target_group" "this" {
   }
 }
 
-resource "aws_lb_listener" "this" {
-  count             = var.service_name != null ? var.create_alb ? 1 : 0 : 0
-  load_balancer_arn = aws_lb.this[0].arn
-  port              = var.listener_port
-  protocol          = var.listener_protocol
-
-  certificate_arn = var.listener_certificate_arn
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.this[0].arn
-  }
-}
 
 # If an existing ALB is specified, use this
 

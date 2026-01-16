@@ -38,6 +38,11 @@ output "alb_arn" {
   value       = try(aws_lb.this[0].arn, "")
 }
 
+output "alb_name" {
+  description = "Name of the Application Load Balancer"
+  value       = try(aws_lb.this[0].name, "")
+}
+
 output "target_group_arn" {
   description = "ARN of the target group"
   value       = try(aws_lb_target_group.this[0].arn, "")

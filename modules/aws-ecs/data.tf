@@ -18,8 +18,8 @@ data "aws_subnets" "this" {
     values = [local.vpc_id]
   }
   filter {
-    name   = "tag:${var.subnet_tag_key}"
-    values = [var.subnet_tag_name]
+    name   = "tag:${var.subnet_tag_name}"
+    values = ["${var.subnet_tag_key}"]
   }
 }
 

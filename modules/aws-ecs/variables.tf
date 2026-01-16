@@ -92,7 +92,7 @@ variable "launch_type" {
 variable "security_groups" {
   description = "List of security group IDs to associate with the ECS service"
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "load_balancer" {
@@ -156,7 +156,7 @@ variable "policy_arns" {
 variable "alb_name" {
   description = "Name of the Application Load Balancer"
   type        = string
-  default     = "ecs-alb-example"
+  default     = ""
 }
 
 variable "alb_internal" {
@@ -210,7 +210,7 @@ variable "health_check" {
 variable "create_alb" {
   description = "Whether to create an Application Load Balancer for the ECS service"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "listener_certificate_arn" {
