@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.2...aws-ecs-v1.1.3) (2026-01-16)
+
+
+### Bug Fixes
+
+* **aws-ecs:** update autoscaling for services outside cluster ([#868](https://github.com/prefapp/tfm/issues/868)) ([ee2ed76](https://github.com/prefapp/tfm/commit/ee2ed765874558443293f51793d28a4127d21070))
+
 ## [1.1.2](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.1...aws-ecs-v1.1.2) (2026-01-16)
 
 
