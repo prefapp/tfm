@@ -37,7 +37,7 @@
     "modules/azure-backup-vault": "0.1.1",
     "modules/azure-event-hub": "0.1.1",
     "modules/aws-cloudfront-delivery": "0.2.5",
-    "modules/aws-ecs": "1.1.2",
+    "modules/aws-ecs": "1.1.3",
     "modules/azure-linux-vm": "0.1.2",
     "modules/azure-windows-vm": "0.1.10",
     "modules/dummy": "0.1.0"
