@@ -51,6 +51,15 @@ When using `access_mode = "private_with_nlb"`, you must provide the private IP a
 
 * `broker_urls`: The DNS hostnames for each broker instance (e.g., `b-xxxx.mq.us-east-1.amazonaws.com`).
 
+#### Note on `expose_all_ports`
+
+When you set `expose_all_ports = true` in the `nlb_listener_ips` block, the module will expose all ports defined in its internal `rabbitmq_port_names` map. As currently configured, this means **only the following ports will be exposed**:
+
+- 5671 (AMQPS)
+- 15672 (Management UI)
+
+If you need to expose additional ports, you must add them to the `rabbitmq_port_names` map in the module's `locals.tf` file. The phrase "all RabbitMQ ports" refers specifically to the ports listed in this map, not every possible RabbitMQ port.
+
 To resolve the private IPs from the broker URLs, you can use the `dig` or `nslookup` command:
 
 ```sh
