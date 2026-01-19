@@ -107,7 +107,8 @@ resource "aws_lb" "this" {
 
 resource "aws_lb_target_group" "this" {
   for_each = var.access_mode == "private_with_nlb" ? { for cfg in local.nlb_listener_configs : cfg.port_key => cfg } : {}
-  name        = replace(substr("${local.tg_name_prefix}${each.key}", 0, 32), "-+$", "")
+  # Ensure the total name length (prefix + port_key) does not exceed 32 characters
+  name = replace("${substr(local.tg_name_prefix, 0, max(0, 32 - length(each.key)))}${each.key}", "-+$", "")
   port        = each.value.target_port
   protocol    = "TLS"
   vpc_id      = local.vpc_id
