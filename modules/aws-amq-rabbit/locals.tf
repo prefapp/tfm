@@ -1,7 +1,5 @@
 locals {
-  broker_security_groups = contains(["private", "private_with_nlb"], var.access_mode) ? (
-    var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]
-  ) : null
+  broker_security_groups = var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]
 
   # AWS Target Group name limit is 32 chars. AWS appends a 6-char random suffix, so we have 26 chars for our prefix.
   # We use up to 21 chars for the base prefix and 5 for the port (max 65535), e.g. 'prefix-p65535-'.
