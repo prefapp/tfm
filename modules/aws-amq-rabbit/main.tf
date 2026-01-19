@@ -125,7 +125,7 @@ resource "aws_lb_target_group" "this" {
     enabled  = true
     protocol = "TLS"
     port     = "traffic-port"
-    path     = "/"
+    # No 'path' parameter for TLS health checks
   }
 }
 
