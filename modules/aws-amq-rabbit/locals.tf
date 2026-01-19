@@ -58,7 +58,9 @@ locals {
                 [for k, v in local.rabbitmq_port_names : k if v == entry.target_port][0] : null
             )
           )
-          # Same reverse lookup logic as above, repeated for listener_port.
+          # The following reverse lookup logic is duplicated from target_port above.
+          # This duplication is necessary because Terraform does not support per-item helper variables or functions in for-expressions or object definitions.
+          # If listener_port is not set, and target_port is a string (e.g., a port name), look up the corresponding port number in rabbitmq_port_names.
           listener_port = (
             lookup(entry, "listener_port", null) != null ? entry.listener_port : (
               can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : (
