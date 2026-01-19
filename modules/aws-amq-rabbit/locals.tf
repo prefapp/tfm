@@ -50,18 +50,16 @@ locals {
         }
         ] : [
         {
-          target_port = (
-            can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : (
-              length([for k, v in local.rabbitmq_port_names : k if v == entry.target_port]) > 0 ?
+          _reverse_port = (
+            length([for k, v in local.rabbitmq_port_names : k if v == entry.target_port]) > 0 ?
               [for k, v in local.rabbitmq_port_names : k if v == entry.target_port][0] : null
-            )
+          )
+          target_port = (
+            can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : _reverse_port
           )
           listener_port = (
             lookup(entry, "listener_port", null) != null ? entry.listener_port : (
-              can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : (
-                length([for k, v in local.rabbitmq_port_names : k if v == entry.target_port]) > 0 ?
-                [for k, v in local.rabbitmq_port_names : k if v == entry.target_port][0] : null
-              )
+              can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : _reverse_port
             )
           )
           ips      = entry.ips
