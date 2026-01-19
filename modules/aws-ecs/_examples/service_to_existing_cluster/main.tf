@@ -25,8 +25,8 @@ module "ecs" {
   # security_groups = ["sg-0123456789abcdef0"]
   existing_alb_name = "ecs-example-autoscaling-cluster"
   static_content_host_header = "example.mydomain.com"
-  subnet_tag_key  = "Public"
-  subnet_tag_name = "Network"
+  subnet_tag_key  = "Network"
+  subnet_tag_name = "Public"
   vpc_tag_name    = "beginners-mq-vpc"
 
   ecs_autoscaling = {
