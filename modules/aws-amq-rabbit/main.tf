@@ -15,6 +15,13 @@ resource "aws_ssm_parameter" "mq_password" {
   value       = random_password.mq_password.result
   overwrite   = true
   tags        = local.common_tags
+
+  # Prevent replacement of the SSM parameter unless the name changes, to avoid accidental password rotation
+  lifecycle {
+        ignore_changes  = [value]
+  }
+
+  # NOTE: By default, the password will not be rotated on every apply. If you want to rotate the password, you must taint or manually update this resource.
 }
 resource "aws_security_group" "this" {
   count       = var.existing_security_group_id == null ? 1 : 0
