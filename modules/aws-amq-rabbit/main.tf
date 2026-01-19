@@ -116,8 +116,8 @@ resource "aws_lb_target_group" "this" {
 
   health_check {
     enabled  = true
-    protocol = "HTTPS"
-    port     = "443"
+    protocol = "TLS"
+    port     = "traffic-port"
     path     = "/"
   }
 }
