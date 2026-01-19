@@ -147,19 +147,7 @@ resource "aws_lb_listener" "this" {
 # Register Broker Private IPs as NLB Targets
 # -------------------------------------------------------------------------
 resource "aws_lb_target_group_attachment" "broker" {
-  for_each = var.access_mode == "private_with_nlb" ? merge([
-    for pair in flatten([
-      for cfg in local.nlb_listener_configs : [
-        for ip in cfg.ips : {
-          "${cfg.port_key}-${ip}" = {
-            tg_arn = aws_lb_target_group.this[cfg.port_key].arn
-            port   = cfg.target_port
-            ip     = ip
-          }
-        }
-      ]
-    ]) : pair
-  ]...) : {}
+  for_each = local.nlb_target_group_attachments
 
   target_group_arn = each.value.tg_arn
   target_id        = each.value.ip

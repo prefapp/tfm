@@ -70,4 +70,20 @@ locals {
       ]
     )
   ]) : []
+
+
+  # Precompute the for_each map for aws_lb_target_group_attachment.broker for clarity
+  nlb_target_group_attachments = var.access_mode == "private_with_nlb" ? merge([
+    for pair in flatten([
+      for cfg in local.nlb_listener_configs : [
+        for ip in cfg.ips : {
+          "${cfg.port_key}-${ip}" = {
+            tg_arn = aws_lb_target_group.this[cfg.port_key].arn
+            port   = cfg.target_port
+            ip     = ip
+          }
+        }
+      ]
+    ]) : pair
+  ]...) : {}
 }
