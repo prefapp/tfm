@@ -26,9 +26,9 @@ variable "nlb_listener_ips" {
       ]
   EOT
   type = list(object({
-    ips             = list(string)
-    target_port     = optional(any) # number or string (name)
-    listener_port   = optional(number)
+    ips              = list(string)
+    target_port      = optional(any) # number or string (name)
+    listener_port    = optional(number)
     expose_all_ports = optional(bool)
   }))
   default = []

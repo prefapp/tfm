@@ -18,7 +18,7 @@ resource "aws_ssm_parameter" "mq_password" {
 
   # Prevent replacement of the SSM parameter unless the name changes, to avoid accidental password rotation
   lifecycle {
-        ignore_changes  = [value]
+    ignore_changes = [value]
   }
 
   # NOTE: By default, the password will not be rotated on every apply. If you want to rotate the password, you must taint or manually update this resource.
@@ -70,7 +70,7 @@ resource "aws_security_group" "this" {
 }
 
 resource "aws_mq_broker" "this" {
-    broker_name        = local.name_prefix
+  broker_name         = local.name_prefix
   engine_type         = "RabbitMQ"
   engine_version      = var.engine_version
   host_instance_type  = var.host_instance_type
@@ -101,12 +101,12 @@ resource "aws_mq_broker" "this" {
 # This part is only needed if access_mode is set to "private_with_nlb"
 #
 resource "aws_lb" "this" {
-  count               = var.access_mode == "private_with_nlb" ? 1 : 0
-  name                = "${local.name_prefix}-nlb"
-  internal            = contains(["private", "private_with_nlb"], var.access_mode)
-  load_balancer_type  = "network"
-  subnets             = local.lb_subnet_ids
-  tags                = local.common_tags
+  count              = var.access_mode == "private_with_nlb" ? 1 : 0
+  name               = "${local.name_prefix}-nlb"
+  internal           = contains(["private", "private_with_nlb"], var.access_mode)
+  load_balancer_type = "network"
+  subnets            = local.lb_subnet_ids
+  tags               = local.common_tags
 }
 
 
@@ -115,7 +115,7 @@ resource "aws_lb" "this" {
 resource "aws_lb_target_group" "this" {
   for_each = var.access_mode == "private_with_nlb" ? { for cfg in local.nlb_listener_configs : cfg.port_key => cfg } : {}
   # Ensure the total name length (prefix + port_key) does not exceed 32 characters
-  name = replace("${substr(local.tg_name_prefix, 0, max(0, 32 - length(each.key)))}${each.key}", "-+$", "")
+  name        = replace("${substr(local.tg_name_prefix, 0, max(0, 32 - length(each.key)))}${each.key}", "-+$", "")
   port        = each.value.target_port
   protocol    = "TLS"
   vpc_id      = local.vpc_id

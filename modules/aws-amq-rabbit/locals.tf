@@ -1,7 +1,7 @@
 locals {
   broker_security_groups = contains(["private", "private_with_nlb"], var.access_mode) ? (
-      var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]
-    ) : null
+    var.existing_security_group_id != null ? [var.existing_security_group_id] : [aws_security_group.this[0].id]
+  ) : null
 
   # AWS Target Group name limit is 32 chars. AWS appends a 6-char random suffix, so we have 26 chars for our prefix.
   # We use up to 21 chars for the base prefix and 5 for the port (max 65535), e.g. 'prefix-p65535-'.
@@ -11,16 +11,16 @@ locals {
     5671  = "AMQPS"
     15672 = "Management UI"
   }
-  vpc_id = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.by_name[*].id)
+  vpc_id         = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.by_name[*].id)
   vpc_cidr_block = var.vpc_id != null ? one(data.aws_vpc.this[*].cidr_block) : one(data.aws_vpc.by_name[*].cidr_block)
   single_broker_subnet_id = (
     length(var.broker_subnet_ids) > 0
     ? var.broker_subnet_ids[0]
     : (
-        length(try(one(data.aws_subnets.broker[*].ids), [])) > 0
-        ? try(one(data.aws_subnets.broker[*].ids)[0], null)
-        : null
-      )
+      length(try(one(data.aws_subnets.broker[*].ids), [])) > 0
+      ? try(one(data.aws_subnets.broker[*].ids)[0], null)
+      : null
+    )
   )
   broker_subnet_ids = (
     var.deployment_mode == "SINGLE_INSTANCE"
@@ -48,24 +48,24 @@ locals {
           ips           = entry.ips
           port_key      = tostring(port)
         }
-      ] : [
+        ] : [
         {
           target_port = (
             can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : (
               length([for k, v in local.rabbitmq_port_names : k if v == entry.target_port]) > 0 ?
-                [for k, v in local.rabbitmq_port_names : k if v == entry.target_port][0] : null
+              [for k, v in local.rabbitmq_port_names : k if v == entry.target_port][0] : null
             )
           )
           listener_port = (
             lookup(entry, "listener_port", null) != null ? entry.listener_port : (
               can(tonumber(lookup(entry, "target_port", null))) ? tonumber(entry.target_port) : (
                 length([for k, v in local.rabbitmq_port_names : k if v == entry.target_port]) > 0 ?
-                  [for k, v in local.rabbitmq_port_names : k if v == entry.target_port][0] : null
+                [for k, v in local.rabbitmq_port_names : k if v == entry.target_port][0] : null
               )
             )
           )
-          ips           = entry.ips
-          port_key      = tostring(lookup(entry, "listener_port", null) != null ? entry.listener_port : entry.target_port)
+          ips      = entry.ips
+          port_key = tostring(lookup(entry, "listener_port", null) != null ? entry.listener_port : entry.target_port)
         }
       ]
     )
