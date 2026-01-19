@@ -65,7 +65,9 @@ locals {
             )
           )
           ips      = entry.ips
-          port_key = tostring(lookup(entry, "listener_port", null) != null ? entry.listener_port : entry.target_port)
+          port_key = lookup(entry, "listener_port", null) != null ? tostring(entry.listener_port) : (
+            lookup(entry, "target_port", null) != null ? tostring(entry.target_port) : "unknown"
+          )
         }
       ]
     )
