@@ -46,7 +46,7 @@ When deploying a private RabbitMQ broker with a Network Load Balancer (NLB), you
 **Why is this necessary?**
 
 
-For Amazon MQ brokers with the RabbitMQ engine type, AWS does not expose the broker's private IP addresses as Terraform resource attributes. However, these IPs do exist and can be resolved via DNS lookups on the broker hostnames (e.g., using `dig` or `nslookup`). Because Terraform cannot access these IPs directly, you must manually resolve and provide them to the module using the `nlb_listener_ips` variable if you want to register the broker with an NLB. This is a limitation of the AWS provider and the Amazon MQ API, as documented in the [Amazon MQ documentation](https://aws.amazon.com/documentation-overview/amazon-mq/).
+For Amazon MQ brokers with the RabbitMQ engine type, AWS does not expose the broker's private IP addresses as Terraform resource attributes. However, these IPs do exist and can be resolved via DNS lookups on the broker hostnames (e.g., using `dig` or `nslookup`). Because Terraform cannot access these IPs directly, you must manually resolve and provide them to the module using the `nlb_listener_ips` variable if you want to register the broker with an NLB. This is a limitation of the AWS provider and the Amazon MQ API. As of now, there is no official AWS documentation page describing this limitation, but it is a known behavior observed by the community and in practice.
 
 
 ### Resolving Broker IPs for NLB Registration
