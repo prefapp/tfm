@@ -144,6 +144,11 @@ variable "lb_certificate_arn" {
   description = "ARN of the ACM certificate for the TLS listener. Required only if access_mode is 'private_with_nlb'."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.access_mode != "private_with_nlb" || (var.access_mode == "private_with_nlb" && var.lb_certificate_arn != null && var.lb_certificate_arn != "")
+    error_message = "You must provide a non-empty lb_certificate_arn when access_mode is 'private_with_nlb'."
+  }
 }
 
 variable "allowed_ingress_cidrs" {
