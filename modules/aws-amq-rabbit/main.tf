@@ -10,6 +10,13 @@ resource "random_password" "mq_password" {
 
 resource "aws_ssm_parameter" "mq_password" {
   name        = "/${var.project_name}/${var.environment}/mq/broker_password"
+  # WARNING: Password rotation and service disruption
+  #
+  # By default, this resource uses a random password and sets overwrite = true.
+  # If the password is updated in SSM while the broker is running, existing connections may fail.
+  # To prevent accidental password rotation and service disruption, a lifecycle block with ignore_changes = [value] is used below.
+  #
+  # If you want to rotate the password, you must taint or manually update this resource.
   description = "Amazon MQ broker password for ${var.project_name} (${var.environment})"
   type        = "SecureString"
   value       = random_password.mq_password.result
