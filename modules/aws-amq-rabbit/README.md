@@ -56,7 +56,7 @@ When using `access_mode = "private_with_nlb"`, you must provide the private IP a
 When you set `expose_all_ports = true` in the `nlb_listener_ips` block, the module will expose all ports defined in its internal `rabbitmq_port_names` map. As currently configured, this means **only the following ports will be exposed**:
 
 - 5671 (AMQPS)
-- 15672 (Management UI)
+- 443 (Management UI)
 
 If you need to expose additional ports, you must add them to the `rabbitmq_port_names` map in the module's `locals.tf` file. The phrase "all RabbitMQ ports" refers specifically to the ports listed in this map, not every possible RabbitMQ port.
 
@@ -80,12 +80,12 @@ nlb_listener_ips = [
   {
     ips = ["10.0.1.11"]
     target_port = "Management UI" # You can use the port number or the name
-    listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+    listener_port = 443 # Optional, NLB will listen on 443 and forward to the Management UI
   }
   # Or, to expose all RabbitMQ ports (AMQPS and Management UI) for the same set of IPs:
   {
     ips = ["10.0.1.10", "10.0.2.10"]
-    expose_all_ports = true # Optional, will expose all RabbitMQ ports (5671 and 15672)
+    expose_all_ports = true # Optional, will expose all RabbitMQ ports (5671 and 443)
   }
 ]
 ```
@@ -103,7 +103,7 @@ You can expose one or more ports for RabbitMQ by setting the `exposed_ports` var
 ```hcl
 module "rabbitmq" {
   # ...existing code...
-  exposed_ports = [5671, 15672] # Exposes AMQPS and management UI
+  exposed_ports = [5671, 443] # Exposes AMQPS and management UI
 }
 ```
 
@@ -147,7 +147,7 @@ module "rabbitmq" {
   access_mode            = "private_with_nlb"
   lb_subnet_ids          = ["subnet-yyyyyyyy"]
   lb_certificate_arn     = "arn:aws:acm:..."
-  exposed_ports          = [5671, 15672]
+  exposed_ports          = [5671, 443]
   nlb_listener_ips = [
     {
       ips = ["10.0.1.10", "10.0.2.10"]
@@ -157,7 +157,7 @@ module "rabbitmq" {
     {
       ips = ["10.0.1.11"]
       target_port = "Management UI" # You can use the port number or the name
-      listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+      listener_port = 443 # Optional, NLB will listen on 443 and forward to the Management UI
     }
   ]
   host_instance_type     = "mq.t3.micro"
@@ -202,13 +202,14 @@ The module is organized with the following directory and file structure:
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.0 |
 
 ## Modules
 
@@ -251,7 +252,7 @@ No modules.
 | <a name="input_lb_subnet_filter_tags"></a> [lb\_subnet\_filter\_tags](#input\_lb\_subnet\_filter\_tags) | Tags used to discover subnets for the NLB (e.g., { 'NetworkTier' = 'Public' }). | `map(string)` | `{}` | no |
 | <a name="input_lb_subnet_ids"></a> [lb\_subnet\_ids](#input\_lb\_subnet\_ids) | List of subnet IDs for the NLB. Takes precedence over filters. | `list(string)` | `[]` | no |
 | <a name="input_mq_username"></a> [mq\_username](#input\_mq\_username) | Administrative username for the RabbitMQ broker | `string` | n/a | yes |
-| <a name="input_nlb_listener_ips"></a> [nlb\_listener\_ips](#input\_nlb\_listener\_ips) | List of objects to define NLB listeners and targets. Each object can specify:<br/>      - ips: List of broker IPs to register as targets<br/>      - target\_port: Port number or name (e.g., 5671, 15672, "AMQPS", "Management UI")<br/>      - listener\_port: (Optional) Port number for the NLB listener. If not set, uses target\_port.<br/>    Example:<br/>      [<br/>        {<br/>          ips = ["10.0.1.10", "10.0.2.10"]<br/>          target\_port = 5671<br/>          listener\_port = 8081<br/>        },<br/>        {<br/>          ips = ["10.0.1.11"]<br/>          target\_port = "Management UI"<br/>          listener\_port = 8080<br/>        }<br/>      ] | <pre>list(object({<br/>    ips              = list(string)<br/>    target_port      = optional(any) # number or string (name)<br/>    listener_port    = optional(number)<br/>    expose_all_ports = optional(bool)<br/>  }))</pre> | `[]` | no |
+| <a name="input_nlb_listener_ips"></a> [nlb\_listener\_ips](#input\_nlb\_listener\_ips) | List of objects to define NLB listeners and targets. Each object can specify:<br/>      - ips: List of broker IPs to register as targets<br/>      - target\_port: Port number or name (e.g., 5671, 443, "AMQPS", "Management UI")<br/>      - listener\_port: (Optional) Port number for the NLB listener. If not set, uses target\_port.<br/>    Example:<br/>      [<br/>        {<br/>          ips = ["10.0.1.10", "10.0.2.10"]<br/>          target\_port = 5671<br/>          listener\_port = 8081<br/>        },<br/>        {<br/>          ips = ["10.0.1.11"]<br/>          target\_port = "Management UI"<br/>          listener\_port = 443<br/>        }<br/>      ] | <pre>list(object({<br/>    ips              = list(string)<br/>    target_port      = optional(any) # number or string (name)<br/>    listener_port    = optional(number)<br/>    expose_all_ports = optional(bool)<br/>  }))</pre> | `[]` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Generic project identifier used for resource naming (e.g., 'messaging-hub') | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional metadata tags to apply to all resources | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the target VPC. Takes precedence over 'vpc\_name'. | `string` | `null` | no |

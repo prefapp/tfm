@@ -16,9 +16,14 @@ module "amq_rabbit" {
       ips = ["10.0.1.10", "10.0.2.10"]
       target_port = 5671 # AMQPS
     },
+    # You can use either the port number or the name for Management UI. Both resolve to the same host/IP.
     {
-      ips = ["10.0.1.11"]
-      target_port = 15672 # Management UI
+      ips = ["10.0.1.10", "10.0.2.10"]
+      target_port = 443 # Management UI (RabbitMQ)
+    },
+    {
+      ips = ["10.0.1.10", "10.0.2.10"]
+      target_port = "Management UI" # also valid, resolves to port 443
     }
   ]
   tags = {

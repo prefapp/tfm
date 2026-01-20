@@ -6,8 +6,8 @@ locals {
   tg_name_prefix = "${substr(local.name_prefix, 0, 21)}-p"
   # Map well-known RabbitMQ ports to service names for SG descriptions
   rabbitmq_port_names = {
-    5671  = "AMQPS"
-    15672 = "Management UI"
+    5671 = "AMQPS"
+    443  = "Management UI"
   }
   vpc_id         = var.vpc_id != null ? var.vpc_id : one(data.aws_vpc.by_name[*].id)
   vpc_cidr_block = var.vpc_id != null ? one(data.aws_vpc.this[*].cidr_block) : one(data.aws_vpc.by_name[*].cidr_block)

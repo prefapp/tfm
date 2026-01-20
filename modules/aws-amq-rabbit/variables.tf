@@ -9,7 +9,7 @@ variable "nlb_listener_ips" {
   description = <<EOT
     List of objects to define NLB listeners and targets. Each object can specify:
       - ips: List of broker IPs to register as targets
-      - target_port: Port number or name (e.g., 5671, 15672, "AMQPS", "Management UI")
+      - target_port: Port number or name (e.g., 5671, 443, "AMQPS", "Management UI")
       - listener_port: (Optional) Port number for the NLB listener. If not set, uses target_port.
     Example:
       [
@@ -21,7 +21,7 @@ variable "nlb_listener_ips" {
         {
           ips = ["10.0.1.11"]
           target_port = "Management UI"
-          listener_port = 8080
+          listener_port = 443
         }
       ]
   EOT

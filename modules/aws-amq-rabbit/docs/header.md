@@ -58,10 +58,11 @@ When using `access_mode = "private_with_nlb"`, you must provide the private IP a
 
 #### Note on `expose_all_ports`
 
+
 When you set `expose_all_ports = true` in the `nlb_listener_ips` block, the module will expose all ports defined in its internal `rabbitmq_port_names` map. As currently configured, this means **only the following ports will be exposed**:
 
 - 5671 (AMQPS)
-- 15672 (Management UI)
+- 443 (Management UI)
 
 If you need to expose additional ports, you must add them to the `rabbitmq_port_names` map in the module's `locals.tf` file. The phrase "all RabbitMQ ports" refers specifically to the ports listed in this map, not every possible RabbitMQ port.
 
@@ -85,12 +86,12 @@ nlb_listener_ips = [
   {
     ips = ["10.0.1.11"]
     target_port = "Management UI" # You can use the port number or the name
-    listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+    listener_port = 443 # Optional, NLB will listen on 443 and forward to the Management UI
   }
   # Or, to expose all RabbitMQ ports (AMQPS and Management UI) for the same set of IPs:
   {
     ips = ["10.0.1.10", "10.0.2.10"]
-    expose_all_ports = true # Optional, will expose all RabbitMQ ports (5671 and 15672)
+    expose_all_ports = true # Optional, will expose all RabbitMQ ports (5671 and 443)
   }
 ]
 ```
@@ -110,7 +111,7 @@ You can expose one or more ports for RabbitMQ by setting the `exposed_ports` var
 ```hcl
 module "rabbitmq" {
   # ...existing code...
-  exposed_ports = [5671, 15672] # Exposes AMQPS and management UI
+  exposed_ports = [5671, 443] # Exposes AMQPS and management UI
 }
 ```
 
@@ -156,7 +157,7 @@ module "rabbitmq" {
   access_mode            = "private_with_nlb"
   lb_subnet_ids          = ["subnet-yyyyyyyy"]
   lb_certificate_arn     = "arn:aws:acm:..."
-  exposed_ports          = [5671, 15672]
+  exposed_ports          = [5671, 443]
   nlb_listener_ips = [
     {
       ips = ["10.0.1.10", "10.0.2.10"]
@@ -166,7 +167,7 @@ module "rabbitmq" {
     {
       ips = ["10.0.1.11"]
       target_port = "Management UI" # You can use the port number or the name
-      listener_port = 8443 # Optional, NLB will listen on 8443 and forward to 15672
+      listener_port = 443 # Optional, NLB will listen on 443 and forward to the Management UI
     }
   ]
   host_instance_type     = "mq.t3.micro"
