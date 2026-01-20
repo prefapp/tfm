@@ -129,6 +129,9 @@
         },
         "modules/azure-windows-vm": {
             "package-name": "azure-windows-vm"
+        },
+        "modules/aws-amq-rabbit": {
+            "package-name": "aws-amq-rabbit"
         }
     }
 }
