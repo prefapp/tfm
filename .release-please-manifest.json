@@ -40,6 +40,6 @@
     "modules/aws-ecs": "1.1.4",
     "modules/azure-linux-vm": "0.1.2",
     "modules/azure-windows-vm": "0.1.10",
-    "modules/aws-amq-rabbit": "0.1.0",
+    "modules/aws-amq-rabbit": "0.2.0",
     "modules/dummy": "0.1.0"
 }
