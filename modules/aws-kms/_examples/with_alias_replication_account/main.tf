@@ -20,5 +20,5 @@ module "kms" {
   aws_region          = "eu-west-1"
   alias               = "rds"
   aws_regions_replica = ["eu-central-1", "eu-west-2"]
-  aws_accounts_access = ["111111111111","222222222222"]
+  aws_accounts_access = ["111111111111", "222222222222"]
 }
