@@ -1,4 +1,3 @@
-<!-- BEGIN_TF_DOCS -->
 # Azure Application Gateway Terraform Module
 
 ## Overview
@@ -276,70 +275,3 @@ values:
                 priority: 21
                 name: "request_routing_rule-another-example"
 ```
-
-## Requirements
-
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.47.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.47.0 |
-| <a name="provider_external"></a> [external](#provider\_external) | n/a |
-
-## Modules
-
-No modules.
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [azurerm_application_gateway.application_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/4.47.0/docs/resources/application_gateway) | resource |
-| [azurerm_public_ip.public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/4.47.0/docs/resources/public_ip) | resource |
-| [azurerm_web_application_firewall_policy.default_waf_policy](https://registry.terraform.io/providers/hashicorp/azurerm/4.47.0/docs/resources/web_application_firewall_policy) | resource |
-| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.47.0/docs/data-sources/resource_group) | data source |
-| [azurerm_subnet.that](https://registry.terraform.io/providers/hashicorp/azurerm/4.47.0/docs/data-sources/subnet) | data source |
-| [azurerm_user_assigned_identity.that](https://registry.terraform.io/providers/hashicorp/azurerm/4.47.0/docs/data-sources/user_assigned_identity) | data source |
-| [external_external.cert_content_base64](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
-| [external_external.list_cert_files](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | The Application Gateway object. | `any` | n/a | yes |
-| <a name="input_location"></a> [location](#input\_location) | The location/region where the Application Gateway should be created. | `string` | `"westeurope"` | no |
-| <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | The Azure Public IP object. | `any` | n/a | yes |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Application Gateway. | `string` | n/a | yes |
-| <a name="input_rewrite_rule_sets"></a> [rewrite\_rule\_sets](#input\_rewrite\_rule\_sets) | List of Rewrite Rule Sets for Application Gateway | <pre>list(object({<br/>    name = string<br/>    rewrite_rules = list(object({<br/>      name          = string<br/>      rule_sequence = number<br/>      conditions = optional(list(object({<br/>        variable    = string<br/>        pattern     = string<br/>        ignore_case = optional(bool, false)<br/>        negate      = optional(bool, false)<br/>      })), [])<br/>      request_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      response_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      url_rewrite = optional(object({<br/>        source_path = optional(string)<br/>        query_string = optional(string)<br/>        components = optional(string)<br/>        reroute = optional(bool)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
-| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | Application Gateway configuration | <pre>object({<br/>    policy_type          = string<br/>    policy_name          = optional(string)<br/>    cipher_suites        = optional(list(string))<br/>    min_protocol_version = optional(string)<br/>  })</pre> | <pre>{<br/>  "policy_name": "AppGwSslPolicy20220101",<br/>  "policy_type": "Predefined"<br/>}</pre> | no |
-| <a name="input_ssl_profiles"></a> [ssl\_profiles](#input\_ssl\_profiles) | List of SSL profiles for Application Gateway. | <pre>list(object({<br/>    name                                     = string<br/>    trusted_client_certificate_names         = optional(list(string))<br/>    verify_client_cert_issuer_dn             = optional(bool, false)<br/>    verify_client_certificate_revocation     = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols                     = optional(list(string))<br/>      min_protocol_version                   = optional(string)<br/>      policy_name                            = optional(string)<br/>      cipher_suites                          = optional(list(string))<br/>    }))<br/>    ca_certs_origin = object({<br/>      github_owner       = string<br/>      github_repository  = string<br/>      github_branch      = string<br/>      github_directory   = string<br/>    })<br/>  }))</pre> | `[]` | no |
-| <a name="input_subnet"></a> [subnet](#input\_subnet) | The subnet object. | `any` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
-| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
-| <a name="input_user_assigned_identity"></a> [user\_assigned\_identity](#input\_user\_assigned\_identity) | The name of the User Assigned Identity. | `string` | n/a | yes |
-| <a name="input_web_application_firewall_policy"></a> [web\_application\_firewall\_policy](#input\_web\_application\_firewall\_policy) | Configuration for the web application firewall policy | <pre>object({<br/>    name = string<br/>    policy_settings = optional(object({<br/>      enabled                     = optional(bool)<br/>      mode                        = optional(string)<br/>      request_body_check          = optional(bool)<br/>      file_upload_limit_in_mb     = optional(number)<br/>      max_request_body_size_in_kb = optional(number)<br/>      request_body_enforcement    = optional(string)<br/>    }))<br/>    custom_rules = optional(list(object({<br/>      enabled               = optional(bool, true)<br/>      name                  = string<br/>      priority              = number<br/>      rule_type             = string<br/>      action                = string<br/>      rate_limit_duration   = optional(string)<br/>      rate_limit_threshold  = optional(number)<br/>      group_rate_limit_by   = optional(string)<br/>      match_conditions      = list(object({<br/>        operator           = string<br/>        negation_condition = optional(bool, false)<br/>        match_values       = optional(list(string))<br/>        transforms         = optional(list(string))<br/>        match_variables    = list(object({<br/>          variable_name = string<br/>          selector      = optional(string)<br/>        }))<br/>      }))<br/>    })), [])<br/>    managed_rule_set = list(object({<br/>      type                = optional(string)<br/>      version             = string<br/>      rule_group_override = optional(list(object({<br/>        rule_group_name = string<br/>        rule = optional(list(object({<br/>          id      = number<br/>          enabled = optional(bool)<br/>          action  = optional(string)<br/>        })))<br/>      })))<br/>    }))<br/>  })</pre> | n/a | yes |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | n/a |
-
----
-
-## Recursos adicionales
-
-- [Azure Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/overview)
-- [Proveedor Terraform AzureRM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway)
-- [Documentación oficial de Terraform](https://www.terraform.io/docs)
-
-## Soporte
-
-Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
-<!-- END_TF_DOCS -->
