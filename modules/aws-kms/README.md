@@ -68,7 +68,10 @@ The module is organized with the following directory and file structure:
 
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.2 |
 
 ## Providers
 
@@ -116,7 +119,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Minimal](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/minimal) – Minimal KMS creation
 - [KMS with alias and replication](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/with\_alias\_replication) – KMS creation with alias and region replication
-- [KMS with alias, replication, and extra account access](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/with\_alias\_replication\_account) – KMS creation with alias, region replication, and extra account access
+- [KMS with alias, replication, and extra account access](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/with\_alias\_replication\_region) – KMS creation with alias, region replication, and extra account access
 
 ## Remote Resources
 - Terraform: https://www.terraform.io/
