@@ -10,6 +10,9 @@
         "modules/aws-sso": {
             "package-name": "aws-sso"
         },
+        "modules/aws-kms": {
+            "package-name": "aws-kms"
+        },
         "modules/azure-flexible-server-postgresql": {
             "package-name": "azure-flexible-server-postgresql"
         },
