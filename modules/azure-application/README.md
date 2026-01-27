@@ -1,9 +1,65 @@
+<!-- BEGIN_TF_DOCS -->
+# Azure Application Registration Terraform Module
+
+## Overview
+
+Este módulo de Terraform permite crear y gestionar un registro de aplicación en Azure Active Directory (Azure AD), incluyendo:
+- Creación de la aplicación y service principal.
+- Asignación de roles y permisos (incluyendo Microsoft Graph).
+- Configuración de credenciales federadas y secretos.
+- Soporte para redirecciones y miembros.
+- Integración opcional con Azure Key Vault para almacenar secretos.
+
+## Características principales
+- Registro de aplicación y service principal en Azure AD.
+- Asignación de roles personalizados y de Microsoft Graph.
+- Soporte para credenciales federadas (OIDC, GitHub Actions, etc).
+- Gestión de secretos con rotación y almacenamiento seguro en Key Vault.
+- Configuración flexible de redirecciones y miembros.
+
+## Ejemplo básico de uso
+
+```hcl
+module "azure_application" {
+  source  = "./modules/azure-application"
+  name    = "my-app"
+  members = ["user1@dominio.com", "user2@dominio.com"]
+  msgraph_roles = ["User.Read.All"]
+  redirects = [{
+    platform      = "web"
+    redirect_uris = ["https://myapp.com/auth/callback"]
+  }]
+  client_secret = {
+    enabled = true
+    rotation_days = 90
+    keyvault = {
+      id = azurerm_key_vault.example.id
+      key_name = "my-app-secret"
+    }
+  }
+}
+```
+
+## Estructura de archivos
+
+```
+.
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── versions.tf
+├── README.md
+├── CHANGELOG.md
+└── docs/
+    ├── header.md
+    └── footer.md
+```
+
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 2.3.0 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 3.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.16.0 |
 
@@ -11,9 +67,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 3.3.0 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.16.0 |
-| <a name="provider_time"></a> [time](#provider\_time) | 0.13.1 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 3.3.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.16.0 |
+| <a name="provider_time"></a> [time](#provider\_time) | n/a |
 
 ## Modules
 
@@ -45,7 +101,7 @@ No modules.
 | <a name="input_extra_role_assignments"></a> [extra\_role\_assignments](#input\_extra\_role\_assignments) | The list of extra role assignments to be added to the Azure App Registration. | <pre>list(object({<br/>    role_definition_name = string<br/>    scope                = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_federated_credentials"></a> [federated\_credentials](#input\_federated\_credentials) | The federated credentials configuration for the Azure App Registration. | <pre>list(object({<br/>    display_name = string<br/>    audiences    = list(string)<br/>    issuer       = string<br/>    subject      = string<br/>    description  = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_members"></a> [members](#input\_members) | The list of members to be added to the Azure App Registration. | `list(string)` | n/a | yes |
-| <a name="input_msgraph_roles"></a> [msgraph\_roles](#input\_msgraph\_roles) | The list of Microsoft Graph roles to be assigned to the Azure App Registration. e.g. User.Read.All | `list(string)` | n/a | yes |
+| <a name="input_msgraph_roles"></a> [msgraph\_roles](#input\_msgraph\_roles) | The list of Microsoft Graph roles to be assigned to the Azure App Registration. Each role includes a name and whether it is delegated. | <pre>list(object({<br/>    id        = string<br/>    delegated = bool<br/>  }))</pre> | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | The name of the Azure App Registration. | `string` | n/a | yes |
 | <a name="input_redirects"></a> [redirects](#input\_redirects) | The redirect configuration for the Azure App Registration. | <pre>list(object({<br/>    platform      = string<br/>    redirect_uris = list(string)<br/>  }))</pre> | n/a | yes |
 
@@ -55,3 +111,17 @@ No modules.
 |------|-------------|
 | <a name="output_application_client_id"></a> [application\_client\_id](#output\_application\_client\_id) | The client ID of the Azure application |
 | <a name="output_application_object_id"></a> [application\_object\_id](#output\_application\_object\_id) | The object ID of the Azure application |
+
+---
+
+## Recursos adicionales
+
+- [Azure Active Directory App Registration](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+- [Proveedor Terraform AzureAD](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application)
+- [Proveedor Terraform AzureRM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+- [Documentación oficial de Terraform](https://www.terraform.io/docs)
+
+## Soporte
+
+Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->

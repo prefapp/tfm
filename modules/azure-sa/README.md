@@ -1,3 +1,178 @@
+<!-- BEGIN_TF_DOCS -->
+# Azure Storage Account Terraform Module
+
+## Overview
+
+Este módulo de Terraform permite crear y gestionar una cuenta de almacenamiento en Azure (Storage Account), incluyendo:
+- Creación de la cuenta y configuración avanzada (tier, replicación, red, TLS, etc).
+- Soporte para blobs, colas, tablas y shares.
+- Políticas de ciclo de vida y reglas de red.
+- Integración con subredes y protección avanzada contra amenazas.
+- Etiquetado flexible y herencia de etiquetas del Resource Group.
+
+## Características principales
+- Creación de Storage Account con configuración avanzada.
+- Soporte para containers, colas, tablas y shares.
+- Políticas de ciclo de vida y reglas de red personalizables.
+- Integración con subredes y protección avanzada.
+- Gestión de etiquetas y herencia desde el Resource Group.
+
+## Ejemplo completo de uso
+
+```yaml
+    values:
+      resource_group_name: "rg_test"
+      allowed_subnets:
+        - name: "data"
+          vnet: "test-vnet"
+          resource_group: "rg-test"
+        - name: "video"
+          vnet: "test-vnet1"
+          resource_group: "rg-test1"
+      additional_allowed_subnet_ids:
+        - "/subscriptions/324ca80b-cea7-41ff-ac13-25441f452f33/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
+        - "/subscriptions/c9e99a2d-e0cd-473b-935c-bc2e37ea8511/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
+      # storage account
+      storage_account:
+        name: "mystorageaccount"
+        account_tier: "Standard"
+        account_replication_type: "LRS"
+        account_kind: "StorageV2"
+        access_tier: "Hot"
+        cross_tenant_replication_enabled: false
+        https_traffic_only_enabled: true
+        min_tls_version: "TLS1_2"
+        public_network_access_enabled: true
+        identity:
+          type: "SystemAssigned"
+        blob_properties:
+          versioning_enabled: true
+          change_feed_enabled: true
+          delete_retention_policy:
+            days: 30
+          container_delete_retention_policy:
+            days: 15
+          restore_policy:
+            days: 10
+      # storage account network rules
+      network_rules:
+        default_action: "Deny"
+        bypass: "AzureServices"
+        private_link_access:
+          - endpoint_resource_id: "/subscriptions/xxxx/resourceGroups/xxxx/providers/Microsoft.Network/privateLinkService/xxxx"
+            endpoint_tenant_id: "66666666-7777-8888-9999-000000000000"
+          - endpoint_resource_id: "/subscriptions/yyyy/resourceGroups/yyyy/providers/Microsoft.Network/privateLinkService/yyyy"
+      # storage containers
+      containers:
+        - name: "test"
+          container_access_type: "private"
+        - name: "test2"
+          container_access_type: "private"
+      # storage queues
+      queues:
+        - name: "test"
+          metadata:
+            queuename: functionsqueue
+            queuelength: '5'
+            connection: STORAGE_CONNECTIONSTRING_ENV_NAME
+      # storage tables
+      tables:
+        - name: "Table1"
+          acl:
+            id: "policy1"
+            access_policy:
+              permissions: "rwd"
+              start: "2024-09-01T00:00:00Z"
+              expiry: "2024-09-30T23:59:59Z"
+      # storage shares
+      shares:
+        - name: "share1"
+          access_tier: "Hot"
+          enabled_protocol: "SMB"
+          quota: 100
+          metadata:
+            environment: "production"
+            owner: "teamA"
+        - name: "share2"
+          quota: 200
+          metadata:
+            environment: "staging"
+          acl:
+            - id: "policy2"
+              access_policy:
+                permissions: "r"
+                start: "2024-10-01T00:00:00Z"
+                expiry: "2024-10-31T23:59:59Z"
+        - name: "share3"
+          access_tier: "Cool"
+          quota: 50
+      # storage management policy rules
+      lifecycle_policy_rules:
+        - name: "rule1"
+          enabled: true
+          filters:
+            blob_types:
+              - "blockBlob"
+            prefix_match:
+              - "container1/prefix1"
+            match_blob_index_tag:
+              - name: "tag1"
+                operation: "=="
+                value: "val1"
+          actions:
+            base_blob:
+              tier_to_cool_after_days_since_modification_greater_than: 10
+              tier_to_archive_after_days_since_modification_greater_than: 50
+              delete_after_days_since_modification_greater_than: 100
+            snapshot:
+              delete_after_days_since_creation_greater_than: 30
+            version:
+              delete_after_days_since_creation: 90
+        - name: "rule2"
+          enabled: false
+          filters:
+            blob_types:
+              - "blockBlob"
+            prefix_match:
+              - "container2/prefix1"
+              - "container2/prefix2"
+          actions:
+            base_blob:
+              tier_to_cool_after_days_since_modification_greater_than: 11
+              tier_to_archive_after_days_since_modification_greater_than: 51
+              delete_after_days_since_modification_greater_than: 101
+            snapshot:
+              change_tier_to_cool_after_days_since_creation: 23
+              change_tier_to_archive_after_days_since_creation: 90
+              delete_after_days_since_creation_greater_than: 31
+            version:
+              change_tier_to_archive_after_days_since_creation: 9
+              change_tier_to_cool_after_days_since_creation: 90
+              delete_after_days_since_creation: 3
+      # tags
+      tags:
+        cliente: "test"
+        tenant: "test"
+        Producto: "test"
+        application: "test"
+        env: "test"
+```
+
+## Estructura de archivos
+
+```
+.
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── versions.tf
+├── README.md
+├── CHANGELOG.md
+└── docs/
+    ├── header.md
+    └── footer.md
+```
+
 ## Requirements
 
 | Name | Version |
@@ -51,153 +226,17 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | ID of the storage account |
+| <a name="output_id"></a> [id](#output\_id) | n/a |
 
-## Example
+---
 
-```yaml
-    values:
-      # data values
-      resource_group_name: "rg_test"
-      allowed_subnets:
-        - name: "data"
-          vnet: "test-vnet"
-          resource_group: "rg-test"
-        - name: "video"
-          vnet: "test-vnet1"
-          resource_group: "rg-test1"
-      additional_allowed_subnet_ids:
-        - "/subscriptions/324ca80b-cea7-41ff-ac13-25441f452f33/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
-        - "/subscriptions/c9e99a2d-e0cd-473b-935c-bc2e37ea8511/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
+## Recursos adicionales
 
-      # storage account
-      storage_account:
-        name: "mystorageaccount"
-        account_tier: "Standard"
-        account_replication_type: "LRS"
-        account_kind: "StorageV2"
-        access_tier: "Hot"
-        cross_tenant_replication_enabled: false
-        https_traffic_only_enabled: true
-        min_tls_version: "TLS1_2"
-        public_network_access_enabled: true
-        identity:
-          type: "SystemAssigned"
-        blob_properties:
-          versioning_enabled: true
-          change_feed_enabled: true
-          delete_retention_policy:
-            days: 30
-          container_delete_retention_policy:
-            days: 15
-          restore_policy:
-            days: 10
+- [Azure Storage Account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview)
+- [Proveedor Terraform AzureRM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account)
+- [Documentación oficial de Terraform](https://www.terraform.io/docs)
 
-      # storage account network rules
-      network_rules:
-        default_action: "Deny"
-        bypass: "AzureServices"
-        private_link_access:
-          - endpoint_resource_id: "/subscriptions/xxxx/resourceGroups/xxxx/providers/Microsoft.Network/privateLinkService/xxxx"
-            endpoint_tenant_id: "66666666-7777-8888-9999-000000000000"
-          - endpoint_resource_id: "/subscriptions/yyyy/resourceGroups/yyyy/providers/Microsoft.Network/privateLinkService/yyyy"
+## Soporte
 
-      # storage containers
-      containers:
-        - name: "test"
-          container_access_type: "private"
-        - name: "test2"
-          container_access_type: "private"
-
-      # storage queues
-      queues:
-        - name: "test"
-          metadata:
-            queuename: functionsqueue
-            queuelength: '5'
-            connection: STORAGE_CONNECTIONSTRING_ENV_NAME
-
-      # storage tables
-      tables:
-        - name: "Table1"
-          acl:
-            id: "policy1"
-            access_policy:
-              permissions: "rwd"
-              start: "2024-09-01T00:00:00Z"
-              expiry: "2024-09-30T23:59:59Z"
-
-      # storage shares
-      shares:
-        - name: "share1"
-          access_tier: "Hot"
-          enabled_protocol: "SMB"
-          quota: 100
-          metadata:
-            environment: "production"
-            owner: "teamA"
-        - name: "share2"
-          quota: 200
-          metadata:
-            environment: "staging"
-          acl:
-            - id: "policy2"
-              access_policy:
-                permissions: "r"
-                start: "2024-10-01T00:00:00Z"
-                expiry: "2024-10-31T23:59:59Z"
-        - name: "share3"
-          access_tier: "Cool"
-          quota: 50
-
-      # storage management policy rules
-      lifecycle_policy_rules:
-        - name: "rule1"
-          enabled: true
-          filters:
-            blob_types: 
-              - "blockBlob"
-            prefix_match: 
-              - "container1/prefix1"
-            match_blob_index_tag:
-              - name: "tag1"
-                operation: "=="
-                value: "val1"
-          actions:
-            base_blob:
-              tier_to_cool_after_days_since_modification_greater_than: 10
-              tier_to_archive_after_days_since_modification_greater_than: 50
-              delete_after_days_since_modification_greater_than: 100
-            snapshot:
-              delete_after_days_since_creation_greater_than: 30
-            version:
-              delete_after_days_since_creation: 90
-        - name: "rule2"
-          enabled: false
-          filters:
-            blob_types: 
-              - "blockBlob"
-            prefix_match:
-              - "container2/prefix1"
-              - "container2/prefix2"
-          actions:
-            base_blob:
-              tier_to_cool_after_days_since_modification_greater_than: 11
-              tier_to_archive_after_days_since_modification_greater_than: 51
-              delete_after_days_since_modification_greater_than: 101
-            snapshot:
-              change_tier_to_cool_after_days_since_creation: 23
-              change_tier_to_archive_after_days_since_creation: 90
-              delete_after_days_since_creation_greater_than: 31
-            version:
-              change_tier_to_archive_after_days_since_creation: 9
-              change_tier_to_cool_after_days_since_creation: 90
-              delete_after_days_since_creation: 3
-      # tags
-      tags:
-        cliente: "test"
-        tenant: "test"
-        Producto: "test"
-        application: "test"
-        env: "test"
-```
+Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->
