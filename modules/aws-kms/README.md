@@ -74,7 +74,7 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.28.0 |
 
 ## Modules
 
@@ -90,6 +90,7 @@ No modules.
 | [aws_kms_replica_key.replica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_replica_key) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.kms_default_statement](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_role.role_used_by_sso](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
 
 ## Inputs
 
@@ -98,7 +99,7 @@ No modules.
 | <a name="input_alias"></a> [alias](#input\_alias) | The alias that will use the KMS key | `string` | `null` | no |
 | <a name="input_aws_accounts_access"></a> [aws\_accounts\_access](#input\_aws\_accounts\_access) | Enable access to kms for additional AWS accounts | `list(string)` | `[]` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Region to create kms key | `string` | `"eu-west-1"` | no |
-| <a name="input_aws_regions_replica"></a> [aws\_regions\_replica](#input\_aws\_regions\_replica) | Enable access to kms for additional AWS accounts | `list(string)` | `[]` | no |
+| <a name="input_aws_regions_replica"></a> [aws\_regions\_replica](#input\_aws\_regions\_replica) | List of AWS regions where KMS key replicas should be created | `list(string)` | `[]` | no |
 | <a name="input_deletion_window_in_days"></a> [deletion\_window\_in\_days](#input\_deletion\_window\_in\_days) | The waiting period, specified in days, before the KMS key is deleted. Default is 30 days. | `number` | `30` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of the KMS key | `string` | `"An example symmetric encryption KMS key"` | no |
 | <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Specifies whether key rotation is enabled. Default is true. | `bool` | `true` | no |

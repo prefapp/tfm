@@ -1,5 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+locals {
+  # Extraemos solo el role name usando split
+  role_name = split("/", data.aws_caller_identity.current.arn)[1]
+}
+
+data "aws_iam_role" "role_used_by_sso" {
+  name = local.role_name
+}
 
 data "aws_iam_policy_document" "kms_default_statement" {
 
@@ -39,7 +47,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${data.aws_caller_identity.current.id}:role/Administrator",
-        "arn:aws:iam::${data.aws_caller_identity.current.id}:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AdministratorAccess_b943c3dee381e483"
+        "${data.aws_iam_role.role_used_by_sso.arn}"
       ]
     }
   }

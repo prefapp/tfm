@@ -30,7 +30,7 @@ resource "aws_kms_replica_key" "replica" {
 }
 
 resource "aws_kms_alias" "this_replica" {
-  for_each      = toset(var.aws_regions_replica)
+  for_each      = var.alias != null ? toset(var.aws_regions_replica) : []
   region        = each.key
   name          = "alias/${var.alias}"
   target_key_id = aws_kms_replica_key.replica[each.key].arn
