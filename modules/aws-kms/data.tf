@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  # Extraemos solo el role name usando split
+  # Extract only the role name using split
   role_name = split("/", data.aws_caller_identity.current.arn)[1]
 }
 
