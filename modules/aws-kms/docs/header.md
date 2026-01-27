@@ -54,9 +54,9 @@ The module is organized with the following directory and file structure:
 ├── variables.tf
 ├── outputs.tf
 ├── _examples
-│   ├── basic
-│   ├── autoscaling
-│   └── with_tags
+│   ├── minimal
+│   ├── with_alias_replication
+│   └── with_alias_replication_account
 ├── README.md
 └── docs
     └── header.md
