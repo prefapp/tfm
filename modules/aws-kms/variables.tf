@@ -11,7 +11,7 @@ variable "aws_accounts_access" {
 }
 
 variable "aws_regions_replica" {
-  description = "Enable access to kms for additional AWS accounts"
+  description = "List of AWS regions where KMS key replicas should be created"
   type        = list(string)
   default     = []
 }
