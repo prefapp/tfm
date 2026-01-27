@@ -1,4 +1,4 @@
-# Example: ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
+# Example: KMS key with alias, multi-region replication, and cross-account access
 
 terraform {
   required_version = ">= 1.5"
