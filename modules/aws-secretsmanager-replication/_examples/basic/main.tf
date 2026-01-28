@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 locals {
-  # Aquí definimos la estructura multi-cuenta/multi-región/multi-KMS
+  # Here we define the multi-account/multi-region/multi-KMS structure
   destinations = {
     "111111111111" = {
       role_arn = "arn:aws:iam::111111111111:role/secrets-dr-replication-role"
@@ -46,8 +46,8 @@ locals {
 }
 
 module "secrets_dr_replication" {
-  # Ajusta esta ruta a donde tengas el módulo:
-  # por ejemplo: "../modules/secrets-dr-replication"
+  # Adjust this path to where you have the module:
+  # for example: "../modules/secrets-dr-replication"
   source = "../../"
 
   name = "secrets-dr-replication"
