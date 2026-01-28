@@ -2,19 +2,19 @@
 
 ## Overview
 
-Este módulo de Terraform permite crear y configurar backups de discos gestionados en Azure, incluyendo:
-- Creación de Recovery Services vault.
-- Definición de políticas de backup personalizadas.
-- Creación de instancias de backup para discos específicos.
-- Soporte para etiquetas y herencia desde el Resource Group.
+This Terraform module allows you to create and configure managed disks backups in Azure, including:
+- Creation of Recovery Services vault.
+- Definition of custom backup policies.
+- Creation of backup instances for specific disks.
+- Support for tags and inheritance from the Resource Group.
 
-## Características principales
-- Vault y políticas de backup configurables.
-- Soporte para múltiples discos y políticas.
-- Control de retención, redundancia y soft delete.
-- Ejemplo realista de configuración.
+## Main features
+- Configurable vault and backup policies.
+- Support for multiple disks and policies.
+- Retention, redundancy, and soft delete control.
+- Realistic configuration example.
 
-## Ejemplo completo de uso
+## Complete usage example
 
 ```hcl
 resource_group_name = "bk-disks"
@@ -86,12 +86,12 @@ backup_instances = [
 ]
 ```
 
-## Notas
-- El resource_group_name debe ser el mismo para el vault y los snapshots.
-- Los discos pueden estar en resource groups diferentes al del vault.
-- El módulo lanza error si el resource group del disco y del vault coinciden.
+## Notes
+- The resource_group_name must be the same for the vault and the snapshots.
+- Disks can be in different resource groups than the vault.
+- The module will throw an error if the disk and vault resource group are the same.
 
-## Estructura de archivos
+## File structure
 
 ```
 .

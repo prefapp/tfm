@@ -1,11 +1,11 @@
 ---
 
-## Recursos adicionales
+## Additional resources
 
 - [Azure Custom Roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/custom-roles)
-- [Proveedor Terraform AzureRM - azurerm_role_definition](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition)
-- [Documentación oficial de Terraform](https://www.terraform.io/docs)
+- [Terraform AzureRM Provider - azurerm_role_definition](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition)
+- [Official Terraform documentation](https://www.terraform.io/docs)
 
-## Soporte
+## Support
 
-Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)

@@ -2,14 +2,14 @@
 
 ## Overview
 
-Este módulo de Terraform permite crear un rol personalizado (Custom Role) en Azure, especificando acciones, data actions y los ámbitos (scopes) donde se puede asignar.
+This Terraform module allows you to create a custom role in Azure, specifying actions, data actions, and the assignable scopes.
 
-## Características principales
-- Creación de roles personalizados en Azure.
-- Definición flexible de acciones, data actions, not actions y not data actions.
-- Soporte para múltiples scopes asignables.
+## Main features
+- Create custom roles in Azure.
+- Flexible definition of actions, data actions, not actions, and not data actions.
+- Support for multiple assignable scopes.
 
-## Ejemplo completo de uso
+## Complete usage example
 
 ### HCL
 ```hcl
@@ -45,7 +45,7 @@ permissions:
     - "Microsoft.Authorization/*/Write"
 ```
 
-## Estructura de archivos
+## File structure
 
 ```
 .

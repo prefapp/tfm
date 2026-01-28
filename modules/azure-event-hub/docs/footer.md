@@ -1,13 +1,13 @@
 ---
 
-## Recursos adicionales
+## Additional resources
 
 - [Azure Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/)
-- [Proveedor Terraform AzureRM - azurerm_eventhub](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub)
-- [Proveedor Terraform AzureRM - azurerm_eventhub_namespace](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace)
-- [Proveedor Terraform AzureRM - azurerm_eventgrid_system_topic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventgrid_system_topic)
-- [Documentación oficial de Terraform](https://www.terraform.io/docs)
+- [Terraform AzureRM Provider - azurerm_eventhub](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub)
+- [Terraform AzureRM Provider - azurerm_eventhub_namespace](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace)
+- [Terraform AzureRM Provider - azurerm_eventgrid_system_topic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventgrid_system_topic)
+- [Official Terraform documentation](https://www.terraform.io/docs)
 
-## Soporte
+## Support
 
-Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)

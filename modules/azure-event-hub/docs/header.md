@@ -2,19 +2,19 @@
 
 ## Overview
 
-Este módulo de Terraform permite crear y gestionar un entorno completo de Azure Event Hub, incluyendo:
-- Namespace, Event Hubs, reglas de autorización y grupos de consumidores.
-- Integración con Event Grid System Topics y suscripciones.
-- Configuración avanzada de red, seguridad y escalabilidad.
-- Etiquetado flexible y herencia de etiquetas del Resource Group.
+This Terraform module allows you to create and manage a complete Azure Event Hub environment, including:
+- Namespace, Event Hubs, authorization rules, and consumer groups.
+- Integration with Event Grid System Topics and subscriptions.
+- Advanced network, security, and scalability configuration.
+- Flexible tagging and tag inheritance from the Resource Group.
 
-## Características principales
-- Creación de namespaces y múltiples Event Hubs con configuración personalizada.
-- Soporte para reglas de autorización, grupos de consumidores y suscripciones de eventos.
-- Integración con Event Grid System Topics.
-- Configuración de reglas de red (IP, VNet, acceso público, etc).
+## Main features
+- Create namespaces and multiple Event Hubs with custom configuration.
+- Support for authorization rules, consumer groups, and event subscriptions.
+- Integration with Event Grid System Topics.
+- Network rules configuration (IP, VNet, public access, etc).
 
-## Ejemplo completo de uso
+## Complete usage example
 
 ```yaml
 values:
@@ -86,7 +86,7 @@ values:
           manage: false
 ```
 
-## Estructura de archivos
+## File structure
 
 ```
 .

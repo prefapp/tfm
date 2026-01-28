@@ -2,18 +2,18 @@
 
 ## Overview
 
-Este módulo de Terraform permite crear y gestionar discos gestionados (Managed Disks) en Azure, con soporte para:
-- Creación de múltiples discos con diferentes configuraciones.
-- Asignación opcional de roles sobre los discos.
-- Etiquetado flexible y herencia de etiquetas del Resource Group.
+This Terraform module allows you to create and manage managed disks in Azure, with support for:
+- Creation of multiple disks with different configurations.
+- Optional role assignment on disks.
+- Flexible tagging and tag inheritance from the Resource Group.
 
-## Características principales
-- Creación de discos gestionados de diferentes tipos y tamaños.
-- Asignación opcional de roles a los discos (por ejemplo, Contributor).
-- Soporte para tags y herencia desde el Resource Group.
-- Manejo de cambios de tamaño ignorados por el lifecycle (útil para CSI Driver).
+## Main features
+- Create managed disks of different types and sizes.
+- Optional role assignment to disks (e.g., Contributor).
+- Support for tags and inheritance from the Resource Group.
+- Ignores disk size changes in lifecycle (useful for CSI Driver).
 
-## Ejemplo completo de uso
+## Complete usage example
 
 ```yaml
 values:
@@ -28,12 +28,12 @@ values:
       - name: disk-4
 ```
 
-## Notas
-- Se pueden crear discos vacíos o basados en otro disco.
-- No es obligatorio asignar un rol a un disco.
-- El tamaño del disco se ignora en los cambios para evitar conflictos con el CSI Driver.
+## Notes
+- You can create empty disks or base them on another disk.
+- Assigning a role to a disk is not mandatory.
+- Disk size is ignored in changes to avoid conflicts with the CSI Driver.
 
-## Estructura de archivos
+## File structure
 
 ```
 .
