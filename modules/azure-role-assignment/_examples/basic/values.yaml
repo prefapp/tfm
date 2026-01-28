@@ -1,0 +1,10 @@
+role_assignments:
+  foo:
+    scope: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup
+    role_definition_name: Reader
+    target_id: 12345678-1234-1234-1234-123456789012
+  bar:
+    scope: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM
+    role_definition_id: /subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/12345678-1234-1234-1234-123456789012
+    target_id: 87654321-4321-4321-4321-210987654321
+

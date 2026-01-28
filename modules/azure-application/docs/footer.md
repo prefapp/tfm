@@ -1,5 +1,11 @@
 ---
 
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-application/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-application/_examples/basic) - Azure AD App Registration with members, redirects, Microsoft Graph roles and client secret stored in Key Vault.
+
 ## Recursos adicionales
 
 - [Azure Active Directory App Registration](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)

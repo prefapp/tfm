@@ -1,0 +1,17 @@
+version: "0.16"
+output-file: README.md
+output-mode: inject
+sections:
+  hide:
+    - requirements
+    - providers
+    - modules
+    - resources
+    - data-sources
+  show:
+    - header
+    - inputs
+    - outputs
+    - footer
+header-from: docs/header.md
+footer-from: docs/footer.md

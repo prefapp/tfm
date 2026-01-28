@@ -1,5 +1,11 @@
 ---
 
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples/basic) - Event Hub namespace with a basic event hub and optional system topic integration.
+
 ## Additional resources
 
 - [Azure Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/)

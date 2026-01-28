@@ -9,41 +9,9 @@ This Terraform module allows you to create a custom role in Azure, specifying ac
 - Flexible definition of actions, data actions, not actions, and not data actions.
 - Support for multiple assignable scopes.
 
-## Complete usage example
+## Ejemplo completo
 
-### HCL
-```hcl
-module "custom_role" {
-  source = "./modules/azure-customrole"
-  name   = "Custom Role"
-  assignable_scopes = ["/subscriptions/xxx", "/subscriptions/yyy"]
-  permissions = {
-    actions = [
-      "Microsoft.Compute/disks/read",
-      "Microsoft.Compute/disks/write",
-    ]
-    not_actions = [
-      "Microsoft.Compute/disks/read",
-      "Microsoft.Compute/disks/write",
-    ]
-  }
-}
-```
-
-### YAML
-```yaml
-name: "Custom Role"
-assignable_scopes:
-  - "/subscriptions/xxx"
-  - "/subscriptions/yyy"
-permissions:
-  actions:
-    - "Microsoft.Compute/disks/read"
-    - "Microsoft.Compute/disks/write"
-  notActions:
-    - "Microsoft.Authorization/*/Delete"
-    - "Microsoft.Authorization/*/Write"
-```
+Puedes encontrar un ejemplo completo en [`_examples/basic/values.yaml`](../_examples/basic/values.yaml).
 
 ## File structure
 

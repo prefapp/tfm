@@ -12,6 +12,13 @@ It is suitable for development, staging, and production environments, and can be
 - **Domain Name Label Definition**: Capacity to define a custom domain name label
 - **Availability zone allocation**: Define in which availability zones deploy the public ip
 
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| public_ip_id | The ID of the Public IP. |
+| public_ip_address | The IP address of the Public IP. |
+
 ## Basic Usage
 
 ### Example 1: Base Public IP
