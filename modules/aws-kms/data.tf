@@ -1,6 +1,12 @@
 data "aws_caller_identity" "current" {}
 
 locals {
+  # Check if the caller identity is a role by inspecting the ARN
+  # Role ARN format: arn:aws:iam::ACCOUNT:role/ROLE_NAME
+  # User ARN format: arn:aws:iam::ACCOUNT:user/USER_NAME
+  # Assumed role ARN format: arn:aws:sts::ACCOUNT:assumed-role/ROLE_NAME/SESSION_NAME
+  is_role = can(regex(":role/", data.aws_caller_identity.current.arn)) || can(regex(":assumed-role/", data.aws_caller_identity.current.arn))
+  
   # Extract only the role name from the caller identity ARN in a safe way
   arn_parts = split("/", data.aws_caller_identity.current.arn)
   # Use the second element when available (preserving previous behavior), otherwise fall back to the first
@@ -8,7 +14,8 @@ locals {
 }
 
 data "aws_iam_role" "role_used_by_sso" {
-  name = local.role_name
+  count = local.is_role ? 1 : 0
+  name  = local.role_name
 }
 
 data "aws_iam_policy_document" "kms_default_statement" {
@@ -49,7 +56,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
       type = "AWS"
       identifiers = compact(concat(
         var.administrator_role_name != null ? ["arn:aws:iam::${data.aws_caller_identity.current.id}:role/${var.administrator_role_name}"] : [],
-        [data.aws_iam_role.role_used_by_sso.arn]
+        local.is_role ? [data.aws_iam_role.role_used_by_sso[0].arn] : []
       ))
     }
   }
