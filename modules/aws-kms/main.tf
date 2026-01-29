@@ -5,7 +5,7 @@ resource "aws_kms_key" "this" {
   enable_key_rotation     = var.enable_key_rotation
   deletion_window_in_days = var.deletion_window_in_days
   policy                  = data.aws_iam_policy_document.kms_default_statement.json
-  tags                    = merge({ "alias" = var.alias }, var.tags)
+  tags                    = var.alias != null ? merge({ "alias" = var.alias }, var.tags) : var.tags
 }
 
 resource "aws_kms_alias" "this" {
@@ -25,7 +25,7 @@ resource "aws_kms_replica_key" "replica" {
   primary_key_arn         = aws_kms_key.this.arn
   policy                  = data.aws_iam_policy_document.kms_default_statement.json
 
-  tags = merge({ "alias" = var.alias }, var.tags)
+  tags = var.alias != null ? merge({ "alias" = var.alias }, var.tags) : var.tags
 
 }
 
