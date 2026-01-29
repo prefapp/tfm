@@ -53,7 +53,6 @@ The module is organized with the following directory and file structure:
 ├── data.tf
 ├── main.tf
 ├── variables.tf
-├── outputs.tf
 ├── _examples
 │   ├── minimal
 │   ├── with_alias_replication
