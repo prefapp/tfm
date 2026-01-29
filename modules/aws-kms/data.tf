@@ -86,7 +86,6 @@ data "aws_iam_policy_document" "kms_default_statement" {
       principals {
         type        = "AWS"
         identifiers = [for account in var.aws_accounts_access : "arn:aws:iam::${account}:root"]
-
       }
     }
   }
