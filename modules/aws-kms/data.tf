@@ -9,19 +9,21 @@ locals {
   
   # Extract only the role name from the caller identity ARN in a safe way
   # Only used when caller is a role (data source has count = 0 when is_role is false)
-  arn_parts = split("/", data.aws_caller_identity.current.arn)
-  # Use the second element when available (preserving previous behavior), otherwise fall back to the first
-  role_name = length(local.arn_parts) >= 2 ? local.arn_parts[1] : local.arn_parts[0]
+  arn_parts        = split("/", data.aws_caller_identity.current.arn)
+  # Consider the ARN valid for role-name extraction only when there is a non-empty second part
+  valid_role_name  = length(local.arn_parts) >= 2 && trim(local.arn_parts[1]) != ""
+  # Use the extracted role name only when the ARN format is valid; otherwise leave it empty
+  role_name        = local.valid_role_name ? local.arn_parts[1] : ""
   
   # Build list of administrator identifiers
   administrator_identifiers = compact(concat(
     var.administrator_role_name != null ? ["arn:aws:iam::${data.aws_caller_identity.current.id}:role/${var.administrator_role_name}"] : [],
-    local.is_role ? [data.aws_iam_role.role_used_by_sso[0].arn] : []
+    local.is_role && local.valid_role_name ? [data.aws_iam_role.role_used_by_sso[0].arn] : []
   ))
 }
 
 data "aws_iam_role" "role_used_by_sso" {
-  count = local.is_role ? 1 : 0
+  count = local.is_role && local.valid_role_name ? 1 : 0
   name  = local.role_name
 }
 
