@@ -6,7 +6,6 @@ locals {
   # User ARN format: arn:aws:iam::ACCOUNT:user/USER_NAME
   # Assumed role ARN format: arn:aws:sts::ACCOUNT:assumed-role/ROLE_NAME/SESSION_NAME
   is_role = can(regex(":role/", data.aws_caller_identity.current.arn)) || can(regex(":assumed-role/", data.aws_caller_identity.current.arn))
-
   # Extract only the role name from the caller identity ARN in a safe way
   # Only used when caller is a role (data source has count = 0 when is_role is false)
   arn_parts = split("/", data.aws_caller_identity.current.arn)
