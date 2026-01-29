@@ -6,6 +6,13 @@ resource "aws_kms_key" "this" {
   deletion_window_in_days = var.deletion_window_in_days
   policy                  = data.aws_iam_policy_document.kms_default_statement.json
   tags                    = var.alias != null ? merge({ "alias" = var.alias }, var.tags) : var.tags
+
+  lifecycle {
+    precondition {
+      condition     = length(var.aws_regions_replica) == 0 || var.multiregion == true
+      error_message = "KMS replica keys can only be created for multi-region keys. Set multiregion = true when using aws_regions_replica."
+    }
+  }
 }
 
 resource "aws_kms_alias" "this" {
