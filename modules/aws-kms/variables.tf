@@ -21,6 +21,11 @@ variable "deletion_window_in_days" {
   description = "The waiting period, specified in days, before the KMS key is deleted. Default is 30 days."
   type        = number
   default     = 30
+
+  validation {
+    condition     = var.deletion_window_in_days >= 7 && var.deletion_window_in_days <= 30
+    error_message = "deletion_window_in_days must be between 7 and 30 days (inclusive), as required by AWS KMS."
+  }
 }
 
 variable "enable_key_rotation" {
