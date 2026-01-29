@@ -42,7 +42,7 @@ variable "enable_key_rotation" {
 variable "description" {
   description = "Description of the KMS key"
   type        = string
-  default     = "An example symmetric encryption KMS key"
+  default     = "Symmetric encryption KMS key"
 }
 
 variable "multiregion" {
