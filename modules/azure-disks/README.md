@@ -3,18 +3,18 @@
 
 ## Overview
 
-Este módulo de Terraform permite crear y gestionar discos gestionados (Managed Disks) en Azure, con soporte para:
-- Creación de múltiples discos con diferentes configuraciones.
-- Asignación opcional de roles sobre los discos.
-- Etiquetado flexible y herencia de etiquetas del Resource Group.
+This Terraform module allows you to create and manage managed disks in Azure, with support for:
+- Creation of multiple disks with different configurations.
+- Optional role assignment on disks.
+- Flexible tagging and tag inheritance from the Resource Group.
 
-## Características principales
-- Creación de discos gestionados de diferentes tipos y tamaños.
-- Asignación opcional de roles a los discos (por ejemplo, Contributor).
-- Soporte para tags y herencia desde el Resource Group.
-- Manejo de cambios de tamaño ignorados por el lifecycle (útil para CSI Driver).
+## Main features
+- Create managed disks of different types and sizes.
+- Optional role assignment to disks (e.g., Contributor).
+- Support for tags and inheritance from the Resource Group.
+- Ignores disk size changes in lifecycle (useful for CSI Driver).
 
-## Ejemplo completo de uso
+## Complete usage example
 
 ```yaml
 values:
@@ -29,12 +29,12 @@ values:
       - name: disk-4
 ```
 
-## Notas
-- Se pueden crear discos vacíos o basados en otro disco.
-- No es obligatorio asignar un rol a un disco.
-- El tamaño del disco se ignora en los cambios para evitar conflictos con el CSI Driver.
+## Notes
+- You can create empty disks or base them on another disk.
+- Assigning a role to a disk is not mandatory.
+- Disk size is ignored in changes to avoid conflicts with the CSI Driver.
 
-## Estructura de archivos
+## File structure
 
 ```
 .
@@ -96,13 +96,19 @@ No modules.
 
 ---
 
-## Recursos adicionales
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples/basic) - Basic managed disk configuration with size, SKU and performance settings.
+
+## Additional resources
 
 - [Azure Managed Disks](https://learn.microsoft.com/en-us/azure/virtual-machines/managed-disks-overview)
-- [Proveedor Terraform AzureRM - azurerm\_managed\_disk](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_disk)
-- [Documentación oficial de Terraform](https://www.terraform.io/docs)
+- [Terraform AzureRM Provider - azurerm\_managed\_disk](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_disk)
+- [Official Terraform documentation](https://www.terraform.io/docs)
 
-## Soporte
+## Support
 
-Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
 <!-- END_TF_DOCS -->

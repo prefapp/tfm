@@ -1,4 +1,4 @@
-formatter: "markdown"
+formatter: "markdown" # this is required
 
 version: ""
 

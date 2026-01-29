@@ -3,19 +3,19 @@
 
 ## Overview
 
-Este módulo de Terraform permite crear y configurar backups de discos gestionados en Azure, incluyendo:
-- Creación de Recovery Services vault.
-- Definición de políticas de backup personalizadas.
-- Creación de instancias de backup para discos específicos.
-- Soporte para etiquetas y herencia desde el Resource Group.
+This Terraform module allows you to create and configure managed disks backups in Azure, including:
+- Creation of Recovery Services vault.
+- Definition of custom backup policies.
+- Creation of backup instances for specific disks.
+- Support for tags and inheritance from the Resource Group.
 
-## Características principales
-- Vault y políticas de backup configurables.
-- Soporte para múltiples discos y políticas.
-- Control de retención, redundancia y soft delete.
-- Ejemplo realista de configuración.
+## Main features
+- Configurable vault and backup policies.
+- Support for multiple disks and policies.
+- Retention, redundancy, and soft delete control.
+- Realistic configuration example.
 
-## Ejemplo completo de uso
+## Complete usage example
 
 ```hcl
 resource_group_name = "bk-disks"
@@ -87,12 +87,12 @@ backup_instances = [
 ]
 ```
 
-## Notas
-- El resource\_group\_name debe ser el mismo para el vault y los snapshots.
-- Los discos pueden estar en resource groups diferentes al del vault.
-- El módulo lanza error si el resource group del disco y del vault coinciden.
+## Notes
+- The resource\_group\_name must be the same for the vault and the snapshots.
+- Disks can be in different resource groups than the vault.
+- The module will throw an error if the disk and vault resource group are the same.
 
-## Estructura de archivos
+## File structure
 
 ```
 .
@@ -156,17 +156,17 @@ No modules.
 |------|-------------|
 | <a name="output_vault_id"></a> [vault\_id](#output\_vault\_id) | n/a |
 
----
+s---
 
-## Recursos adicionales
+## Additional resources
 
-- [Azure Backup para discos](https://learn.microsoft.com/en-us/azure/backup/backup-managed-disks)
+- [Azure Backup for Disks](https://learn.microsoft.com/en-us/azure/backup/backup-managed-disks)
 - [azurerm\_data\_protection\_backup\_vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault)
 - [azurerm\_data\_protection\_backup\_policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_policy)
 - [azurerm\_data\_protection\_backup\_instance\_disk](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_disk)
-- [Documentación oficial de Terraform](https://www.terraform.io/docs)
+- [Official Terraform documentation](https://www.terraform.io/docs)
 
-## Soporte
+## Support
 
-Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
 <!-- END_TF_DOCS -->

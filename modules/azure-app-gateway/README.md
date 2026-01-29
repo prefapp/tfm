@@ -333,6 +333,12 @@ No modules.
 
 ---
 
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-app-gateway/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-app-gateway/_examples/basic) - Application Gateway with public IP, WAF policy, SSL profiles and rewrite rules.
+
 ## Recursos adicionales
 
 - [Azure Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/overview)

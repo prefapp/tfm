@@ -3,50 +3,18 @@
 
 ## Overview
 
-Este módulo de Terraform permite crear un rol personalizado (Custom Role) en Azure, especificando acciones, data actions y los ámbitos (scopes) donde se puede asignar.
+This Terraform module allows you to create a custom role in Azure, specifying actions, data actions, and the assignable scopes.
 
-## Características principales
-- Creación de roles personalizados en Azure.
-- Definición flexible de acciones, data actions, not actions y not data actions.
-- Soporte para múltiples scopes asignables.
+## Main features
+- Create custom roles in Azure.
+- Flexible definition of actions, data actions, not actions, and not data actions.
+- Support for multiple assignable scopes.
 
-## Ejemplo completo de uso
+## Ejemplo completo
 
-### HCL
-```hcl
-module "custom_role" {
-  source = "./modules/azure-customrole"
-  name   = "Custom Role"
-  assignable_scopes = ["/subscriptions/xxx", "/subscriptions/yyy"]
-  permissions = {
-    actions = [
-      "Microsoft.Compute/disks/read",
-      "Microsoft.Compute/disks/write",
-    ]
-    not_actions = [
-      "Microsoft.Compute/disks/read",
-      "Microsoft.Compute/disks/write",
-    ]
-  }
-}
-```
+Puedes encontrar un ejemplo completo en [`_examples/basic/values.yaml`](../\_examples/basic/values.yaml).
 
-### YAML
-```yaml
-name: "Custom Role"
-assignable_scopes:
-  - "/subscriptions/xxx"
-  - "/subscriptions/yyy"
-permissions:
-  actions:
-    - "Microsoft.Compute/disks/read"
-    - "Microsoft.Compute/disks/write"
-  notActions:
-    - "Microsoft.Authorization/*/Delete"
-    - "Microsoft.Authorization/*/Write"
-```
-
-## Estructura de archivos
+## File structure
 
 ```
 .
@@ -100,13 +68,19 @@ No modules.
 
 ---
 
-## Recursos adicionales
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/basic) - Basic custom role definition with assignable scopes and permissions.
+
+## Additional resources
 
 - [Azure Custom Roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/custom-roles)
-- [Proveedor Terraform AzureRM - azurerm\_role\_definition](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition)
-- [Documentación oficial de Terraform](https://www.terraform.io/docs)
+- [Terraform AzureRM Provider - azurerm\_role\_definition](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition)
+- [Official Terraform documentation](https://www.terraform.io/docs)
 
-## Soporte
+## Support
 
-Para dudas, incidencias o contribuciones, utiliza el issue tracker del repositorio: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->

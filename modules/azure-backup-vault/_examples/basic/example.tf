@@ -1,4 +1,4 @@
-// Basic example: backup vault with PostgreSQL, MySQL, disk, blob and Kubernetes policies
+// Basic example: backup vault with PostgreSQL, disk, blob and Kubernetes policies and instances
 
 module "azure_backup_vault" {
   source = "../../"
