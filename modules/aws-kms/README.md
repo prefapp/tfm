@@ -98,6 +98,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_administrator_role_name"></a> [administrator\_role\_name](#input\_administrator\_role\_name) | Name of the IAM role to grant KMS administrator permissions. Set to null to disable granting permissions to this role. | `string` | `"Administrator"` | no |
 | <a name="input_alias"></a> [alias](#input\_alias) | The alias that will use the KMS key | `string` | `null` | no |
 | <a name="input_aws_accounts_access"></a> [aws\_accounts\_access](#input\_aws\_accounts\_access) | Enable access to kms for additional AWS accounts | `list(string)` | `[]` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Region to create kms key | `string` | `"eu-west-1"` | no |

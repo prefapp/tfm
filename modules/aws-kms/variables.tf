@@ -72,3 +72,9 @@ variable "alias" {
   type        = string
   default     = null
 }
+
+variable "administrator_role_name" {
+  description = "Name of the IAM role to grant KMS administrator permissions. Set to null to disable granting permissions to this role."
+  type        = string
+  default     = "Administrator"
+}
