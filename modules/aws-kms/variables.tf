@@ -19,11 +19,6 @@ variable "aws_regions_replica" {
     condition     = length([for r in var.aws_regions_replica : r if r == var.aws_region]) == 0
     error_message = "aws_regions_replica must not contain the primary aws_region."
   }
-
-  validation {
-    condition     = length([for r in var.aws_regions_replica : r if r == var.aws_region]) == 0
-    error_message = "aws_regions_replica must not contain the primary aws_region."
-  }
 }
 
 
@@ -31,11 +26,6 @@ variable "deletion_window_in_days" {
   description = "The waiting period, specified in days, before the KMS key is deleted. Default is 30 days."
   type        = number
   default     = 30
-
-  validation {
-    condition     = var.deletion_window_in_days >= 7 && var.deletion_window_in_days <= 30
-    error_message = "deletion_window_in_days must be between 7 and 30 days (inclusive), as required by AWS KMS."
-  }
 
   validation {
     condition     = var.deletion_window_in_days >= 7 && var.deletion_window_in_days <= 30
