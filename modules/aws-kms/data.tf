@@ -1,8 +1,10 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-  # Extract only the role name using split
-  role_name = split("/", data.aws_caller_identity.current.arn)[1]
+  # Extract only the role name from the caller identity ARN in a safe way
+  arn_parts = split("/", data.aws_caller_identity.current.arn)
+  # Use the second element when available (preserving previous behavior), otherwise fall back to the first
+  role_name = length(local.arn_parts) >= 2 ? local.arn_parts[1] : local.arn_parts[0]
 }
 
 data "aws_iam_role" "role_used_by_sso" {
