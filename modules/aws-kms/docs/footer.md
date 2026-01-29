@@ -4,7 +4,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Minimal](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/minimal) – Minimal KMS creation
 - [KMS with alias and replication](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/with_alias_replication) – KMS creation with alias and region replication
-- [KMS with alias, replication, and extra account access](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/with_alias_replication_region) – KMS creation with alias, region replication, and extra account access
+- [KMS with alias, replication, and extra account access](https://github.com/prefapp/tfm/tree/main/modules/aws-kms/_examples/with_alias_replication_account) – KMS creation with alias, region replication, and extra account access
 
 ## Remote Resources
 - Terraform: https://www.terraform.io/
