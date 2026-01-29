@@ -29,7 +29,7 @@ resource "aws_kms_replica_key" "replica" {
 
   lifecycle {
     precondition {
-      condition     = var.multiregion == true
+      condition     = length(var.aws_regions_replica) == 0 || var.multiregion == true
       error_message = "KMS replica keys can only be created for multi-region keys. Set multiregion = true when using aws_regions_replica."
     }
   }
