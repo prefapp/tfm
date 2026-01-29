@@ -27,7 +27,7 @@ resource "aws_kms_alias" "this" {
 resource "aws_kms_replica_key" "replica" {
   for_each                = toset(var.aws_regions_replica)
   region                  = each.key
-  description             = "Multi-Region replica key"
+  description             = "${var.description} - Replica in ${each.key}"
   deletion_window_in_days = var.deletion_window_in_days
   primary_key_arn         = aws_kms_key.this.arn
   policy                  = data.aws_iam_policy_document.kms_default_statement.json
