@@ -1,0 +1,11 @@
+name: "Custom Role"
+assignable_scopes:
+  - "/subscriptions/xxx"
+  - "/subscriptions/yyy"
+permissions:
+  actions:
+    - "Microsoft.Compute/disks/read"
+    - "Microsoft.Compute/disks/write"
+  notActions:
+    - "Microsoft.Authorization/*/Delete"
+    - "Microsoft.Authorization/*/Write"
