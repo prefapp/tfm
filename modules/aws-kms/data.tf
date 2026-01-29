@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
       type = "AWS"
       identifiers = compact(concat(
         var.administrator_role_name != null ? ["arn:aws:iam::${data.aws_caller_identity.current.id}:role/${var.administrator_role_name}"] : [],
-        ["${data.aws_iam_role.role_used_by_sso.arn}"]
+        [data.aws_iam_role.role_used_by_sso.arn]
       ))
     }
   }
