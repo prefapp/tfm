@@ -14,6 +14,11 @@ variable "aws_regions_replica" {
   description = "List of AWS regions where KMS key replicas should be created"
   type        = list(string)
   default     = []
+
+  validation {
+    condition     = length([for r in var.aws_regions_replica : r if r == var.aws_region]) == 0
+    error_message = "aws_regions_replica must not contain the primary aws_region."
+  }
 }
 
 
