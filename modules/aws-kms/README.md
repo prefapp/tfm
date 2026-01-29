@@ -111,7 +111,15 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_alias_arn"></a> [alias\_arn](#output\_alias\_arn) | The Amazon Resource Name (ARN) of the KMS key alias (null if not created) |
+| <a name="output_alias_name"></a> [alias\_name](#output\_alias\_name) | The name of the KMS key alias (null if not created) |
+| <a name="output_key_arn"></a> [key\_arn](#output\_key\_arn) | The Amazon Resource Name (ARN) of the KMS key |
+| <a name="output_key_id"></a> [key\_id](#output\_key\_id) | The globally unique identifier for the KMS key |
+| <a name="output_replica_alias_arns"></a> [replica\_alias\_arns](#output\_replica\_alias\_arns) | Map of replica region to KMS replica alias ARNs (empty if alias not created) |
+| <a name="output_replica_key_arns"></a> [replica\_key\_arns](#output\_replica\_key\_arns) | Map of replica region to KMS replica key ARNs |
+| <a name="output_replica_key_ids"></a> [replica\_key\_ids](#output\_replica\_key\_ids) | Map of replica region to KMS replica key IDs |
 
 ## Examples
 
