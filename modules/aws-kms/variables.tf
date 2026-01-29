@@ -19,6 +19,11 @@ variable "aws_regions_replica" {
     condition     = length([for r in var.aws_regions_replica : r if r == var.aws_region]) == 0
     error_message = "aws_regions_replica must not contain the primary aws_region."
   }
+
+  validation {
+    condition     = length([for r in var.aws_regions_replica : r if r == var.aws_region]) == 0
+    error_message = "aws_regions_replica must not contain the primary aws_region."
+  }
 }
 
 
