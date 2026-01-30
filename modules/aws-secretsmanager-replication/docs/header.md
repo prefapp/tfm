@@ -1,0 +1,52 @@
+
+
+# **AWS Secrets Manager Copy Terraform Module**
+
+## Overview
+
+This Terraform module provisions and manages a Lambda function for cross-account and cross-region replication of AWS Secrets Manager secrets. It automates the deployment of the Lambda, IAM roles, permissions, and (optionally) EventBridge rules to trigger secret replication on changes.
+
+The module is designed for secure and automated secret replication, supporting flexible configuration of destination accounts and regions. It is suitable for organizations that need to synchronize secrets across multiple AWS environments for Disaster Recovery or multi-region scenarios.
+
+## Key Features
+
+- **Secrets Replication**: Automatically replicates secrets to one or more destination AWS accounts and/or regions.
+- **Event-Driven**: Uses EventBridge to trigger replication when a secret is created or updated (optional).
+- **Customizable Destinations**: Configure multiple destination accounts and regions, each with its own IAM role and KMS key.
+- **IAM Role Management**: Creates all necessary IAM roles and policies for Lambda execution and cross-account access.
+- **Environment Variables**: Supports custom environment variables for advanced configuration.
+- **Tag Replication**: Optionally replicates tags from the source secret to the destination (controlled by the `enable_tag_replication` variable).
+
+## Secret Replication Logic
+
+This module deploys a Lambda function that listens for changes in AWS Secrets Manager via EventBridge (if enabled). When a secret is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both secret value and tags (if enabled).
+
+### Destination Configuration Format
+
+The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure:
+
+```json
+{
+	"DEST_ACCOUNT_ID": {
+		"role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
+		"regions": {
+			"us-east-1": {
+				"kms_key_id": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx"
+			},
+			"eu-west-1": {
+				"kms_key_id": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
+			}
+		}
+	}
+}
+```
+
+You can specify as many destination accounts and regions as needed. Each region must specify the KMS key to use for secret encryption.
+
+### Tag Replication
+
+By default, tags from the source secret are also replicated to the destination. You can control this behavior using the `enable_tag_replication` variable in Terraform. If set to `false`, tags will not be copied.
+
+## Important Note: Permissions
+
+Ensure that the destination roles have the necessary permissions to create and update secrets in the target accounts/regions. The source Lambda role must also have permission to assume these roles and read the source secrets.
