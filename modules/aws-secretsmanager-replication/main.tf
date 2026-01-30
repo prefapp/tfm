@@ -78,7 +78,7 @@ resource "aws_cloudwatch_event_rule" "secret_change" {
 
   event_pattern = jsonencode({
     source      = ["aws.secretsmanager"]
-    detail_type = ["AWS API Call via CloudTrail"]
+    detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["secretsmanager.amazonaws.com"]
       eventName   = ["PutSecretValue", "UpdateSecret"]
