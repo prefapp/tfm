@@ -82,25 +82,18 @@ resource "aws_s3_bucket" "cloudtrail" {
   tags          = var.tags
 }
 
-resource "aws_cloudtrail" "secrets_data_events" {
-  name                          = "${var.prefix}-secrets-data-events"
+resource "aws_cloudtrail" "secrets_management_events" {
+  name                          = "${var.prefix}-secrets-management-events"
   is_multi_region_trail         = true
   include_global_service_events = false
   enable_logging                = true
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id
 
-  # No necesitamos management events para este caso
   event_selector {
     read_write_type           = "All"
-    include_management_events = false
-
-    data_resource {
-      type = "AWS::SecretsManager::Secret"
-      values = [
-        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:*"
-      ]
-    }
+    include_management_events = true
   }
 
   tags = var.tags
 }
+
