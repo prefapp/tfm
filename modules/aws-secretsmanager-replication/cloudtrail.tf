@@ -1,9 +1,3 @@
-resource "aws_s3_bucket" "cloudtrail_logs" {
-  bucket = "${var.prefix}-cloudtrail-logs"
-
-  force_destroy = false
-}
-
 resource "aws_cloudtrail" "this" {
   name                          = "${var.prefix}-trail"
   s3_bucket_name                = aws_s3_bucket.cloudtrail_logs.id
