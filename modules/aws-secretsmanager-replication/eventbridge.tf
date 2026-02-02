@@ -1,17 +1,3 @@
-resource "aws_cloudwatch_event_rule" "secretsmanager_events" {
-  name        = "${var.prefix}-secretsmanager-events"
-  description = "Trigger Lambda on Secrets Manager updates"
-
-  event_pattern = jsonencode({
-    source      = ["aws.secretsmanager"]
-    "detail-type" = ["AWS API Call via CloudTrail"]
-    detail = {
-      eventSource = ["secretsmanager.amazonaws.com"]
-      eventName   = ["PutSecretValue", "UpdateSecret"]
-    }
-  })
-}
-
 resource "aws_cloudwatch_event_rule" "secret_change" {
   count       = var.eventbridge_enabled ? 1 : 0
   name        = "${var.name}-secret-change"
