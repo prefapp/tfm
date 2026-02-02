@@ -1,6 +1,6 @@
 resource "aws_cloudtrail" "this" {
   name                          = "${var.prefix}-trail"
-  s3_bucket_name                = aws_s3_bucket.cloudtrail_logs.id
+  s3_bucket_name                = aws_s3_bucket.cloudtrail_logs[0].id
   include_global_service_events = true
   is_multi_region_trail         = true
   enable_logging                = true
