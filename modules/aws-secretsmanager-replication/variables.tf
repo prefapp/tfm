@@ -3,6 +3,17 @@ variable "name" {
   type        = string
 }
 
+variable "prefix" {
+  description = "Prefix to use for naming resources."
+  type        = string
+}
+
+variable "cloudtrail_bucket_name" {
+  type        = string
+  description = "Name of the bucket for CloudTrail. If not defined, the module will create one."
+  default     = null
+}
+
 variable "destinations_json" {
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
