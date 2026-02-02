@@ -107,7 +107,10 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
         Sid       = "AWSCloudTrailAclCheck"
         Effect    = "Allow"
         Principal = { Service = "cloudtrail.amazonaws.com" }
-        Action    = "s3:GetBucketAcl"
+        Action    = [
+          "s3:GetBucketAcl",
+          "s3:GetBucketPolicy"
+        ]
         Resource  = aws_s3_bucket.cloudtrail.arn
       },
       {
@@ -125,3 +128,4 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
     ]
   })
 }
+
