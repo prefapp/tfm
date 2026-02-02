@@ -9,6 +9,10 @@ terraform {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+
 locals {
   # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
   environment = merge(
@@ -40,7 +44,7 @@ module "lambda" {
 
   environment_variables = local.environment
 
-  attach_cloudwatch_logs_policy     = false
+  attach_cloudwatch_logs_policy = false
 
   # Extra IAM permissions for Secrets Manager + STS
   attach_policy_json = true
@@ -70,4 +74,33 @@ module "lambda" {
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = module.lambda.lambda_role_name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_s3_bucket" "cloudtrail" {
+  bucket        = "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}"
+  force_destroy = true
+  tags          = var.tags
+}
+
+resource "aws_cloudtrail" "secrets_data_events" {
+  name                          = "${var.prefix}-secrets-data-events"
+  is_multi_region_trail         = true
+  include_global_service_events = false
+  enable_logging                = true
+  s3_bucket_name                = aws_s3_bucket.cloudtrail.id
+
+  # No necesitamos management events para este caso
+  event_selector {
+    read_write_type           = "All"
+    include_management_events = false
+
+    data_resource {
+      type = "AWS::SecretsManager::Secret"
+      values = [
+        "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:*"
+      ]
+    }
+  }
+
+  tags = var.tags
 }
