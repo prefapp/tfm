@@ -40,8 +40,7 @@ module "lambda" {
 
   environment_variables = local.environment
 
-  attach_cloudwatch_logs_policy     = true
-  cloudwatch_logs_retention_in_days = 30
+  attach_cloudwatch_logs_policy     = false
 
   # Extra IAM permissions for Secrets Manager + STS
   attach_policy_json = true
@@ -68,3 +67,7 @@ module "lambda" {
 }
 
 
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role       = module.lambda.lambda_role_name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
