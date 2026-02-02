@@ -26,12 +26,6 @@ class Config:
 
 def load_config() -> Config:
 
-    # Guarda: no permitir AWS_REGION como variable de entorno externa
-    if "AWS_REGION" in os.environ and os.environ.get("AWS_REGION") != os.environ.get("AWS_LAMBDA_FUNCTION_REGION"):
-        raise RuntimeError(
-            "No se permite establecer AWS_REGION manualmente en las variables de entorno. AWS lo gestiona automáticamente."
-        )
-
     raw = os.environ.get("DESTINATIONS_JSON", "{}")
     parsed = json.loads(raw)
 
