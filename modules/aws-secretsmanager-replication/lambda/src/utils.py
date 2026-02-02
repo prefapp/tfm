@@ -18,7 +18,7 @@ def log(level: str, message: str, **kwargs):
     elif level == "warning":
         logger.warning(message, **extra)
     elif level == "error":
-        logger.error(message, **extra)
+        logger.error(message, exc_info=True, **extra)
     else:
         logger.debug(message, **extra)
 
