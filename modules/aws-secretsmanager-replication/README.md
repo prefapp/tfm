@@ -32,10 +32,10 @@ The destinations are configured via the `destinations_json` variable, which must
 		"role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
 		"regions": {
 			"us-east-1": {
-				"kms_key_id": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx"
+				"kms_key_arn": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx"
 			},
 			"eu-west-1": {
-				"kms_key_id": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
+				"kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
 			}
 		}
 	}
@@ -63,7 +63,7 @@ Ensure that the destination roles have the necessary permissions to create and u
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.28.0 |
 
 ## Modules
 
@@ -91,6 +91,7 @@ Ensure that the destination roles have the necessary permissions to create and u
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `10` | no |
 | <a name="input_name"></a> [name](#input\_name) | Base name for the Lambda and associated resources | `string` | n/a | yes |
+| <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to use for naming resources. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to all resources created by this module | `map(string)` | `{}` | no |
 
 ## Outputs

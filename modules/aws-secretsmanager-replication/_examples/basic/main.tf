@@ -20,10 +20,10 @@ locals {
       role_arn = "arn:aws:iam::111111111111:role/secrets-dr-replication-role"
       regions = {
         "us-east-1" = {
-          kms_key_id = "arn:aws:kms:us-east-1:111111111111:key/abc123"
+          kms_key_arn = "arn:aws:kms:us-east-1:111111111111:key/abc123"
         }
         "eu-central-1" = {
-          kms_key_id = "arn:aws:kms:eu-central-1:111111111111:key/def456"
+          kms_key_arn = "arn:aws:kms:eu-central-1:111111111111:key/def456"
         }
       }
     }
@@ -32,7 +32,7 @@ locals {
       role_arn = "arn:aws:iam::222222222222:role/secrets-dr-replication-role"
       regions = {
         "us-east-1" = {
-          kms_key_id = "arn:aws:kms:us-east-1:222222222222:key/xyz789"
+          kms_key_arn = "arn:aws:kms:us-east-1:222222222222:key/xyz789"
         }
       }
     }
@@ -51,6 +51,8 @@ module "secrets_dr_replication" {
   source = "../../"
 
   name = "secrets-dr-replication"
+
+  prefix = "secretsmanager-replication"
 
   destinations_json    = local.destinations_json
   allowed_assume_roles = local.allowed_assume_roles

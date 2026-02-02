@@ -31,10 +31,10 @@ The destinations are configured via the `destinations_json` variable, which must
 		"role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
 		"regions": {
 			"us-east-1": {
-				"kms_key_id": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx"
+				"kms_key_arn": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx"
 			},
 			"eu-west-1": {
-				"kms_key_id": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
+				"kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
 			}
 		}
 	}
