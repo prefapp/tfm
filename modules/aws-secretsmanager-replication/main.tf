@@ -84,7 +84,7 @@ resource "aws_s3_bucket" "cloudtrail" {
 
 resource "aws_cloudtrail" "secrets_management_events" {
   name                          = "${var.prefix}-secrets-management-events"
-  is_multi_region_trail         = true
+  is_multi_region_trail         = false
   include_global_service_events = false
   enable_logging                = true
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id
