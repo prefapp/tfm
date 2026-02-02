@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_cloudtrail" "this" {
   name                          = "${var.prefix}-trail"
   s3_bucket_name                = aws_s3_bucket.cloudtrail_logs[0].id
@@ -32,7 +34,7 @@ resource "aws_s3_bucket_policy" "cloudtrail_logs" {
         Effect = "Allow"
         Principal = { Service = "cloudtrail.amazonaws.com" }
         Action = "s3:PutObject"
-        Resource = "arn:aws:s3:::${aws_s3_bucket.cloudtrail_logs[0].id}/AWSLogs/*"
+        Resource = "arn:aws:s3:::${aws_s3_bucket.cloudtrail_logs[0].id}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
         Condition = {
           StringEquals = {
             "s3:x-amz-acl" = "bucket-owner-full-control"
