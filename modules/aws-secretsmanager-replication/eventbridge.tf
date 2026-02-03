@@ -1,25 +1,22 @@
-resource "aws_cloudwatch_event_rule" "secret_change" {
+# EventBridge rule that matches CloudTrail API calls for Secrets Manager (including rotations)
+resource "aws_cloudwatch_event_rule" "secretsmanager_api_calls" {
   count       = var.eventbridge_enabled ? 1 : 0
-  name        = "${var.name}-secret-change"
-  description = "Trigger Lambda when a secret is modified"
-
+  name        = "${var.prefix}-secretsmanager-cloudtrail-rule"
+  description = "Trigger Lambda on Secrets Manager API calls via CloudTrail (Create/Put/Update/Rotate/Restore)"
   event_pattern = jsonencode({
-    source      = ["aws.secretsmanager"]
-    detail-type = ["AWS API Call via CloudTrail"]
-    detail = {
-      eventSource = ["secretsmanager.amazonaws.com"]
-      eventName   = ["PutSecretValue", "UpdateSecret"]
+    "source" : ["aws.secretsmanager"],
+    "detail-type" : ["AWS API Call via CloudTrail"],
+    "detail" : {
+      "eventName" : ["CreateSecret", "PutSecretValue", "UpdateSecret", "RotateSecret", "RestoreSecret"]
     }
   })
-
-  tags = var.tags
 }
 
-resource "aws_cloudwatch_event_target" "lambda_target" {
-  count     = var.eventbridge_enabled ? 1 : 0
-  rule      = aws_cloudwatch_event_rule.secret_change[0].name
-  target_id = "lambda"
-  arn       = module.lambda.lambda_function_arn
+resource "aws_cloudwatch_event_target" "invoke_lambda" {
+  count = var.eventbridge_enabled ? 1 : 0
+  rule  = aws_cloudwatch_event_rule.secretsmanager_api_calls[0].name
+  arn   = module.lambda.lambda_function_arn
+  # optional: configure retry policy or input transformer if needed
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
@@ -28,7 +25,7 @@ resource "aws_lambda_permission" "allow_eventbridge" {
   action        = "lambda:InvokeFunction"
   function_name = module.lambda.lambda_function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.secret_change[0].arn
+  source_arn    = aws_cloudwatch_event_rule.secretsmanager_api_calls[0].arn
 }
 
 

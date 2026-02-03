@@ -104,23 +104,63 @@ module "lambda" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "CloudWatchLogs"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "arn:aws:logs:*:*:*"
+      },
+      {
+        Sid    = "ReadSourceSecrets",
         Effect = "Allow"
         Action = [
           "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:ListSecretVersionIds",
+          "secretsmanager:GetResourcePolicy"
         ]
-        Resource = "*"
+        Resource = var.source_secret_arns # or ["*"] temporarily
       },
       {
+        Sid    = "ManageDestinationSecrets",
         Effect = "Allow"
         Action = [
-          "sts:AssumeRole"
+          "secretsmanager:CreateSecret",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:TagResource",
+          "secretsmanager:UntagResource",
+          "secretsmanager:UpdateSecretVersionStage",
+          "secretsmanager:ListSecretVersionIds"
         ]
+        Resource = var.destination_secret_arns # or ["*"] temporarily
+      },
+      {
+        Sid      = "AssumeDestinationRoles",
+        Effect   = "Allow"
+        Action   = ["sts:AssumeRole"]
         Resource = var.allowed_assume_roles
+      },
+      {
+        Sid    = "KMSUsage",
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:GenerateDataKey",
+          "kms:Encrypt",
+          "kms:ReEncrypt*",
+          "kms:DescribeKey"
+        ]
+        Resource = var.kms_key_arns # or ["*"] temporarily
       }
     ]
   })
 }
+
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = module.lambda.lambda_role_name
@@ -164,7 +204,7 @@ resource "aws_cloudtrail" "secrets_management_events" {
 ###############################################################################
 
 resource "aws_s3_bucket_policy" "cloudtrail" {
-  count = var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || var.s3_bucket_name == "") ? 1 : 0
+  count  = var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || var.s3_bucket_name == "") ? 1 : 0
   bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
   policy = jsonencode({
