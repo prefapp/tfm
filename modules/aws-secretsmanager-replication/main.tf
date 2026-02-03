@@ -164,8 +164,8 @@ resource "aws_cloudtrail" "secrets_management_events" {
 ###############################################################################
 
 resource "aws_s3_bucket_policy" "cloudtrail" {
-  count  = var.manage_s3_bucket_policy && local.s3_bucket_id != "" ? 1 : 0
-  bucket = local.s3_bucket_id
+  count = var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || var.s3_bucket_name == "") ? 1 : 0
+  bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -178,14 +178,14 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
           "s3:GetBucketAcl",
           "s3:GetBucketPolicy"
         ]
-        Resource = local.s3_bucket_arn
+        Resource = var.s3_bucket_name != "" ? format("arn:aws:s3:::%s", var.s3_bucket_name) : aws_s3_bucket.cloudtrail[0].arn
       },
       {
         Sid       = "AWSCloudTrailWrite"
         Effect    = "Allow"
         Principal = { Service = "cloudtrail.amazonaws.com" }
         Action    = "s3:PutObject"
-        Resource  = local.s3_bucket_logs_arn
+        Resource  = var.s3_bucket_name != "" ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
         Condition = {
           StringEquals = {
             "s3:x-amz-acl" = "bucket-owner-full-control"
