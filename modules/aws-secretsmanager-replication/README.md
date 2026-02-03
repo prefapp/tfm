@@ -52,6 +52,29 @@ By default, tags from the source secret are also replicated to the destination. 
 
 Ensure that the destination roles have the necessary permissions to create and update secrets in the target accounts/regions. The source Lambda role must also have permission to assume these roles and read the source secrets.
 
+## Architecture: Event-Driven Cross-Account Secret Replication
+
+To replicate AWS Secrets Manager secrets between two accounts upon a change or rotation, the architecture must rely on **AWS CloudTrail** as the intermediary, as Secrets Manager does not emit direct state-change events to EventBridge.
+
+### Workflow Overview
+
+1. **Source Action:** A change occurs in the source account (e.g., `RotateSecret`, `PutSecretValue`, or `UpdateSecret`).
+2. **CloudTrail Capture:** This API activity is captured by a configured **CloudTrail Trail**.
+3. **S3 Storage:** The Trail must be configured to deliver log files to a designated **S3 Bucket**. This ensures persistent storage and reliable delivery of the event data required for the trigger.
+4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the specific pattern `AWS API Call via CloudTrail`.
+5. **Lambda Execution:** The rule triggers a **Lambda function**, which assumes an IAM role to read the secret from the source and write/update it in the destination account.
+
+> **Important:** You cannot filter by "Secrets Manager" service events directly. You must configure the EventBridge pattern to look for specific API calls logged by CloudTrail.
+
+### Required Resources & Links
+
+- **CloudTrail:** You must ensure a Trail is enabled to log management events.
+  - [Logging Secrets Manager events with CloudTrail](https://docs.aws.amazon.com/secretsmanager/latest/userguide/monitoring-cloudtrail.html)
+- **S3 Bucket:** Required for storing CloudTrail logs.
+  - [Creating a trail for your AWS account](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-create-and-update-a-trail.html)
+- **EventBridge:** Configured to listen to CloudTrail API calls.
+  - [Monitoring Secrets Manager with Amazon EventBridge](https://docs.aws.amazon.com/secretsmanager/latest/userguide/monitoring-eventbridge.html)
+
 ## Requirements
 
 | Name | Version |
@@ -75,9 +98,15 @@ Ensure that the destination roles have the necessary permissions to create and u
 
 | Name | Type |
 |------|------|
+| [aws_cloudtrail.secrets_management_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail) | resource |
 | [aws_cloudwatch_event_rule.secret_change](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.lambda_target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
+| [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [aws_s3_bucket.cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket_policy.cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
