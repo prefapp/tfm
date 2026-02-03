@@ -8,7 +8,6 @@ variable "prefix" {
   type        = string
 }
 
-
 variable "destinations_json" {
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
@@ -53,4 +52,26 @@ variable "tags" {
   description = "Tags applied to all resources created by this module"
   type        = map(string)
   default     = {}
+}
+
+# ---------------------------------------------------------------------------
+# CloudTrail / S3 integration variables (optional)
+# ---------------------------------------------------------------------------
+
+variable "s3_bucket_name" {
+  description = "(Optional) S3 bucket name where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one."
+  type        = string
+  default     = ""
+}
+
+variable "cloudtrail_name" {
+  description = "(Optional) Name of the CloudTrail trail to monitor for Secrets Manager events. If provided, the module will reuse this trail instead of creating one."
+  type        = string
+  default     = ""
+}
+
+variable "manage_s3_bucket_policy" {
+  description = "If true, the module will apply the minimal S3 bucket policy required for CloudTrail to the chosen bucket. Set to false if the Landing Zone manages bucket policies."
+  type        = bool
+  default     = true
 }

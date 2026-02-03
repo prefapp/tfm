@@ -1,5 +1,3 @@
-
-
 # **AWS Secrets Manager Copy Terraform Module**
 
 ## Overview
@@ -74,3 +72,31 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
   - [Creating a trail for your AWS account](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-create-and-update-a-trail.html)
 - **EventBridge:** Configured to listen to CloudTrail API calls.
   - [Monitoring Secrets Manager with Amazon EventBridge](https://docs.aws.amazon.com/secretsmanager/latest/userguide/monitoring-eventbridge.html)
+
+## Using Pre-Existing CloudTrail and S3 Buckets (Control Tower / Landing Zone)
+
+In AWS Control Tower or Landing Zone environments, CloudTrail trails and S3 buckets for log storage are often provisioned centrally and shared across accounts. This module fully supports integration with these pre-existing resources.
+
+**How to use:**
+- Set the `cloudtrail_name` variable to the name of the existing CloudTrail trail.
+- Set the `s3_bucket_name` variable to the name of the existing S3 bucket used by that trail.
+
+The module will:
+- Reference the existing CloudTrail and S3 bucket instead of creating new ones.
+- Not attempt to modify or manage the lifecycle of these resources.
+- Optionally, you can disable the S3 bucket policy management with `manage_s3_bucket_policy = false` if bucket policies are managed centrally.
+
+**Important considerations:**
+- The S3 bucket policy must allow CloudTrail to write logs (see AWS documentation for required permissions).
+- You must provide both variables if using a pre-existing CloudTrail; otherwise, the module cannot determine where logs are stored.
+- This approach is recommended for organizations with centralized logging and compliance requirements.
+
+**Example:**
+```hcl
+module "secrets_replication" {
+  # ... other variables ...
+  cloudtrail_name         = "centralized-org-trail"
+  s3_bucket_name          = "centralized-logs-bucket"
+  manage_s3_bucket_policy = false
+}
+```
