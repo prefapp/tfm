@@ -18,10 +18,6 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 ## Optional: existing CloudTrail
-data "aws_cloudtrail" "existing" {
-  count = var.cloudtrail_name != "" ? 1 : 0
-  name  = var.cloudtrail_name
-}
 
 ## Optional: existing S3 bucket
 data "aws_s3_bucket" "existing_cloudtrail" {
@@ -43,21 +39,14 @@ locals {
   using_existing_cloudtrail = var.cloudtrail_name != ""
   using_existing_s3_bucket  = var.s3_bucket_name != ""
 
-  existing_cloudtrail_arns  = data.aws_cloudtrail.existing.*.arn
-  existing_cloudtrail_names = data.aws_cloudtrail.existing.*.name
 
-  created_cloudtrail_arns  = aws_cloudtrail.secrets_management_events.*.arn
-  created_cloudtrail_names = aws_cloudtrail.secrets_management_events.*.name
+  # For existing CloudTrail, use the provided name directly
+  cloudtrail_arn  = var.cloudtrail_name != "" ? "" : (length(aws_cloudtrail.secrets_management_events.*.arn) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : "")
+  cloudtrail_name = var.cloudtrail_name != "" ? var.cloudtrail_name : (length(aws_cloudtrail.secrets_management_events.*.name) > 0 ? aws_cloudtrail.secrets_management_events[0].name : "")
 
-  s3_bucket_ids  = aws_s3_bucket.cloudtrail.*.id
-  s3_bucket_arns = aws_s3_bucket.cloudtrail.*.arn
-
-  cloudtrail_arn  = local.using_existing_cloudtrail && length(local.existing_cloudtrail_arns) > 0 ? local.existing_cloudtrail_arns[0] : (length(local.created_cloudtrail_arns) > 0 ? local.created_cloudtrail_arns[0] : "")
-  cloudtrail_name = local.using_existing_cloudtrail && length(local.existing_cloudtrail_names) > 0 ? local.existing_cloudtrail_names[0] : (length(local.created_cloudtrail_names) > 0 ? local.created_cloudtrail_names[0] : "")
-
-  s3_bucket_id       = local.using_existing_s3_bucket ? var.s3_bucket_name : (length(local.s3_bucket_ids) > 0 ? local.s3_bucket_ids[0] : "")
-  s3_bucket_arn      = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s", var.s3_bucket_name) : (length(local.s3_bucket_arns) > 0 ? local.s3_bucket_arns[0] : "")
-  s3_bucket_logs_arn = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : (length(local.s3_bucket_arns) > 0 ? "${local.s3_bucket_arns[0]}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : "")
+  s3_bucket_id       = local.using_existing_s3_bucket ? var.s3_bucket_name : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].id : "")
+  s3_bucket_arn      = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s", var.s3_bucket_name) : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].arn : "")
+  s3_bucket_logs_arn = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : (length(aws_s3_bucket.cloudtrail) > 0 ? "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : "")
 
   has_existing_bucket    = var.s3_bucket_name != ""
   existing_bucket_policy = length(data.aws_s3_bucket_policy.existing) > 0 ? data.aws_s3_bucket_policy.existing[0].policy : ""
@@ -222,7 +211,7 @@ resource "null_resource" "validate_inputs_fallback" {
   ) ? 1 : 0
 
   provisioner "local-exec" {
-    when    = "create"
+    when    = create
     command = <<-EOT
       echo "ERROR: Input validation failed for the secretsmanager-replication module."
       if [ "${var.cloudtrail_name}" != "" ] && [ "${var.s3_bucket_name}" = "" ]; then
