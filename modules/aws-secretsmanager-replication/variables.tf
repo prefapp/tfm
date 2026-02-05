@@ -54,6 +54,12 @@ variable "tags" {
   default     = {}
 }
 
+variable "manual_replication_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to deploy the manual secrets sync Lambda"
+}
+
 # ---------------------------------------------------------------------------
 # CloudTrail / S3 integration variables (optional)
 # ---------------------------------------------------------------------------

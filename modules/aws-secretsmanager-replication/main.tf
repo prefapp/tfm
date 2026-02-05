@@ -182,6 +182,97 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+
+################################################################################
+# Lambda for manual secret replication (triggered via API or console, not EventBridge)
+################################################################################
+module "lambda_manual_replication" {
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "~> 7.0"
+
+  count = var.manual_replication_enabled ? 1 : 0
+
+  function_name = "${var.prefix}-manual-secrets-sync"
+  handler       = "handler.lambda_handler"
+  runtime       = "python3.12"
+
+  source_path = "${path.module}/lambda_manual_replication"
+
+  timeout     = var.lambda_timeout
+  memory_size = var.lambda_memory
+  tags        = var.tags
+
+  # No necesita variables de entorno por defecto,
+  # pero puedes añadirlas si algún día quieres defaults.
+  environment_variables = {}
+
+  attach_cloudwatch_logs_policy = false
+
+  attach_policy_json = true
+  policy_json = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "CloudWatchLogs"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "arn:aws:logs:*:*:*"
+      },
+      {
+        Sid    = "SecretsManagerRead"
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:ListSecrets",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "SecretsManagerWrite"
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:CreateSecret",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:TagResource",
+          "secretsmanager:UntagResource"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid      = "AssumeCrossAccountRoles"
+        Effect   = "Allow"
+        Action   = ["sts:AssumeRole"]
+        Resource = var.allowed_assume_roles
+      },
+      {
+        Sid    = "KMSUsage"
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:DescribeKey",
+          "kms:ReEncrypt*"
+        ]
+        Resource = var.kms_key_arns
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_manual_basic_execution" {
+  role       = module.lambda_manual_replication.lambda_role_name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+
+
 ###############################################################################
 # S3 bucket for CloudTrail (create only if not provided)
 ###############################################################################
