@@ -116,14 +116,14 @@ data "aws_iam_policy_document" "kms_default_statement" {
       sid    = "Allow account access"
       effect = "Allow"
       actions = [
-        "kms:Encrypt",
+        "kms:Decrypt",
         "kms:GenerateDataKey*",
         "kms:DescribeKey",
       ]
       resources = ["*"]
       principals {
         type        = "AWS"
-        identifiers = [for account in var.user_roles_with_read_write : account]
+        identifiers = [for account in var.user_roles_with_read : account]
       }
     }
   }
