@@ -1,5 +1,5 @@
 variable "kms_to_create" {
-  description = "Names of kms to create in aws"
+  description = "Names of KMS to create in aws"
   type        = list(string)
   default     = []
 }
@@ -9,13 +9,13 @@ variable "kms_alias_prefix" {
   default     = "custom/"
 }
 variable "aws_region" {
-  description = "Region to create kms key"
+  description = "Region to create KMS key"
   type        = string
   default     = "eu-west-1"
 }
 
 variable "aws_accounts_access" {
-  description = "Enable access to kms for additional AWS accounts"
+  description = "Enable access to KMS for additional AWS accounts"
   type        = list(string)
   default     = []
 }

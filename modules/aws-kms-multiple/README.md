@@ -79,14 +79,14 @@ No resources.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_administrator_role_name"></a> [administrator\_role\_name](#input\_administrator\_role\_name) | Name of the IAM role to grant KMS administrator permissions. Set to null to disable granting permissions to this role. | `string` | `"Administrator"` | no |
-| <a name="input_aws_accounts_access"></a> [aws\_accounts\_access](#input\_aws\_accounts\_access) | Enable access to kms for additional AWS accounts | `list(string)` | `[]` | no |
-| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Region to create kms key | `string` | `"eu-west-1"` | no |
+| <a name="input_aws_accounts_access"></a> [aws\_accounts\_access](#input\_aws\_accounts\_access) | Enable access to KMS for additional AWS accounts | `list(string)` | `[]` | no |
+| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Region to create KMS key | `string` | `"eu-west-1"` | no |
 | <a name="input_aws_regions_replica"></a> [aws\_regions\_replica](#input\_aws\_regions\_replica) | List of AWS regions where KMS key replicas should be created | `list(string)` | `[]` | no |
 | <a name="input_deletion_window_in_days"></a> [deletion\_window\_in\_days](#input\_deletion\_window\_in\_days) | The waiting period, specified in days, before the KMS key is deleted. Default is 30 days. | `number` | `30` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of the KMS key | `string` | `"Symmetric encryption KMS key"` | no |
 | <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Specifies whether key rotation is enabled. Default is true. | `bool` | `true` | no |
 | <a name="input_kms_alias_prefix"></a> [kms\_alias\_prefix](#input\_kms\_alias\_prefix) | Prefix for the KMS key alias. The full alias will be constructed as '$prefix$kms\_name' for each KMS key created. | `string` | `"custom/"` | no |
-| <a name="input_kms_to_create"></a> [kms\_to\_create](#input\_kms\_to\_create) | Names of kms to create in aws | `list(string)` | `[]` | no |
+| <a name="input_kms_to_create"></a> [kms\_to\_create](#input\_kms\_to\_create) | Names of KMS to create in aws | `list(string)` | `[]` | no |
 | <a name="input_multiregion"></a> [multiregion](#input\_multiregion) | Specifies whether the KMS key is multi-region. Default is true. | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource. | `map(string)` | `{}` | no |
 
