@@ -18,7 +18,7 @@ This module leverages the aws-kms module to create multiple custom KMS keys in A
 
 ```hcl
 module "kms" {
-  source         = "github.com/prefapp/tfm/modules/aws-kms"
+  source         = "github.com/prefapp/tfm/modules/aws-kms-multiple"
   kms_to_create  = ["rds", "s3", "ec2"] # Each key will have alias "custom/<name>"
   aws_region     = "eu-west-1"
 }
@@ -28,7 +28,7 @@ module "kms" {
 
 ```hcl
 module "kms" {
-  source              = "github.com/prefapp/tfm/modules/aws-kms"
+  source              = "github.com/prefapp/tfm/modules/aws-kms-multiple"
   kms_to_create       = ["rds", "s3", "ec2"] # Aliases: custom/rds, custom/s3, custom/ec2
   aws_region          = "eu-west-1"
   aws_regions_replica = ["eu-central-1", "eu-west-2"] # Replicates each key to these regions
