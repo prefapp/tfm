@@ -5,6 +5,7 @@ import time
 import hashlib
 import logging
 from botocore.exceptions import ClientError
+from src.replication import extract_secret_name
 import boto3
 
 LOG = logging.getLogger()
@@ -14,6 +15,7 @@ DESTINATIONS = json.loads(os.environ.get("DESTINATIONS_JSON", "{}"))
 ENABLE_TAGS = os.environ.get("ENABLE_TAG_REPLICATION", "true").lower() == "true"
 RETRY_MAX = 3
 RETRY_BASE = 0.5
+
 
 def extract_secret_id(detail):
     rp = detail.get("requestParameters", {})
@@ -26,8 +28,10 @@ def extract_secret_id(detail):
             return r.get("ARN") or r.get("resourceName")
     return None
 
+
 def checksum(s):
     return hashlib.sha256((s or "").encode("utf-8")).hexdigest()
+
 
 def retry(fn, *args, **kwargs):
     for attempt in range(1, RETRY_MAX + 1):
@@ -35,9 +39,10 @@ def retry(fn, *args, **kwargs):
             return fn(*args, **kwargs)
         except ClientError as e:
             code = e.response.get("Error", {}).get("Code", "")
-            if attempt == RETRY_MAX or code in ("AccessDeniedException","InvalidRequestException"):
+            if attempt == RETRY_MAX or code in ("AccessDeniedException", "InvalidRequestException"):
                 raise
             time.sleep(RETRY_BASE * (2 ** (attempt - 1)))
+
 
 def assume_role(role_arn):
     sts = boto3.client("sts")
@@ -46,8 +51,9 @@ def assume_role(role_arn):
     return {
         "aws_access_key_id": creds["AccessKeyId"],
         "aws_secret_access_key": creds["SecretAccessKey"],
-        "aws_session_token": creds["SessionToken"]
+        "aws_session_token": creds["SessionToken"],
     }
+
 
 def get_secret_value(client, secret_id, version_id=None):
     params = {"SecretId": secret_id}
@@ -55,19 +61,28 @@ def get_secret_value(client, secret_id, version_id=None):
         params["VersionId"] = version_id
     return retry(client.get_secret_value, **params)
 
+
 def list_versions(client, secret_id):
     return retry(client.list_secret_version_ids, SecretId=secret_id)
+
 
 def ensure_destination_secret(dest_client, name, secret_string, kms_key=None):
     try:
         return retry(dest_client.create_secret, Name=name, SecretString=secret_string, KmsKeyId=kms_key)
     except ClientError as e:
-        if e.response["Error"]["Code"] in ("ResourceExistsException","InvalidRequestException"):
+        if e.response["Error"]["Code"] in ("ResourceExistsException", "InvalidRequestException"):
             return retry(dest_client.put_secret_value, SecretId=name, SecretString=secret_string)
         raise
 
+
 def update_awscurrent(dest_client, secret_id, version_id):
-    return retry(dest_client.update_secret_version_stage, SecretId=secret_id, VersionStage="AWSCURRENT", MoveToVersionId=version_id)
+    return retry(
+        dest_client.update_secret_version_stage,
+        SecretId=secret_id,
+        VersionStage="AWSCURRENT",
+        MoveToVersionId=version_id,
+    )
+
 
 def replicate_tags(dest_client, secret_id, tags):
     if not tags:
@@ -77,11 +92,12 @@ def replicate_tags(dest_client, secret_id, tags):
     except ClientError as e:
         LOG.warning("Tag replication failed: %s", e)
 
+
 def lambda_handler(event, context):
     LOG.info("Received event")
     detail = event.get("detail", {})
     event_name = detail.get("eventName")
-    if event_name not in ("CreateSecret","PutSecretValue","UpdateSecret","RotateSecret","RestoreSecret"):
+    if event_name not in ("CreateSecret", "PutSecretValue", "UpdateSecret", "RotateSecret", "RestoreSecret"):
         LOG.info("Ignoring event %s", event_name)
         return
 
@@ -113,11 +129,12 @@ def lambda_handler(event, context):
         if not role_arn:
             LOG.warning("No role_arn for destination %s, skipping", dest_account)
             continue
+
         for region, rcfg in cfg.get("regions", {}).items():
             kms_key = rcfg.get("kms_key_arn")
             creds = assume_role(role_arn)
             dest_client = boto3.client("secretsmanager", region_name=region, **creds)
-            dest_name = secret_id
+            dest_name = extract_secret_name(secret_id)
 
             try:
                 dest_latest = dest_client.get_secret_value(SecretId=dest_name)
