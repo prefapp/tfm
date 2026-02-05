@@ -158,12 +158,9 @@ module "lambda" {
         Resource = var.kms_key_arns # or ["*"] temporarily
       },
       {
-        Sid : "AllowReplicationRole",
-        Effect : "Allow",
-        Principal = {
-          AWS = var.allowed_assume_roles[0]
-        }
-        Action : [
+        Sid = "AllowReplicationRole"
+        Effect = "Allow"
+        Action = [
           "secretsmanager:DescribeSecret",
           "secretsmanager:GetSecretValue",
           "secretsmanager:PutSecretValue",
