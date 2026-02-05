@@ -77,6 +77,18 @@ variable "administrator_role_name" {
 
 variable "via_service" {
   description = "AWS services that are allowed to use the KMS key. This is used to create a condition in the key policy that allows access through these services. Example: 'rds', 's3'"
-  type        = string
+  type        = list(string)
   default     = null
+}
+
+variable "user_roles_with_read_write" {
+  description = "List of IAM role names to grant read/write permissions to the KMS key. Set to null to disable granting permissions to any additional roles."
+  type        = list(string)
+  default     = []
+}
+
+variable "user_roles_with_read" {
+  description = "List of IAM role names or users to grant read permissions to the KMS key. Set to null to disable granting permissions to any additional roles."
+  type        = list(string)
+  default     = []
 }

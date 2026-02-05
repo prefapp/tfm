@@ -4,7 +4,7 @@ resource "aws_kms_key" "this" {
   multi_region            = var.multiregion
   enable_key_rotation     = var.enable_key_rotation
   deletion_window_in_days = var.deletion_window_in_days
-  policy                  = data.aws_iam_policy_document.kms_default_statement.json
+  policy                  = data.aws_iam_policy_document.kms_default_statement[var.aws_region].json
   tags                    = var.alias != null ? merge({ "alias" = "${var.kms_alias_prefix}${var.alias}" }, var.tags) : var.tags
 
   lifecycle {
@@ -30,7 +30,7 @@ resource "aws_kms_replica_key" "replica" {
   description             = "${var.description} - Replica in ${each.key}"
   deletion_window_in_days = var.deletion_window_in_days
   primary_key_arn         = aws_kms_key.this.arn
-  policy                  = data.aws_iam_policy_document.kms_default_statement.json
+  policy                  = data.aws_iam_policy_document.kms_default_statement[each.key].json
 
   tags = var.alias != null ? merge({ "alias" = "${var.kms_alias_prefix}${var.alias}" }, var.tags) : var.tags
 

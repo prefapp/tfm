@@ -27,6 +27,7 @@ data "aws_iam_role" "role_used_by_sso" {
 }
 
 data "aws_iam_policy_document" "kms_default_statement" {
+  for_each = toset(concat(var.aws_regions_replica, [var.aws_region]))
 
   statement {
     sid       = "Enable IAM User Permissions"
@@ -90,6 +91,43 @@ data "aws_iam_policy_document" "kms_default_statement" {
   }
 
   dynamic "statement" {
+    for_each = length(var.user_roles_with_read_write) > 0 ? [1] : []
+    content {
+      sid    = "Allow account access"
+      effect = "Allow"
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey",
+      ]
+      resources = ["*"]
+      principals {
+        type        = "AWS"
+        identifiers = [for account in var.user_roles_with_read_write : account]
+      }
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.user_roles_with_read) > 0 ? [1] : []
+    content {
+      sid    = "Allow account access"
+      effect = "Allow"
+      actions = [
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey",
+      ]
+      resources = ["*"]
+      principals {
+        type        = "AWS"
+        identifiers = [for account in var.user_roles_with_read_write : account]
+      }
+    }
+  }
+  dynamic "statement" {
     for_each = length(var.aws_accounts_access) > 0 ? [1] : []
     content {
       sid    = "Allow account grant access"
@@ -111,40 +149,36 @@ data "aws_iam_policy_document" "kms_default_statement" {
       }
     }
   }
+  dynamic "statement" {
+    for_each = var.via_service != null || var.alias != null ? [1] : []
+    content {
+      sid    = "Allow access through RDS for all principals in the account that are authorized to use RDS"
+      effect = "Allow"
+      principals {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
 
-  statement {
-    sid    = "Allow access through RDS for all principals in the account that are authorized to use RDS"
-    effect = "Allow"
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
+      condition {
+        test     = "StringEquals"
+        variable = "kms:ViaService"
+        values   = var.via_service == null ? ["${var.alias}.${each.key}.amazonaws.com"] : [for service in var.via_service : "${service}.${each.key}.amazonaws.com"]
+      }
+      condition {
+        test     = "StringEquals"
+        variable = "kms:callerAccount"
+        values   = [for account in concat(var.aws_accounts_access, [data.aws_caller_identity.current.id]) : account]
+      }
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:CreateGrant",
+        "kms:ListGrants",
+        "kms:DescribeKey",
+      ]
     }
-    condition {
-      test     = "StringEquals"
-      variable = "kms:ViaService"
-      values   = [for region in concat(var.aws_regions_replica, [var.aws_region]) : var.via_service == null ? "${var.alias}.${region}.amazonaws.com" : "${var.via_service}.${region}.amazonaws.com"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "kms:callerAccount"
-      values   = [for account in concat(var.aws_accounts_access, [data.aws_caller_identity.current.id]) : account]
-    }
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:CreateGrant",
-      "kms:ListGrants",
-      "kms:DescribeKey",
-    ]
-  }
-  lifecycle {
-    precondition {
-      condition     = var.via_service == null || var.alias == null
-      error_message = "You must specify either via_service or alias."
-    }
-
   }
 }
 
