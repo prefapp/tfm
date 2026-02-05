@@ -3,8 +3,8 @@
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-kms-multiple/_examples):
 
 - [Minimal](https://github.com/prefapp/tfm/tree/main/modules/aws-kms-multiple/_examples/minimal) – Minimal KMS MULTIPLE creation
-- [KMS with replication](https://github.com/prefapp/tfm/tree/main/modules/aws-kms-multiple/_examples/with_alias_replication_account) – KMS MULTIPLE creation with region replication
-- [KMS with replication, and extra account access](https://github.com/prefapp/tfm/tree/main/modules/aws-kms-multiple/_examples/with_replication_account) – KMS MULTIPLE creation with alias, region replication, and extra account access
+- [KMS with replication](https://github.com/prefapp/tfm/tree/main/modules/aws-kms-multiple/_examples/with_replication_account) – KMS MULTIPLE creation with region replication
+
 
 ## Remote Resources
 - Terraform: https://www.terraform.io/
