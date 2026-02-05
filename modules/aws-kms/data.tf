@@ -152,7 +152,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
   dynamic "statement" {
     for_each = var.via_service != null || var.alias != null ? [1] : []
     content {
-      sid    = "Allow access through RDS for all principals in the account that are authorized to use RDS"
+      sid    = "Allow access through AWS services for authorized principals"
       effect = "Allow"
       principals {
         type        = "AWS"
@@ -166,7 +166,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
       }
       condition {
         test     = "StringEquals"
-        variable = "kms:callerAccount"
+        variable = "kms:CallerAccount"
         values   = [for account in concat(var.aws_accounts_access, [data.aws_caller_identity.current.id]) : account]
       }
       actions = [
