@@ -1,11 +1,11 @@
 output "lambda_arn" {
   description = "ARN of the Lambda function"
-  value       = module.lambda.lambda_function_arn
+  value       = module.lambda_automatic_replication.lambda_function_arn
 }
 
 output "lambda_role_arn" {
   description = "IAM role ARN associated with the Lambda"
-  value       = module.lambda.lambda_role_arn
+  value       = module.lambda_automatic_replication.lambda_role_arn
 }
 
 output "eventbridge_rule_arn" {

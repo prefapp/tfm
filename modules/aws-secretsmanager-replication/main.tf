@@ -80,7 +80,7 @@ resource "random_integer" "suffix" {
 # Lambda using the official module
 ###############################################################################
 
-module "lambda" {
+module "lambda_automatic_replication" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "~> 7.0"
 
@@ -88,7 +88,7 @@ module "lambda" {
   handler       = "handler.lambda_handler"
   runtime       = "python3.12"
 
-  source_path = "${path.module}/lambda"
+  source_path = "${path.module}/lambda_automatic_replication"
 
   timeout     = var.lambda_timeout
   memory_size = var.lambda_memory
@@ -178,7 +178,7 @@ module "lambda" {
 
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-  role       = module.lambda.lambda_role_name
+  role       = module.lambda_automatic_replication
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
