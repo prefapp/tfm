@@ -64,7 +64,7 @@ variable "alias" {
 }
 
 variable "kms_alias_prefix" {
-  description = "The prefix for the alias that will use the KMS key. The full alias will be in the format 'alias/{prefix}-{random_id.suffix.hex}'"
+  description = "The prefix for the alias that will use the KMS key. The full alias will be in the format alias/{prefix}{alias}"
   type        = string
   default     = ""
 }
