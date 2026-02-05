@@ -17,5 +17,5 @@ provider "aws" {
 module "kms" {
   source = "./../.."
   aws_region = "eu-west-1"
-  kms_to_create = ["rds","s3"]
+  kms_to_create = ["rds", "s3"]
 }
