@@ -9,6 +9,6 @@ module "multiple-kms" {
   enable_key_rotation     = var.enable_key_rotation
   multiregion             = var.multiregion
   tags                    = var.tags
-  alias                   = "custom/${each.value}"
+  alias                   = "${var.kms_alias_prefix}${each.value}"
   administrator_role_name = var.administrator_role_name
 }

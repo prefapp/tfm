@@ -3,7 +3,11 @@ variable "kms_to_create" {
   type        = list(string)
   default     = []
 }
-
+variable "kms_alias_prefix" {
+  description = "Prefix for the KMS key alias. The full alias will be constructed as '$prefix$kms_name' for each KMS key created."
+  type        = string
+  default     = "custom/"
+}
 variable "aws_region" {
   description = "Region to create kms key"
   type        = string
