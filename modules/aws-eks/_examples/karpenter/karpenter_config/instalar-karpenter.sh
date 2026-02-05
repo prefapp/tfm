@@ -6,8 +6,9 @@
 set -e
 
 # Variables
-export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::xxxxxxxxxxx:role/kubernetes-my-org-dev-karpenter-role"
-export CLUSTER_NAME="kubernetes-my-org-dev"
+export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::807867957104:role/firestartr-pre-karpenter-role"
+export CLUSTER_NAME="firestartr-pre"
+REGION="eu-west-1"
 
 echo "🚀 Instalando/Actualizando Karpenter..."
 echo ""
@@ -19,7 +20,7 @@ echo ""
 
 # Verificar que la cola existe
 echo "🔍 Verificando que la cola SQS existe..."
-if aws sqs get-queue-url --queue-name "karpenter-${CLUSTER_NAME}" --region eu-west-1 >/dev/null 2>&1; then
+if aws sqs get-queue-url --queue-name "karpenter-${CLUSTER_NAME}" --region "${REGION}" >/dev/null 2>&1; then
     echo "✅ La cola SQS existe: karpenter-${CLUSTER_NAME}"
 else
     echo "❌ ERROR: La cola SQS no existe: karpenter-${CLUSTER_NAME}"
@@ -31,10 +32,10 @@ fi
 
 echo ""
 echo "📦 Instalando Karpenter con Helm..."
-aws eks update-kubeconfig --region eu-west-1 --name kubernetes-my-org-dev
+aws eks update-kubeconfig --region "${REGION}" --name "${CLUSTER_NAME}"
 helm upgrade --install --namespace karpenter --create-namespace \
   karpenter oci://public.ecr.aws/karpenter/karpenter \
-  --version 1.6.3 \
+  --version 1.6.6 \
   --set "serviceAccount.annotations.eks\.amazonaws\.com/role-arn=${KARPENTER_IAM_ROLE_ARN}" \
   --set settings.clusterName=${CLUSTER_NAME} \
   --set settings.interruptionQueue=karpenter-${CLUSTER_NAME} \

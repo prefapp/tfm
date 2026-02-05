@@ -7,8 +7,8 @@ serviceAccount:
   name: "karpenter-sa"
   # -- Additional annotations for the ServiceAccount.
   annotations:
-    # eks.amazonaws.com/role-arn: arn:aws:iam::816069157330:role/kubernetes-my-org-dev-karpenter-role
-    eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxx:role/kubernetes-my-org-dev-karpenter-role
+    # El ARN se sobrescribe en instalar-karpenter.sh con --set, pero lo dejamos aquí como referencia
+    eks.amazonaws.com/role-arn: arn:aws:iam::807867957104:role/firestartr-pre-karpenter-role
 
 dnsConfig:
  options:
@@ -37,10 +37,10 @@ affinity: {}
 # -- Global Settings to configure Karpenter
 settings:
 
-  clusterName: "kubernetes-my-org-dev"
+  clusterName: "firestartr-pre"
   
   # SQS Queue for interruption handling
-  interruptionQueue: "karpenter-kubernetes-my-org-dev"
+  interruptionQueue: "karpenter-firestartr-pre"
 
   featureGates:
     # -- driftEnabled is in ALPHA and is disabled by default.

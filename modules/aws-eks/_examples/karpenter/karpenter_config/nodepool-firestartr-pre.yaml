@@ -1,0 +1,43 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: karpenter-firestartr-pre
+spec:
+  template:
+    metadata:
+      labels:
+        Name: "workers-karpenter"
+        environment: "pre"
+        application: "firestartr"
+        type: "karpenter"
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        # Permitir toda la familia t3a - Karpenter elegirá el tamaño óptimo
+        # según los requests de los pods (optimización automática de costos)
+        - key: karpenter.k8s.aws/instance-family
+          operator: In
+          values: ["t3a"]
+        - key: karpenter.k8s.aws/instance-size
+          operator: In
+          values: ["small", "medium", "large"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: karpenter-firestartr-pre
+      expireAfter: 168h # 7 * 24h = 168h (7 días)
+  limits:
+    cpu: 12      # ~6 nodos t3a.medium (6 * 2 vCPU = 12)
+    memory: "24Gi"  # ~6 nodos t3a.medium (6 * 4 GiB = 24)
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 5m
+  weight: 10

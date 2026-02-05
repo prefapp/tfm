@@ -1,0 +1,50 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: karpenter-firestartr-pro
+spec:
+  template:
+    metadata:
+      labels:
+        Name: "workers-karpenter"
+        environment: "pro"
+        application: "firestartr"
+        type: "karpenter"
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        # Permitir toda la familia m6a - Karpenter elegirá el tamaño óptimo
+        # según los requests de los pods (optimización automática de costos)
+        - key: karpenter.k8s.aws/instance-family
+          operator: In
+          values: ["m6a"]
+        - key: karpenter.k8s.aws/instance-size
+          operator: In
+          values: ["small", "medium", "large"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: karpenter-firestartr-pro
+      # Expiración deshabilitada para producción (o usar un tiempo muy largo)
+      expireAfter: 720h # 30 días (opcional)
+  limits:
+    # Límites conservadores basados en tu uso actual (11% CPU, 33% memoria)
+    # Ajusta según tus necesidades de escalado máximo esperado
+    # Con m6a.large: ~10 nodos (10 * 2 vCPU = 20, 10 * 8 GiB = 80)
+    cpu: 20      # ~10 nodos m6a.large (ajusta según picos esperados)
+    memory: "80Gi"  # ~10 nodos m6a.large (ajusta según picos esperados)
+  disruption:
+    # Consolidación más conservadora para producción
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 15m  # Esperar 15 minutos antes de consolidar (más conservador que pre)
+    # Opcional: deshabilitar consolidación en producción para mayor estabilidad
+    # consolidationPolicy: Never
+  weight: 10

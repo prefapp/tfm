@@ -1,0 +1,31 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: karpenter-firestartr-pro
+spec:
+  amiFamily: AL2023 # Amazon Linux 2023
+  role: "Karpenter-firestartr-pro"  # Ajusta según el nombre de tu cluster en producción
+  subnetSelectorTerms:
+    - tags:
+        application: "firestartr"
+        environment: "pro"
+        kubernetes.io/role/internal-elb: "1"
+  securityGroupSelectorTerms:
+    - tags:
+        "kubernetes.io/cluster/firestartr-pro": "owned"  # Ajusta según el nombre de tu cluster
+  amiSelectorTerms:
+  - name: "amazon-eks-node-al2023-x86_64-standard-1.33-*"  # Ajusta la versión de Kubernetes
+  tags:
+    Name: "firestartr-pro"
+    application: "firestartr"
+    environment: "pro"
+    project: "firestartr"
+    ManagedBy: "karpenter"
+    Cluster: "firestartr-pro"  # Ajusta según el nombre de tu cluster
+  blockDeviceMappings:
+  - deviceName: /dev/xvda
+    ebs:
+      volumeSize: 200Gi
+      volumeType: gp3
+      encrypted: true
+      iops: 3000

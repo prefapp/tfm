@@ -24,23 +24,25 @@ sleep 10
 # Paso 2: Aplicar EC2NodeClass y NodePool
 echo ""
 echo "📦 Paso 2/3: Aplicando EC2NodeClass y NodePools..."
-echo "   Aplicando EC2NodeClass on-demand por defecto..."
-kubectl apply -f ec2nodeclass-on-demand-default.yaml
+echo "   Aplicando EC2NodeClass para firestartr-pre..."
+kubectl apply -f ec2nodeclass-firestartr-pre.yaml
 
-echo "   Aplicando NodePool on-demand por defecto..."
-kubectl apply -f nodepool-on-demand-default.yaml
-
-echo "   Aplicando NodePool on-demand dev..."
-kubectl apply -f nodepool-on-demand-dev.yaml
+echo "   Aplicando NodePool para firestartr-pre..."
+kubectl apply -f nodepool-firestartr-pre.yaml
 
 echo ""
 echo "⏳ Esperando 5 segundos..."
 sleep 5
 
-# Paso 3: Aplicar deployment de ejemplo
+# Paso 3: Aplicar deployment de ejemplo (opcional)
 echo ""
-echo "📦 Paso 3/3: Aplicando deployment de ejemplo para dev..."
-kubectl apply -f deployment-dev.yaml
+echo "📦 Paso 3/3: Deployment de ejemplo (opcional)..."
+if [ -f "deployment-dev.yaml" ]; then
+    echo "   Aplicando deployment de ejemplo para dev..."
+    kubectl apply -f deployment-dev.yaml
+else
+    echo "   ⏭️  Saltando deployment de ejemplo (archivo no encontrado)"
+fi
 
 echo ""
 echo "✅ Configuración aplicada correctamente"

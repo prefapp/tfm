@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-karpenter
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-karpenter
+  template:
+    metadata:
+      labels:
+        app: test-karpenter
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        resources:
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"
