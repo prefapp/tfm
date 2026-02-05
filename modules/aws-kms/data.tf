@@ -112,5 +112,39 @@ data "aws_iam_policy_document" "kms_default_statement" {
     }
   }
 
+  statement {
+    sid    = "Allow access through RDS for all principals in the account that are authorized to use RDS"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = [for region in concat(var.aws_regions_replica, [var.aws_region]) : var.via_service == null ? "${var.alias}.${region}.amazonaws.com" : "${var.via_service}.${region}.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:callerAccount"
+      values   = [for account in concat(var.aws_accounts_access, [data.aws_caller_identity.current.id]) : account]
+    }
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:CreateGrant",
+      "kms:ListGrants",
+      "kms:DescribeKey",
+    ]
+  }
+  lifecycle {
+    precondition {
+      condition     = var.via_service == null || var.alias == null
+      error_message = "You must specify either via_service or alias."
+    }
 
+  }
 }
+
