@@ -106,7 +106,7 @@ No modules.
 | <a name="input_deletion_window_in_days"></a> [deletion\_window\_in\_days](#input\_deletion\_window\_in\_days) | The waiting period, specified in days, before the KMS key is deleted. Default is 30 days. | `number` | `30` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of the KMS key | `string` | `"Symmetric encryption KMS key"` | no |
 | <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Specifies whether key rotation is enabled. Default is true. | `bool` | `true` | no |
-| <a name="input_kms_alias_prefix"></a> [kms\_alias\_prefix](#input\_kms\_alias\_prefix) | The prefix for the alias that will use the KMS key. The full alias will be in the format 'alias/{prefix}-{random\_id.suffix.hex}' | `string` | `""` | no |
+| <a name="input_kms_alias_prefix"></a> [kms\_alias\_prefix](#input\_kms\_alias\_prefix) | The prefix for the alias that will use the KMS key. The full alias will be in the format alias/{prefix}{alias} | `string` | `""` | no |
 | <a name="input_multiregion"></a> [multiregion](#input\_multiregion) | Specifies whether the KMS key is multi-region. Default is true. | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource. | `map(string)` | `{}` | no |
 | <a name="input_user_roles_with_read"></a> [user\_roles\_with\_read](#input\_user\_roles\_with\_read) | List of IAM role names or users to grant read permissions to the KMS key. Set to null to disable granting permissions to any additional roles. | `list(string)` | `[]` | no |
