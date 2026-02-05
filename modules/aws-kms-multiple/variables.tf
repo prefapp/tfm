@@ -1,5 +1,5 @@
 variable "kms_to_create" {
-  description = "Names of KMS to create in aws"
+  description = "Names of KMS to create in AWS"
   type        = list(string)
   default     = []
 }
