@@ -136,16 +136,22 @@ def lambda_handler(event, context):
             dest_client = boto3.client("secretsmanager", region_name=region, **creds)
             dest_name = extract_secret_name(secret_id)
 
-            try:
-                dest_latest = dest_client.get_secret_value(SecretId=dest_name)
-                dest_val = dest_latest.get("SecretString") or dest_latest.get("SecretBinary")
-                if checksum(dest_val) == src_checksum:
-                    LOG.info("Destination %s in %s already up-to-date", dest_name, region)
-                    continue
-            except ClientError as e:
-                if e.response["Error"]["Code"] not in ("ResourceNotFoundException",):
-                    LOG.exception("Error reading destination secret %s: %s", dest_name, e)
-                    raise
+        try:
+            resp = ensure_destination_secret(dest_client, dest_name, secret_string, kms_key)
+            new_version = resp.get("VersionId")
+        except ClientError as e:
+            LOG.exception("Failed to create/put secret in %s/%s: %s", dest_account, region, e)
+            raise
+
+        try:
+            update_awscurrent(dest_client, dest_name, new_version)
+        except ClientError as e:
+            LOG.exception("Failed to update AWSCURRENT for %s in %s: %s", dest_name, region, e)
+            raise
+
+        if ENABLE_TAGS and tags:
+            replicate_tags(dest_client, dest_name, tags)
+
 
             try:
                 resp = ensure_destination_secret(dest_client, dest_name, secret_string, kms_key)

@@ -158,7 +158,7 @@ module "lambda" {
         Resource = var.kms_key_arns # or ["*"] temporarily
       },
       {
-        Sid = "AllowReplicationRole"
+        Sid    = "AllowReplicationRole"
         Effect = "Allow"
         Action = [
           "secretsmanager:DescribeSecret",
