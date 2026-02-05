@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "this" {
   bucket              = var.bucket
   region              = var.region
-  object_lock_enabled = var.object_lock_enabled != null ? var.object_lock_enabled : null
+  object_lock_enabled = var.object_lock_enabled
   tags = {
     Name        = "My bucket"
     Environment = "Dev"
