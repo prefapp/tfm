@@ -1,0 +1,34 @@
+// Basic example: Azure AD Application Registration using the module
+
+module "azure_application" {
+  source = "../../"
+
+  name    = "my-app"
+  members = [
+    "user1@contoso.com",
+    "user2@contoso.com",
+  ]
+
+  msgraph_roles = [
+    {
+      id        = "role-id-user-read-all"
+      delegated = true
+    }
+  ]
+
+  redirects = [
+    {
+      platform      = "Web"
+      redirect_uris = ["https://myapp.com/auth/callback"]
+    }
+  ]
+
+  client_secret = {
+    enabled       = true
+    rotation_days = 90
+    keyvault = {
+      id       = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.KeyVault/vaults/example-kv"
+      key_name = "my-app-secret"
+    }
+  }
+}
