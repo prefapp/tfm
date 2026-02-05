@@ -62,10 +62,6 @@ def get_secret_value(client, secret_id, version_id=None):
     return retry(client.get_secret_value, **params)
 
 
-def list_versions(client, secret_id):
-    return retry(client.list_secret_version_ids, SecretId=secret_id)
-
-
 def ensure_destination_secret(dest_client, name, secret_string, kms_key=None):
     try:
         return retry(dest_client.create_secret, Name=name, SecretString=secret_string, KmsKeyId=kms_key)
@@ -73,15 +69,6 @@ def ensure_destination_secret(dest_client, name, secret_string, kms_key=None):
         if e.response["Error"]["Code"] in ("ResourceExistsException", "InvalidRequestException"):
             return retry(dest_client.put_secret_value, SecretId=name, SecretString=secret_string)
         raise
-
-
-def update_awscurrent(dest_client, secret_id, version_id):
-    return retry(
-        dest_client.update_secret_version_stage,
-        SecretId=secret_id,
-        VersionStage="AWSCURRENT",
-        MoveToVersionId=version_id,
-    )
 
 
 def replicate_tags(dest_client, secret_id, tags):
@@ -114,7 +101,6 @@ def lambda_handler(event, context):
         raise
 
     secret_string = src_val.get("SecretString") or src_val.get("SecretBinary")
-    src_checksum = checksum(secret_string)
 
     tags = []
     if ENABLE_TAGS:
@@ -136,34 +122,10 @@ def lambda_handler(event, context):
             dest_client = boto3.client("secretsmanager", region_name=region, **creds)
             dest_name = extract_secret_name(secret_id)
 
-        try:
-            resp = ensure_destination_secret(dest_client, dest_name, secret_string, kms_key)
-            new_version = resp.get("VersionId")
-        except ClientError as e:
-            LOG.exception("Failed to create/put secret in %s/%s: %s", dest_account, region, e)
-            raise
-
-        try:
-            update_awscurrent(dest_client, dest_name, new_version)
-        except ClientError as e:
-            LOG.exception("Failed to update AWSCURRENT for %s in %s: %s", dest_name, region, e)
-            raise
-
-        if ENABLE_TAGS and tags:
-            replicate_tags(dest_client, dest_name, tags)
-
-
             try:
                 resp = ensure_destination_secret(dest_client, dest_name, secret_string, kms_key)
-                new_version = resp.get("VersionId")
             except ClientError as e:
                 LOG.exception("Failed to create/put secret in %s/%s: %s", dest_account, region, e)
-                raise
-
-            try:
-                update_awscurrent(dest_client, dest_name, new_version)
-            except ClientError as e:
-                LOG.exception("Failed to update AWSCURRENT for %s in %s: %s", dest_name, region, e)
                 raise
 
             if ENABLE_TAGS and tags:
