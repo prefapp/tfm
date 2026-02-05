@@ -1,3 +1,9 @@
+# ARN of the IAM role to allow replication (used in the Principal field)
+variable "replication_role_arn" {
+  description = "ARN of the IAM role to allow replication (used in the Principal field of the policy)."
+  type        = string
+}
+
 variable "name" {
   description = "Base name for the Lambda and associated resources"
   type        = string

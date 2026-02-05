@@ -156,6 +156,24 @@ module "lambda" {
           "kms:DescribeKey"
         ]
         Resource = var.kms_key_arns # or ["*"] temporarily
+      },
+      {
+        Sid : "AllowReplicationRole",
+        Effect : "Allow",
+        Principal = {
+          AWS = var.replication_role_arn
+        }
+        Action : [
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:UpdateSecret",
+          "secretsmanager:UpdateSecretVersionStage",
+          "secretsmanager:TagResource",
+          "secretsmanager:UntagResource",
+          "secretsmanager:ListSecretVersionIds"
+        ],
+        Resource : "*"
       }
     ]
   })
