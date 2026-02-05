@@ -161,7 +161,7 @@ module "lambda" {
         Sid : "AllowReplicationRole",
         Effect : "Allow",
         Principal = {
-          AWS = var.replication_role_arn
+          AWS = var.allowed_assume_roles[0]
         }
         Action : [
           "secretsmanager:DescribeSecret",
