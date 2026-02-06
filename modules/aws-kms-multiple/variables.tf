@@ -8,10 +8,12 @@ Example usage:
   ]
 EOT
   type = list(object({
-    name             = string
-    alias            = optional(string)
-    kms_alias_prefix = optional(string)
-    via_service      = optional(list(string))
+    name                       = string
+    alias                      = optional(string)
+    kms_alias_prefix           = optional(string)
+    via_service                = optional(list(string))
+    user_roles_with_read       = optional(list(string))
+    user_roles_with_read_write = optional(list(string))
   }))
   default = []
 }
@@ -84,4 +86,16 @@ variable "administrator_role_name" {
   description = "Name of the IAM role to grant KMS administrator permissions. Set to null to disable granting permissions to this role."
   type        = string
   default     = "Administrator"
+}
+
+variable "user_roles_with_read_write" {
+  description = "List of IAM role names to grant read/write permissions to the KMS key. Set to null to disable granting permissions to any additional roles."
+  type        = list(string)
+  default     = []
+}
+
+variable "user_roles_with_read" {
+  description = "List of IAM role names or users to grant read permissions to the KMS key. Set to null to disable granting permissions to any additional roles."
+  type        = list(string)
+  default     = []
 }
