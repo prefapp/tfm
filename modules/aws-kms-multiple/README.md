@@ -19,7 +19,7 @@ This module leverages the aws-kms module to create multiple custom KMS keys in A
 ```hcl
 module "kms" {
   source         = "github.com/prefapp/tfm/modules/aws-kms-multiple"
-  kms_to_create  = ["rds", "s3", "ec2"] # Each key will have alias "custom/<name>"
+  kms_to_create  = [ { name = "rds" }, { name =  "s3" }, { name = "ec2" } ] # Each key will have alias "custom/<name>"
   aws_region     = "eu-west-1"
 }
 ```
@@ -29,7 +29,7 @@ module "kms" {
 ```hcl
 module "kms" {
   source              = "github.com/prefapp/tfm/modules/aws-kms-multiple"
-  kms_to_create       = ["rds", "s3", "ec2"] # Aliases: custom/rds, custom/s3, custom/ec2
+  kms_to_create       = [ { name = "rds" }, { name = "s3", kms_alias_prefix = "myneworg" }, { name = "ec2", via_service = ["ec2","lambda"] } ] # Aliases: custom/rds, myneworg/s3, custom/ec2
   aws_region          = "eu-west-1"
   aws_regions_replica = ["eu-central-1", "eu-west-2"] # Replicates each key to these regions
   aws_accounts_access = ["111111111111", "222222222222"] # Grants access to these AWS accounts
@@ -83,7 +83,7 @@ No resources.
 | <a name="input_description"></a> [description](#input\_description) | Description of the KMS key | `string` | `"Symmetric encryption KMS key"` | no |
 | <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Specifies whether key rotation is enabled. Default is true. | `bool` | `true` | no |
 | <a name="input_kms_alias_prefix"></a> [kms\_alias\_prefix](#input\_kms\_alias\_prefix) | Prefix for the KMS key alias. The full alias will be constructed as '$prefix$kms\_name' for each KMS key created. | `string` | `"custom/"` | no |
-| <a name="input_kms_to_create"></a> [kms\_to\_create](#input\_kms\_to\_create) | Names of KMS to create in aws | `list(string)` | `[]` | no |
+| <a name="input_kms_to_create"></a> [kms\_to\_create](#input\_kms\_to\_create) | List of KMS keys to create. Each item must be an object, with at least the 'name' attribute.<br/>Example usage:<br/>  kms\_to\_create = [<br/>    { name = "s3" }, # Only name, uses default values for the rest<br/>    { name = "rds", alias = "custom-rds", kms\_alias\_prefix = "myorg/", via\_service = ["rds"] }<br/>  ] | <pre>list(object({<br/>    name             = string<br/>    alias            = optional(string)<br/>    kms_alias_prefix = optional(string)<br/>    via_service      = optional(list(string))<br/>  }))</pre> | `[]` | no |
 | <a name="input_multiregion"></a> [multiregion](#input\_multiregion) | Specifies whether the KMS key is multi-region. Default is true. | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource. | `map(string)` | `{}` | no |
 

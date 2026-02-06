@@ -1,7 +1,19 @@
 variable "kms_to_create" {
-  description = "Names of KMS to create in AWS"
-  type        = list(string)
-  default     = []
+  description = <<EOT
+List of KMS keys to create. Each item must be an object, with at least the 'name' attribute.
+Example usage:
+  kms_to_create = [
+    { name = "s3" }, # Only name, uses default values for the rest
+    { name = "rds", alias = "custom-rds", kms_alias_prefix = "myorg/", via_service = ["rds"] }
+  ]
+EOT
+  type = list(object({
+    name             = string
+    alias            = optional(string)
+    kms_alias_prefix = optional(string)
+    via_service      = optional(list(string))
+  }))
+  default = []
 }
 variable "kms_alias_prefix" {
   description = "Prefix for the KMS key alias. The full alias will be constructed as '$prefix$kms_name' for each KMS key created."
