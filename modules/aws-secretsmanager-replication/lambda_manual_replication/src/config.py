@@ -6,7 +6,7 @@ from typing import Dict
 
 @dataclass
 class RegionConfig:
-    kms_key_arn: str
+    kms_key_id: str
 
 
 @dataclass
@@ -34,7 +34,7 @@ def load_config() -> Config:
     for account_id, entry in parsed.items():
         regions = {
             region_name: RegionConfig(
-                kms_key_arn = region_cfg["kms_key_arn"]
+                kms_key_id = region_cfg["kms_key_id"]
             )
             for region_name, region_cfg in entry["regions"].items()
         }
