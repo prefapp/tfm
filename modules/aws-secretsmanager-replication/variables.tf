@@ -83,24 +83,24 @@ variable "manage_s3_bucket_policy" {
 }
 
 variable "source_secret_arns" {
-  description = "Optional list of source Secrets Manager ARNs or ARN prefixes to restrict read permissions for the Lambda. Use concrete ARNs or prefixes in production; default allows all."
+  description = "List of source Secrets Manager ARNs or ARN prefixes to restrict read permissions for the Lambda. Must be set explicitly for least-privilege."
   type        = list(string)
-  default     = ["*"]
+  default     = []
 }
 
 variable "destination_secret_arns" {
-  description = "Optional list of destination Secrets Manager ARNs or ARN prefixes to restrict write permissions for the Lambda. Use concrete ARNs or prefixes in production; default allows all."
+  description = "List of destination Secrets Manager ARNs or ARN prefixes to restrict write permissions for the Lambda. Must be set explicitly for least-privilege."
   type        = list(string)
-  default     = ["*"]
+  default     = []
 }
 
 variable "kms_key_arns" {
-  description = "Optional list of KMS key ARNs used by source/destination secrets to restrict KMS permissions for the Lambda. Use concrete key ARNs in production; default allows all."
+  description = "List of KMS key ARNs used by source/destination secrets to restrict KMS permissions for the Lambda. Must be set explicitly for least-privilege."
   type        = list(string)
-  default     = ["*"]
+  default     = []
 
   validation {
     condition     = length(var.kms_key_arns) > 0
-    error_message = "kms_key_arns must be a non-empty list (use [\"*\"] to allow all or provide specific KMS key ARNs)."
+    error_message = "kms_key_arns must be a non-empty list of ARNs."
   }
 }
