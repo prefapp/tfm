@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# **AWS Secrets Manager Copy Terraform Module**
+# **AWS Secrets Manager Replication Terraform Module**
 
 ## Overview
 

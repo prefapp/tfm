@@ -1,4 +1,4 @@
-# **AWS Secrets Manager Copy Terraform Module**
+# **AWS Secrets Manager Replication Terraform Module**
 
 ## Overview
 
