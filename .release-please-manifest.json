@@ -34,7 +34,7 @@
     "modules/azure-application": "1.0.0",
     "modules/aws-terraform-backend": "1.0.0",
     "modules/aws-rds": "0.1.1",
-    "modules/aws-kms": "0.1.0",
+    "modules/aws-kms": "0.2.0",
     "modules/azure-backup-vault": "0.1.1",
     "modules/azure-event-hub": "0.1.1",
     "modules/aws-cloudfront-delivery": "0.2.5",
