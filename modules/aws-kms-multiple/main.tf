@@ -3,9 +3,9 @@ module "multiple-kms" {
   for_each = {
     for kms in var.kms_to_create : kms.name => {
       name             = kms.name
-      alias            = can(kms.alias) ? kms.alias : kms.name
-      kms_alias_prefix = can(kms.kms_alias_prefix) ? kms.kms_alias_prefix : var.kms_alias_prefix
-      via_service      = can(kms.via_service) ? kms.via_service : []
+      alias            = kms.alias != null ? kms.alias : kms.name
+      kms_alias_prefix = kms.kms_alias_prefix != null ? kms.kms_alias_prefix : var.kms_alias_prefix
+      via_service      = kms.via_service != null ? kms.via_service : []
     }
   }
   aws_region              = var.aws_region
