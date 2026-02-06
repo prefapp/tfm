@@ -19,5 +19,5 @@ module "multiple-kms" {
   kms_alias_prefix        = (each.value.kms_alias_prefix != "" && each.value.kms_alias_prefix != null) ? each.value.kms_alias_prefix : var.kms_alias_prefix
   alias                   = (each.value.alias != "" && each.value.alias != null) ? each.value.alias : each.value.name
   administrator_role_name = var.administrator_role_name
-  via_service             = (each.value.via_service != [] && each.value.via_service != null) ? each.value.via_service : null
+  via_service             = length(each.value.via_service) > 0 ? each.value.via_service : null
 }
