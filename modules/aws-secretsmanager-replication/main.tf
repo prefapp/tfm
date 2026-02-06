@@ -84,7 +84,7 @@ module "lambda_automatic_replication" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "~> 7.0"
 
-  function_name = var.name
+  function_name = "${var.name}-automatic"
   handler       = "handler.lambda_handler"
   runtime       = "python3.12"
 
@@ -192,7 +192,7 @@ module "lambda_manual_replication" {
 
   count = var.manual_replication_enabled ? 1 : 0
 
-  function_name = "${var.prefix}-manual-secrets-sync"
+  function_name = "${var.name}-manual"
   handler       = "handler.lambda_handler"
   runtime       = "python3.12"
 
