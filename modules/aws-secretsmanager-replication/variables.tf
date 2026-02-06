@@ -99,8 +99,5 @@ variable "kms_key_arns" {
   type        = list(string)
   default     = []
 
-  validation {
-    condition     = length(var.kms_key_arns) > 0
-    error_message = "kms_key_arns must be a non-empty list of ARNs."
-  }
+  # No validation block: empty list is allowed as default, must be set explicitly for least-privilege.
 }
