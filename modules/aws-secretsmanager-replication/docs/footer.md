@@ -2,9 +2,9 @@
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-secretsmanager-copy/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-secretsmanager-replication/_examples):
 
-- [Basic Replication](https://github.com/prefapp/tfm/tree/main/modules/aws-secretsmanager-copy/_examples/basic) – Replicate a secret to another AWS account or region
+- [Basic Replication](https://github.com/prefapp/tfm/tree/main/modules/aws-secretsmanager-replication/_examples/basic) – Replicate a secret to another AWS account or region
 
 ## Remote resources
 - Terraform: https://www.terraform.io/
