@@ -458,8 +458,10 @@ resource "aws_wafv2_web_acl" "this" {
               for_each = [regex_pattern_set_reference_statement.value.field_to_match]
               content {
                 dynamic "body" {
-                  for_each = try(field_to_match.value.body, null) != null ? [1] : []
-                  content {}
+                  for_each = try(field_to_match.value.body, null) != null ? [field_to_match.value.body] : []
+                  content {
+                    oversize_handling = try(body.value.oversize_handling, "CONTINUE")
+                  }
                 }
                 dynamic "method" {
                   for_each = try(field_to_match.value.method, null) != null ? [1] : []
@@ -624,8 +626,10 @@ resource "aws_wafv2_web_acl" "this" {
               for_each = [byte_match_statement.value.field_to_match]
               content {
                 dynamic "body" {
-                  for_each = try(field_to_match.value.body, null) != null ? [1] : []
-                  content {}
+                  for_each = try(field_to_match.value.body, null) != null ? [field_to_match.value.body] : []
+                  content {
+                    oversize_handling = try(body.value.oversize_handling, "CONTINUE")
+                  }
                 }
                 dynamic "method" {
                   for_each = try(field_to_match.value.method, null) != null ? [1] : []
@@ -678,8 +682,10 @@ resource "aws_wafv2_web_acl" "this" {
               for_each = [size_constraint_statement.value.field_to_match]
               content {
                 dynamic "body" {
-                  for_each = try(field_to_match.value.body, null) != null ? [1] : []
-                  content {}
+                  for_each = try(field_to_match.value.body, null) != null ? [field_to_match.value.body] : []
+                  content {
+                    oversize_handling = try(body.value.oversize_handling, "CONTINUE")
+                  }
                 }
                 dynamic "method" {
                   for_each = try(field_to_match.value.method, null) != null ? [1] : []
