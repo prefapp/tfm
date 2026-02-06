@@ -290,7 +290,7 @@ resource "aws_s3_bucket" "cloudtrail" {
   count = var.s3_bucket_name == "" ? 1 : 0
 
   bucket        = var.s3_bucket_name != "" ? var.s3_bucket_name : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
-  force_destroy = true
+  force_destroy = false
   tags          = var.tags
 }
 
