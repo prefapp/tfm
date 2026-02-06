@@ -57,9 +57,7 @@ module "secrets_dr_replication" {
   destinations_json    = local.destinations_json
   allowed_assume_roles = local.allowed_assume_roles
 
-  environment_variables = {
-    ENABLE_TAG_REPLICATION = "true"
-  }
+  # environment_variables can be used to pass additional custom variables if needed
 
   lambda_timeout     = 10
   lambda_memory      = 128
