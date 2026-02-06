@@ -178,7 +178,7 @@ module "lambda_automatic_replication" {
 
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-  role       = module.lambda_automatic_replication
+  role       = module.lambda_automatic_replication.lambda_role_name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
@@ -267,7 +267,7 @@ module "lambda_manual_replication" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_manual_basic_execution" {
-  role       = module.lambda_manual_replication.lambda_role_name
+  role       = module.lambda_manual_replication[0].lambda_role_name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
