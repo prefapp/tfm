@@ -18,6 +18,13 @@ RETRY_BASE = 0.5
 
 
 def extract_secret_id(detail):
+    """
+    Extracts the secret ID from a CloudTrail event detail.
+    Args:
+        detail (dict): CloudTrail event detail.
+    Returns:
+        str or None: The secret ID or ARN, or None if not found.
+    """
     rp = detail.get("requestParameters", {})
 
     # 1. Normal case: PutSecretValue, UpdateSecret, RotateSecret
@@ -40,10 +47,28 @@ def extract_secret_id(detail):
 
 
 def checksum(s):
+    """
+    Returns the SHA-256 checksum of a string.
+    Args:
+        s (str): Input string.
+    Returns:
+        str: Hexadecimal SHA-256 checksum.
+    """
     return hashlib.sha256((s or "").encode("utf-8")).hexdigest()
 
 
 def retry(fn, *args, **kwargs):
+    """
+    Executes a function with retry logic for transient AWS errors.
+    Args:
+        fn: Function to execute.
+        *args: Positional arguments for the function.
+        **kwargs: Keyword arguments for the function.
+    Returns:
+        The result of the function call.
+    Raises:
+        ClientError: If the maximum number of retries is exceeded or for non-retryable errors.
+    """
     for attempt in range(1, RETRY_MAX + 1):
         try:
             return fn(*args, **kwargs)
@@ -55,6 +80,13 @@ def retry(fn, *args, **kwargs):
 
 
 def assume_role(role_arn):
+    """
+    Assumes an AWS IAM role and returns temporary credentials.
+    Args:
+        role_arn (str): ARN of the role to assume.
+    Returns:
+        dict: Temporary credentials for the assumed role.
+    """
     sts = boto3.client("sts")
     resp = sts.assume_role(RoleArn=role_arn, RoleSessionName="secrets-replication")
     creds = resp["Credentials"]
@@ -66,6 +98,15 @@ def assume_role(role_arn):
 
 
 def get_secret_value(client, secret_id, version_id=None):
+    """
+    Gets the value of a secret from AWS Secrets Manager.
+    Args:
+        client: Boto3 Secrets Manager client.
+        secret_id (str): Secret ID or ARN.
+        version_id (str, optional): Version ID of the secret.
+    Returns:
+        dict: Secret value response from AWS.
+    """
     params = {"SecretId": secret_id}
     if version_id:
         params["VersionId"] = version_id
@@ -73,6 +114,18 @@ def get_secret_value(client, secret_id, version_id=None):
 
 
 def ensure_destination_secret(dest_client, name, secret_string, kms_key=None):
+    """
+    Ensures the destination secret exists and is updated with the provided value.
+    Args:
+        dest_client: Boto3 client for destination Secrets Manager.
+        name (str): Name of the secret.
+        secret_string (str): Secret value as string.
+        kms_key (str, optional): KMS key ARN for encryption.
+    Returns:
+        dict: Response from create_secret or put_secret_value.
+    Raises:
+        ClientError: If AWS API calls fail.
+    """
     try:
         return retry(dest_client.create_secret, Name=name, SecretString=secret_string, KmsKeyId=kms_key)
     except ClientError as e:
@@ -82,6 +135,15 @@ def ensure_destination_secret(dest_client, name, secret_string, kms_key=None):
 
 
 def replicate_tags(dest_client, secret_id, tags):
+    """
+    Replicates tags to the destination secret.
+    Args:
+        dest_client: Boto3 client for destination Secrets Manager.
+        secret_id (str): ID or name of the secret.
+        tags (list): List of tags to apply.
+    Returns:
+        None
+    """
     if not tags:
         return
     try:
@@ -91,6 +153,14 @@ def replicate_tags(dest_client, secret_id, tags):
 
 
 def lambda_handler(event, context):
+    """
+    AWS Lambda entry point. Handles the event for secret replication.
+    Args:
+        event (dict): Lambda event data.
+        context: Lambda context object.
+    Returns:
+        None
+    """
     LOG.info("Received event")
     detail = event.get("detail", {})
     event_name = detail.get("eventName")

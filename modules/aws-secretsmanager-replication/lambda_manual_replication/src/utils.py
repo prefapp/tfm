@@ -4,9 +4,13 @@ import logging
 
 def log(level: str, message: str, **kwargs):
     """
-    Structured logging helper.
-    Usage:
-        log("info", "Replicating secret", secret_id=secret_id)
+    Structured logging helper for consistent log output.
+    Args:
+        level (str): Log level (info, warning, error, debug).
+        message (str): Log message.
+        **kwargs: Additional context for the log.
+    Returns:
+        None
     """
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
@@ -25,8 +29,13 @@ def log(level: str, message: str, **kwargs):
 
 def assume_role(role_arn: str, region: str, session_name: str = "replication-session"):
     """
-    Assume a cross-account IAM role and return a Secrets Manager client
-    using the temporary credentials.
+    Assume a cross-account IAM role and return a Secrets Manager client using the temporary credentials.
+    Args:
+        role_arn (str): ARN of the role to assume.
+        region (str): AWS region for the client.
+        session_name (str): Session name for the assumed role.
+    Returns:
+        boto3.client: Boto3 Secrets Manager client with assumed credentials.
     """
     sts = boto3.client("sts")
 

@@ -25,6 +25,11 @@ class Config:
 
 
 def load_config() -> Config:
+    """
+    Loads configuration for secret replication from environment variables and JSON.
+    Returns:
+        Config: Configuration object with destinations, source region, and tag replication flag.
+    """
 
     raw = os.environ.get("DESTINATIONS_JSON", "{}")
     parsed = json.loads(raw)

@@ -3,6 +3,13 @@ import boto3
 
 
 def extract_secret_name(secret_id):
+    """
+    Extracts the real secret name from a Secrets Manager ARN, removing the random 6-character suffix if present.
+    Args:
+        secret_id (str): The ARN or name of the secret.
+    Returns:
+        str: The extracted secret name without the random suffix.
+    """
     # ARN → extract the part after "secret:"
     if secret_id.startswith("arn:"):
         # Example ARN:
@@ -14,6 +21,14 @@ def extract_secret_name(secret_id):
 
 
 def replicate_secret(secret_id: str, config):
+    """
+    Replicates a secret to all configured destinations and regions.
+    Args:
+        secret_id (str): ID or ARN of the secret to replicate.
+        config: Configuration object with destinations and options.
+    Returns:
+        None
+    """
     log("info", "Starting replication", secret_id=secret_id)
 
     # Secret name (valid in destination)
