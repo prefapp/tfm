@@ -83,19 +83,19 @@ variable "manage_s3_bucket_policy" {
 }
 
 variable "source_secret_arns" {
-  description = "List of source Secrets Manager ARNs or ARN prefixes to restrict read permissions for the Lambda. Must be set explicitly for least-privilege."
+  description = "List of source Secrets Manager ARNs or ARN prefixes to restrict read permissions for the Lambda. Must be set explicitly for least-privilege. Do not use [\"*\"] in production."
   type        = list(string)
   default     = []
 }
 
 variable "destination_secret_arns" {
-  description = "List of destination Secrets Manager ARNs or ARN prefixes to restrict write permissions for the Lambda. Must be set explicitly for least-privilege."
+  description = "List of destination Secrets Manager ARNs or ARN prefixes to restrict write permissions for the Lambda. Must be set explicitly for least-privilege. Do not use [\"*\"] in production."
   type        = list(string)
   default     = []
 }
 
 variable "kms_key_arns" {
-  description = "List of KMS key ARNs used by source/destination secrets to restrict KMS permissions for the Lambda. Must be set explicitly for least-privilege."
+  description = "List of KMS key ARNs used by source/destination secrets to restrict KMS permissions for the Lambda. Must be set explicitly for least-privilege. Do not use [\"*\"] in production."
   type        = list(string)
   default     = []
 

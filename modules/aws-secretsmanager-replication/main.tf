@@ -135,7 +135,7 @@ module "lambda_automatic_replication" {
           "secretsmanager:ListSecretVersionIds",
           "secretsmanager:GetResourcePolicy"
         ]
-        Resource = var.source_secret_arns # or ["*"] temporarily
+        Resource = var.source_secret_arns
       },
       {
         Sid    = "ManageDestinationSecrets",
@@ -150,7 +150,7 @@ module "lambda_automatic_replication" {
           "secretsmanager:UpdateSecretVersionStage",
           "secretsmanager:ListSecretVersionIds"
         ]
-        Resource = var.destination_secret_arns # or ["*"] temporarily
+        Resource = var.destination_secret_arns
       },
       {
         Sid      = "AssumeDestinationRoles",
@@ -168,7 +168,7 @@ module "lambda_automatic_replication" {
           "kms:ReEncrypt*",
           "kms:DescribeKey"
         ]
-        Resource = var.kms_key_arns # or ["*"] temporarily
+        Resource = var.kms_key_arns
       },
       {
         Sid    = "AllowReplicationRole"
