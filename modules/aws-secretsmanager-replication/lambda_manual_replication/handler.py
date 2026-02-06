@@ -203,7 +203,7 @@ def replicate_one(secret_id):
             continue
 
         for region, rcfg in cfg.get("regions", {}).items():
-            kms_key = rcfg.get("kms_key_id")
+            kms_key = rcfg.get("kms_key_arn")
             creds = assume_role(role_arn)
             dest_client = boto3.client("secretsmanager", region_name=region, **creds)
             dest_name = extract_secret_name(secret_id)

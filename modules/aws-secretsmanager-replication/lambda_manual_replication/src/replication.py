@@ -64,7 +64,7 @@ def replicate_secret(secret_id: str, config):
                 sm_dest.create_secret(
                     Name=dest_name,
                     SecretString=secret_value,
-                    KmsKeyId=region_cfg.kms_key_id,
+                    KmsKeyId=region_cfg.kms_key_arn,
                     Tags=source_tags if config.enable_tag_replication else [],
                 )
             else:
