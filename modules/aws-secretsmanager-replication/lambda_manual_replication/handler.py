@@ -151,7 +151,7 @@ def replicate_tags(dest_client, secret_id, tags):
 
 
 # -----------------------------
-# Replicación individual
+# Individual replication
 # -----------------------------
 
 def replicate_one(secret_id):

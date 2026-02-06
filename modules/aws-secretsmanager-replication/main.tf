@@ -202,8 +202,7 @@ module "lambda_manual_replication" {
   memory_size = var.lambda_memory
   tags        = var.tags
 
-  # No necesita variables de entorno por defecto,
-  # pero puedes añadirlas si algún día quieres defaults.
+  # No default environment variables needed,
   environment_variables = {}
 
   attach_cloudwatch_logs_policy = false

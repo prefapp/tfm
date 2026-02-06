@@ -3,12 +3,12 @@ import boto3
 
 
 def extract_secret_name(secret_id):
-    # ARN → extraer la parte después de "secret:"
+    # ARN → extract the part after "secret:"
     if secret_id.startswith("arn:"):
-        # Ejemplo ARN:
+        # Example ARN:
         # arn:aws:secretsmanager:eu-west-1:123456789012:secret:dev/valor_de_pi-QQzt8J
         name_with_suffix = secret_id.split(":secret:")[1]
-        # Quitamos solo el sufijo aleatorio final
+        # Remove only the random suffix at the end
         return name_with_suffix.rsplit("-", 1)[0]
     return secret_id
 
@@ -16,10 +16,10 @@ def extract_secret_name(secret_id):
 def replicate_secret(secret_id: str, config):
     log("info", "Starting replication", secret_id=secret_id)
 
-    # Nombre del secreto (válido en destino)
+    # Secret name (valid in destination)
     dest_name = extract_secret_name(secret_id)
 
-    # Read source secret (ARN completo OK)
+    # Read source secret (full ARN is OK)
     source_sm = boto3.client("secretsmanager", region_name=config.source_region)
 
     secret_value = source_sm.get_secret_value(SecretId=secret_id)["SecretString"]

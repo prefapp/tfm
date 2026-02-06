@@ -20,17 +20,17 @@ RETRY_BASE = 0.5
 def extract_secret_id(detail):
     rp = detail.get("requestParameters", {})
 
-    # 1. Caso normal: PutSecretValue, UpdateSecret, RotateSecret
+    # 1. Normal case: PutSecretValue, UpdateSecret, RotateSecret
     sid = rp.get("secretId") or rp.get("SecretId")
     if sid:
         return sid
 
-    # 2. Caso CreateSecret: solo trae "name"
+    # 2. CreateSecret case: only has "name"
     name = rp.get("name")
     if name:
         return name
 
-    # 3. Caso raro: CloudTrail a veces mete el ARN en resources
+    # 3. Rare case: CloudTrail sometimes puts the ARN in resources
     resources = detail.get("resources", [])
     for r in resources:
         if r.get("type") == "AWS::SecretsManager::Secret":
