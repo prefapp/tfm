@@ -251,13 +251,13 @@ resource "aws_cloudfront_distribution" "example" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.3 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.3 |
 
 ## Modules
 
@@ -279,7 +279,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_association_resource_arns"></a> [association\_resource\_arns](#input\_association\_resource\_arns) | List of resource ARNs to associate with the WebACL. <br/>Supports ALB, API Gateway, AppSync, Cognito User Pool, App Runner, and Verified Access Instance ARNs.<br/>Note: For CLOUDFRONT scope, associations are managed through CloudFront distribution configuration, not this variable. | `list(string)` | `[]` | no |
-| <a name="input_aws_managed_rules"></a> [aws\_managed\_rules](#input\_aws\_managed\_rules) | List of AWS managed rule groups to include in the WebACL.<br/>Example:<br/>[<br/>  {<br/>    name            = "AWSManagedRulesCommonRuleSet"<br/>    priority        = 10<br/>    override\_action = "none"<br/>    excluded\_rules  = ["SizeRestrictions\_BODY"]<br/>    rule\_action\_overrides = {<br/>      "GenericRFI\_BODY" = "count"<br/>    }<br/>  },<br/>  {<br/>    name            = "AWSManagedRulesKnownBadInputsRuleSet"<br/>    priority        = 20<br/>    override\_action = "none"<br/>  }<br/>] | <pre>list(object({<br/>    name                  = string<br/>    vendor_name           = optional(string, "AWS")<br/>    priority              = number<br/>    override_action       = optional(string, "none")<br/>    excluded_rules        = optional(list(string), [])<br/>    rule_action_overrides = optional(map(string), {})<br/>    version               = optional(string, null)<br/>    scope_down_statement  = optional(any, null)<br/>  }))</pre> | `[]` | no |
+| <a name="input_aws_managed_rules"></a> [aws\_managed\_rules](#input\_aws\_managed\_rules) | List of AWS managed rule groups to include in the WebACL.<br/><br/>Note: To exclude a rule from the managed rule group, use rule\_action\_overrides with "count" action.<br/>The excluded\_rules parameter was deprecated in AWS Provider v5.x.<br/><br/>Example:<br/>[<br/>  {<br/>    name            = "AWSManagedRulesCommonRuleSet"<br/>    priority        = 10<br/>    override\_action = "none"<br/>    rule\_action\_overrides = {<br/>      "SizeRestrictions\_BODY" = "count"  # Effectively excludes this rule<br/>      "GenericRFI\_BODY"       = "count"  # Effectively excludes this rule<br/>    }<br/>  },<br/>  {<br/>    name            = "AWSManagedRulesKnownBadInputsRuleSet"<br/>    priority        = 20<br/>    override\_action = "none"<br/>  }<br/>] | <pre>list(object({<br/>    name                  = string<br/>    vendor_name           = optional(string, "AWS")<br/>    priority              = number<br/>    override_action       = optional(string, "none")<br/>    rule_action_overrides = optional(map(string), {})<br/>    version               = optional(string, null)<br/>    scope_down_statement  = optional(any, null)<br/>  }))</pre> | `[]` | no |
 | <a name="input_captcha_config"></a> [captcha\_config](#input\_captcha\_config) | CAPTCHA configuration for the WebACL.<br/>Example:<br/>{<br/>  immunity\_time\_property = {<br/>    immunity\_time = 300<br/>  }<br/>} | <pre>object({<br/>    immunity_time_property = optional(object({<br/>      immunity_time = number<br/>    }), null)<br/>  })</pre> | `null` | no |
 | <a name="input_challenge_config"></a> [challenge\_config](#input\_challenge\_config) | Challenge configuration for the WebACL.<br/>Example:<br/>{<br/>  immunity\_time\_property = {<br/>    immunity\_time = 300<br/>  }<br/>} | <pre>object({<br/>    immunity_time_property = optional(object({<br/>      immunity_time = number<br/>    }), null)<br/>  })</pre> | `null` | no |
 | <a name="input_cloudwatch_metrics_enabled"></a> [cloudwatch\_metrics\_enabled](#input\_cloudwatch\_metrics\_enabled) | Whether CloudWatch metrics are enabled for the WebACL | `bool` | `true` | no |
@@ -292,7 +292,7 @@ No modules.
 | <a name="input_metric_name"></a> [metric\_name](#input\_metric\_name) | CloudWatch metric name for the WebACL. If not specified, the name will be used | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the WebACL and related resources | `string` | n/a | yes |
 | <a name="input_regex_pattern_sets"></a> [regex\_pattern\_sets](#input\_regex\_pattern\_sets) | Map of regex pattern sets to create. Each key is the pattern set name.<br/>Example:<br/>{<br/>  "bad-patterns" = {<br/>    description = "Patterns to block"<br/>    patterns    = [".*badbot.*", ".*malware.*"]<br/>  }<br/>} | <pre>map(object({<br/>    description = optional(string, "")<br/>    patterns    = list(string)<br/>  }))</pre> | `{}` | no |
-| <a name="input_rule_group_references"></a> [rule\_group\_references](#input\_rule\_group\_references) | List of rule group ARNs to reference in the WebACL.<br/>Example:<br/>[<br/>  {<br/>    arn             = "arn:aws:wafv2:us-east-1:123456789012:regional/rulegroup/my-rule-group/12345678"<br/>    priority        = 50<br/>    override\_action = "none"<br/>    excluded\_rules  = []<br/>    rule\_action\_overrides = {}<br/>  }<br/>] | <pre>list(object({<br/>    arn                   = string<br/>    priority              = number<br/>    override_action       = optional(string, "none")<br/>    excluded_rules        = optional(list(string), [])<br/>    rule_action_overrides = optional(map(string), {})<br/>  }))</pre> | `[]` | no |
+| <a name="input_rule_group_references"></a> [rule\_group\_references](#input\_rule\_group\_references) | List of rule group ARNs to reference in the WebACL.<br/><br/>Note: To exclude a rule from the rule group, use rule\_action\_overrides with "count" action.<br/>The excluded\_rules parameter was deprecated in AWS Provider v5.x.<br/><br/>Example:<br/>[<br/>  {<br/>    arn             = "arn:aws:wafv2:us-east-1:123456789012:regional/rulegroup/my-rule-group/12345678"<br/>    priority        = 50<br/>    override\_action = "none"<br/>    rule\_action\_overrides = {<br/>      "some-rule-name" = "count"  # Effectively excludes this rule<br/>    }<br/>  }<br/>] | <pre>list(object({<br/>    arn                   = string<br/>    priority              = number<br/>    override_action       = optional(string, "none")<br/>    rule_action_overrides = optional(map(string), {})<br/>  }))</pre> | `[]` | no |
 | <a name="input_sampled_requests_enabled"></a> [sampled\_requests\_enabled](#input\_sampled\_requests\_enabled) | Whether AWS WAF should store a sampling of the web requests that match the rules | `bool` | `true` | no |
 | <a name="input_scope"></a> [scope](#input\_scope) | Scope of the WebACL. Valid values are CLOUDFRONT or REGIONAL. For CLOUDFRONT, the provider region must be us-east-1 | `string` | `"REGIONAL"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources | `map(string)` | `{}` | no |
@@ -365,9 +365,12 @@ Customize the action for specific rules within the group:
 |--------|-------------|
 | `allow` | Allow the request |
 | `block` | Block the request |
-| `count` | Count but don't block (monitoring mode) |
+| `count` | Count but don't block (monitoring mode / effectively excludes the rule) |
 | `captcha` | Present a CAPTCHA challenge |
 | `challenge` | Present a silent challenge |
+
+> **Note:** The `excluded_rules` parameter was deprecated in AWS Provider v5.x and removed in v6.x.
+> To exclude a rule, use `rule_action_overrides` with `"count"` action instead.
 
 **Example:**
 ```hcl
@@ -377,8 +380,8 @@ aws_managed_rules = [
     priority        = 10
     override_action = "none"  # Use rule group's default actions
     rule_action_overrides = {
-      "SizeRestrictions_BODY" = "count"    # Monitor large bodies
-      "GenericRFI_BODY"       = "count"    # Monitor RFI attempts
+      "SizeRestrictions_BODY" = "count"    # Effectively excludes this rule (count only)
+      "GenericRFI_BODY"       = "count"    # Effectively excludes this rule (count only)
       "NoUserAgent_HEADER"    = "captcha"  # Challenge missing user-agent
     }
   }

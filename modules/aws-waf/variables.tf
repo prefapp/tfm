@@ -167,15 +167,19 @@ variable "regex_pattern_sets" {
 variable "aws_managed_rules" {
   description = <<-EOT
     List of AWS managed rule groups to include in the WebACL.
+
+    Note: To exclude a rule from the managed rule group, use rule_action_overrides with "count" action.
+    The excluded_rules parameter was deprecated in AWS Provider v5.x.
+
     Example:
     [
       {
         name            = "AWSManagedRulesCommonRuleSet"
         priority        = 10
         override_action = "none"
-        excluded_rules  = ["SizeRestrictions_BODY"]
         rule_action_overrides = {
-          "GenericRFI_BODY" = "count"
+          "SizeRestrictions_BODY" = "count"  # Effectively excludes this rule
+          "GenericRFI_BODY"       = "count"  # Effectively excludes this rule
         }
       },
       {
@@ -190,7 +194,6 @@ variable "aws_managed_rules" {
     vendor_name           = optional(string, "AWS")
     priority              = number
     override_action       = optional(string, "none")
-    excluded_rules        = optional(list(string), [])
     rule_action_overrides = optional(map(string), {})
     version               = optional(string, null)
     scope_down_statement  = optional(any, null)
@@ -212,7 +215,7 @@ variable "aws_managed_rules" {
 variable "custom_rules" {
   description = <<-EOT
     List of custom rules to include in the WebACL. Supports various statement types.
-    
+
     Supported statement types:
     - ip_set_reference: Reference an IP set (use ip_set_key for module-created sets or ip_set_arn for external)
     - geo_match: Match requests by country codes
@@ -222,7 +225,7 @@ variable "custom_rules" {
     - size_constraint: Match request size
     - label_match: Match labels from other rules
     - not/and/or: Compound statements
-    
+
     Example:
     [
       {
@@ -259,14 +262,19 @@ variable "custom_rules" {
 variable "rule_group_references" {
   description = <<-EOT
     List of rule group ARNs to reference in the WebACL.
+
+    Note: To exclude a rule from the rule group, use rule_action_overrides with "count" action.
+    The excluded_rules parameter was deprecated in AWS Provider v5.x.
+
     Example:
     [
       {
         arn             = "arn:aws:wafv2:us-east-1:123456789012:regional/rulegroup/my-rule-group/12345678"
         priority        = 50
         override_action = "none"
-        excluded_rules  = []
-        rule_action_overrides = {}
+        rule_action_overrides = {
+          "some-rule-name" = "count"  # Effectively excludes this rule
+        }
       }
     ]
   EOT
@@ -274,7 +282,6 @@ variable "rule_group_references" {
     arn                   = string
     priority              = number
     override_action       = optional(string, "none")
-    excluded_rules        = optional(list(string), [])
     rule_action_overrides = optional(map(string), {})
   }))
   default = []
@@ -286,7 +293,7 @@ variable "rule_group_references" {
 
 variable "association_resource_arns" {
   description = <<-EOT
-    List of resource ARNs to associate with the WebACL. 
+    List of resource ARNs to associate with the WebACL.
     Supports ALB, API Gateway, AppSync, Cognito User Pool, App Runner, and Verified Access Instance ARNs.
     Note: For CLOUDFRONT scope, associations are managed through CloudFront distribution configuration, not this variable.
   EOT
@@ -302,7 +309,7 @@ variable "logging_configuration" {
   description = <<-EOT
     Logging configuration for the WebACL.
     If log_destination_arns is not provided, a CloudWatch Log Group will be created automatically.
-    
+
     Example with custom destination:
     {
       log_destination_arns = ["arn:aws:firehose:us-east-1:123456789012:deliverystream/aws-waf-logs-example"]
@@ -326,7 +333,7 @@ variable "logging_configuration" {
         ]
       }
     }
-    
+
     Example with auto-created CloudWatch Log Group:
     {
       cloudwatch_log_group_retention_days = 30

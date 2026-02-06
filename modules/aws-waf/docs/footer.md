@@ -48,9 +48,12 @@ Customize the action for specific rules within the group:
 |--------|-------------|
 | `allow` | Allow the request |
 | `block` | Block the request |
-| `count` | Count but don't block (monitoring mode) |
+| `count` | Count but don't block (monitoring mode / effectively excludes the rule) |
 | `captcha` | Present a CAPTCHA challenge |
 | `challenge` | Present a silent challenge |
+
+> **Note:** The `excluded_rules` parameter was deprecated in AWS Provider v5.x and removed in v6.x. 
+> To exclude a rule, use `rule_action_overrides` with `"count"` action instead.
 
 **Example:**
 ```hcl
@@ -60,8 +63,8 @@ aws_managed_rules = [
     priority        = 10
     override_action = "none"  # Use rule group's default actions
     rule_action_overrides = {
-      "SizeRestrictions_BODY" = "count"    # Monitor large bodies
-      "GenericRFI_BODY"       = "count"    # Monitor RFI attempts
+      "SizeRestrictions_BODY" = "count"    # Effectively excludes this rule (count only)
+      "GenericRFI_BODY"       = "count"    # Effectively excludes this rule (count only)
       "NoUserAgent_HEADER"    = "captcha"  # Challenge missing user-agent
     }
   }
