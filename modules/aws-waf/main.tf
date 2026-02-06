@@ -290,7 +290,7 @@ resource "aws_wafv2_web_acl" "this" {
             )
 
             dynamic "ip_set_forwarded_ip_config" {
-              for_each = try(ip_set_reference_statement.value.ip_set_forwarded_config, null) != null ? [ip_set_reference_statement.value.ip_set_forwarded_config] : []
+              for_each = try(ip_set_reference_statement.value.ip_set_forwarded_ip_config, null) != null ? [ip_set_reference_statement.value.ip_set_forwarded_ip_config] : []
               content {
                 header_name       = ip_set_forwarded_ip_config.value.header_name
                 fallback_behavior = ip_set_forwarded_ip_config.value.fallback_behavior
