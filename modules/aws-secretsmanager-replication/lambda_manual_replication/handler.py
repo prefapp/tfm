@@ -22,8 +22,6 @@ RETRY_BASE = 0.5
 # -----------------------------
 
 def extract_secret_id(detail):
-    rp = detail.get("requestParameters", {})
-
     """
     Extracts the secret ID from a CloudTrail event detail.
     Args:
@@ -31,6 +29,7 @@ def extract_secret_id(detail):
     Returns:
         str or None: The secret ID or ARN, or None if not found.
     """
+    rp = detail.get("requestParameters", {})
     sid = rp.get("secretId") or rp.get("SecretId")
     if sid:
         return sid
