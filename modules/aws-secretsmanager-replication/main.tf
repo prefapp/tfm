@@ -60,9 +60,9 @@ locals {
   has_existing_bucket    = var.s3_bucket_name != ""
   existing_bucket_policy = length(data.aws_s3_bucket_policy.existing) > 0 ? data.aws_s3_bucket_policy.existing[0].policy : ""
   bucket_policy_has_cloudtrail = local.existing_bucket_policy != "" && (
-    contains(local.existing_bucket_policy, "cloudtrail.amazonaws.com")
-    && contains(local.existing_bucket_policy, "s3:GetBucketAcl")
-    && contains(local.existing_bucket_policy, "s3:PutObject")
+    strcontains(local.existing_bucket_policy, "cloudtrail.amazonaws.com")
+    && strcontains(local.existing_bucket_policy, "s3:GetBucketAcl")
+    && strcontains(local.existing_bucket_policy, "s3:PutObject")
   )
 
   # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
@@ -211,8 +211,10 @@ module "lambda_manual_replication" {
   memory_size = var.lambda_memory
   tags        = var.tags
 
-  # No default environment variables needed,
-  environment_variables = {}
+  environment_variables = {
+    DESTINATIONS_JSON      = var.destinations_json
+    ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
+  }
 
   attach_cloudwatch_logs_policy = false
 

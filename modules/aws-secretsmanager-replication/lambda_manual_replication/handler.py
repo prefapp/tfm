@@ -125,10 +125,17 @@ def ensure_destination_secret(dest_client, name, secret_string, kms_key=None):
         ClientError: If AWS API calls fail.
     """
     try:
-        return retry(dest_client.create_secret, Name=name, SecretString=secret_string, KmsKeyId=kms_key)
+        # secret_string can be either a string or bytes (for binary secrets)
+        if isinstance(secret_string, bytes):
+            return retry(dest_client.create_secret, Name=name, SecretBinary=secret_string, KmsKeyId=kms_key)
+        else:
+            return retry(dest_client.create_secret, Name=name, SecretString=secret_string, KmsKeyId=kms_key)
     except ClientError as e:
         if e.response["Error"]["Code"] in ("ResourceExistsException", "InvalidRequestException"):
-            return retry(dest_client.put_secret_value, SecretId=name, SecretString=secret_string)
+            if isinstance(secret_string, bytes):
+                return retry(dest_client.put_secret_value, SecretId=name, SecretBinary=secret_string)
+            else:
+                return retry(dest_client.put_secret_value, SecretId=name, SecretString=secret_string)
         raise
 
 
@@ -172,7 +179,14 @@ def replicate_one(secret_id):
         LOG.exception("Failed to read source secret %s: %s", secret_id, e)
         return
 
-    secret_string = src_val.get("SecretString") or src_val.get("SecretBinary")
+    # Prefer SecretString if present, otherwise use SecretBinary (bytes)
+    if "SecretString" in src_val:
+        secret_value = src_val["SecretString"]
+    elif "SecretBinary" in src_val:
+        secret_value = src_val["SecretBinary"]
+    else:
+        LOG.error("Secret %s has neither SecretString nor SecretBinary", secret_id)
+        return
 
     tags = []
     if ENABLE_TAGS:
@@ -195,7 +209,7 @@ def replicate_one(secret_id):
             dest_name = extract_secret_name(secret_id)
 
             try:
-                ensure_destination_secret(dest_client, dest_name, secret_string, kms_key)
+                ensure_destination_secret(dest_client, dest_name, secret_value, kms_key)
             except ClientError as e:
                 LOG.exception("Failed to create/put secret in %s/%s: %s", dest_account, region, e)
                 continue
