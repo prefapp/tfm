@@ -267,6 +267,7 @@ module "lambda_manual_replication" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_manual_basic_execution" {
+  count      = var.manual_replication_enabled ? 1 : 0
   role       = module.lambda_manual_replication[0].lambda_role_name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
@@ -310,7 +311,7 @@ resource "aws_cloudtrail" "secrets_management_events" {
 ###############################################################################
 
 resource "aws_s3_bucket_policy" "cloudtrail" {
-  count  = var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || var.s3_bucket_name == "") ? 1 : 0
+  count  = var.manage_s3_bucket_policy ? 1 : 0
   bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
   policy = jsonencode({

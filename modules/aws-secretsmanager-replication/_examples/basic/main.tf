@@ -72,7 +72,7 @@ module "secrets_dr_replication" {
 }
 
 output "lambda_arn" {
-  value = module.secrets_dr_replication.lambda_arn
+  value = module.secrets_dr_replication.lambda_automatic_replication_arn
 }
 
 output "eventbridge_rule_arn" {
