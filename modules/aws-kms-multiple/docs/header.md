@@ -29,7 +29,7 @@ module "kms" {
 ```hcl
 module "kms" {
   source              = "github.com/prefapp/tfm/modules/aws-kms-multiple"
-  kms_to_create       = [ { name = "rds" }, { name = "s3", kms_alias_prefix = "myneworg" }, { name = "ec2", via_service = ["ec2","lambda"] } ] # Aliases: custom/rds, myneworg/s3, custom/ec2
+  kms_to_create       = [ { name = "rds" }, { name = "s3", kms_alias_prefix = "myneworg/" }, { name = "ec2", via_service = ["ec2","lambda"] } ] # Aliases: custom/rds, myneworg/s3, custom/ec2
   aws_region          = "eu-west-1"
   aws_regions_replica = ["eu-central-1", "eu-west-2"] # Replicates each key to these regions
   aws_accounts_access = ["111111111111", "222222222222"] # Grants access to these AWS accounts
