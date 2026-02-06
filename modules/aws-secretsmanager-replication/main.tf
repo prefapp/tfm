@@ -170,7 +170,7 @@ module "lambda_automatic_replication" {
           "secretsmanager:UntagResource",
           "secretsmanager:ListSecretVersionIds"
         ],
-        Resource : "*"
+        Resource = "*"
       }
     ]
   })
