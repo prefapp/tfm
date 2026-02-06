@@ -1,0 +1,19 @@
+# Basic example values for azure-vnet-and-subnet module
+
+resource_group_name: example-rg
+
+virtual_network:
+  name: example-vnet
+  location: westeurope
+  address_space:
+    - 10.0.0.0/16
+  subnets:
+    internal:
+      address_prefixes:
+        - 10.0.1.0/24
+
+private_dns_zones: []
+peerings: []
+
+tags:
+  environment: dev
