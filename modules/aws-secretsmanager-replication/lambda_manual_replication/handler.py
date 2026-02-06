@@ -1,15 +1,58 @@
-import boto3
-import logging
+# lambda/handler.py
+import os
+import json
 import time
-import re
+import hashlib
+import logging
 from botocore.exceptions import ClientError
+from src.replication import extract_secret_name
+import boto3
 
 LOG = logging.getLogger()
 LOG.setLevel(logging.INFO)
 
+DESTINATIONS = json.loads(os.environ.get("DESTINATIONS_JSON", "{}"))
+ENABLE_TAGS = os.environ.get("ENABLE_TAG_REPLICATION", "true").lower() == "true"
 RETRY_MAX = 3
 RETRY_BASE = 0.5
-HEX_SUFFIX = re.compile(r"^[0-9a-fA-F]{6}$")
+
+
+# -----------------------------
+# Helpers
+# -----------------------------
+
+def extract_secret_id(detail):
+    rp = detail.get("requestParameters", {})
+
+    """
+    Extracts the secret ID from a CloudTrail event detail.
+    Args:
+        detail (dict): CloudTrail event detail.
+    Returns:
+        str or None: The secret ID or ARN, or None if not found.
+    """
+    sid = rp.get("secretId") or rp.get("SecretId")
+    if sid:
+        return sid
+    name = rp.get("name")
+    if name:
+        return name
+    resources = detail.get("resources", [])
+    for r in resources:
+        if r.get("type") == "AWS::SecretsManager::Secret":
+            return r.get("ARN") or r.get("resourceName")
+    return None
+
+
+def checksum(s):
+    """
+    Returns the SHA-256 checksum of a string.
+    Args:
+        s (str): Input string.
+    Returns:
+        str: Hexadecimal SHA-256 checksum.
+    """
+    return hashlib.sha256((s or "").encode("utf-8")).hexdigest()
 
 
 def retry(fn, *args, **kwargs):
@@ -43,7 +86,7 @@ def assume_role(role_arn):
         dict: Temporary credentials for the assumed role.
     """
     sts = boto3.client("sts")
-    resp = sts.assume_role(RoleArn=role_arn, RoleSessionName="secrets-sync")
+    resp = sts.assume_role(RoleArn=role_arn, RoleSessionName="secrets-replication")
     creds = resp["Credentials"]
     return {
         "aws_access_key_id": creds["AccessKeyId"],
@@ -52,34 +95,29 @@ def assume_role(role_arn):
     }
 
 
-def extract_secret_name(arn):
+def get_secret_value(client, secret_id, version_id=None):
     """
-    Extracts the real secret name from a Secrets Manager ARN, removing the random 6-character suffix if present.
+    Gets the value of a secret from AWS Secrets Manager.
     Args:
-        arn (str): The ARN of the secret.
+        client: Boto3 Secrets Manager client.
+        secret_id (str): Secret ID or ARN.
+        version_id (str, optional): Version ID of the secret.
     Returns:
-        str: The extracted secret name without the random suffix.
+        dict: Secret value response from AWS.
     """
-    # Extracts the real secret name from the ARN
-    # ARN format: arn:aws:secretsmanager:region:account-id:secret:secret-name-6chars
-    # The name may contain dashes, so only remove the random suffix
-    name_with_suffix = arn.split(":secret:")[1]
-    # The random suffix is always 6 hex characters after the last dash
-    if "-" in name_with_suffix:
-        base, suffix = name_with_suffix.rsplit("-", 1)
-        if HEX_SUFFIX.match(suffix):
-            return base
-    return name_with_suffix
+    params = {"SecretId": secret_id}
+    if version_id:
+        params["VersionId"] = version_id
+    return retry(client.get_secret_value, **params)
 
 
-def ensure_destination_secret(dest_client, name, secret_string=None, secret_binary=None, kms_key=None):
+def ensure_destination_secret(dest_client, name, secret_string, kms_key=None):
     """
     Ensures the destination secret exists and is updated with the provided value.
     Args:
         dest_client: Boto3 client for destination Secrets Manager.
         name (str): Name of the secret.
-        secret_string (str, optional): Secret value as string.
-        secret_binary (bytes, optional): Secret value as binary.
+        secret_string (str): Secret value as string.
         kms_key (str, optional): KMS key ARN for encryption.
     Returns:
         dict: Response from create_secret or put_secret_value.
@@ -87,26 +125,10 @@ def ensure_destination_secret(dest_client, name, secret_string=None, secret_bina
         ClientError: If AWS API calls fail.
     """
     try:
-        if secret_string is not None:
-            return retry(dest_client.create_secret,
-                         Name=name,
-                         SecretString=secret_string,
-                         KmsKeyId=kms_key)
-        else:
-            return retry(dest_client.create_secret,
-                         Name=name,
-                         SecretBinary=secret_binary,
-                         KmsKeyId=kms_key)
+        return retry(dest_client.create_secret, Name=name, SecretString=secret_string, KmsKeyId=kms_key)
     except ClientError as e:
         if e.response["Error"]["Code"] in ("ResourceExistsException", "InvalidRequestException"):
-            if secret_string is not None:
-                return retry(dest_client.put_secret_value,
-                             SecretId=name,
-                             SecretString=secret_string)
-            else:
-                return retry(dest_client.put_secret_value,
-                             SecretId=name,
-                             SecretBinary=secret_binary)
+            return retry(dest_client.put_secret_value, SecretId=name, SecretString=secret_string)
         raise
 
 
@@ -125,8 +147,12 @@ def replicate_tags(dest_client, secret_id, tags):
     try:
         retry(dest_client.tag_resource, SecretId=secret_id, Tags=tags)
     except ClientError as e:
-        LOG.warning("Tag replication failed for %s: %s", secret_id, e)
+        LOG.warning("Tag replication failed: %s", e)
 
+
+# -----------------------------
+# Replicación individual
+# -----------------------------
 
 def replicate_one(secret_id):
     """
@@ -136,6 +162,8 @@ def replicate_one(secret_id):
     Returns:
         None
     """
+    LOG.info("Replicating secret %s", secret_id)
+
     src_client = boto3.client("secretsmanager")
 
     try:
@@ -178,6 +206,9 @@ def replicate_one(secret_id):
     LOG.info("Replication completed for %s", secret_id)
 
 
+# -----------------------------
+# Full sync
+# -----------------------------
 
 def replicate_all():
     """
@@ -192,7 +223,6 @@ def replicate_all():
     for page in paginator.paginate():
         for secret in page.get("SecretList", []):
             name = secret["Name"]
-            LOG.info("Replicating secret %s", name)
             try:
                 replicate_one(name)
             except Exception as e:
@@ -200,6 +230,10 @@ def replicate_all():
 
     LOG.info("Full sync completed")
 
+
+# -----------------------------
+# Handler
+# -----------------------------
 
 def lambda_handler(event, context):
     """
@@ -211,12 +245,10 @@ def lambda_handler(event, context):
         None
     """
     LOG.info("Received event")
-
     secret_id = event.get("secret_id")
     if secret_id:
         LOG.info("Manual replication of %s", secret_id)
         replicate_one(secret_id)
         return
-
     LOG.info("No secret_id provided, performing full sync")
     replicate_all()
