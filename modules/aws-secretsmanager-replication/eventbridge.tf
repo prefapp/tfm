@@ -7,7 +7,7 @@ resource "aws_cloudwatch_event_rule" "secretsmanager_api_calls" {
     "source" : ["aws.secretsmanager"],
     "detail-type" : ["AWS API Call via CloudTrail"],
     "detail" : {
-      "eventName" : ["PutSecretValue"]
+      "eventName" : ["PutSecretValue,CreateSecret"]
     }
   })
 }
