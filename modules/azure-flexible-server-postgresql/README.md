@@ -146,3 +146,156 @@ values:
       name: "example-configuration"
       value: "TRUE"
 ```
+
+<!-- BEGIN_TF_DOCS -->
+# Azure PostgreSQL Flexible Server Terraform Module
+
+## Overview
+
+Este módulo de Terraform permite crear y gestionar un servidor PostgreSQL Flexible en Azure, con soporte para:
+- Creación de servidor, configuraciones, firewall y restauración PITR.
+- Integración con Key Vault para contraseñas seguras.
+- Soporte para redes privadas, subredes y DNS privados.
+- Configuración avanzada de autenticación, backup y mantenimiento.
+
+## Características principales
+- Creación de PostgreSQL Flexible Server con opciones avanzadas.
+- Soporte para restauración Point-in-Time (PITR).
+- Gestión de configuraciones y reglas de firewall.
+- Integración con Key Vault y redes privadas.
+- Ejemplo realista de configuración.
+
+## Ejemplo completo de uso
+
+```yaml
+values:
+  resource_group: "example-resource-group"
+  tags_from_rg: true
+  key_vault:
+    tags:
+     value: "tag1"
+    #name: "key-vault-name"
+    #resource_group_name: "key-vault-resource-group-name"
+  vnet:
+    tags:
+      value: "tag1"
+    #name: "example-vnet"
+    #resource_group_name: "vnet-resource-group-name"
+  subnet_name: "example-subnet"
+  dns_private_zone_name: "dns.private.zone.example.com"
+  administrator_password_key_vault_secret_name: "flexible-server-secret-example-test"
+  password_lenght: 10
+  postgresql_flexible_server:
+    location: "westeurope"
+    name: "example-flexible-server"
+    version: "15"
+    administrator_login: "psqladmin"
+    public_network_access_enabled: false
+    storage_mb: "65536"
+    sku_name: "GP_Standard_D2ds_v5"
+    backup_retention_days: 30
+    #create_mode: "PointInTimeRestore"
+    #source_server_id: "/subscriptions/xxxxxx-xxxx-xxxx-xxxxxx/resourceGroups/example-resource-group/providers/Microsoft.DBforPostgreSQL/flexibleServers/example-flexible-server"
+    #point_in_time_restore_time_in_utc: "2025-02-21T09:35:43Z"
+    maintenance_window:
+      day_of_week: 6
+      start_hour: 0
+      start_minute: 0
+    authentication:
+      active_directory_auth_enabled: false
+      password_auth_enabled: true
+  postgresql_flexible_server_configuration:
+    azure.extensions:
+      name: "azure.extensions"
+      value: "extension1,extension2"
+    configuration1:
+      name: "example-configuration"
+      value: "TRUE"
+```
+
+## Notas
+- Puedes usar Key Vault para gestionar la contraseña del administrador.
+- Si usas red privada, debes especificar subnet y DNS privado.
+- Para restauración PITR, consulta la sección de la documentación sobre create\_mode.
+
+## Estructura de archivos
+
+```
+.
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── README.md
+├── CHANGELOG.md
+└── docs/
+    ├── header.md
+    └── footer.md
+```
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.35.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.35.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [azurerm_key_vault_secret.password_create](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
+| [azurerm_postgresql_flexible_server.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server) | resource |
+| [azurerm_postgresql_flexible_server_configuration.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration) | resource |
+| [azurerm_postgresql_flexible_server_firewall_rule.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule) | resource |
+| [random_password.password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [azurerm_key_vault_secret.administrator_password](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_private_dns_zone.dns_private_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | data source |
+| [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_resources.key_vault_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_resources.key_vault_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_resources.vnet_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_resources.vnet_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
+| [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_administrator_password_key_vault_secret_name"></a> [administrator\_password\_key\_vault\_secret\_name](#input\_administrator\_password\_key\_vault\_secret\_name) | n/a | `string` | `null` | no |
+| <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | n/a | `string` | `null` | no |
+| <a name="input_firewall_rule"></a> [firewall\_rule](#input\_firewall\_rule) | n/a | <pre>list(object({<br/>    name             = optional(string)<br/>    start_ip_address = optional(string)<br/>    end_ip_address   = optional(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_key_vault"></a> [key\_vault](#input\_key\_vault) | n/a | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
+| <a name="input_password_length"></a> [password\_length](#input\_password\_length) | n/a | `number` | `20` | no |
+| <a name="input_postgresql_flexible_server"></a> [postgresql\_flexible\_server](#input\_postgresql\_flexible\_server) | n/a | <pre>object({<br/>    name                              = string<br/>    location                          = string<br/>    version                           = optional(number)<br/>    public_network_access_enabled     = optional(bool)<br/>    administrator_login               = optional(string)<br/>    zone                              = optional(string)<br/>    storage_tier                      = optional(string)<br/>    storage_mb                        = optional(number)<br/>    sku_name                          = optional(string)<br/>    replication_role                  = optional(string)<br/>    create_mode                       = optional(string)<br/>    source_server_id                  = optional(string)<br/>    point_in_time_restore_time_in_utc = optional(string)<br/>    backup_retention_days             = optional(number)<br/>    maintenance_window = optional(object({<br/>      day_of_week  = number<br/>      start_hour   = number<br/>      start_minute = number<br/>    }))<br/>    authentication = optional(object({<br/>      active_directory_auth_enabled = bool<br/>      password_auth_enabled         = bool<br/>      tenant_id                     = optional(string)<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_postgresql_flexible_server_configuration"></a> [postgresql\_flexible\_server\_configuration](#input\_postgresql\_flexible\_server\_configuration) | n/a | <pre>map(object({<br/>    name  = optional(string)<br/>    value = optional(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | n/a | `string` | n/a | yes |
+| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | n/a | `string` | `null` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | n/a | `bool` | `false` | no |
+| <a name="input_vnet"></a> [vnet](#input\_vnet) | n/a | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_id"></a> [id](#output\_id) | n/a |
+
+## Recursos y soporte
+
+- [Documentación oficial de Azure PostgreSQL Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/)
+- [Referencia de Terraform para azurerm\_postgresql\_flexible\_server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server)
+- [Soporte de la comunidad](https://github.com/prefapp/terraform-modules/discussions)
+
+¿Necesitas ayuda? Abre un issue o participa en la comunidad Prefapp.
+<!-- END_TF_DOCS -->
