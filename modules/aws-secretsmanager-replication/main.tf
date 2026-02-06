@@ -19,6 +19,11 @@ data "aws_region" "current" {}
 
 ## Optional: existing CloudTrail
 
+data "aws_cloudtrail" "existing" {
+  count = var.cloudtrail_name != "" ? 1 : 0
+  name  = var.cloudtrail_name
+}
+
 ## Optional: existing S3 bucket
 data "aws_s3_bucket" "existing_cloudtrail" {
   count  = var.s3_bucket_name != "" ? 1 : 0
@@ -41,7 +46,7 @@ locals {
 
 
   # For existing CloudTrail, use the provided name directly
-  cloudtrail_arn  = var.cloudtrail_name != "" ? "" : (length(aws_cloudtrail.secrets_management_events.*.arn) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : "")
+  cloudtrail_arn  = var.cloudtrail_name != "" ? data.aws_cloudtrail.existing[0].arn : (length(aws_cloudtrail.secrets_management_events.*.arn) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : "")
   cloudtrail_name = var.cloudtrail_name != "" ? var.cloudtrail_name : (length(aws_cloudtrail.secrets_management_events.*.name) > 0 ? aws_cloudtrail.secrets_management_events[0].name : "")
 
   s3_bucket_id       = local.using_existing_s3_bucket ? var.s3_bucket_name : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].id : "")
