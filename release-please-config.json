@@ -135,6 +135,9 @@
         },
         "modules/aws-amq-rabbit": {
             "package-name": "aws-amq-rabbit"
+        },
+        "modules/aws-waf": {
+            "package-name": "aws-waf"
         }
     }
 }
