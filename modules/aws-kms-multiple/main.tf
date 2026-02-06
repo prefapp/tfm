@@ -3,9 +3,9 @@ module "multiple-kms" {
   for_each = {
     for kms in var.kms_to_create : kms.name => {
       name             = kms.name
-      alias            = kms.alias != null ? kms.alias : kms.name
-      kms_alias_prefix = kms.kms_alias_prefix != null ? kms.kms_alias_prefix : var.kms_alias_prefix
-      via_service      = kms.via_service != null ? kms.via_service : []
+      alias            = try(kms.alias, null)
+      kms_alias_prefix = try(kms.kms_alias_prefix, null)
+      via_service      = try(kms.via_service, [])
     }
   }
   aws_region              = var.aws_region
@@ -19,5 +19,5 @@ module "multiple-kms" {
   kms_alias_prefix        = (each.value.kms_alias_prefix != "" && each.value.kms_alias_prefix != null) ? each.value.kms_alias_prefix : var.kms_alias_prefix
   alias                   = (each.value.alias != "" && each.value.alias != null) ? each.value.alias : each.value.name
   administrator_role_name = var.administrator_role_name
-  via_service             = length(each.value.via_service) > 0 ? each.value.via_service : null
+  via_service             = (each.value.via_service != null && each.value.via_service != []) ? each.value.via_service : null
 }
