@@ -206,6 +206,15 @@ module "waf" {
                   }
                 ]
               }
+            },
+            {
+              not = {
+                statement = {
+                  ip_set_reference = {
+                    ip_set_key = "allowed-ips"
+                  }
+                }
+              }
             }
           ]
         }
