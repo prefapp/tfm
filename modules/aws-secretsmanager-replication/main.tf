@@ -183,7 +183,7 @@ module "lambda_automatic_replication" {
           "secretsmanager:UntagResource",
           "secretsmanager:ListSecretVersionIds"
         ]
-        Resource = "*"
+        Resource = var.source_secret_arns
       }
     ])
   })
