@@ -47,7 +47,7 @@ def lambda_handler(event, context):
     if event_name not in ("CreateSecret", "PutSecretValue", "UpdateSecret", "RotateSecret", "RestoreSecret"):
         return
 
-    secret_id = extract_secret_id(event)
+    secret_id = extract_secret_id(detail)
     if not secret_id:
         return
 
