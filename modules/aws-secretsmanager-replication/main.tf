@@ -321,7 +321,7 @@ resource "aws_cloudtrail" "secrets_management_events" {
 ###############################################################################
 
 resource "aws_s3_bucket_policy" "cloudtrail" {
-  count  = var.manage_s3_bucket_policy ? 1 : 0
+  count  = var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
   bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
   policy = jsonencode({
