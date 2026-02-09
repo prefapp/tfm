@@ -12,11 +12,19 @@ def replicate_all(config):
     log("info", "Starting full sync (replicate all secrets)")
     source_sm = boto3.client("secretsmanager", region_name=config.source_region)
     paginator = source_sm.get_paginator("list_secrets")
+    # Cache for assumed-role clients: {(role_arn, region): sm_client}
+    sm_client_cache = {}
+    def get_sm_client(role_arn, region_name):
+        key = (role_arn, region_name)
+        if key not in sm_client_cache:
+            sm_client_cache[key] = assume_role(role_arn, region_name)
+        return sm_client_cache[key]
+
     for page in paginator.paginate():
         for secret in page.get("SecretList", []):
             secret_id = secret["ARN"]
             try:
-                replicate_secret(secret_id, config)
+                replicate_secret(secret_id, config, get_sm_client=get_sm_client)
             except Exception as e:
                 log("error", f"Failed to replicate secret {secret_id}: {e}")
 
@@ -46,7 +54,7 @@ def extract_secret_name(secret_id):
     return secret_id
 
 
-def replicate_secret(secret_id: str, config):
+def replicate_secret(secret_id: str, config, get_sm_client=None):
     """
     Replicates a secret to all configured destinations and regions.
     Args:
@@ -83,8 +91,11 @@ def replicate_secret(secret_id: str, config):
         for region_name, region_cfg in dest.regions.items():
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
-            # Assume role → returns a Secrets Manager client for that region
-            sm_dest = assume_role(dest.role_arn, region_name)
+            # Use cached client if provided, else fallback to assume_role
+            if get_sm_client is not None:
+                sm_dest = get_sm_client(dest.role_arn, region_name)
+            else:
+                sm_dest = assume_role(dest.role_arn, region_name)
 
             # Ensure secret exists or create it
             try:
