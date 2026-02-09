@@ -233,16 +233,23 @@ module "lambda_manual_replication" {
         Resource = "arn:aws:logs:*:*:*"
       },
       {
-        Sid    = "SecretsManagerRead"
+        Sid    = "SecretsManagerList"
         Effect = "Allow"
         Action = [
-          "secretsmanager:ListSecrets",
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
+          "secretsmanager:ListSecrets"
         ]
         Resource = "*"
       },
-      {
+      length(var.source_secret_arns) > 0 ? {
+        Sid    = "SecretsManagerRead"
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = var.source_secret_arns
+      } : null,
+      length(var.destination_secret_arns) > 0 ? {
         Sid    = "SecretsManagerWrite"
         Effect = "Allow"
         Action = [
@@ -252,8 +259,8 @@ module "lambda_manual_replication" {
           "secretsmanager:TagResource",
           "secretsmanager:UntagResource"
         ]
-        Resource = "*"
-      },
+        Resource = var.destination_secret_arns
+      } : null,
       length(var.allowed_assume_roles) > 0 ? {
         Sid      = "AssumeCrossAccountRoles"
         Effect   = "Allow"
