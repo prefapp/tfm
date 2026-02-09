@@ -40,7 +40,7 @@ data "aws_s3_bucket" "existing_cloudtrail" {
 
 ## Data source to read the policy of the existing bucket (optional)
 data "aws_s3_bucket_policy" "existing" {
-  count  = var.s3_bucket_name != "" ? 1 : 0
+  count  = var.s3_bucket_name != "" && !var.manage_s3_bucket_policy ? 1 : 0
   bucket = var.s3_bucket_name
 }
 
@@ -293,7 +293,7 @@ resource "aws_iam_role_policy_attachment" "lambda_manual_basic_execution" {
 ###############################################################################
 
 resource "aws_s3_bucket" "cloudtrail" {
-  count = var.s3_bucket_name == "" ? 1 : 0
+  count = var.s3_bucket_name == "" && !var.manage_s3_bucket_policy ? 1 : 0
 
   bucket        = var.s3_bucket_name != "" ? var.s3_bucket_name : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
   force_destroy = false
