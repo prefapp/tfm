@@ -176,6 +176,7 @@ module "lambda_manual_replication" {
     {
       DESTINATIONS_JSON      = var.destinations_json
       ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
+      ENABLE_FULL_SYNC       = tostring(var.enable_full_sync)
     }
   )
 
