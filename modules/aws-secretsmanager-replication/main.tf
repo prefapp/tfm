@@ -108,6 +108,7 @@ module "lambda_automatic_replication" {
   attach_cloudwatch_logs_policy = false
 
   # Extra IAM permissions for Secrets Manager + STS
+  # This is needed to copy source/destination secrets
   attach_policy_json = true
   policy_json = jsonencode({
     Version = "2012-10-17"
