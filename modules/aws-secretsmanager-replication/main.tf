@@ -26,12 +26,6 @@ data "aws_cloudtrail" "existing" {
   name  = var.cloudtrail_name
 }
 
-## Optional: existing S3 bucket
-data "aws_s3_bucket" "existing_cloudtrail" {
-  count  = var.s3_bucket_name != "" ? 1 : 0
-  bucket = var.s3_bucket_name
-}
-
 
 ###############################################################################
 # Locals (safe for count = 0)
