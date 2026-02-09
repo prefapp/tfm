@@ -102,3 +102,22 @@ variable "s3_destination_bucket_arn" {
   #   error_message = "s3_destination_bucket_arn must be set if s3_bucket_versioning is enabled."
   # }
 }
+
+variable "s3_replication_destination" {
+  description = "Object containing the replication destination configuration."
+  type = object({
+    account       = string
+    bucket        = string
+    storage_class = string
+    filter = optional(object({
+      prefix = optional(string)
+      tags   = optional(map(string))
+      and = optional(object({
+        prefix = optional(string)
+        tags   = optional(map(string))
+      }))
+    }))
+  })
+  default = null
+}
+

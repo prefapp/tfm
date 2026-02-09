@@ -1,23 +1,55 @@
 
-resource "aws_s3_bucket_replication_configuration" "east_to_west" {
-  # Must have bucket versioning enabled first
+resource "aws_s3_bucket_replication_configuration" "origin_to_destination" {
   depends_on = [aws_s3_bucket_versioning.this]
-
-  role   = aws_iam_role.east_replication.arn
-  bucket = aws_s3_bucket.east.id
+  region     = var.region
+  role       = aws_iam_role.replication.arn
+  bucket     = aws_s3_bucket.this.id
 
   rule {
-    id = "foobar"
-
-    filter {
-      prefix = "foo"
-    }
+    id = "origin-to-destination"
 
     status = "Enabled"
 
-    destination {
-      bucket        = var.aws_s3_bucket.west.arn
-      storage_class = "STANDARD"
+    delete_marker_replication {
+      status = try(var.s3_replication_destination.filter.and.tags, null) == null ? "Enabled" : "Disabled"
+    }
+
+
+    dynamic "destination" {
+      for_each = var.s3_replication_destination != null ? [var.s3_replication_destination] : []
+      content {
+        account       = var.s3_replication_destination.account
+        bucket        = var.s3_replication_destination.bucket
+        storage_class = var.s3_replication_destination.storage_class
+        access_control_translation {
+          owner = "Destination"
+        }
+      }
+    }
+
+
+    dynamic "filter" {
+      for_each = (var.s3_replication_destination.filter != null && var.s3_replication_destination.filter != {}) ? [var.s3_replication_destination.filter] : []
+      content {
+        prefix = filter.value.prefix
+
+        dynamic "and" {
+          for_each = filter.value.and != null ? [filter.value.and] : []
+          content {
+            prefix = try(and.value.prefix, null)
+            tags   = try(and.value.tags, null)
+          }
+
+        }
+
+      }
+    }
+
+    dynamic "filter" {
+      for_each = try(var.s3_replication_destination.filter, null) != null ? [] : [1]
+      content {
+
+      }
     }
   }
 }
@@ -37,7 +69,8 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "replication" {
-  name_prefix        = "${var.bucket}-replication-"
+  name_prefix = substr("${var.bucket}-replication-", 0, 38) # AWS IAM role names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
+  # region             = var.region
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -50,7 +83,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:ListBucket",
     ]
 
-    resources = [aws_s3_bucket.source.arn]
+    resources = [var.s3_destination_bucket_arn]
   }
 
   statement {
@@ -62,7 +95,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:GetObjectVersionTagging",
     ]
 
-    resources = ["${aws_s3_bucket.source.arn}/*"]
+    resources = ["${aws_s3_bucket.this.arn}/*"]
   }
 
   statement {
@@ -79,11 +112,79 @@ data "aws_iam_policy_document" "replication" {
 }
 
 resource "aws_iam_policy" "replication" {
-  name_prefix = "${var.bucket}-replication"
-  policy      = data.aws_iam_policy_document.replication.json
+  name_prefix = substr("${var.bucket}-replication", 0, 38) # AWS IAM policy names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
+
+  policy = data.aws_iam_policy_document.replication.json
 }
 
 resource "aws_iam_role_policy_attachment" "replication" {
   role       = aws_iam_role.replication.name
   policy_arn = aws_iam_policy.replication.arn
+}
+
+### Creating rule for destination bucket
+# {
+#     "Version": "2012-10-17",
+#     "Id": "",
+#     "Statement": [
+#         {
+#             "Sid": "Set-permissions-for-objects",
+#             "Effect": "Allow",
+#             "Principal": {
+#                 "AWS": "arn:aws:iam::816069157330:role/prefapp-tfm-module-test-bucket-ruben-r20260206131700333500000001"
+#             },
+#             "Action": [
+#                 "s3:ReplicateObject",
+#                 "s3:ReplicateDelete"
+#             ],
+#             "Resource": "arn:aws:s3:::ruben-castrelo-s3-proba/*"
+#         },
+#         {
+#             "Sid": "Set-permissions-on-bucket",
+#             "Effect": "Allow",
+#             "Principal": {
+#                 "AWS": "arn:aws:iam::816069157330:role/prefapp-tfm-module-test-bucket-ruben-r20260206131700333500000001"
+#             },
+#             "Action": [
+#                 "s3:GetBucketVersioning",
+#                 "s3:PutBucketVersioning"
+#             ],
+#             "Resource": "arn:aws:s3:::ruben-castrelo-s3-proba"
+#         }
+#     ]
+# }
+
+
+data "aws_iam_policy_document" "destination_replication_s3_policy" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.replication.arn]
+    }
+
+    actions = [
+      "s3:ReplicateObject",
+      "s3:ReplicateDelete"
+    ]
+
+    resources = ["${var.s3_destination_bucket_arn}/*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.replication.arn]
+    }
+
+    actions = [
+      "s3:GetBucketVersioning",
+      "s3:PutBucketVersioning"
+    ]
+
+    resources = [var.s3_destination_bucket_arn]
+  }
 }
