@@ -97,10 +97,6 @@ variable "s3_destination_bucket_arn" {
   description = "The ARN of the destination bucket for replication."
   type        = string
   default     = null
-  # validation {
-  #   condition     = var.s3_bucket_versioning == "Enabled"
-  #   error_message = "s3_destination_bucket_arn must be set if s3_bucket_versioning is enabled."
-  # }
 }
 
 variable "s3_replication_destination" {
