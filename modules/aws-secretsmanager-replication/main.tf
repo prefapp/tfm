@@ -1,35 +1,3 @@
-# Merge existing bucket policy with CloudTrail statements if using an existing bucket
-data "aws_iam_policy_document" "cloudtrail_merged" {
-  count = var.eventbridge_enabled && var.manage_s3_bucket_policy && var.s3_bucket_name != "" ? 1 : 0
-  source_json = local.existing_bucket_policy
-
-  statement {
-    sid       = "AWSCloudTrailAclCheck"
-    effect    = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["cloudtrail.amazonaws.com"]
-    }
-    actions   = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
-    resources = [format("arn:aws:s3:::%s", var.s3_bucket_name)]
-  }
-
-  statement {
-    sid       = "AWSCloudTrailWrite"
-    effect    = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["cloudtrail.amazonaws.com"]
-    }
-    actions   = ["s3:PutObject"]
-    resources = [format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id)]
-    condition {
-      test     = "StringEquals"
-      variable = "s3:x-amz-acl"
-      values   = ["bucket-owner-full-control"]
-    }
-  }
-}
 terraform {
   required_version = ">= 1.5.0"
 
@@ -358,9 +326,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
   bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
-  policy = var.s3_bucket_name != "" ? (
-    data.aws_iam_policy_document.cloudtrail_merged[0].json
-  ) : jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
