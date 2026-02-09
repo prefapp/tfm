@@ -14,13 +14,17 @@ def extract_secret_name(secret_id):
     if secret_id.startswith("arn:"):
         # Example ARN:
         # arn:aws:secretsmanager:eu-west-1:123456789012:secret:dev/valor_de_pi-QQzt8J
-        name_with_suffix = secret_id.split(":secret:", 1)[1]
-        # Remove only the random 6-character alphanumeric suffix at the end, if present
-        if "-" in name_with_suffix:
-            base, last_segment = name_with_suffix.rsplit("-", 1)
-            if len(last_segment) == 6 and last_segment.isalnum():
-                return base
-        return name_with_suffix
+        split_arn = secret_id.split(":secret:", 1)
+        if len(split_arn) == 2:
+            name_with_suffix = split_arn[1]
+            # Remove only the random 6-character alphanumeric suffix at the end, if present
+            if "-" in name_with_suffix:
+                base, last_segment = name_with_suffix.rsplit("-", 1)
+                if len(last_segment) == 6 and last_segment.isalnum():
+                    return base
+            return name_with_suffix
+        # If :secret: is not found, fall through and return the full ARN
+        return secret_id
     return secret_id
 
 
