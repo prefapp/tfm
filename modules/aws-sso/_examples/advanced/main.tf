@@ -2,7 +2,7 @@
 # Requires a sso.yaml file in the same directory or specified path
 
 module "aws_sso_advanced" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/aws-sso?ref=v0.6.1" # Path to the module
+  source = "../.." # Relative path to the module
 
   data_file           = "${path.module}/sso.yaml"
   identity_store_arn  = "arn:aws:sso:::instance/ssoins-1234567890abcdef"  # Replace with your instance ARN
