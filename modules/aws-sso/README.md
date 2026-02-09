@@ -99,6 +99,153 @@ aws-sso/
 - **variables.tf**: Input variables for YAML data file, Identity Store ARN, and Store ID.
 - **outputs.tf**: Exports debug output for user-group associations.
 
+## User's Guide
+
+> [https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)
+
+The SSO process is as follows:
+
+  1. When a user logs into an application, the application generates an SSO token and sends an authentication request to the SSO service. 
+  2. The service checks if the user was previously authenticated in the system. If so, it sends a confirmed authentication response to the application to grant access to the user. 
+  3. If the user does not have a validated credential, the SSO service redirects the user to a central login system and prompts the user to submit his or her username and password.
+  4. After submission, the service validates the user's credentials and sends the positive response to the application. 
+  5. Otherwise, the user receives an error message and must re-enter the credentials. Multiple failed login attempts may result in the service blocking the user from further attempts for a fixed period of time.
+
+## Security obligations
+
+> [https://docs.aws.amazon.com/singlesignon/latest/userguide/security.html](https://docs.aws.amazon.com/singlesignon/latest/userguide/security.html)
+
+  1. Only the owner of the organization (product, CTO, CEO...) should have the AWS root account.
+  2. Keep users updated in their account. Do not leave inactive users enabled.
+  3. Do not allow access to the AWS account through the root account.
+  4. Be very careful with administrator permissions.
+  5. Do not allow any user to embed credentials in code.
+  6. Do not allow any user to lack MFA.
+  7. Validate that IAM policies are not too permissive.
+  8. Do not overlook any threat warnings that are presented to you.
+  9. Rotate account passwords systematically and periodically.
+  10. Force users to change their passwords as frequently.
+
+## Recommendations on user migration from IAM
+
+1. Write down in a list which users are to be migrated and which users are not to be migrated.
+2. The users that will not be migrated must be disabled from the AWS organization by inactivating their access. Subsequently, once they have waited a reasonable time and confirmed that they have been migrated properly, they can be deleted.
+3. Before disabling users, verify that they do not have any associated resources.
+4. Standardize the user names, to improve readability and avoid duplicity problems.
+5. Make sure that the users to be migrated have a valid e-mail address.
+6. Organize users into groups, to make it easier to manage permissions.
+7. Check if the users have administrator permissions, and if so, remove them.
+8. Review the permissions of the associates, and if necessary, remove or restrict them.
+9. Gradually migrate users, so that there are no availability problems.
+10. Never start migrating users without being sure that the permissions are properly configured.
+
+## SSO Terraform
+
+The main document where [users](#users), [groups](#groups), [user/group association](#user) and [policies](#policies) should be entered is in sso.yaml.
+
+### Users
+
+Users must be in `users` with the following structure:
+
+```yaml
+users:
+  - name: "userA"
+    email: "test@test.test"
+    fullname: "userA"
+  - name: "userB"
+    email: "test-2@test.test"
+    fullname: "userB"
+```
+
+### Groups
+
+The groups must be in `groups` with the following structure:
+
+```yaml
+  - name: "operadores-admin"
+    description: "The operadores-admin group"
+    users:
+      - userA
+      - userB
+```
+
+### `users>group` attachments
+
+Users and groups must be associated using `attachments` with the following structure:
+
+```yaml
+attachments:
+  "123456789012":
+    permission-set-foo:
+      groups:
+        - groupA
+      users:
+        - userA
+```
+
+### Policies
+
+Policies can be added in 3 different ways:
+
+- [Customized policies](#customized-policies).
+- [Managed policies](#managed-policies).
+- [Inline policies](#inline-policies).
+
+#### Customized policies
+  - Policies (unmanaged).
+  - They can be created in advance using terraform.
+  - Only the policy name needs to be added.
+  - It is not necessary to add the arn.
+  - Are defined in `custom-policies` with the following structure:
+
+```yaml
+permission-sets:
+  - name: "permission-set-foo"
+    custom-policies:
+      - name: "custom-policy-foo"
+```
+
+#### Managed policies
+
+  - The arn of the policy must be added.
+  - Are defined in `managed-policies` with the following structure:
+
+```yaml
+permission-sets:
+  - name: "permission-set-foo"
+    managed-policies:
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+```
+
+#### Inline policies
+
+Policies created in the same yaml document. ⚠️ NOT RECOMMENDED. Its use is for testing.
+  - It is necessary to add the policy name.
+  - It is necessary to add the content of the policy.
+  - The content of the policy must be in json format and must be indented with 2 spaces.
+  - Are defined in `inline-policies` with the following structure:
+
+```yaml
+permission-sets:
+  - name: "permission-set-foo"
+    inline-policies:
+      - name: "inline-policy-foo"
+        policy: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "ec2:Describe*"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+```
+
 ## Requirements
 
 No requirements.
