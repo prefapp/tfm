@@ -113,16 +113,7 @@ module "lambda_automatic_replication" {
   policy_json = jsonencode({
     Version = "2012-10-17"
     Statement = compact([
-      {
-        Sid    = "CloudWatchLogs"
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Resource = "arn:aws:logs:*:*:*"
-      },
+      # CloudWatch Logs permissions are provided by the managed AWSLambdaBasicExecutionRole
       length(var.source_secret_arns) > 0 ? {
         Sid    = "ReadSourceSecrets"
         Effect = "Allow"
@@ -223,16 +214,7 @@ module "lambda_manual_replication" {
   policy_json = jsonencode({
     Version = "2012-10-17"
     Statement = compact([
-      {
-        Sid    = "CloudWatchLogs"
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Resource = "arn:aws:logs:*:*:*"
-      },
+      # CloudWatch Logs permissions are provided by the managed AWSLambdaBasicExecutionRole
       {
         Sid    = "SecretsManagerList"
         Effect = "Allow"
