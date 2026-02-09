@@ -322,14 +322,14 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
               Effect    = "Allow"
               Principal = { Service = "cloudtrail.amazonaws.com" }
               Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
-              Resource  = var.s3_bucket_name != "" ? format("arn:aws:s3:::%s", var.s3_bucket_name) : aws_s3_bucket.cloudtrail[0].arn
+              Resource  = local.s3_bucket_arn
             },
             {
               Sid       = "AWSCloudTrailWrite"
               Effect    = "Allow"
               Principal = { Service = "cloudtrail.amazonaws.com" }
               Action    = "s3:PutObject"
-              Resource  = var.s3_bucket_name != "" ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+              Resource  = local.s3_bucket_logs_arn
               Condition = {
                 StringEquals = {
                   "s3:x-amz-acl" = "bucket-owner-full-control"
@@ -351,14 +351,14 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
           "s3:GetBucketAcl",
           "s3:GetBucketPolicy"
         ]
-        Resource = aws_s3_bucket.cloudtrail[0].arn
+        Resource = local.s3_bucket_arn
       },
       {
         Sid       = "AWSCloudTrailWrite"
         Effect    = "Allow"
         Principal = { Service = "cloudtrail.amazonaws.com" }
         Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+        Resource  = local.s3_bucket_logs_arn
         Condition = {
           StringEquals = {
             "s3:x-amz-acl" = "bucket-owner-full-control"
