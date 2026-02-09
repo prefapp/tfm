@@ -1,3 +1,6 @@
+from src.utils import assume_role, log
+import boto3
+
 def replicate_all(config):
     """
     Replicates all secrets in the source account to all configured destinations and regions.
@@ -16,9 +19,6 @@ def replicate_all(config):
                 replicate_secret(secret_id, config)
             except Exception as e:
                 log("error", f"Failed to replicate secret {secret_id}: {e}")
-from src.utils import assume_role, log
-import boto3
-
 
 def extract_secret_name(secret_id):
     """
