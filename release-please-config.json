@@ -13,6 +13,9 @@
         "modules/aws-kms": {
             "package-name": "aws-kms"
         },
+        "modules/aws-kms-multiple": {
+            "package-name": "aws-kms-multiple"
+        },
         "modules/azure-flexible-server-postgresql": {
             "package-name": "azure-flexible-server-postgresql"
         },
@@ -135,6 +138,9 @@
         },
         "modules/aws-amq-rabbit": {
             "package-name": "aws-amq-rabbit"
+        },
+        "modules/aws-waf": {
+            "package-name": "aws-waf"
         }
     }
 }
