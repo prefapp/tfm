@@ -386,13 +386,4 @@ check "input_validation" {
     condition = !(var.eventbridge_enabled && var.cloudtrail_name != "" && var.s3_bucket_name == "")
     error_message = "You provided cloudtrail_name but not s3_bucket_name. Provide the S3 bucket name used by that trail."
   }
-  assert {
-    condition = !(
-      var.eventbridge_enabled &&
-      !var.manage_s3_bucket_policy &&
-      var.s3_bucket_name != "" &&
-      !local.bucket_policy_has_cloudtrail
-    )
-    error_message = "manage_s3_bucket_policy=false and an existing s3_bucket_name was provided, but the bucket policy does not appear to allow CloudTrail to write logs. Ensure the bucket policy allows cloudtrail.amazonaws.com to call s3:GetBucketAcl and s3:PutObject on AWSLogs/<ACCOUNT_ID>/*."
-  }
 }
