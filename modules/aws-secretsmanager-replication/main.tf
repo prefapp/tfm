@@ -34,11 +34,6 @@ data "aws_s3_bucket" "existing_cloudtrail" {
   bucket = var.s3_bucket_name
 }
 
-## Data source to read the policy of the existing bucket (optional)
-data "aws_s3_bucket_policy" "existing" {
-  count  = var.s3_bucket_name != ""? 1 : 0
-  bucket = var.s3_bucket_name
-}
 
 ###############################################################################
 # Locals (safe for count = 0)
@@ -58,12 +53,6 @@ locals {
   s3_bucket_logs_arn = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : (length(aws_s3_bucket.cloudtrail) > 0 ? "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : "")
 
   has_existing_bucket    = var.s3_bucket_name != ""
-  existing_bucket_policy = length(data.aws_s3_bucket_policy.existing) > 0 ? data.aws_s3_bucket_policy.existing[0].policy : ""
-  bucket_policy_has_cloudtrail = local.existing_bucket_policy != "" && (
-    strcontains(local.existing_bucket_policy, "cloudtrail.amazonaws.com")
-    && strcontains(local.existing_bucket_policy, "s3:GetBucketAcl")
-    && strcontains(local.existing_bucket_policy, "s3:PutObject")
-  )
 
   # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
   environment = merge(
@@ -326,7 +315,37 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
   bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
-  policy = jsonencode({
+  policy = var.s3_bucket_name != "" && var.existing_bucket_policy_json != null ? (
+    jsonencode(merge(
+      jsondecode(var.existing_bucket_policy_json),
+      {
+        Statement = concat(
+          try(jsondecode(var.existing_bucket_policy_json).Statement, []),
+          [
+            {
+              Sid       = "AWSCloudTrailAclCheck"
+              Effect    = "Allow"
+              Principal = { Service = "cloudtrail.amazonaws.com" }
+              Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
+              Resource  = var.s3_bucket_name != "" ? format("arn:aws:s3:::%s", var.s3_bucket_name) : aws_s3_bucket.cloudtrail[0].arn
+            },
+            {
+              Sid       = "AWSCloudTrailWrite"
+              Effect    = "Allow"
+              Principal = { Service = "cloudtrail.amazonaws.com" }
+              Action    = "s3:PutObject"
+              Resource  = var.s3_bucket_name != "" ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+              Condition = {
+                StringEquals = {
+                  "s3:x-amz-acl" = "bucket-owner-full-control"
+                }
+              }
+            }
+          ]
+        )
+      }
+    ))
+  ) : jsonencode({
     Version = "2012-10-17"
     Statement = [
       {

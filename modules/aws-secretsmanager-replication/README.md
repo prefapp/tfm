@@ -1,3 +1,22 @@
+| <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input_existing_bucket_policy_json) | (Optional) Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. If not provided, only the CloudTrail statements will be used. | `string` | `null` | no |
+## Robust S3 Bucket Policy Handling for Existing Buckets
+
+When using an existing S3 bucket for CloudTrail logs (via `s3_bucket_name`), the module allows you to provide the current bucket policy as JSON using the `existing_bucket_policy_json` input. This enables the module to merge the required CloudTrail permissions with your existing policy, ensuring no permissions are lost.
+
+**If you do not provide `existing_bucket_policy_json`, the module will apply only the minimal CloudTrail policy.**
+
+This makes the module robust for buckets that may not have a policy yet, or where you want to manage the policy entirely via Terraform. If you want to preserve and extend an existing policy, supply its JSON here.
+
+**Example:**
+```hcl
+module "secrets_replication" {
+	# ... other variables ...
+	s3_bucket_name              = "centralized-logs-bucket"
+	existing_bucket_policy_json = file("../existing-bucket-policy.json")
+}
+```
+
+If the bucket has no policy, you can omit this variable and the module will create a minimal policy for CloudTrail access only.
 <!-- BEGIN_TF_DOCS -->
 # **AWS Secrets Manager Replication Terraform Module**
 
@@ -142,7 +161,6 @@ module "secrets_replication" {
 | [aws_cloudtrail.existing](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudtrail) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_s3_bucket.existing_cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket) | data source |
-| [aws_s3_bucket_policy.existing](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket_policy) | data source |
 
 ## Inputs
 
@@ -155,6 +173,7 @@ module "secrets_replication" {
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to replicate tags from the source secret (used by the code, not Terraform) | `bool` | `true` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Additional environment variables passed to the Lambda | `map(string)` | `{}` | no |
 | <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `true` | no |
+| <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input\_existing\_bucket\_policy\_json) | (Optional) Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. If not provided, only the CloudTrail statements will be used. | `string` | `null` | no |
 | <a name="input_kms_key_arns"></a> [kms\_key\_arns](#input\_kms\_key\_arns) | List of KMS key ARNs used by source/destination secrets to restrict KMS permissions for the Lambda. Must be set explicitly for least-privilege. Do not use ["*"] in production. | `list(string)` | `[]` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `10` | no |

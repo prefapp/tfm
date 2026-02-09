@@ -1,3 +1,8 @@
+variable "existing_bucket_policy_json" {
+  description = "(Optional) Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. If not provided, only the CloudTrail statements will be used."
+  type        = string
+  default     = null
+}
 variable "name" {
   description = "Base name for the Lambda and associated resources"
   type        = string
