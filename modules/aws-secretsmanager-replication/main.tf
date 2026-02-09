@@ -93,53 +93,54 @@ module "lambda_automatic_replication" {
 
   policy_json = jsonencode({
     Version = "2012-10-17"
-    Statement = compact([
-      # CloudWatch Logs permissions are provided by the managed AWSLambdaBasicExecutionRole
-      length(var.source_secret_arns) > 0 ? {
-        Sid    = "AllowReplicationRole"
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:DescribeSecret",
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:ListSecretVersionIds",
-          "secretsmanager:GetResourcePolicy"
-        ]
-        Resource = var.source_secret_arns
-      } : null,
-      length(var.destination_secret_arns) > 0 ? {
-        Sid    = "ManageDestinationSecrets"
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:CreateSecret",
-          "secretsmanager:PutSecretValue",
-          "secretsmanager:UpdateSecret",
-          "secretsmanager:DescribeSecret",
-          "secretsmanager:TagResource",
-          "secretsmanager:UntagResource",
-          "secretsmanager:UpdateSecretVersionStage",
-          "secretsmanager:ListSecretVersionIds"
-        ]
-        Resource = var.destination_secret_arns
-      } : null,
-      length(var.allowed_assume_roles) > 0 ? {
-        Sid      = "AssumeDestinationRoles"
-        Effect   = "Allow"
-        Action   = ["sts:AssumeRole"]
-        Resource = var.allowed_assume_roles
-      } : null,
-      length(var.kms_key_arns) > 0 ? {
-        Sid    = "KMSUsage"
-        Effect = "Allow"
-        Action = [
-          "kms:Decrypt",
-          "kms:GenerateDataKey",
-          "kms:Encrypt",
-          "kms:ReEncrypt*",
-          "kms:DescribeKey"
-        ]
-        Resource = var.kms_key_arns
-      } : null
-    ])
+    Statement = [
+      for s in [
+        length(var.source_secret_arns) > 0 ? {
+          Sid    = "AllowReplicationRole"
+          Effect = "Allow"
+          Action = [
+            "secretsmanager:DescribeSecret",
+            "secretsmanager:GetSecretValue",
+            "secretsmanager:ListSecretVersionIds",
+            "secretsmanager:GetResourcePolicy"
+          ]
+          Resource = var.source_secret_arns
+        } : null,
+        length(var.destination_secret_arns) > 0 ? {
+          Sid    = "ManageDestinationSecrets"
+          Effect = "Allow"
+          Action = [
+            "secretsmanager:CreateSecret",
+            "secretsmanager:PutSecretValue",
+            "secretsmanager:UpdateSecret",
+            "secretsmanager:DescribeSecret",
+            "secretsmanager:TagResource",
+            "secretsmanager:UntagResource",
+            "secretsmanager:UpdateSecretVersionStage",
+            "secretsmanager:ListSecretVersionIds"
+          ]
+          Resource = var.destination_secret_arns
+        } : null,
+        length(var.allowed_assume_roles) > 0 ? {
+          Sid      = "AssumeDestinationRoles"
+          Effect   = "Allow"
+          Action   = ["sts:AssumeRole"]
+          Resource = var.allowed_assume_roles
+        } : null,
+        length(var.kms_key_arns) > 0 ? {
+          Sid    = "KMSUsage"
+          Effect = "Allow"
+          Action = [
+            "kms:Decrypt",
+            "kms:GenerateDataKey",
+            "kms:Encrypt",
+            "kms:ReEncrypt*",
+            "kms:DescribeKey"
+          ]
+          Resource = var.kms_key_arns
+        } : null
+      ] : s if s != null
+    ]
   })
 }
 
@@ -182,57 +183,58 @@ module "lambda_manual_replication" {
   attach_policy_json = true
   policy_json = jsonencode({
     Version = "2012-10-17"
-    Statement = compact([
-      # CloudWatch Logs permissions are provided by the managed AWSLambdaBasicExecutionRole
-      {
-        # allow reading all secrets for all-secret-replication use case
-        Sid    = "SecretsManagerList"
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:ListSecrets"
-        ]
-        Resource = "*"
-      },
-      length(var.source_secret_arns) > 0 ? {
-        Sid    = "SecretsManagerRead"
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
-        ]
-        Resource = var.source_secret_arns
-      } : null,
-      length(var.destination_secret_arns) > 0 ? {
-        Sid    = "SecretsManagerWrite"
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:CreateSecret",
-          "secretsmanager:PutSecretValue",
-          "secretsmanager:UpdateSecret",
-          "secretsmanager:TagResource",
-          "secretsmanager:UntagResource"
-        ]
-        Resource = var.destination_secret_arns
-      } : null,
-      length(var.allowed_assume_roles) > 0 ? {
-        Sid      = "AssumeCrossAccountRoles"
-        Effect   = "Allow"
-        Action   = ["sts:AssumeRole"]
-        Resource = var.allowed_assume_roles
-      } : null,
-      length(var.kms_key_arns) > 0 ? {
-        Sid    = "KMSUsage"
-        Effect = "Allow"
-        Action = [
-          "kms:Decrypt",
-          "kms:Encrypt",
-          "kms:GenerateDataKey",
-          "kms:DescribeKey",
-          "kms:ReEncrypt*"
-        ]
-        Resource = var.kms_key_arns
-      } : null
-    ])
+    Statement = [
+      for s in [
+        {
+          # allow reading all secrets for all-secret-replication use case
+          Sid    = "SecretsManagerList"
+          Effect = "Allow"
+          Action = [
+            "secretsmanager:ListSecrets"
+          ]
+          Resource = "*"
+        },
+        length(var.source_secret_arns) > 0 ? {
+          Sid    = "SecretsManagerRead"
+          Effect = "Allow"
+          Action = [
+            "secretsmanager:GetSecretValue",
+            "secretsmanager:DescribeSecret"
+          ]
+          Resource = var.source_secret_arns
+        } : null,
+        length(var.destination_secret_arns) > 0 ? {
+          Sid    = "SecretsManagerWrite"
+          Effect = "Allow"
+          Action = [
+            "secretsmanager:CreateSecret",
+            "secretsmanager:PutSecretValue",
+            "secretsmanager:UpdateSecret",
+            "secretsmanager:TagResource",
+            "secretsmanager:UntagResource"
+          ]
+          Resource = var.destination_secret_arns
+        } : null,
+        length(var.allowed_assume_roles) > 0 ? {
+          Sid      = "AssumeCrossAccountRoles"
+          Effect   = "Allow"
+          Action   = ["sts:AssumeRole"]
+          Resource = var.allowed_assume_roles
+        } : null,
+        length(var.kms_key_arns) > 0 ? {
+          Sid    = "KMSUsage"
+          Effect = "Allow"
+          Action = [
+            "kms:Decrypt",
+            "kms:Encrypt",
+            "kms:GenerateDataKey",
+            "kms:DescribeKey",
+            "kms:ReEncrypt*"
+          ]
+          Resource = var.kms_key_arns
+        } : null
+      ] : s if s != null
+    ]
   })
 }
 
