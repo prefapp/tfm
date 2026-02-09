@@ -87,12 +87,8 @@ def replicate_secret(secret_id: str, config):
                 )
 
                 # Sync tags if enabled and source_tags is non-empty
-                # Explicitly, it does not support tag deletion
+                # Only tag_resource is needed; it will update/overwrite as needed
                 if config.enable_tag_replication and source_tags:
-                    sm_dest.untag_resource(
-                        SecretId=dest_name,
-                        TagKeys=[t["Key"] for t in source_tags]
-                    )
                     sm_dest.tag_resource(
                         SecretId=dest_name,
                         Tags=source_tags
