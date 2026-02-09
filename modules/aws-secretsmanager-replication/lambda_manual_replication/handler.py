@@ -6,6 +6,7 @@ import hashlib
 import logging
 from botocore.exceptions import ClientError
 from src.replication import extract_secret_name
+from src.utils import assume_role
 import boto3
 
 LOG = logging.getLogger()
@@ -76,22 +77,6 @@ def retry(fn, *args, **kwargs):
             time.sleep(RETRY_BASE * (2 ** (attempt - 1)))
 
 
-def assume_role(role_arn):
-    """
-    Assumes an AWS IAM role and returns temporary credentials.
-    Args:
-        role_arn (str): ARN of the role to assume.
-    Returns:
-        dict: Temporary credentials for the assumed role.
-    """
-    sts = boto3.client("sts")
-    resp = sts.assume_role(RoleArn=role_arn, RoleSessionName="secrets-replication")
-    creds = resp["Credentials"]
-    return {
-        "aws_access_key_id": creds["AccessKeyId"],
-        "aws_secret_access_key": creds["SecretAccessKey"],
-        "aws_session_token": creds["SessionToken"],
-    }
 
 
 def get_secret_value(client, secret_id, version_id=None):
