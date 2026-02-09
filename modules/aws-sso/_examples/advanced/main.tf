@@ -9,46 +9,12 @@ module "aws_sso_advanced" {
   store_id            = "d-1234567890"  # Replace with your Identity Store ID
 }
 
-# Example sso.yaml content (create this file separately)
-# users:
-#   - name: "userA"
-#     email: "test@test.test"
-#     fullname: "userA"
-#   - name: "userB"
-#     email: "test2@test.test"
-#     fullname: "userB"
-# groups:
-#   - name: "groupA"
-#     users:
-#       - userA
-#       - userB
-# permission-sets:
-#   - name: "permission-set-advanced"
-#     custom-policies:
-#       - name: "custom-policy-example"
-#     managed-policies:
-#       - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-#     inline-policies:
-#       - name: "inline-policy-example"
-#         policy: |
-#           {
-#             "Version": "2012-10-17",
-#             "Statement": [
-#               {
-#                 "Effect": "Allow",
-#                 "Action": ["ec2:Describe*"],
-#                 "Resource": "*"
-#               }
-#             ]
-#           }
-# attachments:
-#   "123456789012":
-#     permission-set-advanced:
-#       groups:
-#         - groupA
-#       users:
-#         - userA
-#   "210987654321":
-#     permission-set-advanced:
-#       groups:
-#         - groupA
+# Create a sso.yaml file alongside this main.tf with your desired users, groups,
+# permission sets, and attachments. This example expects sso.yaml to define:
+#   - users
+#   - groups
+#   - permission-sets
+#   - attachments
+#
+# See the module documentation or the example sso.yaml file in this directory
+# for a complete example configuration.

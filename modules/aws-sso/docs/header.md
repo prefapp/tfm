@@ -36,7 +36,7 @@ module "aws_sso" {
 
 This example demonstrates defining a permission set with a combination of custom, managed, and inline policies in the YAML file.
 
-```
+```yaml
 # Example sso.yaml snippet
 permission-sets:
   - name: "permission-set-advanced"
@@ -57,7 +57,8 @@ permission-sets:
               }
             ]
           }
-
+```
+```hcl
 module "aws_sso" {
   source = "github.com/prefapp/tfm/modules/aws-sso?ref=v0.6.1"
 

@@ -9,21 +9,12 @@ module "aws_sso_basic" {
   store_id            = "d-1234567890"  # Replace with your Identity Store ID
 }
 
-# Example sso.yaml content (create this file separately)
-# users:
-#   - name: "userA"
-#     email: "test@test.test"
-#     fullname: "userA"
-# groups:
-#   - name: "groupA"
-#     users:
-#       - userA
-# permission-sets:
-#   - name: "permission-set-basic"
-#     managed-policies:
-#       - "arn:aws:iam::aws:policy/ReadOnlyAccess"
-# attachments:
-#   "123456789012":
-#     permission-set-basic:
-#       groups:
-#         - groupA
+# Create a sso.yaml file alongside this main.tf with your desired users, groups,
+# permission sets, and attachments. This example expects sso.yaml to define:
+#   - users
+#   - groups
+#   - permission-sets
+#   - attachments
+#
+# See the module documentation or the example sso.yaml file in this directory
+# for a complete example configuration.
