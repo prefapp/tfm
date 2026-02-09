@@ -9,17 +9,27 @@ variable "prefix" {
 }
 
 variable "destinations_json" {
-    validation {
-      condition = can(jsondecode(var.destinations_json))
-      error_message = "destinations_json must be valid JSON."
-    }
-    validation {
-      condition = alltrue([
-        for k, v in try(jsondecode(var.destinations_json), {}):
-          contains(keys(v), "role_arn") && contains(keys(v), "regions")
+  validation {
+    condition = alltrue([
+      for k, v in try(jsondecode(var.destinations_json), {}) :
+      alltrue([
+        for region_name, region_cfg in try(v.regions, {}) :
+        contains(keys(region_cfg), "kms_key_arn")
       ])
-      error_message = "Each destination in destinations_json must contain 'role_arn' and 'regions' keys."
-    }
+    ])
+    error_message = "Each region in each destination in destinations_json must contain a 'kms_key_arn' key."
+  }
+  validation {
+    condition     = can(jsondecode(var.destinations_json))
+    error_message = "destinations_json must be valid JSON."
+  }
+  validation {
+    condition = alltrue([
+      for k, v in try(jsondecode(var.destinations_json), {}) :
+      contains(keys(v), "role_arn") && contains(keys(v), "regions")
+    ])
+    error_message = "Each destination in destinations_json must contain 'role_arn' and 'regions' keys."
+  }
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
 }
