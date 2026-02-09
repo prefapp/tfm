@@ -115,7 +115,7 @@ module "lambda_automatic_replication" {
   attach_policy_json = true
   policy_json = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement = compact([
       {
         Sid    = "CloudWatchLogs"
         Effect = "Allow"
@@ -126,8 +126,8 @@ module "lambda_automatic_replication" {
         ]
         Resource = "arn:aws:logs:*:*:*"
       },
-      {
-        Sid    = "ReadSourceSecrets",
+      length(var.source_secret_arns) > 0 ? {
+        Sid    = "ReadSourceSecrets"
         Effect = "Allow"
         Action = [
           "secretsmanager:GetSecretValue",
@@ -136,9 +136,9 @@ module "lambda_automatic_replication" {
           "secretsmanager:GetResourcePolicy"
         ]
         Resource = var.source_secret_arns
-      },
-      {
-        Sid    = "ManageDestinationSecrets",
+      } : null,
+      length(var.destination_secret_arns) > 0 ? {
+        Sid    = "ManageDestinationSecrets"
         Effect = "Allow"
         Action = [
           "secretsmanager:CreateSecret",
@@ -151,15 +151,15 @@ module "lambda_automatic_replication" {
           "secretsmanager:ListSecretVersionIds"
         ]
         Resource = var.destination_secret_arns
-      },
-      {
-        Sid      = "AssumeDestinationRoles",
+      } : null,
+      length(var.allowed_assume_roles) > 0 ? {
+        Sid      = "AssumeDestinationRoles"
         Effect   = "Allow"
         Action   = ["sts:AssumeRole"]
         Resource = var.allowed_assume_roles
-      },
-      {
-        Sid    = "KMSUsage",
+      } : null,
+      length(var.kms_key_arns) > 0 ? {
+        Sid    = "KMSUsage"
         Effect = "Allow"
         Action = [
           "kms:Decrypt",
@@ -169,7 +169,7 @@ module "lambda_automatic_replication" {
           "kms:DescribeKey"
         ]
         Resource = var.kms_key_arns
-      },
+      } : null,
       {
         Sid    = "AllowReplicationRole"
         Effect = "Allow"
@@ -182,10 +182,10 @@ module "lambda_automatic_replication" {
           "secretsmanager:TagResource",
           "secretsmanager:UntagResource",
           "secretsmanager:ListSecretVersionIds"
-        ],
+        ]
         Resource = "*"
       }
-    ]
+    ])
   })
 }
 
@@ -225,7 +225,7 @@ module "lambda_manual_replication" {
   attach_policy_json = true
   policy_json = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement = compact([
       {
         Sid    = "CloudWatchLogs"
         Effect = "Allow"
@@ -258,13 +258,13 @@ module "lambda_manual_replication" {
         ]
         Resource = "*"
       },
-      {
+      length(var.allowed_assume_roles) > 0 ? {
         Sid      = "AssumeCrossAccountRoles"
         Effect   = "Allow"
         Action   = ["sts:AssumeRole"]
         Resource = var.allowed_assume_roles
-      },
-      {
+      } : null,
+      length(var.kms_key_arns) > 0 ? {
         Sid    = "KMSUsage"
         Effect = "Allow"
         Action = [
@@ -275,8 +275,8 @@ module "lambda_manual_replication" {
           "kms:ReEncrypt*"
         ]
         Resource = var.kms_key_arns
-      }
-    ]
+      } : null
+    ])
   })
 }
 
