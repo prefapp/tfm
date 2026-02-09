@@ -1,22 +1,3 @@
-| <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input_existing_bucket_policy_json) | (Optional) Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. If not provided, only the CloudTrail statements will be used. | `string` | `null` | no |
-## Robust S3 Bucket Policy Handling for Existing Buckets
-
-When using an existing S3 bucket for CloudTrail logs (via `s3_bucket_name`), the module allows you to provide the current bucket policy as JSON using the `existing_bucket_policy_json` input. This enables the module to merge the required CloudTrail permissions with your existing policy, ensuring no permissions are lost.
-
-**If you do not provide `existing_bucket_policy_json`, the module will apply only the minimal CloudTrail policy.**
-
-This makes the module robust for buckets that may not have a policy yet, or where you want to manage the policy entirely via Terraform. If you want to preserve and extend an existing policy, supply its JSON here.
-
-**Example:**
-```hcl
-module "secrets_replication" {
-	# ... other variables ...
-	s3_bucket_name              = "centralized-logs-bucket"
-	existing_bucket_policy_json = file("../existing-bucket-policy.json")
-}
-```
-
-If the bucket has no policy, you can omit this variable and the module will create a minimal policy for CloudTrail access only.
 <!-- BEGIN_TF_DOCS -->
 # **AWS Secrets Manager Replication Terraform Module**
 
@@ -159,8 +140,6 @@ module "secrets_replication" {
 | [random_integer.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_cloudtrail.existing](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudtrail) | data source |
-| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
-| [aws_s3_bucket.existing_cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket) | data source |
 
 ## Inputs
 
