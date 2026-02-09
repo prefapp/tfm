@@ -147,11 +147,11 @@ module "lambda_automatic_replication" {
     Statement = compact([
       # CloudWatch Logs permissions are provided by the managed AWSLambdaBasicExecutionRole
       length(var.source_secret_arns) > 0 ? {
-        Sid    = "ReadSourceSecrets"
+        Sid    = "AllowReplicationRole"
         Effect = "Allow"
         Action = [
-          "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret",
+          "secretsmanager:GetSecretValue",
           "secretsmanager:ListSecretVersionIds",
           "secretsmanager:GetResourcePolicy"
         ]
@@ -189,17 +189,6 @@ module "lambda_automatic_replication" {
           "kms:DescribeKey"
         ]
         Resource = var.kms_key_arns
-      } : null,
-      length(var.source_secret_arns) > 0 ? {
-        Sid    = "AllowReplicationRole"
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:DescribeSecret",
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:ListSecretVersionIds",
-          "secretsmanager:GetResourcePolicy"
-        ]
-        Resource = var.source_secret_arns
       } : null
     ])
   })
