@@ -373,14 +373,20 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 
 
 check "input_validation" {
-    assert {
-      condition = !(
-        var.eventbridge_enabled && var.s3_bucket_name == "" && !var.manage_s3_bucket_policy
-      )
-      error_message = "If the module is creating the CloudTrail S3 bucket (s3_bucket_name == '' and eventbridge_enabled = true), manage_s3_bucket_policy must be true. Otherwise, CloudTrail log delivery will fail due to missing bucket policy."
-    }
+  assert {
+    condition = !(
+      var.eventbridge_enabled && var.s3_bucket_name == "" && !var.manage_s3_bucket_policy
+    )
+    error_message = "If the module is creating the CloudTrail S3 bucket (s3_bucket_name == '' and eventbridge_enabled = true), manage_s3_bucket_policy must be true. Otherwise, CloudTrail log delivery will fail due to missing bucket policy."
+  }
   assert {
     condition = !(var.eventbridge_enabled && var.cloudtrail_name != "" && var.s3_bucket_name == "")
     error_message = "You provided cloudtrail_name but not s3_bucket_name. Provide the S3 bucket name used by that trail."
+  }
+  assert {
+    condition = !(
+      var.manage_s3_bucket_policy && var.s3_bucket_name != "" && var.existing_bucket_policy_json == null
+    )
+    error_message = "When managing the policy on an existing S3 bucket (s3_bucket_name set), you must provide existing_bucket_policy_json to avoid overwriting existing statements."
   }
 }
