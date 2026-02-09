@@ -52,17 +52,18 @@ Ensure that the destination roles have the necessary permissions to create and u
 
 ## Architecture: Event-Driven Cross-Account Secret Replication
 
-To replicate AWS Secrets Manager secrets between two accounts upon a change or rotation, the architecture must rely on **AWS CloudTrail** as the intermediary, as Secrets Manager does not emit direct state-change events to EventBridge.
+
+To replicate AWS Secrets Manager secrets between two accounts upon a change or rotation, the architecture relies on **AWS CloudTrail** as the intermediary, since Secrets Manager does not emit direct state-change events to EventBridge.
 
 ### Workflow Overview
 
-1. **Source Action:** A change occurs in the source account via a Secrets Manager API call such as `CreateSecret` or `PutSecretValue` (including automatic rotations or updates that invoke `PutSecretValue`).
+1. **Source Action:** A change occurs in the source account via a Secrets Manager API call such as `CreateSecret` or `PutSecretValue`. **Note:** Secret rotations are handled by the `PutSecretValue` API, so the EventBridge rule triggers on both manual updates and automatic rotations.
 2. **CloudTrail Capture:** This API activity is captured by a configured **CloudTrail Trail**.
 3. **S3 Storage:** The Trail must be configured to deliver log files to a designated **S3 Bucket**. This ensures persistent storage and reliable delivery of the event data required for the trigger.
-4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the specific pattern `AWS API Call via CloudTrail`.
+4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the specific pattern `AWS API Call via CloudTrail`, matching `CreateSecret` and `PutSecretValue` events.
 5. **Lambda Execution:** The rule triggers a **Lambda function**, which assumes an IAM role to read the secret from the source and write/update it in the destination account.
 
-> **Important:** You cannot filter by "Secrets Manager" service events directly. You must configure the EventBridge pattern to look for specific API calls logged by CloudTrail.
+> **Important:** You cannot filter by "Secrets Manager" service events directly. You must configure the EventBridge pattern to look for specific API calls logged by CloudTrail. Rotations are fully supported because they invoke `PutSecretValue`.
 
 ### Required Resources & Links
 
