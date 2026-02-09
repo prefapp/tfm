@@ -83,8 +83,8 @@ def replicate_secret(secret_id: str, config):
                     **{secret_value_key: secret_value}
                 )
 
-                # Sync tags if enabled
-                if config.enable_tag_replication:
+                # Sync tags if enabled and source_tags is non-empty
+                if config.enable_tag_replication and source_tags:
                     sm_dest.untag_resource(
                         SecretId=dest_name,
                         TagKeys=[t["Key"] for t in source_tags]
