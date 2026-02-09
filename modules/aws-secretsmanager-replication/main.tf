@@ -80,7 +80,7 @@ locals {
 ###############################################################################
 
 resource "random_integer" "suffix" {
-  count = var.s3_bucket_name == "" ? 1 : 0
+  count = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
   min   = 10000
   max   = 99999
 }
@@ -279,7 +279,7 @@ resource "aws_iam_role_policy_attachment" "lambda_manual_basic_execution" {
 ###############################################################################
 
 resource "aws_s3_bucket" "cloudtrail" {
-  count         = var.s3_bucket_name == "" ? 1 : 0
+  count         = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
   bucket        = var.s3_bucket_name != "" ? var.s3_bucket_name : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
   force_destroy = false
   tags          = var.tags
@@ -287,7 +287,7 @@ resource "aws_s3_bucket" "cloudtrail" {
 
 # Baseline hardening for CloudTrail S3 bucket
 resource "aws_s3_bucket_public_access_block" "cloudtrail" {
-  count  = var.s3_bucket_name == "" ? 1 : 0
+  count  = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
   bucket = aws_s3_bucket.cloudtrail[0].id
 
   block_public_acls       = true
@@ -297,7 +297,7 @@ resource "aws_s3_bucket_public_access_block" "cloudtrail" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail" {
-  count  = var.s3_bucket_name == "" ? 1 : 0
+  count  = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
   bucket = aws_s3_bucket.cloudtrail[0].id
 
   rule {
@@ -312,7 +312,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail" {
 ###############################################################################
 
 resource "aws_cloudtrail" "secrets_management_events" {
-  count                         = var.cloudtrail_name == "" ? 1 : 0
+  count                         = var.cloudtrail_name == "" && var.eventbridge_enabled ? 1 : 0
   name                          = "${var.prefix}-secrets-management-events"
   is_multi_region_trail         = false
   include_global_service_events = false
@@ -332,7 +332,7 @@ resource "aws_cloudtrail" "secrets_management_events" {
 ###############################################################################
 
 resource "aws_s3_bucket_policy" "cloudtrail" {
-  count  = var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
+  count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
   bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
   policy = jsonencode({
@@ -367,11 +367,12 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 
 check "input_validation" {
   assert {
-    condition = !(var.cloudtrail_name != "" && var.s3_bucket_name == "")
+    condition = !(var.eventbridge_enabled && var.cloudtrail_name != "" && var.s3_bucket_name == "")
     error_message = "You provided cloudtrail_name but not s3_bucket_name. Provide the S3 bucket name used by that trail."
   }
   assert {
     condition = !(
+      var.eventbridge_enabled &&
       !var.manage_s3_bucket_policy &&
       var.s3_bucket_name != "" &&
       !local.bucket_policy_has_cloudtrail
