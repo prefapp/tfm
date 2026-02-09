@@ -247,6 +247,7 @@ module "lambda_manual_replication" {
     Statement = compact([
       # CloudWatch Logs permissions are provided by the managed AWSLambdaBasicExecutionRole
       {
+        # allow reading all secrets for all-secret-replication use case
         Sid    = "SecretsManagerList"
         Effect = "Allow"
         Action = [
