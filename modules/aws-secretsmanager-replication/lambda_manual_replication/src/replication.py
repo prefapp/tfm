@@ -1,3 +1,21 @@
+def replicate_all(config):
+    """
+    Replicates all secrets in the source account to all configured destinations and regions.
+    Args:
+        config: Configuration object with destinations and options.
+    Returns:
+        None
+    """
+    log("info", "Starting full sync (replicate all secrets)")
+    source_sm = boto3.client("secretsmanager", region_name=config.source_region)
+    paginator = source_sm.get_paginator("list_secrets")
+    for page in paginator.paginate():
+        for secret in page.get("SecretList", []):
+            secret_id = secret["ARN"]
+            try:
+                replicate_secret(secret_id, config)
+            except Exception as e:
+                log("error", f"Failed to replicate secret {secret_id}: {e}")
 from src.utils import assume_role, log
 import boto3
 

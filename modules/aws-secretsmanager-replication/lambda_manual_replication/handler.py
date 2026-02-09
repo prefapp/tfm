@@ -1,6 +1,6 @@
 import logging
 from src.config import load_config
-from src.replication import replicate_secret
+from src.replication import replicate_secret, replicate_all
 
 LOG = logging.getLogger()
 LOG.setLevel(logging.INFO)
@@ -16,9 +16,10 @@ def lambda_handler(event, context):
     """
     LOG.info("Received event")
     secret_id = event.get("secret_id")
+    config = load_config()
     if secret_id:
         LOG.info("Manual replication of %s", secret_id)
-        config = load_config()
         replicate_secret(secret_id, config)
         return
-    LOG.warning("No secret_id provided and full sync is not supported in this handler.")
+    LOG.info("No secret_id provided, running full sync (replicate all secrets)")
+    replicate_all(config)
