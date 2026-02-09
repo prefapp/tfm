@@ -56,7 +56,7 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 
 ### Workflow Overview
 
-1. **Source Action:** A change occurs in the source account (e.g., `RotateSecret`, `PutSecretValue`, or `UpdateSecret`).
+1. **Source Action:** A change occurs in the source account via a Secrets Manager API call such as `CreateSecret` or `PutSecretValue` (including automatic rotations or updates that invoke `PutSecretValue`).
 2. **CloudTrail Capture:** This API activity is captured by a configured **CloudTrail Trail**.
 3. **S3 Storage:** The Trail must be configured to deliver log files to a designated **S3 Bucket**. This ensures persistent storage and reliable delivery of the event data required for the trigger.
 4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the specific pattern `AWS API Call via CloudTrail`.
@@ -149,6 +149,7 @@ module "secrets_replication" {
 | <a name="input_cloudtrail_name"></a> [cloudtrail\_name](#input\_cloudtrail\_name) | (Optional) Name of the CloudTrail trail to monitor for Secrets Manager events. If provided, the module will reuse this trail instead of creating one. | `string` | `""` | no |
 | <a name="input_destination_secret_arns"></a> [destination\_secret\_arns](#input\_destination\_secret\_arns) | List of destination Secrets Manager ARNs or ARN prefixes to restrict write permissions for the Lambda. Must be set explicitly for least-privilege. Do not use ["*"] in production. | `list(string)` | `[]` | no |
 | <a name="input_destinations_json"></a> [destinations\_json](#input\_destinations\_json) | JSON describing accounts, regions and KMS keys for replication | `string` | n/a | yes |
+| <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the manual replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to replicate tags from the source secret (used by the code, not Terraform) | `bool` | `true` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Additional environment variables passed to the Lambda | `map(string)` | `{}` | no |
 | <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `true` | no |

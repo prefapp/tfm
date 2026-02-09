@@ -56,7 +56,7 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 
 ### Workflow Overview
 
-1. **Source Action:** A change occurs in the source account (e.g., `RotateSecret`, `PutSecretValue`, or `UpdateSecret`).
+1. **Source Action:** A change occurs in the source account via a Secrets Manager API call such as `CreateSecret` or `PutSecretValue` (including automatic rotations or updates that invoke `PutSecretValue`).
 2. **CloudTrail Capture:** This API activity is captured by a configured **CloudTrail Trail**.
 3. **S3 Storage:** The Trail must be configured to deliver log files to a designated **S3 Bucket**. This ensures persistent storage and reliable delivery of the event data required for the trigger.
 4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the specific pattern `AWS API Call via CloudTrail`.
