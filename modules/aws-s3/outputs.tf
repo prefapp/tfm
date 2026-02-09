@@ -11,13 +11,13 @@ output "bucket_domain_name" {
 
 ## Replication outputs
 output "replication_role_arn" {
-  value = aws_iam_role.replication.arn
+  value = try(aws_iam_role.replication[0].arn, null)
 }
 
 output "replication_destination_bucket_arn" {
-  value = var.s3_destination_bucket_arn
+  value = try(var.s3_replication_destination.bucket_arn, null)
 }
 
 output "replication_s3_destination_replication_s3_policydestination_policy" {
-  value = data.aws_iam_policy_document.destination_replication_s3_policy.json
+  value = try(data.aws_iam_policy_document.destination_replication_s3_policy[0].json, null)
 }

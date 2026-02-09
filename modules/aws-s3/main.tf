@@ -19,10 +19,11 @@ resource "aws_s3_bucket_public_access_block" "this" {
 resource "aws_s3_bucket_policy" "this" {
   region = var.region
   bucket = aws_s3_bucket.this.id
-  policy = data.aws_iam_policy_document.only_https.json
+  policy = var.s3_replication_source != null ? data.aws_iam_policy_document.source_replication_s3_policy_with_https_policy[0].json : data.aws_iam_policy_document.only_https.json
 }
 
 data "aws_iam_policy_document" "only_https" {
+  source_policy_documents = var.extra_bucket_iam_policies_json
   statement {
     principals {
       type        = "AWS"
@@ -44,6 +45,53 @@ data "aws_iam_policy_document" "only_https" {
       "${aws_s3_bucket.this.arn}/*",
     ]
   }
+}
+
+
+
+
+data "aws_iam_policy_document" "source_replication_s3_policy" {
+  count = var.s3_replication_source != null ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [try(var.s3_replication_source.role_arn, "")]
+    }
+
+    actions = [
+      "s3:ReplicateObject",
+      "s3:ReplicateDelete"
+    ]
+
+    resources = ["${try(aws_s3_bucket.this.arn, "")}/*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [try(var.s3_replication_source.role_arn, "")]
+    }
+
+    actions = [
+      "s3:GetBucketVersioning",
+      "s3:PutBucketVersioning"
+    ]
+
+    resources = [try(aws_s3_bucket.this.arn, "")]
+  }
+}
+
+
+data "aws_iam_policy_document" "source_replication_s3_policy_with_https_policy" {
+  count = var.s3_replication_source != null ? 1 : 0
+  source_policy_documents = [
+    data.aws_iam_policy_document.only_https.json,
+    data.aws_iam_policy_document.source_replication_s3_policy[0].json
+  ]
 }
 # END Bucket Policy
 

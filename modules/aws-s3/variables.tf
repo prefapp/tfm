@@ -9,6 +9,11 @@ variable "bucket" {
   type        = string
 }
 
+variable "extra_bucket_iam_policies_json" {
+  description = "A array from JSON string representing additional IAM policies to attach to the bucket."
+  type        = list(string)
+  default     = []
+}
 variable "region" {
   description = "The AWS region where the S3 bucket will be created."
   type        = string
@@ -93,17 +98,12 @@ variable "lifecycle_rules" {
 
 
 ## Replication variables
-variable "s3_destination_bucket_arn" {
-  description = "The ARN of the destination bucket for replication."
-  type        = string
-  default     = null
-}
 
 variable "s3_replication_destination" {
   description = "Object containing the replication destination configuration."
   type = object({
     account       = string
-    bucket        = string
+    bucket_arn    = string
     storage_class = string
     filter = optional(object({
       prefix = optional(string)
@@ -117,3 +117,21 @@ variable "s3_replication_destination" {
   default = null
 }
 
+## Replication variables
+
+variable "s3_replication_source" {
+  description = "Object containing the replication source configuration."
+  type = object({
+    account  = string
+    role_arn = string
+    filter = optional(object({
+      prefix = optional(string)
+      tags   = optional(map(string))
+      and = optional(object({
+        prefix = optional(string)
+        tags   = optional(map(string))
+      }))
+    }))
+  })
+  default = null
+}

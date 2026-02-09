@@ -1,8 +1,9 @@
 
 resource "aws_s3_bucket_replication_configuration" "origin_to_destination" {
+  count      = var.s3_replication_destination != null ? 1 : 0
   depends_on = [aws_s3_bucket_versioning.this]
   region     = var.region
-  role       = aws_iam_role.replication.arn
+  role       = aws_iam_role.replication[0].arn
   bucket     = aws_s3_bucket.this.id
 
   rule {
@@ -19,7 +20,7 @@ resource "aws_s3_bucket_replication_configuration" "origin_to_destination" {
       for_each = var.s3_replication_destination != null ? [var.s3_replication_destination] : []
       content {
         account       = var.s3_replication_destination.account
-        bucket        = var.s3_replication_destination.bucket
+        bucket        = var.s3_replication_destination.bucket_arn
         storage_class = var.s3_replication_destination.storage_class
         access_control_translation {
           owner = "Destination"
@@ -69,6 +70,7 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "replication" {
+  count       = var.s3_replication_destination != null ? 1 : 0
   name_prefix = substr("${var.bucket}-replication-", 0, 38) # AWS IAM role names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
   # region             = var.region
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
@@ -82,8 +84,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:GetReplicationConfiguration",
       "s3:ListBucket",
     ]
-
-    resources = [var.s3_destination_bucket_arn]
+    resources = [try(var.s3_replication_destination.bucket_arn, "")]
   }
 
   statement {
@@ -107,19 +108,21 @@ data "aws_iam_policy_document" "replication" {
       "s3:ReplicateTags",
     ]
 
-    resources = ["${var.s3_destination_bucket_arn}/*"]
+    resources = ["${try(var.s3_replication_destination.bucket_arn, "")}/*"]
   }
 }
 
 resource "aws_iam_policy" "replication" {
+  count       = var.s3_replication_destination != null ? 1 : 0
   name_prefix = substr("${var.bucket}-replication", 0, 38) # AWS IAM policy names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
 
   policy = data.aws_iam_policy_document.replication.json
 }
 
 resource "aws_iam_role_policy_attachment" "replication" {
-  role       = aws_iam_role.replication.name
-  policy_arn = aws_iam_policy.replication.arn
+  count      = var.s3_replication_destination != null ? 1 : 0
+  role       = aws_iam_role.replication[0].name
+  policy_arn = aws_iam_policy.replication[0].arn
 }
 
 ### Creating rule for destination bucket
@@ -156,12 +159,13 @@ resource "aws_iam_role_policy_attachment" "replication" {
 
 
 data "aws_iam_policy_document" "destination_replication_s3_policy" {
+  count = var.s3_replication_destination != null ? 1 : 0
   statement {
     effect = "Allow"
 
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_role.replication.arn]
+      identifiers = [try(aws_iam_role.replication[0].arn, "")]
     }
 
     actions = [
@@ -169,7 +173,7 @@ data "aws_iam_policy_document" "destination_replication_s3_policy" {
       "s3:ReplicateDelete"
     ]
 
-    resources = ["${var.s3_destination_bucket_arn}/*"]
+    resources = ["${try(var.s3_replication_destination.bucket_arn, "")}/*"]
   }
 
   statement {
@@ -177,7 +181,7 @@ data "aws_iam_policy_document" "destination_replication_s3_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_role.replication.arn]
+      identifiers = [try(aws_iam_role.replication[0].arn, "")]
     }
 
     actions = [
@@ -185,6 +189,6 @@ data "aws_iam_policy_document" "destination_replication_s3_policy" {
       "s3:PutBucketVersioning"
     ]
 
-    resources = [var.s3_destination_bucket_arn]
+    resources = [try(var.s3_replication_destination.bucket_arn, "")]
   }
 }
