@@ -10,10 +10,6 @@ terraform {
       source  = "hashicorp/random"
       version = ">= 3.0"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = ">= 3.0"
-    }
   }
 }
 
@@ -357,33 +353,18 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   })
 }
 
-###############################################################################
-# Optional: simple precondition checks to fail early with clear messages
-###############################################################################
 
-## Fallback validation (compatible with Terraform < 1.5 and >= 1.5)
-resource "null_resource" "validate_inputs_fallback" {
-  # Input validations for compatibility with Terraform < 1.5
-  # If you use Terraform >= 1.5, consider migrating these validations to precondition blocks in the affected resources.
-  count = (
-    (!var.manage_s3_bucket_policy && var.s3_bucket_name != "" && !local.bucket_policy_has_cloudtrail)
-    || (var.cloudtrail_name != "" && var.s3_bucket_name == "")
-    # You can add more validations here if you add new variable combinations
-  ) ? 1 : 0
-
-  provisioner "local-exec" {
-    when    = create
-    command = <<-EOT
-      echo "ERROR: Input validation failed for the secretsmanager-replication module."
-      if [ "${var.cloudtrail_name}" != "" ] && [ "${var.s3_bucket_name}" = "" ]; then
-        echo " - You provided cloudtrail_name but not s3_bucket_name. Provide the S3 bucket name used by that trail."
-      fi
-      if [ "${var.manage_s3_bucket_policy}" = "false" ] && [ "${var.s3_bucket_name}" != "" ] && [ "${local.bucket_policy_has_cloudtrail}" = "false" ]; then
-        echo " - manage_s3_bucket_policy=false and an existing s3_bucket_name was provided,"
-        echo "   but the bucket policy does not appear to allow CloudTrail to write logs."
-        echo "   Ensure the bucket policy allows cloudtrail.amazonaws.com to call s3:GetBucketAcl, s3:GetBucketPolicy and s3:PutObject on AWSLogs/<ACCOUNT_ID>/*."
-      fi
-      exit 1
-    EOT
+check "input_validation" {
+  assert {
+    condition = !(var.cloudtrail_name != "" && var.s3_bucket_name == "")
+    error_message = "You provided cloudtrail_name but not s3_bucket_name. Provide the S3 bucket name used by that trail."
+  }
+  assert {
+    condition = !(
+      !var.manage_s3_bucket_policy &&
+      var.s3_bucket_name != "" &&
+      !local.bucket_policy_has_cloudtrail
+    )
+    error_message = "manage_s3_bucket_policy=false and an existing s3_bucket_name was provided, but the bucket policy does not appear to allow CloudTrail to write logs. Ensure the bucket policy allows cloudtrail.amazonaws.com to call s3:GetBucketAcl, s3:GetBucketPolicy and s3:PutObject on AWSLogs/<ACCOUNT_ID>/*."
   }
 }
