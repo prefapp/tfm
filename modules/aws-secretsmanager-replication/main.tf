@@ -185,7 +185,7 @@ module "lambda_manual_replication" {
     Version = "2012-10-17"
     Statement = [
       for s in [
-        {
+        var.enable_full_sync ? {
           # allow reading all secrets for all-secret-replication use case
           Sid    = "SecretsManagerList"
           Effect = "Allow"
@@ -193,7 +193,7 @@ module "lambda_manual_replication" {
             "secretsmanager:ListSecrets"
           ]
           Resource = "*"
-        },
+        } : null,
         length(var.source_secret_arns) > 0 ? {
           Sid    = "SecretsManagerRead"
           Effect = "Allow"

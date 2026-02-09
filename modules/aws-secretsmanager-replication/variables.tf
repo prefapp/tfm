@@ -1,3 +1,8 @@
+variable "enable_full_sync" {
+  description = "If true, the manual replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege."
+  type        = bool
+  default     = false
+}
 variable "existing_bucket_policy_json" {
   description = "(Optional) Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. If not provided, only the CloudTrail statements will be used."
   type        = string
