@@ -19,8 +19,6 @@ terraform {
 
 data "aws_caller_identity" "current" {}
 
-data "aws_region" "current" {}
-
 ## Optional: existing CloudTrail
 
 data "aws_cloudtrail" "existing" {
