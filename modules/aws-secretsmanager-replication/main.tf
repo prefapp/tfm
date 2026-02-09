@@ -199,10 +199,13 @@ module "lambda_manual_replication" {
   memory_size = var.lambda_memory
   tags        = var.tags
 
-  environment_variables = {
-    DESTINATIONS_JSON      = var.destinations_json
-    ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
-  }
+  environment_variables = merge(
+    var.environment_variables,
+    {
+      DESTINATIONS_JSON      = var.destinations_json
+      ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
+    }
+  )
 
   attach_cloudwatch_logs_policy = false
 
