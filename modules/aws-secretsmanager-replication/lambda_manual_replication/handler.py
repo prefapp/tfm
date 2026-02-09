@@ -3,7 +3,6 @@ from src.config import load_config
 from src.replication import replicate_secret, replicate_all
 
 LOG = logging.getLogger()
-LOG.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     """
