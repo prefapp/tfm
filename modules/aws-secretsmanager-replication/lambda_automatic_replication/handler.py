@@ -22,11 +22,14 @@ def extract_secret_id(detail):
     if name:
         return name
 
-    # 3. Rare case: CloudTrail sometimes puts the ARN in resources
+    # 3. Fallback: handle both List[str] ARNs and List[dict] resource entries
     resources = detail.get("resources", [])
     for r in resources:
-        if r.get("type") == "AWS::SecretsManager::Secret":
-            return r.get("ARN") or r.get("resourceName")
+        if isinstance(r, dict):
+            if r.get("type") == "AWS::SecretsManager::Secret":
+                return r.get("ARN") or r.get("resourceName")
+        elif isinstance(r, str) and r.startswith("arn:aws:secretsmanager:"):
+            return r
 
     return None
 
@@ -44,7 +47,7 @@ def lambda_handler(event, context):
     if event_name not in ("CreateSecret", "PutSecretValue", "UpdateSecret", "RotateSecret", "RestoreSecret"):
         return
 
-    secret_id = extract_secret_id(detail)
+    secret_id = extract_secret_id(event)
     if not secret_id:
         return
 
