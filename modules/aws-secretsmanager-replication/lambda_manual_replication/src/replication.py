@@ -109,16 +109,26 @@ def replicate_secret(secret_id: str, config):
                     **{secret_value_key: secret_value}
                 )
 
-                # Sync tags if enabled and source_tags is non-empty
-                if config.enable_tag_replication and source_tags:
-                    sm_dest.untag_resource(
-                        SecretId=dest_name,
-                        TagKeys=[t["Key"] for t in source_tags]
-                    )
-                    sm_dest.tag_resource(
-                        SecretId=dest_name,
-                        Tags=source_tags
-                    )
+                # Sync tags if enabled: ensure destination tags match source exactly
+                if config.enable_tag_replication:
+                    # Get current tags from destination
+                    dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
+                    dest_tags = dest_metadata.get("Tags", [])
+                    source_tag_keys = {t["Key"] for t in source_tags}
+                    dest_tag_keys = {t["Key"] for t in dest_tags}
+                    # Remove tags that are present on destination but not in source
+                    tags_to_remove = list(dest_tag_keys - source_tag_keys)
+                    if tags_to_remove:
+                        sm_dest.untag_resource(
+                            SecretId=dest_name,
+                            TagKeys=tags_to_remove
+                        )
+                    # Apply all source tags (will add/update as needed)
+                    if source_tags:
+                        sm_dest.tag_resource(
+                            SecretId=dest_name,
+                            Tags=source_tags
+                        )
 
             log("info", "Replication completed", account_id=account_id, region=region_name)
 
