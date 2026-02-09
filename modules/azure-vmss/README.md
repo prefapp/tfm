@@ -110,9 +110,6 @@ This Terraform module allows you to create and manage Azure Linux Virtual Machin
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.16.0 |
 
-## Modules
-
-No modules.
 
 ## Resources
 
