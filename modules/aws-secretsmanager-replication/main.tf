@@ -166,7 +166,7 @@ module "lambda_automatic_replication" {
         ]
         Resource = var.kms_key_arns
       } : null,
-      {
+      length(var.source_secret_arns) > 0 ? {
         Sid    = "AllowReplicationRole"
         Effect = "Allow"
         Action = [
@@ -180,7 +180,7 @@ module "lambda_automatic_replication" {
           "secretsmanager:ListSecretVersionIds"
         ]
         Resource = var.source_secret_arns
-      }
+      } : null
     ])
   })
 }
