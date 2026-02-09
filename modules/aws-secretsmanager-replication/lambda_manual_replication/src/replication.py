@@ -37,7 +37,16 @@ def replicate_secret(secret_id: str, config):
     # Read source secret (full ARN is OK)
     source_sm = boto3.client("secretsmanager", region_name=config.source_region)
 
-    secret_value = source_sm.get_secret_value(SecretId=secret_id)["SecretString"]
+    secret_response = source_sm.get_secret_value(SecretId=secret_id)
+    if "SecretString" in secret_response:
+        secret_value = secret_response["SecretString"]
+        secret_value_key = "SecretString"
+    elif "SecretBinary" in secret_response:
+        secret_value = secret_response["SecretBinary"]
+        secret_value_key = "SecretBinary"
+    else:
+        raise Exception(f"Secret {secret_id} has neither SecretString nor SecretBinary")
+
     secret_metadata = source_sm.describe_secret(SecretId=secret_id)
 
     source_tags = secret_metadata.get("Tags", [])
@@ -63,15 +72,15 @@ def replicate_secret(secret_id: str, config):
 
                 sm_dest.create_secret(
                     Name=dest_name,
-                    SecretString=secret_value,
                     KmsKeyId=region_cfg.kms_key_arn,
                     Tags=source_tags if config.enable_tag_replication else [],
+                    **{secret_value_key: secret_value}
                 )
             else:
                 # Update secret value
                 sm_dest.put_secret_value(
                     SecretId=dest_name,
-                    SecretString=secret_value,
+                    **{secret_value_key: secret_value}
                 )
 
                 # Sync tags if enabled
