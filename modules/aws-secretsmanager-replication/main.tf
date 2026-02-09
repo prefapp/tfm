@@ -47,12 +47,13 @@ locals {
   has_existing_bucket    = var.s3_bucket_name != ""
 
   # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
+  # Note: Terraform-provided values override any conflicting keys in var.environment_variables
   environment = merge(
+    var.environment_variables,
     {
       DESTINATIONS_JSON      = var.destinations_json
       ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
-    },
-    var.environment_variables
+    }
   )
 }
 
