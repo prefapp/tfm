@@ -2,7 +2,9 @@
 
 ## Overview
 
-This Terraform module provisions and manages AWS Single Sign-On (SSO), now known as IAM Identity Center, resources in a declarative manner. It handles the creation of users and groups within the Identity Store, defines permission sets with various policy attachments (including custom-managed, AWS-managed, and inline policies), and assigns these permission sets to specific AWS accounts for both groups and users. The module reads configurations from a YAML file, allowing for centralized management of identity and access controls across AWS environments
+This Terraform module provisions and manages AWS Single Sign-On (SSO), now known as IAM Identity Center, resources in a declarative manner.
+It handles the creation of users and groups within the Identity Store, defines permission sets with various policy attachments (including custom-managed, AWS-managed, and inline policies), and assigns these permission sets to specific AWS accounts for both groups and users.
+The module reads configurations from a YAML file, allowing for centralized management of identity and access controls across AWS environments.
 By leveraging Terraform's infrastructure-as-code approach, this module ensures consistent and reproducible SSO setups, reducing manual errors and simplifying compliance. It supports complex scenarios such as multi-account permissions, group-based access control, and policy customizations, making it suitable for organizations scaling their AWS presence. Key integrations include dependencies on AWS SSO admin resources and Identity Store, with built-in waits to handle eventual consistency in AWS services.
 This module is ideal for development, staging, and production environments where fine-grained access management is required. It promotes best practices like least privilege through permission sets and helps migrate from traditional IAM users to centralized SSO identities.
 
@@ -34,7 +36,7 @@ module "aws_sso" {
 
 This example demonstrates defining a permission set with a combination of custom, managed, and inline policies in the YAML file.
 
-```hcl
+```
 # Example sso.yaml snippet
 permission-sets:
   - name: "permission-set-advanced"

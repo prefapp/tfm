@@ -17,9 +17,9 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Remote resources
 
-- **AWS IAM Identity Center (SSO)**: [https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html]
-- **AWS SSO Admin Resources**: [https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.html]
-- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest/docs]
+- **AWS IAM Identity Center (SSO)**: [https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)
+- **AWS SSO Admin Resources**: [https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.html](https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.html)
+- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest/docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
 ## Support
 
