@@ -1,5 +1,11 @@
+
 import boto3
 import logging
+import os
+
+# Configure root logger level once, honoring LOG_LEVEL env var if set
+_log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.getLogger().setLevel(getattr(logging, _log_level, logging.INFO))
 
 
 def log(level: str, message: str, **kwargs):
@@ -12,8 +18,8 @@ def log(level: str, message: str, **kwargs):
     Returns:
         None
     """
+
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
 
     extra = {"extra": kwargs} if kwargs else {}
 
