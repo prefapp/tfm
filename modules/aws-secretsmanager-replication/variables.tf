@@ -9,6 +9,17 @@ variable "prefix" {
 }
 
 variable "destinations_json" {
+    validation {
+      condition = can(jsondecode(var.destinations_json))
+      error_message = "destinations_json must be valid JSON."
+    }
+    validation {
+      condition = alltrue([
+        for k, v in try(jsondecode(var.destinations_json), {}):
+          contains(keys(v), "role_arn") && contains(keys(v), "regions")
+      ])
+      error_message = "Each destination in destinations_json must contain 'role_arn' and 'regions' keys."
+    }
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
 }
