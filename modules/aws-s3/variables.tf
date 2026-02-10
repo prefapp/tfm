@@ -15,7 +15,7 @@ variable "create_bucket" {
   default     = true
 }
 variable "extra_bucket_iam_policies_json" {
-  description = "A array from JSON string representing additional IAM policies to attach to the bucket."
+  description = "An array from JSON string representing additional IAM policies to attach to the bucket."
   type        = list(string)
   default     = []
 }
