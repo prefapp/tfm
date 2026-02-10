@@ -22,6 +22,15 @@ def log(level: str, message: str, exc_info=None, **kwargs):
 
     logger = logging.getLogger()
 
+    # Normalize log level to lower case and accept standard levels
+    level_normalized = level.lower()
+    if level_normalized in ["info", "warning", "error", "debug"]:
+        pass
+    elif level.upper() in ["INFO", "WARNING", "ERROR", "DEBUG"]:
+        level_normalized = level.lower()
+    else:
+        level_normalized = "debug"
+
     # Serialize kwargs as JSON and append to message for CloudWatch visibility
     if kwargs:
         try:
@@ -29,12 +38,11 @@ def log(level: str, message: str, exc_info=None, **kwargs):
         except Exception:
             message = f"{message} | context: {kwargs}"
 
-    if level == "info":
+    if level_normalized == "info":
         logger.info(message)
-    elif level == "warning":
+    elif level_normalized == "warning":
         logger.warning(message)
-    elif level == "error":
-        # Only include exc_info if explicitly requested (default: False)
+    elif level_normalized == "error":
         logger.error(message, exc_info=exc_info if exc_info is not None else False)
     else:
         logger.debug(message)
