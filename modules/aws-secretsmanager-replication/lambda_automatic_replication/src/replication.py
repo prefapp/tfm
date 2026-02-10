@@ -2,32 +2,6 @@ from src.utils import assume_role, log
 import boto3
 
 
-def extract_secret_name(secret_id):
-    """
-    Extracts the real secret name from a Secrets Manager ARN, removing the random 6-character suffix if present.
-    Args:
-        secret_id (str): The ARN or name of the secret.
-    Returns:
-        str: The extracted secret name without the random suffix.
-    """
-    # ARN → extract the part after "secret:"
-    if secret_id.startswith("arn:"):
-        # Example ARN:
-        # arn:aws:secretsmanager:eu-west-1:123456789012:secret:dev/valor_de_pi-QQzt8J
-        split_arn = secret_id.split(":secret:", 1)
-        if len(split_arn) == 2:
-            name_with_suffix = split_arn[1]
-            # Remove only the random 6-character alphanumeric suffix at the end, if present
-            if "-" in name_with_suffix:
-                base, last_segment = name_with_suffix.rsplit("-", 1)
-                if len(last_segment) == 6 and last_segment.isalnum():
-                    return base
-            return name_with_suffix
-        # If :secret: is not found, fall through and return the full ARN
-        return secret_id
-    return secret_id
-
-
 def replicate_secret(secret_id: str, config, get_sm_client=None):
     """
     Replicates a secret to all configured destinations and regions.
