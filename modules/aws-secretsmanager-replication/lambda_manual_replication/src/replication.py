@@ -29,32 +29,6 @@ def replicate_all(config):
                 log("error", f"Failed to replicate secret {secret_id}: {e}")
 
 
-def extract_secret_name(secret_id):
-    """
-    Extracts the real secret name from a Secrets Manager ARN, removing the random 6-character suffix if present.
-    Args:
-        secret_id (str): The ARN or name of the secret.
-    Returns:
-        str: The extracted secret name without the random suffix.
-    """
-    # ARN → extract the part after "secret:"
-    if secret_id.startswith("arn:"):
-        # Example ARN:
-        # arn:aws:secretsmanager:eu-west-1:123456789012:secret:dev/valor_de_pi-QQzt8J
-        parts = secret_id.split(":secret:", 1)
-        if len(parts) == 2:
-            name_with_suffix = parts[1]
-            # Only strip if the last segment is a 6-char alphanumeric suffix
-            base, last_segment = name_with_suffix.rsplit("-", 1) if "-" in name_with_suffix else (name_with_suffix, "")
-            if len(last_segment) == 6 and last_segment.isalnum():
-                return base
-            return name_with_suffix
-        else:
-            # Fallback: return the original secret_id
-            return secret_id
-    return secret_id
-
-
 def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None):
     """
     Replicates a secret to all configured destinations and regions.
