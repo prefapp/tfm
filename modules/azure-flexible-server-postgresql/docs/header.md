@@ -23,7 +23,7 @@ values:
   tags_from_rg: true
   key_vault:
     tags:
-     value: "tag1"
+      value: "tag1"
     #name: "key-vault-name"
     #resource_group_name: "key-vault-resource-group-name"
   vnet:
