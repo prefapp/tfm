@@ -34,7 +34,7 @@ values:
   subnet_name: "example-subnet"
   dns_private_zone_name: "dns.private.zone.example.com"
   administrator_password_key_vault_secret_name: "flexible-server-secret-example-test"
-  password_lenght: 10
+  password_length: 10
   postgresql_flexible_server:
     location: "westeurope"
     name: "example-flexible-server"
