@@ -12,7 +12,7 @@ This Terraform module allows you to create a custom role in Azure, specifying ac
 
 ## Ejemplo completo
 
-Puedes encontrar un ejemplo completo en [`_examples/basic/values.yaml`](../\_examples/basic/values.yaml).
+Puedes encontrar un ejemplo completo en [`_examples/basic/values.yaml`](_examples/basic/values.yaml).
 
 ## File structure
 
