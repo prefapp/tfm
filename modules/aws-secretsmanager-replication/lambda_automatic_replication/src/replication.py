@@ -13,8 +13,10 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
     """
     log("info", "Starting replication", secret_id=secret_id)
 
-    # Read source secret (full ARN is OK)
-    source_sm = boto3.client("secretsmanager", region_name=config.source_region)
+    # Allow passing a pre-created source_sm client for efficiency (e.g., full sync)
+    source_sm = getattr(config, "source_sm", None)
+    if source_sm is None:
+        source_sm = boto3.client("secretsmanager", region_name=config.source_region)
 
     secret_response = source_sm.get_secret_value(SecretId=secret_id)
     if "SecretString" in secret_response:
@@ -120,10 +122,18 @@ def replicate_all(config):
             sm_client_cache[key] = assume_role(role_arn, region_name)
         return sm_client_cache[key]
 
+    # Pass the source_sm client via config for reuse
+    class ConfigWithClient:
+        def __init__(self, base, source_sm):
+            self.__dict__.update(base.__dict__)
+            self.source_sm = source_sm
+
+    config_with_client = ConfigWithClient(config, source_sm)
+
     for page in paginator.paginate():
         for secret in page.get("SecretList", []):
             secret_id = secret["ARN"]
             try:
-                replicate_secret(secret_id, config, get_sm_client=get_sm_client)
+                replicate_secret(secret_id, config_with_client, get_sm_client=get_sm_client)
             except Exception as e:
                 log("error", f"Failed to replicate secret {secret_id}: {e}", exc_info=True)
