@@ -27,7 +27,6 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
         raise Exception(f"Secret {secret_id} has neither SecretString nor SecretBinary")
 
     secret_metadata = source_sm.describe_secret(SecretId=secret_id)
-    dest_name = secret_metadata["Name"]
     source_tags = secret_metadata.get("Tags", [])
 
     for account_id, dest in config.destinations.items():
@@ -35,6 +34,10 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
 
         for region_name, region_cfg in dest.regions.items():
             log("info", "Replicating to region", account_id=account_id, region=region_name)
+
+            dest_secret_arn = region_cfg.destination_secret_arn
+            # Extract the secret name from the ARN (last part after :secret:)
+            dest_name = dest_secret_arn.split(":secret:", 1)[1] if ":secret:" in dest_secret_arn else dest_secret_arn
 
             # Use cached client if provided, else fallback to assume_role
             if get_sm_client is not None:
