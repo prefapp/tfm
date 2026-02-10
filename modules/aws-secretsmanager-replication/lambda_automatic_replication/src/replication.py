@@ -38,7 +38,15 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
             if secret_id == region_cfg.source_secret_arn:
                 match = True
             elif ":secret:" in region_cfg.source_secret_arn and ":secret:" in secret_id:
+                # Both are ARNs: compare the resource part after ":secret:"
                 match = region_cfg.source_secret_arn.split(":secret:", 1)[1] == secret_id.split(":secret:", 1)[1]
+            elif ":secret:" in region_cfg.source_secret_arn and ":secret:" not in secret_id:
+                # Configured value is an ARN and secret_id is a name (e.g., from CreateSecret CloudTrail event).
+                # Extract the secret-name portion from the ARN (before the trailing random suffix, if present).
+                arn_resource = region_cfg.source_secret_arn.split(":secret:", 1)[1]
+                secret_name_from_arn = arn_resource.rsplit("-", 1)[0]
+                if secret_id == secret_name_from_arn:
+                    match = True
             if not match:
                 continue
 
