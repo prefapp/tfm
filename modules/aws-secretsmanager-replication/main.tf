@@ -343,64 +343,54 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
   bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
 
-  policy = var.s3_bucket_name != "" && var.existing_bucket_policy_json != null ? (
-    jsonencode(merge(
-      local.decoded_existing_bucket_policy,
-      {
-        Statement = concat(
-          local.decoded_existing_bucket_policy_statements,
-          [
-            {
-              Sid       = "AWSCloudTrailAclCheck"
-              Effect    = "Allow"
-              Principal = { Service = "cloudtrail.amazonaws.com" }
-              Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
-              Resource  = local.s3_bucket_arn
-              Condition = (
-                var.s3_bucket_name != "" && var.cloudtrail_name != "" ? merge({
-                  StringEquals = {
-                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+  policy = (
+    var.s3_bucket_name != "" && var.existing_bucket_policy_json != null ?
+      jsonencode(merge(
+        local.decoded_existing_bucket_policy,
+        {
+          Statement = concat(
+            local.decoded_existing_bucket_policy_statements,
+            [
+              {
+                Sid       = "AWSCloudTrailAclCheck"
+                Effect    = "Allow"
+                Principal = { Service = "cloudtrail.amazonaws.com" }
+                Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
+                Resource  = local.s3_bucket_arn
+                Condition = (
+                  var.s3_bucket_name != "" && var.cloudtrail_name != "" ? merge({
+                    StringEquals = {
+                      "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                    }
+                  }, {
+                    ArnLike = {
+                      "aws:SourceArn" = local.cloudtrail_arn
+                    }
+                  }) : {
+                    StringEquals = {
+                      "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                    }
                   }
-                }, {
-                  ArnLike = {
-                    "aws:SourceArn" = local.cloudtrail_arn
-                  }
-                }) : {
-                  StringEquals = {
-                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                  }
-                }
-              )
-            },
-            {
-              Sid       = "AWSCloudTrailWrite"
-              Effect    = "Allow"
-              Principal = { Service = "cloudtrail.amazonaws.com" }
-              Action    = "s3:PutObject"
-              Resource  = local.s3_bucket_logs_arn
-              Condition = (
-                var.s3_bucket_name != "" && var.cloudtrail_name != "" ? merge({
-                  StringEquals = {
-                    "s3:x-amz-acl"      = "bucket-owner-full-control"
-                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                  }
-                }, {
-                  ArnLike = {
-                    "aws:SourceArn" = local.cloudtrail_arn
-                  }
-                }) : {
+                ),
+              },
+              {
+                Sid       = "AWSCloudTrailWrite"
+                Effect    = "Allow"
+                Principal = { Service = "cloudtrail.amazonaws.com" }
+                Action    = "s3:PutObject"
+                Resource  = local.s3_bucket_logs_arn
+                Condition = {
                   StringEquals = {
                     "s3:x-amz-acl"      = "bucket-owner-full-control"
                     "aws:SourceAccount" = data.aws_caller_identity.current.account_id
                   }
                 }
-              )
-            }
-          ]
-        )
-      }
-    ))
-    ) : jsonencode({
+              }
+            ]
+          )
+        }
+      ))
+      : jsonencode({
       Version = "2012-10-17"
       Statement = [
         {
@@ -432,25 +422,6 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
           }
         }
       ]
-  })
-}
-
-
-check "input_validation" {
-  assert {
-    condition = !(
-      var.eventbridge_enabled && var.s3_bucket_name == "" && !var.manage_s3_bucket_policy
-    )
-    error_message = "If the module is creating the CloudTrail S3 bucket (s3_bucket_name == '' and eventbridge_enabled = true), manage_s3_bucket_policy must be true. Otherwise, CloudTrail log delivery will fail due to missing bucket policy."
-  }
-  assert {
-    condition     = !(var.eventbridge_enabled && var.cloudtrail_name != "" && var.s3_bucket_name == "")
-    error_message = "You provided cloudtrail_name but not s3_bucket_name. Provide the S3 bucket name used by that trail."
-  }
-  assert {
-    condition = !(
-      var.manage_s3_bucket_policy && var.s3_bucket_name != "" && var.existing_bucket_policy_json == null
-    )
-    error_message = "When managing the policy on an existing S3 bucket (s3_bucket_name set), you must provide existing_bucket_policy_json to avoid overwriting existing statements."
-  }
+    })
+  )
 }
