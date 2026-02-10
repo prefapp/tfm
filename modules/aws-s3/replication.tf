@@ -125,17 +125,6 @@ data "aws_iam_policy_document" "replication" {
     ]
   }
 
-  # statement {
-  #   effect = "Allow"
-
-  #   actions = [
-  #     "s3:ReplicateObject",
-  #     "s3:ReplicateDelete",
-  #     "s3:ReplicateTags",
-  #   ]
-
-  #   resources = ["${try(var.s3_replication_destination.bucket_arn, "")}/*"]
-  # }
 }
 
 resource "aws_iam_policy" "replication" {
@@ -152,36 +141,6 @@ resource "aws_iam_role_policy_attachment" "replication" {
 }
 
 ### Creating rule for destination bucket
-# {
-#     "Version": "2012-10-17",
-#     "Id": "",
-#     "Statement": [
-#         {
-#             "Sid": "Set-permissions-for-objects",
-#             "Effect": "Allow",
-#             "Principal": {
-#                 "AWS": "arn:aws:iam::816069157330:role/prefapp-tfm-module-test-bucket-ruben-r20260206131700333500000001"
-#             },
-#             "Action": [
-#                 "s3:ReplicateObject",
-#                 "s3:ReplicateDelete"
-#             ],
-#             "Resource": "arn:aws:s3:::ruben-castrelo-s3-proba/*"
-#         },
-#         {
-#             "Sid": "Set-permissions-on-bucket",
-#             "Effect": "Allow",
-#             "Principal": {
-#                 "AWS": "arn:aws:iam::816069157330:role/prefapp-tfm-module-test-bucket-ruben-r20260206131700333500000001"
-#             },
-#             "Action": [
-#                 "s3:GetBucketVersioning",
-#                 "s3:PutBucketVersioning"
-#             ],
-#             "Resource": "arn:aws:s3:::ruben-castrelo-s3-proba"
-#         }
-#     ]
-# }
 
 
 data "aws_iam_policy_document" "destination_replication_s3_policy" {
