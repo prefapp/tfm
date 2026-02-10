@@ -41,10 +41,13 @@ backup_policies:
 backup_instances:
   - disk_name: foo-disk
     disk_resource_group: foo-data
+    snapshot_resource_group_name: bk-disks
     backup_policy_name: foo-policy
   - disk_name: foo-disk
     disk_resource_group: foo-data
+    snapshot_resource_group_name: bk-disks
     backup_policy_name: bar-policy
   - disk_name: bar-disk
     disk_resource_group: bar-data
+    snapshot_resource_group_name: bk-disks
     backup_policy_name: bar-policy
