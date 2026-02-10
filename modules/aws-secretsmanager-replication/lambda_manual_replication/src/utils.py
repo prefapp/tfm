@@ -1,4 +1,4 @@
-
+import json
 import boto3
 import logging
 import os
@@ -8,12 +8,13 @@ _log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
 logging.getLogger().setLevel(getattr(logging, _log_level, logging.INFO))
 
 
-def log(level: str, message: str, **kwargs):
+def log(level: str, message: str, exc_info=None, **kwargs):
     """
     Structured logging helper for consistent log output.
     Args:
         level (str): Log level (info, warning, error, debug).
         message (str): Log message.
+        exc_info (bool|None): Whether to include exception info (only for error logs).
         **kwargs: Additional context for the log.
     Returns:
         None
@@ -21,16 +22,22 @@ def log(level: str, message: str, **kwargs):
 
     logger = logging.getLogger()
 
-    extra = {"extra": kwargs} if kwargs else {}
+    # Serialize kwargs as JSON and append to message for CloudWatch visibility
+    if kwargs:
+        try:
+            message = f"{message} | context: {json.dumps(kwargs, default=str, sort_keys=True)}"
+        except Exception:
+            message = f"{message} | context: {kwargs}"
 
     if level == "info":
-        logger.info(message, **extra)
+        logger.info(message)
     elif level == "warning":
-        logger.warning(message, **extra)
+        logger.warning(message)
     elif level == "error":
-        logger.error(message, exc_info=True, **extra)
+        # Only include exc_info if explicitly requested (default: False)
+        logger.error(message, exc_info=exc_info if exc_info is not None else False)
     else:
-        logger.debug(message, **extra)
+        logger.debug(message)
 
 
 def assume_role(role_arn: str, region: str, session_name: str = "replication-session"):
