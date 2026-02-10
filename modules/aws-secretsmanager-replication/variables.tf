@@ -113,10 +113,16 @@ variable "s3_bucket_name" {
   default     = ""
 }
 
-variable "cloudtrail_name" {
-  description = "(Optional) Name of the CloudTrail trail to monitor for Secrets Manager events. If provided, the module will reuse this trail instead of creating one."
+variable "cloudtrail_arn" {
+  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail."
   type        = string
-  default     = ""
+  default     = null
+}
+
+variable "cloudtrail_name" {
+  description = "(Optional) Name of an existing CloudTrail. Required if using an existing trail."
+  type        = string
+  default     = null
 }
 
 variable "manage_s3_bucket_policy" {
