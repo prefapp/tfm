@@ -87,6 +87,8 @@ description: Minimal test group
 members:
   - type: user
     email: user-2@example.com
+directory_roles: []
+subscription_roles: []
 ```
 
 **main.tf**
@@ -97,9 +99,11 @@ locals {
 
 module "azuread-group" {
   source = "../.."
-  name   = local.values.name
-  description = local.values.description
-  members = local.values.members
+  name              = local.values.name
+  description       = local.values.description
+  members           = local.values.members
+  directory_roles   = local.values.directory_roles
+  subscription_roles = local.values.subscription_roles
 }
 ```
 
