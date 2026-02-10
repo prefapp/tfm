@@ -10,7 +10,7 @@ variable "bucket" {
 }
 
 variable "create_bucket" {
-  description = "Variable para indicar si creamos el bucket o si usamos uno con el nombre indicado en bucket"
+  description = "Whether to create a new bucket or use an existing one with the name specified in the 'bucket' variable."
   type        = bool
   default     = true
 }
