@@ -16,12 +16,12 @@ locals {
   # VPC resolution
   vpc_by_id  = (var.vpc_id != null && var.vpc_id != "") ? data.aws_vpc.by_id[0] : null
   vpc_by_tag = (var.vpc_id == null && var.vpc_tag_name != "") ? data.aws_vpc.this[0] : null
-  vpc_id     = var.service_name != null ? try(local.vpc_by_id.id, local.vpc_by_tag.id) : null
+  vpc_id     = try(local.vpc_by_id.id, local.vpc_by_tag.id, "")
 
   # Subnet resolution
   resolved_subnets = (
     var.subnet_ids != null && length(var.subnet_ids) > 0
-  ) ? var.subnet_ids : var.service_name != null ? try(data.aws_subnets.this[0].ids, []) : []
+  ) ? var.subnet_ids : try(data.aws_subnets.this[0].ids, [])
 
 
   # Target group creation condition

@@ -1,47 +1,103 @@
-# SSO
+<!-- BEGIN_TF_DOCS -->
+# AWS SSO Terraform Module
 
-**Index**
+## Overview
 
-- [SSO](#sso)
-  - [What is SSO?](#what-is-sso)
-  - [User's Guide](#users-guide)
-  - [Security obligations](#security-obligations)
-  - [Recommendations on user migration from IAM](#recommendations-on-user-migration-from-iam)
-  - [SSO Terraform](#sso-terraform)
-    - [Users](#users)
-    - [Groups](#groups)
-    - [`users>group` attachments](#usersgroup-attachments)
-    - [Policies](#policies)
-      - [Customized policies](#customized-policies)
-      - [Managed policies](#managed-policies)
-      - [Inline policies](#inline-policies)
-      - [Example of combined policies:](#example-of-combined-policies)
-    - [Example of a complete document](#example-of-a-complete-document)
-  - [Workflow](#workflow)
-    - [Operate on the main repository](#operate-on-the-main-repository)
-    - [If a new user has been created in the process](#if-a-new-user-has-been-created-in-the-process)
-  - [If the group needs access to k8s (EKS)](#if-the-group-needs-access-to-k8s-eks)
-  - [New User Guidance](#new-user-guidance)
-  - [AWS console access](#aws-console-access)
-  - [Programmatic access](#programmatic-access)
+This Terraform module provisions and manages AWS Single Sign-On (SSO), now known as IAM Identity Center, resources in a declarative manner.
+It handles the creation of users and groups within the Identity Store, defines permission sets with various policy attachments (including custom-managed, AWS-managed, and inline policies), and assigns these permission sets to specific AWS accounts for both groups and users.
+The module reads configurations from a YAML file, allowing for centralized management of identity and access controls across AWS environments.
+By leveraging Terraform's infrastructure-as-code approach, this module ensures consistent and reproducible SSO setups, reducing manual errors and simplifying compliance. It supports complex scenarios such as multi-account permissions, group-based access control, and policy customizations, making it suitable for organizations scaling their AWS presence. Key integrations include dependencies on AWS SSO admin resources and Identity Store, with built-in waits to handle eventual consistency in AWS services.
+This module is ideal for development, staging, and production environments where fine-grained access management is required. It promotes best practices like least privilege through permission sets and helps migrate from traditional IAM users to centralized SSO identities.
 
-<br>
+## Key Features
 
----
+- **User and Group Management**: Creates and manages users and groups in AWS Identity Store, including user-group memberships for organized access control.
+- **Permission Set Configuration**: Supports multiple policy types including custom-managed policies (by name/path), AWS-managed policies (by ARN), and inline policies (defined in YAML).
+- **Account Assignments**: Assigns permission sets to AWS accounts for groups and users, enabling multi-account access management.
+- **YAML-Driven Configuration**: All definitions (users, groups, permissions, attachments) are specified in a single YAML file for simplicity and version control.
+- **Dependency Management**: Includes explicit dependencies and time sleeps to ensure resources are provisioned in the correct order, handling AWS API eventual consistency.
 
-<br>
+## Basic Usage
 
-## What is SSO?
+### Standard Configuration with YAML File
 
-> [https://aws.amazon.com/es/single-sign-on/](https://aws.amazon.com/es/single-sign-on/)
+This example shows a basic module invocation using a YAML file to define users, groups, permission sets, and account attachments.
 
-Single sign-on (SSO) is an authentication solution that allows users to log in to multiple applications and websites with a single user authentication. As users today frequently access applications directly from their browsers, organizations prioritize access management strategies that improve both security and user experience. SSO provides both, as users can access all password-protected resources without a repeat login once their identity has been validated.
+```hcl
+module "aws_sso" {
+  source = "github.com/prefapp/tfm/modules/aws-sso?ref=v0.6.1"  # Use the latest version or a specific tag
 
-<br>
+  data_file           = "path/to/sso.yaml"
+  identity_store_arn  = "arn:aws:sso:::instance/ssoins-1234567890abcdef"
+  store_id            = "d-1234567890"
+}
+```
 
----
+### Advanced Configuration with Mixed Policies
 
-<br>
+This example demonstrates defining a permission set with a combination of custom, managed, and inline policies in the YAML file.
+
+```yaml
+# Example sso.yaml snippet
+permission-sets:
+  - name: "permission-set-advanced"
+    custom-policies:
+      - name: "custom-policy-example"
+    managed-policies:
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+    inline-policies:
+      - name: "inline-policy-example"
+        policy: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": ["ec2:Describe*"],
+                "Resource": "*"
+              }
+            ]
+          }
+```
+```hcl
+module "aws_sso" {
+  source = "github.com/prefapp/tfm/modules/aws-sso?ref=v0.6.1"
+
+  data_file           = "path/to/sso.yaml"
+  identity_store_arn  = "arn:aws:sso:::instance/ssoins-1234567890abcdef"
+  store_id            = "d-1234567890"
+}
+```
+## File Structure
+
+The module is organized with the following directory and file structure:
+
+```
+aws-sso/
+├── .terraform-docs.yml       # terraform-docs configuration
+├── attachments.tf            # Account assignment resources for groups and users
+├── main.tf                   # Core user and group management resources
+├── outputs.tf                # Output value definitions
+├── permissions.tf            # Permission set definitions and policy attachments
+├── variables.tf              # Input variable definitions
+├── CHANGELOG.md              # Release history (auto-generated)
+├── docs/                     # Documentation files
+│   ├── header.md             # This file - module overview and usage
+│   └── footer.md             # Additional resources and support
+└── _examples/                # Usage examples for different scenarios
+    ├── basic/                # Basic SSO setup example
+    │   └── main.tf
+    └── advanced/             # Advanced permissions example
+        └── main.tf
+```
+
+**Key Files**:
+
+- **attachments.tf**: Defines account assignments for permission sets to groups and users across AWS accounts.
+- **main.tf**: Handles creation of users, groups, and group memberships in the Identity Store.
+- **permissions.tf**: Manages permission sets and attachments for custom, managed, and inline policies, including time sleeps for dependencies.
+- **variables.tf**: Input variables for YAML data file, Identity Store ARN, and Store ID.
+- **outputs.tf**: Exports debug output for user-group associations.
 
 ## User's Guide
 
@@ -54,12 +110,6 @@ The SSO process is as follows:
   3. If the user does not have a validated credential, the SSO service redirects the user to a central login system and prompts the user to submit his or her username and password.
   4. After submission, the service validates the user's credentials and sends the positive response to the application. 
   5. Otherwise, the user receives an error message and must re-enter the credentials. Multiple failed login attempts may result in the service blocking the user from further attempts for a fixed period of time.
-
-<br>
-
----
-
-<br>
 
 ## Security obligations
 
@@ -76,12 +126,6 @@ The SSO process is as follows:
   9. Rotate account passwords systematically and periodically.
   10. Force users to change their passwords as frequently.
 
-<br>
-
----
-
-<br>
-
 ## Recommendations on user migration from IAM
 
 1. Write down in a list which users are to be migrated and which users are not to be migrated.
@@ -94,12 +138,6 @@ The SSO process is as follows:
 8. Review the permissions of the associates, and if necessary, remove or restrict them.
 9. Gradually migrate users, so that there are no availability problems.
 10. Never start migrating users without being sure that the permissions are properly configured.
-
-<br>
-
----
-
-<br>
 
 ## SSO Terraform
 
@@ -131,9 +169,9 @@ The groups must be in `groups` with the following structure:
       - userB
 ```
 
-### `users>group` attachments 
+### `users>group` attachments
 
-Los usuarios y grupos se deben asociar mediante `attachments` con la siguiente estructura:
+Users and groups must be associated using `attachments` with the following structure:
 
 ```yaml
 attachments:
@@ -208,209 +246,74 @@ permission-sets:
           }
 ```
 
-#### Example of combined policies:
+## Requirements
 
-```yaml
-permission-sets:
-  - name: "permission-set-foo"
-    custom-policies:
-      - name: "custom-policy-foo"
-    managed-policies:
-      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-      - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-    inline-policies:
-      - name: "inline-policy-foo"
-        policy: |
-          {
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Effect": "Allow",
-                "Action": [
-                  "ec2:Describe*"
-                ],
-                "Resource": "*"
-              }
-            ]
-          }
-```
+No requirements.
 
-### Example of a complete document
+## Providers
 
-```yaml
-groups:
-  - name: "groupA"
-    description: "The Group A"
-    users:
-      - userA
-      - userB
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_time"></a> [time](#provider\_time) | n/a |
 
-users:
-  - name: "userA"
-    email: "test@test.test"
-    fullname: "userA"
-  - name: "userB"
-    email: "test-2@test.test"
-    fullname: "userB"
+## Modules
 
-permission-sets:
-  - name: "permission-set-foo"
-    custom-policies:
-      - name: "custom-policy-foo"
-    managed-policies:
-      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-      - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-    inline-policies:
-      - name: "inline-policy-foo"
-        policy: |
-          {
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Effect": "Allow",
-                "Action": [
-                  "ec2:Describe*"
-                ],
-                "Resource": "*"
-              }
-            ]
-          }
+No modules.
 
-attachments:
-  123456789101:
-    permission-set-foo:
-      groups:
-        - groupA
-      users:
-        - userA
-```
+## Resources
 
-<br>
+| Name | Type |
+|------|------|
+| [aws_identitystore_group.groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_group) | resource |
+| [aws_identitystore_group_membership.groups-users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_group_membership) | resource |
+| [aws_identitystore_user.users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_user) | resource |
+| [aws_ssoadmin_account_assignment.accounts-permissions-groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
+| [aws_ssoadmin_account_assignment.accounts-permissions-users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
+| [aws_ssoadmin_customer_managed_policy_attachment.permissions-custom-policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_customer_managed_policy_attachment) | resource |
+| [aws_ssoadmin_managed_policy_attachment.permissions-managed-policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_managed_policy_attachment) | resource |
+| [aws_ssoadmin_permission_set.permissions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set) | resource |
+| [aws_ssoadmin_permission_set_inline_policy.permissions-inline-policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
+| [time_sleep.wait_30seg](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 
----
+## Inputs
 
-<br>
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_data_file"></a> [data\_file](#input\_data\_file) | absolute path of the data to use (in YAML format) | `string` | n/a | yes |
+| <a name="input_identity_store_arn"></a> [identity\_store\_arn](#input\_identity\_store\_arn) | the arn of the SSO instance | `string` | n/a | yes |
+| <a name="input_store_id"></a> [store\_id](#input\_store\_id) | the Identity store id | `string` | n/a | yes |
 
-## Workflow
+## Outputs
 
-### Operate on the main repository
+| Name | Description |
+|------|-------------|
+| <a name="output_debug"></a> [debug](#output\_debug) | n/a |
 
-1. Modify the `sso.yaml` file with the changes you want.
-2. Generate a PR with the changes.
-3. Verify that the verification pipeline is completed correctly.
-4. Verify in the `terraform plan` step that the changes to be applied are as desired.
-5. Wait for the approval of the PR by the repository owner.
-6. Once the PR is approved, merge the PR.
-7. Validate that the `terraform apply` pipeline is completed correctly.
-8. Verify with the people involved that the changes have been applied correctly.
+## Additional configuration details
 
-### If a new user has been created in the process
+### YAML Configuration File
 
-1. Access the user from the AWS console at IAM Identity Center (successor to AWS Single Sign-On)>Users.
-<p align="center"><img src="../../_assets/sso_1.png" width="600" /></p>
+The module relies on a YAML file (specified via `data_file`) for all SSO configurations. Key sections include:
+- **users**: List of users with name, email, and fullname.
+- **groups**: List of groups with name, description, and associated users.
+- **permission-sets**: Definitions for permission sets, including custom-policies, managed-policies, and inline-policies.
+- **attachments**: Account-specific assignments of permission sets to groups and users.
 
-2. Send the verification email.
-<p align="center"><img src="../../_assets/sso_2.png" width="600" /></p>
-<p align="center"><img src="../../_assets/sso_2_1.png" width="600" /></p>
+## Examples
 
-## If the group needs access to k8s (EKS)
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-sso/_examples):
 
-This step is necessary for the user to be able to access the k8s cluster with K9s or kubectl. Therefore, segregate users into groups that need or do not need access to k8s.
+- [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-sso/_examples/basic) - Basic SSO setup with users, groups, and simple permission sets.
+- [Advanced](https://github.com/prefapp/tfm/tree/main/modules/aws-sso/_examples/advanced) - Advanced configuration with mixed policies and multi-account assignments.
 
-For example, if you create a role with permissions to access the k8s cluster, the user belonging to that group will have access to the k8s cluster.
+## Remote resources
 
-> Note: a user can belong to several groups. Check the permissions assigned to each group carefully.
+- **AWS IAM Identity Center (SSO)**: [https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)
+- **AWS SSO Admin Resources**: [https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.html](https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.html)
+- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest/docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
-1. Locate the role-arn group using the group name. For example, if the group is named `front`, run the following command:
+## Support
 
-> Note: Replace `front` with the name of the group you created in the previous step.
-
-```bash
-ROLE_NAME="front"; aws iam list-roles --output text | grep $ROLE_NAME | grep -v Arn | cut -d '/' -f 5 | awk '{str="arn:aws:iam::123456789012:role/"; print str $1}'
-```
-
-```output
-arn:aws:iam::123456789012:role/AWSReservedSSO_front_aa123456789012
-```
-
-1. Access the `default.tfvars` file in the `terraform/eks-next` directory of this same repository.
-2. In the key `aws_auth_roles` add the role you have obtained in the previous step. For example:
-
-```yaml
-aws_auth_roles = [
-  ...
-  },
-  {
-    userarn  = "arn:aws:iam::1234567890123:role/AWSReservedSSO_front_aa94d123456789"
-    username = "terraform"
-    groups   = ["system:masters"]
-  }
-]
-```
-
-1. Pay attention to which group/s the role belongs to (users attached). There are several roles that you can consult in the RBAC directory of this same repository.
-2. If you want it to have access to the whole cluster, add the role to the `system:masters` group (as in the previous example). If you want it to have access to a specific namespace.
-3. Apply the changes with `terraform apply --var-file=default.tfvars` in the `terraform/eks-next` directory of this same repository.
-
-## New User Guidance
-
-1. Ask him to validate your account using the email you have received.
-<p align="center"><img src="../../_assets/sso_3.png" width="600" /></p>
-
-2. Provide the access link to the AWS console.
-
-`https://nameexample.awsapps.com/start`
-
-3. Ask him to log in to the AWS console, enter his user (email) and click `Forgot password?`
-<p align="center">
-  <img src="../../_assets/sso_4.png" width="600" />
-  <img src="../../_assets/sso_5.png" width="600" />
-</p>
-
-4. The user will receive an email with a link to reset the password.
-<p align="center"><img src="../../_assets/sso_6.png" width="600" /></p>
-
-5. The user accesses the link and sets his password.
-
-<br>
-
----
-
-<br>
-
-## AWS console access
-
-The user accesses the AWS console with his user name and password. He will be able to access the services assigned to him from the AWS console (1).
-
-<p align="center"><img src="../../_assets/sso_7.png" width="600" /></p>
-
-<br>
-
----
-
-<br>
-
-## Programmatic access
-
-1. The user can access AWS services programmatically. To do so, you must configure your AWS client with the credentials provided by AWS SSO (2).
-2. Or, the user can configure your AWS client with the `nameexample-sso` profile provided by AWS SSO.
-
-```bash
-$ aws configure sso
-SSO start URL [None]: https://nameexample.awsapps.com/start
-SSO Region [None]: eu-west-1
-SSO account id [None]: 123456789012
-CLI default client Region [None]: eu-west-1
-CLI default output format [None]: json
-CLI profile name [None]: nameexample-sso
-```
-
-3. Once the profile is configured, you can access AWS services programmatically with the following command:
-
-```bash
-$ aws sso login --profile nameexample-sso
-```
-
-4. Copy the code and open the link in a browser window to authenticate with your AWS SSO username and password.
-
-<p align="center"><img src="../../_assets/sso_8.png" width="600" /></p>
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+<!-- END_TF_DOCS -->

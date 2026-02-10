@@ -15,6 +15,10 @@ provider "aws" {
 }
 
 module "ecs" {
-  source = "../../"
-  cluster_name          = "example-autoscaling-cluster"
+  source          = "../../"
+  cluster_name    = "example-autoscaling-cluster"
+}
+
+output "proba" {
+  value = module.ecs
 }

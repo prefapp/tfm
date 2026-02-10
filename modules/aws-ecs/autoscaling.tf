@@ -12,7 +12,7 @@ resource "aws_appautoscaling_target" "ecs" {
 
   max_capacity       = each.value.max_capacity
   min_capacity       = each.value.min_capacity
-  resource_id        = "service/${aws_ecs_cluster.this[0].name}/${each.key}"
+  resource_id        = "service/${var.cluster_name}/${aws_ecs_service.this[0].name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
@@ -114,7 +114,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_up_alarm" {
         period      = var.ecs_autoscaling[each.key].scale.up.period
         stat        = var.ecs_autoscaling[each.key].metric_statistic
         dimensions = {
-          ClusterName = aws_ecs_cluster.this.name
+          ClusterName = var.create_cluster ? aws_ecs_cluster.this[0].name : var.cluster_name
           ServiceName = each.key
         }
       }
@@ -160,7 +160,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_down_alarm" {
         period      = var.ecs_autoscaling[each.key].scale.down.period
         stat        = var.ecs_autoscaling[each.key].metric_statistic
         dimensions = {
-          ClusterName = aws_ecs_cluster.this.name
+          ClusterName = var.create_cluster ? aws_ecs_cluster.this[0].name : var.cluster_name
           ServiceName = each.key
         }
       }
