@@ -356,16 +356,20 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
               Principal = { Service = "cloudtrail.amazonaws.com" }
               Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
               Resource  = local.s3_bucket_arn
-              Condition = merge({
-                StringEquals = {
-                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                }
-              },
-                local.cloudtrail_arn != null ? {
+              Condition = (
+                var.s3_bucket_name != "" && var.cloudtrail_name != "" ? merge({
+                  StringEquals = {
+                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                  }
+                }, {
                   ArnLike = {
                     "aws:SourceArn" = local.cloudtrail_arn
                   }
-                } : {}
+                }) : {
+                  StringEquals = {
+                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                  }
+                }
               )
             },
             {
@@ -374,17 +378,22 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
               Principal = { Service = "cloudtrail.amazonaws.com" }
               Action    = "s3:PutObject"
               Resource  = local.s3_bucket_logs_arn
-              Condition = merge({
-                StringEquals = {
-                  "s3:x-amz-acl"      = "bucket-owner-full-control"
-                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                }
-              },
-                local.cloudtrail_arn != null ? {
+              Condition = (
+                var.s3_bucket_name != "" && var.cloudtrail_name != "" ? merge({
+                  StringEquals = {
+                    "s3:x-amz-acl"      = "bucket-owner-full-control"
+                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                  }
+                }, {
                   ArnLike = {
                     "aws:SourceArn" = local.cloudtrail_arn
                   }
-                } : {}
+                }) : {
+                  StringEquals = {
+                    "s3:x-amz-acl"      = "bucket-owner-full-control"
+                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                  }
+                }
               )
             }
           ]
