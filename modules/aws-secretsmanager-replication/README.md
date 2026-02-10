@@ -48,7 +48,21 @@ By default, tags from the source secret are also replicated to the destination. 
 
 ## Important Note: Permissions
 
-Ensure that the destination roles have the necessary permissions to create and update secrets in the target accounts/regions. The source Lambda role must also have permission to assume these roles and read the source secrets.
+**Important:**
+The Lambda IAM permissions for reading and writing secrets are determined by the `source_secret_arns` and `destination_secret_arns` locals, which are extracted from the destinations\_json. However, the documented destinations\_json schema only includes `role_arn` and `kms_key_arn`, so these locals will likely be empty unless you extend the schema to include secret ARNs.
+
+If no secret ARNs are provided, the Lambda role will not have permissions to read or write any secrets, resulting in AccessDenied errors for basic operations like `GetSecretValue` and `DescribeSecret`. To avoid this, you should either:
+
+- Extend your destinations\_json to include `source_secret_arn` and `destination_secret_arn` for each region.
+- Or, use a controlled wildcard pattern (such as prefix-based ARNs) for IAM permissions, if your secrets follow a naming convention.
+
+**Example wildcard pattern:**
+```
+arn:aws:secretsmanager:<region>:<account>:secret:<prefix>*
+```
+
+**Recommendation:**
+Review your destinations\_json and IAM policy configuration to ensure the Lambda has the necessary permissions for all intended secrets.
 
 ## Architecture: Event-Driven Cross-Account Secret Replication
 
