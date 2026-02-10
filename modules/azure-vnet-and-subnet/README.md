@@ -9,68 +9,92 @@ This Terraform module creates and manages a Virtual Network (VNet) and subnets i
 - Configure network peerings
 - Flexible tagging and tag inheritance from the resource group
 
-#### Example
+### Basic example
 
-### Set a module
+```hcl
+module "azure_vnet_and_subnet" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-and-subnet?ref=<version>"
 
-```terraform
-module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-subnet?ref=<version>"
+  resource_group_name = "example-rg"
+
+  virtual_network = {
+    name          = "example-vnet"
+    location      = "westeurope"
+    address_space = ["10.0.0.0/16"]
+    subnets = {
+      internal = {
+        address_prefixes = ["10.0.1.0/24"]
+      }
+    }
+  }
+
+  private_dns_zones = []
+  peerings          = []
+
+  tags = {
+    environment = "dev"
+  }
 }
 ```
 
+### Advanced example
+
 ```hcl
-resource_group_name = "myResourceGroupName"
+module "azure_vnet_and_subnet" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-and-subnet?ref=<version>"
 
-virtual_network = {
-  name = "myVnetName"
-  location = "myLocation"
-  address_space = ["10.107.0.0/32"]
-  subnets = {
-    subnet1 = {
-      address_prefixes = ["10.107.0.0/18"]
-      service_endpoints = ["Microsoft.Storage"]
-    }
-    subnet2 = {
-      address_prefixes = ["10.107.64.0/24"]
-      service_endpoints = ["Microsoft.Storage"]
-      delegation = [
-        {
-          name = "Microsoft.DBforPostgreSQL.flexibleServers"
-          service_delegation = {
-            name = "Microsoft.DBforPostgreSQL/flexibleServers"
-            actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+  resource_group_name = "myResourceGroupName"
+
+  virtual_network = {
+    name          = "myVnetName"
+    location      = "myLocation"
+    address_space = ["10.107.0.0/16"]
+    subnets = {
+      subnet1 = {
+        address_prefixes = ["10.107.0.0/18"]
+        service_endpoints = ["Microsoft.Storage"]
+      }
+      subnet2 = {
+        address_prefixes = ["10.107.64.0/24"]
+        service_endpoints = ["Microsoft.Storage"]
+        delegation = [
+          {
+            name = "Microsoft.DBforPostgreSQL.flexibleServers"
+            service_delegation = {
+              name    = "Microsoft.DBforPostgreSQL/flexibleServers"
+              actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+            }
           }
-        }
-      ]
+        ]
+      }
     }
   }
-}
 
-private_dns_zones = [
-  {
-    name = "foo.councilbox.postgres.database.azure.com",
-    auto_registration_enabled = true
-  },
-  {
-    name = "privatelink.redis.cache.windows.net"
-    link_name = "redis_link"
+  private_dns_zones = [
+    {
+      name                      = "foo.councilbox.postgres.database.azure.com"
+      auto_registration_enabled = true
+    },
+    {
+      name      = "privatelink.redis.cache.windows.net"
+      link_name = "redis_link"
+    }
+  ]
+
+  peerings = [
+    {
+      peering_name              = "myPeeringName"
+      resource_group_name       = "myResourceGroupName"
+      vnet_name                 = "myVnetName"
+      remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
+    }
+  ]
+
+  tags_from_rg = false
+  tags = {
+    environment = "myEnvironment"
+    department  = "myDepartment"
   }
-]
-
-peerings = [
-  {
-    peering_name = "myPeeringName"
-    resource_group_name = "myResourceGroupName"
-    vnet_name = "myVnetName"
-    remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
-  }
-]
-
-tags_from_rg = false
-tags = {
-  environment = "myEnvironment"
-  department  = "myDepartment"
 }
 ```
 
@@ -83,8 +107,8 @@ private_dns_zone_ids = [
 ]
 
 private_dns_zone_virtual_network_link_ids = [
-  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/bar-foo",
-  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.bar.postgres.database.azure.com/virtualNetworkLinks/foo-bar",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/redis_link",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com/virtualNetworkLinks/redis_link",
 ]
 
 subnet_ids = {
