@@ -142,7 +142,6 @@ module "lambda_automatic_replication" {
           Sid    = "ManageDestinationSecrets"
           Effect = "Allow"
           Action = [
-            "secretsmanager:CreateSecret",
             "secretsmanager:PutSecretValue",
             "secretsmanager:UpdateSecret",
             "secretsmanager:DescribeSecret",
@@ -153,6 +152,17 @@ module "lambda_automatic_replication" {
           ]
           Resource = local.destination_secret_arns
         } : null,
+        {
+          Sid      = "CreateSecretRestricted"
+          Effect   = "Allow"
+          Action   = ["secretsmanager:CreateSecret"]
+          Resource = "*"
+          Condition = {
+            StringEqualsIfExists = {
+              "secretsmanager:Name" = local.allowed_destination_secret_names
+            }
+          }
+        },
         length(var.allowed_assume_roles) > 0 ? {
           Sid      = "AssumeDestinationRoles"
           Effect   = "Allow"
