@@ -32,19 +32,25 @@ data "aws_cloudtrail" "existing" {
 ###############################################################################
 
 locals {
-  source_secret_arns = flatten([
+  # ARN Lists, get from DESTINATIONS_JSON for dynamic number of secrets
+  source_secret_arns = compact(flatten([
     for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.source_secret_arn
+      for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "source_secret_arn", null)
+    ]
+  ]))
+  destination_secret_arns = compact(flatten([
+    for dest in local.parsed_destinations : [
+      for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "destination_secret_arn", null)
+    ]
+  ]))
+  kms_key_arns = flatten([
+    for dest in local.parsed_destinations : [
+      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.kms_key_arn
     ]
   ])
-  destination_secret_arns = flatten([
-    for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.destination_secret_arn
-    ]
-  ])
+
   using_existing_cloudtrail = var.cloudtrail_name != ""
   using_existing_s3_bucket  = var.s3_bucket_name != ""
-
 
   # For existing CloudTrail, use the provided name directly
   cloudtrail_arn  = var.cloudtrail_name != "" ? data.aws_cloudtrail.existing[0].arn : (length(aws_cloudtrail.secrets_management_events.*.arn) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : "")
@@ -67,11 +73,7 @@ locals {
   )
 
   parsed_destinations = try(jsondecode(var.destinations_json), {})
-  kms_key_arns = flatten([
-    for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.kms_key_arn
-    ]
-  ])
+
 }
 
 ###############################################################################
