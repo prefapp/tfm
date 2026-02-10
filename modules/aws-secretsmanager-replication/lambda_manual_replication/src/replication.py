@@ -55,7 +55,7 @@ def extract_secret_name(secret_id):
     return secret_id
 
 
-def replicate_secret(secret_id: str, config, get_sm_client=None):
+def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None):
     """
     Replicates a secret to all configured destinations and regions.
     Args:
@@ -66,10 +66,8 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
     """
     log("info", "Starting replication", secret_id=secret_id)
 
-    # Accept an existing source_sm client if provided, else create one
-    if "source_sm" in locals() and locals()["source_sm"] is not None:
-        source_sm = locals()["source_sm"]
-    else:
+    # Use provided source_sm client if given, else create one
+    if source_sm is None:
         source_sm = boto3.client("secretsmanager", region_name=config.source_region)
 
     secret_response = source_sm.get_secret_value(SecretId=secret_id)
