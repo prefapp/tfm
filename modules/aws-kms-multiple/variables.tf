@@ -1,11 +1,35 @@
+variable "kms_to_create" {
+  description = <<EOT
+List of KMS keys to create. Each item must be an object, with at least the 'name' attribute.
+Example usage:
+  kms_to_create = [
+    { name = "s3" }, # Only name, uses default values for the rest
+    { name = "rds", alias = "custom-rds", kms_alias_prefix = "myorg/", via_service = ["rds"] }
+  ]
+EOT
+  type = list(object({
+    name                       = string
+    alias                      = optional(string)
+    kms_alias_prefix           = optional(string)
+    via_service                = optional(list(string))
+    user_roles_with_read       = optional(list(string))
+    user_roles_with_read_write = optional(list(string))
+  }))
+  default = []
+}
+variable "kms_alias_prefix" {
+  description = "Prefix for the KMS key alias. The full alias will be constructed as '$prefix$kms_name' for each KMS key created."
+  type        = string
+  default     = "custom/"
+}
 variable "aws_region" {
-  description = "Region to create kms key"
+  description = "Region to create KMS key"
   type        = string
   default     = "eu-west-1"
 }
 
 variable "aws_accounts_access" {
-  description = "Enable access to kms for additional AWS accounts"
+  description = "Enable access to KMS for additional AWS accounts"
   type        = list(string)
   default     = []
 }
@@ -57,28 +81,11 @@ variable "tags" {
   default     = {}
 }
 
-variable "alias" {
-  description = "The alias that will use the KMS key"
-  type        = string
-  default     = null
-}
-
-variable "kms_alias_prefix" {
-  description = "The prefix for the alias that will use the KMS key. The full alias will be in the format alias/{prefix}{alias}"
-  type        = string
-  default     = ""
-}
 
 variable "administrator_role_name" {
   description = "Name of the IAM role to grant KMS administrator permissions. Set to null to disable granting permissions to this role."
   type        = string
   default     = "Administrator"
-}
-
-variable "via_service" {
-  description = "AWS services that are allowed to use the KMS key. This is used to create a condition in the key policy that allows access through these services. Example: 'rds', 's3'"
-  type        = list(string)
-  default     = null
 }
 
 variable "user_roles_with_read_write" {

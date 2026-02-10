@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.1...azure-backup-vault-v0.1.2) (2026-02-10)
+
+
+### Bug Fixes
+
+* update configuration following contributing guidelines ([#916](https://github.com/prefapp/tfm/issues/916)) ([2275f47](https://github.com/prefapp/tfm/commit/2275f471a6bef43512e8ef93ecbe47eb99e34746))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.0...azure-backup-vault-v0.1.1) (2025-12-03)
 
 

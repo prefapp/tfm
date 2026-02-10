@@ -1,4 +1,3 @@
-<!-- BEGIN_TF_DOCS -->
 # AWS SSO Terraform Module
 
 ## Overview
@@ -99,6 +98,7 @@ aws-sso/
 - **variables.tf**: Input variables for YAML data file, Identity Store ARN, and Store ID.
 - **outputs.tf**: Exports debug output for user-group associations.
 
+
 ## User's Guide
 
 > [https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)
@@ -169,7 +169,7 @@ The groups must be in `groups` with the following structure:
       - userB
 ```
 
-### `users>group` attachments
+### `users>group` attachments 
 
 Users and groups must be associated using `attachments` with the following structure:
 
@@ -245,75 +245,3 @@ permission-sets:
             ]
           }
 ```
-
-## Requirements
-
-No requirements.
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_time"></a> [time](#provider\_time) | n/a |
-
-## Modules
-
-No modules.
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [aws_identitystore_group.groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_group) | resource |
-| [aws_identitystore_group_membership.groups-users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_group_membership) | resource |
-| [aws_identitystore_user.users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/identitystore_user) | resource |
-| [aws_ssoadmin_account_assignment.accounts-permissions-groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
-| [aws_ssoadmin_account_assignment.accounts-permissions-users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
-| [aws_ssoadmin_customer_managed_policy_attachment.permissions-custom-policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_customer_managed_policy_attachment) | resource |
-| [aws_ssoadmin_managed_policy_attachment.permissions-managed-policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_managed_policy_attachment) | resource |
-| [aws_ssoadmin_permission_set.permissions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set) | resource |
-| [aws_ssoadmin_permission_set_inline_policy.permissions-inline-policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
-| [time_sleep.wait_30seg](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_data_file"></a> [data\_file](#input\_data\_file) | absolute path of the data to use (in YAML format) | `string` | n/a | yes |
-| <a name="input_identity_store_arn"></a> [identity\_store\_arn](#input\_identity\_store\_arn) | the arn of the SSO instance | `string` | n/a | yes |
-| <a name="input_store_id"></a> [store\_id](#input\_store\_id) | the Identity store id | `string` | n/a | yes |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| <a name="output_debug"></a> [debug](#output\_debug) | n/a |
-
-## Additional configuration details
-
-### YAML Configuration File
-
-The module relies on a YAML file (specified via `data_file`) for all SSO configurations. Key sections include:
-- **users**: List of users with name, email, and fullname.
-- **groups**: List of groups with name, description, and associated users.
-- **permission-sets**: Definitions for permission sets, including custom-policies, managed-policies, and inline-policies.
-- **attachments**: Account-specific assignments of permission sets to groups and users.
-
-## Examples
-
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-sso/_examples):
-
-- [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-sso/_examples/basic) - Basic SSO setup with users, groups, and simple permission sets.
-- [Advanced](https://github.com/prefapp/tfm/tree/main/modules/aws-sso/_examples/advanced) - Advanced configuration with mixed policies and multi-account assignments.
-
-## Remote resources
-
-- **AWS IAM Identity Center (SSO)**: [https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html](https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html)
-- **AWS SSO Admin Resources**: [https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.html](https://docs.aws.amazon.com/singlesignon/latest/developerguide/what-is-scim.html)
-- **Terraform AWS Provider**: [https://registry.terraform.io/providers/hashicorp/aws/latest/docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-
-## Support
-
-For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
-<!-- END_TF_DOCS -->

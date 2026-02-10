@@ -1,0 +1,35 @@
+
+# Example: Use Key Vault for secure backup configuration (e.g., for PostgreSQL backup policy secret)
+
+
+# Example: Configure blob backup with custom policy
+
+module "azure_backup_vault" {
+  source = "../../"
+
+  backup_resource_group_name = "example-backup-rg"
+  vault = {
+    name           = "example-backup-vault"
+    datastore_type = "VaultStore"
+    redundancy     = "LocallyRedundant"
+  }
+
+  blob_policies = [
+    {
+      name = "daily-blob-policy"
+      backup_repeating_time_intervals = ["R/2026-02-10T08:00:00Z/PT24H"]
+      operational_default_retention_duration = "P7D"
+      vault_default_retention_duration = "P30D"
+    }
+  ]
+
+  blob_instances = [
+    {
+      name = "blob1-backup"
+      storage_account_name = "example-storage-account"
+      storage_account_resource_group = "example-storage-rg"
+      storage_account_container_names = ["container1"]
+      policy_key = "daily-blob-policy"
+    }
+  ]
+}

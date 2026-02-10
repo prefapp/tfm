@@ -19,100 +19,23 @@ This Terraform module creates and configures an Azure Data Protection Backup Vau
 - Optional tags and inheritance from the backup resource group.
 - Support for Kubernetes backup extension and snapshot resource group.
 
-## Example
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples):
 
-```yaml
-values:
-  # COMMON configuration
-  backup_resource_group_name: my-backup-rg
+- [with\_nic](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/with\_nic) - Example configuring backup for disks with custom network interface configuration.
+- [with\_custom\_data](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/with\_custom\_data) - Example provisioning backup for blob storage with custom policy.
+- [with\_vault\_admin\_pass](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/with\_vault\_admin\_pass) - Example using Key Vault for secure backup configuration.
+- See documentation for more advanced scenarios (Kubernetes, PostgreSQL, MySQL, etc).
 
-  # VAULT configuration
-  vault:
-    name: my-backup-vault
-    datastore_type: VaultStore
-    redundancy: LocallyRedundant
-    retention_duration_in_days: 30
-    immutability: Disabled
-    soft_delete: Off
+## Remote resources
 
-  # POSTGRESQL configuration
-  postgresql_policies:
-    - name: daily
-      backup_repeating_time_intervals:
-        - "R/2025-10-23T08:00:00Z/PT10M"
-      default_retention_rule:
-        life_cycle:
-          duration: "P30D"
-          data_store_type: VaultStore
-      retention_rule:
-        - name: daily
-          priority: 1
-          life_cycle:
-            duration: "P7D"
-            data_store_type: VaultStore
-          criteria:
-            absolute_criteria: "FirstOfDay"
-    - name: weekly
-      backup_repeating_time_intervals:
-        - "R/2025-10-23T08:00:00Z/PT10M"
-      default_retention_rule:
-        life_cycle:
-          duration: "P30D"
-          data_store_type: VaultStore
-      retention_rule:
-        - name: weekly
-          priority: 1
-          life_cycle:
-            duration: "P30D"
-            data_store_type: VaultStore
-          criteria:
-            absolute_criteria: "FirstOfDay"
+- **Azure Data Protection Backup Vault**: [azurerm\_data\_protection\_backup\_vault documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault)
+- **Azure Disk Backup**: [azurerm\_data\_protection\_backup\_instance\_disk documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_disk)
+- **Azure Blob Backup**: [azurerm\_data\_protection\_backup\_instance\_blob\_storage documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_blob_storage)
+- **Azure Kubernetes Backup**: [azurerm\_data\_protection\_backup\_instance\_kubernetes\_cluster documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_kubernetes_cluster)
+- **Azure PostgreSQL Backup**: [azurerm\_data\_protection\_backup\_instance\_postgresql\_flexible\_server documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_instance_postgresql_flexible_server)
+- **Terraform Azure Provider**: [Terraform Provider documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
 
-  postgresql_instances:
-    - name: pg1-backup
-      server_name: my-postgres-server-1
-      resource_group_name: my-db-rg
-      policy_key: daily
-    - name: pg2-backup
-      server_name: my-postgres-server-2
-      resource_group_name: my-db-rg-2
-      policy_key: weekly
-
-  ## MYSQL configuration is disabled by Azure for the moment due to issues with the provider
-  # MYSQL configuration
-  mysql_policies:
-    - name: daily
-      backup_repeating_time_intervals:
-        - "R/2025-10-23T08:00:00Z/PT10M"
-      default_retention_rule:
-        life_cycle:
-          duration: "P30D"
-          data_store_type: VaultStore
-    - name: weekly
-      backup_repeating_time_intervals:
-        - "R/2025-10-23T08:00:00Z/PT10M"
-      default_retention_rule:
-        life_cycle:
-          duration: "P7D"
-          data_store_type: VaultStore
-
-  mysql_instances:
-    - name: mysql1-backup
-      server_name: my-mysql-server-1
-      resource_group_name: my-db-rg
-      policy_key: daily
-
-  # DISKS configuration
-  disk_policies:
-    - name: daily-disk-policy
-      backup_repeating_time_intervals:
-        - "R/2025-10-23T08:00:00Z/PT10M"
-      default_retention_duration: "P7D"
-
-  disk_instances:
-    - name: disk1-backup
-      disk_resource_group: my-disk-rg
-      policy_key: daily-disk-policy
+## Support
 
   # BLOB configuration
   blob_policies:
