@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.1.4](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.3...aws-ecs-v1.1.4) (2026-01-16)
+
+
+### Bug Fixes
+
+* **aws-ecs:** update autoscaling for services outside cluster ([#870](https://github.com/prefapp/tfm/issues/870)) ([f865a1b](https://github.com/prefapp/tfm/commit/f865a1b1fad8667a95bef78103c896f446d2d4f1))
+
+## [1.1.3](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.2...aws-ecs-v1.1.3) (2026-01-16)
+
+
+### Bug Fixes
+
+* **aws-ecs:** update autoscaling for services outside cluster ([#868](https://github.com/prefapp/tfm/issues/868)) ([ee2ed76](https://github.com/prefapp/tfm/commit/ee2ed765874558443293f51793d28a4127d21070))
+
+## [1.1.2](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.1...aws-ecs-v1.1.2) (2026-01-16)
+
+
+### Bug Fixes
+
+* **aws-ecs:** update autoscaling for services outside cluster ([#866](https://github.com/prefapp/tfm/issues/866)) ([6e71036](https://github.com/prefapp/tfm/commit/6e71036b53b4565690fef33a88bd1c7fb09f28e9))
+
+## [1.1.1](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.0...aws-ecs-v1.1.1) (2026-01-16)
+
+
+### Bug Fixes
+
+* **aws-ecs:** set correct version of tag and name ([#864](https://github.com/prefapp/tfm/issues/864)) ([d02d63f](https://github.com/prefapp/tfm/commit/d02d63f7a5fd18a0474edcc3871b19fee09b9966))
+
+## [1.1.0](https://github.com/prefapp/tfm/compare/aws-ecs-v1.0.0...aws-ecs-v1.1.0) (2026-01-15)
+
+
+### Features
+
+* **aws-ecs:** fix issue networks by tags and added alb in cluster ([#859](https://github.com/prefapp/tfm/issues/859)) ([91e08b4](https://github.com/prefapp/tfm/commit/91e08b47dd8f4b271d0040998232f53b33955c54))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/aws-ecs-v0.2.0...aws-ecs-v1.0.0) (2026-01-07)
 
 

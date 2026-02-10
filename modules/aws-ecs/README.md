@@ -159,6 +159,7 @@ No modules.
 | [aws_lb_listener.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_target_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
+| [aws_security_group.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_lb.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb) | data source |
 | [aws_lb_listener.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb_listener) | data source |
@@ -172,13 +173,13 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_alb_internal"></a> [alb\_internal](#input\_alb\_internal) | Whether the ALB is internal | `bool` | `false` | no |
 | <a name="input_alb_listener_priority"></a> [alb\_listener\_priority](#input\_alb\_listener\_priority) | Priority for the ALB listener rule | `number` | `100` | no |
-| <a name="input_alb_name"></a> [alb\_name](#input\_alb\_name) | Name of the Application Load Balancer | `string` | `"ecs-alb-example"` | no |
+| <a name="input_alb_name"></a> [alb\_name](#input\_alb\_name) | Name of the Application Load Balancer | `string` | `""` | no |
 | <a name="input_assume_role_policy"></a> [assume\_role\_policy](#input\_assume\_role\_policy) | IAM assume role policy for the ECS task execution role. Example:<br/>  {<br/>    "Version": "2012-10-17",<br/>    "Statement": [<br/>      {<br/>        "Action": "sts:AssumeRole",<br/>        "Effect": "Allow",<br/>        "Principal": {<br/>          "Service": "ecs-tasks.amazonaws.com"<br/>        }<br/>      }<br/>    ]<br/>  } | `string` | `""` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the ECS cluster | `string` | n/a | yes |
 | <a name="input_container_definitions"></a> [container\_definitions](#input\_container\_definitions) | Container definitions in JSON format | `string` | `null` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | Port on the container to register with the load balancer and expose via the ECS service. | `number` | `80` | no |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU units for the task | `number` | `256` | no |
-| <a name="input_create_alb"></a> [create\_alb](#input\_create\_alb) | Whether to create an Application Load Balancer for the ECS service | `bool` | `true` | no |
+| <a name="input_create_alb"></a> [create\_alb](#input\_create\_alb) | Whether to create an Application Load Balancer for the ECS service | `bool` | `false` | no |
 | <a name="input_create_cluster"></a> [create\_cluster](#input\_create\_cluster) | Whether to create the ECS cluster. If false, the module assumes the cluster already exists. | `bool` | `true` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | Number of desired tasks for the ECS service | `number` | `1` | no |
 | <a name="input_ecs_autoscaling"></a> [ecs\_autoscaling](#input\_ecs\_autoscaling) | ECS service autoscaling configuration.<br/><br/>  Special fields:<br/>  - halt: If present, disables all autoscaling resources for this service. The ECS service will use the value of var.desired\_count (the variable's value), not the runtime value that may have been set by autoscaling. Setting halt prevents new autoscaling actions and the service will revert to the value of var.desired\_count. Use this if you want to keep the service running but temporarily suspend autoscaling actions (no scaling up or down will occur).<br/>  - stop: If present, sets desired\_count to 0, stopping all running tasks for the service. Use this if you want to fully stop the ECS service (no tasks running), regardless of autoscaling settings. Autoscaling resources will also be disabled.<br/><br/>  Use halt to pause scaling but keep the service alive; use stop to fully stop the service and all its tasks. | <pre>map(object({<br/>    autoscaling_enabled = bool<br/>    min_capacity        = number<br/>    max_capacity        = number<br/><br/>    metric_type      = string<br/>    metric_statistic = string<br/><br/>    custom_metric = optional(object({<br/>      namespace               = string<br/>      name                    = string<br/>      dimensions              = map(string)<br/>      metric_aggregation_type = optional(string)<br/>      treat_missing_data      = optional(string)<br/>      datapoints_to_alarm     = optional(number)<br/>    }))<br/><br/>    scale = object({<br/>      up = object({<br/>        threshold           = number<br/>        comparison_operator = string<br/>        evaluation_periods  = number<br/>        period              = number<br/>        cooldown            = number<br/>        adjustment_type     = string<br/>        scaling_adjustment  = number<br/>      })<br/>      down = object({<br/>        threshold           = number<br/>        comparison_operator = string<br/>        evaluation_periods  = number<br/>        period              = number<br/>        cooldown            = number<br/>        adjustment_type     = string<br/>        scaling_adjustment  = number<br/>      })<br/>      halt = optional(object({}))<br/>      stop = optional(object({}))<br/>    })<br/>  }))</pre> | `{}` | no |
@@ -192,7 +193,7 @@ No modules.
 | <a name="input_load_balancer"></a> [load\_balancer](#input\_load\_balancer) | List of load balancer configurations for the ECS service. Each object should include:<br/>- target\_group\_arn (optional): ARN of the target group. If not provided or empty, the module will use the ARN of the target group it creates internally.<br/>- container\_name: Name of the container to associate with the load balancer.<br/>- container\_port: Port on the container to associate with the load balancer. | <pre>list(object({<br/>    target_group_arn = optional(string)<br/>    container_name   = string<br/>    container_port   = number<br/>  }))</pre> | `[]` | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | Memory (MiB) for the task | `number` | `512` | no |
 | <a name="input_policy_arns"></a> [policy\_arns](#input\_policy\_arns) | List of policy ARNs to attach to the ECS task execution role | `list(string)` | <pre>[<br/>  "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"<br/>]</pre> | no |
-| <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security group IDs to associate with the ECS service | `list(string)` | `null` | no |
+| <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security group IDs to associate with the ECS service | `list(string)` | `[]` | no |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Name of the ECS service | `string` | `null` | no |
 | <a name="input_sg_description"></a> [sg\_description](#input\_sg\_description) | Description of the security group | `string` | `"Allow HTTP inbound traffic"` | no |
 | <a name="input_sg_egress"></a> [sg\_egress](#input\_sg\_egress) | List of egress rules for the security group | <pre>list(object({<br/>    from_port   = number<br/>    to_port     = number<br/>    protocol    = string<br/>    cidr_blocks = list(string)<br/>  }))</pre> | <pre>[<br/>  {<br/>    "cidr_blocks": [<br/>      "0.0.0.0/0"<br/>    ],<br/>    "from_port": 0,<br/>    "protocol": "-1",<br/>    "to_port": 0<br/>  }<br/>]</pre> | no |
@@ -213,6 +214,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_alb_arn"></a> [alb\_arn](#output\_alb\_arn) | ARN of the Application Load Balancer |
+| <a name="output_alb_name"></a> [alb\_name](#output\_alb\_name) | Name of the Application Load Balancer |
 | <a name="output_ecs_cluster_arn"></a> [ecs\_cluster\_arn](#output\_ecs\_cluster\_arn) | ARN of the ECS cluster |
 | <a name="output_ecs_cluster_name"></a> [ecs\_cluster\_name](#output\_ecs\_cluster\_name) | Name of the ECS cluster |
 | <a name="output_ecs_service_arn"></a> [ecs\_service\_arn](#output\_ecs\_service\_arn) | ARN of the ECS service |
@@ -233,6 +235,8 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/basic) - Basic ECS Service with ALB + Fargate
 - [Autoscaling enabled](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/autoscaling) - ECS Service with CPU-Based Autoscaling
 - [Only cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/only\_cluster) - ECS Cluster without services attached
+- [Only cluster with alb](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/only\_cluster\_with\_alb) - ECS Cluster without services attached and with alb for services
+- [Service to existing cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/service\_to\_existing\_cluster) - Attach service to existing cluster with created alb
 - [Attach service to cluster](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/attach\_service\_to-cluster) - ECS services that need a existent cluster
 - [With tags](https://github.com/prefapp/tfm/tree/main/modules/aws-ecs/_examples/with\_tags) - ECS Service with Autoscaling and Tag-Based VPC/Subnet Discovery
 

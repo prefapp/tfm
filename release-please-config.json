@@ -10,6 +10,12 @@
         "modules/aws-sso": {
             "package-name": "aws-sso"
         },
+        "modules/aws-kms": {
+            "package-name": "aws-kms"
+        },
+        "modules/aws-kms-multiple": {
+            "package-name": "aws-kms-multiple"
+        },
         "modules/azure-flexible-server-postgresql": {
             "package-name": "azure-flexible-server-postgresql"
         },
@@ -63,6 +69,9 @@
         },
         "modules/azure-vmss": {
             "package-name": "azure-vmss"
+        },
+        "modules/dummy": {
+            "package-name": "dummy"
         },
         "modules/mongodb-atlas-project": {
             "package-name": "mongodb-atlas-project"
@@ -126,6 +135,12 @@
         },
         "modules/azure-windows-vm": {
             "package-name": "azure-windows-vm"
+        },
+        "modules/aws-amq-rabbit": {
+            "package-name": "aws-amq-rabbit"
+        },
+        "modules/aws-waf": {
+            "package-name": "aws-waf"
         }
     }
 }

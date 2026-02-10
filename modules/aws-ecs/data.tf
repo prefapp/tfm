@@ -19,7 +19,7 @@ data "aws_subnets" "this" {
   }
   filter {
     name   = "tag:${var.subnet_tag_key}"
-    values = [var.subnet_tag_name]
+    values = ["${var.subnet_tag_name}"]
   }
 }
 
