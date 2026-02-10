@@ -32,18 +32,16 @@ data "aws_cloudtrail" "existing" {
 ###############################################################################
 
 locals {
-    # Example: extract source and destination ARNs from destinations_json if structure allows
-    # You may need to adjust this logic to match your actual JSON structure
-    source_secret_arns = flatten([
-      for dest in local.parsed_destinations : [
-        for region_cfg in try(dest.regions, {}) : try(region_cfg.value.source_secret_arn, [])
-      ]
-    ])
-    destination_secret_arns = flatten([
-      for dest in local.parsed_destinations : [
-        for region_cfg in try(dest.regions, {}) : try(region_cfg.value.destination_secret_arn, [])
-      ]
-    ])
+  source_secret_arns = flatten([
+    for dest in local.parsed_destinations : [
+      for region_name, region_cfg in try(dest.regions, {}) : try(region_cfg.source_secret_arn, [])
+    ]
+  ])
+  destination_secret_arns = flatten([
+    for dest in local.parsed_destinations : [
+      for region_name, region_cfg in try(dest.regions, {}) : try(region_cfg.destination_secret_arn, [])
+    ]
+  ])
   using_existing_cloudtrail = var.cloudtrail_name != ""
   using_existing_s3_bucket  = var.s3_bucket_name != ""
 
@@ -71,7 +69,7 @@ locals {
   parsed_destinations = try(jsondecode(var.destinations_json), {})
   kms_key_arns = flatten([
     for dest in local.parsed_destinations : [
-      for region_cfg in try(dest.regions, {}) : region_cfg.value.kms_key_arn
+      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.kms_key_arn
     ]
   ])
 }
