@@ -32,6 +32,15 @@ data "aws_cloudtrail" "existing" {
 ###############################################################################
 
 locals {
+  # Precompute allowed destination secret names for CreateSecret condition
+  allowed_destination_secret_names = compact(flatten([
+    for dest in local.parsed_destinations : [
+      for region_name, region_cfg in try(dest.regions, {}) : (
+        length(split(":secret:", lookup(region_cfg, "destination_secret_arn", ""))) == 2 ?
+        split(":secret:", lookup(region_cfg, "destination_secret_arn", ""))[1] : null
+      )
+    ]
+  ]))
   # ARN Lists, get from DESTINATIONS_JSON for dynamic number of secrets
   source_secret_arns = compact(flatten([
     for dest in local.parsed_destinations : [
@@ -218,7 +227,6 @@ module "lambda_manual_replication" {
           Sid    = "SecretsManagerWrite"
           Effect = "Allow"
           Action = [
-            "secretsmanager:CreateSecret",
             "secretsmanager:PutSecretValue",
             "secretsmanager:UpdateSecret",
             "secretsmanager:TagResource",
@@ -226,6 +234,18 @@ module "lambda_manual_replication" {
           ]
           Resource = local.destination_secret_arns
         } : null,
+        # Separate statement for CreateSecret with Resource = "*" and restrictive condition
+        {
+          Sid      = "CreateSecretRestricted"
+          Effect   = "Allow"
+          Action   = ["secretsmanager:CreateSecret"]
+          Resource = "*"
+          Condition = {
+            StringEqualsIfExists = {
+              "secretsmanager:Name" = local.allowed_destination_secret_names
+            }
+          }
+        },
         length(var.allowed_assume_roles) > 0 ? {
           Sid      = "AssumeCrossAccountRoles"
           Effect   = "Allow"
