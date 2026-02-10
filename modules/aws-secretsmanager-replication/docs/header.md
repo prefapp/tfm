@@ -101,3 +101,19 @@ module "secrets_replication" {
   manage_s3_bucket_policy = false
 }
 ```
+
+## EventBridge Rule Pattern (Secrets Manager)
+
+The EventBridge rule should match Secrets Manager API calls via CloudTrail. Example pattern:
+
+```json
+{
+	"source": ["aws.secretsmanager"],
+	"detail-type": ["AWS API Call via CloudTrail"],
+	"detail": {
+		"eventName": ["PutSecretValue", "CreateSecret"]
+	}
+}
+```
+
+This ensures the rule triggers on all relevant Secrets Manager API calls recorded by CloudTrail.
