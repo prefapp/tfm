@@ -55,13 +55,15 @@ By default, tags from the source secret are also replicated to the destination. 
 
 ## Important Note: Permissions
 
+
 **Important:**
-The Lambda IAM permissions for reading and writing secrets are determined by the `source_secret_arns` and `destination_secret_arns` locals, which are extracted from the destinations_json. However, the documented destinations_json schema only includes `role_arn` and `kms_key_arn`, so these locals will likely be empty unless you extend the schema to include secret ARNs.
+The Lambda IAM permissions for reading and writing secrets are determined by the `source_secret_arns` and `destination_secret_arns` locals, which are extracted from the `destinations_json` variable. The required schema for each region is:
 
-If no secret ARNs are provided, the Lambda role will not have permissions to read or write any secrets, resulting in AccessDenied errors for basic operations like `GetSecretValue` and `DescribeSecret`. To avoid this, you should either:
+- `kms_key_arn`: ARN of the KMS key to use for encryption in the destination region.
+- `source_secret_arn`: ARN of the source secret to replicate.
+- `destination_secret_arn`: ARN of the destination secret to create or update.
 
-- Extend your destinations_json to include `source_secret_arn` and `destination_secret_arn` for each region.
-- Or, use a controlled wildcard pattern (such as prefix-based ARNs) for IAM permissions, if your secrets follow a naming convention.
+All three keys are required for each region. If any are missing, the module will fail validation and the Lambda will not have permissions to read or write the intended secrets, resulting in AccessDenied errors. Ensure your `destinations_json` includes all required ARNs for every region.
 
 **Example wildcard pattern:**
 ```
