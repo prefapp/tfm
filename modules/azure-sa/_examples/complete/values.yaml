@@ -8,8 +8,8 @@ values:
       vnet: "test-vnet1"
       resource_group: "rg-test1"
   additional_allowed_subnet_ids:
-    - "/subscriptions/324ca80b-cea7-41ff-ac13-25441f452f33/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
-    - "/subscriptions/c9e99a2d-e0cd-473b-935c-bc2e37ea8511/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
+    - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
+    - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
   # storage account
   storage_account:
     name: "mystorageaccount"
@@ -37,9 +37,9 @@ values:
     default_action: "Deny"
     bypass: "AzureServices"
     private_link_access:
-      - endpoint_resource_id: "/subscriptions/xxxx/resourceGroups/xxxx/providers/Microsoft.Network/privateLinkService/xxxx"
-        endpoint_tenant_id: "66666666-7777-8888-9999-000000000000"
-      - endpoint_resource_id: "/subscriptions/yyyy/resourceGroups/yyyy/providers/Microsoft.Network/privateLinkService/yyyy"
+      - endpoint_resource_id: "/subscriptions/<subscription-id-1>/resourceGroups/rg_test/providers/Microsoft.Network/privateLinkService/pls-1"
+        endpoint_tenant_id: "00000000-0000-0000-0000-000000000000"
+      - endpoint_resource_id: "/subscriptions/<subscription-id-2>/resourceGroups/rg_test/providers/Microsoft.Network/privateLinkService/pls-2"
   # storage containers
   containers:
     - name: "test"

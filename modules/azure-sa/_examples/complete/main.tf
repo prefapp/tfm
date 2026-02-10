@@ -1,5 +1,5 @@
 locals {
-  values = yamldecode(file("./values.yaml"))
+  values = yamldecode(file("${path.module}/values.yaml"))
 }
 
 module "storage_account" {

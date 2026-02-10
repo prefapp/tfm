@@ -34,7 +34,11 @@ This Terraform module allows you to create and manage an Azure Storage Account, 
 │   ├── header.md
 │   └── footer.md
 └── _examples/
-    └── values.yaml
+    ├── basic/
+    │   └── main.tf
+    └── complete/
+        ├── main.tf
+        └── values.yaml
 ```
 
 ## Basic usage example
@@ -48,4 +52,4 @@ values:
     account_replication_type: "LRS"
 ```
 
-> For a complete and advanced example, see the file at `_examples/basic/values.yaml`.
+> For a complete and advanced example, see the file at `_examples/complete/values.yaml`.
