@@ -32,6 +32,8 @@ data "aws_cloudtrail" "existing" {
 ###############################################################################
 
 locals {
+  decoded_existing_bucket_policy = var.existing_bucket_policy_json != null ? jsondecode(var.existing_bucket_policy_json) : null
+  decoded_existing_bucket_policy_statements = local.decoded_existing_bucket_policy != null ? try(local.decoded_existing_bucket_policy.Statement, []) : []
 
   # Precompute allowed destination secret names for CreateSecret condition
   allowed_destination_secret_names = compact(flatten([
@@ -343,10 +345,10 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 
   policy = var.s3_bucket_name != "" && var.existing_bucket_policy_json != null ? (
     jsonencode(merge(
-      jsondecode(var.existing_bucket_policy_json),
+      local.decoded_existing_bucket_policy,
       {
         Statement = concat(
-          try(jsondecode(var.existing_bucket_policy_json).Statement, []),
+          local.decoded_existing_bucket_policy_statements,
           [
             {
               Sid       = "AWSCloudTrailAclCheck"
