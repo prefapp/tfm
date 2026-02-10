@@ -39,7 +39,7 @@ locals {
   destination_secret_arns = compact(flatten([
     for account_id, dest in local.parsed_destinations : [
       for region_name, region_cfg in try(dest.regions, {}) :
-      (length(trim(lookup(region_cfg, "destination_secret_name", ""))) > 0 ?
+      (length(trim(lookup(region_cfg, "destination_secret_name", ""), " ")) > 0 ?
       format("arn:aws:secretsmanager:%s:%s:secret:%s*", region_name, account_id, region_cfg["destination_secret_name"]) : null)
     ]
   ]))

@@ -47,7 +47,7 @@ variable "destinations_json" {
       for k, v in try(jsondecode(var.destinations_json), {}) :
       alltrue([
         for region_name, region_cfg in try(try(v.regions, {}), {}) :
-        can(keys(region_cfg)) && contains(try(keys(region_cfg), []), "kms_key_arn") && contains(try(keys(region_cfg), []), "source_secret_arn") && contains(try(keys(region_cfg), []), "destination_secret_name") && length(trim(region_cfg["destination_secret_name"])) > 0
+        can(keys(region_cfg)) && contains(try(keys(region_cfg), []), "kms_key_arn") && contains(try(keys(region_cfg), []), "source_secret_arn") && contains(try(keys(region_cfg), []), "destination_secret_name") && length(trim(region_cfg["destination_secret_name"], " ")) > 0
       ])
     ])
     error_message = "Each region in each destination in destinations_json must contain 'kms_key_arn', 'source_secret_arn', and non-empty 'destination_secret_name' keys."
