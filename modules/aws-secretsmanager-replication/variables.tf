@@ -20,6 +20,17 @@ variable "prefix" {
 
 variable "destinations_json" {
   validation {
+    condition = (
+      length(keys(try(jsondecode(var.destinations_json), {}))) > 0
+      &&
+      anytrue([
+        for _, destination in try(jsondecode(var.destinations_json), {}) :
+        length(try(destination.regions, [])) > 0
+      ])
+    )
+    error_message = "destinations_json must define at least one destination and at least one region entry."
+  }
+  validation {
     condition     = can(jsondecode(var.destinations_json))
     error_message = "destinations_json must be valid JSON."
   }

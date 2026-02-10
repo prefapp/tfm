@@ -32,7 +32,7 @@ data "aws_cloudtrail" "existing" {
 ###############################################################################
 
 locals {
-  decoded_existing_bucket_policy = var.existing_bucket_policy_json != null ? jsondecode(var.existing_bucket_policy_json) : null
+  decoded_existing_bucket_policy            = var.existing_bucket_policy_json != null ? jsondecode(var.existing_bucket_policy_json) : null
   decoded_existing_bucket_policy_statements = local.decoded_existing_bucket_policy != null ? try(local.decoded_existing_bucket_policy.Statement, []) : []
 
   # Precompute allowed destination secret names for CreateSecret condition
@@ -46,8 +46,8 @@ locals {
   destination_secret_arns = compact(flatten([
     for account_id, dest in local.parsed_destinations : [
       for region_name, region_cfg in try(dest.regions, {}) :
-        (length(trim(lookup(region_cfg, "destination_secret_name", ""))) > 0 ?
-          format("arn:aws:secretsmanager:%s:%s:secret:%s*", region_name, account_id, region_cfg["destination_secret_name"]) : null)
+      (length(trim(lookup(region_cfg, "destination_secret_name", ""))) > 0 ?
+      format("arn:aws:secretsmanager:%s:%s:secret:%s*", region_name, account_id, region_cfg["destination_secret_name"]) : null)
     ]
   ]))
 
@@ -370,7 +370,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
               Resource  = local.s3_bucket_logs_arn
               Condition = {
                 StringEquals = {
-                  "s3:x-amz-acl" = "bucket-owner-full-control"
+                  "s3:x-amz-acl"      = "bucket-owner-full-control"
                   "aws:SourceAccount" = data.aws_caller_identity.current.account_id
                 }
               }
@@ -405,7 +405,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
           Resource  = local.s3_bucket_logs_arn
           Condition = {
             StringEquals = {
-              "s3:x-amz-acl" = "bucket-owner-full-control"
+              "s3:x-amz-acl"      = "bucket-owner-full-control"
               "aws:SourceAccount" = data.aws_caller_identity.current.account_id
             }
           }
