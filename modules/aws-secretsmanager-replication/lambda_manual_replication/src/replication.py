@@ -62,19 +62,26 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None)
         log("info", "Processing destination account", account_id=account_id)
 
         for region_name, region_cfg in dest.regions.items():
+            # Only replicate if secret_id matches the configured source_secret_arn (full ARN or secret name)
+            match = False
+            if secret_id == region_cfg.source_secret_arn:
+                match = True
+            elif ":secret:" in region_cfg.source_secret_arn and ":secret:" in secret_id:
+                # Compare just the secret name part
+                match = region_cfg.source_secret_arn.split(":secret:", 1)[1] == secret_id.split(":secret:", 1)[1]
+            if not match:
+                continue
+
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
             dest_secret_arn = region_cfg.destination_secret_arn
-            # Extract the secret name from the ARN (last part after :secret:)
             dest_name = dest_secret_arn.split(":secret:", 1)[1] if ":secret:" in dest_secret_arn else dest_secret_arn
 
-            # Use cached client if provided, else fallback to assume_role
             if get_sm_client is not None:
                 sm_dest = get_sm_client(dest.role_arn, region_name)
             else:
                 sm_dest = assume_role(dest.role_arn, region_name)
 
-            # Ensure secret exists or create it
             try:
                 sm_dest.describe_secret(SecretId=dest_name)
                 secret_exists = True
@@ -91,27 +98,22 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None)
                     **{secret_value_key: secret_value}
                 )
             else:
-                # Update secret value
                 sm_dest.put_secret_value(
                     SecretId=dest_name,
                     **{secret_value_key: secret_value}
                 )
 
-                # Sync tags if enabled: ensure destination tags match source exactly
                 if config.enable_tag_replication:
-                    # Get current tags from destination
                     dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
                     dest_tags = dest_metadata.get("Tags", [])
                     source_tag_keys = {t["Key"] for t in source_tags}
                     dest_tag_keys = {t["Key"] for t in dest_tags}
-                    # Remove tags that are present on destination but not in source
                     tags_to_remove = list(dest_tag_keys - source_tag_keys)
                     if tags_to_remove:
                         sm_dest.untag_resource(
                             SecretId=dest_name,
                             TagKeys=tags_to_remove
                         )
-                    # Apply all source tags (will add/update as needed)
                     if source_tags:
                         sm_dest.tag_resource(
                             SecretId=dest_name,

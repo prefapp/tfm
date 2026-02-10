@@ -7,6 +7,7 @@ from typing import Dict
 @dataclass
 class RegionConfig:
     kms_key_arn: str
+    source_secret_arn: str
     destination_secret_arn: str
 
 
@@ -41,6 +42,7 @@ def load_config() -> Config:
         regions = {
             region_name: RegionConfig(
                 kms_key_arn = region_cfg["kms_key_arn"],
+                source_secret_arn = region_cfg["source_secret_arn"],
                 destination_secret_arn = region_cfg["destination_secret_arn"]
             )
             for region_name, region_cfg in entry["regions"].items()
