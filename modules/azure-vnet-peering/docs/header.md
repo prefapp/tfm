@@ -9,25 +9,21 @@ This Terraform module creates a virtual network peering between two Azure virtua
 
 ## Real usage example
 
-### Set a module
-
-```terraform
-module "azure-vnet-peering" {
+```hcl
+module "azure_vnet_peering" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-peering?ref=<version>"
-}
-```
 
-###############
-# VNET ORIGIN #
-###############
+  ################
+  # VNET ORIGIN  #
+  ################
 
-  origin_virtual_network_name      = "origen-vnet"
-  origin_resource_group_name       = "test-peering"
-  origin_name_peering              = "origen-vnet-to-destino-vnet"
+  origin_virtual_network_name = "origen-vnet"
+  origin_resource_group_name  = "test-peering"
+  origin_name_peering         = "origen-vnet-to-destino-vnet"
 
-####################
-# VNET DESTINATION #
-####################
+  #####################
+  # VNET DESTINATION  #
+  #####################
 
   destination_virtual_network_name = "destino-vnet"
   destination_resource_group_name  = "test-peering"
