@@ -144,18 +144,6 @@ module "lambda_automatic_replication" {
           Effect   = "Allow"
           Action   = ["sts:AssumeRole"]
           Resource = var.allowed_assume_roles
-        } : null,
-        length(local.kms_key_arns) > 0 ? {
-          Sid    = "KMSUsage"
-          Effect = "Allow"
-          Action = [
-            "kms:Decrypt",
-            "kms:GenerateDataKey",
-            "kms:Encrypt",
-            "kms:ReEncrypt*",
-            "kms:DescribeKey"
-          ]
-          Resource = local.kms_key_arns
         } : null
       ] : s if s != null
     ]
@@ -241,18 +229,6 @@ module "lambda_manual_replication" {
           Effect   = "Allow"
           Action   = ["sts:AssumeRole"]
           Resource = var.allowed_assume_roles
-        } : null,
-        length(local.kms_key_arns) > 0 ? {
-          Sid    = "KMSUsage"
-          Effect = "Allow"
-          Action = [
-            "kms:Decrypt",
-            "kms:Encrypt",
-            "kms:GenerateDataKey",
-            "kms:DescribeKey",
-            "kms:ReEncrypt*"
-          ]
-          Resource = local.kms_key_arns
         } : null
       ] : s if s != null
     ]
