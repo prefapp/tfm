@@ -75,7 +75,7 @@ data "aws_iam_policy_document" "assume_role" {
 
 resource "aws_iam_role" "replication" {
   count = var.s3_replication_destination != null ? 1 : 0
-  name  = substr("${var.bucket}${var.s3_replication_role_suffix}", 0, 38) # AWS IAM role names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
+  name  = substr("${var.bucket}${var.s3_replication_role_suffix}", 0, 64) # AWS IAM role names have a maximum length of 64 characters; truncate to IAM's limit
   # region             = var.region
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
