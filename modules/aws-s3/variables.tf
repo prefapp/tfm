@@ -182,6 +182,11 @@ variable "s3_replication_destination" {
     }))
   })
   default = null
+
+  validation {
+    condition     = var.s3_replication_destination == null || var.s3_bucket_versioning == "Enabled"
+    error_message = "When configuring s3_replication_destination, s3_bucket_versioning must be set to \"Enabled\"."
+  }
 }
 
 ## Replication variables
