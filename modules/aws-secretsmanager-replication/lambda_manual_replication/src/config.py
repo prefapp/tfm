@@ -1,7 +1,7 @@
 import json
 import os
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Optional
 
 
 @dataclass
@@ -9,7 +9,7 @@ class RegionConfig:
     kms_key_arn: str
     source_secret_arn: str
     destination_secret_name: str
-    destination_secret_arn: str = None  # Optional, for reference only
+    destination_secret_arn: Optional[str] = None  # Optional, for reference only
 
 
 @dataclass
