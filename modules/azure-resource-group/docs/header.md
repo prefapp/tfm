@@ -16,10 +16,8 @@ This Terraform module allows you to create Azure Resource Groups with optional t
 module "github-oidc" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-resource-group?ref=<version>"
 }
-```
 
 ### HCL
-
 ```hcl
 name     = "group_one"
 location = "westEurope"
