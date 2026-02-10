@@ -254,7 +254,7 @@ module "lambda_manual_replication" {
           Action   = ["secretsmanager:CreateSecret"]
           Resource = "*"
           Condition = {
-            StringEqualsIfExists = {
+            StringEquals = {
               "secretsmanager:Name" = local.allowed_destination_secret_names
             }
           }
