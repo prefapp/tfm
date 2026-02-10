@@ -330,7 +330,7 @@ resource "aws_cloudtrail" "secrets_management_events" {
 
   tags = var.tags
 
-  depends_on = [aws_s3_bucket_policy.cloudtrail]
+  depends_on = var.s3_bucket_name != "" && var.cloudtrail_name == "" ? [] : [aws_s3_bucket_policy.cloudtrail]
 }
 
 ###############################################################################
