@@ -41,7 +41,7 @@ module "azure_vmss" {
 
     identity_type = "SystemAssigned"
 
-    cloud_init = null
+    cloud_init = "#cloud-config"
     run_script = null
   }
 
