@@ -6,6 +6,6 @@ permissions:
   actions:
     - "Microsoft.Compute/disks/read"
     - "Microsoft.Compute/disks/write"
-  notActions:
+  not_actions:
     - "Microsoft.Authorization/*/Delete"
     - "Microsoft.Authorization/*/Write"
