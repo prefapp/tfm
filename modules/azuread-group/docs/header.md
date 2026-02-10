@@ -2,10 +2,6 @@
 
 This Terraform module creates and manages Azure Active Directory (AD) groups, including role assignments, PIM (Privileged Identity Management), owners, and members. It supports configuration via YAML for easier management and reproducibility.
 
-## Requirements
-- Terraform >= 1.7.0
-- Provider azuread ~> 2.52.0
-- Provider azurerm = 4.16.0
 
 ### Provisioner actor and permissions
 
@@ -107,8 +103,7 @@ module "azuread-group" {
 }
 ```
 
-> For a complete working example, see the `_examples/with_yaml_file` folder in this repository.
-
+> For a more complete example configuration, see the `_examples/with_yaml_file` folder in this repository. Ensure that provider versions in the example align with the Requirements section above.
 ## Known issues
 - Removing a `azuread_privileged_access_group_eligibility_schedule` resource may crash the provider ([issue #1399](https://github.com/hashicorp/terraform-provider-azuread/issues/1399)).
 - Updating a `azuread_privileged_access_group_eligibility_schedule` may show a wrong log error; sometimes you must remove and recreate the resource ([issue #1412](https://github.com/hashicorp/terraform-provider-azuread/issues/1412)).
