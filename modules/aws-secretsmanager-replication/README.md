@@ -25,7 +25,7 @@ This module deploys a Lambda function that listens for changes in AWS Secrets Ma
 
 The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure. **Each region must now include the keys `kms_key_arn`, `source_secret_arn`, and `destination_secret_name` (all required for correct IAM permissions). `destination_secret_arn` is optional and only for documentation/reference:**
 
-```json
+```jsonc
 {
 	"DEST_ACCOUNT_ID": {
 		"role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
@@ -46,6 +46,8 @@ The destinations are configured via the `destinations_json` variable, which must
 	}
 }
 ```
+
+> **Note:** The above example uses `//` comments for documentation. If you need valid JSON, remove the comments or use a tool that supports JSONC (JSON with comments).
 
 You can specify as many destination accounts and regions as needed. Each region must specify the KMS key, the source secret ARN, and the destination secret name. The destination ARN is optional and only for documentation.
 
