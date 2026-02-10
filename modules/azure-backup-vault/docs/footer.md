@@ -3,10 +3,9 @@
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples):
 
-- [with_nic](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/with_nic) - Example configuring backup for disks with custom network interface configuration.
-- [with_custom_data](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/with_custom_data) - Example provisioning backup for blob storage with custom policy.
-- [with_vault_admin_pass](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/with_vault_admin_pass) - Example using Key Vault for secure backup configuration.
-- See documentation for more advanced scenarios (Kubernetes, PostgreSQL, MySQL, etc).
+- [blobs](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/blobs) - Example provisioning backup for blobs with custom policy.
+- [disks](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/disks) - Example provisioning backup for disks with custom policy.
+- [postgresql](https://github.com/prefapp/tfm/tree/main/modules/azure-backup-vault/_examples/postgresql) - Example provisioning backup for postgresql with custom policies.
 
 ## Remote resources
 
