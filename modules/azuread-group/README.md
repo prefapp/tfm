@@ -3,11 +3,6 @@
 
 This Terraform module creates and manages Azure Active Directory (AD) groups, including role assignments, PIM (Privileged Identity Management), owners, and members. It supports configuration via YAML for easier management and reproducibility.
 
-## Requirements
-- Terraform >= 1.7.0
-- Provider azuread ~> 2.52.0
-- Provider azurerm = 4.16.0
-
 ### Provisioner actor and permissions
 
 > The provisioner actor must be a Service Principal due to a bug in the provider. See [issue #1386](https://github.com/hashicorp/terraform-provider-azuread/issues/1386).
