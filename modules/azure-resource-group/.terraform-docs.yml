@@ -36,8 +36,8 @@ settings:
   anchor: true
   color: true
   default: true
-  description: false
-  escape: true
+  description: true
+  escape: false
   hide-empty: false
   html: true
   indent: 2
