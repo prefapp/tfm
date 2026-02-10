@@ -24,9 +24,10 @@ def replicate_all(config):
         for secret in page.get("SecretList", []):
             secret_id = secret["ARN"]
             try:
-                replicate_secret(secret_id, config, get_sm_client=get_sm_client)
+                replicate_secret(secret_id, config, get_sm_client=get_sm_client, source_sm=source_sm)
             except Exception as e:
                 log("error", f"Failed to replicate secret {secret_id}: {e}")
+
 
 def extract_secret_name(secret_id):
     """
@@ -65,8 +66,11 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
     """
     log("info", "Starting replication", secret_id=secret_id)
 
-    # Read source secret (full ARN is OK)
-    source_sm = boto3.client("secretsmanager", region_name=config.source_region)
+    # Accept an existing source_sm client if provided, else create one
+    if "source_sm" in locals() and locals()["source_sm"] is not None:
+        source_sm = locals()["source_sm"]
+    else:
+        source_sm = boto3.client("secretsmanager", region_name=config.source_region)
 
     secret_response = source_sm.get_secret_value(SecretId=secret_id)
     if "SecretString" in secret_response:
