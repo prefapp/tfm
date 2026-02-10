@@ -143,3 +143,61 @@ The EventBridge rule should match Secrets Manager API calls via CloudTrail. Exam
 ```
 
 This ensures the rule triggers on all relevant Secrets Manager API calls recorded by CloudTrail.
+
+## Required IAM Role in Destination Account
+
+The destination account must have an IAM role that the replication Lambda can assume. This role should be specified in `destinations_json` as `role_arn` for each destination account. The role must have the following permissions:
+
+### Minimum Policy for Secrets Manager Replication
+
+```jsonc
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:CreateSecret",
+        "secretsmanager:PutSecretValue",
+        "secretsmanager:UpdateSecret",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:TagResource",
+        "secretsmanager:UntagResource",
+        "secretsmanager:UpdateSecretVersionStage",
+        "secretsmanager:ListSecretVersionIds"
+      ],
+      "Resource": "arn:aws:secretsmanager:<region>:<account>:secret:<destination_secret_name>*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:GenerateDataKey",
+        "kms:DescribeKey"
+      ],
+      "Resource": [
+        "<kms_key_arn>"
+      ]
+    }
+  ]
+}
+```
+
+- Replace `<region>`, `<account>`, `<destination_secret_name>`, and `<kms_key_arn>` with the actual values for your setup.
+- The role must be assumable by the Lambda's source account. Example trust policy:
+
+```jsonc
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::<source_account_id>:root" },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+> **Note:** You may need to further restrict or expand permissions depending on your organization's security requirements.
