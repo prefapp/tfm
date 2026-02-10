@@ -34,12 +34,12 @@ data "aws_cloudtrail" "existing" {
 locals {
   source_secret_arns = flatten([
     for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : try(region_cfg.source_secret_arn, [])
+      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.source_secret_arn
     ]
   ])
   destination_secret_arns = flatten([
     for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : try(region_cfg.destination_secret_arn, [])
+      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.destination_secret_arn
     ]
   ])
   using_existing_cloudtrail = var.cloudtrail_name != ""
