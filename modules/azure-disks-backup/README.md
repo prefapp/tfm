@@ -156,7 +156,7 @@ No modules.
 |------|-------------|
 | <a name="output_vault_id"></a> [vault\_id](#output\_vault\_id) | n/a |
 
-s---
+---
 
 ## Additional resources
 
