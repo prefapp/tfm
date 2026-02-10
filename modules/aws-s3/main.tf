@@ -1,4 +1,5 @@
 resource "aws_s3_bucket" "this" {
+  count               = var.create_bucket ? 1 : 0
   bucket              = var.bucket
   region              = var.region
   object_lock_enabled = var.object_lock_enabled
@@ -6,7 +7,9 @@ resource "aws_s3_bucket" "this" {
 }
 ## ACL Config
 resource "aws_s3_bucket_public_access_block" "this" {
-  bucket                  = aws_s3_bucket.this.id
+  count = var.create_bucket ? 1 : 0
+
+  bucket                  = aws_s3_bucket.this[0].id
   region                  = var.region
   block_public_acls       = var.block_public_acls == null ? var.bucket_public_access : var.block_public_acls
   block_public_policy     = var.block_public_policy == null ? var.bucket_public_access : var.block_public_policy
@@ -17,13 +20,15 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 ## Bucket Policy to enforce HTTPS only
 resource "aws_s3_bucket_policy" "this" {
+
   region = var.region
-  bucket = aws_s3_bucket.this.id
+  bucket = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
   policy = var.s3_replication_source != null ? data.aws_iam_policy_document.source_replication_s3_policy_with_https_policy[0].json : data.aws_iam_policy_document.only_https.json
+  # policy = data.aws_iam_policy_document.only_https.json
 }
 
 data "aws_iam_policy_document" "only_https" {
-  source_policy_documents = var.extra_bucket_iam_policies_json
+  # source_policy_documents = var.extra_bucket_iam_policies_json
   statement {
     principals {
       type        = "AWS"
@@ -40,9 +45,12 @@ data "aws_iam_policy_document" "only_https" {
     ]
 
     effect = "Deny"
-    resources = [
-      aws_s3_bucket.this.arn,
-      "${aws_s3_bucket.this.arn}/*",
+    resources = var.create_bucket ? [
+      aws_s3_bucket.this[0].arn,
+      "${aws_s3_bucket.this[0].arn}/*",
+      ] : [
+      data.aws_s3_bucket.this[0].arn,
+      "${data.aws_s3_bucket.this[0].arn}/*",
     ]
   }
 }
@@ -59,13 +67,13 @@ data "aws_iam_policy_document" "source_replication_s3_policy" {
       type        = "AWS"
       identifiers = [try(var.s3_replication_source.role_arn, "")]
     }
-
+    sid = "Set-permissions-for-objects"
     actions = [
       "s3:ReplicateObject",
       "s3:ReplicateDelete"
     ]
 
-    resources = ["${try(aws_s3_bucket.this.arn, "")}/*"]
+    resources = var.create_bucket ? ["${try(aws_s3_bucket.this[0].arn, "")}/*"] : ["${try(data.aws_s3_bucket.this[0].arn, "")}/*"]
   }
 
   statement {
@@ -76,12 +84,13 @@ data "aws_iam_policy_document" "source_replication_s3_policy" {
       identifiers = [try(var.s3_replication_source.role_arn, "")]
     }
 
+    sid = "Set-permissions-on-bucket"
     actions = [
       "s3:GetBucketVersioning",
       "s3:PutBucketVersioning"
     ]
 
-    resources = [try(aws_s3_bucket.this.arn, "")]
+    resources = var.create_bucket ? [try(aws_s3_bucket.this[0].arn, "")] : [try(data.aws_s3_bucket.this[0].arn, "")]
   }
 }
 
@@ -97,11 +106,12 @@ data "aws_iam_policy_document" "source_replication_s3_policy_with_https_policy" 
 
 ## Bucket Versioning
 resource "aws_s3_bucket_versioning" "this" {
-  bucket = aws_s3_bucket.this.id
+  count  = var.create_bucket ? 1 : 0
+  bucket = aws_s3_bucket.this[0].id
   region = var.region
   versioning_configuration {
     status = var.s3_bucket_versioning
   }
+
 }
 # END Bucket Versioning
-

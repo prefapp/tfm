@@ -1,12 +1,12 @@
 output "bucket_id" {
-  value = aws_s3_bucket.this.id
+  value = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
 }
 
 output "bucket_arn" {
-  value = aws_s3_bucket.this.arn
+  value = var.create_bucket ? aws_s3_bucket.this[0].arn : data.aws_s3_bucket.this[0].arn
 }
 output "bucket_domain_name" {
-  value = aws_s3_bucket.this.bucket_domain_name
+  value = var.create_bucket ? aws_s3_bucket.this[0].bucket_domain_name : data.aws_s3_bucket.this[0].bucket_domain_name
 }
 
 ## Replication outputs

@@ -4,7 +4,7 @@ resource "aws_s3_bucket_replication_configuration" "origin_to_destination" {
   depends_on = [aws_s3_bucket_versioning.this]
   region     = var.region
   role       = aws_iam_role.replication[0].arn
-  bucket     = aws_s3_bucket.this.id
+  bucket     = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
 
   rule {
     id = "origin-to-destination"
@@ -14,7 +14,11 @@ resource "aws_s3_bucket_replication_configuration" "origin_to_destination" {
     delete_marker_replication {
       status = try(var.s3_replication_destination.filter.and.tags, null) == null ? "Enabled" : "Disabled"
     }
-
+    source_selection_criteria {
+      replica_modifications {
+        status = "Enabled"
+      }
+    }
 
     dynamic "destination" {
       for_each = var.s3_replication_destination != null ? [var.s3_replication_destination] : []
@@ -70,8 +74,8 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "replication" {
-  count       = var.s3_replication_destination != null ? 1 : 0
-  name_prefix = substr("${var.bucket}-replication-", 0, 38) # AWS IAM role names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
+  count = var.s3_replication_destination != null ? 1 : 0
+  name  = substr("${var.bucket}${var.s3_replication_role_suffix}", 0, 38) # AWS IAM role names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
   # region             = var.region
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
@@ -82,21 +86,24 @@ data "aws_iam_policy_document" "replication" {
 
     actions = [
       "s3:GetReplicationConfiguration",
-      "s3:ListBucket",
-    ]
-    resources = [try(var.s3_replication_destination.bucket_arn, "")]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
+      "s3:GetObjectVersionTagging",
       "s3:GetObjectVersionForReplication",
       "s3:GetObjectVersionAcl",
-      "s3:GetObjectVersionTagging",
+      "s3:GetObjectRetention",
+      "s3:GetObjectLegalHold",
+      "s3:ListBucket",
     ]
-
-    resources = ["${aws_s3_bucket.this.arn}/*"]
+    resources = var.create_bucket ? [
+      "${try(aws_s3_bucket.this[0].arn, "")}",
+      "${try(aws_s3_bucket.this[0].arn, "")}/*",
+      "${try(var.s3_replication_destination.bucket_arn, "")}",
+      "${try(var.s3_replication_destination.bucket_arn, "")}/*",
+      ] : [
+      "${try(data.aws_s3_bucket.this[0].arn, "")}",
+      "${try(data.aws_s3_bucket.this[0].arn, "")}/*",
+      "${try(var.s3_replication_destination.bucket_arn, "")}",
+      "${try(var.s3_replication_destination.bucket_arn, "")}/*",
+    ]
   }
 
   statement {
@@ -106,15 +113,34 @@ data "aws_iam_policy_document" "replication" {
       "s3:ReplicateObject",
       "s3:ReplicateDelete",
       "s3:ReplicateTags",
+      "s3:ObjectOwnerOverrideToBucketOwner",
     ]
 
-    resources = ["${try(var.s3_replication_destination.bucket_arn, "")}/*"]
+    resources = var.create_bucket ? [
+      "${try(aws_s3_bucket.this[0].arn, "")}/*",
+      "${try(var.s3_replication_destination.bucket_arn, "")}/*",
+      ] : [
+      "${try(data.aws_s3_bucket.this[0].arn, "")}/*",
+      "${try(var.s3_replication_destination.bucket_arn, "")}/*",
+    ]
   }
+
+  # statement {
+  #   effect = "Allow"
+
+  #   actions = [
+  #     "s3:ReplicateObject",
+  #     "s3:ReplicateDelete",
+  #     "s3:ReplicateTags",
+  #   ]
+
+  #   resources = ["${try(var.s3_replication_destination.bucket_arn, "")}/*"]
+  # }
 }
 
 resource "aws_iam_policy" "replication" {
-  count       = var.s3_replication_destination != null ? 1 : 0
-  name_prefix = substr("${var.bucket}-replication", 0, 38) # AWS IAM policy names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
+  count = var.s3_replication_destination != null ? 1 : 0
+  name  = substr("${var.bucket}${var.s3_replication_role_suffix}", 0, 38) # AWS IAM policy names have a maximum length of 64 characters, and we need to account for the random suffix added by Terraform
 
   policy = data.aws_iam_policy_document.replication.json
 }

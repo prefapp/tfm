@@ -1,10 +1,10 @@
 resource "aws_s3_bucket_lifecycle_configuration" "this" {
-  count  = length(var.lifecycle_rules) > 0 ? 1 : 0
+  count  = length(local.lifecycle_rules) > 0 ? 1 : 0
   region = var.region
-  bucket = aws_s3_bucket.this.id
+  bucket = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
 
   dynamic "rule" {
-    for_each = var.lifecycle_rules
+    for_each = local.lifecycle_rules
     content {
       id     = rule.value.id
       status = try(rule.value.status, "Enabled")
@@ -48,6 +48,15 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
         }
 
       }
+
+      dynamic "abort_incomplete_multipart_upload" {
+        for_each = try(rule.value.abort_incomplete_multipart_upload, null) != null ? [rule.value.abort_incomplete_multipart_upload] : []
+        content {
+          days_after_initiation = abort_incomplete_multipart_upload.value.days_after_initiation
+        }
+
+      }
+
     }
 
   }

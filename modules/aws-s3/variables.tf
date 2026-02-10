@@ -9,6 +9,11 @@ variable "bucket" {
   type        = string
 }
 
+variable "create_bucket" {
+  description = "Variable para indicar si creamos el bucket o si usamos uno con el nombre indicado en bucket"
+  type        = bool
+  default     = true
+}
 variable "extra_bucket_iam_policies_json" {
   description = "A array from JSON string representing additional IAM policies to attach to the bucket."
   type        = list(string)
@@ -57,6 +62,12 @@ variable "s3_bucket_versioning" {
   }
 }
 
+variable "s3_replication_role_suffix" {
+  description = "Suffix to add to the replication role name. This is useful to avoid name conflicts when creating multiple replication roles in the same account."
+  type        = string
+  default     = "-replication"
+}
+
 variable "object_lock_enabled" {
   description = "A boolean that indicates whether object lock is enabled for the bucket."
   type        = bool
@@ -91,9 +102,65 @@ variable "lifecycle_rules" {
       newer_noncurrent_versions = optional(number)
       noncurrent_days           = optional(number)
     }))
+    abort_incomplete_multipart_upload = optional(object({
+      days_after_initiation = number
+    }))
 
   }))
   default = []
+}
+
+variable "default_lifecycle_rules" {
+  description = "A list of lifecycle rules when replication or versioning is enabled to apply to the bucket."
+  type = list(object({
+    id     = string
+    status = optional(string)
+    filter = optional(object({
+      prefix = optional(string)
+      and = optional(object({
+        prefix                   = optional(string)
+        object_size_greater_than = optional(number)
+        object_size_less_than    = optional(number)
+      }))
+    }))
+    enabled = optional(bool)
+    prefix  = optional(string)
+    tags    = optional(map(string))
+    transitions = optional(list(object({
+      days          = number
+      storage_class = string
+    })))
+    expiration = optional(object({
+      days                         = optional(number)
+      expired_object_delete_marker = optional(bool)
+    }))
+    noncurrent_version_expiration = optional(object({
+      newer_noncurrent_versions = optional(number)
+      noncurrent_days           = optional(number)
+    }))
+    abort_incomplete_multipart_upload = optional(object({
+      days_after_initiation = number
+    }))
+  }))
+  default = [
+    {
+      id     = "Permanently delete noncurrent versions of objects after 3 days"
+      status = "Enabled"
+      noncurrent_version_expiration = {
+        noncurrent_days = 3
+      }
+    },
+    {
+      id     = "Delete expired objects and incomplete multipart uploads (after 2 days)"
+      status = "Enabled"
+      abort_incomplete_multipart_upload = {
+        days_after_initiation = 2
+      }
+      expiration = {
+        expired_object_delete_marker = true
+      }
+    }
+  ]
 }
 
 
