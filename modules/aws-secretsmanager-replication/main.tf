@@ -371,9 +371,6 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
                   "s3:x-amz-acl" = "bucket-owner-full-control"
                   "aws:SourceAccount" = data.aws_caller_identity.current.account_id
                 }
-                ArnLike = {
-                  "aws:SourceArn" = local.cloudtrail_arn
-                }
               }
             }
           ]
