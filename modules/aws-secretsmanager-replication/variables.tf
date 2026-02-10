@@ -20,7 +20,11 @@ variable "prefix" {
 
 variable "destinations_json" {
   validation {
-    condition = (
+    condition     = can(jsondecode(var.destinations_json))
+    error_message = "destinations_json must be valid JSON."
+  }
+  validation {
+    condition = can(jsondecode(var.destinations_json)) && (
       length(keys(try(jsondecode(var.destinations_json), {}))) > 0
       &&
       anytrue([
@@ -31,11 +35,7 @@ variable "destinations_json" {
     error_message = "destinations_json must define at least one destination and at least one region entry."
   }
   validation {
-    condition     = can(jsondecode(var.destinations_json))
-    error_message = "destinations_json must be valid JSON."
-  }
-  validation {
-    condition = alltrue([
+    condition = can(jsondecode(var.destinations_json)) && alltrue([
       for k, v in try(jsondecode(var.destinations_json), {}) :
       can(keys(v)) && can(lookup(v, "role_arn", null)) && can(lookup(v, "regions", null)) &&
       contains(try(keys(v), []), "role_arn") && contains(try(keys(v), []), "regions")
@@ -43,7 +43,7 @@ variable "destinations_json" {
     error_message = "Each destination in destinations_json must contain 'role_arn' and 'regions' keys."
   }
   validation {
-    condition = alltrue([
+    condition = can(jsondecode(var.destinations_json)) && alltrue([
       for k, v in try(jsondecode(var.destinations_json), {}) :
       alltrue([
         for region_name, region_cfg in try(try(v.regions, {}), {}) :
