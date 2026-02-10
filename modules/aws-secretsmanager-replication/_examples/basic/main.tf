@@ -21,9 +21,13 @@ locals {
       regions = {
         "us-east-1" = {
           kms_key_arn = "arn:aws:kms:us-east-1:111111111111:key/abc123"
+          source_secret_arn = "arn:aws:secretsmanager:us-east-1:111111111111:secret:example-source-secret-abc123"
+          destination_secret_arn = "arn:aws:secretsmanager:us-east-1:111111111111:secret:example-dest-secret-xyz789"
         }
         "eu-central-1" = {
           kms_key_arn = "arn:aws:kms:eu-central-1:111111111111:key/def456"
+          source_secret_arn = "arn:aws:secretsmanager:eu-central-1:111111111111:secret:example-source-secret-def456"
+          destination_secret_arn = "arn:aws:secretsmanager:eu-central-1:111111111111:secret:example-dest-secret-uvw000"
         }
       }
     }
@@ -33,6 +37,8 @@ locals {
       regions = {
         "us-east-1" = {
           kms_key_arn = "arn:aws:kms:us-east-1:222222222222:key/xyz789"
+          source_secret_arn = "arn:aws:secretsmanager:us-east-1:222222222222:secret:example-source-secret-xyz789"
+          destination_secret_arn = "arn:aws:secretsmanager:us-east-1:222222222222:secret:example-dest-secret-abc111"
         }
       }
     }
