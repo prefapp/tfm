@@ -2,7 +2,7 @@
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network
 data "azurerm_resource_group" "this" {
-  name = var.resource_group_name
+  name = var.vpn.resource_group_name
 }
 
 data "azurerm_subnet" "this" {
