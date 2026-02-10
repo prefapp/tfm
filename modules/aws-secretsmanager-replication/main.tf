@@ -389,6 +389,11 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
             "s3:GetBucketPolicy"
           ]
           Resource = local.s3_bucket_arn
+          Condition = {
+            StringEquals = {
+              "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+            }
+          }
         },
         {
           Sid       = "AWSCloudTrailWrite"
@@ -399,6 +404,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
           Condition = {
             StringEquals = {
               "s3:x-amz-acl" = "bucket-owner-full-control"
+              "aws:SourceAccount" = data.aws_caller_identity.current.account_id
             }
           }
         }
