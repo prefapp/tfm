@@ -24,7 +24,10 @@ module "azure_application" {
   source  = "./modules/azure-application"
   name    = "my-app"
   members = ["user1@dominio.com", "user2@dominio.com"]
-  msgraph_roles = ["User.Read.All"]
+  msgraph_roles = [{
+    id        = "User.Read.All"
+    delegated = true
+  }]
   redirects = [{
     platform      = "web"
     redirect_uris = ["https://myapp.com/auth/callback"]
