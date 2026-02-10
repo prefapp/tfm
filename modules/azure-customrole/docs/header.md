@@ -9,9 +9,9 @@ This Terraform module allows you to create a custom role in Azure, specifying ac
 - Flexible definition of actions, data actions, not actions, and not data actions.
 - Support for multiple assignable scopes.
 
-## Ejemplo completo
+## Full example
 
-Puedes encontrar un ejemplo completo en [`_examples/basic/values.yaml`](../_examples/basic/values.yaml).
+You can find a full example in [`_examples/basic/values.yaml`](../_examples/basic/values.yaml).
 
 ## File structure
 
