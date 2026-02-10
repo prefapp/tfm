@@ -122,17 +122,18 @@ module "lambda_automatic_replication" {
     Version = "2012-10-17"
     Statement = [
       for s in [
-        length(local.source_secret_arns) > 0 ? {
-          Sid    = "AllowReplicationRole"
+        # Allow reading any secret in the account (for DR/backup)
+        {
+          Sid    = "AllowGetSecretValueAllSecrets"
           Effect = "Allow"
           Action = [
-            "secretsmanager:DescribeSecret",
             "secretsmanager:GetSecretValue",
+            "secretsmanager:DescribeSecret",
             "secretsmanager:ListSecretVersionIds",
             "secretsmanager:GetResourcePolicy"
           ]
-          Resource = local.source_secret_arns
-        } : null,
+          Resource = "*"
+        },
         length(local.destination_secret_arns) > 0 ? {
           Sid    = "ManageDestinationSecrets"
           Effect = "Allow"
