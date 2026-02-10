@@ -32,26 +32,28 @@ data "aws_cloudtrail" "existing" {
 ###############################################################################
 
 locals {
+
   # Precompute allowed destination secret names for CreateSecret condition
   allowed_destination_secret_names = compact(flatten([
     for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : (
-        length(split(":secret:", lookup(region_cfg, "destination_secret_arn", ""))) == 2 ?
-        split(":secret:", lookup(region_cfg, "destination_secret_arn", ""))[1] : null
-      )
+      for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "destination_secret_name", null)
     ]
   ]))
-  # ARN Lists, get from DESTINATIONS_JSON for dynamic number of secrets
+
+  # Wildcard ARNs for destination secrets (to allow for AWS-generated suffixes)
+  destination_secret_arns = compact(flatten([
+    for dest in local.parsed_destinations : [
+      for region_name, region_cfg in try(dest.regions, {}) :
+        format("arn:aws:secretsmanager:%s:%s:secret:%s*", region_name, dest.account_id != null ? dest.account_id : "*", lookup(region_cfg, "destination_secret_name", ""))
+    ]
+  ]))
+
   source_secret_arns = compact(flatten([
     for dest in local.parsed_destinations : [
       for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "source_secret_arn", null)
     ]
   ]))
-  destination_secret_arns = compact(flatten([
-    for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "destination_secret_arn", null)
-    ]
-  ]))
+
   kms_key_arns = flatten([
     for dest in local.parsed_destinations : [
       for region_name, region_cfg in try(dest.regions, {}) : region_cfg.kms_key_arn

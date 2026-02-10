@@ -8,7 +8,8 @@ from typing import Dict
 class RegionConfig:
     kms_key_arn: str
     source_secret_arn: str
-    destination_secret_arn: str
+    destination_secret_name: str
+    destination_secret_arn: str = None  # Optional, for reference only
 
 
 @dataclass
@@ -43,7 +44,8 @@ def load_config() -> Config:
             region_name: RegionConfig(
                 kms_key_arn = region_cfg["kms_key_arn"],
                 source_secret_arn = region_cfg["source_secret_arn"],
-                destination_secret_arn = region_cfg["destination_secret_arn"]
+                destination_secret_name = region_cfg["destination_secret_name"],
+                destination_secret_arn = region_cfg.get("destination_secret_arn")
             )
             for region_name, region_cfg in entry["regions"].items()
         }

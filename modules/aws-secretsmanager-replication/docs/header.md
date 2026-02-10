@@ -19,12 +19,11 @@ The module is designed for secure and automated secret replication, supporting f
 
 This module deploys a Lambda function that listens for changes in AWS Secrets Manager via EventBridge (if enabled). When a secret is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both secret value and tags (if enabled).
 
+
 ### Destination Configuration Format
-> **Note:** For the first replication, you must specify the expected `destination_secret_arn` for each region in `destinations_json` even if the secret does not yet exist. This ensures the Lambda has IAM permissions to create the destination secret. The ARN should match the name you want the secret to have in the destination account/region.
+> **Note:** For the first replication, you must specify the expected `destination_secret_name` for each region in `destinations_json`. This ensures the Lambda creates and manages the correct secret, and the IAM policy can safely use a wildcard pattern to allow all ARNs generated for that name.
 
-
-The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure. **Each region must now include the keys `kms_key_arn`, `source_secret_arn`, and `destination_secret_arn` (all required for correct IAM permissions):**
-
+The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure. **Each region must now include the keys `kms_key_arn`, `source_secret_arn`, and `destination_secret_name` (all required for correct IAM permissions). `destination_secret_arn` is optional and only for documentation/reference:**
 
 ```json
 {
@@ -34,20 +33,21 @@ The destinations are configured via the `destinations_json` variable, which must
 			"us-east-1": {
 				"kms_key_arn": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx",
 				"source_secret_arn": "arn:aws:secretsmanager:us-east-1:SOURCE_ACCOUNT_ID:secret:my-secret-xxxxxx",
-				"destination_secret_arn": "arn:aws:secretsmanager:us-east-1:DEST_ACCOUNT_ID:secret:my-secret-copy-yyyyyy"
+				"destination_secret_name": "my-secret-copy",
+				"destination_secret_arn": "arn:aws:secretsmanager:us-east-1:DEST_ACCOUNT_ID:secret:my-secret-copy-xxxxxx" // optional, for reference only
 			},
 			"eu-west-1": {
 				"kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy",
 				"source_secret_arn": "arn:aws:secretsmanager:eu-west-1:SOURCE_ACCOUNT_ID:secret:my-secret-xxxxxx",
-				"destination_secret_arn": "arn:aws:secretsmanager:eu-west-1:DEST_ACCOUNT_ID:secret:my-secret-copy-yyyyyy"
+				"destination_secret_name": "my-secret-copy",
+				"destination_secret_arn": "arn:aws:secretsmanager:eu-west-1:DEST_ACCOUNT_ID:secret:my-secret-copy-yyyyyy" // optional
 			}
 		}
 	}
 }
 ```
 
-You can specify as many destination accounts and regions as needed. Each region must specify the KMS key to use for secret encryption.
-You can specify as many destination accounts and regions as needed. **Each region must specify the KMS key, the source secret ARN, and the destination secret ARN.**
+You can specify as many destination accounts and regions as needed. Each region must specify the KMS key, the source secret ARN, and the destination secret name. The destination ARN is optional and only for documentation.
 
 ### Tag Replication
 
@@ -56,22 +56,22 @@ By default, tags from the source secret are also replicated to the destination. 
 ## Important Note: Permissions
 
 
+
 **Important:**
-The Lambda IAM permissions for reading and writing secrets are determined by the `source_secret_arns` and `destination_secret_arns` locals, which are extracted from the `destinations_json` variable. The required schema for each region is:
+The Lambda IAM permissions for reading and writing secrets are determined by the `source_secret_arns` and a wildcard-based ARN for each `destination_secret_name`, e.g.:
+
+```
+arn:aws:secretsmanager:<region>:<account>:secret:<destination_secret_name>*
+```
+
+This allows the Lambda to manage all ARNs generated for a given secret name, regardless of AWS-generated suffixes. The required schema for each region is:
 
 - `kms_key_arn`: ARN of the KMS key to use for encryption in the destination region.
 - `source_secret_arn`: ARN of the source secret to replicate.
-- `destination_secret_arn`: ARN of the destination secret to create or update.
+- `destination_secret_name`: Name of the secret to create or update in the destination region/account.
+- `destination_secret_arn`: (Optional) Example ARN for documentation/reference only.
 
-All three keys are required for each region. If any are missing, the module will fail validation and the Lambda will not have permissions to read or write the intended secrets, resulting in AccessDenied errors. Ensure your `destinations_json` includes all required ARNs for every region.
-
-**Example wildcard pattern:**
-```
-arn:aws:secretsmanager:<region>:<account>:secret:<prefix>*
-```
-
-**Recommendation:**
-Review your destinations_json and IAM policy configuration to ensure the Lambda has the necessary permissions for all intended secrets.
+All fields except `destination_secret_arn` are required for each region. If any are missing, the module will fail validation and the Lambda will not have permissions to read or write the intended secrets, resulting in AccessDenied errors. Ensure your `destinations_json` includes all required fields for every region.
 
 
 ## Architecture: Event-Driven Cross-Account Secret Replication

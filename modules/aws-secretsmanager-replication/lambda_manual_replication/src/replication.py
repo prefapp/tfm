@@ -74,8 +74,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None)
 
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
-            dest_secret_arn = region_cfg.destination_secret_arn
-            dest_name = dest_secret_arn.split(":secret:", 1)[1] if ":secret:" in dest_secret_arn else dest_secret_arn
+            dest_name = region_cfg.destination_secret_name
 
             if get_sm_client is not None:
                 sm_dest = get_sm_client(dest.role_arn, region_name)
