@@ -33,7 +33,7 @@ eventhub:
         send: false
         manage: false
     event_subscription: null
-    system_topic_name: example-system-topic
+    system_topic_name: example-topic
 
 tags_from_rg: false
 tags:

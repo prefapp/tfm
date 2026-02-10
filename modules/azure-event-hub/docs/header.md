@@ -86,6 +86,10 @@ values:
           manage: false
 ```
 
+## Notes
+- In each `eventhub` entry, `system_topic_name` must be the **map key** of the linked entry in `system_topic` (e.g. `topic-events`), not the topic's `name` attribute.
+- In HCL, map keys that contain hyphens (e.g. `example-topic`, `example-hub`) must be quoted: `"example-topic" = { ... }`.
+
 ## File structure
 
 ```

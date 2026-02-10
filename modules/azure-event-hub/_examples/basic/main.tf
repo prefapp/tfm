@@ -19,7 +19,7 @@ module "azure_event_hub" {
   }
 
   system_topic = {
-    example-topic = {
+    "example-topic" = {
       name               = "example-system-topic"
       location           = "westeurope"
       topic_type         = "Microsoft.EventHub.namespaces"
@@ -28,7 +28,7 @@ module "azure_event_hub" {
   }
 
   eventhub = {
-    example-hub = {
+    "example-hub" = {
       name                 = "example-eventhub"
       partition_count      = 2
       message_retention    = 7
@@ -42,7 +42,7 @@ module "azure_event_hub" {
         }
       ]
       event_subscription = null
-      system_topic_name  = "example-system-topic"
+      system_topic_name  = "example-topic"
     }
   }
 
