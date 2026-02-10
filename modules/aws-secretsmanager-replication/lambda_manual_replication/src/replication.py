@@ -65,9 +65,6 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
     """
     log("info", "Starting replication", secret_id=secret_id)
 
-    # Secret name (valid in destination)
-    dest_name = extract_secret_name(secret_id)
-
     # Read source secret (full ARN is OK)
     source_sm = boto3.client("secretsmanager", region_name=config.source_region)
 
@@ -82,7 +79,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
         raise Exception(f"Secret {secret_id} has neither SecretString nor SecretBinary")
 
     secret_metadata = source_sm.describe_secret(SecretId=secret_id)
-
+    dest_name = secret_metadata["Name"]
     source_tags = secret_metadata.get("Tags", [])
 
     for account_id, dest in config.destinations.items():
