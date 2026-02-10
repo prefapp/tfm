@@ -32,6 +32,18 @@ data "aws_cloudtrail" "existing" {
 ###############################################################################
 
 locals {
+    # Example: extract source and destination ARNs from destinations_json if structure allows
+    # You may need to adjust this logic to match your actual JSON structure
+    source_secret_arns = flatten([
+      for dest in local.parsed_destinations : [
+        for region_cfg in try(dest.regions, {}) : try(region_cfg.value.source_secret_arn, [])
+      ]
+    ])
+    destination_secret_arns = flatten([
+      for dest in local.parsed_destinations : [
+        for region_cfg in try(dest.regions, {}) : try(region_cfg.value.destination_secret_arn, [])
+      ]
+    ])
   using_existing_cloudtrail = var.cloudtrail_name != ""
   using_existing_s3_bucket  = var.s3_bucket_name != ""
 
@@ -44,7 +56,7 @@ locals {
   s3_bucket_arn      = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s", var.s3_bucket_name) : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].arn : "")
   s3_bucket_logs_arn = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : (length(aws_s3_bucket.cloudtrail) > 0 ? "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : "")
 
-  has_existing_bucket    = var.s3_bucket_name != ""
+  has_existing_bucket = var.s3_bucket_name != ""
 
   # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
   # Note: Terraform-provided values override any conflicting keys in var.environment_variables
@@ -55,6 +67,13 @@ locals {
       ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
     }
   )
+
+  parsed_destinations = try(jsondecode(var.destinations_json), {})
+  kms_key_arns = flatten([
+    for dest in local.parsed_destinations : [
+      for region_cfg in try(dest.regions, {}) : region_cfg.value.kms_key_arn
+    ]
+  ])
 }
 
 ###############################################################################
@@ -96,7 +115,7 @@ module "lambda_automatic_replication" {
     Version = "2012-10-17"
     Statement = [
       for s in [
-        length(var.source_secret_arns) > 0 ? {
+        length(local.source_secret_arns) > 0 ? {
           Sid    = "AllowReplicationRole"
           Effect = "Allow"
           Action = [
@@ -105,9 +124,9 @@ module "lambda_automatic_replication" {
             "secretsmanager:ListSecretVersionIds",
             "secretsmanager:GetResourcePolicy"
           ]
-          Resource = var.source_secret_arns
+          Resource = local.source_secret_arns
         } : null,
-        length(var.destination_secret_arns) > 0 ? {
+        length(local.destination_secret_arns) > 0 ? {
           Sid    = "ManageDestinationSecrets"
           Effect = "Allow"
           Action = [
@@ -120,7 +139,7 @@ module "lambda_automatic_replication" {
             "secretsmanager:UpdateSecretVersionStage",
             "secretsmanager:ListSecretVersionIds"
           ]
-          Resource = var.destination_secret_arns
+          Resource = local.destination_secret_arns
         } : null,
         length(var.allowed_assume_roles) > 0 ? {
           Sid      = "AssumeDestinationRoles"
@@ -128,7 +147,7 @@ module "lambda_automatic_replication" {
           Action   = ["sts:AssumeRole"]
           Resource = var.allowed_assume_roles
         } : null,
-        length(var.kms_key_arns) > 0 ? {
+        length(local.kms_key_arns) > 0 ? {
           Sid    = "KMSUsage"
           Effect = "Allow"
           Action = [
@@ -138,7 +157,7 @@ module "lambda_automatic_replication" {
             "kms:ReEncrypt*",
             "kms:DescribeKey"
           ]
-          Resource = var.kms_key_arns
+          Resource = local.kms_key_arns
         } : null
       ] : s if s != null
     ]
@@ -198,16 +217,16 @@ module "lambda_manual_replication" {
           ]
           Resource = "*"
         } : null,
-        length(var.source_secret_arns) > 0 ? {
+        length(local.source_secret_arns) > 0 ? {
           Sid    = "SecretsManagerRead"
           Effect = "Allow"
           Action = [
             "secretsmanager:GetSecretValue",
             "secretsmanager:DescribeSecret"
           ]
-          Resource = var.source_secret_arns
+          Resource = local.source_secret_arns
         } : null,
-        length(var.destination_secret_arns) > 0 ? {
+        length(local.destination_secret_arns) > 0 ? {
           Sid    = "SecretsManagerWrite"
           Effect = "Allow"
           Action = [
@@ -217,7 +236,7 @@ module "lambda_manual_replication" {
             "secretsmanager:TagResource",
             "secretsmanager:UntagResource"
           ]
-          Resource = var.destination_secret_arns
+          Resource = local.destination_secret_arns
         } : null,
         length(var.allowed_assume_roles) > 0 ? {
           Sid      = "AssumeCrossAccountRoles"
@@ -225,7 +244,7 @@ module "lambda_manual_replication" {
           Action   = ["sts:AssumeRole"]
           Resource = var.allowed_assume_roles
         } : null,
-        length(var.kms_key_arns) > 0 ? {
+        length(local.kms_key_arns) > 0 ? {
           Sid    = "KMSUsage"
           Effect = "Allow"
           Action = [
@@ -235,7 +254,7 @@ module "lambda_manual_replication" {
             "kms:DescribeKey",
             "kms:ReEncrypt*"
           ]
-          Resource = var.kms_key_arns
+          Resource = local.kms_key_arns
         } : null
       ] : s if s != null
     ]
@@ -343,32 +362,32 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
         )
       }
     ))
-  ) : jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "AWSCloudTrailAclCheck"
-        Effect    = "Allow"
-        Principal = { Service = "cloudtrail.amazonaws.com" }
-        Action = [
-          "s3:GetBucketAcl",
-          "s3:GetBucketPolicy"
-        ]
-        Resource = local.s3_bucket_arn
-      },
-      {
-        Sid       = "AWSCloudTrailWrite"
-        Effect    = "Allow"
-        Principal = { Service = "cloudtrail.amazonaws.com" }
-        Action    = "s3:PutObject"
-        Resource  = local.s3_bucket_logs_arn
-        Condition = {
-          StringEquals = {
-            "s3:x-amz-acl" = "bucket-owner-full-control"
+    ) : jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Sid       = "AWSCloudTrailAclCheck"
+          Effect    = "Allow"
+          Principal = { Service = "cloudtrail.amazonaws.com" }
+          Action = [
+            "s3:GetBucketAcl",
+            "s3:GetBucketPolicy"
+          ]
+          Resource = local.s3_bucket_arn
+        },
+        {
+          Sid       = "AWSCloudTrailWrite"
+          Effect    = "Allow"
+          Principal = { Service = "cloudtrail.amazonaws.com" }
+          Action    = "s3:PutObject"
+          Resource  = local.s3_bucket_logs_arn
+          Condition = {
+            StringEquals = {
+              "s3:x-amz-acl" = "bucket-owner-full-control"
+            }
           }
         }
-      }
-    ]
+      ]
   })
 }
 
@@ -381,7 +400,7 @@ check "input_validation" {
     error_message = "If the module is creating the CloudTrail S3 bucket (s3_bucket_name == '' and eventbridge_enabled = true), manage_s3_bucket_policy must be true. Otherwise, CloudTrail log delivery will fail due to missing bucket policy."
   }
   assert {
-    condition = !(var.eventbridge_enabled && var.cloudtrail_name != "" && var.s3_bucket_name == "")
+    condition     = !(var.eventbridge_enabled && var.cloudtrail_name != "" && var.s3_bucket_name == "")
     error_message = "You provided cloudtrail_name but not s3_bucket_name. Provide the S3 bucket name used by that trail."
   }
   assert {
