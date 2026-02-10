@@ -35,16 +35,16 @@ locals {
 
   # Precompute allowed destination secret names for CreateSecret condition
   allowed_destination_secret_names = compact(flatten([
-    for dest in local.parsed_destinations : [
+    for account_id, dest in local.parsed_destinations : [
       for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "destination_secret_name", null)
     ]
   ]))
 
   # Wildcard ARNs for destination secrets (to allow for AWS-generated suffixes)
   destination_secret_arns = compact(flatten([
-    for dest in local.parsed_destinations : [
+    for account_id, dest in local.parsed_destinations : [
       for region_name, region_cfg in try(dest.regions, {}) :
-        format("arn:aws:secretsmanager:%s:%s:secret:%s*", region_name, dest.account_id != null ? dest.account_id : "*", lookup(region_cfg, "destination_secret_name", ""))
+        format("arn:aws:secretsmanager:%s:%s:secret:%s*", region_name, account_id, lookup(region_cfg, "destination_secret_name", ""))
     ]
   ]))
 
