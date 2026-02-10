@@ -21,8 +21,9 @@ The module is designed for secure and automated secret replication, supporting f
 This module deploys a Lambda function that listens for changes in AWS Secrets Manager via EventBridge (if enabled). When a secret is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both secret value and tags (if enabled).
 
 ### Destination Configuration Format
+> **Note:** For the first replication, you must specify the expected `destination_secret_arn` for each region in `destinations_json` even if the secret does not yet exist. This ensures the Lambda has IAM permissions to create the destination secret. The ARN should match the name you want the secret to have in the destination account/region.
 
-The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure:
+The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure. **Each region must now include the keys `kms_key_arn`, `source_secret_arn`, and `destination_secret_arn` (all required for correct IAM permissions):**
 
 ```json
 {
@@ -30,10 +31,14 @@ The destinations are configured via the `destinations_json` variable, which must
 		"role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
 		"regions": {
 			"us-east-1": {
-				"kms_key_arn": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx"
+				"kms_key_arn": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx",
+				"source_secret_arn": "arn:aws:secretsmanager:us-east-1:SOURCE_ACCOUNT_ID:secret:my-secret-xxxxxx",
+				"destination_secret_arn": "arn:aws:secretsmanager:us-east-1:DEST_ACCOUNT_ID:secret:my-secret-copy-yyyyyy"
 			},
 			"eu-west-1": {
-				"kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
+				"kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy",
+				"source_secret_arn": "arn:aws:secretsmanager:eu-west-1:SOURCE_ACCOUNT_ID:secret:my-secret-xxxxxx",
+				"destination_secret_arn": "arn:aws:secretsmanager:eu-west-1:DEST_ACCOUNT_ID:secret:my-secret-copy-yyyyyy"
 			}
 		}
 	}
@@ -41,6 +46,7 @@ The destinations are configured via the `destinations_json` variable, which must
 ```
 
 You can specify as many destination accounts and regions as needed. Each region must specify the KMS key to use for secret encryption.
+You can specify as many destination accounts and regions as needed. **Each region must specify the KMS key, the source secret ARN, and the destination secret ARN.**
 
 ### Tag Replication
 
@@ -182,7 +188,7 @@ This ensures the rule triggers on all relevant Secrets Manager API calls recorde
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to replicate tags from the source secret (used by the code, not Terraform) | `bool` | `true` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Additional environment variables passed to the Lambda | `map(string)` | `{}` | no |
 | <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `true` | no |
-| <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input\_existing\_bucket\_policy\_json) | (Optional) Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. If not provided, only the CloudTrail statements will be used. | `string` | `null` | no |
+| <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input\_existing\_bucket\_policy\_json) | Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. Required when `manage_s3_bucket_policy` is true and `s3_bucket_name` is set. | `string` | `null` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `10` | no |
 | <a name="input_manage_s3_bucket_policy"></a> [manage\_s3\_bucket\_policy](#input\_manage\_s3\_bucket\_policy) | If true, the module will apply the minimal S3 bucket policy required for CloudTrail to the chosen bucket. Set to false if the Landing Zone manages bucket policies. | `bool` | `true` | no |

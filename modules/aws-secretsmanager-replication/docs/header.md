@@ -20,8 +20,11 @@ The module is designed for secure and automated secret replication, supporting f
 This module deploys a Lambda function that listens for changes in AWS Secrets Manager via EventBridge (if enabled). When a secret is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both secret value and tags (if enabled).
 
 ### Destination Configuration Format
+> **Note:** For the first replication, you must specify the expected `destination_secret_arn` for each region in `destinations_json` even if the secret does not yet exist. This ensures the Lambda has IAM permissions to create the destination secret. The ARN should match the name you want the secret to have in the destination account/region.
 
-The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure:
+
+The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure. **Each region must now include the keys `kms_key_arn`, `source_secret_arn`, and `destination_secret_arn` (all required for correct IAM permissions):**
+
 
 ```json
 {
@@ -29,10 +32,14 @@ The destinations are configured via the `destinations_json` variable, which must
 		"role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
 		"regions": {
 			"us-east-1": {
-				"kms_key_arn": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx"
+				"kms_key_arn": "arn:aws:kms:us-east-1:DEST_ACCOUNT_ID:key/xxxx",
+				"source_secret_arn": "arn:aws:secretsmanager:us-east-1:SOURCE_ACCOUNT_ID:secret:my-secret-xxxxxx",
+				"destination_secret_arn": "arn:aws:secretsmanager:us-east-1:DEST_ACCOUNT_ID:secret:my-secret-copy-yyyyyy"
 			},
 			"eu-west-1": {
-				"kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
+				"kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy",
+				"source_secret_arn": "arn:aws:secretsmanager:eu-west-1:SOURCE_ACCOUNT_ID:secret:my-secret-xxxxxx",
+				"destination_secret_arn": "arn:aws:secretsmanager:eu-west-1:DEST_ACCOUNT_ID:secret:my-secret-copy-yyyyyy"
 			}
 		}
 	}
@@ -40,6 +47,7 @@ The destinations are configured via the `destinations_json` variable, which must
 ```
 
 You can specify as many destination accounts and regions as needed. Each region must specify the KMS key to use for secret encryption.
+You can specify as many destination accounts and regions as needed. **Each region must specify the KMS key, the source secret ARN, and the destination secret ARN.**
 
 ### Tag Replication
 

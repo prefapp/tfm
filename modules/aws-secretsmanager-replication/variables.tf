@@ -36,10 +36,10 @@ variable "destinations_json" {
       for k, v in try(jsondecode(var.destinations_json), {}) :
       alltrue([
         for region_name, region_cfg in try(try(v.regions, {}), {}) :
-        can(keys(region_cfg)) && contains(try(keys(region_cfg), []), "kms_key_arn")
+        can(keys(region_cfg)) && contains(try(keys(region_cfg), []), "kms_key_arn") && contains(try(keys(region_cfg), []), "source_secret_arn") && contains(try(keys(region_cfg), []), "destination_secret_arn")
       ])
     ])
-    error_message = "Each region in each destination in destinations_json must contain a 'kms_key_arn' key."
+    error_message = "Each region in each destination in destinations_json must contain 'kms_key_arn', 'source_secret_arn', and 'destination_secret_arn' keys."
   }
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
