@@ -28,28 +28,6 @@ locals {
   decoded_existing_bucket_policy            = var.existing_bucket_policy_json != null ? jsondecode(var.existing_bucket_policy_json) : null
   decoded_existing_bucket_policy_statements = local.decoded_existing_bucket_policy != null ? try(local.decoded_existing_bucket_policy.Statement, []) : []
 
-  # Precompute allowed destination secret names for CreateSecret condition
-  allowed_destination_secret_names = compact(flatten([
-    for account_id, dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "destination_secret_name", null)
-    ]
-  ]))
-
-  # Wildcard ARNs for destination secrets (to allow for AWS-generated suffixes)
-  destination_secret_arns = compact(flatten([
-    for account_id, dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) :
-      (length(trim(lookup(region_cfg, "destination_secret_name", ""), " ")) > 0 ?
-      format("arn:aws:secretsmanager:%s:%s:secret:%s*", region_name, account_id, region_cfg["destination_secret_name"]) : null)
-    ]
-  ]))
-
-  source_secret_arns = compact(flatten([
-    for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : lookup(region_cfg, "source_secret_arn", null)
-    ]
-  ]))
-
   kms_key_arns = flatten([
     for dest in local.parsed_destinations : [
       for region_name, region_cfg in try(dest.regions, {}) : region_cfg.kms_key_arn
@@ -134,8 +112,8 @@ module "lambda_automatic_replication" {
           ]
           Resource = "*"
         },
-        length(local.destination_secret_arns) > 0 ? {
-          Sid    = "ManageDestinationSecrets"
+        {
+          Sid    = "ManageDestinationSecretsDynamic"
           Effect = "Allow"
           Action = [
             "secretsmanager:PutSecretValue",
@@ -146,19 +124,15 @@ module "lambda_automatic_replication" {
             "secretsmanager:UpdateSecretVersionStage",
             "secretsmanager:ListSecretVersionIds"
           ]
-          Resource = local.destination_secret_arns
-        } : null,
+          Resource = "*"
+        },
         {
-          Sid      = "CreateSecretRestricted"
+          Sid      = "CreateSecretDynamic"
           Effect   = "Allow"
           Action   = ["secretsmanager:CreateSecret"]
           Resource = "*"
-          Condition = {
-            StringEquals = {
-              "secretsmanager:Name" = local.allowed_destination_secret_names
-            }
-          }
         },
+
         length(var.allowed_assume_roles) > 0 ? {
           Sid      = "AssumeDestinationRoles"
           Effect   = "Allow"
@@ -223,16 +197,16 @@ module "lambda_manual_replication" {
           ]
           Resource = "*"
         } : null,
-        length(local.source_secret_arns) > 0 ? {
-          Sid    = "SecretsManagerRead"
+        {
+          Sid    = "SecretsManagerReadAll"
           Effect = "Allow"
           Action = [
             "secretsmanager:GetSecretValue",
             "secretsmanager:DescribeSecret"
           ]
-          Resource = local.source_secret_arns
-        } : null,
-        length(local.destination_secret_arns) > 0 ? {
+          Resource = "*"
+        },
+        {
           Sid    = "SecretsManagerWrite"
           Effect = "Allow"
           Action = [
@@ -241,19 +215,14 @@ module "lambda_manual_replication" {
             "secretsmanager:TagResource",
             "secretsmanager:UntagResource"
           ]
-          Resource = local.destination_secret_arns
-        } : null,
+          Resource = "*"
+        },
         # Separate statement for CreateSecret with Resource = "*" and restrictive condition
         {
-          Sid      = "CreateSecretRestricted"
+          Sid      = "CreateSecretDynamic"
           Effect   = "Allow"
           Action   = ["secretsmanager:CreateSecret"]
           Resource = "*"
-          Condition = {
-            StringEquals = {
-              "secretsmanager:Name" = local.allowed_destination_secret_names
-            }
-          }
         },
         length(var.allowed_assume_roles) > 0 ? {
           Sid      = "AssumeCrossAccountRoles"
@@ -340,50 +309,50 @@ resource "aws_s3_bucket_policy" "cloudtrail_strict" {
 
   policy = (
     var.existing_bucket_policy_json != null ?
-      jsonencode(merge(
-        local.decoded_existing_bucket_policy,
-        {
-          Statement = concat(
-            local.decoded_existing_bucket_policy_statements,
-            [
-              {
-                Sid       = "AWSCloudTrailAclCheck"
-                Effect    = "Allow"
-                Principal = { Service = "cloudtrail.amazonaws.com" }
-                Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
-                Resource  = local.s3_bucket_arn
-                Condition = merge({
-                  StringEquals = {
-                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                  }
+    jsonencode(merge(
+      local.decoded_existing_bucket_policy,
+      {
+        Statement = concat(
+          local.decoded_existing_bucket_policy_statements,
+          [
+            {
+              Sid       = "AWSCloudTrailAclCheck"
+              Effect    = "Allow"
+              Principal = { Service = "cloudtrail.amazonaws.com" }
+              Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
+              Resource  = local.s3_bucket_arn
+              Condition = merge({
+                StringEquals = {
+                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                }
                 }, {
-                  ArnLike = {
-                    "aws:SourceArn" = local.cloudtrail_arn
-                  }
-                })
-              },
-              {
-                Sid       = "AWSCloudTrailWrite"
-                Effect    = "Allow"
-                Principal = { Service = "cloudtrail.amazonaws.com" }
-                Action    = "s3:PutObject"
-                Resource  = local.s3_bucket_logs_arn
-                Condition = merge({
-                  StringEquals = {
-                    "s3:x-amz-acl"      = "bucket-owner-full-control"
-                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                  }
+                ArnLike = {
+                  "aws:SourceArn" = local.cloudtrail_arn
+                }
+              })
+            },
+            {
+              Sid       = "AWSCloudTrailWrite"
+              Effect    = "Allow"
+              Principal = { Service = "cloudtrail.amazonaws.com" }
+              Action    = "s3:PutObject"
+              Resource  = local.s3_bucket_logs_arn
+              Condition = merge({
+                StringEquals = {
+                  "s3:x-amz-acl"      = "bucket-owner-full-control"
+                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                }
                 }, {
-                  ArnLike = {
-                    "aws:SourceArn" = local.cloudtrail_arn
-                  }
-                })
-              }
-            ]
-          )
-        }
-      ))
-      : jsonencode({
+                ArnLike = {
+                  "aws:SourceArn" = local.cloudtrail_arn
+                }
+              })
+            }
+          ]
+        )
+      }
+    ))
+    : jsonencode({
       Version = "2012-10-17"
       Statement = [
         {
@@ -399,7 +368,7 @@ resource "aws_s3_bucket_policy" "cloudtrail_strict" {
             StringEquals = {
               "aws:SourceAccount" = data.aws_caller_identity.current.account_id
             }
-          }, {
+            }, {
             ArnLike = {
               "aws:SourceArn" = local.cloudtrail_arn
             }
@@ -416,7 +385,7 @@ resource "aws_s3_bucket_policy" "cloudtrail_strict" {
               "s3:x-amz-acl"      = "bucket-owner-full-control"
               "aws:SourceAccount" = data.aws_caller_identity.current.account_id
             }
-          }, {
+            }, {
             ArnLike = {
               "aws:SourceArn" = local.cloudtrail_arn
             }
@@ -434,42 +403,42 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 
   policy = (
     var.s3_bucket_name != "" && var.existing_bucket_policy_json != null ?
-      jsonencode(merge(
-        local.decoded_existing_bucket_policy,
-        {
-          Statement = concat(
-            local.decoded_existing_bucket_policy_statements,
-            [
-              {
-                Sid       = "AWSCloudTrailAclCheck"
-                Effect    = "Allow"
-                Principal = { Service = "cloudtrail.amazonaws.com" }
-                Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
-                Resource  = local.s3_bucket_arn
-                Condition = {
-                  StringEquals = {
-                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                  }
-                }
-              },
-              {
-                Sid       = "AWSCloudTrailWrite"
-                Effect    = "Allow"
-                Principal = { Service = "cloudtrail.amazonaws.com" }
-                Action    = "s3:PutObject"
-                Resource  = local.s3_bucket_logs_arn
-                Condition = {
-                  StringEquals = {
-                    "s3:x-amz-acl"      = "bucket-owner-full-control"
-                    "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                  }
+    jsonencode(merge(
+      local.decoded_existing_bucket_policy,
+      {
+        Statement = concat(
+          local.decoded_existing_bucket_policy_statements,
+          [
+            {
+              Sid       = "AWSCloudTrailAclCheck"
+              Effect    = "Allow"
+              Principal = { Service = "cloudtrail.amazonaws.com" }
+              Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
+              Resource  = local.s3_bucket_arn
+              Condition = {
+                StringEquals = {
+                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
                 }
               }
-            ]
-          )
-        }
-      ))
-      : jsonencode({
+            },
+            {
+              Sid       = "AWSCloudTrailWrite"
+              Effect    = "Allow"
+              Principal = { Service = "cloudtrail.amazonaws.com" }
+              Action    = "s3:PutObject"
+              Resource  = local.s3_bucket_logs_arn
+              Condition = {
+                StringEquals = {
+                  "s3:x-amz-acl"      = "bucket-owner-full-control"
+                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+                }
+              }
+            }
+          ]
+        )
+      }
+    ))
+    : jsonencode({
       Version = "2012-10-17"
       Statement = [
         {
