@@ -23,8 +23,8 @@ variable "destinations_json" {
   type        = string
   validation {
     condition = alltrue([
-      for account_id, dest in var.destinations_json : alltrue([
-        for region_name, region_cfg in dest.regions :
+      for account_id, dest in try(jsondecode(var.destinations_json), {}) : alltrue([
+        for region_name, region_cfg in try(dest.regions, {}) :
         contains(keys(region_cfg), "kms_key_arn")
       ])
     ])
