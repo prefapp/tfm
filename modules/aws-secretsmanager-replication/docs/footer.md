@@ -2,9 +2,11 @@
 
 ## Examples
 
+
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-secretsmanager-replication/_examples):
 
 - [Basic Replication](https://github.com/prefapp/tfm/tree/main/modules/aws-secretsmanager-replication/_examples/basic) – Replicate a secret to another AWS account or region
+- [Existing CloudTrail & S3 Bucket](https://github.com/prefapp/tfm/tree/main/modules/aws-secretsmanager-replication/_examples/existing_resources) – Use the module with pre-existing CloudTrail and S3 bucket (e.g., ControlTower environments)
 
 ## Remote resources
 - Terraform: https://www.terraform.io/
