@@ -83,7 +83,10 @@ module "lambda_automatic_replication" {
   handler       = "handler.lambda_handler"
   runtime       = "python3.12"
 
-  source_path = "${path.module}/lambda_automatic_replication"
+  source_path = [
+    "${path.module}/src/lambda_automatic_replication",
+    "${path.module}/src/common"
+  ]
 
   timeout     = var.lambda_timeout
   memory_size = var.lambda_memory
@@ -164,7 +167,10 @@ module "lambda_manual_replication" {
   handler       = "handler.lambda_handler"
   runtime       = "python3.12"
 
-  source_path = "${path.module}/lambda_manual_replication"
+  source_path = [
+    "${path.module}/src/lambda_manual_replication",
+    "${path.module}/src/common"
+  ]
 
   timeout     = var.lambda_timeout
   memory_size = var.lambda_memory
