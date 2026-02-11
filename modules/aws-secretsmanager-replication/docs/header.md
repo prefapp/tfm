@@ -91,11 +91,11 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 ### Required Resources & Links
 
 - **CloudTrail:** Must be enabled to log management events.
-  - Logging Secrets Manager events with CloudTrail [(docs.aws.amazon.com in Bing)](https://www.bing.com/search?q="https%3A%2F%2Fdocs.aws.amazon.com%2Fsecretsmanager%2Flatest%2Fuserguide%2Fmonitoring-cloudtrail.html")
+  - Logging Secrets Manager events with CloudTrail [docs.aws.amazon.com](https://docs.aws.amazon.com/secretsmanager/latest/userguide/monitoring-cloudtrail.html)
 - **S3 Bucket:** Required for storing CloudTrail logs.
-  - Creating a trail for your AWS account [(docs.aws.amazon.com in Bing)](https://www.bing.com/search?q="https%3A%2F%2Fdocs.aws.amazon.com%2Fawscloudtrail%2Flatest%2Fuserguide%2Fcloudtrail-create-and-update-a-trail.html")
+  - Creating a trail for your AWS account [docs.aws.amazon.com](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-create-and-update-a-trail.html)
 - **EventBridge:** Configured to listen to CloudTrail API calls.
-  - Monitoring Secrets Manager with Amazon EventBridge [(docs.aws.amazon.com in Bing)](https://www.bing.com/search?q="https%3A%2F%2Fdocs.aws.amazon.com%2Fsecretsmanager%2Flatest%2Fuserguide%2Fmonitoring-eventbridge.html")
+  - Monitoring Secrets Manager with Amazon EventBridge [docs.aws.amazon.com](https://docs.aws.amazon.com/secretsmanager/latest/userguide/monitoring-eventbridge.html)
 
 ## Using Pre-Existing CloudTrail and S3 Buckets (Control Tower / Landing Zone)
 
