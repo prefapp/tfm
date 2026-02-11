@@ -1,6 +1,6 @@
 # lambda_automatic_replication/handler.py
-from common.replication import replicate_secret
-from common.config import load_config
+from replication import replicate_secret
+from config import load_config
 
 def extract_secret_id(detail):
     """

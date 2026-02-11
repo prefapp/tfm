@@ -1,7 +1,7 @@
 import logging
 import os
-from common.config import load_config
-from common.replication import replicate_secret, replicate_all
+from config import load_config
+from replication import replicate_secret, replicate_all
 
 LOG = logging.getLogger()
 
