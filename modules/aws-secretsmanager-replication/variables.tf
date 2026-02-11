@@ -92,13 +92,13 @@ variable "s3_bucket_name" {
 variable "cloudtrail_arn" {
   description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail."
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "cloudtrail_name" {
   description = "(Optional) Name of an existing CloudTrail. Required if using an existing trail."
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "manage_s3_bucket_policy" {
