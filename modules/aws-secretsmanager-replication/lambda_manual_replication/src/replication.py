@@ -26,7 +26,7 @@ def replicate_all(config):
             try:
                 replicate_secret(secret_id, config, get_sm_client=get_sm_client, source_sm=source_sm)
             except Exception as e:
-                log("error", f"Failed to replicate secret {secret_id}: {e}")
+                log("error", f"Failed to replicate secret {secret_id}: {e}", exc_info=e)
 
 
 def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None):
