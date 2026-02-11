@@ -19,41 +19,17 @@ variable "prefix" {
 }
 
 variable "destinations_json" {
-  validation {
-    condition     = can(jsondecode(var.destinations_json))
-    error_message = "destinations_json must be valid JSON."
-  }
-  validation {
-    condition = can(jsondecode(var.destinations_json)) && (
-      length(keys(try(jsondecode(var.destinations_json), {}))) > 0
-      &&
-      anytrue([
-        for _, destination in try(jsondecode(var.destinations_json), {}) :
-        length(try(destination.regions, [])) > 0
-      ])
-    )
-    error_message = "destinations_json must define at least one destination and at least one region entry."
-  }
-  validation {
-    condition = can(jsondecode(var.destinations_json)) && alltrue([
-      for k, v in try(jsondecode(var.destinations_json), {}) :
-      can(keys(v)) && can(lookup(v, "role_arn", null)) && can(lookup(v, "regions", null)) &&
-      contains(try(keys(v), []), "role_arn") && contains(try(keys(v), []), "regions")
-    ])
-    error_message = "Each destination in destinations_json must contain 'role_arn' and 'regions' keys."
-  }
-  validation {
-    condition = can(jsondecode(var.destinations_json)) && alltrue([
-      for k, v in try(jsondecode(var.destinations_json), {}) :
-      alltrue([
-        for region_name, region_cfg in try(try(v.regions, {}), {}) :
-        can(keys(region_cfg)) && contains(try(keys(region_cfg), []), "kms_key_arn") && contains(try(keys(region_cfg), []), "source_secret_arn") && contains(try(keys(region_cfg), []), "destination_secret_name") && length(trim(region_cfg["destination_secret_name"], " ")) > 0
-      ])
-    ])
-    error_message = "Each region in each destination in destinations_json must contain 'kms_key_arn', 'source_secret_arn', and non-empty 'destination_secret_name' keys."
-  }
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
+  validation {
+    condition = alltrue([
+      for account_id, dest in var.destinations_json : alltrue([
+        for region_name, region_cfg in dest.regions :
+        contains(keys(region_cfg), "kms_key_arn")
+      ])
+    ])
+    error_message = "Each region must contain 'kms_key_arn'."
+  }
 }
 
 variable "allowed_assume_roles" {
