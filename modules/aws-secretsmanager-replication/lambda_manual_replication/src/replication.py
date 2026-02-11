@@ -62,19 +62,11 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None)
         log("info", "Processing destination account", account_id=account_id)
 
         for region_name, region_cfg in dest.regions.items():
-            # Only replicate if secret_id matches the configured source_secret_arn (full ARN or secret name)
-            match = False
-            if secret_id == region_cfg.source_secret_arn:
-                match = True
-            elif ":secret:" in region_cfg.source_secret_arn and ":secret:" in secret_id:
-                # Compare just the secret name part
-                match = region_cfg.source_secret_arn.split(":secret:", 1)[1] == secret_id.split(":secret:", 1)[1]
-            if not match:
-                continue
 
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
-            dest_name = region_cfg.destination_secret_name
+            # Destination secret name = same as source
+            dest_name = secret_metadata["Name"]
 
             if get_sm_client is not None:
                 sm_dest = get_sm_client(dest.role_arn, region_name)
@@ -102,23 +94,23 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None)
                     **{secret_value_key: secret_value}
                 )
 
-                if config.enable_tag_replication:
-                    dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
-                    dest_tags = dest_metadata.get("Tags", [])
-                    source_tag_keys = {t["Key"] for t in source_tags}
-                    dest_tag_keys = {t["Key"] for t in dest_tags}
-                    tags_to_remove = list(dest_tag_keys - source_tag_keys)
-                    if tags_to_remove:
-                        sm_dest.untag_resource(
-                            SecretId=dest_name,
-                            TagKeys=tags_to_remove
-                        )
-                    if source_tags:
-                        sm_dest.tag_resource(
-                            SecretId=dest_name,
-                            Tags=source_tags
-                        )
+            if config.enable_tag_replication:
+                dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
+                dest_tags = dest_metadata.get("Tags", [])
+                source_tag_keys = {t["Key"] for t in source_tags}
+                dest_tag_keys = {t["Key"] for t in dest_tags}
+                tags_to_remove = list(dest_tag_keys - source_tag_keys)
+                if tags_to_remove:
+                    sm_dest.untag_resource(
+                        SecretId=dest_name,
+                        TagKeys=tags_to_remove
+                    )
+                if source_tags:
+                    sm_dest.tag_resource(
+                       SecretId=dest_name,
+                        Tags=source_tags
+                    )
 
-            log("info", "Replication completed", account_id=account_id, region=region_name)
+        log("info", "Replication completed", account_id=account_id, region=region_name)
 
     log("info", "Replication finished for all destinations", secret_id=secret_id)
