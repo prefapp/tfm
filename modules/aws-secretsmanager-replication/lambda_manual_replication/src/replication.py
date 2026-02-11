@@ -108,7 +108,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, source_sm=None)
                 if source_tags:
                     sm_dest.tag_resource(
                        SecretId=dest_name,
-                        Tags=source_tags
+                       Tags=source_tags
                     )
 
         log("info", "Replication completed for destination account", account_id=account_id )
