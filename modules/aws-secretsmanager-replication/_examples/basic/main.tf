@@ -14,34 +14,29 @@ provider "aws" {
 }
 
 locals {
-  # Here we define the multi-account/multi-region/multi-KMS structure
   destinations = {
     "111111111111" = {
       role_arn = "arn:aws:iam::111111111111:role/secrets-dr-replication-role"
       regions = {
         "us-east-1" = {
-          kms_key_arn = "arn:aws:kms:us-east-1:111111111111:key/abc123"
-          source_secret_arn = "arn:aws:secretsmanager:us-east-1:111111111111:secret:example-source-secret-abc123"
+          kms_key_arn             = "arn:aws:kms:us-east-1:111111111111:key/abc123"
+          source_secret_arn       = "arn:aws:secretsmanager:us-east-1:111111111111:secret:example-source-secret-abc123"
           destination_secret_name = "example-dest-secret"
-          destination_secret_arn = "arn:aws:secretsmanager:us-east-1:111111111111:secret:example-dest-secret-xyz789" # optional, for reference
         }
         "eu-central-1" = {
-          kms_key_arn = "arn:aws:kms:eu-central-1:111111111111:key/def456"
-          source_secret_arn = "arn:aws:secretsmanager:eu-central-1:111111111111:secret:example-source-secret-def456"
+          kms_key_arn             = "arn:aws:kms:eu-central-1:111111111111:key/def456"
+          source_secret_arn       = "arn:aws:secretsmanager:eu-central-1:111111111111:secret:example-source-secret-def456"
           destination_secret_name = "example-dest-secret"
-          destination_secret_arn = "arn:aws:secretsmanager:eu-central-1:111111111111:secret:example-dest-secret-uvw000" # optional
         }
       }
     }
-
     "222222222222" = {
       role_arn = "arn:aws:iam::222222222222:role/secrets-dr-replication-role"
       regions = {
         "us-east-1" = {
-          kms_key_arn = "arn:aws:kms:us-east-1:222222222222:key/xyz789"
-          source_secret_arn = "arn:aws:secretsmanager:us-east-1:222222222222:secret:example-source-secret-xyz789"
+          kms_key_arn             = "arn:aws:kms:us-east-1:222222222222:key/xyz789"
+          source_secret_arn       = "arn:aws:secretsmanager:us-east-1:222222222222:secret:example-source-secret-xyz789"
           destination_secret_name = "example-dest-secret"
-          destination_secret_arn = "arn:aws:secretsmanager:us-east-1:222222222222:secret:example-dest-secret-abc111" # optional
         }
       }
     }
