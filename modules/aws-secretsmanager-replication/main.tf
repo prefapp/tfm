@@ -307,6 +307,13 @@ resource "aws_s3_bucket_policy" "cloudtrail_strict" {
   count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && var.s3_bucket_name != "" && var.cloudtrail_name != "" ? 1 : 0
   bucket = var.s3_bucket_name
 
+  lifecycle {
+    precondition {
+      condition = !(var.cloudtrail_name != "" || var.cloudtrail_arn == "")
+      error_message = "If cloudtrail_name is set, cloudtrail_arn must also be provided unless the module is creating the CloudTrail. This precondition prevents creating a policy with an invalid SourceArn reference."
+    }
+  }
+
   policy = (
     var.existing_bucket_policy_json != null ?
     jsonencode(merge(
