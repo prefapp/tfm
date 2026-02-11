@@ -71,15 +71,25 @@ module "s3" {
 
 The module is organized with the following directory and file structure:
 
-```
-├── data.tf
-├── lifecycle.tf
-├── local.tf
-├── main.tf
-├── outputs.tf
-├── replication.tf
-└── variables.tf
-```
+.
+├── .terraform-docs.yml          # terraform-docs configuration
+├── README.md                    # Auto-generated documentation
+├── \_examples/
+│   ├── basic/main.tf
+│   ├── minimal\_destination\_source\_and\_destination/main.tf
+│   ├── minimal\_replication/main.tf
+│   └── minimal\_source/main.tf
+├── data.tf                      # Data source for existing bucket
+├── docs/
+│   ├── footer.md
+│   └── header.md
+├── lifecycle.tf                 # Lifecycle configuration
+├── local.tf                     # Locals (lifecycle rules merge)
+├── main.tf                      # Bucket, ACL, policy, versioning
+├── outputs.tf                   # Module outputs
+├── replication.tf               # Replication + IAM
+├── variables.tf                 # Input variables
+└── versions.tf                  # Required providers
 - **`data.tf`**: If bucket is not created, we use data of bucket
 - **`lifecycle.tf`**: Lifecycle configurations for S3 buckets.
 - **`main.tf`**: Entry point that wires together all module components.
