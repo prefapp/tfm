@@ -24,12 +24,12 @@ output "eventbridge_rule_arn" {
 }
 
 output "cloudtrail_arn" {
-  value       = var.s3_bucket_name != "" && var.cloudtrail_name != "" ? local.cloudtrail_arn : null
+  value       = local.cloudtrail_arn
   description = "ARN of the CloudTrail used (existing or created)."
 }
 
 output "cloudtrail_name" {
-  value       = var.s3_bucket_name != "" && var.cloudtrail_name != "" ? local.cloudtrail_name : null
+  value       = local.cloudtrail_name
   description = "Name of the CloudTrail used (existing or created)."
 }
 
