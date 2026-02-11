@@ -1,15 +1,12 @@
 import json
 import os
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Dict
 
 
 @dataclass
 class RegionConfig:
     kms_key_arn: str
-    source_secret_arn: str
-    destination_secret_name: str
-    destination_secret_arn: Optional[str] = None  # Optional, for reference only
 
 
 @dataclass
@@ -18,13 +15,11 @@ class Destination:
     regions: Dict[str, RegionConfig]  # region_name → RegionConfig
 
 
-
 @dataclass
 class Config:
     destinations: Dict[str, Destination]
     source_region: str
     enable_tag_replication: bool
-
 
 
 def load_config() -> Config:
@@ -42,10 +37,7 @@ def load_config() -> Config:
     for account_id, entry in parsed.items():
         regions = {
             region_name: RegionConfig(
-                kms_key_arn = region_cfg["kms_key_arn"],
-                source_secret_arn = region_cfg["source_secret_arn"],
-                destination_secret_name = region_cfg["destination_secret_name"],
-                destination_secret_arn = region_cfg.get("destination_secret_arn")
+                kms_key_arn=region_cfg["kms_key_arn"]
             )
             for region_name, region_cfg in entry["regions"].items()
         }
