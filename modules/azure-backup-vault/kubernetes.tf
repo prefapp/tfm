@@ -37,6 +37,7 @@ resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
 # Ensure the Microsoft.KubernetesConfiguration provider is registered
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_provider_registration
 resource "azurerm_resource_provider_registration" "this" {
+  count = length(var.kubernetes_instances) > 0 ? 1 : 0
   name = "Microsoft.KubernetesConfiguration"
 }
 
@@ -60,7 +61,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup[each.value.name].primary_blob_endpoint
   }
   depends_on = [
-    azurerm_resource_provider_registration.this,
+    azurerm_resource_provider_registration.this[0],
     azurerm_data_protection_backup_instance_blob_storage.this,
     azurerm_role_assignment.vault_reader_on_snapshot_rg,
     azurerm_role_assignment.aks_contributor_on_snapshot_rg
