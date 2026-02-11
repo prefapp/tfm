@@ -309,7 +309,7 @@ resource "aws_s3_bucket_policy" "cloudtrail_strict" {
 
   lifecycle {
     precondition {
-      condition     = !(var.cloudtrail_name != "" || var.cloudtrail_arn == "")
+      condition     = !(var.cloudtrail_name != "" && var.cloudtrail_arn == "")
       error_message = "If cloudtrail_name is set, cloudtrail_arn must also be provided unless the module is creating the CloudTrail. This precondition prevents creating a policy with an invalid SourceArn reference."
     }
   }
