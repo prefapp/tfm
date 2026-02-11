@@ -16,7 +16,7 @@ provider "aws" {
 
 module "s3" {
   source = "../../"
-  bucket = "source-ruben-2029"
+  bucket = "source-bucket"
   #  testing vars for ruben
 
   region               = "eu-west-1"
@@ -24,7 +24,7 @@ module "s3" {
 
   s3_replication_destination = {
     account       = "1122334455"
-    bucket_arn    = "arn:aws:s3:::destination-ruben-2029-02"
+    bucket_arn    = "arn:aws:s3:::destination-bucket"
     storage_class = "STANDARD"
   }
 

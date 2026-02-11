@@ -150,12 +150,12 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | n/a |
-| <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | n/a |
-| <a name="output_bucket_id"></a> [bucket\_id](#output\_bucket\_id) | n/a |
-| <a name="output_replication_destination_bucket_arn"></a> [replication\_destination\_bucket\_arn](#output\_replication\_destination\_bucket\_arn) | n/a |
-| <a name="output_replication_role_arn"></a> [replication\_role\_arn](#output\_replication\_role\_arn) | # Replication outputs |
-| <a name="output_replication_s3_destination_replication_s3_policydestination_policy"></a> [replication\_s3\_destination\_replication\_s3\_policydestination\_policy](#output\_replication\_s3\_destination\_replication\_s3\_policydestination\_policy) | n/a |
+| <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | ARN of the bucket that is created or whose data is obtained |
+| <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | Domain name of the bucket that is created or whose data is obtained |
+| <a name="output_bucket_id"></a> [bucket\_id](#output\_bucket\_id) | Name of the bucket that is created or whose data is obtained |
+| <a name="output_replication_destination_bucket_arn"></a> [replication\_destination\_bucket\_arn](#output\_replication\_destination\_bucket\_arn) | ARN of the replication destination bucket |
+| <a name="output_replication_role_arn"></a> [replication\_role\_arn](#output\_replication\_role\_arn) | ARN of the replication role |
+| <a name="output_replication_s3_destination_replication_s3_policy_json"></a> [replication\_s3\_destination\_replication\_s3\_policy\_json](#output\_replication\_s3\_destination\_replication\_s3\_policy\_json) | JSON policy for S3 replication in the destination bucket, to be applied to that bucket. |
 
 ## Examples
 
