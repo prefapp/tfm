@@ -84,7 +84,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
                             Tags=source_tags
                         )
 
-        log("info", "Replication completed", account_id=account_id, region=region_name)
+            log("info", "Replication completed for account", account_id=account_id)
 
     log("info", "Replication finished for all destinations", secret_id=secret_id)
 
