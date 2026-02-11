@@ -61,7 +61,7 @@ resource "azurerm_kubernetes_cluster_extension" "this" {
     "configuration.backupStorageLocation.config.storageAccountURI" = data.azurerm_storage_account.backup[each.value.name].primary_blob_endpoint
   }
   depends_on = [
-    azurerm_resource_provider_registration[0].this,
+    azurerm_resource_provider_registration.this[0],
     azurerm_data_protection_backup_instance_blob_storage.this,
     azurerm_role_assignment.vault_reader_on_snapshot_rg,
     azurerm_role_assignment.aks_contributor_on_snapshot_rg
