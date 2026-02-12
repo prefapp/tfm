@@ -107,7 +107,7 @@ The module is organized with the following directory and file structure:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.30.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.2 |
 
 ## Modules
 

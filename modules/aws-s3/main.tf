@@ -28,7 +28,7 @@ resource "aws_s3_bucket_policy" "this" {
 }
 
 data "aws_iam_policy_document" "only_https" {
-  # source_policy_documents = var.extra_bucket_iam_policies_json
+  source_policy_documents = var.extra_bucket_iam_policies_json
   statement {
     principals {
       type        = "AWS"
