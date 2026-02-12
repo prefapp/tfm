@@ -38,8 +38,8 @@ locals {
   using_existing_s3_bucket  = var.s3_bucket_name != ""
 
   # For existing CloudTrail, use the provided ARN and name directly
-  cloudtrail_arn  = var.cloudtrail_arn != null ? var.cloudtrail_arn : (length(aws_cloudtrail.secrets_management_events.*.arn) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : null)
-  cloudtrail_name = var.cloudtrail_name != null ? var.cloudtrail_name : (length(aws_cloudtrail.secrets_management_events.*.name) > 0 ? aws_cloudtrail.secrets_management_events[0].name : null)
+  cloudtrail_arn  = var.cloudtrail_arn != "" ? var.cloudtrail_arn : (length(aws_cloudtrail.secrets_management_events.*.arn) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : null)
+  cloudtrail_name = var.cloudtrail_name != "" ? var.cloudtrail_name : (length(aws_cloudtrail.secrets_management_events.*.name) > 0 ? aws_cloudtrail.secrets_management_events[0].name : null)
 
   s3_bucket_id       = local.using_existing_s3_bucket ? var.s3_bucket_name : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].id : null)
   s3_bucket_arn      = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s", var.s3_bucket_name) : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].arn : null)
