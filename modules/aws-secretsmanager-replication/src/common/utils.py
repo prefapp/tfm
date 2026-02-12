@@ -24,11 +24,7 @@ def log(level: str, message: str, exc_info=None, **kwargs):
 
     # Normalize log level to lower case and accept standard levels
     level_normalized = level.lower()
-    if level_normalized in ["info", "warning", "error", "debug"]:
-        pass
-    elif level.upper() in ["INFO", "WARNING", "ERROR", "DEBUG"]:
-        level_normalized = level.lower()
-    else:
+    if level_normalized not in ["info", "warning", "error", "debug"]:
         level_normalized = "debug"
 
     # Serialize kwargs as JSON and append to message for CloudWatch visibility
