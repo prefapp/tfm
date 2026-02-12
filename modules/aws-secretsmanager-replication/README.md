@@ -260,7 +260,7 @@ The destination account must have an IAM role that the replication Lambda can as
 | <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `true` | no |
 | <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input\_existing\_bucket\_policy\_json) | Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. Required when `manage_s3_bucket_policy` is true and `s3_bucket_name` is set. | `string` | `null` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
-| <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `10` | no |
+| <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `600` | no |
 | <a name="input_manage_s3_bucket_policy"></a> [manage\_s3\_bucket\_policy](#input\_manage\_s3\_bucket\_policy) | If true, the module will apply the minimal S3 bucket policy required for CloudTrail to the chosen bucket. Set to false if the Landing Zone manages bucket policies. | `bool` | `true` | no |
 | <a name="input_manual_replication_enabled"></a> [manual\_replication\_enabled](#input\_manual\_replication\_enabled) | Whether to deploy the manual secrets sync Lambda | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Base name for the Lambda and associated resources | `string` | n/a | yes |
