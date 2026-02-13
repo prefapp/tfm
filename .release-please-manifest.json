@@ -45,5 +45,6 @@
     "modules/azure-windows-vm": "0.1.10",
     "modules/aws-amq-rabbit": "0.2.0",
     "modules/dummy": "0.1.0",
-    "modules/aws-waf": "0.2.0"
+    "modules/aws-waf": "0.2.0",
+    "modules/aws-secretsmanager-replication": "0.0.0"
 }

@@ -144,6 +144,9 @@
         },
         "modules/aws-waf": {
             "package-name": "aws-waf"
+        },
+        "modules/aws-secretsmanager-replication": {
+            "package-name": "aws-secretsmanager-replication"
         }
     }
 }
