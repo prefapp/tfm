@@ -15,7 +15,7 @@ locals {
   using_existing_cloudtrail = var.cloudtrail_name != ""
   using_existing_s3_bucket  = var.s3_bucket_name != ""
 
-  # Para evitar ciclos, solo dependemos de aws_cloudtrail.secrets_management_events si NO se pasan cloudtrail_name y cloudtrail_arn
+  # To avoid cycles, only depend on aws_cloudtrail.secrets_management_events if cloudtrail_name and cloudtrail_arn are NOT passed
   cloudtrail_arn  = var.cloudtrail_arn != "" ? var.cloudtrail_arn : ""
   cloudtrail_name = var.cloudtrail_name != "" ? var.cloudtrail_name : ""
 
