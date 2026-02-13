@@ -15,9 +15,12 @@ locals {
   using_existing_cloudtrail = var.cloudtrail_name != ""
   using_existing_s3_bucket  = var.s3_bucket_name != ""
 
-  # Para evitar ciclos, solo dependemos de aws_cloudtrail.secrets_management_events si NO se pasan cloudtrail_name y cloudtrail_arn
-  cloudtrail_arn  = var.cloudtrail_arn != "" ? var.cloudtrail_arn : ""
-  cloudtrail_name = var.cloudtrail_name != "" ? var.cloudtrail_name : ""
+  cloudtrail_arn = var.cloudtrail_arn != "" ? var.cloudtrail_arn : (
+    var.cloudtrail_name == "" && length(aws_cloudtrail.secrets_management_events) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : ""
+  )
+  cloudtrail_name = var.cloudtrail_name != "" ? var.cloudtrail_name : (
+    var.cloudtrail_name == "" && length(aws_cloudtrail.secrets_management_events) > 0 ? aws_cloudtrail.secrets_management_events[0].name : ""
+  )
 
   s3_bucket_id       = local.using_existing_s3_bucket ? var.s3_bucket_name : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].id : null)
   s3_bucket_arn      = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s", var.s3_bucket_name) : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].arn : null)
