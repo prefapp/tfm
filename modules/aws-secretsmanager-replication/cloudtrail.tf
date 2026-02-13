@@ -62,7 +62,6 @@ resource "aws_cloudtrail" "secrets_management_events" {
 
   tags = var.tags
 
-  depends_on = [aws_s3_bucket_policy.cloudtrail]
 }
 
 ###############################################################################
@@ -101,7 +100,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
                   "aws:SourceAccount" = data.aws_caller_identity.current.account_id
                 }
               }, (
-                var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
+                var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
                   ArnLike = {
                     "aws:SourceArn" = local.cloudtrail_arn
                   }
@@ -120,7 +119,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
                   "aws:SourceAccount" = data.aws_caller_identity.current.account_id
                 }
               }, (
-                var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
+                var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
                   ArnLike = {
                     "aws:SourceArn" = local.cloudtrail_arn
                   }
@@ -148,7 +147,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
               "aws:SourceAccount" = data.aws_caller_identity.current.account_id
             }
           }, (
-            var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
+            var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
               ArnLike = {
                 "aws:SourceArn" = local.cloudtrail_arn
               }
@@ -167,7 +166,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
               "aws:SourceAccount" = data.aws_caller_identity.current.account_id
             }
           }, (
-            var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
+            var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != "" ? {
               ArnLike = {
                 "aws:SourceArn" = local.cloudtrail_arn
               }
