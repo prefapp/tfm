@@ -121,6 +121,9 @@
         "modules/aws-rds": {
             "package-name": "aws-rds"
         },
+        "modules/aws-s3": {
+            "package-name": "aws-s3"
+        },
         "modules/azure-backup-vault": {
             "package-name": "azure-backup-vault"
         },
