@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.1...aws-secretsmanager-replication-v0.1.2) (2026-02-13)
+
+
+### Bug Fixes
+
+* cyclic check for cloutrail arn and name ([#933](https://github.com/prefapp/tfm/issues/933)) ([34bea76](https://github.com/prefapp/tfm/commit/34bea7646599b7ba53f531800c9b5250a6a20b45))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.0...aws-secretsmanager-replication-v0.1.1) (2026-02-13)
 
 
