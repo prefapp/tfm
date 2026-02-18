@@ -62,7 +62,7 @@ resource "aws_cloudtrail" "secrets_management_events" {
 
   tags = var.tags
 
-  # Asegura que la policy S3 esté aplicada antes de crear el CloudTrail (Terraform requiere lista estática)
+  # Ensure S3 policy is applied before creating CloudTrail (Terraform requires static list)
   depends_on = [aws_s3_bucket_policy.cloudtrail]
 
 }
@@ -77,7 +77,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_arn != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
   bucket = var.s3_bucket_arn != "" ? regex("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0] : aws_s3_bucket.cloudtrail[0].id
 
-  # No precondition: solo cloudtrail_arn es relevante para recursos existentes
+  # No precondition: only cloudtrail_arn is relevant for existing resources
 
   policy = var.existing_bucket_policy_json != null ? jsonencode(merge(
     jsondecode(var.existing_bucket_policy_json),

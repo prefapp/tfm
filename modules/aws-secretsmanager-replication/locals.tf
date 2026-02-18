@@ -22,7 +22,7 @@ locals {
   s3_bucket_id       = local.using_existing_s3_bucket ? regex("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0] : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].id : null)
   s3_bucket_arn      = local.using_existing_s3_bucket ? var.s3_bucket_arn : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].arn : null)
   s3_bucket_logs_arn = local.using_existing_s3_bucket ? "${var.s3_bucket_arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : (length(aws_s3_bucket.cloudtrail) > 0 ? "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : null)
-  # has_existing_bucket solo se define una vez arriba
+  # has_existing_bucket is only defined once above
 
 
   # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
