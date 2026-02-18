@@ -4,15 +4,16 @@ variable "enable_full_sync" {
   default     = false
 }
 variable "existing_bucket_policy_json" {
-  description = "Existing bucket policy JSON to merge with the module-managed bucket policy (for both new and existing buckets). Required when `manage_s3_bucket_policy` is true and `s3_bucket_arn` is set. If you use an existing bucket and want the module to manage its policy, you must provide the current policy JSON to avoid overwriting other statements."
+  description = "Existing bucket policy JSON to merge with the module-managed bucket policy (for both new and existing buckets). Required when `manage_s3_bucket_policy` is true, `eventbridge_enabled` is true, and `s3_bucket_arn` is set. If you use an existing bucket and want the module to manage its policy, you must provide the current policy JSON to avoid overwriting other statements."
   type        = string
   default     = null
   validation {
     condition = !(
       try(var.manage_s3_bucket_policy, false) &&
+      try(var.eventbridge_enabled, false) &&
       var.s3_bucket_arn != ""
     ) || var.existing_bucket_policy_json != null
-    error_message = "existing_bucket_policy_json must be provided when manage_s3_bucket_policy is true and s3_bucket_arn is set."
+    error_message = "existing_bucket_policy_json must be provided when manage_s3_bucket_policy is true, eventbridge_enabled is true, and s3_bucket_arn is set."
   }
 }
 variable "name" {
