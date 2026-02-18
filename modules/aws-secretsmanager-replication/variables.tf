@@ -10,7 +10,7 @@ variable "existing_bucket_policy_json" {
   validation {
     condition = !(
       try(var.manage_s3_bucket_policy, false) &&
-      try(var.s3_bucket_arn, null) != null
+      var.s3_bucket_arn != ""
     ) || var.existing_bucket_policy_json != null
     error_message = "existing_bucket_policy_json must be provided when manage_s3_bucket_policy is true and s3_bucket_arn is set."
   }
@@ -91,7 +91,7 @@ variable "manual_replication_enabled" {
 # ---------------------------------------------------------------------------
 
 variable "s3_bucket_arn" {
-  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name)."
+  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation."
   type        = string
   default     = ""
   validation {
