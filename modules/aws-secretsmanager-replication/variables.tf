@@ -4,7 +4,7 @@ variable "enable_full_sync" {
   default     = false
 }
 variable "existing_bucket_policy_json" {
-  description = "Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. Required when `manage_s3_bucket_policy` is true and `s3_bucket_name` is set."
+  description = "Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. Required when `manage_s3_bucket_policy` is true and `s3_bucket_arn` is set."
   type        = string
   default     = null
 }
@@ -84,9 +84,13 @@ variable "manual_replication_enabled" {
 # ---------------------------------------------------------------------------
 
 variable "s3_bucket_arn" {
-  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one."
+  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name)."
   type        = string
   default     = ""
+  validation {
+    condition     = var.s3_bucket_arn == "" || can(regex("^arn:aws:s3:::[a-zA-Z0-9.-]{3,63}$", var.s3_bucket_arn))
+    error_message = "If provided, s3_bucket_arn must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name)."
+  }
 }
 
 variable "cloudtrail_arn" {
