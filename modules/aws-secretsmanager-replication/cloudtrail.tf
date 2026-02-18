@@ -16,7 +16,7 @@ resource "random_integer" "suffix" {
 
 resource "aws_s3_bucket" "cloudtrail" {
   count         = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
-  bucket        = var.s3_bucket_arn != "" ? try(regexall("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0], "INVALID_S3_BUCKET_ARN") : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
+  bucket        = var.s3_bucket_arn != "" ? try(regexall("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0][0], "INVALID_S3_BUCKET_ARN") : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
   force_destroy = false
   tags          = var.tags
 }
@@ -75,7 +75,7 @@ resource "aws_cloudtrail" "secrets_management_events" {
 # S3 bucket policy for CloudTrail
 resource "aws_s3_bucket_policy" "cloudtrail" {
   count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_arn != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
-  bucket = var.s3_bucket_arn != "" ? try(regexall("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0], "INVALID_S3_BUCKET_ARN") : aws_s3_bucket.cloudtrail[0].id
+  bucket = var.s3_bucket_arn != "" ? try(regexall("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0][0], "INVALID_S3_BUCKET_ARN") : aws_s3_bucket.cloudtrail[0].id
 
   # No precondition: only cloudtrail_arn is relevant for existing resources
 
