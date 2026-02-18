@@ -62,6 +62,9 @@ resource "aws_cloudtrail" "secrets_management_events" {
 
   tags = var.tags
 
+  # Asegura que la policy S3 esté aplicada antes de crear el CloudTrail, solo si se gestiona la policy
+  depends_on = var.manage_s3_bucket_policy ? [aws_s3_bucket_policy.cloudtrail] : []
+
 }
 
 ###############################################################################
