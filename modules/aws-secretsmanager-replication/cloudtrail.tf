@@ -3,7 +3,7 @@
 ###############################################################################
 
 resource "random_integer" "suffix" {
-  count = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
+  count = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
   min   = 10000
   max   = 99999
 }
@@ -15,15 +15,15 @@ resource "random_integer" "suffix" {
 ###############################################################################
 
 resource "aws_s3_bucket" "cloudtrail" {
-  count         = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
-  bucket        = var.s3_bucket_name != "" ? var.s3_bucket_name : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
+  count         = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
+  bucket        = var.s3_bucket_arn != "" ? regex("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0] : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
   force_destroy = false
   tags          = var.tags
 }
 
 # Baseline hardening for CloudTrail S3 bucket
 resource "aws_s3_bucket_public_access_block" "cloudtrail" {
-  count  = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
+  count  = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
   bucket = aws_s3_bucket.cloudtrail[0].id
 
   block_public_acls       = true
@@ -33,7 +33,7 @@ resource "aws_s3_bucket_public_access_block" "cloudtrail" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail" {
-  count  = var.s3_bucket_name == "" && var.eventbridge_enabled ? 1 : 0
+  count  = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
   bucket = aws_s3_bucket.cloudtrail[0].id
 
   rule {
@@ -48,7 +48,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail" {
 ###############################################################################
 
 resource "aws_cloudtrail" "secrets_management_events" {
-  count                         = var.cloudtrail_name == "" && var.eventbridge_enabled ? 1 : 0
+  count                         = var.cloudtrail_arn == "" && var.eventbridge_enabled ? 1 : 0
   name                          = "${var.prefix}-secrets-management-events"
   is_multi_region_trail         = false
   include_global_service_events = false
@@ -74,15 +74,10 @@ resource "aws_cloudtrail" "secrets_management_events" {
 
 # S3 bucket policy for CloudTrail
 resource "aws_s3_bucket_policy" "cloudtrail" {
-  count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_name != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
-  bucket = var.s3_bucket_name != "" ? var.s3_bucket_name : aws_s3_bucket.cloudtrail[0].id
+  count  = var.eventbridge_enabled && var.manage_s3_bucket_policy && (var.s3_bucket_arn != "" || length(aws_s3_bucket.cloudtrail) > 0) ? 1 : 0
+  bucket = var.s3_bucket_arn != "" ? regex("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0] : aws_s3_bucket.cloudtrail[0].id
 
-  lifecycle {
-    precondition {
-      condition     = !(var.cloudtrail_name != "" && var.cloudtrail_arn == "")
-      error_message = "If cloudtrail_name is set, cloudtrail_arn must also be provided unless the module is creating the CloudTrail. This precondition prevents creating a policy with an invalid SourceArn reference."
-    }
-  }
+  # No precondition: solo cloudtrail_arn es relevante para recursos existentes
 
   policy = var.existing_bucket_policy_json != null ? jsonencode(merge(
     jsondecode(var.existing_bucket_policy_json),

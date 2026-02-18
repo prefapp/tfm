@@ -83,20 +83,14 @@ variable "manual_replication_enabled" {
 # CloudTrail / S3 integration variables (optional)
 # ---------------------------------------------------------------------------
 
-variable "s3_bucket_name" {
-  description = "(Optional) S3 bucket name where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one."
+variable "s3_bucket_arn" {
+  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one."
   type        = string
   default     = ""
 }
 
 variable "cloudtrail_arn" {
-  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail."
-  type        = string
-  default     = ""
-}
-
-variable "cloudtrail_name" {
-  description = "(Optional) Name of an existing CloudTrail. Required if using an existing trail."
+  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail. Only this is needed."
   type        = string
   default     = ""
 }
