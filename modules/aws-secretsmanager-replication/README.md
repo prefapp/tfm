@@ -276,9 +276,9 @@ The destination account must have an IAM role that the replication Lambda can as
 | <a name="output_lambda_automatic_replication_role_arn"></a> [lambda\_automatic\_replication\_role\_arn](#output\_lambda\_automatic\_replication\_role\_arn) | IAM role ARN associated with the Lambda |
 | <a name="output_lambda_manual_replication_arn"></a> [lambda\_manual\_replication\_arn](#output\_lambda\_manual\_replication\_arn) | ARN of the manual replication Lambda function (if created) |
 | <a name="output_lambda_manual_replication_role_arn"></a> [lambda\_manual\_replication\_role\_arn](#output\_lambda\_manual\_replication\_role\_arn) | IAM role ARN for the manual replication Lambda (if created) |
-| <a name="output_s3_bucket_id"></a> [s3\_bucket\_id](#output\_s3\_bucket\_id) | S3 bucket name used for CloudTrail logs (existing or created). |
+| <a name="output_s3_bucket_id"></a> [s3\_bucket\_id](#output\_s3\_bucket\_id) | S3 bucket name used for CloudTrail logs (created or derived from the provided s3\_bucket\_arn). |
 | <a name="output_using_existing_cloudtrail"></a> [using\_existing\_cloudtrail](#output\_using\_existing\_cloudtrail) | True if an existing CloudTrail was provided. |
-| <a name="output_using_existing_s3_bucket"></a> [using\_existing\_s3\_bucket](#output\_using\_existing\_s3\_bucket) | True if an existing S3 bucket name was provided. |
+| <a name="output_using_existing_s3_bucket"></a> [using\_existing\_s3\_bucket](#output\_using\_existing\_s3\_bucket) | True if an existing S3 bucket ARN was provided. |
 
 ## Examples
 
