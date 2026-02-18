@@ -5,7 +5,7 @@
 locals {
   decoded_existing_bucket_policy            = var.existing_bucket_policy_json != null ? jsondecode(var.existing_bucket_policy_json) : null
   decoded_existing_bucket_policy_statements = local.decoded_existing_bucket_policy != null ? try(local.decoded_existing_bucket_policy.Statement, []) : []
-  use_cloudtrail_arn = var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != ""
+  use_cloudtrail_arn                        = var.s3_bucket_name != "" && var.cloudtrail_name != "" && var.cloudtrail_arn != ""
 
   kms_key_arns = flatten([
     for dest in local.parsed_destinations : [

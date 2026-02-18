@@ -84,100 +84,100 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
     }
   }
 
-  policy = (
-    (var.s3_bucket_name != "" && var.existing_bucket_policy_json != null) ?
-    jsonencode(merge(
-      local.decoded_existing_bucket_policy,
+  policy = var.existing_bucket_policy_json != null ? jsonencode(merge(
+    jsondecode(var.existing_bucket_policy_json),
+    {
+      Statement = concat(
+        try(jsondecode(var.existing_bucket_policy_json).Statement, []),
+        [
+          {
+            Sid       = "AWSCloudTrailAclCheck"
+            Effect    = "Allow"
+            Principal = { Service = "cloudtrail.amazonaws.com" }
+            Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
+            Resource  = local.s3_bucket_arn
+            Condition = (var.cloudtrail_arn != "" ? {
+              StringEquals = {
+                "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+              }
+              ArnLike = {
+                "aws:SourceArn" = var.cloudtrail_arn
+              }
+              } : {
+              StringEquals = {
+                "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+              }
+            })
+          },
+          {
+            Sid       = "AWSCloudTrailWrite"
+            Effect    = "Allow"
+            Principal = { Service = "cloudtrail.amazonaws.com" }
+            Action    = "s3:PutObject"
+            Resource  = local.s3_bucket_logs_arn
+            Condition = (var.cloudtrail_arn != "" ? {
+              StringEquals = {
+                "s3:x-amz-acl"      = "bucket-owner-full-control"
+                "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+              }
+              ArnLike = {
+                "aws:SourceArn" = var.cloudtrail_arn
+              }
+              } : {
+              StringEquals = {
+                "s3:x-amz-acl"      = "bucket-owner-full-control"
+                "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+              }
+            })
+          }
+        ]
+      )
+    }
+    )) : jsonencode({
+    Version = "2012-10-17",
+    Statement = [
       {
-        Statement = concat(
-          local.decoded_existing_bucket_policy_statements,
-          [
-            {
-              Sid       = "AWSCloudTrailAclCheck"
-              Effect    = "Allow"
-              Principal = { Service = "cloudtrail.amazonaws.com" }
-              Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
-              Resource  = local.s3_bucket_arn
-              Condition = merge({
-                StringEquals = {
-                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                }
-              }, (
-                local.use_cloudtrail_arn ? {
-                  ArnLike = {
-                    "aws:SourceArn" = local.cloudtrail_arn
-                  }
-                } : {}
-              ))
-            },
-            {
-              Sid       = "AWSCloudTrailWrite"
-              Effect    = "Allow"
-              Principal = { Service = "cloudtrail.amazonaws.com" }
-              Action    = "s3:PutObject"
-              Resource  = local.s3_bucket_logs_arn
-              Condition = merge({
-                StringEquals = {
-                  "s3:x-amz-acl"      = "bucket-owner-full-control"
-                  "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-                }
-              }, (
-                local.use_cloudtrail_arn ? {
-                  ArnLike = {
-                    "aws:SourceArn" = local.cloudtrail_arn
-                  }
-                } : {}
-              ))
-            }
-          ]
-        )
+        Sid       = "AWSCloudTrailAclCheck"
+        Effect    = "Allow"
+        Principal = { Service = "cloudtrail.amazonaws.com" }
+        Action    = ["s3:GetBucketAcl", "s3:GetBucketPolicy"]
+        Resource  = local.s3_bucket_arn
+        Condition = (var.cloudtrail_arn != "" ? {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+          ArnLike = {
+            "aws:SourceArn" = var.cloudtrail_arn
+          }
+          } : {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        })
+      },
+      {
+        Sid       = "AWSCloudTrailWrite"
+        Effect    = "Allow"
+        Principal = { Service = "cloudtrail.amazonaws.com" }
+        Action    = "s3:PutObject"
+        Resource  = local.s3_bucket_logs_arn
+        Condition = (var.cloudtrail_arn != "" ? {
+          StringEquals = {
+            "s3:x-amz-acl"      = "bucket-owner-full-control"
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+          ArnLike = {
+            "aws:SourceArn" = var.cloudtrail_arn
+          }
+          } : {
+          StringEquals = {
+            "s3:x-amz-acl"      = "bucket-owner-full-control"
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        })
       }
-    ))
-    : jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Sid       = "AWSCloudTrailAclCheck"
-          Effect    = "Allow"
-          Principal = { Service = "cloudtrail.amazonaws.com" }
-          Action = [
-            "s3:GetBucketAcl",
-            "s3:GetBucketPolicy"
-          ]
-          Resource = local.s3_bucket_arn
-          Condition = merge({
-            StringEquals = {
-              "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-            }
-          }, (
-            local.use_cloudtrail_arn ? {
-              ArnLike = {
-                "aws:SourceArn" = local.cloudtrail_arn
-              }
-            } : {}
-          ))
-        },
-        {
-          Sid       = "AWSCloudTrailWrite"
-          Effect    = "Allow"
-          Principal = { Service = "cloudtrail.amazonaws.com" }
-          Action    = "s3:PutObject"
-          Resource  = local.s3_bucket_logs_arn
-          Condition = merge({
-            StringEquals = {
-              "s3:x-amz-acl"      = "bucket-owner-full-control"
-              "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-            }
-          }, (
-            local.use_cloudtrail_arn ? {
-              ArnLike = {
-                "aws:SourceArn" = local.cloudtrail_arn
-              }
-            } : {}
-          ))
-        }
-      ]
-    })
-  )
+    ]
+  })
 }
+
 
