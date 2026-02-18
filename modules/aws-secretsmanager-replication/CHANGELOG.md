@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.2...aws-secretsmanager-replication-v0.1.3) (2026-02-18)
+
+
+### Bug Fixes
+
+* remove dependency ([#935](https://github.com/prefapp/tfm/issues/935)) ([59c11ea](https://github.com/prefapp/tfm/commit/59c11ea6337791c2b2e24628a0d0d2e688502fe9))
+
 ## [0.1.2](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.1...aws-secretsmanager-replication-v0.1.2) (2026-02-13)
 
 
