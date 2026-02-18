@@ -88,8 +88,8 @@ variable "s3_bucket_arn" {
   type        = string
   default     = ""
   validation {
-    condition     = var.s3_bucket_arn == "" || can(regex("^arn:aws:s3:::[a-zA-Z0-9.-]{3,63}$", var.s3_bucket_arn))
-    error_message = "If provided, s3_bucket_arn must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name)."
+    condition     = var.s3_bucket_arn == "" || can(regex("^arn:aws:s3:::[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$", var.s3_bucket_arn))
+    error_message = "If provided, s3_bucket_arn must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name) with a lowercase bucket name (3-63 chars, only lowercase letters, numbers, hyphens, and periods)."
   }
 }
 
