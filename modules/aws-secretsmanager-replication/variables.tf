@@ -94,7 +94,7 @@ variable "s3_bucket_arn" {
 }
 
 variable "cloudtrail_arn" {
-  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail. Only this is needed."
+  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail. Only the CloudTrail ARN is required when using an existing trail (cloudtrail_name is no longer needed)."
   type        = string
   default     = ""
 }
