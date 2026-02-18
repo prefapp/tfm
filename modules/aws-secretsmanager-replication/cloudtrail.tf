@@ -80,10 +80,10 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   # No precondition: only cloudtrail_arn is relevant for existing resources
 
   policy = var.existing_bucket_policy_json != null ? jsonencode(merge(
-    jsondecode(var.existing_bucket_policy_json),
+    local.decoded_existing_bucket_policy,
     {
       Statement = concat(
-        try(jsondecode(var.existing_bucket_policy_json).Statement, []),
+        local.decoded_existing_bucket_policy_statements,
         [
           {
             Sid       = "AWSCloudTrailAclCheck"

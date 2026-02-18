@@ -4,7 +4,7 @@ variable "enable_full_sync" {
   default     = false
 }
 variable "existing_bucket_policy_json" {
-  description = "Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. Required when `manage_s3_bucket_policy` is true and `s3_bucket_arn` is set."
+  description = "Existing bucket policy JSON to merge with the module-managed bucket policy (for both new and existing buckets). Required when `manage_s3_bucket_policy` is true and `s3_bucket_arn` is set."
   type        = string
   default     = null
 }
