@@ -28,10 +28,6 @@ output "cloudtrail_arn" {
   description = "ARN of the CloudTrail used (existing or created)."
 }
 
-output "cloudtrail_name" {
-  value       = local.cloudtrail_name
-  description = "Name of the CloudTrail used (existing or created)."
-}
 
 output "s3_bucket_id" {
   value       = local.s3_bucket_id
