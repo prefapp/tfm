@@ -28,14 +28,9 @@ output "cloudtrail_arn" {
   description = "ARN of the CloudTrail used (existing or created)."
 }
 
-output "cloudtrail_name" {
-  value       = local.cloudtrail_name
-  description = "Name of the CloudTrail used (existing or created)."
-}
-
 output "s3_bucket_id" {
   value       = local.s3_bucket_id
-  description = "S3 bucket name used for CloudTrail logs (existing or created)."
+  description = "S3 bucket name used for CloudTrail logs (created or derived from the provided s3_bucket_arn)."
 }
 
 output "using_existing_cloudtrail" {
@@ -45,6 +40,6 @@ output "using_existing_cloudtrail" {
 
 output "using_existing_s3_bucket" {
   value       = local.using_existing_s3_bucket
-  description = "True if an existing S3 bucket name was provided."
+  description = "True if an existing S3 bucket ARN was provided."
 }
 

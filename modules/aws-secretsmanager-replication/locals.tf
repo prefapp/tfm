@@ -12,18 +12,17 @@ locals {
     ]
   ])
 
-  using_existing_cloudtrail = var.cloudtrail_name != ""
-  using_existing_s3_bucket  = var.s3_bucket_name != ""
+  using_existing_cloudtrail = var.cloudtrail_arn != ""
+  using_existing_s3_bucket  = var.s3_bucket_arn != ""
 
-  # For existing CloudTrail, use the provided ARN and name directly
-  cloudtrail_arn  = var.cloudtrail_arn != "" ? var.cloudtrail_arn : (length(aws_cloudtrail.secrets_management_events.*.arn) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : null)
-  cloudtrail_name = var.cloudtrail_name != "" ? var.cloudtrail_name : (length(aws_cloudtrail.secrets_management_events.*.name) > 0 ? aws_cloudtrail.secrets_management_events[0].name : null)
+  cloudtrail_arn = var.cloudtrail_arn != "" ? var.cloudtrail_arn : (
+    length(aws_cloudtrail.secrets_management_events) > 0 ? aws_cloudtrail.secrets_management_events[0].arn : ""
+  )
 
-  s3_bucket_id       = local.using_existing_s3_bucket ? var.s3_bucket_name : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].id : null)
-  s3_bucket_arn      = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s", var.s3_bucket_name) : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].arn : null)
-  s3_bucket_logs_arn = local.using_existing_s3_bucket ? format("arn:aws:s3:::%s/AWSLogs/%s/*", var.s3_bucket_name, data.aws_caller_identity.current.account_id) : (length(aws_s3_bucket.cloudtrail) > 0 ? "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : null)
+  s3_bucket_id       = local.using_existing_s3_bucket ? regexall("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0][0] : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].id : null)
+  s3_bucket_arn      = local.using_existing_s3_bucket ? var.s3_bucket_arn : (length(aws_s3_bucket.cloudtrail) > 0 ? aws_s3_bucket.cloudtrail[0].arn : null)
+  s3_bucket_logs_arn = local.using_existing_s3_bucket ? "${var.s3_bucket_arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : (length(aws_s3_bucket.cloudtrail) > 0 ? "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : null)
 
-  has_existing_bucket = var.s3_bucket_name != ""
 
   # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
   # Note: Terraform-provided values override any conflicting keys in var.environment_variables

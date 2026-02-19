@@ -4,9 +4,17 @@ variable "enable_full_sync" {
   default     = false
 }
 variable "existing_bucket_policy_json" {
-  description = "Existing bucket policy JSON to merge with CloudTrail statements if using an existing bucket. Required when `manage_s3_bucket_policy` is true and `s3_bucket_name` is set."
+  description = "Existing bucket policy JSON to merge with the module-managed bucket policy (for both new and existing buckets). Required when `manage_s3_bucket_policy` is true, `eventbridge_enabled` is true, and `s3_bucket_arn` is set. If you use an existing bucket and want the module to manage its policy, you must provide the current policy JSON to avoid overwriting other statements."
   type        = string
   default     = null
+  validation {
+    condition = !(
+      try(var.manage_s3_bucket_policy, false) &&
+      try(var.eventbridge_enabled, false) &&
+      var.s3_bucket_arn != ""
+    ) || var.existing_bucket_policy_json != null
+    error_message = "existing_bucket_policy_json must be provided when manage_s3_bucket_policy is true, eventbridge_enabled is true, and s3_bucket_arn is set."
+  }
 }
 variable "name" {
   description = "Base name for the Lambda and associated resources"
@@ -83,20 +91,18 @@ variable "manual_replication_enabled" {
 # CloudTrail / S3 integration variables (optional)
 # ---------------------------------------------------------------------------
 
-variable "s3_bucket_name" {
-  description = "(Optional) S3 bucket name where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one."
+variable "s3_bucket_arn" {
+  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation."
   type        = string
   default     = ""
+  validation {
+    condition     = var.s3_bucket_arn == "" || can(regex("^arn:aws:s3:::[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$", var.s3_bucket_arn))
+    error_message = "If provided, s3_bucket_arn must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name) with a lowercase bucket name (3-63 chars, only lowercase letters, numbers, hyphens, and periods)."
+  }
 }
 
 variable "cloudtrail_arn" {
-  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail."
-  type        = string
-  default     = ""
-}
-
-variable "cloudtrail_name" {
-  description = "(Optional) Name of an existing CloudTrail. Required if using an existing trail."
+  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail. Only the CloudTrail ARN is required when using an existing trail (cloudtrail_name is no longer needed)."
   type        = string
   default     = ""
 }
