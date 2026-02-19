@@ -38,7 +38,7 @@ module "eks" {
   create_kms_key                         = var.create_kms_key
   encryption_config                      = var.cluster_encryption_config
   access_entries                         = var.access_entries
-  fargate_profiles                       = var.fargate_profiles
+  fargate_profiles                       = local.fargate_profiles_map
   create_cloudwatch_log_group            = var.create_cloudwatch_log_group
   cloudwatch_log_group_class             = var.cloudwatch_log_group_class
   enabled_log_types                      = var.create_cloudwatch_log_group ? var.enabled_log_types : []

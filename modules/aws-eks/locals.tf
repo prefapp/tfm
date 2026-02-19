@@ -1,4 +1,13 @@
 locals {
+  # Adaptar fargate_profiles de lista a mapa para el módulo oficial
+  fargate_profiles_map = {
+    for profile in var.fargate_profiles :
+    profile.name => {
+      name      = profile.name
+      selectors = profile.selectors
+      tags      = profile.tags
+    }
+  }
   # Get only two of the private subnets to create the cluster
   node_groups_with_subnets = {
     for group_name, group in var.node_groups : group_name => merge(

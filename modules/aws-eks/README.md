@@ -141,7 +141,7 @@ The module is organized with the following directory and file structure:
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 21.15.1 |
-| <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 20.33.1 |
+| <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 21.0.0 |
 
 ## Resources
 
@@ -203,7 +203,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_enabled_log_types"></a> [enabled\_log\_types](#input\_enabled\_log\_types) | A list of the desired control plane logs to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) | `list(string)` | <pre>[<br/>  "audit",<br/>  "api",<br/>  "authenticator"<br/>]</pre> | no |
 | <a name="input_external_dns_role_name"></a> [external\_dns\_role\_name](#input\_external\_dns\_role\_name) | IAM role name for external-dns. Leave null to auto-generate using the cluster name. For backward compatibility, set to 'external-dns-Kubernetes'. | `string` | `null` | no |
 | <a name="input_externaldns_tags"></a> [externaldns\_tags](#input\_externaldns\_tags) | Tags to apply to the ExternalDNS IAM resources | `map(any)` | `{}` | no |
-| <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>map(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `{}` | no |
+| <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles (compatibilidad: lista, formato antiguo) | <pre>list(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | `{}` | no |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | `any` | n/a | yes |
 | <a name="input_parameter_store_role_name"></a> [parameter\_store\_role\_name](#input\_parameter\_store\_role\_name) | IAM role name for Parameter Store. Leave null to auto-generate per cluster (format: iam\_role\_parameter\_store\_all-<cluster\_name>). For backward compatibility, use: iam\_role\_parameter\_store\_all. | `string` | `null` | no |
