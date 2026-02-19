@@ -9,28 +9,6 @@ locals {
     }
   }
 
-  ########################################
-  # Default EKS addons (vpc-cni, coredns, kube-proxy)
-  ########################################
-  default_cluster_addons = {
-    vpc-cni = {
-      # Use the recommended version for your EKS version, update if needed
-      resolve_conflicts = "OVERWRITE"
-    }
-    coredns = {
-      resolve_conflicts = "OVERWRITE"
-    }
-    kube-proxy = {
-      resolve_conflicts = "OVERWRITE"
-    }
-  }
-
-  # If the user defines cluster_addons, use them. Otherwise, use the defaults.
-  cluster_addons = (
-    length(var.cluster_addons) > 0 ? var.cluster_addons : local.default_cluster_addons
-  )
-
-
   # Adapt node_groups for EKS v21.x compatibility (retrocompatible)
   node_groups_with_subnets = {
     for group_name, group in var.node_groups : group_name => merge(
