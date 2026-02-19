@@ -137,7 +137,7 @@ variable "vpc_id" {
 
 variable "fargate_profiles" {
   description = "Define dynamically the different fargate profiles"
-  type = list(object({
+  type = map(object({
     name = string
     selectors = list(object({
       namespace = string
@@ -146,7 +146,7 @@ variable "fargate_profiles" {
     tags = map(string)
   }))
 
-  default = []
+  default = {}
 }
 
 variable "node_security_group_additional_rules" {
