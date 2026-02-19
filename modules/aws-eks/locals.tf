@@ -8,10 +8,24 @@ locals {
       tags      = profile.tags
     }
   }
-  # Get only two of the private subnets to create the cluster
+  # Adapt node_groups for EKS v21.x compatibility (retrocompatible)
   node_groups_with_subnets = {
     for group_name, group in var.node_groups : group_name => merge(
-      group,
+      {
+        # Si el usuario pasa pre_bootstrap_user_data, lo movemos a launch_template.user_data
+        launch_template = (
+          contains(keys(group), "pre_bootstrap_user_data") ? merge(
+            lookup(group, "launch_template", {}),
+            {
+              user_data = group.pre_bootstrap_user_data
+            }
+          ) : (
+            lookup(group, "launch_template", null)
+          )
+        )
+      },
+      # Copiamos el resto de campos, pero quitamos pre_bootstrap_user_data y launch_template antiguos
+      { for k, v in group : k => v if !contains(["pre_bootstrap_user_data", "launch_template"], k) },
       {
         subnet_ids = (
           (lookup(group, "subnet_ids", null) != null)
