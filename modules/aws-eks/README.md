@@ -125,7 +125,7 @@ The module is organized with the following directory and file structure:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.83 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.33 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.35 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.12 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
@@ -134,7 +134,7 @@ The module is organized with the following directory and file structure:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.83 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.33 |
 
 ## Modules
 
@@ -240,5 +240,5 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Support
 
-For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the [repository’s issue tracker](https://github.com/prefapp/tfm/issues)
 <!-- END_TF_DOCS -->
