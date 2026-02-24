@@ -23,8 +23,9 @@ variable "vpn" {
     vpn_client_aad_issuer    = string
     vpn_client_aad_tenant    = string
     root_certificates        = list(object({
-      name             = string
-      public_cert_data = string
+      name            = string
+      public_cert     = optional(string)
+      public_cert_data = optional(string)
     }))
     connection_name          = string
     vpn_client_address_pool  = list(string)

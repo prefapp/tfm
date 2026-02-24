@@ -21,7 +21,10 @@ resource "azurerm_virtual_network_gateway" "this" {
 			for_each = var.vpn.root_certificates
 			content {
 				name        = root_certificate.value.name
-				public_cert_data = root_certificate.value.public_cert_data
+					public_cert_data = coalesce(
+					  try(root_certificate.value.public_cert_data, null),
+					  try(root_certificate.value.public_cert, null)
+					)
 			}
 		}
 	}
