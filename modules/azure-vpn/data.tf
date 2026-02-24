@@ -6,12 +6,12 @@ data "azurerm_resource_group" "this" {
 }
 
 data "azurerm_subnet" "this" {
-  name                 = var.vpn.subnet.subnet_gw_name
-  virtual_network_name = var.vpn.subnet.vnet_name
-  resource_group_name  = var.vpn.subnet.resource_group_name
+  name                 = var.vpn.gateway_subnet_name
+  virtual_network_name = var.vpn.vnet_name
+  resource_group_name  = var.vpn.resource_group_name
 }
 
 data "azurerm_public_ip" "this" {
-  name                = var.vpn.ip.name
-  resource_group_name = var.vpn.ip.resource_group_name
+  name                = var.vpn.ip_name
+  resource_group_name = var.vpn.resource_group_name
 }

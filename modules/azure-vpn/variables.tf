@@ -2,6 +2,8 @@
 variable "vpn" {
   description = "VPN Gateway configuration object (includes P2S config)"
   type = object({
+    vnet_name                = string
+    gateway_subnet_name      = string
     location                = string
     resource_group_name     = string
     gateway_name            = string
