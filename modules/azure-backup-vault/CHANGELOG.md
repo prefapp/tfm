@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.3...azure-backup-vault-v0.1.4) (2026-02-11)
+
+
+### Bug Fixes
+
+* optional creation of kubernetes provider registration ([#923](https://github.com/prefapp/tfm/issues/923)) ([52c2361](https://github.com/prefapp/tfm/commit/52c236191154ed1d957435206558b13c905bdcfc))
+
 ## [0.1.3](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.2...azure-backup-vault-v0.1.3) (2026-02-10)
 
 
