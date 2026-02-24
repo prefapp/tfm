@@ -27,6 +27,7 @@ variable "vpn" {
     connection_name          = string
     vpn_client_address_pool  = list(string)
   })
+  default = {}
 }
 
 variable "s2s" {
@@ -45,6 +46,7 @@ variable "s2s" {
     connection_name             = string
     shared_key                  = string
   }))
+  default = {}
 }
 
 variable "tags_from_rg" {
