@@ -27,7 +27,6 @@ variable "vpn" {
     connection_name          = string
     vpn_client_address_pool  = list(string)
   })
-  default = {}
 }
 
 variable "s2s" {
