@@ -10,8 +10,8 @@ resource "azurerm_virtual_network_gateway" "this" {
 	sku                 = var.vpn.sku
 	ip_configuration {
 		name                          = var.vpn.ip_name
-		subnet_id                     = var.vpn.gateway_subnet_id
-		public_ip_address_id          = var.vpn.public_ip_id
+		subnet_id                     = data.azurerm_subnet.this.id
+		public_ip_address_id          = data.azurerm_public_ip.this.id
 	}
 	enable_bgp            = false
 	vpn_client_configuration {
