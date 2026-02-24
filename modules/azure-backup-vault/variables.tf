@@ -50,7 +50,7 @@ variable "disk_policies" {
       criteria = object({
         absolute_criteria = optional(string)
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -90,7 +90,7 @@ variable "blob_policies" {
         data_store_type = string
         duration        = string
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -135,7 +135,7 @@ variable "postgresql_policies" {
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -179,7 +179,7 @@ variable "mysql_policies" {
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -223,7 +223,7 @@ variable "kubernetes_policies" {
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
       })
-    })))
+    })), [])
   }))
   default = []
 }
