@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.4...azure-backup-vault-v0.1.5) (2026-02-24)
+
+
+### Bug Fixes
+
+* add default values to variables ([#941](https://github.com/prefapp/tfm/issues/941)) ([b3554e3](https://github.com/prefapp/tfm/commit/b3554e37ce5b7b9fc480f4a0d04c6376b1c21c9f))
+
 ## [0.1.4](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.3...azure-backup-vault-v0.1.4) (2026-02-11)
 
 
