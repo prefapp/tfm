@@ -46,8 +46,8 @@ variable "s2s" {
     connection_name             = string
     shared_key                  = string
   }))
-  default = {}
-}
+    default = []
+  }
 
 variable "tags_from_rg" {
   description = "Use resource group tags as base for module tags"
