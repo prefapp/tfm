@@ -6,6 +6,7 @@ module "azure_backup_vault" {
   backup_resource_group_name = "example-backup-rg"
   vault = {
     name           = "example-backup-vault"
+    location       = "eastus"
     datastore_type = "VaultStore"
     redundancy     = "LocallyRedundant"
   }
@@ -21,6 +22,7 @@ module "azure_backup_vault" {
   disk_instances = [
     {
       name = "disk1-backup"
+      location = "eastus"
       disk_resource_group = "example-disk-rg"
       policy_key = "daily-disk-policy"
     }

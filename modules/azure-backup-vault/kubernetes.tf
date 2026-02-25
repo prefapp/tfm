@@ -123,7 +123,7 @@ resource "azurerm_data_protection_backup_policy_kubernetes_cluster" "this" {
 resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "this" {
   for_each                     = { for instance in var.kubernetes_instances : instance.name => instance }
   name                         = each.value.name
-  location                     = data.azurerm_resource_group.this.location
+  location                     = each.value.location
   vault_id                     = azurerm_data_protection_backup_vault.this.id
   kubernetes_cluster_id        = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].id
   snapshot_resource_group_name = each.value.snapshot_resource_group_name
