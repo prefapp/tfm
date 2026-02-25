@@ -44,7 +44,7 @@ resource "azurerm_data_protection_backup_policy_disk" "this" {
 resource "azurerm_data_protection_backup_instance_disk" "this" {
   for_each                     = { for instance in var.disk_instances : instance.name => instance }
   name                         = each.value.name
-  location                     = data.azurerm_resource_group.disk_rg[each.value.disk_resource_group].location
+  location                     = each.valuelocation
   vault_id                     = azurerm_data_protection_backup_vault.this.id
   disk_id                      = data.azurerm_managed_disk.this[each.value.name].id
   snapshot_resource_group_name = data.azurerm_resource_group.disk_rg[each.value.disk_resource_group].name
