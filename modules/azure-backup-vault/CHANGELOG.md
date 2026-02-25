@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.5...azure-backup-vault-v0.1.6) (2026-02-25)
+
+
+### Bug Fixes
+
+* add location value to all resources ([#943](https://github.com/prefapp/tfm/issues/943)) ([10f9e68](https://github.com/prefapp/tfm/commit/10f9e68fd871e5b0f52b538d4a1b1e668d0e9e63))
+
 ## [0.1.5](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.4...azure-backup-vault-v0.1.5) (2026-02-24)
 
 
