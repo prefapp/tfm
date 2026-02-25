@@ -112,3 +112,8 @@ output "debug" {
   description = "Debug information for mixed addons"
   value       = local.mixed_addons
 }
+
+output "debug_cluster_addons" {
+  description = "Debug: cluster_addons local value passed to EKS module"
+  value       = local.cluster_addons
+}
