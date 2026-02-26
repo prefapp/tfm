@@ -12,7 +12,7 @@ variable "oac_name" {
     condition     = var.oac_name == null || (length(var.oac_name) >= 1 && length(var.oac_name) <= 64)
     error_message = "The OAC name (if provided) must be between 1 and 64 characters."
   }
-  description = "(Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name_prefix>-s3-oac-<random>' (truncated to 64 chars) to ensure uniqueness. Must be unique per AWS account."
+  description = "(Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name_prefix>-s3-oac-<random>' (truncated to 64 chars) to ensure uniqueness across deployments. Must be unique per AWS account."
   type        = string
   default     = null
 }
