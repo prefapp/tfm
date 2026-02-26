@@ -8,6 +8,7 @@ resource "azurerm_virtual_network_gateway" "this" {
 	type                = var.vpn.type
 	vpn_type            = var.vpn.vpn_type
 	sku                 = var.vpn.sku
+	tags                 = local.tags
 	ip_configuration {
 		name                          = var.vpn.ip_name
 		subnet_id                     = data.azurerm_subnet.this.id
