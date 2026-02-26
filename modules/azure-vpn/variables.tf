@@ -8,9 +8,9 @@ variable "vpn" {
     resource_group_name     = string
     gateway_name            = string
     ip_name                 = string
-    public_ip_id            = string
+    public_ip_id            = optional(string)
     ip_allocation_method    = string
-    gateway_subnet_id       = string
+    gateway_subnet_id       = optional(string)
     type                    = string
     vpn_type                = string
     active_active           = bool
