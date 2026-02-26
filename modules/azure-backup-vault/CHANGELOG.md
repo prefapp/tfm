@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.6...azure-backup-vault-v0.1.7) (2026-02-26)
+
+
+### Bug Fixes
+
+* add reader on MI backup vault over kubernetes cluster ([#945](https://github.com/prefapp/tfm/issues/945)) ([8766c93](https://github.com/prefapp/tfm/commit/8766c9311805993f4e7e84b42147e5c156eed6e8))
+
 ## [0.1.6](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.5...azure-backup-vault-v0.1.6) (2026-02-25)
 
 
