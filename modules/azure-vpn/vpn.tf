@@ -29,7 +29,7 @@ resource "azurerm_virtual_network_gateway" "this" {
 	}
 
 		dynamic "custom_route" {
-			for_each = length(var.vpn.custom_route_address_prefixes) > 0 ? [1] : []
+			for_each = var.vpn.custom_route_address_prefixes != null && length(var.vpn.custom_route_address_prefixes) > 0 ? [1] : []
 			content {
 				address_prefixes = var.vpn.custom_route_address_prefixes
 			}
