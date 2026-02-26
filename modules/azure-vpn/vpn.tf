@@ -28,11 +28,8 @@ resource "azurerm_virtual_network_gateway" "this" {
 		private_ip_address_allocation = var.vpn.private_ip_address_allocation
 	}
 
-		dynamic "custom_route" {
-			for_each = var.vpn.custom_route_address_prefixes != null && length(var.vpn.custom_route_address_prefixes) > 0 ? [1] : []
-			content {
-				address_prefixes = var.vpn.custom_route_address_prefixes
-			}
+		custom_route {
+			address_prefixes = var.vpn.custom_route_address_prefixes
 		}
 
 		dynamic "vpn_client_configuration" {
