@@ -13,6 +13,7 @@ module "cloudfront-delivery" {
   create_origin_access_control = true
   origin_access_control = {
     s3_oac = {
+      name             = local.resolved_oac_name
       description      = "CloudFront access to S3 bucket delivery ${var.name_prefix}"
       origin_type      = "s3"
       signing_behavior = "always"

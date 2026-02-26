@@ -1,3 +1,19 @@
+locals {
+  # If oac_name is not provided, generate it and truncate to 64 chars (AWS limit)
+  resolved_oac_name = var.oac_name != null ? var.oac_name : substr("${var.name_prefix}-s3-oac", 0, 64)
+}
+
+variable "oac_name" {
+    validation {
+      condition     = var.oac_name == null || (length(var.oac_name) >= 1 && length(var.oac_name) <= 64)
+      error_message = "The OAC name (if provided) must be between 1 and 64 characters."
+    }
+  description = "(Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name_prefix>-s3-oac'. Must be unique per AWS account."
+  type        = string
+  default     = null
+}
+
+
 variable "tags" {
   description = "A map of tags to assign to the resources."
   type        = map(string)

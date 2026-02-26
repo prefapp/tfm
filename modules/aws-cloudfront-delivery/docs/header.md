@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module provisions an **AWS CloudFront distribution** to deliver content from an **S3 bucket** created by the same module with the `-delivery` suffix.  
+This module provisions an **AWS CloudFront distribution** to deliver content from an **S3 bucket** created by the same module with the `-delivery` suffix.
 The S3 bucket is generated using the official **terraform-aws-modules/s3-bucket/aws** module.
 
 An **ACM certificate** can also be requested and validated via **domain validation**, allowing the CloudFront distribution to serve content over HTTPS with a custom domain.
@@ -28,6 +28,23 @@ This module provides a simple and standardized way to deploy a secure CDN backed
 
 - **Route53 DNS Integration**: Creates the required Route53 hosted zone records to expose the CloudFront distribution via a custom domain.
 
+
+## Origin Access Control (OAC) Naming
+
+The name of the CloudFront Origin Access Control (OAC) must be unique within your AWS account. By default, this module generates the OAC name using the `name_prefix` variable and the suffix `-s3-oac`, truncated to 64 characters (the AWS limit). You can override this by providing your own value for the `oac_name` variable. If you set `oac_name`, it must be between 1 and 64 characters. This ensures compatibility with AWS requirements and avoids name collisions when deploying multiple instances of the module.
+
+Example:
+
+```
+module "cloudfront" {
+  # ...other options...
+  # By default: OAC name will be "<name_prefix>-s3-oac" (truncated to 64 chars)
+  # Optionally, set your own unique OAC name:
+  oac_name = "my-unique-oac-name"
+}
+```
+
+
 ## Basic Usage
 
 ### Minimal usage
@@ -44,7 +61,7 @@ module "cloudfront" {
 }
 ```
 
-### Usage with certificate and route53 zones. 
+### Usage with certificate and route53 zones.
 
 ``` hcl
 module "cloudfront" {
