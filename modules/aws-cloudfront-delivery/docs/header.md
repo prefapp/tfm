@@ -35,7 +35,7 @@ The name of the CloudFront Origin Access Control (OAC) must be unique within you
 
 Example:
 
-```
+```hcl
 module "cloudfront" {
   # ...other options...
   # By default: OAC name will be "<name_prefix>-s3-oac" (truncated to 64 chars)
