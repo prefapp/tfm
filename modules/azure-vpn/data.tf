@@ -12,6 +12,6 @@ data "azurerm_subnet" "this" {
 }
 
 data "azurerm_public_ip" "this" {
-  name                = var.vpn.ip_name
+  name                = var.vpn.public_ip_name
   resource_group_name = var.vpn.resource_group_name
 }
