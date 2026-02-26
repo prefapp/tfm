@@ -124,7 +124,7 @@ module "cloudfront" {
 | <a name="input_http_version"></a> [http\_version](#input\_http\_version) | The HTTP version to use for requests to your distribution. | `string` | `"http2and3"` | no |
 | <a name="input_is_ipv6_enabled"></a> [is\_ipv6\_enabled](#input\_is\_ipv6\_enabled) | Whether the CloudFront distribution is enabled for IPv6. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | A prefix to use for naming resources. | `string` | `"cdn-bucket"` | no |
-| <a name="input_oac_name"></a> [oac\_name](#input\_oac\_name) | (Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name\_prefix>-s3-oac'. Must be unique per AWS account. | `string` | `null` | no |
+| <a name="input_oac_name"></a> [oac\_name](#input\_oac\_name) | (Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name\_prefix>-s3-oac-<random>' (truncated to 64 chars) to ensure uniqueness. Must be unique per AWS account. | `string` | `null` | no |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for the CloudFront distribution. | `string` | `null` | no |
 | <a name="input_retain_on_delete"></a> [retain\_on\_delete](#input\_retain\_on\_delete) | Whether to retain the CloudFront distribution when the module is destroyed. | `bool` | `false` | no |
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | The name of the Route 53 hosted zone to use in resources that require it. | `string` | `null` | no |

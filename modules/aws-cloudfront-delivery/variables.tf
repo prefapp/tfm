@@ -1,9 +1,10 @@
 resource "random_id" "oac_suffix" {
   byte_length = 4
 }
-
+  # This random suffix is used to ensure the default OAC name is unique per deployment
 locals {
-  resolved_oac_name = var.oac_name != null ? var.oac_name : substr("${var.name_prefix}-s3-oac-${random_id.oac_suffix.hex}", 0, 64)
+    # If oac_name is not provided, generate it as "<name_prefix>-s3-oac-<random>" (truncated to 64 chars, AWS limit) to ensure uniqueness
+    resolved_oac_name = var.oac_name != null ? var.oac_name : substr("${var.name_prefix}-s3-oac-${random_id.oac_suffix.hex}", 0, 64)
 }
 
 variable "oac_name" {
@@ -11,7 +12,7 @@ variable "oac_name" {
     condition     = var.oac_name == null || (length(var.oac_name) >= 1 && length(var.oac_name) <= 64)
     error_message = "The OAC name (if provided) must be between 1 and 64 characters."
   }
-  description = "(Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name_prefix>-s3-oac'. Must be unique per AWS account."
+  description = "(Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name_prefix>-s3-oac-<random>' (truncated to 64 chars) to ensure uniqueness. Must be unique per AWS account."
   type        = string
   default     = null
 }
