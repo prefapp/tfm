@@ -1,6 +1,9 @@
+resource "random_id" "oac_suffix" {
+  byte_length = 4
+}
+
 locals {
-  # If oac_name is not provided, generate it and truncate to 64 chars (AWS limit)
-  resolved_oac_name = var.oac_name != null ? var.oac_name : substr("${var.name_prefix}-s3-oac", 0, 64)
+  resolved_oac_name = var.oac_name != null ? var.oac_name : substr("${var.name_prefix}-s3-oac-${random_id.oac_suffix.hex}", 0, 64)
 }
 
 variable "oac_name" {
