@@ -7,6 +7,15 @@ resource "azurerm_role_assignment" "kubernetes_reader" {
   principal_id         = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].identity[0].principal_id
 }
 
+# Role assignment: Reader for the Backup Vault identity over the Kubernetes cluster
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
+resource "azurerm_role_assignment" "vault_reader_on_kubernetes" {
+  for_each             = { for instance in var.kubernetes_instances : instance.name => instance }
+  scope                = data.azurerm_kubernetes_cluster.this[each.value.cluster_name].id
+  role_definition_name = "Reader"
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+}
+
 # Role assignment: Reader for the Backup Vault identity over the snapshot resource group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "vault_reader_on_snapshot_rg" {
