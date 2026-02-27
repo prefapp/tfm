@@ -89,7 +89,7 @@ variable "copy_action_default_values" {
 }
 
 variable "enable_cross_account_backup" {
-  description = "Enable cross-account backup in AWS Backup global settings. If set to true, the module will not manage the global settings resource, allowing you to configure it separately if needed."
+  description = "Enable cross-account backup in AWS Backup global settings. If set to true, the module will manage the global settings resource to enable cross-account backup. If set to false, you can configure it separately if needed."
   type        = bool
   default     = false
 }

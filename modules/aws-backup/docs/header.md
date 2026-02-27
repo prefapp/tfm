@@ -66,7 +66,7 @@ module "backup" {
 
 For the accounts in your organization
 
-In the account that only recive backups:
+In the account that only receive backups:
 
 ```hcl
 module "backup" {
@@ -96,7 +96,7 @@ module "backup" {
     #   "tree" = "four"
     # }
     plan = [{
-      name      = "only-rds-dayly-backup"
+      name      = "only-rds-daily-backup"
       rule_name = "my-rule"
       schedule  = "cron(0 12 * * ? *)"
       backup_selection_conditions = {

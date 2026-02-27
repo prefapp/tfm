@@ -54,11 +54,13 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 resource "aws_iam_role" "this" {
+  count              = var.aws_backup_vault != [] ? 1 : 0
   name_prefix        = "backupselection-role-"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
+  count      = var.aws_backup_vault != [] ? 1 : 0
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.this[0].name
 }

@@ -1,7 +1,7 @@
 ## Vault to store backups
 
 resource "aws_backup_vault" "this" {
-  for_each = var.aws_backup_vault != [] ? {
+  for_each = length(var.aws_backup_vault) > 0 ? {
     for vault in var.aws_backup_vault : vault.vault_name => vault
     if vault.vault_name != null
   } : {}
@@ -54,13 +54,15 @@ resource "aws_backup_plan" "this" {
       content {
         destination_vault_arn = try(each.value.plan.copy_action.destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
         lifecycle {
-          delete_after = try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) : null
+          cold_storage_after = try(each.value.plan.copy_action.cold_storage_after, var.copy_action_default_values.cold_storage_after) != null ? try(each.value.plan.copy_action.cold_storage_after, var.copy_action_default_values.cold_storage_after) : null
+          delete_after       = try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) : null
         }
       }
     }
 
     lifecycle {
-      delete_after = try(each.value.plan.delete_after, 14)
+      cold_storage_after = try(each.value.plan.cold_storage_after, null)
+      delete_after       = try(each.value.plan.delete_after, 14)
     }
   }
 
@@ -155,7 +157,7 @@ resource "aws_backup_selection" "resource_selection" {
   }
   region       = try(each.value.vault.vault_region, null)
   iam_role_arn = aws_iam_role.this.arn
-  name         = each.key
+  name         = substr(each.key, 0, 50) # Backup selection name must be 50 characters or fewer
   plan_id      = aws_backup_plan.this[each.key].id
 
   resources = each.value.plan.backup_selection_arn_resources
