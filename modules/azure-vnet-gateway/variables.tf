@@ -70,6 +70,19 @@ variable "vpn" {
   })
 }
 
+variable "nat_rules" {
+  description = "List of NAT rules for the VPN gateway"
+  type = list(object({
+    name                           = string
+    mode                           = string
+    type                           = string
+    ip_configuration_id            = string
+    external_mapping_address_space = string
+    internal_mapping_address_space = string
+  }))
+  default = []
+}
+
 variable "tags_from_rg" {
   description = "Use resource group tags as base for module tags"
   type        = bool

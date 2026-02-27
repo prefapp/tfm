@@ -1,14 +1,6 @@
 ## VARIABLES SECTION
 
-variable "vpn" {
-  description = "VPN Gateway link configuration object variables"
-  type = object({
-    gateway_name        = string
-    resource_group_name = string
-  })
-}
-
-variable "connection" {
+variable "localnet" {
   description = "List of Site-to-Site VPN connection objects"
   type = list(object({
     type                        = string
@@ -36,19 +28,6 @@ variable "connection" {
       pfs_group        = string
       sa_lifetime      = number
     }))
-  }))
-  default = []
-}
-
-variable "nat_rules" {
-  description = "List of NAT rules for the VPN gateway"
-  type = list(object({
-    name                           = string
-    mode                           = string
-    type                           = string
-    ip_configuration_id            = string
-    external_mapping_address_space = string
-    internal_mapping_address_space = string
   }))
   default = []
 }
