@@ -76,7 +76,7 @@ variable "nat_rules" {
     name                           = string
     mode                           = string
     type                           = string
-    ip_configuration_id            = string
+    ip_configuration_id            = optional(string)
     external_mapping_address_space = string
     internal_mapping_address_space = string
   }))

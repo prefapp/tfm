@@ -8,7 +8,10 @@ resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   virtual_network_gateway_id = azurerm_virtual_network_gateway.this.id
   mode                       = each.value.mode
   type                       = each.value.type
-  ip_configuration_id        = data.azurerm_virtual_network_gateway.this.ip_configuration[0].id
+  ip_configuration_id        = coalesce(
+    try(each.value.ip_configuration_id, null),
+    data.azurerm_virtual_network_gateway.this.ip_configuration[0].id
+  )
 
   external_mapping {
     address_space = each.value.external_mapping_address_space
