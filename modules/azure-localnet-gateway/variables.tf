@@ -4,6 +4,7 @@ variable "localnet" {
   description = "List of Site-to-Site VPN connection objects"
   type = list(object({
     type                        = string
+    resource_group_name         = string
     gateway_name                = string
     gateway_sku                 = string
     location                    = string
