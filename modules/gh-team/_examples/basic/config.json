@@ -1,0 +1,11 @@
+{
+  "group": {
+    "name": "私のチーム",
+    "description": "Prefapp all description",
+    "privacy": "closed",
+    "parentTeamId": null
+  },
+  "group_members": [
+    { "username": "frmadem-user", "teamId": "16210762" }
+  ]
+}
