@@ -14,6 +14,7 @@ variable "s2s" {
     type                        = string
     gateway_name                = string
     gateway_sku                 = string
+    location                    = string
     ip_name                     = string
     enable_bgp                  = bool
     local_gateway_name          = string

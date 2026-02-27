@@ -4,7 +4,7 @@
 resource "azurerm_local_network_gateway" "this" {
 	for_each            = { for idx, s in var.s2s : idx => s }
 	name                = each.value.local_gateway_name
-	location            = var.vpn.location
+	location            = each.value.location
 	resource_group_name = var.vpn.resource_group_name
 	gateway_address     = each.value.local_gateway_ip
 	address_space       = each.value.local_gateway_address_space
