@@ -157,7 +157,7 @@ resource "aws_backup_selection" "resource_selection" {
   }
   region       = try(each.value.vault.vault_region, null)
   iam_role_arn = aws_iam_role.this.arn
-  name         = each.key
+  name         = substr(each.key, 0, 50) # Backup selection name must be 50 characters or fewer
   plan_id      = aws_backup_plan.this[each.key].id
 
   resources = each.value.plan.backup_selection_arn_resources
