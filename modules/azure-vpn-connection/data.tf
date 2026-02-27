@@ -5,8 +5,8 @@ data "azurerm_resource_group" "this" {
   name = var.vpn.resource_group_name
 }
 
-data "azurerm_virtual_network" "this" {
-  name                = var.vpn.vnet_name
+data "azurerm_virtual_network_gateway" "this" {
+  name                = var.vpn.gateway_name
   resource_group_name = var.vpn.resource_group_name
 }
 
