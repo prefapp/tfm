@@ -1,7 +1,7 @@
 ## Vault to store backups
 
 resource "aws_backup_vault" "this" {
-  for_each = var.aws_backup_vault != [] ? {
+  for_each = length(var.aws_backup_vault) > 0 ? {
     for vault in var.aws_backup_vault : vault.vault_name => vault
     if vault.vault_name != null
   } : {}
