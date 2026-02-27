@@ -33,7 +33,7 @@ resource "aws_backup_plan" "this" {
   name = each.value.plan.name
 
   rule {
-    rule_name                    = try(each.value.plan.rule_name, "tf_example_backup_rule") 
+    rule_name                    = try(each.value.plan.rule_name, "tf_example_backup_rule")
     target_vault_name            = aws_backup_vault.this[each.value.vault.vault_name].name
     schedule                     = try(each.value.plan.schedule, "cron(0 12 * * ? *)")
     schedule_expression_timezone = try(each.value.plan.schedule_expression_timezone, null)
@@ -41,7 +41,7 @@ resource "aws_backup_plan" "this" {
     completion_window            = try(each.value.plan.completion_window, null) != null ? each.value.plan.completion_window : 11520
     recovery_point_tags          = try(each.value.plan.recovery_point_tags, {}) != {} ? each.value.plan.recovery_point_tags : null
     dynamic "scan_action" {
-      for_each = try(each.value.plan.scan_action, [])
+      for_each = each.value.plan.scan_action != null ? [1] : []
       content {
         malware_scanner = try(scan_action.value.malware_scanner, null) != null ? scan_action.value.malware_scanner : null
         scan_mode       = try(scan_action.value.scan_action_type, null) != null ? scan_action.value.scan_action_type : null
@@ -49,13 +49,12 @@ resource "aws_backup_plan" "this" {
     }
 
     dynamic "copy_action" {
-      for_each = try(each.value.plan.copy_action, null) != null ? [1] : var.copy_action_default_values.destination_account_id != null && var.copy_action_default_values.destination_region != null ? [1] : []
+      for_each = try(each.value.plan.copy_action, []) != null ? [1] : var.copy_action_default_values.destination_account_id != null && var.copy_action_default_values.destination_region != null ? [1] : []
       # for_each = try(each.value.plan.copy_action, []) != null ? each.value.plan.copy_action : []
       content {
         destination_vault_arn = try(each.value.plan.copy_action.destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
         lifecycle {
-          cold_storage_after = try(each.value.plan.copy_action.cold_storage_after, var.copy_action_default_values.cold_storage_after) != null ? try(each.value.plan.copy_action.cold_storage_after, var.copy_action_default_values.cold_storage_after) : null
-          delete_after       = try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) : null
+          delete_after = try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) : null
         }
       }
     }
@@ -97,7 +96,7 @@ resource "aws_backup_selection" "tag_selection" {
     }
   }
   region       = try(each.value.vault.vault_region, null)
-  iam_role_arn = aws_iam_role.this.arn
+  iam_role_arn = aws_iam_role.this[0].arn
   name         = substr(each.key, 0, 50) # Backup selection name must be 50 characters or fewer
   plan_id      = aws_backup_plan.this[each.key].id
   resources    = ["*"]
@@ -156,7 +155,7 @@ resource "aws_backup_selection" "resource_selection" {
     }
   }
   region       = try(each.value.vault.vault_region, null)
-  iam_role_arn = aws_iam_role.this.arn
+  iam_role_arn = aws_iam_role.this[0].arn
   name         = substr(each.key, 0, 50) # Backup selection name must be 50 characters or fewer
   plan_id      = aws_backup_plan.this[each.key].id
 
