@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.7](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.6...azure-backup-vault-v0.1.7) (2026-02-26)
+
+
+### Bug Fixes
+
+* add reader on MI backup vault over kubernetes cluster ([#945](https://github.com/prefapp/tfm/issues/945)) ([8766c93](https://github.com/prefapp/tfm/commit/8766c9311805993f4e7e84b42147e5c156eed6e8))
+
+## [0.1.6](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.5...azure-backup-vault-v0.1.6) (2026-02-25)
+
+
+### Bug Fixes
+
+* add location value to all resources ([#943](https://github.com/prefapp/tfm/issues/943)) ([10f9e68](https://github.com/prefapp/tfm/commit/10f9e68fd871e5b0f52b538d4a1b1e668d0e9e63))
+
+## [0.1.5](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.4...azure-backup-vault-v0.1.5) (2026-02-24)
+
+
+### Bug Fixes
+
+* add default values to variables ([#941](https://github.com/prefapp/tfm/issues/941)) ([b3554e3](https://github.com/prefapp/tfm/commit/b3554e37ce5b7b9fc480f4a0d04c6376b1c21c9f))
+
 ## [0.1.4](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.3...azure-backup-vault-v0.1.4) (2026-02-11)
 
 
