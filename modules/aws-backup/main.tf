@@ -54,13 +54,15 @@ resource "aws_backup_plan" "this" {
       content {
         destination_vault_arn = try(each.value.plan.copy_action.destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
         lifecycle {
-          delete_after = try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) : null
+          cold_storage_after = try(each.value.plan.copy_action.cold_storage_after, var.copy_action_default_values.cold_storage_after) != null ? try(each.value.plan.copy_action.cold_storage_after, var.copy_action_default_values.cold_storage_after) : null
+          delete_after       = try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) : null
         }
       }
     }
 
     lifecycle {
-      delete_after = try(each.value.plan.delete_after, 14)
+      cold_storage_after = try(each.value.plan.cold_storage_after, null)
+      delete_after       = try(each.value.plan.delete_after, 14)
     }
   }
 
