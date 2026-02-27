@@ -3,8 +3,8 @@
 variable "vpn" {
   description = "VPN Gateway link configuration object variables"
   type = object({
-    location                 = string
-    resource_group_name      = string
+    gateway_name        = string
+    resource_group_name = string
   })
 }
 
