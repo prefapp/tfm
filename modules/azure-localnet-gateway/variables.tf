@@ -29,6 +29,8 @@ variable "localnet" {
       pfs_group        = string
       sa_lifetime      = number
     }))
+    tags_from_rg                = optional(bool)
+    tags                        = optional(map(string))
   }))
   default = []
 }
