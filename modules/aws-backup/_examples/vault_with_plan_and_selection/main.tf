@@ -1,4 +1,4 @@
-# Example: Minimal KMS key creation
+# Example: AWS Backup vault with plan and selection
 
 terraform {
   required_version = ">= 1.5"
