@@ -17,7 +17,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 	location                   = var.vpn.location
 	resource_group_name        = var.vpn.resource_group_name
 	type                       = each.value.type
-	virtual_network_gateway_id = azurerm_virtual_network_gateway.this.id
+	virtual_network_gateway_id = data.azurerm_virtual_network_gateway.this.id
 	local_network_gateway_id   = azurerm_local_network_gateway.this[each.key].id
 	shared_key                 = coalesce(
 		try(each.value.shared_key, null),
@@ -37,17 +37,4 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 			sa_lifetime      = ipsec_policy.value.sa_lifetime
 		}
 	}
-}
-
-# Optionally fetch shared_key from Key Vault if secret_name and vault info are provided
-data "azurerm_key_vault_secret" "s2s" {
-	for_each = { for idx, s in var.s2s : idx => s if try(s.keyvault_secret_name, null) != null && try(s.keyvault_vault_name, null) != null && try(s.keyvault_vault_rg, null) != null }
-	name         = each.value.keyvault_secret_name
-	key_vault_id = data.azurerm_key_vault.s2s[each.key].id
-}
-
-data "azurerm_key_vault" "s2s" {
-	for_each = { for idx, s in var.s2s : idx => s if try(s.keyvault_vault_name, null) != null && try(s.keyvault_vault_rg, null) != null }
-	name                = each.value.keyvault_vault_name
-	resource_group_name = each.value.keyvault_vault_rg
 }
