@@ -147,6 +147,9 @@
         },
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
+        },
+        "modules/gh-team": {
+            "package-name": "gh-team"
         }
     }
 }
