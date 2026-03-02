@@ -60,8 +60,8 @@ resource "aws_backup_plan" "this" {
     }
 
     lifecycle {
-      cold_storage_after = try(each.value.plan.cold_storage_after, null)
-      delete_after       = try(each.value.plan.delete_after, 14)
+      cold_storage_after = try(each.value.plan.lifecycle.cold_storage_after, null)
+      delete_after       = try(each.value.plan.lifecycle.delete_after, 14)
     }
   }
 
