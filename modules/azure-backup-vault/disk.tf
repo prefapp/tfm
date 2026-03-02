@@ -47,7 +47,7 @@ resource "azurerm_data_protection_backup_instance_disk" "this" {
   location                     = each.value.location
   vault_id                     = azurerm_data_protection_backup_vault.this.id
   disk_id                      = data.azurerm_managed_disk.this[each.value.name].id
-  snapshot_resource_group_name = data.azurerm_resource_group.disk_rg[each.value.disk_resource_group].name
+  snapshot_resource_group_name = each.value.snapshot_resource_group_name
   backup_policy_id             = azurerm_data_protection_backup_policy_disk.this[each.value.policy_key].id
 
   depends_on = [
