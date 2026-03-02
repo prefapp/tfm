@@ -66,7 +66,7 @@ module "backup" {
 
 For the accounts in your organization
 
-In the account that only receive backups:
+In the account that only receives backups:
 
 ```hcl
 module "backup" {
