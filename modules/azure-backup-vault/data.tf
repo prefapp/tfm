@@ -31,12 +31,6 @@ data "azurerm_resource_group" "disk_rg" {
   name     = each.value
 }
 
-# Data source to get the snapshot resource group for each disk
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
-data "azurerm_resource_group" "disk_snapshot_rg" {
-  for_each = { for rg in var.disk_instances.snapshot_resource_group_name : rg => rg }
-  name     = each.value
-}
 
 # Data source to get the managed disk by name
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/managed_disk
