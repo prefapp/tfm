@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.7...azure-backup-vault-v0.1.8) (2026-03-03)
+
+
+### Bug Fixes
+
+* snapshot rg name in disk instance config ([#957](https://github.com/prefapp/tfm/issues/957)) ([883a517](https://github.com/prefapp/tfm/commit/883a51725a2c071b1e113c1faa3414de6a70b347))
+
 ## [0.1.7](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.6...azure-backup-vault-v0.1.7) (2026-02-26)
 
 
