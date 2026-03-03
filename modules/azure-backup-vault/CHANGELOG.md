@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.8...azure-backup-vault-v0.1.9) (2026-03-03)
+
+
+### Bug Fixes
+
+* Add new role on snapshot resource group and fix resouce group sna… ([#959](https://github.com/prefapp/tfm/issues/959)) ([689f871](https://github.com/prefapp/tfm/commit/689f8710b2475ca204525a47ad0c2befc7cc5631))
+
 ## [0.1.8](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.7...azure-backup-vault-v0.1.8) (2026-03-03)
 
 
