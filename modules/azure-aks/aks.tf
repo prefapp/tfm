@@ -54,5 +54,5 @@ module "aks" {
   temporary_name_for_rotation                          = var.temporary_name_for_rotation
   vnet_subnet                                          = data.azurerm_subnet.aks_subnet.id
   workload_identity_enabled                            = var.workload_identity_enabled
-  net_profile_outbound_type                            = var.network_profile_outbound_type
+  net_profile_outbound_type                            = var.net_profile_outbound_type
 }
