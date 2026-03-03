@@ -16,3 +16,7 @@ data "azurerm_public_ip" "aks_public_ip" {
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
+
+#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription.html
+data "azurerm_subscription" "current" {
+}

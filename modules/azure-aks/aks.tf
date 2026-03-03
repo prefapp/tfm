@@ -45,7 +45,7 @@ module "aks" {
   os_disk_size_gb                                      = var.aks_os_disk_size_gb
   prefix                                               = var.aks_prefix
   rbac_aad_azure_rbac_enabled                          = true
-  rbac_aad_tenant_id                                   = data.azurerm_resource_group.this.tenant_id
+  rbac_aad_tenant_id                                   = data.azurerm_subscription.current.tenant_id
   resource_group_name                                  = var.resource_group_name
   role_based_access_control_enabled                    = true
   secret_rotation_enabled                              = var.secret_rotation_enabled
