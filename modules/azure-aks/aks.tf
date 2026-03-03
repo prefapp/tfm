@@ -52,7 +52,7 @@ module "aks" {
   sku_tier                                             = var.aks_sku_tier
   tags                                                 = local.tags
   temporary_name_for_rotation                          = var.temporary_name_for_rotation
-  vnet_subnet.id                                       = data.azurerm_subnet.aks_subnet.id
+  vnet_subnet                                          = data.azurerm_subnet.aks_subnet.id
   workload_identity_enabled                            = var.workload_identity_enabled
   net_profile_outbound_type                            = var.network_profile_outbound_type
 }
