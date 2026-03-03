@@ -3,6 +3,7 @@ module "aks" {
   # https://registry.terraform.io/modules/Azure/aks/azurerm/latest
   source = "github.com/Azure/terraform-azurerm-aks?ref=11.1.0"
 
+  location                                             = var.location
   agents_count                                         = var.aks_agents_count
   agents_labels                                        = var.aks_default_pool_custom_labels
   agents_max_pods                                      = var.aks_agents_max_pods
@@ -44,7 +45,6 @@ module "aks" {
   os_disk_size_gb                                      = var.aks_os_disk_size_gb
   prefix                                               = var.aks_prefix
   rbac_aad_azure_rbac_enabled                          = true
-  rbac_aad_managed                                     = true
   resource_group_name                                  = var.resource_group_name
   role_based_access_control_enabled                    = true
   secret_rotation_enabled                              = var.secret_rotation_enabled
@@ -52,7 +52,7 @@ module "aks" {
   sku_tier                                             = var.aks_sku_tier
   tags                                                 = local.tags
   temporary_name_for_rotation                          = var.temporary_name_for_rotation
-  vnet_subnet_id                                       = data.azurerm_subnet.aks_subnet.id
+  vnet_subnet.id                                       = data.azurerm_subnet.aks_subnet.id
   workload_identity_enabled                            = var.workload_identity_enabled
-  net_profile_outbound_type                        = var.network_profile_outbound_type
+  net_profile_outbound_type                            = var.network_profile_outbound_type
 }
