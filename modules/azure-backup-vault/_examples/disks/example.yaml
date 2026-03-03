@@ -17,4 +17,5 @@ values:
     - name: disk1-backup
       location: eastus
       disk_resource_group: example-disk-rg
+      snapshot_resource_group_name: snapshot-rg
       policy_key: daily-disk-policy
