@@ -55,3 +55,4 @@ module "aks" {
   vnet_subnet_id                                       = data.azurerm_subnet.aks_subnet.id
   workload_identity_enabled                            = var.workload_identity_enabled
   network_profile_outbound_type                        = var.network_profile_outbound_type
+}
