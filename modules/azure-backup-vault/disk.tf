@@ -7,12 +7,21 @@ resource "azurerm_role_assignment" "disk_backup_reader" {
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
-# Role assignment: Snapshot RG Contributor for each disk snapshot resource group
+# Role assignment: Snapshot RG Disk Snapshot Contributor for each disk snapshot resource group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
+resource "azurerm_role_assignment" "snapshot_rg_contributor" {
+  for_each             = data.azurerm_resource_group.disk_snapshot_rg
+  scope                = each.value.id
+  role_definition_name = "Disk Snapshot Contributor"
+  principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
+}
+
+# Role assignment: Snapshot RG Contributor for each snapshot disk resource group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "snapshot_rg_contributor" {
   for_each             = data.azurerm_resource_group.disk_rg
   scope                = each.value.id
-  role_definition_name = "Contributor"
+  role_definition_name = "Disk Snapshot Contributor"
   principal_id         = azurerm_data_protection_backup_vault.this.identity[0].principal_id
 }
 
