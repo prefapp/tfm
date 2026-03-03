@@ -35,6 +35,7 @@ variable "connection" {
       ipsec_integrity  = string
       pfs_group        = string
       sa_lifetime      = number
+      sa_datasize      = number
     }))
   }))
   default = []
