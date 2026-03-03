@@ -7,7 +7,7 @@ locals {
       node_count            = pool.enable_auto_scaling ? null : pool.node_count
       vnet_subnet_id        = data.azurerm_subnet.aks_subnet.id
       create_before_destroy = pool.create_before_destroy
-      enable_auto_scaling   = pool.enable_auto_scaling
+      auto_scaling_enabled  = pool.enable_auto_scaling
       max_count             = pool.max_count
       min_count             = pool.min_count
       max_pods              = pool.max_pod_per_node

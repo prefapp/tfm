@@ -258,7 +258,7 @@ variable "extra_node_pools" {
     vm_size               = string
     node_count            = optional(number, 1)
     create_before_destroy = optional(bool, true)
-    enable_auto_scaling   = optional(bool, false)
+    auto_scaling_enabled  = optional(bool, false)
     min_count             = optional(number, null)
     max_count             = optional(number, null)
     max_pod_per_node      = optional(number, 110)
