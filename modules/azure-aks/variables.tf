@@ -243,7 +243,7 @@ variable "auto_scaler_profile_skip_nodes_with_system_pods" {
   default     = false
 }
 
-variable "outbound_type" {
+variable "network_profile_outbound_type" {
   description = "The outbound (egress) routing method which should be used for this Kubernetes Cluster"
   type        = string
   default     = "loadBalancer"
