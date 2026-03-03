@@ -1,7 +1,7 @@
 # AKS section
 module "aks" {
   # https://registry.terraform.io/modules/Azure/aks/azurerm/latest
-  source = "github.com/Azure/terraform-azurerm-aks?ref=9.1.0"
+  source = "github.com/Azure/terraform-azurerm-aks?ref=11.1.0"
 
   agents_count                                         = var.aks_agents_count
   agents_labels                                        = var.aks_default_pool_custom_labels
