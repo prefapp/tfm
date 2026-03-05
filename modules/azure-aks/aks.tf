@@ -58,4 +58,3 @@ module "aks" {
   }
   workload_identity_enabled                            = var.workload_identity_enabled
   net_profile_outbound_type                            = var.net_profile_outbound_type
-}

@@ -1,6 +1,6 @@
 # Global variables
 variable "location" {
-  description = "The Azure location where all resources in this example should be created"
+  description = "The Azure location where all resources should be created"
 }
 
 variable "resource_group_name" {
@@ -247,6 +247,11 @@ variable "net_profile_outbound_type" {
   description = "The outbound (egress) routing method which should be used for this Kubernetes Cluster"
   type        = string
   default     = "loadBalancer"
+
+  validation {
+    condition     = contains(["loadBalancer", "userAssignedNATGateway"], var.net_profile_outbound_type)
+    error_message = "You must use loadBalancer or userAssignedNATGateway as outbound type value"
+
 }
 
 # Extra node pools variables
