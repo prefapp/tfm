@@ -31,4 +31,3 @@ module "nat_gateway" {
     tags_from_rg        = true
 }
 ```
-
