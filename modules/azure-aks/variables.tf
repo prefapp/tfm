@@ -251,7 +251,7 @@ variable "net_profile_outbound_type" {
   validation {
     condition     = contains(["loadBalancer", "userAssignedNATGateway"], var.net_profile_outbound_type)
     error_message = "You must use loadBalancer or userAssignedNATGateway as outbound type value"
-
+  }
 }
 
 # Extra node pools variables
