@@ -1,11 +1,11 @@
 # Variables
 variable "resource_group_name" {
-  description = "The name of the resource group in which to create the NAt Gateway"
+  description = "The name of the resource group in which to create the NAT Gateway"
   type = string
 }
 
 variable "nat_gateway_name" {
-  description = "The name of the NAT GAteway"
+  description = "The name of the NAT Gateway"
   type = string
 }
 
@@ -43,7 +43,7 @@ variable "subnet_id" {
 }
 
 variable "tags" {
-  description = "A map of tags to add to the public IP"
+  description = "A map of tags to add to the NAT Gateway"
   type = map(string)
   default = {}
 }
