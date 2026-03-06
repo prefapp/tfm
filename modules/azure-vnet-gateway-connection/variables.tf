@@ -6,6 +6,8 @@ variable "connection" {
     name                       = string
     location                   = string
     resource_group_name        = string
+    local_gateway_name         = string
+    local_gateway_resource_group_name = string
     type                       = string
     gateway_name               = string
     enable_bgp                 = bool
