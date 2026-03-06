@@ -6,7 +6,9 @@ locals {
       vm_size               = pool.vm_size
       node_count            = coalesce(
         pool.auto_scaling_enabled, pool.enable_auto_scaling) ? null : pool.node_count
-      vnet_subnet.id        = data.azurerm_subnet.aks_subnet.id
+      vnet_subnet = {
+        id = data.azurerm_subnet.aks_subnet.id
+      }
       create_before_destroy = pool.create_before_destroy
       auto_scaling_enabled  = coalesce(
         pool.auto_scaling_enabled, pool.enable_auto_scaling)
