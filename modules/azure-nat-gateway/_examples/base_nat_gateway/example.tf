@@ -1,14 +1,12 @@
 module "nat_gateway" {
   source = "../../"
 
-  nat_gateway = {
-    name                = "nat-gateway-name"
-    resource_group_name = "resource-group-name"
-    nat_gateway_name    = "nat-gateway-name"
-    location            = "westeurope"
-    nat_gateway_timeout = 4
-    nat_gateway_sku     = "Standard"
-    public_ip_id        = "public-ip-id"
-    subnet_id           = "subnet-id"
-    tags_from_rg        = true
+  resource_group_name = "resource-group-name"
+  nat_gateway_name    = "nat-gateway-name"
+  location            = "westeurope"
+  nat_gateway_timeout = 4
+  nat_gateway_sku     = "Standard"
+  public_ip_id        = "public-ip-id"
+  subnet_id           = "subnet-id"
+  tags_from_rg        = true
 }

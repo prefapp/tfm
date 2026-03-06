@@ -1,5 +1,4 @@
 nat_gateway:
-  name: "nat-gateway-name"
   resource_group_name: "resource-group-name"
   nat_gateway_name: "nat-gateway-name"
   location: "westeurope"
