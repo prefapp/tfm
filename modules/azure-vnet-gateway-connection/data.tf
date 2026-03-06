@@ -1,3 +1,9 @@
+# Data source para local network gateway
+data "azurerm_local_network_gateway" "this" {
+	for_each = { for idx, s in var.connection : idx => s }
+	name                = each.value.local_gateway_name
+	resource_group_name = each.value.resource_group_name
+}
 ## DATA SOURCES SECTION
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network

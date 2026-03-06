@@ -29,8 +29,4 @@ variable "connection" {
   default = []
 }
 
-variable "local_network_gateway_id" {
-  description = "Map of local network gateway IDs, indexed by connection key"
-  type        = map(string)
-}
 
