@@ -1,13 +1,5 @@
 ## VARIABLES SECTION
 
-variable "vpn" {
-  description = "VPN Gateway link configuration object variables"
-  type = object({
-    gateway_name        = string
-    resource_group_name = string
-  })
-}
-
 variable "connection" {
   description = "List of Site-to-Site VPN connection objects"
   type = list(object({
