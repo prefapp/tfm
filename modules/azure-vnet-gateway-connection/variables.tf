@@ -26,6 +26,9 @@ variable "connection" {
     dpd_timeout_seconds                 = optional(number)
     connection_mode                     = optional(string)
     tags_from_rg                        = optional(bool)
+    egress_nat_rule_ids                = optional(list(string))
+    ingress_nat_rule_ids               = optional(list(string))
+    local_azure_ip_address_enabled     = optional(bool)
     tags                                = optional(map(string))
     ipsec_policy = optional(object({
       dh_group         = string

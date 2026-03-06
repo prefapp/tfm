@@ -6,6 +6,9 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 	name                       = each.value.name
 	location                   = each.value.location
 	resource_group_name        = each.value.resource_group_name
+	egress_nat_rule_ids = try(each.value.egress_nat_rule_ids, null)
+	ingress_nat_rule_ids = try(each.value.ingress_nat_rule_ids, null)
+	local_azure_ip_address_enabled = try(each.value.local_azure_ip_address_enabled, null)
 	tags                       = local.tags[each.key]
 	type                       = each.value.type
 			 virtual_network_gateway_id = (
