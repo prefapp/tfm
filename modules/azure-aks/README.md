@@ -44,6 +44,9 @@ For more details, see the [Terraform AKS module documentation](https://registry.
 
 It is designed to be flexible, production-ready, and easy to integrate into existing infrastructures.
 
+The attribute `enable_auto_scaling` has been deprecated and replaced by `auto_scaling_enabled`.
+For backward compatibility, the module still supports both attributes.
+
 ## Basic Usage
 
 ### Minimal Example
@@ -141,7 +144,7 @@ module "azure_aks" {
 | <a name="input_auto_scaler_profile_skip_nodes_with_local_storage"></a> [auto\_scaler\_profile\_skip\_nodes\_with\_local\_storage](#input\_auto\_scaler\_profile\_skip\_nodes\_with\_local\_storage) | Whether to skip nodes with local storage for the auto scaler profile | `bool` | `false` | no |
 | <a name="input_auto_scaler_profile_skip_nodes_with_system_pods"></a> [auto\_scaler\_profile\_skip\_nodes\_with\_system\_pods](#input\_auto\_scaler\_profile\_skip\_nodes\_with\_system\_pods) | Whether to skip nodes with system pods for the auto scaler profile | `bool` | `false` | no |
 | <a name="input_create_role_assignment_public_ip"></a> [create\_role\_assignment\_public\_ip](#input\_create\_role\_assignment\_public\_ip) | Boolean value to create a role assignment for the public IP | `bool` | `false` | no |
-| <a name="input_extra_node_pools"></a> [extra\_node\_pools](#input\_extra\_node\_pools) | A list of extra node pools to create | <pre>list(object({<br/>    name                  = string<br/>    pool_name             = string<br/>    vm_size               = string<br/>    node_count            = optional(number, 1)<br/>    create_before_destroy = optional(bool, true)<br/>    auto_scaling_enabled   = optional(bool, false)<br/>    min_count             = optional(number, null)<br/>    max_count             = optional(number, null)<br/>    max_pod_per_node      = optional(number, 110)<br/>    os_disk_type          = optional(string, "Ephemeral")<br/>    mode                  = optional(string, "User")<br/>    custom_labels         = map(string)<br/>    orchestrator_version  = optional(string, "")<br/>    upgrade_settings = optional(object({<br/>      drain_timeout_in_minutes      = number<br/>      node_soak_duration_in_minutes = number<br/>      max_surge                     = string<br/>    }))<br/>  }))</pre> | `[]` | no |
+| <a name="input_extra_node_pools"></a> [extra\_node\_pools](#input\_extra\_node\_pools) | A list of extra node pools to create | <pre>list(object({<br/>    name                  = string<br/>    pool_name             = string<br/>    vm_size               = string<br/>    node_count            = optional(number, 1)<br/>    create_before_destroy = optional(bool, true)<br/>    auto_scaling_enabled   = optional(bool, false)<br/>   enable_auto_scaling   = optional(bool, false)<br/>     min_count             = optional(number, null)<br/>    max_count             = optional(number, null)<br/>    max_pod_per_node      = optional(number, 110)<br/>    os_disk_type          = optional(string, "Ephemeral")<br/>    mode                  = optional(string, "User")<br/>    custom_labels         = map(string)<br/>    orchestrator_version  = optional(string, "")<br/>    upgrade_settings = optional(object({<br/>      drain_timeout_in_minutes      = number<br/>      node_soak_duration_in_minutes = number<br/>      max_surge                     = string<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_key_vault_secrets_provider_enabled"></a> [key\_vault\_secrets\_provider\_enabled](#input\_key\_vault\_secrets\_provider\_enabled) | Boolean value to activate the csi-secrets-store-driver | `any` | n/a | yes |
 | <a name="input_load_balancer_profile_enabled"></a> [load\_balancer\_profile\_enabled](#input\_load\_balancer\_profile\_enabled) | Value to enable or not the load balancer profile | `bool` | `true` | no |
 | <a name="input_load_balancer_sku"></a> [load\_balancer\_sku](#input\_load\_balancer\_sku) | Load balancer sku (basic or standard) | `string` | `"standard"` | no |
@@ -159,7 +162,7 @@ module "azure_aks" {
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | The name of the virtual network where the subnet is located | `any` | n/a | yes |
 | <a name="input_vnet_resource_group_name"></a> [vnet\_resource\_group\_name](#input\_vnet\_resource\_group\_name) | The name of the resource group in which the virtual network is located | `any` | n/a | yes |
 | <a name="input_workload_identity_enabled"></a> [workload\_identity\_enabled](#input\_workload\_identity\_enabled) | Whether to enable Workload Identity for the AKS cluster | `any` | n/a | yes |
-| <a name="input_workload_identity_enabled"></a> [net\_profile\_outbound\_type](#input\_net\_profile\_outbound\_type) | The outbound (egress) routing method which should be used for this Kubernetes Cluster | `string` | loadBalancer | no |
+| <a name="input_net_profile_outbound_type"></a> [net\_profile\_outbound\_type](#input\_net\_profile\_outbound\_type) | The outbound (egress) routing method which should be used for this Kubernetes Cluster | `string` | loadBalancer | no |
 
 ## Outputs
 
@@ -237,6 +240,7 @@ extra_node_pools :
 		pool_name: "captpre"
 		vm_size: "Standard_F8s_v2"
 		auto_scaling_enabled: true
+		#enable_auto_scaling: true
 		max_count: 5
 		min_count: 2
 		max_pod_per_node: 30
@@ -247,6 +251,7 @@ extra_node_pools :
 		pool_name: "genhpa"
 		vm_size: "Standard_D4as_v5"
 		auto_scaling_enabled: true
+		#enable_autoscaling: true
 		min_count: 2
 		max_count: 20
 		max_pod_per_node: 110
