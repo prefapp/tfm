@@ -6,7 +6,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 	name                       = each.value.name
 	location                   = each.value.location
 	resource_group_name        = each.value.resource_group_name
-	tags                       = local.tags
+	tags                       = local.tags[each.key]
 	type                       = each.value.type
 	virtual_network_gateway_id = data.azurerm_virtual_network_gateway.this[each.key].id
 	local_network_gateway_id   = data.azurerm_local_network_gateway.this[each.key].id
