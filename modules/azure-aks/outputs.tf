@@ -53,7 +53,7 @@ output "oidc_issuer_url" {
 
 # The outbound IP address of the AKS cluster.
 output "outbound_ip_address" {
-  value = data.azurerm_public_ip.aks_public_ip.id
+  value = try(data.azurerm_public_ip.aks_public_ip[0].id, null)
 }
 
 # The subnet ID of the AKS cluster.
@@ -65,3 +65,4 @@ output "subnet_id" {
 output "vnet" {
   value = data.azurerm_subnet.aks_subnet.virtual_network_name
 }
+

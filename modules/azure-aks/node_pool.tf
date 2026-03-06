@@ -4,10 +4,16 @@ locals {
     pool.name => {
       name                  = pool.pool_name
       vm_size               = pool.vm_size
-      node_count            = coalesce(
-        pool.auto_scaling_enabled, pool.enable_auto_scaling) ? null : pool.node_count
-      auto_scaling_enabled  = coalesce(
-        pool.auto_scaling_enabled, pool.enable_auto_scaling)
+      auto_scaling_enabled = coalesce(
+        try(pool.auto_scaling_enabled, null),
+        try(pool.enable_auto_scaling, null),
+        false
+      )
+      node_count = coalesce(
+        try(pool.auto_scaling_enabled, null),
+        try(pool.enable_auto_scaling, null),
+        false
+      ) ? null : pool.node_count
       vnet_subnet = {
         id = data.azurerm_subnet.aks_subnet.id
       }
