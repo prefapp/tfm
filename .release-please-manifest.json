@@ -38,7 +38,7 @@
     "modules/aws-s3": "0.1.0",
     "modules/aws-kms": "0.2.0",
     "modules/aws-kms-multiple": "0.1.0",
-    "modules/azure-backup-vault": "0.1.7",
+    "modules/azure-backup-vault": "0.1.9",
     "modules/azure-event-hub": "0.1.1",
     "modules/aws-cloudfront-delivery": "0.2.6",
     "modules/aws-ecs": "1.1.4",
