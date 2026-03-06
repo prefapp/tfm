@@ -10,10 +10,11 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 	type                       = each.value.type
 	virtual_network_gateway_id = data.azurerm_virtual_network_gateway.this[each.key].id
 	local_network_gateway_id   = data.azurerm_local_network_gateway.this[each.key].id
-	shared_key                 = coalesce(
-		try(each.value.shared_key, null),
-		try(data.azurerm_key_vault_secret.s2s[each.key].value, null)
-	)
+			 shared_key = (
+				 try(each.value.shared_key, null) != null ? each.value.shared_key : (
+					 try(data.azurerm_key_vault_secret.s2s[each.key].value, null) != null ? data.azurerm_key_vault_secret.s2s[each.key].value : null
+				 )
+			 )
 	enable_bgp                 = each.value.enable_bgp
 
 	dynamic "ipsec_policy" {
