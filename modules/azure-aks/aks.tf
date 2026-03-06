@@ -31,8 +31,8 @@ module "aks" {
   auto_scaler_profile_skip_nodes_with_system_pods      = var.auto_scaler_profile_skip_nodes_with_system_pods
   key_vault_secrets_provider_enabled                   = var.key_vault_secrets_provider_enabled
   kubernetes_version                                   = var.aks_kubernetes_version
-  load_balancer_profile_enabled                        = var.load_balancer_profile_enabled
-  load_balancer_profile_outbound_ip_address_ids        = [data.azurerm_public_ip.aks_public_ip.id]
+  load_balancer_profile_enabled                        = var.net_profile_outbound_type == "loadBalancer" ? var.load_balancer_profile_enabled : false
+  load_balancer_profile_outbound_ip_address_ids        = var.net_profile_outbound_type == "loadBalancer" && length(data.azurerm_public_ip.aks_public_ip) > 0 ? [data.azurerm_public_ip.aks_public_ip[0].id] : null
   load_balancer_sku                                    = var.load_balancer_sku
   log_analytics_workspace_enabled                      = false
   network_contributor_role_assigned_subnet_ids         = { aks_subnet = data.azurerm_subnet.aks_subnet.id }
