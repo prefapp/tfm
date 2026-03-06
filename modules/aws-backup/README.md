@@ -66,7 +66,7 @@ module "backup" {
 
 For the accounts in your organization
 
-In the account that only receive backups:
+In the account that only receives backups:
 
 ```hcl
 module "backup" {
@@ -76,14 +76,14 @@ module "backup" {
     # vault_region = "eu-west-1"
     # vault_tags = {
     #   "one"  = "two"
-    #   "tree" = "four"
+    #   "three" = "four"
     # }
     }
   ]
 }
 ```
 
-In the account that you will made backups and sending to other account
+In the account that will make backups and send them to another account
 
 ```hcl
 module "backup" {
@@ -93,7 +93,7 @@ module "backup" {
     # vault_region = "eu-west-1"
     # vault_tags = {
     #   "one"  = "two"
-    #   "tree" = "four"
+    #   "three" = "four"
     # }
     plan = [{
       name      = "only-rds-daily-backup"
