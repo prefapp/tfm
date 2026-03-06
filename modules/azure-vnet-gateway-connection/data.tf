@@ -1,13 +1,17 @@
 ## DATA SOURCES SECTION
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network
+
+# Iterar sobre cada conexión para los data sources
 data "azurerm_resource_group" "this" {
-  name = var.connection.resource_group_name
+	for_each = { for idx, s in var.connection : idx => s }
+	name     = each.value.resource_group_name
 }
 
 data "azurerm_virtual_network_gateway" "this" {
-  name                = var.connection.gateway_name
-  resource_group_name = var.connection.resource_group_name
+	for_each            = { for idx, s in var.connection : idx => s }
+	name                = each.value.gateway_name
+	resource_group_name = each.value.resource_group_name
 }
 
 # Optionally fetch shared_key from Key Vault if secret_name and vault info are provided
