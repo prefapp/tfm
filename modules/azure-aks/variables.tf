@@ -251,7 +251,7 @@ variable "net_profile_outbound_type" {
   default     = "loadBalancer"
 
   validation {
-    condition     = contains(["loadBalancer", "userAssignedNATGateway", "userDefinedRouting, managedNATGateway, none], var.net_profile_outbound_type)
+    condition     = contains(["loadBalancer", "userAssignedNATGateway", "userDefinedRouting", "managedNATGateway", "none"], var.net_profile_outbound_type)
     error_message = "You must use loadBalancer, userAssignedNATGateway, userDefinedRouting, managedNATGateway or none as outbound type value"
   }
 }
