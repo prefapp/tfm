@@ -10,8 +10,6 @@ variable "connection" {
     local_gateway_resource_group_name   = string
     type                                = string
     gateway_name                        = string
-      # DEPRECATED: enable_bgp is deprecated in azurerm_virtual_network_gateway_connection
-      enable_bgp                          = optional(bool)
     shared_key                          = optional(string)
     keyvault_secret_name                = optional(string)
     keyvault_vault_name                 = optional(string)
