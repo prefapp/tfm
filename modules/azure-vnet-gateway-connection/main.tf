@@ -11,28 +11,27 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 	local_azure_ip_address_enabled = try(each.value.local_azure_ip_address_enabled, null)
 	tags                       = local.tags[each.key]
 	type                       = each.value.type
-			 virtual_network_gateway_id = (
-				 try(each.value.virtual_network_gateway_id, null) != null ? each.value.virtual_network_gateway_id : data.azurerm_virtual_network_gateway.this[each.key].id
-			 )
-			 local_network_gateway_id = (
-				 try(each.value.local_network_gateway_id, null) != null ? each.value.local_network_gateway_id : data.azurerm_local_network_gateway.this[each.key].id
-			 )
-			 shared_key = (
-				 try(each.value.shared_key, null) != null ? each.value.shared_key : (
-					 try(data.azurerm_key_vault_secret.s2s[each.key].value, null) != null ? data.azurerm_key_vault_secret.s2s[each.key].value : null
-				 )
-			 )
-             # enable_bgp está deprecado y no debe usarse
-             enable_bgp = null
-			 connection_protocol = try(each.value.connection_protocol, null)
-			 routing_weight = try(each.value.routing_weight, null)
-			 authorization_key = try(each.value.authorization_key, null)
-			 express_route_circuit_id = try(each.value.express_route_circuit_id, null)
-			 peer_virtual_network_gateway_id = try(each.value.peer_virtual_network_gateway_id, null)
-			 use_policy_based_traffic_selectors = try(each.value.use_policy_based_traffic_selectors, null)
-			 express_route_gateway_bypass = try(each.value.express_route_gateway_bypass, null)
-			 dpd_timeout_seconds = try(each.value.dpd_timeout_seconds, null)
-			 connection_mode = try(each.value.connection_mode, null)
+	virtual_network_gateway_id = (
+		try(each.value.virtual_network_gateway_id, null) != null ? each.value.virtual_network_gateway_id : data.azurerm_virtual_network_gateway.this[each.key].id
+	)
+	local_network_gateway_id = (
+		try(each.value.local_network_gateway_id, null) != null ? each.value.local_network_gateway_id : data.azurerm_local_network_gateway.this[each.key].id
+	)
+	shared_key = (
+		try(each.value.shared_key, null) != null ? each.value.shared_key : (
+			try(data.azurerm_key_vault_secret.s2s[each.key].value, null) != null ? data.azurerm_key_vault_secret.s2s[each.key].value : null
+		)
+	)
+	enable_bgp = try(each.value.enable_bgp, null)
+	connection_protocol = try(each.value.connection_protocol, null)
+	routing_weight = try(each.value.routing_weight, null)
+	authorization_key = try(each.value.authorization_key, null)
+	express_route_circuit_id = try(each.value.express_route_circuit_id, null)
+	peer_virtual_network_gateway_id = try(each.value.peer_virtual_network_gateway_id, null)
+	use_policy_based_traffic_selectors = try(each.value.use_policy_based_traffic_selectors, null)
+	express_route_gateway_bypass = try(each.value.express_route_gateway_bypass, null)
+	dpd_timeout_seconds = try(each.value.dpd_timeout_seconds, null)
+	connection_mode = try(each.value.connection_mode, null)
 
 			 dynamic "ipsec_policy" {
 				 for_each = try(each.value.ipsec_policy != null, false) ? [each.value.ipsec_policy] : []
