@@ -65,3 +65,8 @@ output "subnet_id" {
 output "vnet" {
   value = data.azurerm_subnet.aks_subnet.virtual_network_name
 }
+
+# The outbound public ip adress.
+output "outbound_ip_address" {
+  value = try(data.azurerm_public_ip.aks_public_ip[0].id, null)
+}
