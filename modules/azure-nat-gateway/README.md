@@ -8,7 +8,7 @@ It is suitable for development, staging, and production environments, and can be
 ## Key Features
 
 - **Nat Gateway Provisioning**: Deploys a fully managed Azure Nat Gateway resource with customizable name, SKU and zone allocation.
-- **Availability zone allocation**: Define in which availability zones deploy the NAT Gateway.
+- **Availability zone allocation**: Define in which availability zones deploy the NAT Gateway. 
 
 ## Basic Usage
 
