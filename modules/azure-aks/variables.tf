@@ -21,7 +21,9 @@ variable "tags" {
 
 # Data section public IP variables
 variable "public_ip_name" {
-  description = "The name of the public IP address to use for the AKS cluster"
+  description = "The name of an existing public IP address to use for the AKS load balancer outbound profile. Only applicable when net_profile_outbound_type is 'loadBalancer'. If null, AKS manages outbound IPs automatically."
+  type        = string
+  default     = null
 }
 
 # Data section subnet variables
@@ -249,7 +251,7 @@ variable "net_profile_outbound_type" {
   default     = "loadBalancer"
 
   validation {
-    condition     = contains(["loadBalancer", "userAssignedNATGateway", "userDefinedRouting, managedNATGateway, none], var.net_profile_outbound_type)
+    condition     = contains(["loadBalancer", "userAssignedNATGateway", "userDefinedRouting", "managedNATGateway", "none"], var.net_profile_outbound_type)
     error_message = "You must use loadBalancer, userAssignedNATGateway, userDefinedRouting, managedNATGateway or none as outbound type value"
   }
 }
