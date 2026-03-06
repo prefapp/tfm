@@ -8,8 +8,8 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 	resource_group_name        = each.value.resource_group_name
 	tags                       = local.tags
 	type                       = each.value.type
-	virtual_network_gateway_id = data.azurerm_virtual_network_gateway.this.id
-	local_network_gateway_id   = azurerm_local_network_gateway.this[each.key].id
+	virtual_network_gateway_id = data.azurerm_virtual_network_gateway.this[each.key].id
+	local_network_gateway_id   = var.local_network_gateway_id[each.key]
 	shared_key                 = coalesce(
 		try(each.value.shared_key, null),
 		try(data.azurerm_key_vault_secret.s2s[each.key].value, null)

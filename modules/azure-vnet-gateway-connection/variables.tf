@@ -3,22 +3,16 @@
 variable "connection" {
   description = "List of Site-to-Site VPN connection objects"
   type = list(object({
-    type                        = string
-    gateway_name                = string
-    gateway_sku                 = string
-    location                    = string
-    ip_name                     = string
-    enable_bgp                  = bool
-    local_gateway_name          = string
-    local_gateway_ip            = string
-    local_gateway_address_space = list(string)
-    connection_name             = string
-    shared_key                  = optional(string)
-    # Optional: fetch shared_key from Key Vault
-    keyvault_secret_name        = optional(string)
-    keyvault_vault_name         = optional(string)
-    keyvault_vault_rg           = optional(string)
-    # Optional: advanced IPsec policy
+    name                       = string
+    location                   = string
+    resource_group_name        = string
+    type                       = string
+    gateway_name               = string
+    enable_bgp                 = bool
+    shared_key                 = optional(string)
+    keyvault_secret_name       = optional(string)
+    keyvault_vault_name        = optional(string)
+    keyvault_vault_rg          = optional(string)
     ipsec_policy = optional(object({
       dh_group         = string
       ike_encryption   = string
@@ -28,8 +22,15 @@ variable "connection" {
       pfs_group        = string
       sa_lifetime      = number
       sa_datasize      = number
-    }))
+    }) )
+    tags_from_rg               = optional(bool)
+    tags                       = optional(map(string))
   }))
   default = []
+}
+
+variable "local_network_gateway_id" {
+  description = "Map of local network gateway IDs, indexed by connection key"
+  type        = map(string)
 }
 
