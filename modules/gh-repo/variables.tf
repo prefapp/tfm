@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    github = {
-      source  = "integrations/github"
-      version = "~> 6.0"
-    }
-  }
-}
-
 variable "config" {
   description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators) as a single complex object"
   type = object({
