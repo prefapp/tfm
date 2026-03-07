@@ -151,5 +151,8 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         }
+        "modules/gh-repo": {
+            "package-name": "gh-repo"
+        }
     }
 }
