@@ -1,5 +1,14 @@
+terraform {
+  required_providers {
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
+  }
+}
+
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC template) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -43,6 +52,18 @@ variable "config" {
       useDefault       = optional(bool, true)
       includeClaimKeys = optional(list(string), [])
     }), null)
+
+    teams = optional(list(object({
+      repository = string
+      teamId     = number      # ← CHANGED: teamId (number) instead of team_slug
+      permission = string
+    })), [])
+
+    collaborators = optional(list(object({
+      repository = string
+      username   = string
+      permission = string
+    })), [])
   })
 
   validation {

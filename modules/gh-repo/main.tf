@@ -22,7 +22,7 @@ resource "github_branch_default" "this" {
   rename     = var.config.default_branch.rename
 }
 
-# Commit files (CODEOWNERS, workflows, etc.)
+# Commit files
 resource "github_repository_file" "this" {
   for_each = { for f in var.config.files : f.file => f }
 
@@ -43,16 +43,33 @@ resource "github_actions_variable" "this" {
   value         = each.value.value
 }
 
-# OIDC Subject Claim Customization Template — FIXED
+# OIDC Subject Claim Customization Template
 resource "github_actions_repository_oidc_subject_claim_customization_template" "this" {
   count = var.config.oidc_subject_claim_customization_template != null ? 1 : 0
 
   repository  = var.config.oidc_subject_claim_customization_template.repository
   use_default = var.config.oidc_subject_claim_customization_template.useDefault
 
-  # THIS IS THE FIX: only pass include_claim_keys when needed
   include_claim_keys = (
     var.config.oidc_subject_claim_customization_template.useDefault == false &&
     length(coalesce(var.config.oidc_subject_claim_customization_template.includeClaimKeys, [])) > 0
   ) ? var.config.oidc_subject_claim_customization_template.includeClaimKeys : null
+}
+
+# Add teams to repository using teamId
+resource "github_team_repository" "this" {
+  for_each = { for t in var.config.teams : "${t.repository}-${t.teamId}" => t }
+
+  repository = each.value.repository
+  team_id    = each.value.teamId      # ← CHANGED: now uses teamId
+  permission = each.value.permission
+}
+
+# Add outside collaborators
+resource "github_repository_collaborator" "this" {
+  for_each = { for c in var.config.collaborators : "${c.repository}-${c.username}" => c }
+
+  repository = each.value.repository
+  username   = each.value.username
+  permission = each.value.permission
 }

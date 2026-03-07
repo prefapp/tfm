@@ -42,3 +42,13 @@ output "oidc_subject_claim_customization_template" {
   description = "OIDC subject claim customization template configuration"
   value       = var.config.oidc_subject_claim_customization_template
 }
+
+output "added_teams" {
+  description = "List of teams (by ID) added to the repository"
+  value       = [for t in var.config.teams : t.teamId]
+}
+
+output "collaborators" {
+  description = "List of collaborators added to the repository"
+  value       = [for c in var.config.collaborators : c.username]
+}
