@@ -22,7 +22,7 @@ resource "github_branch_default" "this" {
   rename     = var.config.default_branch.rename
 }
 
-# Commit files (CODEOWNERS, workflows, README, etc.)
+# Commit files (CODEOWNERS, workflows, etc.)
 resource "github_repository_file" "this" {
   for_each = {
     for f in var.config.files : f.file => f
@@ -36,7 +36,7 @@ resource "github_repository_file" "this" {
   overwrite_on_create = each.value.overwriteOnCreate
 }
 
-# GitHub Repository Variables (plain-text variables for GitHub Actions)
+# GitHub Repository Variables
 resource "github_actions_variable" "this" {
   for_each = {
     for v in var.config.variables : v.variableName => v
@@ -45,4 +45,13 @@ resource "github_actions_variable" "this" {
   repository    = each.value.repository
   variable_name = each.value.variableName
   value         = each.value.value
+}
+
+# OIDC Subject Claim Customization Template (with includeClaimKeys support)
+resource "github_actions_repository_oidc_subject_claim_customization_template" "this" {
+  count = var.config.oidc_subject_claim_customization_template != null ? 1 : 0
+
+  repository         = var.config.oidc_subject_claim_customization_template.repository
+  use_default        = var.config.oidc_subject_claim_customization_template.useDefault
+  include_claim_keys = var.config.oidc_subject_claim_customization_template.includeClaimKeys
 }

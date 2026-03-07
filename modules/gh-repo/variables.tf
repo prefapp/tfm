@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC template) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -37,6 +37,12 @@ variable "config" {
       repository   = string
       value        = string
     })), [])
+
+    oidc_subject_claim_customization_template = optional(object({
+      repository       = string
+      useDefault       = optional(bool, true)
+      includeClaimKeys = optional(list(string), [])
+    }), null)
   })
 
   validation {

@@ -37,3 +37,8 @@ output "repository_variables" {
   description = "List of repository variables created"
   value       = [for v in var.config.variables : v.variableName]
 }
+
+output "oidc_subject_claim_customization_template" {
+  description = "OIDC subject claim customization template configuration"
+  value       = var.config.oidc_subject_claim_customization_template
+}
