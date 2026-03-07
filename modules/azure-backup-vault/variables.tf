@@ -60,10 +60,11 @@ variable "disk_policies" {
 variable "disk_instances" {
   description = "List of backup instances for disks"
   type = list(object({
-    name                = string
-    location            = string
-    disk_resource_group = string
-    policy_key          = string
+    name                         = string
+    location                     = string
+    disk_resource_group          = string
+    policy_key                   = string
+    snapshot_resource_group_name = string
   }))
   default = []
 }
