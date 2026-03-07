@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    github = {
-      source  = "integrations/github"
-      version = "~> 6.0"
-    }
-  }
-}
-
 variable "config" {
   description = <<EOT
 GitHub repository secrets configuration as a single complex object.
