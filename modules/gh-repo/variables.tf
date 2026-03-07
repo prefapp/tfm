@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -22,6 +22,15 @@ variable "config" {
       rename     = optional(bool, false)
       repository = string
     })
+
+    files = optional(list(object({
+      branch            = string
+      commitMessage     = string
+      content           = string
+      file              = string
+      overwriteOnCreate = optional(bool, true)
+      repository        = string
+    })), [])
   })
 
   validation {
@@ -37,5 +46,12 @@ variable "config" {
   validation {
     condition     = length(trimspace(var.config.default_branch.branch)) > 0
     error_message = "default_branch.branch cannot be empty."
+  }
+
+  validation {
+    condition = alltrue([
+      for f in var.config.files : length(trimspace(f.file)) > 0 && length(trimspace(f.commitMessage)) > 0
+    ])
+    error_message = "Every file must have non-empty 'file' path and 'commitMessage'."
   }
 }

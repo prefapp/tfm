@@ -21,3 +21,17 @@ resource "github_branch_default" "this" {
   branch     = var.config.default_branch.branch
   rename     = var.config.default_branch.rename
 }
+
+# Commit files (CODEOWNERS, workflows, README, etc.)
+resource "github_repository_file" "this" {
+  for_each = {
+    for f in var.config.files : f.file => f
+  }
+
+  repository          = each.value.repository
+  branch              = each.value.branch
+  file                = each.value.file
+  content             = each.value.content
+  commit_message      = each.value.commitMessage
+  overwrite_on_create = each.value.overwriteOnCreate
+}
