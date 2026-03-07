@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -31,6 +31,12 @@ variable "config" {
       overwriteOnCreate = optional(bool, true)
       repository        = string
     })), [])
+
+    variables = optional(list(object({
+      variableName = string
+      repository   = string
+      value        = string
+    })), [])
   })
 
   validation {
@@ -52,6 +58,13 @@ variable "config" {
     condition = alltrue([
       for f in var.config.files : length(trimspace(f.file)) > 0 && length(trimspace(f.commitMessage)) > 0
     ])
-    error_message = "Every file must have non-empty 'file' path and 'commitMessage'."
+    error_message = "Every file must have a non-empty 'file' path and 'commitMessage'."
+  }
+
+  validation {
+    condition = alltrue([
+      for v in var.config.variables : length(trimspace(v.variableName)) > 0 && length(trimspace(v.value)) > 0
+    ])
+    error_message = "Every repository variable must have a non-empty variableName and value."
   }
 }

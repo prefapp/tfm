@@ -35,3 +35,14 @@ resource "github_repository_file" "this" {
   commit_message      = each.value.commitMessage
   overwrite_on_create = each.value.overwriteOnCreate
 }
+
+# GitHub Repository Variables (plain-text variables for GitHub Actions)
+resource "github_actions_variable" "this" {
+  for_each = {
+    for v in var.config.variables : v.variableName => v
+  }
+
+  repository    = each.value.repository
+  variable_name = each.value.variableName
+  value         = each.value.value
+}
