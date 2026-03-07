@@ -24,9 +24,7 @@ resource "github_branch_default" "this" {
 
 # Commit files (CODEOWNERS, workflows, etc.)
 resource "github_repository_file" "this" {
-  for_each = {
-    for f in var.config.files : f.file => f
-  }
+  for_each = { for f in var.config.files : f.file => f }
 
   repository          = each.value.repository
   branch              = each.value.branch
@@ -38,20 +36,23 @@ resource "github_repository_file" "this" {
 
 # GitHub Repository Variables
 resource "github_actions_variable" "this" {
-  for_each = {
-    for v in var.config.variables : v.variableName => v
-  }
+  for_each = { for v in var.config.variables : v.variableName => v }
 
   repository    = each.value.repository
   variable_name = each.value.variableName
   value         = each.value.value
 }
 
-# OIDC Subject Claim Customization Template (with includeClaimKeys support)
+# OIDC Subject Claim Customization Template — FIXED
 resource "github_actions_repository_oidc_subject_claim_customization_template" "this" {
   count = var.config.oidc_subject_claim_customization_template != null ? 1 : 0
 
-  repository         = var.config.oidc_subject_claim_customization_template.repository
-  use_default        = var.config.oidc_subject_claim_customization_template.useDefault
-  include_claim_keys = var.config.oidc_subject_claim_customization_template.includeClaimKeys
+  repository  = var.config.oidc_subject_claim_customization_template.repository
+  use_default = var.config.oidc_subject_claim_customization_template.useDefault
+
+  # THIS IS THE FIX: only pass include_claim_keys when needed
+  include_claim_keys = (
+    var.config.oidc_subject_claim_customization_template.useDefault == false &&
+    length(coalesce(var.config.oidc_subject_claim_customization_template.includeClaimKeys, [])) > 0
+  ) ? var.config.oidc_subject_claim_customization_template.includeClaimKeys : null
 }
