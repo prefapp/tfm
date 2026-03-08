@@ -1,4 +1,4 @@
-# Files where ignoreContentChanges = true → ignore content changes
+# Files where ignoreContentChanges = true → Terraform ignores content changes
 resource "github_repository_file" "ignore_content" {
   for_each = {
     for f in var.config.files : "${f.repository}/${f.file}/${f.branch}" => f
@@ -13,11 +13,11 @@ resource "github_repository_file" "ignore_content" {
   overwrite_on_create = each.value.overwriteOnCreate
 
   lifecycle {
-    ignore_changes = ["content"]
+    ignore_changes = [content]   # ← NO QUOTES (required by OpenTofu)
   }
 }
 
-# Files where ignoreContentChanges = false (or omitted) → Terraform enforces the content
+# Files where ignoreContentChanges = false → Terraform enforces the content
 resource "github_repository_file" "enforce_content" {
   for_each = {
     for f in var.config.files : "${f.repository}/${f.file}/${f.branch}" => f
