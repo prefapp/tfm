@@ -1,11 +1,8 @@
-# ─────────────────────────────────────────────────────────────
-# Files where user wants to ignore changes (e.g. lifecycle_ignore_changes = ["content"])
-# ─────────────────────────────────────────────────────────────
-resource "github_repository_file" "with_ignore" {
+# Files where ignoreContentChanges = true → ignore content changes
+resource "github_repository_file" "ignore_content" {
   for_each = {
-    for f in var.config.files :
-    "${f.repository}/${f.file}/${f.branch}" => f
-    if length(coalesce(f.lifecycle_ignore_changes, [])) > 0
+    for f in var.config.files : "${f.repository}/${f.file}/${f.branch}" => f
+    if f.ignoreContentChanges
   }
 
   repository          = each.value.repository
@@ -16,18 +13,15 @@ resource "github_repository_file" "with_ignore" {
   overwrite_on_create = each.value.overwriteOnCreate
 
   lifecycle {
-    ignore_changes = each.value.lifecycle_ignore_changes
+    ignore_changes = ["content"]
   }
 }
 
-# ─────────────────────────────────────────────────────────────
-# Files where Terraform should enforce the content (empty list)
-# ─────────────────────────────────────────────────────────────
-resource "github_repository_file" "without_ignore" {
+# Files where ignoreContentChanges = false (or omitted) → Terraform enforces the content
+resource "github_repository_file" "enforce_content" {
   for_each = {
-    for f in var.config.files :
-    "${f.repository}/${f.file}/${f.branch}" => f
-    if length(coalesce(f.lifecycle_ignore_changes, [])) == 0
+    for f in var.config.files : "${f.repository}/${f.file}/${f.branch}" => f
+    if !f.ignoreContentChanges
   }
 
   repository          = each.value.repository

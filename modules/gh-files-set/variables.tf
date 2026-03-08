@@ -1,5 +1,14 @@
+terraform {
+  required_providers {
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
+  }
+}
+
 variable "config" {
-  description = "Configuration for GitHub repository files with explicit lifecycle control"
+  description = "Configuration for GitHub repository files with optional content ignore"
   type = object({
     files = list(object({
       branch                = string
@@ -8,7 +17,7 @@ variable "config" {
       file                  = string
       repository            = string
       overwriteOnCreate     = optional(bool, true)
-      lifecycle_ignore_changes = optional(list(string), [])   # ← EXPLICIT control from config
+      ignoreContentChanges  = optional(bool, false)   # ← this is the flag
     }))
   })
 
