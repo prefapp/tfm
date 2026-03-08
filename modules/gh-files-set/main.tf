@@ -1,8 +1,7 @@
-# Files where ignoreContentChanges = true → Terraform ignores content changes
-resource "github_repository_file" "ignore_content" {
+# 1. Create / update all files
+resource "github_repository_file" "files" {
   for_each = {
     for f in var.config.files : "${f.repository}/${f.file}/${f.branch}" => f
-    if f.ignoreContentChanges
   }
 
   repository          = each.value.repository
@@ -13,21 +12,27 @@ resource "github_repository_file" "ignore_content" {
   overwrite_on_create = each.value.overwriteOnCreate
 
   lifecycle {
-    ignore_changes = [content]   # ← NO QUOTES (required by OpenTofu)
+    ignore_changes = each.value.userManaged ? ["content"] : []
   }
 }
 
-# Files where ignoreContentChanges = false → Terraform enforces the content
-resource "github_repository_file" "enforce_content" {
+# 2. Untrack user-managed files so they survive `terraform destroy`
+resource "null_resource" "untrack_user_managed" {
   for_each = {
-    for f in var.config.files : "${f.repository}/${f.file}/${f.branch}" => f
-    if !f.ignoreContentChanges
+    for f in var.config.files : "${f.repository}/${f.file}" => f
+    if f.userManaged
   }
 
-  repository          = each.value.repository
-  branch              = each.value.branch
-  file                = each.value.file
-  content             = each.value.content
-  commit_message      = each.value.commitMessage
-  overwrite_on_create = each.value.overwriteOnCreate
+  triggers = {
+    repository = each.value.repository
+    file       = each.value.file
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOT
+      echo "🔓 Untracking user-managed file: ${each.value.repository}/${each.value.file}"
+      terraform state rm "github_repository_file.${replace(replace(each.value.file, "/", "_"), ".", "_")}_${replace(each.value.branch, "/", "_")}" || true
+    EOT
+  }
 }

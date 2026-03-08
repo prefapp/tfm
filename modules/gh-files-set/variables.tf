@@ -1,20 +1,20 @@
 variable "config" {
-  description = "Configuration for GitHub repository files with optional content ignore"
+  description = "GitHub files configuration — userManaged files survive terraform destroy"
   type = object({
     files = list(object({
-      branch                = string
-      commitMessage         = string
-      content               = string
-      file                  = string
-      repository            = string
-      overwriteOnCreate     = optional(bool, true)
-      ignoreContentChanges  = optional(bool, false)   # ← this is the flag
+      branch            = string
+      commitMessage     = string
+      content           = string
+      file              = string
+      repository        = string
+      overwriteOnCreate = optional(bool, true)
+      userManaged       = optional(bool, false)   # ← key flag
     }))
   })
 
   validation {
     condition     = length(var.config.files) > 0
-    error_message = "At least one file must be defined in config.files"
+    error_message = "At least one file must be defined."
   }
 
   validation {
@@ -25,6 +25,6 @@ variable "config" {
       length(trimspace(f.file)) > 0 &&
       length(trimspace(f.repository)) > 0
     ])
-    error_message = "Every file must have non-empty branch, commitMessage, file path, and repository name."
+    error_message = "Every file must have non-empty branch, commitMessage, file path, and repository."
   }
 }
