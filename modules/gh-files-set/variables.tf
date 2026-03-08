@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    github = {
-      source  = "integrations/github"
-      version = "~> 6.0"
-    }
-  }
-}
-
 variable "config" {
   description = "Configuration for GitHub repository files with optional content ignore"
   type = object({
