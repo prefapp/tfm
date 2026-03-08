@@ -1,23 +1,20 @@
-output "committed_files" {
-  description = "List of files that were successfully managed"
+output "managed_files" {
+  description = "List of provisioned files and their lifecycle settings"
   value = [
-    for f in var.config.files :
-    {
-      repository = f.repository
-      path       = f.file
-      branch     = f.branch
+    for f in var.config.files : {
+      repository             = f.repository
+      path                   = f.file
+      branch                 = f.branch
+      lifecycle_ignore_changes = f.lifecycle_ignore_changes
     }
   ]
 }
 
-output "file_paths" {
-  description = "Flat list of managed file paths (repo/path)"
+output "files_with_ignore_content" {
+  description = "Files where content changes are being ignored"
   value = [
-    for f in var.config.files : "${f.repository}/${f.file}"
+    for f in var.config.files :
+    "${f.repository}/${f.file}"
+    if contains(f.lifecycle_ignore_changes, "content")
   ]
-}
-
-output "commit_messages" {
-  description = "Commit messages that were used"
-  value       = [for f in var.config.files : f.commitMessage]
 }
