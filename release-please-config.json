@@ -154,5 +154,8 @@
         "modules/gh-files-set": {
             "package-name": "gh-files-set"
         }
+        "modules/gh-files-untrack": {
+            "package-name": "gh-files-untrack"
+        }
     }
 }
