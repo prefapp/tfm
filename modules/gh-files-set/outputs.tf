@@ -2,9 +2,9 @@ output "managed_files" {
   description = "All files managed by this module"
   value = [
     for f in var.config.files : {
-      repository  = f.repository
-      path        = f.file
-      branch      = f.branch
+      repository   = f.repository
+      path         = f.file
+      branch       = f.branch
       user_managed = f.userManaged
     }
   ]

@@ -8,7 +8,7 @@ variable "config" {
       file              = string
       repository        = string
       overwriteOnCreate = optional(bool, true)
-      userManaged       = optional(bool, false)   # ← key flag
+      userManaged       = optional(bool, false)   # ← this decides everything
     }))
   })
 
