@@ -22,9 +22,10 @@ module "azure_backup_vault" {
   disk_instances = [
     {
       name = "disk1-backup"
-      location = "eastus"
-      disk_resource_group = "example-disk-rg"
-      policy_key = "daily-disk-policy"
+      location                     = "eastus"
+      disk_resource_group          = "example-disk-rg"
+      policy_key                   = "daily-disk-policy"
+      snapshot_resource_group_name = "snapshot-rg"
     }
   ]
 }
