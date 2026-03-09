@@ -1,19 +1,14 @@
-
-
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples):
 
-- [with_nic](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples/with_nic) - Example using Azure Key Vault for admin password and custom network interface configuration.
-- [with_custom_data](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples/with_custom_data) - Example provisioning a VM with custom PowerShell data.
-- [with_vault_admin_pass](https://github.com/prefapp/tfm/tree/main/modules/azure-windows-vm/_examples/with_vault_admin_pass) - Example using Key Vault to securely provide the VM admin password.
-- You can also use the module to attach additional unmanaged data disks to your VM (see documentation for details).
+- [basic_route_based](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples/basic_route_based) - Basic RouteBased gateway example.
+- [active_active_bgp](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples/active_active_bgp) - Active-Active gateway with BGP enabled.
+- [vpn_client_aad](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples/vpn_client_aad) - Gateway with VPN Client and Azure AD authentication.
 
 ## Remote resources
 
-- **Azure Windows Virtual Machine**: [azurerm_windows_virtual_machine documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/windows_virtual_machine)
-- **Azure Network Interface**: [azurerm_network_interface documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface)
-- **Azure Key Vault**: [azurerm_key_vault documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault)
+- **Azure Virtual Network Gateway**: [azurerm_virtual_network_gateway documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway)
 - **Terraform Azure Provider**: [Terraform Provider documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
 
 ## Support
