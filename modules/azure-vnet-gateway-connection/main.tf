@@ -32,18 +32,20 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 	express_route_gateway_bypass = try(each.value.express_route_gateway_bypass, null)
 	dpd_timeout_seconds = try(each.value.dpd_timeout_seconds, null)
 	connection_mode = try(each.value.connection_mode, null)
-
-			 dynamic "ipsec_policy" {
-				 for_each = try(each.value.ipsec_policy != null, false) ? [each.value.ipsec_policy] : []
-				 content {
-					 dh_group         = ipsec_policy.value.dh_group
-					 ike_encryption   = ipsec_policy.value.ike_encryption
-					 ike_integrity    = ipsec_policy.value.ike_integrity
-					 ipsec_encryption = ipsec_policy.value.ipsec_encryption
-					 ipsec_integrity  = ipsec_policy.value.ipsec_integrity
-					 pfs_group        = ipsec_policy.value.pfs_group
-					 sa_lifetime      = ipsec_policy.value.sa_lifetime
-					 sa_datasize      = ipsec_policy.value.sa_datasize
-				 }
-			 }
+	dynamic "ipsec_policy" {
+		for_each = try(each.value.ipsec_policy != null, false) ? [each.value.ipsec_policy] : []
+		content {
+			dh_group         = ipsec_policy.value.dh_group
+			ike_encryption   = ipsec_policy.value.ike_encryption
+			ike_integrity    = ipsec_policy.value.ike_integrity
+			ipsec_encryption = ipsec_policy.value.ipsec_encryption
+			ipsec_integrity  = ipsec_policy.value.ipsec_integrity
+			pfs_group        = ipsec_policy.value.pfs_group
+			sa_lifetime      = ipsec_policy.value.sa_lifetime
+			sa_datasize      = ipsec_policy.value.sa_datasize
+		}
+	}
+	lifecycle {
+		ignore_changes = [ "shared_key" ]
+	}
 }
