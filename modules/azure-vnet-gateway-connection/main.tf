@@ -46,6 +46,6 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
 		}
 	}
 	lifecycle {
-		ignore_changes = [ "shared_key" ]
+		ignore_changes = [ shared_key]
 	}
 }
