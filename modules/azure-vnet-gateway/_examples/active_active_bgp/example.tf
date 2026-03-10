@@ -15,6 +15,6 @@ module "vnet_gateway" {
     enable_bgp               = true
     sku                      = "VpnGw2"
     bgp_route_translation_for_nat_enabled = true
-    tags                     = { environment = "prod" }
   }
+  tags_from_rg = true
 }

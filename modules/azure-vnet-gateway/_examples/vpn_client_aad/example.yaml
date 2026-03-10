@@ -18,5 +18,4 @@ vpn:
     - IkeV2
     - OpenVPN
   vpn_client_aad_tenant: https://login.microsoftonline.com/<tenant_id>
-  tags:
-    environment: test
+tags_from_rg: true
