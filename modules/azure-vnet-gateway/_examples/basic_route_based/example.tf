@@ -14,6 +14,6 @@ module "vnet_gateway" {
     active_active            = false
     enable_bgp               = false
     sku                      = "VpnGw1"
-    tags                     = { environment = "dev" }
   }
+  tags_from_rg = true
 }

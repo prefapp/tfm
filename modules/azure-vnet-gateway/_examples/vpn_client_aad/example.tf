@@ -17,6 +17,6 @@ module "vnet_gateway" {
     vpn_client_address_space = ["10.10.0.0/24"]
     vpn_client_protocols     = ["IkeV2", "OpenVPN"]
     vpn_client_aad_tenant    = "https://login.microsoftonline.com/<tenant_id>"
-    tags                     = { environment = "test" }
-  }
+    }
+  tags_from_rg = true
 }
