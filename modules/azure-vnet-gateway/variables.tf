@@ -11,7 +11,6 @@ variable "vpn" {
     ip_name                               = string
     public_ip_name                        = string
     public_ip_id                          = optional(string)
-    ip_allocation_method                  = string
     gateway_subnet_id                     = optional(string)
     type                                  = string
     vpn_type                              = string
@@ -82,6 +81,11 @@ variable "nat_rules" {
     internal_mapping_address_space = string
   }))
   default = []
+
+  validation {
+    condition     = length(var.nat_rules) == length(distinct([for rule in var.nat_rules : rule.name]))
+    error_message = "All NAT rule names must be unique."
+  }
 }
 
 variable "tags_from_rg" {

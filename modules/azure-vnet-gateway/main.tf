@@ -22,10 +22,10 @@ resource "azurerm_virtual_network_gateway" "this" {
   virtual_wan_traffic_enabled           = var.vpn.virtual_wan_traffic_enabled
 
   ip_configuration {
-    name                          = var.vpn.ip_name
-    subnet_id                     = data.azurerm_subnet.this.id
-    public_ip_address_id          = data.azurerm_public_ip.this.id
-    private_ip_address_allocation = var.vpn.private_ip_address_allocation
+     name                          = var.vpn.ip_name
+     subnet_id                     = coalesce(var.vpn.gateway_subnet_id, data.azurerm_subnet.this.id)
+     public_ip_address_id          = coalesce(var.vpn.public_ip_id, data.azurerm_public_ip.this.id)
+     private_ip_address_allocation = var.vpn.private_ip_address_allocation
   }
 
   custom_route {
