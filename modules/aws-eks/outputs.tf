@@ -71,7 +71,7 @@ output "summary" {
     coalesce(lookup(addon_value, "addon_version", null), "latest"),
     coalesce(lookup(addon_value, "service_account_role_arn", null), "none"),
     replace(
-      jsonencode(coalesce(lookup(addon_value, "configuration_values", {})), {})),
+      jsonencode(coalesce(lookup(addon_value, "configuration_values", {}), {})),
       "\n", "\n\t\t\t\t\t"
     )
   )
