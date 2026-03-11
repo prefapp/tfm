@@ -58,6 +58,9 @@
         "modules/azure-mi": {
             "package-name": "azure-mi"
         },
+        "modules/azure-nat-gateway": {
+            "package-name": "azure-nat-gateway"
+        },
         "modules/azure-sa": {
             "package-name": "azure-sa"
         },
