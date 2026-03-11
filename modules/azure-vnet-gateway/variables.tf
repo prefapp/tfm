@@ -28,7 +28,7 @@ variable "vpn" {
     virtual_wan_traffic_enabled           = optional(bool)
 
     # ip_configuration block fields
-    private_ip_address_allocation = optional(string)
+    private_ip_address_allocation = optional(string, "Dynamic")
 
     # custom_route block
     custom_route_address_prefixes = optional(list(string), [])

@@ -21,19 +21,19 @@ See the main README and the `_examples/` directory for usage examples.
 module "vnet_gateway" {
   source = "./modules/azure-vnet-gateway"
   vpn = {
-    vnet_name                = "my-vnet"
-    gateway_subnet_name      = "GatewaySubnet"
-    location                 = "westeurope"
-    resource_group_name      = "my-rg"
-    gateway_name             = "my-vpn-gw"
-    ip_name                  = "my-vpn-ip"
-    public_ip_name           = "my-vpn-public-ip"
-    ip_allocation_method     = "Dynamic"
-    type                     = "Vpn"
-    vpn_type                 = "RouteBased"
-    active_active            = false
-    enable_bgp               = false
-    sku                      = "VpnGw1"
+    vnet_name                     = "my-vnet"
+    gateway_subnet_name           = "GatewaySubnet"
+    location                      = "westeurope"
+    resource_group_name           = "my-rg"
+    gateway_name                  = "my-vpn-gw"
+    ip_name                       = "my-vpn-ip"
+    public_ip_name                = "my-vpn-public-ip"
+    private_ip_address_allocation = "Dynamic"
+    type                          = "Vpn"
+    vpn_type                      = "RouteBased"
+    active_active                 = false
+    enable_bgp                    = false
+    sku                           = "VpnGw1"
     # ...other optional fields...
   }
 }
@@ -65,7 +65,6 @@ No modules.
 | [azurerm_public_ip.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/public_ip) | data source |
 | [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/resource_group) | data source |
 | [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/subnet) | data source |
-| [azurerm_virtual_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/virtual_network_gateway) | data source |
 
 ## Inputs
 

@@ -4,8 +4,8 @@ output "virtual_network_gateway_id" {
 }
 
 output "public_ip_id" {
-  description = "The ID of the Public IP used by the gateway."
-  value       = azurerm_virtual_network_gateway.this.ip_configuration[0].public_ip_address_id
+  description = "The IDs of the Public IPs used by the gateway."
+  value       = [for cfg in azurerm_virtual_network_gateway.this.ip_configuration : cfg.public_ip_address_id]
 }
 
 output "nat_rule_ids" {
