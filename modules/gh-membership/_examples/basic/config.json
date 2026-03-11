@@ -1,0 +1,15 @@
+{
+  "config": {
+    "relationships": [
+      {
+        "username": "johndoe",
+        "teamId": "foo-all",
+        "role": "member"
+      }
+    ],
+    "user": {
+      "username": "johndoe",
+      "role": "admin"
+    }
+  }
+}
