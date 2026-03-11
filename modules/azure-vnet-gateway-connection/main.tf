@@ -2,18 +2,18 @@
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_connection
 resource "azurerm_virtual_network_gateway_connection" "this" {
-    custom_bgp_addresses {
-      primary   = try(each.value.custom_bgp_addresses.primary, null)
-      secondary = try(each.value.custom_bgp_addresses.secondary, null)
+  custom_bgp_addresses {
+    primary   = try(each.value.custom_bgp_addresses.primary, null)
+    secondary = try(each.value.custom_bgp_addresses.secondary, null)
+  }
+  private_link_fast_path_enabled = try(each.value.private_link_fast_path_enabled, null)
+  dynamic "traffic_selector_policy" {
+    for_each = try(each.value.traffic_selector_policy, [])
+    content {
+      local_address_cidrs  = traffic_selector_policy.value.local_address_cidrs
+      remote_address_cidrs = traffic_selector_policy.value.remote_address_cidrs
     }
-    private_link_fast_path_enabled = try(each.value.private_link_fast_path_enabled, null)
-    dynamic "traffic_selector_policy" {
-      for_each = try(each.value.traffic_selector_policy, [])
-      content {
-        local_address_cidrs  = traffic_selector_policy.value.local_address_cidrs
-        remote_address_cidrs = traffic_selector_policy.value.remote_address_cidrs
-      }
-    }
+  }
   for_each                       = { for s in var.connection : s.name => s }
   name                           = each.value.name
   location                       = each.value.location

@@ -23,7 +23,7 @@ variable "connection" {
     peer_virtual_network_gateway_id    = optional(string)
     use_policy_based_traffic_selectors = optional(bool)
     express_route_gateway_bypass       = optional(bool)
-    bgp_enabled                       = optional(bool)
+    bgp_enabled                        = optional(bool)
     dpd_timeout_seconds                = optional(number)
     connection_mode                    = optional(string)
     tags_from_rg                       = optional(bool)
