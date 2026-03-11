@@ -3,14 +3,17 @@
 variable "vpn" {
   description = "VPN Gateway configuration object (includes P2S config)"
   type = object({
-    vnet_name                             = string
-    gateway_subnet_name                   = string
-    location                              = string
-    resource_group_name                   = string
-    gateway_name                          = string
-    ip_name                               = string
-    public_ip_name                        = string
-    public_ip_id                          = optional(string)
+    vnet_name           = optional(string)
+    gateway_subnet_name = optional(string)
+    location            = string
+    resource_group_name = string
+    gateway_name        = string
+    ip_configurations = list(object({
+      name                          = string
+      public_ip_name                = optional(string)
+      public_ip_id                  = optional(string)
+      private_ip_address_allocation = optional(string, "Dynamic")
+    }))
     gateway_subnet_id                     = optional(string)
     type                                  = string
     vpn_type                              = string
@@ -26,9 +29,6 @@ variable "vpn" {
     ip_sec_replay_protection_enabled      = optional(bool)
     remote_vnet_traffic_enabled           = optional(bool)
     virtual_wan_traffic_enabled           = optional(bool)
-
-    # ip_configuration block fields
-    private_ip_address_allocation = optional(string, "Dynamic")
 
     # custom_route block
     custom_route_address_prefixes = optional(list(string), [])
@@ -67,35 +67,29 @@ variable "vpn" {
       update = optional(string)
       delete = optional(string)
     }))
+    validation = {
+      condition = (
+        (try(var.vpn.gateway_subnet_id, null) != null || (try(var.vpn.gateway_subnet_name, null) != null && try(var.vpn.vnet_name, null) != null))
+        && alltrue([
+          for ipconf in var.vpn.ip_configurations : (
+            try(ipconf.public_ip_id, null) != null || try(ipconf.public_ip_name, null) != null
+          )
+        ])
+      )
+      error_message = "You must provide either gateway_subnet_id or both gateway_subnet_name and vnet_name, and for each ip_configuration either public_ip_id or public_ip_name."
+    }
   })
-}
-
-variable "nat_rules" {
-  description = "List of NAT rules for the VPN gateway"
-  type = list(object({
-    name                           = string
-    mode                           = string
-    type                           = string
-    ip_configuration_id            = optional(string)
-    external_mapping_address_space = string
-    internal_mapping_address_space = string
-  }))
-  default = []
-
-  validation {
-    condition     = length(var.nat_rules) == length(distinct([for rule in var.nat_rules : rule.name]))
-    error_message = "All NAT rule names must be unique."
-  }
-}
-
-variable "tags_from_rg" {
-  description = "Use resource group tags as base for module tags"
-  type        = bool
-  default     = false
+  default = {}
 }
 
 variable "tags" {
-  description = "Tags to apply to resources"
+  description = "A map of tags to assign to the resource."
   type        = map(string)
   default     = {}
+}
+
+variable "tags_from_rg" {
+  description = "If true, inherit tags from the resource group."
+  type        = bool
+  default     = false
 }

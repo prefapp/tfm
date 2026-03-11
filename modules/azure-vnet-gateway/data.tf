@@ -7,8 +7,8 @@ data "azurerm_resource_group" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet
 data "azurerm_subnet" "this" {
-  count               = var.vpn.gateway_subnet_id == null ? 1 : 0
-  name                = var.vpn.gateway_subnet_name
+  count                = var.vpn.gateway_subnet_id == null ? 1 : 0
+  name                 = var.vpn.gateway_subnet_name
   virtual_network_name = var.vpn.vnet_name
   resource_group_name  = var.vpn.resource_group_name
 }

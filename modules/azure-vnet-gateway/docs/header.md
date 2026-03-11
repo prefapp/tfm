@@ -20,20 +20,34 @@ See the main README and the `_examples/` directory for usage examples.
 module "vnet_gateway" {
   source = "./modules/azure-vnet-gateway"
   vpn = {
-    vnet_name                     = "my-vnet"
-    gateway_subnet_name           = "GatewaySubnet"
-    location                      = "westeurope"
-    resource_group_name           = "my-rg"
-    gateway_name                  = "my-vpn-gw"
-    ip_name                       = "my-vpn-ip"
-    public_ip_name                = "my-vpn-public-ip"
-    private_ip_address_allocation = "Dynamic"
-    type                          = "Vpn"
-    vpn_type                      = "RouteBased"
-    active_active                 = false
-    enable_bgp                    = false
-    sku                           = "VpnGw1"
+    vnet_name           = "my-vnet"
+    gateway_subnet_name = "GatewaySubnet"
+    location            = "westeurope"
+    resource_group_name = "my-rg"
+    gateway_name        = "my-vpn-gw"
+    ip_configurations = [
+      {
+        name                   = "gw-ipconfig1"
+        public_ip_name         = "my-vpn-public-ip-1"
+        private_ip_address_allocation = "Dynamic"
+      },
+      {
+        name                   = "gw-ipconfig2"
+        public_ip_name         = "my-vpn-public-ip-2"
+        private_ip_address_allocation = "Dynamic"
+      }
+    ]
+    type            = "Vpn"
+    vpn_type        = "RouteBased"
+    active_active   = true
+    enable_bgp      = false
+    sku             = "VpnGw1"
     # ...other optional fields...
   }
+  tags = {
+    environment = "dev"
+    application = "example-app"
+  }
+  tags_from_rg = true
 }
 ```
