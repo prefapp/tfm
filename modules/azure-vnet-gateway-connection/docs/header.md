@@ -19,6 +19,8 @@ It is suitable for production, staging, and development environments, and can be
 
 See the main README and the `_examples/` directory for usage examples.
 
+**Important:** Each connection object's `name` must be unique within the module input. This is required for stable resource addressing and to avoid accidental resource replacement if the list order changes.
+
 ```hcl
 module "vnet_gateway_connection" {
   source = "./modules/azure-vnet-gateway-connection"

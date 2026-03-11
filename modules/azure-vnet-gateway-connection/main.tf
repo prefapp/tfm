@@ -2,7 +2,19 @@
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_connection
 resource "azurerm_virtual_network_gateway_connection" "this" {
-  for_each                       = { for idx, s in var.connection : idx => s }
+    custom_bgp_addresses {
+      primary   = try(each.value.custom_bgp_addresses.primary, null)
+      secondary = try(each.value.custom_bgp_addresses.secondary, null)
+    }
+    private_link_fast_path_enabled = try(each.value.private_link_fast_path_enabled, null)
+    dynamic "traffic_selector_policy" {
+      for_each = try(each.value.traffic_selector_policy, [])
+      content {
+        local_address_cidrs  = traffic_selector_policy.value.local_address_cidrs
+        remote_address_cidrs = traffic_selector_policy.value.remote_address_cidrs
+      }
+    }
+  for_each                       = { for s in var.connection : s.name => s }
   name                           = each.value.name
   location                       = each.value.location
   resource_group_name            = each.value.resource_group_name
@@ -22,7 +34,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
       try(data.azurerm_key_vault_secret.s2s[each.key].value, null) != null ? data.azurerm_key_vault_secret.s2s[each.key].value : null
     )
   )
-  enable_bgp                         = try(each.value.enable_bgp, null)
+  bgp_enabled                        = try(each.value.bgp_enabled, null)
   connection_protocol                = try(each.value.connection_protocol, null)
   routing_weight                     = try(each.value.routing_weight, null)
   authorization_key                  = try(each.value.authorization_key, null)

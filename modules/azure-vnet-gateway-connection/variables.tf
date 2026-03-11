@@ -6,8 +6,8 @@ variable "connection" {
     name                               = string
     location                           = string
     resource_group_name                = string
-    local_gateway_name                 = string
-    local_gateway_resource_group_name  = string
+    local_gateway_name                 = optional(string)
+    local_gateway_resource_group_name  = optional(string)
     type                               = string
     gateway_name                       = string
     shared_key                         = optional(string)
@@ -23,6 +23,7 @@ variable "connection" {
     peer_virtual_network_gateway_id    = optional(string)
     use_policy_based_traffic_selectors = optional(bool)
     express_route_gateway_bypass       = optional(bool)
+    bgp_enabled                       = optional(bool)
     dpd_timeout_seconds                = optional(number)
     connection_mode                    = optional(string)
     tags_from_rg                       = optional(bool)
@@ -38,8 +39,17 @@ variable "connection" {
       ipsec_integrity  = string
       pfs_group        = string
       sa_lifetime      = number
-      sa_datasize      = number
+      sa_datasize      = optional(number)
     }))
+    custom_bgp_addresses = optional(object({
+      primary   = string
+      secondary = optional(string)
+    }))
+    private_link_fast_path_enabled = optional(bool)
+    traffic_selector_policy = optional(list(object({
+      local_address_cidrs  = list(string)
+      remote_address_cidrs = list(string)
+    })))
   }))
   default = []
 }
