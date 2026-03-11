@@ -79,7 +79,6 @@ variable "vpn" {
     )
     error_message = "You must provide either gateway_subnet_id or both gateway_subnet_name and vnet_name, and for each ip_configuration either public_ip_id or public_ip_name."
   }
-  default = {}
 }
 
 variable "nat_rules" {
