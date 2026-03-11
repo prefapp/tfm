@@ -295,4 +295,9 @@ variable "create_role_assignment_public_ip" {
   description = "Boolean value to create a role assignment for the public IP"
   type        = bool
   default     = false
+
+  validation {
+    condition = !var.create_role_assignment_public_ip || var.public_ip_name != null
+    error_message = "public_ip_name must be set when create_role_assignment_public_ip is true."
+  }
 }
