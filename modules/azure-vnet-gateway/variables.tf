@@ -82,6 +82,19 @@ variable "vpn" {
   default = {}
 }
 
+variable "nat_rules" {
+  description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, mode, type, external_mapping_address_space, internal_mapping_address_space, and optionally ip_configuration_id."
+  type = list(object({
+    name                           = string
+    mode                           = string # 'EgressSnat', 'IngressSnat', etc.
+    type                           = string # 'Static', 'Dynamic'
+    external_mapping_address_space = string
+    internal_mapping_address_space = string
+    ip_configuration_id            = optional(string)
+  }))
+  default = []
+}
+
 variable "tags" {
   description = "A map of tags to assign to the resource."
   type        = map(string)

@@ -9,6 +9,7 @@ This module provisions and manages an Azure Virtual Network Gateway for VPN conn
 - **Flexible Gateway Deployment**: Supports Route-based and Policy-based VPN gateways, active-active mode, and multiple SKUs.
 - **Custom IP Configuration**: Allows custom public IP, subnet, and private IP allocation.
 - **Advanced VPN Client Support**: Configure VPN client address spaces, protocols, and AAD integration for P2S.
+- **NAT Rules Support**: Allows defining NAT rules for address translation on the gateway.
 - **Tag Inheritance and Customization**: Inherit tags from the resource group or specify custom tags for all resources.
 - **Extensible and Modular**: Designed for easy extension and integration with other Azure network modules.
 
@@ -30,11 +31,6 @@ module "vnet_gateway" {
         name                   = "gw-ipconfig1"
         public_ip_name         = "my-vpn-public-ip-1"
         private_ip_address_allocation = "Dynamic"
-      },
-      {
-        name                   = "gw-ipconfig2"
-        public_ip_name         = "my-vpn-public-ip-2"
-        private_ip_address_allocation = "Dynamic"
       }
     ]
     type            = "Vpn"
@@ -44,6 +40,15 @@ module "vnet_gateway" {
     sku             = "VpnGw1"
     # ...other optional fields...
   }
+  nat_rules = [
+    {
+      name = "egress-nat"
+      mode = "EgressSnat"
+      type = "Static"
+      external_mapping_address_space = "203.0.113.0/24"
+      internal_mapping_address_space = "10.0.0.0/24"
+    }
+  ]
   tags = {
     environment = "dev"
     application = "example-app"

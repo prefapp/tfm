@@ -22,5 +22,14 @@ module "vnet_gateway" {
     vpn_client_protocols     = ["IkeV2", "OpenVPN"]
     vpn_client_aad_tenant    = "https://login.microsoftonline.com/<tenant_id>"
   }
+  nat_rules = [
+    {
+      name = "egress-nat"
+      mode = "EgressSnat"
+      type = "Static"
+      external_mapping_address_space = "203.0.113.0/24"
+      internal_mapping_address_space = "10.0.0.0/24"
+    }
+  ]
   tags_from_rg = true
 }
