@@ -15,8 +15,8 @@ data "azurerm_subnet" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip
 data "azurerm_public_ip" "this" {
-  count               = var.vpn.public_ip_id == null ? 1 : 0
-  name                = var.vpn.public_ip_name
+  for_each = { for ipconf in var.vpn.ip_configurations : ipconf.name => ipconf if try(ipconf.public_ip_name, null) != null && try(ipconf.public_ip_id, null) == null }
+  name                = each.value.public_ip_name
   resource_group_name = var.vpn.resource_group_name
 }
 
