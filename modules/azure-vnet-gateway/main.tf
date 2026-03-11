@@ -25,8 +25,14 @@ resource "azurerm_virtual_network_gateway" "this" {
     for_each = var.vpn.ip_configurations
     content {
       name                          = ip_configuration.value.name
-      subnet_id                     = coalesce(var.vpn.gateway_subnet_id, data.azurerm_subnet.this.id)
-      public_ip_address_id          = coalesce(ip_configuration.value.public_ip_id, data.azurerm_public_ip[try(ip_configuration.value.public_ip_name, "")].id)
+      subnet_id = coalesce(
+        var.vpn.gateway_subnet_id,
+        data.azurerm_subnet.this[0].id
+      )
+      public_ip_address_id = coalesce(
+        ip_configuration.value.public_ip_id,
+        try(data.azurerm_public_ip.this[ip_configuration.value.name].id, null)
+      )
       private_ip_address_allocation = try(ip_configuration.value.private_ip_address_allocation, "Dynamic")
     }
   }
