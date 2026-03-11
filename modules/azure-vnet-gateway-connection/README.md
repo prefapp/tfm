@@ -26,22 +26,22 @@ See the main README and the `_examples/` directory for usage examples.
 module "vnet_gateway_connection" {
   source = "./modules/azure-vnet-gateway-connection"
   connection = [{
-    name                        = "example-connection"
-    location                    = "westeurope"
-    resource_group_name         = "example-rg"
-    gateway_name                = "example-vnet-gw"
-    local_gateway_name          = "example-local-gw"
-    local_gateway_resource_group_name = "example-local-rg"
-    keyvault_vault_name         = "example-kv"
-    keyvault_vault_rg           = "example-kv-rg"
-    keyvault_secret_name        = "vpn-shared-key"
-    type                        = "IPsec"
-    connection_mode             = "InitiatorOnly"
-    connection_protocol         = "IKEv2"
-    enable_bgp                  = false
-    express_route_gateway_bypass = false
-    dpd_timeout_seconds         = 30
-    routing_weight              = 0
+    name                               = "example-connection"
+    location                           = "westeurope"
+    resource_group_name                = "example-rg"
+    gateway_name                       = "example-vnet-gw"
+    local_gateway_name                 = "example-local-gw"
+    local_gateway_resource_group_name  = "example-local-rg"
+    keyvault_vault_name                = "example-kv"
+    keyvault_vault_rg                  = "example-kv-rg"
+    keyvault_secret_name               = "vpn-shared-key"
+    type                               = "IPsec"
+    connection_mode                    = "InitiatorOnly"
+    connection_protocol                = "IKEv2"
+    enable_bgp                         = false
+    express_route_gateway_bypass       = false
+    dpd_timeout_seconds                = 30
+    routing_weight                     = 0
     use_policy_based_traffic_selectors = false
     ipsec_policy = {
       dh_group         = "DHGroup14"
@@ -53,11 +53,11 @@ module "vnet_gateway_connection" {
       sa_datasize      = 0
       sa_lifetime      = 28800
     }
-    egress_nat_rule_ids         = []
-    ingress_nat_rule_ids        = []
+    egress_nat_rule_ids            = []
+    ingress_nat_rule_ids           = []
     local_azure_ip_address_enabled = false
-    tags_from_rg                = true
-    tags                        = {
+    tags_from_rg                   = true
+    tags                           = {
       environment = "dev"
       application = "example-app"
     }

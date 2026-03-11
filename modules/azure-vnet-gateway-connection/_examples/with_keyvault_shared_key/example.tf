@@ -13,7 +13,18 @@ module "vnet_gateway_connection" {
     type                        = "IPsec"
     connection_mode             = "InitiatorOnly"
     connection_protocol         = "IKEv2"
-    enable_bgp                  = false
+    bgp_enabled                 = false
+    # custom_bgp_addresses = {
+    #   primary   = "10.0.0.1"
+    #   secondary = "10.0.0.2"
+    # }
+    # private_link_fast_path_enabled = false
+    # traffic_selector_policy = [
+    #   {
+    #     local_address_cidrs  = ["10.0.0.0/24"]
+    #     remote_address_cidrs = ["10.1.0.0/24"]
+    #   }
+    # ]
     express_route_gateway_bypass = false
     dpd_timeout_seconds         = 30
     routing_weight              = 0
