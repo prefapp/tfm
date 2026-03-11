@@ -151,5 +151,8 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         }
+        "modules/gh-membership": {
+            "package-name": "gh-membership"
+        }
     }
 }
