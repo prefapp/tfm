@@ -47,7 +47,7 @@ resource "azurerm_role_assignment" "extension_storage_blob_data_contributor" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_provider_registration
 resource "azurerm_resource_provider_registration" "this" {
   count = length(var.kubernetes_instances) > 0 ? 1 : 0
-  name = "Microsoft.KubernetesConfiguration"
+  name  = "Microsoft.KubernetesConfiguration"
 }
 
 # Cluster extension for backup
