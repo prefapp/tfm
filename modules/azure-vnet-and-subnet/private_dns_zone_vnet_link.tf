@@ -1,5 +1,4 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link
-
 locals {
   dns_zone_links = flatten([
     for zone in var.private_dns_zones : (
@@ -9,12 +8,14 @@ locals {
           name                  = vnet_link.name
           virtual_network_id    = vnet_link.virtual_network_id
           registration_enabled  = zone.auto_registration_enabled
+          virtual_network_name  = coalesce(vnet_link.virtual_network_name, vnet_link.name)
         }
       ] : [{
         dns_zone_name         = zone.name
         name                  = coalesce(zone.link_name, zone.name)
         virtual_network_id    = azurerm_virtual_network.this.id
         registration_enabled  = zone.auto_registration_enabled
+        virtual_network_name  = coalesce(zone.link_name, zone.name)
       }]
     )
   ])
