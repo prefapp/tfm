@@ -51,10 +51,14 @@ module "githuib-oidc" {
 | `virtual_network.subnets.delegation.service_delegation` | Service delegation details | object | n/a | yes |
 | `virtual_network.subnets.delegation.service_delegation.name` | The name of the service delegation | string | n/a | yes |
 | `virtual_network.subnets.delegation.service_delegation.actions` | List of actions for the service delegation | list(string) | n/a | yes |
-| `private_dns_zones` | List of private DNS zones to create | list(object) | `[]` | no |
+| `private_dns_zones` | List of private DNS zones to create. Each zone can optionally define `virtual_network_links` (list of objects) to link the DNS zone to multiple VNets. If omitted, a default link to the main VNet is created. | list(object) | `[]` | no |
 | `private_dns_zones.name` | The name of the private DNS zone | string | n/a | yes |
-| `private_dns_zones.link_name` | The name of the private DNS zone VNET link | string | n/a | no |
+| `private_dns_zones.link_name` | The name of the private DNS zone VNET link (for default/main VNet link) | string | n/a | no |
 | `private_dns_zones.auto_registration_enabled` | Whether auto registration is enabled | bool | `false` | no |
+| `private_dns_zones.virtual_network_links` | List of additional VNet links for the DNS zone. Each object must have `name`, `virtual_network_name`, and `virtual_network_id`. | list(object) | n/a | no |
+| `private_dns_zones.virtual_network_links.name` | The name of the VNet link | string | n/a | yes |
+| `private_dns_zones.virtual_network_links.virtual_network_name` | The name of the virtual network | string | n/a | yes |
+| `private_dns_zones.virtual_network_links.virtual_network_id` | The ID of the virtual network | string | n/a | yes |
 | `peerings` | List of virtual network peerings | list(object) | `[]` | no |
 | `peerings.peering_name` | The name of the peering | string | n/a | yes |
 | `peerings.allow_forwarded_traffic` | Whether forwarded traffic is allowed | bool | `false` | no |
@@ -102,12 +106,28 @@ virtual_network = {
 
 private_dns_zones = [
   {
-    name = "foo.councilbox.postgres.database.azure.com",
+    name = "foo.councilbox.postgres.database.azure.com"
     auto_registration_enabled = true
   },
   {
     name = "privatelink.redis.cache.windows.net"
     link_name = "redis_link"
+  },
+  {
+    name = "councilbox.com"
+    auto_registration_enabled = false
+    virtual_network_links = [
+      {
+        name = "saas-spoke-common-predev-vnet-link"
+        virtual_network_name = "saas-spoke-common-predev-vnet"
+        virtual_network_id = "/subscriptions/8b17a4df-07f3-4fb1-a704-b92d3fb6334f/resourceGroups/saas-predev-common-predev/providers/Microsoft.Network/virtualNetworks/saas-spoke-common-predev-vnet"
+      },
+      {
+        name = "corpme-spoke-common-predev-vnet-link"
+        virtual_network_name = "corpme-spoke-common-predev-vnet"
+        virtual_network_id = "/subscriptions/a152aa4d-7a6d-4535-893d-f11a70b27033/resourceGroups/corpme-common-predev/providers/Microsoft.Network/virtualNetworks/corpme-spoke-common-predev-vnet"
+      }
+    ]
   }
 ]
 
