@@ -1,0 +1,18 @@
+{
+  "config": {
+    "webhook": {
+      "active": true,
+      "events": [
+        "push",
+        "pull_request",
+        "issues"
+      ],
+      "configuration": {
+        "url": "https://example.com/webhook",
+        "contentType": "json",
+        "secret": "secret-xxx",
+        "insecureSsl": false
+      }
+    }
+  }
+}
