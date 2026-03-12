@@ -13,9 +13,14 @@ data "azurerm_resource_group" "this" {
 # Data source to get the storage account name
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/storage_account
 data "azurerm_storage_account" "this" {
-  for_each            = local.storage_accounts
-  name                = each.value.name
-  resource_group_name = each.value.rg
+  for_each = {
+    for key in toset([
+      for instance in var.blob_instances :
+      "${instance.storage_account_name}|${instance.storage_account_resource_group}"
+    ]) : key => split("|", key)
+  }
+  name                = each.value[0]
+  resource_group_name = each.value[1]
 }
 
 ## Disk specific data sources ##
