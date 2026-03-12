@@ -2,15 +2,6 @@ locals {
   # Handle tags based on whether to use resource group tags or module-defined tags
   tags = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
 
-  # Convert the list of blob instances to a map for easy lookup
-  storage_accounts = {
-    for instance in var.blob_instances :
-    "${instance.storage_account_name}-${instance.storage_account_resource_group}" => {
-      name = instance.storage_account_name
-      rg   = instance.storage_account_resource_group
-    }
-  }
-
   ## Disk specific locals ##
   # List of unique disk resource groups from the disk instances
   unique_disk_resource_groups = distinct([for instance in var.disk_instances : instance.disk_resource_group])
