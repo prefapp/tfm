@@ -150,6 +150,9 @@
         },
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
+        },
+        "modules/azure-vnet-gateway": {
+            "package-name": "azure-vnet-gateway"
         }
     }
 }
