@@ -52,9 +52,9 @@ resource "aws_backup_plan" "this" {
       for_each = try(each.value.plan.copy_action, []) != null ? [1] : var.copy_action_default_values.destination_account_id != null && var.copy_action_default_values.destination_region != null ? [1] : []
       # for_each = try(each.value.plan.copy_action, []) != null ? each.value.plan.copy_action : []
       content {
-        destination_vault_arn = try(each.value.plan.copy_action.destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
+        destination_vault_arn = try(each.value.plan.copy_action[0].destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
         lifecycle {
-          delete_after = try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action.delete_after, var.copy_action_default_values.delete_after) : null
+          delete_after = try(each.value.plan.copy_action[0].delete_after, var.copy_action_default_values.delete_after) != null ? try(each.value.plan.copy_action[0].delete_after, var.copy_action_default_values.delete_after) : null
         }
       }
     }
