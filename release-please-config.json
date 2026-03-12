@@ -150,6 +150,15 @@
         },
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
+        },
+        "modules/azure-vnet-gateway": {
+            "package-name": "azure-vnet-gateway"
+        },
+        "modules/azure-vnet-gateway-connection": {
+            "package-name": "azure-vnet-gateway-connection"
+        },
+        "modules/azure-localnet-gateway": {
+            "package-name": "azure-localnet-gateway"
         }
     }
 }
