@@ -1,5 +1,4 @@
 /*
-
   IAM Role for ALB Ingress Controller
 
   This IAM role is used by the ALB Ingress Controller to manage AWS resources on your behalf.
@@ -11,13 +10,12 @@
     - IAM Role -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
     - IAM Policy -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
     - IAM Role Policy Attachment -> https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
-
 */
 resource "aws_iam_role" "iam_role_oidc" {
 
   count = var.create_alb_ingress_iam ? 1 : 0
 
-  name = format("k8s-%s-%s-oidc-role", var.tags["project"], var.tags["env"])
+  name = coalesce(var.alb_ingress_role_name, format("k8s-%s-%s-oidc-role-%s", var.tags["project"], var.tags["env"], var.cluster_name))
 
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
@@ -37,7 +35,15 @@ resource "aws_iam_role" "iam_role_oidc" {
     ]
   })
 
-  tags = merge({ "Name" = format("k8s-%s-%s-oidc-role", var.tags["project"], var.tags["env"]) }, var.tags)
+  tags = merge(
+    {
+      "Name" = coalesce(
+        var.alb_ingress_role_name,
+        format("k8s-%s-%s-oidc-role-%s", var.tags["project"], var.tags["env"], var.cluster_name)
+      )
+    },
+    var.tags
+  )
 
 }
 
@@ -46,7 +52,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
 
   count = var.create_alb_ingress_iam ? 1 : 0
 
-  name = format("k8s-%s-%s-alb-policy", var.tags["project"], var.tags["env"])
+  name = format("k8s-%s-%s-alb-policy-%s", var.tags["project"], var.tags["env"], var.cluster_name)
 
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -81,6 +87,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
           "ec2:DescribeCoipPools",
           "ec2:GetSecurityGroupsForVpc",
           "ec2:DescribeIpamPools",
+          "ec2:DescribeRouteTables",
           "elasticloadbalancing:DescribeLoadBalancers",
           "elasticloadbalancing:DescribeLoadBalancerAttributes",
           "elasticloadbalancing:DescribeListeners",
@@ -299,7 +306,12 @@ resource "aws_iam_policy" "iam_policy_alb" {
     ]
   })
 
-  tags = merge({ "Name" = format("k8s-%s-%s-policy", var.tags["project"], var.tags["env"]) }, var.tags)
+  tags = merge(
+    {
+      "Name" = format("k8s-%s-%s-alb-policy-%s", var.tags["project"], var.tags["env"], var.cluster_name)
+    },
+    var.tags
+  )
 }
 
 # Attach ALBIngressControllerIAMPolicy in ALBIngressController role

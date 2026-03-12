@@ -1,0 +1,33 @@
+# Example: With Custom Data (YAML)
+
+common:
+  resource_group_name: customdata-rg
+  location: westeurope
+vm:
+  name: customdata-vm
+  size: Standard_B2s
+  admin_username: azureuser
+  source_image_reference:
+    publisher: Canonical
+    offer: 0001-com-ubuntu-server-jammy
+    sku: server
+    version: latest
+  os_disk:
+    caching: ReadWrite
+    disk_size_gb: 64
+    storage_account_type: Standard_LRS
+  admin_ssh_key:
+    username: azureuser
+    public_key: <your-ssh-public-key>
+  # custom_data: file("${path.module}/cloud_init.tpl")
+  custom_data: |
+    #cloud-config
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDbzUPoxqaOUqeZZwA...
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC3...
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC2...
+nic:
+  name: customdata-vm-nic
+  subnet_name: default
+  virtual_network_name: customdata-vnet
+  virtual_network_resource_group_name: customdata-rg

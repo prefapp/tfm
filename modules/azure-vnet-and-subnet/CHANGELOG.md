@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.1.1...azure-vnet-subnet-v2.1.2) (2026-01-12)
+
+
+### Bug Fixes
+
+* Add default value to vnet-peerings variable ([#848](https://github.com/prefapp/tfm/issues/848)) ([d992706](https://github.com/prefapp/tfm/commit/d992706903828ceced84979796abf2fcbf780074))
+
 ## [2.1.1](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.1.0...azure-vnet-subnet-v2.1.1) (2025-04-24)
 
 

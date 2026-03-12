@@ -46,6 +46,7 @@ variable "peerings" {
     vnet_name                    = string
     remote_virtual_network_id    = string
   }))
+  default = []
 }
 
 variable "resource_group_name" {

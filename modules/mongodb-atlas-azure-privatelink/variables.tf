@@ -14,7 +14,19 @@ variable "project_id" {
   type        = string
 }
 
-# Endpoint seccion variables
+# Endpoint section variables
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "endpoint_name" {
   description = "Name of the Azure endpoint"
   type        = string
@@ -40,7 +52,7 @@ variable "endpoint_connection_request_message" {
   type        = string
 }
 
-# Azure seccion variables
+# Azure section variables
 variable "azure_subnet_id" {
   description = "The azure subnet id"
   type        = string

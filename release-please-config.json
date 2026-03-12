@@ -2,12 +2,19 @@
     "last-release-sha": "4b33efeea07dc46178950e42dabcf917b9b43436",
     "separate-pull-requests": true,
     "release-type": "terraform-module",
+    "commit-search-depth": 5,
     "packages": {
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
         },
         "modules/aws-sso": {
             "package-name": "aws-sso"
+        },
+        "modules/aws-kms": {
+            "package-name": "aws-kms"
+        },
+        "modules/aws-kms-multiple": {
+            "package-name": "aws-kms-multiple"
         },
         "modules/azure-flexible-server-postgresql": {
             "package-name": "azure-flexible-server-postgresql"
@@ -48,6 +55,9 @@
         "modules/azure-mi": {
             "package-name": "azure-mi"
         },
+        "modules/azure-nat-gateway": {
+            "package-name": "azure-nat-gateway"
+        },
         "modules/azure-sa": {
             "package-name": "azure-sa"
         },
@@ -62,6 +72,9 @@
         },
         "modules/azure-vmss": {
             "package-name": "azure-vmss"
+        },
+        "modules/dummy": {
+            "package-name": "dummy"
         },
         "modules/mongodb-atlas-project": {
             "package-name": "mongodb-atlas-project"
@@ -104,6 +117,39 @@
         },
         "modules/aws-terraform-backend": {
             "package-name": "aws-terraform-backend"
+        },
+        "modules/aws-ecs": {
+            "package-name": "aws-ecs"
+        },
+        "modules/aws-rds": {
+            "package-name": "aws-rds"
+        },
+        "modules/aws-s3": {
+            "package-name": "aws-s3"
+        },
+        "modules/azure-backup-vault": {
+            "package-name": "azure-backup-vault"
+        },
+        "modules/azure-event-hub": {
+            "package-name": "azure-event-hub"
+        },
+        "modules/aws-cloudfront-delivery": {
+            "package-name": "aws-cloudfront-delivery"
+        },
+        "modules/azure-linux-vm": {
+            "package-name": "azure-linux-vm"
+        },
+        "modules/azure-windows-vm": {
+            "package-name": "azure-windows-vm"
+        },
+        "modules/aws-amq-rabbit": {
+            "package-name": "aws-amq-rabbit"
+        },
+        "modules/aws-waf": {
+            "package-name": "aws-waf"
+        },
+        "modules/aws-secretsmanager-replication": {
+            "package-name": "aws-secretsmanager-replication"
         }
     }
 }

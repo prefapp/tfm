@@ -1,0 +1,33 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: karpenter-on-demand-default
+spec:
+  amiFamily: AL2023 # Amazon Linux 2023
+  role: "Karpenter-kubernetes-my-org-dev"
+  subnetSelectorTerms:
+    - tags:
+        Name: "xxxxxx-xxxx-private"
+        kubernetes.io/role/internal-elb: "1"
+  securityGroupSelectorTerms:
+    - tags:
+        Name: "kubernetes-my-org-dev-node"
+  amiSelectorTerms:
+  - name: "amazon-eks-node-al2023-x86_64-standard-1.33-*"
+  tags:
+    Project: "kubernetes-cluster"
+    Cluster: "kubernetes-my-org-dev"
+    ManagedBy: "karpenter"
+    billing-team: "platform"
+    GithubRepo: "infra"
+    GithubOrg: "ORGNAME"
+    Environment: "dev-worker"
+    Backup: "enabled"
+    Monitoring: "enabled"
+  blockDeviceMappings:
+  - deviceName: /dev/xvda
+    ebs:
+      volumeSize: 100Gi
+      volumeType: gp3
+      encrypted: true
+

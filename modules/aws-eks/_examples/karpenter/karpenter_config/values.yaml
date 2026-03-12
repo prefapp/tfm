@@ -1,0 +1,50 @@
+
+serviceAccount:
+  # -- Specifies if a ServiceAccount should be created.
+  create: true
+  # -- The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: "karpenter-sa"
+  # -- Additional annotations for the ServiceAccount.
+  annotations:
+    # eks.amazonaws.com/role-arn: arn:aws:iam::816069157330:role/kubernetes-my-org-dev-karpenter-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::xxxxxxxxx:role/kubernetes-my-org-dev-karpenter-role
+
+dnsConfig:
+ options:
+   - name: ndots
+     value: "2"
+
+replicas: 1
+# -- The number of old ReplicaSets to retain to allow rollback.
+
+# Disable pod anti-affinity to allow running on single node
+affinity: {}
+# Or use a more relaxed anti-affinity (preferred instead of required):
+# affinity:
+#   podAntiAffinity:
+#     preferredDuringSchedulingIgnoredDuringExecution:
+#       - weight: 100
+#         podAffinityTerm:
+#           labelSelector:
+#             matchExpressions:
+#               - key: app.kubernetes.io/name
+#                 operator: In
+#                 values:
+#                   - karpenter
+#           topologyKey: kubernetes.io/hostname
+
+# -- Global Settings to configure Karpenter
+settings:
+
+  clusterName: "kubernetes-my-org-dev"
+  
+  # SQS Queue for interruption handling
+  interruptionQueue: "karpenter-kubernetes-my-org-dev"
+
+  featureGates:
+    # -- driftEnabled is in ALPHA and is disabled by default.
+    # Setting driftEnabled to true enables the drift deprovisioner to watch for drift between currently deployed nodes
+    # and the desired state of nodes set in provisioners and node templates
+    driftEnabled: false
+

@@ -1,0 +1,204 @@
+# Eks module subnets
+subnet_ids: ["subnet-xxxxxxxxxxx", "subnet-xxxxxxxxxxx", "subnet-xxxxxxxxxxx"]
+
+# Eks cluster config
+cluster_endpoint_private_access: true
+cluster_endpoint_public_access: true
+cluster_security_group_id: sg-xxxxxxxxxxx
+cluster_iam_role_arn: "arn:aws:iam::xxxxxxxxxxx:role/kubernetes-my-org-dev-cluster-xxxxxxxxxxx"
+create_cluster_iam_role: true
+create_kms_key: true
+cluster_encryption_config: {}
+enable_irsa: true
+
+# IAM Roles
+create_alb_ingress_iam: true
+create_cloudwatch_iam: false
+create_efs_driver_iam: false
+create_external_dns_iam: true
+create_parameter_store_iam: true
+
+# Security Group Ids
+security_groups_ids: ["sg-xxxxxxxxxxx", "sg-xxxxxxxxxxx"]
+
+# EKS Cluster addons
+cluster_addons:
+  vpc-cni:
+    # addon_version: "v1.14.0-eksbuild.3"
+    resolve_conflicts: "OVERWRITE"
+    configuration_values:
+      env:
+        ENABLE_PREFIX_DELEGATION: "true"
+        WARM_IP_TARGET: "4"
+        WARM_PREFIX_TARGET: "1"
+  coredns:
+    resolve_conflicts: "OVERWRITE"
+    # addon_version: "v1.9.3-eksbuild.6"
+
+  aws-ebs-csi-driver:
+    # addon_version: "v1.16.0-eksbuild.1"
+    resolve_conflicts: "OVERWRITE"
+    # service_account_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/AmazonEKS_EBS_CSI_DriverRole"
+
+  kube-proxy:
+    # addon_version: "v1.25.11-eksbuild.2"
+    resolve_conflicts: "OVERWRITE"
+
+# Eks additional security groups
+node_security_group_additional_rules:
+  ingress_self_all:
+    description: Node to node all ports/protocols
+    protocol: "-1"
+    from_port: 0
+    to_port: 0
+    type: ingress
+    source_cluster_security_group: false
+    self: true
+
+  egress_all:
+    description: Node all egress
+    protocol: "-1"
+    from_port: 0
+    to_port: 0
+    type: egress
+    source_cluster_security_group: false
+    cidr_blocks:
+      - 0.0.0.0/0
+    ipv6_cidr_blocks:
+      - "::/0"
+
+  ingress_alb_node_ports:
+    description: Allow workers pods to receive communication from ALB
+    protocol: tcp
+    from_port: 30000
+    to_port: 32400
+    source_cluster_security_group: false
+    type: ingress
+    cidr_blocks:
+      - 0.0.0.0/0
+
+# EKS Node groups
+node_groups:
+  worker:
+    name: "worker"
+    instance_types:
+      - "t3.medium"
+    pre_bootstrap_user_data: |
+      #!/bin/bash
+      set -ex
+      cat <<-EOF > /etc/profile.d/bootstrap.sh
+      export CONTAINER_RUNTIME="containerd"
+      export USE_MAX_PODS=false
+      export KUBELET_EXTRA_ARGS="--max-pods=110"
+      EOF
+      # Source extra environment variables in bootstrap script
+      sed -i '/^set -o errexit/a\\nsource /etc/profile.d/bootstrap.sh' /etc/eks/bootstrap.sh
+    desired_size: 1
+    min_size: 0
+    max_size: 3
+    create_iam_role: true
+    # launch_template_id: "lt-XXXXXXXXXXXXXXXXX"
+    launch_template_version: "1"
+    # launch_template_name: worker-XXXXXXXXXXXXXXXXXXXXXXXX
+    use_custom_launch_template: true
+    create: true
+    create_launch_template: true
+    # iam_role_arn: "arn:aws:iam::XXXXXXXXXXXX:role/worker-eks-node-group-XXXXXXXXXXXXXXXXXXXXXXXX"
+    labels:
+      GithubRepo: "infra"
+      GithubOrg: "ORGNAME"
+      Environment: "dev-worker"
+      # environment: Not set here - initial node group nodes are "common"
+      # Only nodes created by Karpenter will have environment labels (dev/pre)
+
+# EKS Cluster Tags
+tags:
+  project: "ORGNAME"
+  env: "dev"
+
+# Vpc config
+vpc_config: {}
+
+# Eks Cluster VPC Id
+vpc_id: "vpc-xxxxxxxxxxx"
+
+# Region
+region: eu-west-1
+
+# Vpc config
+cluster_name: kubernetes-my-org-dev
+cluster_version: 1.33
+
+# EKS IAM Role Arn
+# iam_role_arn: arn:aws:iam::XXXXXXXXXXXX:role/kubernetes-my-org-dev-cluster-XXXXXXXXXXXXXXXXXXXXXXXX
+
+create_cluster_security_group: true
+
+# Access entries
+access_entries:
+  # Acceso de administrador para tu usuario SSO
+  adminAccess:
+    principal_arn: "arn:aws:iam::xxxxxxxxxxx:role/aws-reserved/sso.amazonaws.com/eu-west-1/xxxxxxxxxxx"
+    policy_associations:
+      clusterAdmin:
+        policy_arn: "arn:aws:eks::aws:cluster-access-policy/xxxxxxxxxxx"
+        access_scope:
+          type: "cluster"
+  # Allow administrator access to an IAM role
+  # administratorAccess:
+  #   principal_arn: "arn:aws:sts::xxxxxxx:assumed-role/AWSReservedSSO_AdministratorAccess_xxxxxx/xxxxxx"
+  #   policy_associations:
+  #     AmazonEKSClusterAdminPolicy:
+  #       policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  #       access_scope:
+  #         type: "cluster"
+  
+  # # Read-only access to a group of users
+  # readOnlyAccess:
+  #   principal_arn: "arn:aws:iam::xxxxxxx:role/ReadOnlyRole"
+  #   policy_associations:
+  #     AmazonEKSClusterReadOnlyPolicy:
+  #       policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
+  #       access_scope:
+  #         type: "cluster"
+  
+  # # Allow access to a group of IAM users with limited permissions to a namespace
+  # limitedNamespaceAccess:
+  #   principal_arn: "arn:aws:iam::xxxxxxx:role/NamespaceLimitedRole"
+  #   policy_associations:
+  #     EKSNamespaceAccessPolicy:
+  #       policy_arn: "arn:aws:iam::aws:policy/AmazonEKSNamespaceReadOnlyAccess"
+  #       access_scope:
+  #         type: "namespace"
+  #         namespace: "my-namespace"
+  
+  # # Allow write access to a group of users in a namespace
+  # writeNamespaceAccess:
+  #   principal_arn: "arn:aws:iam::xxxxxxx:role/NamespaceWriteRole"
+  #   policy_associations:
+  #     EKSNamespaceWritePolicy:
+  #       policy_arn: "arn:aws:iam::aws:policy/AmazonEKSClusterWriteAccess"
+  #       access_scope:
+  #         type: "namespace"
+  #         namespace: "my-namespace"
+
+  # # Allow a specific user to access the cluster with limited permissions
+  # userAccess:
+  #   principal_arn: "arn:aws:iam::XXXXXXXXXXXX:user/john_doe"
+  #   policy_associations:
+  #     AmazonEKSClusterReadOnlyPolicy:
+  #       policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
+  #       access_scope:
+  #         type: "cluster"
+  
+  # # Allow a specific user to access a namespace with limited permissions
+  # userNamespaceAccess:
+  #   principal_arn: "arn:aws:iam::XXXXXXXXXXXX:user/john_doe"
+  #   policy_associations:
+  #     EKSNamespaceReadWritePolicy:
+  #       policy_arn: "arn:aws:iam::aws:policy/AmazonEKSNamespaceReadOnlyAccess"
+  #       access_scope:
+  #         type: "namespace"
+  #         namespace: "my-namespace"
+
+enable_karpenter: true

@@ -70,7 +70,5 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
       }
     }
   }
-  lifecycle {
-    ignore_changes = [tags]
-  }
+  tags = local.tags
 }

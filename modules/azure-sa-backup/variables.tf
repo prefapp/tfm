@@ -10,6 +10,18 @@ variable "storage_account_id" {
   type        = string
 }
 
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
 ## Backup fileshares variables
 variable "backup_share" {
   description = "Specifies the backup configuration for the storage share"

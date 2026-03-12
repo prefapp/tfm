@@ -50,7 +50,7 @@ module "aks" {
   secret_rotation_enabled                              = var.secret_rotation_enabled
   secret_rotation_interval                             = var.secret_rotation_interval
   sku_tier                                             = var.aks_sku_tier
-  tags                                                 = var.tags
+  tags                                                 = local.tags
   temporary_name_for_rotation                          = var.temporary_name_for_rotation
   vnet_subnet_id                                       = data.azurerm_subnet.aks_subnet.id
   workload_identity_enabled                            = var.workload_identity_enabled

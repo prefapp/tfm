@@ -21,7 +21,7 @@ locals {
    * Get the EBS ARN role
    */
 
-  ebs_iam_role_name = "AmazonEKS_EBS_CSI_DriverRole"
+  ebs_iam_role_name = "AmazonEKS_EBS_CSI_DriverRole-${var.cluster_name}"
 
   ebs_arn_role = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_iam_role_name}"
 
@@ -65,8 +65,6 @@ resource "aws_iam_role" "ebs_driver_policy" {
       }
     ]
   })
-
-  depends_on = [module.eks]
 
 }
 

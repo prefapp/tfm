@@ -30,12 +30,13 @@ resource "azurerm_storage_account" "this" {
   https_traffic_only_enabled       = var.storage_account.https_traffic_only_enabled
   min_tls_version                  = var.storage_account.min_tls_version
   public_network_access_enabled    = var.storage_account.public_network_access_enabled
-  tags                             = var.tags
+  tags                             = local.tags
   dynamic "blob_properties" {
     for_each = var.storage_account.blob_properties != null ? [var.storage_account.blob_properties] : []
     content {
       versioning_enabled  = lookup(blob_properties.value, "versioning_enabled", null)
       change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
+      last_access_time_enabled = lookup(blob_properties.value, "last_access_time_enabled", null)
       dynamic "delete_retention_policy" {
         for_each = blob_properties.value.delete_retention_policy != null ? [blob_properties.value.delete_retention_policy] : []
         content {
@@ -63,9 +64,6 @@ resource "azurerm_storage_account" "this" {
       identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
-  lifecycle {
-    ignore_changes = [tags]
-  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules
@@ -84,7 +82,7 @@ resource "azurerm_storage_account_network_rules" "this" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container.html
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container
 resource "azurerm_storage_container" "this" {
   for_each                          = var.containers != null ? { for container in var.containers : container.name => container } : {}
   name                              = each.value.name
@@ -99,7 +97,7 @@ resource "azurerm_storage_container" "this" {
 resource "azurerm_storage_share" "this" {
   for_each             = var.shares != null ? { for share in var.shares : share.name => share } : {}
   name                 = each.value.name
-  storage_account_name = azurerm_storage_account.this.name
+  storage_account_id   = azurerm_storage_account.this.id
   access_tier          = each.value.access_tier
   enabled_protocol     = each.value.enabled_protocol
   quota                = each.value.quota
@@ -155,10 +153,11 @@ resource "azurerm_advanced_threat_protection" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
-  for_each           = var.lifecycle_policy_rules != null ? { for rule in var.lifecycle_policy_rules : rule.name => rule } : {}
+  count = var.lifecycle_policy_rules == null ? 0 : 1
   storage_account_id = azurerm_storage_account.this.id
+
   dynamic "rule" {
-    for_each = var.lifecycle_policy_rules
+    for_each = var.lifecycle_policy_rules != null ? var.lifecycle_policy_rules : []
     content {
       name    = rule.value.name
       enabled = rule.value.enabled
@@ -185,6 +184,10 @@ resource "azurerm_storage_management_policy" "this" {
             tier_to_archive_after_days_since_modification_greater_than     = lookup(base_blob.value, "tier_to_archive_after_days_since_modification_greater_than", null)
             tier_to_archive_after_days_since_last_access_time_greater_than = lookup(base_blob.value, "tier_to_archive_after_days_since_last_access_time_greater_than", null)
             tier_to_archive_after_days_since_creation_greater_than         = lookup(base_blob.value, "tier_to_archive_after_days_since_creation_greater_than", null)
+            tier_to_archive_after_days_since_last_tier_change_greater_than = lookup(base_blob.value, "tier_to_archive_after_days_since_last_tier_change_greater_than", null)
+            tier_to_cold_after_days_since_modification_greater_than        = lookup(base_blob.value, "tier_to_cold_after_days_since_modification_greater_than", null)
+            tier_to_cold_after_days_since_last_access_time_greater_than    = lookup(base_blob.value, "tier_to_cold_after_days_since_last_access_time_greater_than", null)
+            tier_to_cold_after_days_since_creation_greater_than            = lookup(base_blob.value, "tier_to_cold_after_days_since_creation_greater_than", null)
             delete_after_days_since_modification_greater_than              = lookup(base_blob.value, "delete_after_days_since_modification_greater_than", null)
             delete_after_days_since_last_access_time_greater_than          = lookup(base_blob.value, "delete_after_days_since_last_access_time_greater_than", null)
             delete_after_days_since_creation_greater_than                  = lookup(base_blob.value, "delete_after_days_since_creation_greater_than", null)

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/prefapp/tfm/compare/azure-vmss-v0.3.1...azure-vmss-v0.3.2) (2025-12-03)
+
+
+### Bug Fixes
+
+* update module and tags ([#763](https://github.com/prefapp/tfm/issues/763)) ([b063b61](https://github.com/prefapp/tfm/commit/b063b6127b79755fdf65156f2a7559b71d7c1e5d))
+
 ## [0.3.1](https://github.com/prefapp/tfm/compare/azure-vmss-v0.3.0...azure-vmss-v0.3.1) (2025-04-24)
 
 

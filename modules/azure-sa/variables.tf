@@ -1,8 +1,15 @@
 # VARIABLES SECTION
 ## General
+variable "tags_from_rg" {
+  description = "Use resource group tags as base for module tags"
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
-  description = "The tags to associate with your resources"
+  description = "Tags to apply to resources"
   type        = map(string)
+  default     = {}
 }
 
 variable "resource_group_name" {
@@ -51,6 +58,7 @@ variable "storage_account" {
     blob_properties = optional(object({
       versioning_enabled  = optional(bool)
       change_feed_enabled = optional(bool)
+      last_access_time_enabled = optional(bool)
       delete_retention_policy = optional(object({
         days = optional(number)
       }))
@@ -229,6 +237,10 @@ variable "lifecycle_policy_rules" {
         tier_to_archive_after_days_since_modification_greater_than     = optional(number)
         tier_to_archive_after_days_since_last_access_time_greater_than = optional(number)
         tier_to_archive_after_days_since_creation_greater_than         = optional(number)
+        tier_to_archive_after_days_since_last_tier_change_greater_than = optional(number)
+        tier_to_cold_after_days_since_modification_greater_than        = optional(number)
+        tier_to_cold_after_days_since_last_access_time_greater_than    = optional(number)
+        tier_to_cold_after_days_since_creation_greater_than            = optional(number)
         delete_after_days_since_modification_greater_than              = optional(number)
         delete_after_days_since_last_access_time_greater_than          = optional(number)
         delete_after_days_since_creation_greater_than                  = optional(number)

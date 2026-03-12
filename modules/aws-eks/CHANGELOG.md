@@ -1,5 +1,68 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.1...aws-eks-v1.4.0) (2025-12-16)
+
+
+### Features
+
+* **aws-eks:** added cloudwatch_log_group_class and option for disable cloudwatch ([#780](https://github.com/prefapp/tfm/issues/780)) ([c6e6d11](https://github.com/prefapp/tfm/commit/c6e6d113c9cc8f3ba79996ff52c9e4d9e70984d7))
+
+## [1.3.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.0...aws-eks-v1.3.1) (2025-12-11)
+
+
+### Bug Fixes
+
+* **aws-eks:** update doc config ([#775](https://github.com/prefapp/tfm/issues/775)) ([ee43ca1](https://github.com/prefapp/tfm/commit/ee43ca13c959971b29adf6f09bd81674cc58ba43))
+
+## [1.3.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.7...aws-eks-v1.3.0) (2025-12-11)
+
+
+### Features
+
+* add karpenter ([#746](https://github.com/prefapp/tfm/issues/746)) ([591ef8a](https://github.com/prefapp/tfm/commit/591ef8a33b49b5f619a9fdfe87ec4a2abfc59745))
+
+## [1.2.7](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.6...aws-eks-v1.2.7) (2025-11-11)
+
+
+### Bug Fixes
+
+* **aws-eks:** remove extra depends-on from iam ([c7b1058](https://github.com/prefapp/tfm/commit/c7b105832f30a0bb844339b3d0971ede714eb5ab))
+
+## [1.2.6](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.5...aws-eks-v1.2.6) (2025-08-25)
+
+
+### Bug Fixes
+
+* aws-eks subnet_tags description ([#708](https://github.com/prefapp/tfm/issues/708)) ([f3b09fe](https://github.com/prefapp/tfm/commit/f3b09fea44d05aebf9598ca83b5b5b9637e464f1))
+
+## [1.2.5](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.4...aws-eks-v1.2.5) (2025-08-22)
+
+
+### Bug Fixes
+
+* aws-eks cluster addons default ([#706](https://github.com/prefapp/tfm/issues/706)) ([1f72b5b](https://github.com/prefapp/tfm/commit/1f72b5ba972b8023fdce973579aac11ada2dd70c))
+
+## [1.2.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.3...aws-eks-v1.2.4) (2025-08-22)
+
+
+### Bug Fixes
+
+* aws-eks addons output ([#704](https://github.com/prefapp/tfm/issues/704)) ([5a6108c](https://github.com/prefapp/tfm/commit/5a6108c11b3b5f10db830a7a842064a1ddb914d2))
+
+## [1.2.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.2...aws-eks-v1.2.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* update aws eks alb policy ([#701](https://github.com/prefapp/tfm/issues/701)) ([e16a443](https://github.com/prefapp/tfm/commit/e16a443bd206ac76055f754404038a2e7fb38588))
+
+## [1.2.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.1...aws-eks-v1.2.2) (2025-07-23)
+
+
+### Bug Fixes
+
+* modify addons configuration_values structure ([#684](https://github.com/prefapp/tfm/issues/684)) ([d166716](https://github.com/prefapp/tfm/commit/d1667165b5339c512cf81fe37c4d92840339af45))
+
 ## [1.2.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.2.0...aws-eks-v1.2.1) (2025-06-10)
 
 

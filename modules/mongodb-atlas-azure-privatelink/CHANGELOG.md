@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/prefapp/tfm/compare/mongodb-atlas-azure-privatelink-v0.2.1...mongodb-atlas-azure-privatelink-v0.2.2) (2025-12-03)
+
+
+### Bug Fixes
+
+* update module and tags ([#755](https://github.com/prefapp/tfm/issues/755)) ([05049eb](https://github.com/prefapp/tfm/commit/05049ebb512ee9ec1e369d71924d57d9cd0a7b22))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/mongodb-atlas-azure-privatelink-v0.2.0...mongodb-atlas-azure-privatelink-v0.2.1) (2025-04-24)
 
 
