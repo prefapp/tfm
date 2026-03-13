@@ -49,8 +49,8 @@ resource "aws_backup_plan" "this" {
     }
 
     dynamic "copy_action" {
-      for_each = try(each.value.plan.copy_action, []) != null ? [1] : var.copy_action_default_values.destination_account_id != null && var.copy_action_default_values.destination_region != null ? [1] : []
-      # for_each = try(each.value.plan.copy_action, []) != null ? each.value.plan.copy_action : []
+      for_each = try(each.value.plan.copy_action, null) != null ? [1] : var.copy_action_default_values.destination_account_id != null && var.copy_action_default_values.destination_region != null ? [1] : []
+      # for_each = try(each.value.plan.copy_action, null) != null ? each.value.plan.copy_action : []
       content {
         destination_vault_arn = try(each.value.plan.copy_action[0].destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
         lifecycle {
@@ -66,7 +66,7 @@ resource "aws_backup_plan" "this" {
   }
 
   dynamic "advanced_backup_setting" {
-    for_each = try(each.value.plan.advanced_backup_setting, []) != null ? each.value.plan.advanced_backup_setting : []
+    for_each = try(each.value.plan.advanced_backup_setting, null) != null ? each.value.plan.advanced_backup_setting : []
     content {
       backup_options = try(advanced_backup_setting.value.backup_options, { WindowsVSS = "enabled" })
       resource_type  = try(advanced_backup_setting.value.resource_type, "EC2")
@@ -105,28 +105,28 @@ resource "aws_backup_selection" "tag_selection" {
     for_each = try(each.value.plan.backup_selection_conditions, null) != null ? [each.value.plan.backup_selection_conditions] : []
     content {
       dynamic "string_equals" {
-        for_each = try(condition.value.string_equals, []) != null ? condition.value.string_equals : []
+        for_each = try(condition.value.string_equals, null) != null ? condition.value.string_equals : []
         content {
           key   = try(string_equals.value.key, null)
           value = try(string_equals.value.value, null)
         }
       }
       dynamic "string_like" {
-        for_each = try(condition.value.string_like, []) != null ? condition.value.string_like : []
+        for_each = try(condition.value.string_like, null) != null ? condition.value.string_like : []
         content {
           key   = try(string_like.value.key, null)
           value = try(string_like.value.value, null)
         }
       }
       dynamic "string_not_equals" {
-        for_each = try(condition.value.string_not_equals, []) != null ? condition.value.string_not_equals : []
+        for_each = try(condition.value.string_not_equals, null) != null ? condition.value.string_not_equals : []
         content {
           key   = try(string_not_equals.value.key, null)
           value = try(string_not_equals.value.value, null)
         }
       }
       dynamic "string_not_like" {
-        for_each = try(condition.value.string_not_like, []) != null ? condition.value.string_not_like : []
+        for_each = try(condition.value.string_not_like, null) != null ? condition.value.string_not_like : []
         content {
           key   = try(string_not_like.value.key, null)
           value = try(string_not_like.value.value, null)
