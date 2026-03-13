@@ -4,10 +4,20 @@ locals {
     pool.name => {
       name                  = pool.pool_name
       vm_size               = pool.vm_size
-      node_count            = pool.enable_auto_scaling ? null : pool.node_count
-      vnet_subnet_id        = data.azurerm_subnet.aks_subnet.id
+      auto_scaling_enabled = coalesce(
+        try(pool.auto_scaling_enabled, null),
+        try(pool.enable_auto_scaling, null),
+        false
+      )
+      node_count = coalesce(
+        try(pool.auto_scaling_enabled, null),
+        try(pool.enable_auto_scaling, null),
+        false
+      ) ? null : pool.node_count
+      vnet_subnet = {
+        id = data.azurerm_subnet.aks_subnet.id
+      }
       create_before_destroy = pool.create_before_destroy
-      enable_auto_scaling   = pool.enable_auto_scaling
       max_count             = pool.max_count
       min_count             = pool.min_count
       max_pods              = pool.max_pod_per_node

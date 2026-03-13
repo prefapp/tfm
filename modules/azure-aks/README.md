@@ -93,7 +93,7 @@ module "azure_aks" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aks"></a> [aks](#module\_aks) | github.com/Azure/terraform-azurerm-aks | 9.1.0 |
+| <a name="module_aks"></a> [aks](#module\_aks) | github.com/Azure/terraform-azurerm-aks | 11.1.0 |
 
 ## Resources
 
@@ -103,6 +103,7 @@ module "azure_aks" {
 | [azurerm_public_ip.aks_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
 | [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
 | [azurerm_subnet.aks_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
+| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 
 ## Inputs
 
@@ -141,14 +142,15 @@ module "azure_aks" {
 | <a name="input_auto_scaler_profile_skip_nodes_with_local_storage"></a> [auto\_scaler\_profile\_skip\_nodes\_with\_local\_storage](#input\_auto\_scaler\_profile\_skip\_nodes\_with\_local\_storage) | Whether to skip nodes with local storage for the auto scaler profile | `bool` | `false` | no |
 | <a name="input_auto_scaler_profile_skip_nodes_with_system_pods"></a> [auto\_scaler\_profile\_skip\_nodes\_with\_system\_pods](#input\_auto\_scaler\_profile\_skip\_nodes\_with\_system\_pods) | Whether to skip nodes with system pods for the auto scaler profile | `bool` | `false` | no |
 | <a name="input_create_role_assignment_public_ip"></a> [create\_role\_assignment\_public\_ip](#input\_create\_role\_assignment\_public\_ip) | Boolean value to create a role assignment for the public IP | `bool` | `false` | no |
-| <a name="input_extra_node_pools"></a> [extra\_node\_pools](#input\_extra\_node\_pools) | A list of extra node pools to create | <pre>list(object({<br/>    name                  = string<br/>    pool_name             = string<br/>    vm_size               = string<br/>    node_count            = optional(number, 1)<br/>    create_before_destroy = optional(bool, true)<br/>    enable_auto_scaling   = optional(bool, false)<br/>    min_count             = optional(number, null)<br/>    max_count             = optional(number, null)<br/>    max_pod_per_node      = optional(number, 110)<br/>    os_disk_type          = optional(string, "Ephemeral")<br/>    mode                  = optional(string, "User")<br/>    custom_labels         = map(string)<br/>    orchestrator_version  = optional(string, "")<br/>    upgrade_settings = optional(object({<br/>      drain_timeout_in_minutes      = number<br/>      node_soak_duration_in_minutes = number<br/>      max_surge                     = string<br/>    }))<br/>  }))</pre> | `[]` | no |
+| <a name="input_extra_node_pools"></a> [extra\_node\_pools](#input\_extra\_node\_pools) | A list of extra node pools to create | <pre>list(object({<br/>    name                  = string<br/>    pool_name             = string<br/>    vm_size               = string<br/>    node_count            = optional(number, 1)<br/>    create_before_destroy = optional(bool, true)<br/>    auto_scaling_enabled  = optional(bool)<br/>    enable_auto_scaling   = optional(bool)<br/>    min_count             = optional(number, null)<br/>    max_count             = optional(number, null)<br/>    max_pod_per_node      = optional(number, 110)<br/>    os_disk_type          = optional(string, "Ephemeral")<br/>    mode                  = optional(string, "User")<br/>    custom_labels         = map(string)<br/>    orchestrator_version  = optional(string, "")<br/>    upgrade_settings = optional(object({<br/>      drain_timeout_in_minutes      = number<br/>      node_soak_duration_in_minutes = number<br/>      max_surge                     = string<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_key_vault_secrets_provider_enabled"></a> [key\_vault\_secrets\_provider\_enabled](#input\_key\_vault\_secrets\_provider\_enabled) | Boolean value to activate the csi-secrets-store-driver | `any` | n/a | yes |
 | <a name="input_load_balancer_profile_enabled"></a> [load\_balancer\_profile\_enabled](#input\_load\_balancer\_profile\_enabled) | Value to enable or not the load balancer profile | `bool` | `true` | no |
 | <a name="input_load_balancer_sku"></a> [load\_balancer\_sku](#input\_load\_balancer\_sku) | Load balancer sku (basic or standard) | `string` | `"standard"` | no |
-| <a name="input_location"></a> [location](#input\_location) | The Azure location where all resources in this example should be created | `any` | n/a | yes |
+| <a name="input_location"></a> [location](#input\_location) | The Azure location where all resources should be created | `any` | n/a | yes |
+| <a name="input_net_profile_outbound_type"></a> [net\_profile\_outbound\_type](#input\_net\_profile\_outbound\_type) | The outbound (egress) routing method which should be used for this Kubernetes Cluster | `string` | `"loadBalancer"` | no |
 | <a name="input_node_os_channel_upgrade"></a> [node\_os\_channel\_upgrade](#input\_node\_os\_channel\_upgrade) | The automatic node channel upgrade setting for the AKS cluster | `string` | `"None"` | no |
 | <a name="input_oidc_issuer_enabled"></a> [oidc\_issuer\_enabled](#input\_oidc\_issuer\_enabled) | Whether to enable OIDC Issuer for the AKS cluster | `any` | n/a | yes |
-| <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | The name of the public IP address to use for the AKS cluster | `any` | n/a | yes |
+| <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | The name of an existing public IP address to use for the AKS load balancer outbound profile. Only applicable when net\_profile\_outbound\_type is 'loadBalancer'. If null, AKS manages outbound IPs automatically. | `string` | `null` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the resources | `any` | n/a | yes |
 | <a name="input_secret_rotation_enabled"></a> [secret\_rotation\_enabled](#input\_secret\_rotation\_enabled) | Boolean value to activate the secrets rotation csi-secrets-store-driver | `any` | n/a | yes |
 | <a name="input_secret_rotation_interval"></a> [secret\_rotation\_interval](#input\_secret\_rotation\_interval) | String value to activate the secrets rotation interval csi-secrets-store-driver | `any` | n/a | yes |

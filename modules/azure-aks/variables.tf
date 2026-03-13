@@ -1,6 +1,6 @@
 # Global variables
 variable "location" {
-  description = "The Azure location where all resources in this example should be created"
+  description = "The Azure location where all resources should be created"
 }
 
 variable "resource_group_name" {
@@ -21,7 +21,9 @@ variable "tags" {
 
 # Data section public IP variables
 variable "public_ip_name" {
-  description = "The name of the public IP address to use for the AKS cluster"
+  description = "The name of an existing public IP address to use for the AKS load balancer outbound profile. Only applicable when net_profile_outbound_type is 'loadBalancer'. If null, AKS manages outbound IPs automatically."
+  type        = string
+  default     = null
 }
 
 # Data section subnet variables
@@ -243,6 +245,17 @@ variable "auto_scaler_profile_skip_nodes_with_system_pods" {
   default     = false
 }
 
+variable "net_profile_outbound_type" {
+  description = "The outbound (egress) routing method which should be used for this Kubernetes Cluster"
+  type        = string
+  default     = "loadBalancer"
+
+  validation {
+    condition     = contains(["loadBalancer", "userAssignedNATGateway", "userDefinedRouting", "managedNATGateway", "none"], var.net_profile_outbound_type)
+    error_message = "You must use loadBalancer, userAssignedNATGateway, userDefinedRouting, managedNATGateway or none as outbound type value"
+  }
+}
+
 # Extra node pools variables
 variable "extra_node_pools" {
   description = "A list of extra node pools to create"
@@ -252,7 +265,8 @@ variable "extra_node_pools" {
     vm_size               = string
     node_count            = optional(number, 1)
     create_before_destroy = optional(bool, true)
-    enable_auto_scaling   = optional(bool, false)
+    auto_scaling_enabled  = optional(bool)
+    enable_auto_scaling   = optional(bool)
     min_count             = optional(number, null)
     max_count             = optional(number, null)
     max_pod_per_node      = optional(number, 110)
