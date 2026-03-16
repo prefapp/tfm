@@ -21,7 +21,21 @@ module "vnet_gateway" {
     type                                  = "Vpn"
     vpn_type                              = "RouteBased"
     active_active                         = true
-    enable_bgp                            = true
+    # To enable BGP, use the bgp_settings block:
+    bgp_settings = {
+      asn = 65515
+      peer_weight = 0
+      peering_addresses = [
+        {
+          ip_configuration_name = "gw-ipconfig1"
+          apipa_addresses = ["169.254.21.2"]
+        },
+        {
+          ip_configuration_name = "gw-ipconfig2"
+          apipa_addresses = ["169.254.21.3"]
+        }
+      ]
+    }
     sku                                   = "VpnGw2"
     bgp_route_translation_for_nat_enabled = true
   }

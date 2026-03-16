@@ -16,7 +16,6 @@ module "vnet_gateway" {
     type                = "Vpn"
     vpn_type            = "RouteBased"
     active_active       = false
-    enable_bgp          = false
     sku                 = "VpnGw1"
     vpn_client_address_space = ["10.10.0.0/24"]
     vpn_client_protocols     = ["IkeV2", "OpenVPN"]

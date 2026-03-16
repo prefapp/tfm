@@ -16,7 +16,6 @@ module "vnet_gateway" {
     type                = "Vpn"
     vpn_type            = "RouteBased"
     active_active       = false
-    enable_bgp          = false
     sku                 = "VpnGw1"
   }
   nat_rules = [
