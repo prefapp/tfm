@@ -82,9 +82,13 @@ variable "vpn" {
 
   validation {
     condition = (
-      try(var.vpn.bgp_settings, null) == null || try(var.vpn.bgp_enabled, false) == true
+      try(var.vpn.bgp_settings, null) == null
+      || (
+        try(var.vpn.bgp_enabled, false) == true
+        && try(var.vpn.bgp_settings.asn, null) != null
+      )
     )
-    error_message = "If bgp_settings is set, bgp_enabled must be true."
+    error_message = "If bgp_settings is set, bgp_enabled must be true and bgp_settings.asn must be provided."
   }
 
   validation {
