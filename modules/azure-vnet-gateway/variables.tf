@@ -151,6 +151,13 @@ variable "nat_rules" {
     ])
     error_message = "Each NAT rule must have at least one external_mapping and one internal_mapping."
   }
+
+  validation {
+    condition = length(var.nat_rules) == length(distinct([
+      for rule in var.nat_rules : rule.name
+    ]))
+    error_message = "Each NAT rule name must be unique; duplicate nat_rules[*].name values are not allowed."
+  }
 }
 
 variable "tags" {
