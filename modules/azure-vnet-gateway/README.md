@@ -1,3 +1,4 @@
+| <a name="input_nat_rules"></a> [nat\_rules](#input\_nat\_rules) | List of NAT rules to apply to the VPN Gateway. Each rule must define a name, mode, type, and external\_mapping/internal\_mapping blocks (lists of objects with address\_space and optional port\_range); ip\_configuration\_id is optional. | <pre>list(object({<br/>    name                = string<br/>    mode                = string<br/>    type                = string<br/>    ip_configuration_id = optional(string)<br/>    external_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>    internal_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>  }))</pre> | `[]` | no |
 <!-- BEGIN_TF_DOCS -->
 # **Azure Virtual Network Gateway Terraform Module**
 
@@ -92,13 +93,13 @@ module "vnet_gateway" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.58.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.58.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.58.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.58.0 |
 
 ## Modules
 
@@ -108,17 +109,17 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [azurerm_virtual_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/resources/virtual_network_gateway) | resource |
-| [azurerm_virtual_network_gateway_nat_rule.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/resources/virtual_network_gateway_nat_rule) | resource |
-| [azurerm_public_ip.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/public_ip) | data source |
-| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/resource_group) | data source |
-| [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/subnet) | data source |
+| [azurerm_virtual_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway) | resource |
+| [azurerm_virtual_network_gateway_nat_rule.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_nat_rule) | resource |
+| [azurerm_public_ip.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
+| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_nat_rules"></a> [nat\_rules](#input\_nat\_rules) | List of NAT rules to apply to the VPN Gateway. Each rule must define a name and external\_mapping/internal\_mapping blocks (lists of objects with address\_space and optional port\_range); mode, type, and ip\_configuration\_id are optional. | <pre>list(object({<br/>    name                = string<br/>    mode                = optional(string)<br/>    type                = optional(string)<br/>    ip_configuration_id = optional(string)<br/>    external_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>    internal_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>  }))</pre> | `[]` | no |
+| <a name="input_nat_rules"></a> [nat\_rules](#input\_nat\_rules) | List of NAT rules to apply to the VPN Gateway. Each rule must have: name, mode, type, external\_mapping, and internal\_mapping. Optional field is ip\_configuration\_id. external\_mapping and internal\_mapping are lists of mappings with address\_space and optional port\_range. mode and type are required. | <pre>list(object({<br/>    name                = string<br/>    mode                = string<br/>    type                = string<br/>    ip_configuration_id = optional(string)<br/>    external_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>    internal_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource. | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | If true, inherit tags from the resource group. | `bool` | `false` | no |
 | <a name="input_vpn"></a> [vpn](#input\_vpn) | VPN Gateway configuration object (includes P2S config) | <pre>object({<br/>    vnet_name           = optional(string)<br/>    gateway_subnet_name = optional(string)<br/>    location            = string<br/>    resource_group_name = string<br/>    gateway_name        = string<br/>    ip_configurations = list(object({<br/>      name                          = string<br/>      public_ip_name                = optional(string)<br/>      public_ip_id                  = optional(string)<br/>      private_ip_address_allocation = optional(string, "Dynamic")<br/>    }))<br/>    gateway_subnet_id                     = optional(string)<br/>    type                                  = string<br/>    vpn_type                              = optional(string)<br/>    active_active                         = optional(bool)<br/>    bgp_enabled                           = optional(bool)<br/>    sku                                   = string<br/>    generation                            = optional(string)<br/>    default_local_network_gateway_id      = optional(string)<br/>    edge_zone                             = optional(string)<br/>    private_ip_address_enabled            = optional(bool)<br/>    bgp_route_translation_for_nat_enabled = optional(bool)<br/>    dns_forwarding_enabled                = optional(bool)<br/>    ip_sec_replay_protection_enabled      = optional(bool)<br/>    remote_vnet_traffic_enabled           = optional(bool)<br/>    virtual_wan_traffic_enabled           = optional(bool)<br/><br/>    # custom_route block<br/>    custom_route_address_prefixes = optional(list(string), [])<br/><br/>    # vpn_client_configuration block<br/>    vpn_client_address_space = optional(list(string), [])<br/>    vpn_client_protocols     = optional(list(string), [])<br/>    vpn_client_aad_tenant    = optional(string)<br/>    vpn_client_aad_audience  = optional(string)<br/>    vpn_client_aad_issuer    = optional(string)<br/>    root_certificates = optional(list(object({<br/>      name             = string<br/>      public_cert      = optional(string)<br/>      public_cert_data = optional(string)<br/>    })), [])<br/>    revoked_certificates = optional(list(object({<br/>      name       = string<br/>      thumbprint = string<br/>    })), [])<br/>    vpn_auth_types = optional(list(string), [])<br/><br/>    # bgp_settings block<br/>    bgp_settings = optional(object({<br/>      asn         = optional(number)<br/>      peer_weight = optional(number)<br/>      peering_addresses = optional(list(object({<br/>        ip_configuration_name = optional(string)<br/>        apipa_addresses       = optional(list(string))<br/>      })), [])<br/>    }))<br/><br/>    # timeouts block<br/>    timeouts = optional(object({<br/>      create = optional(string)<br/>      read   = optional(string)<br/>      update = optional(string)<br/>      delete = optional(string)<br/>    }))<br/>  })</pre> | n/a | yes |
@@ -149,13 +150,11 @@ nat_rules = [
     external_mapping = [
       {
         address_space = "203.0.113.0/24"
-        port_range    = "1-65535"
       }
     ]
     internal_mapping = [
       {
         address_space = "10.0.0.0/24"
-        port_range    = "1-65535"
       }
     ]
   }

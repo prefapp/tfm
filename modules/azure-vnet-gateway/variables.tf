@@ -89,7 +89,7 @@ variable "vpn" {
 
   validation {
     condition = (
-      (var.vpn.type == "Vpn"  && try(var.vpn.vpn_type, null) != null) ||
+      (var.vpn.type == "Vpn" && try(var.vpn.vpn_type, null) != null) ||
       (var.vpn.type != "Vpn" && try(var.vpn.vpn_type, null) == null)
     )
     error_message = "When vpn.type is \"Vpn\", vpn_type must be provided. For other gateway types, vpn_type must not be set."
@@ -97,7 +97,7 @@ variable "vpn" {
 }
 
 variable "nat_rules" {
-  description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, mode, type, external_mapping, and internal_mapping. Optional field is ip_configuration_id. external_mapping and internal_mapping are lists of mappings with address_space and optional port_range."
+  description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, mode, type, external_mapping, and internal_mapping. Optional field is ip_configuration_id. external_mapping and internal_mapping are lists of mappings with address_space and optional port_range. mode and type are required."
   type = list(object({
     name                = string
     mode                = string
