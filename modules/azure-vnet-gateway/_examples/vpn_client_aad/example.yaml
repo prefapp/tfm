@@ -11,7 +11,7 @@ vpn:
   type: Vpn
   vpn_type: RouteBased
   active_active: false
-  enable_bgp: false
+  bgp_enabled: false
   sku: VpnGw1
   vpn_client_address_space:
     - 10.10.0.0/24
@@ -23,6 +23,10 @@ nat_rules:
   - name: egress-nat
     mode: EgressSnat
     type: Static
-    external_mapping_address_space: 203.0.113.0/24
-    internal_mapping_address_space: 10.0.0.0/24
+    external_mapping:
+      - address_space: 203.0.113.0/24
+        port_range: 1-65535
+    internal_mapping:
+      - address_space: 10.0.0.0/24
+        port_range: 1-65535
 tags_from_rg: true

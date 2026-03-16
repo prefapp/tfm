@@ -16,9 +16,9 @@ variable "vpn" {
     }))
     gateway_subnet_id                     = optional(string)
     type                                  = string
-    vpn_type                              = string
-    active_active                         = bool
-    enable_bgp                            = bool
+    vpn_type                              = optional(string)
+    active_active                         = optional(bool)
+    bgp_enabled                           = optional(bool)
     sku                                   = string
     generation                            = optional(string)
     default_local_network_gateway_id      = optional(string)
@@ -79,17 +79,30 @@ variable "vpn" {
     )
     error_message = "You must provide either gateway_subnet_id or both gateway_subnet_name and vnet_name, and for each ip_configuration either public_ip_id or public_ip_name."
   }
+
+  validation {
+    condition = (
+      try(var.vpn.bgp_settings, null) == null || try(var.vpn.bgp_enabled, false) == true
+    )
+    error_message = "If bgp_settings is set, bgp_enabled must be true."
+  }
 }
 
 variable "nat_rules" {
   description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, mode, type, external_mapping_address_space, internal_mapping_address_space, and optionally ip_configuration_id."
   type = list(object({
-    name                           = string
-    mode                           = string # 'EgressSnat', 'IngressSnat', etc.
-    type                           = string # 'Static', 'Dynamic'
-    external_mapping_address_space = string
-    internal_mapping_address_space = string
-    ip_configuration_id            = optional(string)
+    name                = string
+    mode                = optional(string)
+    type                = optional(string)
+    ip_configuration_id = optional(string)
+    external_mapping = list(object({
+      address_space = string
+      port_range    = optional(string)
+    }))
+    internal_mapping = list(object({
+      address_space = string
+      port_range    = optional(string)
+    }))
   }))
   default = []
 }

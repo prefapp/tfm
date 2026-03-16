@@ -21,7 +21,8 @@ module "vnet_gateway" {
     type                                  = "Vpn"
     vpn_type                              = "RouteBased"
     active_active                         = true
-    # To enable BGP, use the bgp_settings block:
+    bgp_enabled                           = true
+    # To enable BGP, use the bgp_enabled variable from the main module and set it to true, and then provide the bgp_settings as shown below.:
     bgp_settings = {
       asn = 65515
       peer_weight = 0
@@ -44,8 +45,18 @@ module "vnet_gateway" {
       name = "egress-nat"
       mode = "EgressSnat"
       type = "Static"
-      external_mapping_address_space = "203.0.113.0/24"
-      internal_mapping_address_space = "10.0.0.0/24"
+      external_mapping = [ 
+        {
+          address_space = "203.0.113.0/24"
+          port_range    = "1-65535"
+        }
+      ]
+      internal_mapping = [
+        {
+          address_space = "10.0.0.0/24"
+          port_range    = "1-65535"
+        }
+      ]
     }
   ]
   tags = {

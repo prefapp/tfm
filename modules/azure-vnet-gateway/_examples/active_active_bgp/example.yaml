@@ -14,7 +14,17 @@ vpn:
   type: Vpn
   vpn_type: RouteBased
   active_active: true
-  enable_bgp: true
+  bgp_enabled: true
+  bgp_settings:
+    asn: 65515
+    peer_weight: 0
+    peering_addresses:
+      - ip_configuration_name: gw-ipconfig1
+        apipa_addresses:
+          - 169.254.21.2
+      - ip_configuration_name: gw-ipconfig2
+        apipa_addresses:
+          - 169.254.21.3
   sku: VpnGw2
   bgp_route_translation_for_nat_enabled: true
 tags:
@@ -24,6 +34,11 @@ nat_rules:
   - name: egress-nat
     mode: EgressSnat
     type: Static
-    external_mapping_address_space: 203.0.113.0/24
-    internal_mapping_address_space: 10.0.0.0/24
+    external_mapping:
+      - address_space: 203.0.113.0/24
+        port_range: 1-65535
+    internal_mapping:
+      - address_space: 10.0.0.0/24
+        port_range: 1-65535
+
 tags_from_rg: true

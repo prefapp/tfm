@@ -23,8 +23,18 @@ module "vnet_gateway" {
       name                          = "egress-nat"
       mode                          = "EgressSnat"
       type                          = "Static"
-      external_mapping_address_space = "203.0.113.0/24"
-      internal_mapping_address_space = "10.0.0.0/24"
+      external_mapping = [ 
+        {
+          address_space = "203.0.113.0/24"
+          port_range    = "1-65535"
+        }
+      ]
+      internal_mapping = [
+        {
+          address_space = "10.0.0.0/24"
+          port_range    = "1-65535"
+        }
+      ]
     }
   ]
   tags = {

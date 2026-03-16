@@ -14,10 +14,12 @@ resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   )
 
   external_mapping {
-    address_space = each.value.external_mapping_address_space
+    address_space = each.value.external_mapping.address_space
+    port_range    = each.value.external_mapping.port_range
   }
 
   internal_mapping {
-    address_space = each.value.internal_mapping_address_space
+    address_space = each.value.internal_mapping.address_space
+    port_range    = each.value.internal_mapping.port_range
   }
 }
