@@ -22,7 +22,7 @@ module "vnet_gateway" {
     vpn_type                              = "RouteBased"
     active_active                         = true
     bgp_enabled                           = true
-    # To enable BGP, use the bgp_enabled variable from the main module and set it to true, and then provide the bgp_settings as shown below.:
+    # To enable BGP, use the bgp_enabled variable from the main module and set it to true, and then provide the bgp_settings as shown below.
     bgp_settings = {
       asn = 65515
       peer_weight = 0
