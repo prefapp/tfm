@@ -14,6 +14,7 @@ resource "azurerm_virtual_network_gateway" "this" {
   default_local_network_gateway_id      = var.vpn.default_local_network_gateway_id
   edge_zone                             = var.vpn.edge_zone
   private_ip_address_enabled            = var.vpn.private_ip_address_enabled
+  bgp_enabled                           = var.vpn.bgp_enabled
   bgp_route_translation_for_nat_enabled = var.vpn.bgp_route_translation_for_nat_enabled
   dns_forwarding_enabled                = var.vpn.dns_forwarding_enabled
   ip_sec_replay_protection_enabled      = var.vpn.ip_sec_replay_protection_enabled

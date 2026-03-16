@@ -19,44 +19,63 @@ See the main README and the `_examples/` directory for usage examples.
 
 ```hcl
 module "vnet_gateway" {
-  source = "./modules/azure-vnet-gateway"
+  source = "../../"
   vpn = {
-    vnet_name           = "my-vnet"
-    gateway_subnet_name = "GatewaySubnet"
-    location            = "westeurope"
-    resource_group_name = "my-rg"
-    gateway_name        = "my-vpn-gw"
+    vnet_name                             = "example-vnet"
+    gateway_subnet_name                   = "GatewaySubnet"
+    location                              = "westeurope"
+    resource_group_name                   = "example-rg"
+    gateway_name                          = "example-vpn-gw"
     ip_configurations = [
       {
         name                   = "gw-ipconfig1"
-        public_ip_name         = "my-vpn-public-ip-1"
+        public_ip_name         = "example-vpn-public-ip-1"
+        private_ip_address_allocation = "Dynamic"
+      },
+      {
+        name                   = "gw-ipconfig2"
+        public_ip_name         = "example-vpn-public-ip-2"
         private_ip_address_allocation = "Dynamic"
       }
     ]
-    type            = "Vpn"
-    vpn_type        = "RouteBased"
-    active_active   = true
-    sku             = "VpnGw1"
-    # To enable BGP, use the bgp_settings block:
-    # bgp_settings = {
-    #   asn = 65515
-    #   peer_weight = 0
-    #   peering_addresses = [
-    #     {
-    #       ip_configuration_name = "gw-ipconfig1"
-    #       apipa_addresses = ["169.254.21.2"]
-    #     }
-    #   ]
-    # }
-    # ...other optional fields...
+    type                                  = "Vpn"
+    vpn_type                              = "RouteBased"
+    active_active                         = true
+    bgp_enabled                           = true
+    bgp_settings = {
+      asn = 65515
+      peer_weight = 0
+      peering_addresses = [
+        {
+          ip_configuration_name = "gw-ipconfig1"
+          apipa_addresses = ["169.254.21.2"]
+        },
+        {
+          ip_configuration_name = "gw-ipconfig2"
+          apipa_addresses = ["169.254.21.3"]
+        }
+      ]
+    }
+    sku                                   = "VpnGw2"
+    bgp_route_translation_for_nat_enabled = true
   }
   nat_rules = [
     {
       name = "egress-nat"
       mode = "EgressSnat"
       type = "Static"
-      external_mapping_address_space = "203.0.113.0/24"
-      internal_mapping_address_space = "10.0.0.0/24"
+      external_mapping = [ 
+        {
+          address_space = "203.0.113.0/24"
+          port_range    = "1-65535"
+        }
+      ]
+      internal_mapping = [
+        {
+          address_space = "10.0.0.0/24"
+          port_range    = "1-65535"
+        }
+      ]
     }
   ]
   tags = {
