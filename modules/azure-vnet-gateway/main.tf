@@ -10,7 +10,6 @@ resource "azurerm_virtual_network_gateway" "this" {
   sku                                   = var.vpn.sku
   tags                                  = local.tags
   active_active                         = var.vpn.active_active
-  enable_bgp                            = var.vpn.enable_bgp
   generation                            = var.vpn.generation
   default_local_network_gateway_id      = var.vpn.default_local_network_gateway_id
   edge_zone                             = var.vpn.edge_zone
@@ -24,10 +23,10 @@ resource "azurerm_virtual_network_gateway" "this" {
   dynamic "ip_configuration" {
     for_each = var.vpn.ip_configurations
     content {
-      name                          = ip_configuration.value.name
+      name = ip_configuration.value.name
       subnet_id = coalesce(
         var.vpn.gateway_subnet_id,
-        data.azurerm_subnet.this[0].id
+        try(data.azurerm_subnet.this[0].id, null)
       )
       public_ip_address_id = coalesce(
         ip_configuration.value.public_ip_id,

@@ -3,7 +3,7 @@ output "virtual_network_gateway_id" {
   value       = azurerm_virtual_network_gateway.this.id
 }
 
-output "public_ip_id" {
+output "public_ip_ids" {
   description = "The IDs of the Public IPs used by the gateway."
   value       = [for cfg in azurerm_virtual_network_gateway.this.ip_configuration : cfg.public_ip_address_id]
 }

@@ -84,7 +84,6 @@ No modules.
 | [azurerm_public_ip.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/public_ip) | data source |
 | [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/resource_group) | data source |
 | [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/subnet) | data source |
-| [azurerm_virtual_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.58.0/docs/data-sources/virtual_network_gateway) | data source |
 
 ## Inputs
 
@@ -100,7 +99,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_nat_rule_ids"></a> [nat\_rule\_ids](#output\_nat\_rule\_ids) | List of IDs of the NAT rules created (if any). |
-| <a name="output_public_ip_id"></a> [public\_ip\_id](#output\_public\_ip\_id) | The IDs of the Public IPs used by the gateway. |
+| <a name="output_public_ip_ids"></a> [public\_ip\_ids](#output\_public\_ip\_ids) | The IDs of the Public IPs used by the gateway. |
 | <a name="output_virtual_network_gateway_id"></a> [virtual\_network\_gateway\_id](#output\_virtual\_network\_gateway\_id) | The ID of the created Virtual Network Gateway. |
 
 ## Examples
