@@ -94,6 +94,22 @@ variable "vpn" {
     )
     error_message = "When vpn.type is \"Vpn\", vpn_type must be provided. For other gateway types, vpn_type must not be set."
   }
+
+  validation {
+    condition = alltrue([
+      for rc in try(var.vpn.root_certificates, []) : (
+        (
+          try(rc.public_cert, null) != null &&
+          try(rc.public_cert_data, null) == null
+        ) ||
+        (
+          try(rc.public_cert, null) == null &&
+          try(rc.public_cert_data, null) != null
+        )
+      )
+    ])
+    error_message = "For each root_certificate, you must provide exactly one of public_cert or public_cert_data."
+  }
 }
 
 variable "nat_rules" {
