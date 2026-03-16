@@ -71,13 +71,14 @@ variable "vpn" {
   validation {
     condition = (
       (try(var.vpn.gateway_subnet_id, null) != null || (try(var.vpn.gateway_subnet_name, null) != null && try(var.vpn.vnet_name, null) != null))
+      && length(var.vpn.ip_configurations) > 0
       && alltrue([
         for ipconf in var.vpn.ip_configurations : (
           try(ipconf.public_ip_id, null) != null || try(ipconf.public_ip_name, null) != null
         )
       ])
     )
-    error_message = "You must provide either gateway_subnet_id or both gateway_subnet_name and vnet_name, and for each ip_configuration either public_ip_id or public_ip_name."
+    error_message = "You must provide either gateway_subnet_id or both gateway_subnet_name and vnet_name, at least one ip_configuration, and for each ip_configuration either public_ip_id or public_ip_name."
   }
 
   validation {
