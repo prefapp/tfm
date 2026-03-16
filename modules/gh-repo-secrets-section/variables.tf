@@ -27,10 +27,10 @@ EOT
     })), {})
   })
 
-  validation {
-    condition     = length(var.config.actions) + length(var.config.codespaces) + length(var.config.dependabot) > 0
-    error_message = "At least one secret must be defined in actions, codespaces or dependabot."
-  }
+  # validation {
+  #   condition     = length(var.config.actions) + length(var.config.codespaces) + length(var.config.dependabot) > 0
+  #   error_message = "At least one secret must be defined in actions, codespaces or dependabot."
+  # }
 
   validation {
     condition = alltrue([
