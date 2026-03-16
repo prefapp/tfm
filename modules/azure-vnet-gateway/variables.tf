@@ -83,6 +83,15 @@ variable "vpn" {
 
   validation {
     condition = (
+      length(var.vpn.ip_configurations) == length(distinct([
+        for ipconf in var.vpn.ip_configurations : ipconf.name
+      ]))
+    )
+    error_message = "All vpn.ip_configurations.name values must be unique."
+  }
+
+  validation {
+    condition = (
       try(var.vpn.bgp_settings, null) == null
       || (
         try(var.vpn.bgp_enabled, false) == true
