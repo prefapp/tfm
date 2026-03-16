@@ -89,7 +89,7 @@ variable "vpn" {
 }
 
 variable "nat_rules" {
-  description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, mode, type, external_mapping_address_space, internal_mapping_address_space, and optionally ip_configuration_id."
+  description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, external_mapping, and internal_mapping. Optional fields are mode, type, and ip_configuration_id. external_mapping and internal_mapping are lists of mappings with address_space and optional port_range."
   type = list(object({
     name                = string
     mode                = optional(string)
