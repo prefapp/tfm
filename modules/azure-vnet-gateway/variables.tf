@@ -97,11 +97,11 @@ variable "vpn" {
 }
 
 variable "nat_rules" {
-  description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, external_mapping, and internal_mapping. Optional fields are mode, type, and ip_configuration_id. external_mapping and internal_mapping are lists of mappings with address_space and optional port_range."
+  description = "List of NAT rules to apply to the VPN Gateway. Each rule must have: name, mode, type, external_mapping, and internal_mapping. Optional field is ip_configuration_id. external_mapping and internal_mapping are lists of mappings with address_space and optional port_range."
   type = list(object({
     name                = string
-    mode                = optional(string)
-    type                = optional(string)
+    mode                = string
+    type                = string
     ip_configuration_id = optional(string)
     external_mapping = list(object({
       address_space = string
@@ -113,6 +113,14 @@ variable "nat_rules" {
     }))
   }))
   default = []
+
+  validation {
+    condition = alltrue([
+      for rule in var.nat_rules :
+      length(rule.external_mapping) > 0 && length(rule.internal_mapping) > 0
+    ])
+    error_message = "Each NAT rule must have at least one external_mapping and one internal_mapping."
+  }
 }
 
 variable "tags" {
