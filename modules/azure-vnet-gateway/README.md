@@ -1,4 +1,3 @@
-| <a name="input_nat_rules"></a> [nat\_rules](#input\_nat\_rules) | List of NAT rules to apply to the VPN Gateway. Each rule must define a name, mode, type, and external\_mapping/internal\_mapping blocks (lists of objects with address\_space and optional port\_range); ip\_configuration\_id is optional. | <pre>list(object({<br/>    name                = string<br/>    mode                = string<br/>    type                = string<br/>    ip_configuration_id = optional(string)<br/>    external_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>    internal_mapping = list(object({<br/>      address_space = string<br/>      port_range    = optional(string)<br/>    }))<br/>  }))</pre> | `[]` | no |
 <!-- BEGIN_TF_DOCS -->
 # **Azure Virtual Network Gateway Terraform Module**
 
