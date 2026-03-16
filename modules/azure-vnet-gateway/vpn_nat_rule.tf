@@ -10,7 +10,7 @@ resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   type                       = each.value.type
   ip_configuration_id = coalesce(
     try(each.value.ip_configuration_id, null),
-    try(data.azurerm_virtual_network_gateway.this.ip_configuration[0].id, null)
+    try(azurerm_virtual_network_gateway.this.ip_configuration[0].id, null)
   )
 
   dynamic "external_mapping" {
