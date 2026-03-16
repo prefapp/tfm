@@ -94,4 +94,11 @@ resource "azurerm_virtual_network_gateway" "this" {
       delete = var.vpn.timeouts.delete
     }
   }
+
+  lifecycle {
+    precondition {
+      condition     = length(var.vpn.vpn_client_address_space) == 0 || length(var.vpn.vpn_client_protocols) > 0
+      error_message = "When vpn_client_address_space is specified, vpn_client_protocols must contain at least one protocol."
+    }
+  }
 }
