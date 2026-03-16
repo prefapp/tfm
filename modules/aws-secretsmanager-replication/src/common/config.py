@@ -20,6 +20,7 @@ class Config:
     destinations: Dict[str, Destination]
     source_region: str
     enable_tag_replication: bool
+    source_account: str
 
 
 def load_config() -> Config:
@@ -50,8 +51,16 @@ def load_config() -> Config:
     source_region = os.environ.get("AWS_REGION", "eu-west-1")
     enable_tag_replication = os.environ.get("ENABLE_TAG_REPLICATION", "true").lower() == "true"
 
+    # Get source account ID automatically
+    try:
+        import boto3
+        source_account = boto3.client("sts").get_caller_identity()["Account"]
+    except Exception:
+        source_account = ""
+
     return Config(
         destinations=destinations,
         source_region=source_region,
         enable_tag_replication=enable_tag_replication,
+        source_account=source_account,
     )
