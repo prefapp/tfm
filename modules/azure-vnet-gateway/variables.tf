@@ -86,6 +86,14 @@ variable "vpn" {
     )
     error_message = "If bgp_settings is set, bgp_enabled must be true."
   }
+
+  validation {
+    condition = (
+      (var.vpn.type == "Vpn"  && try(var.vpn.vpn_type, null) != null) ||
+      (var.vpn.type != "Vpn" && try(var.vpn.vpn_type, null) == null)
+    )
+    error_message = "When vpn.type is \"Vpn\", vpn_type must be provided. For other gateway types, vpn_type must not be set."
+  }
 }
 
 variable "nat_rules" {
