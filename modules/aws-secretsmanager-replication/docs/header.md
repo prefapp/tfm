@@ -204,3 +204,16 @@ The destination account must have an IAM role that the replication Lambda can as
 > You may need to further restrict or expand permissions depending on your organization's security requirements.
 
 ------
+
+## Secret Replication Across Regions
+
+Starting from version X.X, the module implements the following improvements for cross-region secret replication:
+
+- Replicated secrets are automatically renamed with the region code as a prefix (e.g., `eu-west-3-mysecret`).
+- Replicated secrets include additional tags:
+  - `origin-account`: the source AWS account.
+  - `origin-region`: the source AWS region.
+  - `latest-version`: the identifier of the latest version copied.
+- If tag replication is enabled, original tags are merged, avoiding duplicates.
+
+This allows secrets with the same name from different regions to be copied into a single disaster recovery account without overwriting, and improves traceability.

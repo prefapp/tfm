@@ -38,8 +38,22 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
 
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
-            # Destination secret name = same as source
-            dest_name = secret_metadata["Name"]
+            # Destination secret name: region-prefixed, max 512 chars
+            raw_dest_name = f"{region_name}-{secret_metadata['Name']}"
+            dest_name = raw_dest_name[:512]
+
+            # Build replication tags
+            replication_tags = [
+                {"Key": "origin-account", "Value": str(config.source_account)},
+                {"Key": "origin-region", "Value": str(region_name)},
+                {"Key": "latest-version", "Value": str(secret_response.get("VersionId", ""))}
+            ]
+            # Merge original tags if enabled, avoiding duplicates
+            if config.enable_tag_replication and source_tags:
+                existing_keys = {t["Key"] for t in replication_tags}
+                all_tags = replication_tags + [t for t in source_tags if t["Key"] not in existing_keys]
+            else:
+                all_tags = replication_tags
 
             if get_sm_client is not None:
                 sm_dest = get_sm_client(dest.role_arn, region_name)
@@ -58,7 +72,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
                 sm_dest.create_secret(
                     Name=dest_name,
                     KmsKeyId=region_cfg.kms_key_arn,
-                    Tags=source_tags if config.enable_tag_replication else [],
+                    Tags=all_tags,
                     **{secret_value_key: secret_value}
                 )
             else:
