@@ -56,6 +56,11 @@ output "outbound_ip_address" {
   value = try(data.azurerm_public_ip.aks_public_ip[0].ip_address, null)
 }
 
+# The outbound public IP resource ID of the AKS cluster.
+output "outbound_public_ip_id" {
+  value = try(data.azurerm_public_ip.aks_public_ip[0].id, null)
+}
+
 # The subnet ID of the AKS cluster.
 output "subnet_id" {
   value = data.azurerm_subnet.aks_subnet.id
