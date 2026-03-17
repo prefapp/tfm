@@ -39,7 +39,6 @@ For more details, see the [Terraform AKS module documentation](https://registry.
 > The following values are not configurable:
 > - `log_analytics_workspace_enabled`: `false`
 > - `rbac_aad_azure_rbac_enabled`: `true`
-> - `rbac_aad_managed`: `true`
 > - `role_based_access_control_enabled`: `true`
 
 It is designed to be flexible, production-ready, and easy to integrate into existing infrastructures.
