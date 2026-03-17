@@ -1,6 +1,3 @@
-## VPN NAT RULE SECTION
-
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_nat_rule
 resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   for_each                   = { for rule in var.nat_rules : rule.name => rule }
   name                       = each.value.name
