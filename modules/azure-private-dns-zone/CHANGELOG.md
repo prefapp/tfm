@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/prefapp/tfm/compare/azure-private-dns-zone-v0.1.0...azure-private-dns-zone-v1.0.0) (2026-03-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove private-dns-zone
+
+### Features
+
+* Remove private-dns-zone ([bbd4e62](https://github.com/prefapp/tfm/commit/bbd4e621c1479d57a264abd11165418fdc65ff65))
+
 ## 0.1.0 (2026-03-17)
 
 
