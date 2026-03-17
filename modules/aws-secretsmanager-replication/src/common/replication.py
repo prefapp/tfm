@@ -48,7 +48,10 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
             dest_name = raw_dest_name[:512]
 
             # KMS key: usar la de la región si está, si no None (AWS managed)
-            kms_key_arn = region_cfg.kms_key_arn if getattr(region_cfg, "kms_key_arn", None) else None
+            kms_key_arn = getattr(region_cfg, "kms_key_arn", None)
+            # Solo usar si es un ARN válido (no None, no string vacío)
+            if not kms_key_arn or not isinstance(kms_key_arn, str) or not kms_key_arn.strip():
+                kms_key_arn = None
 
             # Build replication tags
             replication_tags = [
@@ -82,7 +85,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
                     "Tags": all_tags,
                     secret_value_key: secret_value
                 }
-                if kms_key_arn:
+                if kms_key_arn is not None:
                     create_args["KmsKeyId"] = kms_key_arn
                 # Si no hay KmsKeyId, AWS managed
                 sm_dest.create_secret(**create_args)
