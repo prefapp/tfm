@@ -20,7 +20,7 @@
     "modules/azure-nat-gateway": "1.1.0",
     "modules/mongodb-atlas-cluster": "0.4.0",
     "modules/azure-disks": "1.1.2",
-    "modules/mongodb-atlas-azure-privatelink": "0.2.2",
+    "modules/mongodb-atlas-azure-privatelink": "0.3.0",
     "modules/cloudamqp-cluster": "1.1.1",
     "modules/mongodb-atlas-project": "1.4.1",
     "modules/azure-customrole": "0.2.1",
