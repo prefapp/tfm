@@ -44,6 +44,47 @@ module "dns_zone" {
 }
 ```
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 1.3.0 |
+| azurerm | >= 3.0.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| azurerm | >= 3.0.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| n/a | n/a | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| azurerm_dns_zone.this | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| `dns_zone_name` | The name of the DNS zone to create. | `string` | n/a | yes |
+| `resource_group_name` | The name of the resource group in which to create the DNS zone. | `string` | n/a | yes |
+| `tags` | A mapping of tags to assign to the DNS zone. | `map(string)` | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| `id` | The ID of the DNS zone. |
+| `name` | The name of the DNS zone. |
+| `name_servers` | A list of name servers for the DNS zone. |
+
 ## Examples
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples):
