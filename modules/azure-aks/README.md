@@ -40,7 +40,7 @@ For more details, see the [Terraform AKS module documentation](https://registry.
 > - `log_analytics_workspace_enabled`: `false`
 > - `rbac_aad_azure_rbac_enabled`: `true`
 > - `role_based_access_control_enabled`: `true`
-> - With the upstream AKS module version `11.1.0`, Azure AD / RBAC integration is configured via the `rbac_aad_tenant_id` input. This wrapper module no longer forces `rbac_aad_managed = true`; if you require managed AAD, configure it explicitly via the appropriate inputs on the upstream module.
+> - With the upstream AKS module version `11.1.0`, Azure AD / RBAC integration is configured via the `rbac_aad_tenant_id` input. This wrapper module configures `rbac_aad_managed = true` along with Azure RBAC by default.
 
 It is designed to be flexible, production-ready, and easy to integrate into existing infrastructures.
 
