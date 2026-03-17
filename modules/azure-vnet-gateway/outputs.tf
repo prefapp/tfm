@@ -10,5 +10,8 @@ output "public_ip_ids" {
 
 output "nat_rule_ids" {
   description = "List of IDs of the NAT rules created (if any)."
-  value       = [for rule in values(azurerm_virtual_network_gateway_nat_rule.this) : rule.id]
+  value       = [
+    for rule_name in sort(keys(azurerm_virtual_network_gateway_nat_rule.this)) :
+    azurerm_virtual_network_gateway_nat_rule.this[rule_name].id
+  ]
 }
