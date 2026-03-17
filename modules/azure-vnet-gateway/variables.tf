@@ -133,6 +133,7 @@ variable "nat_rules" {
     mode                = string
     type                = string
     ip_configuration_id = optional(string)
+    ip_configuration_name = optional(string) # Only needed if ip_configuration_id is not provided; used to look up the ID of the first IP configuration of the gateway if ip_configuration_id is not provided.
     external_mapping = list(object({
       address_space = string
       port_range    = optional(string)
