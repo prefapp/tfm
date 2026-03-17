@@ -21,14 +21,14 @@ data "azurerm_virtual_network_gateway" "this" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret
-data "azurerm_key_vault_secret" "s2s" {
+data "azurerm_key_vault_secret" "this" {
   for_each     = { for s in var.connection : s.name => s if try(s.keyvault_secret_name, null) != null && try(s.keyvault_vault_name, null) != null && try(s.keyvault_vault_rg, null) != null }
   name         = each.value.keyvault_secret_name
-  key_vault_id = data.azurerm_key_vault.s2s[each.key].id
+  key_vault_id = data.azurerm_key_vault.this[each.key].id
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault
-data "azurerm_key_vault" "s2s" {
+data "azurerm_key_vault" "this" {
   for_each            = { for s in var.connection : s.name => s if try(s.keyvault_vault_name, null) != null && try(s.keyvault_vault_rg, null) != null }
   name                = each.value.keyvault_vault_name
   resource_group_name = each.value.keyvault_vault_rg

@@ -31,7 +31,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
   )
   shared_key = (
     try(each.value.shared_key, null) != null ? each.value.shared_key : (
-      try(data.azurerm_key_vault_secret.s2s[each.key].value, null) != null ? data.azurerm_key_vault_secret.s2s[each.key].value : null
+      try(data.azurerm_key_vault_secret.this[each.key].value, null) != null ? data.azurerm_key_vault_secret.this[each.key].value : null
     )
   )
   bgp_enabled                        = try(each.value.bgp_enabled, null)
