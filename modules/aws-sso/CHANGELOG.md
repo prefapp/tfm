@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/prefapp/tfm/compare/aws-sso-v0.6.1...aws-sso-v0.7.0) (2026-03-17)
+
+
+### Features
+
+* Update README.md ([438096b](https://github.com/prefapp/tfm/commit/438096b068f25a7b7974ca95b4409abefe03da67))
+
 ## [0.6.1](https://github.com/prefapp/tfm/compare/aws-sso-v0.6.0...aws-sso-v0.6.1) (2025-04-24)
 
 
