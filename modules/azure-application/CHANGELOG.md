@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/prefapp/tfm/compare/azure-application-v1.0.0...azure-application-v1.1.0) (2026-03-17)
+
+
+### Features
+
+* Update README.md ([438096b](https://github.com/prefapp/tfm/commit/438096b068f25a7b7974ca95b4409abefe03da67))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/azure-application-v0.1.2...azure-application-v1.0.0) (2025-05-21)
 
 
