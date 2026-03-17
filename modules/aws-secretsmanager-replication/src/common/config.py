@@ -38,7 +38,7 @@ def load_config() -> Config:
     for account_id, entry in parsed.items():
         regions = {
             region_name: RegionConfig(
-                kms_key_arn=region_cfg["kms_key_arn"]
+                kms_key_arn=region_cfg.get("kms_key_arn")
             )
             for region_name, region_cfg in entry["regions"].items()
         }
