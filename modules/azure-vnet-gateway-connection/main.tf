@@ -8,7 +8,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
   }
   private_link_fast_path_enabled = try(each.value.private_link_fast_path_enabled, null)
   dynamic "traffic_selector_policy" {
-    for_each = try(each.value.traffic_selector_policy, [])
+    for_each = coalesce(each.value.traffic_selector_policy, [])
     content {
       local_address_cidrs  = traffic_selector_policy.value.local_address_cidrs
       remote_address_cidrs = traffic_selector_policy.value.remote_address_cidrs
