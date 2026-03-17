@@ -11,8 +11,9 @@ resource "azurerm_virtual_network_gateway_nat_rule" "this" {
 
   ip_configuration_id = (
     try(each.value.ip_configuration_id, null) != null ? each.value.ip_configuration_id :
-    try(data.azurerm_virtual_network_gateway.this.ip_configuration[0].id, null)
-  )
+  try(
+    [for conf in data.azurerm_virtual_network_gateway.this.ip_configuration : conf.id if conf.name == each.value.ip_configuration_name][0]
+  )  )
   dynamic "external_mapping" {
     for_each = each.value.external_mapping
     content {
