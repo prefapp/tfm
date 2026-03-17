@@ -26,27 +26,27 @@ output "cluster_issuer" {
   value = module.aks.oidc_issuer_url
 }
 
-# The kubelet identity object ID of the AKS cluster.
+# The kubelet identity client ID of the AKS cluster.
 output "kubelet_identity_client_id" {
   value = module.aks.kubelet_identity[0].client_id
 }
 
-# The network profile of the AKS cluster. See README for structure.
+# The kubelet identity object ID of the AKS cluster.
 output "kubelet_identity_object_id" {
   value = module.aks.kubelet_identity[0].object_id
 }
 
-# The node resource group of the AKS cluster.
+# The network profile of the AKS cluster. See README for structure.
 output "network_profile" {
   value = module.aks.network_profile
 }
 
-# The OIDC issuer URL of the AKS cluster.
+# The node resource group of the AKS cluster.
 output "node_resource_group" {
   value = module.aks.node_resource_group
 }
 
-# The outbound IP address of the AKS cluster.
+# The OIDC issuer URL of the AKS cluster.
 output "oidc_issuer_url" {
   value = module.aks.oidc_issuer_url
 }
