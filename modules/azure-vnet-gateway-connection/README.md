@@ -109,7 +109,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [s2s\_basic](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/s2s\_basic) - Basic Site-to-Site connection example.
 - [with\_nat\_rules](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/with\_nat\_rules) - Example with ingress/egress NAT rules.
-- [with\_keyvault](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/with\_keyvault) - Example using Azure Key Vault for shared key management.
+- [with\_keyvault](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/with\_keyvault_shared_key) - Example using Azure Key Vault for shared key management.
 
 ## Remote resources
 
