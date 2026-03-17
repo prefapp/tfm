@@ -3,7 +3,6 @@
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples):
 
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples/basic) - Minimal configuration for a DNS zone
-- [tags](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples/tags) - DNS zone with custom tags
 
 ## Resources
 
