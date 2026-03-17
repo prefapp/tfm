@@ -119,11 +119,11 @@ private_dns_zones = [
     virtual_network_links = [
       {
         name = "saas-spoke-common-predev-vnet-link"
-        virtual_network_id = "/subscriptions/8b17a4df-07f3-4fb1-a704-b92d3fb6334f/resourceGroups/saas-predev-common-predev/providers/Microsoft.Network/virtualNetworks/saas-spoke-common-predev-vnet"
+        virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myVnetName"
       },
       {
         name = "corpme-spoke-common-predev-vnet-link"
-        virtual_network_id = "/subscriptions/a152aa4d-7a6d-4535-893d-f11a70b27033/resourceGroups/corpme-common-predev/providers/Microsoft.Network/virtualNetworks/corpme-spoke-common-predev-vnet"
+        virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myOtherResourceGroupName/providers/Microsoft.Network/virtualNetworks/myOtherVnetName"
       }
     ]
   }
