@@ -1,11 +1,8 @@
-
-### 3. `docs/footer.md` 
-```markdown
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-repository-secrets/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-repository-secrets/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
 
 ## Resources
 
@@ -17,4 +14,3 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 ## Support
 
 For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
-

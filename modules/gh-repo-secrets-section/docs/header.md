@@ -25,18 +25,20 @@ This approach is the most secure for automated pipelines (Prefapp IDP, GitHub Ac
 
 ```hcl
 module "repo_secrets" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repository-secrets"
+  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo-secrets-section"
 
   config = var.config   # Terraform automatically loads terraform.tfvars.json
 }
+```
 
 ### Inline example
 
 Manages GitHub secrets for **one repository only**.
 
 ```hcl
-module "secrets" {
-  source = "github.com/prefapp/tfm//modules/gh-repo-secrets-section"
+<<<<<<< HEAD
+module "repo_secrets" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo-secrets-section"
 
   config = {
     repository = "prefapp/tfm"
