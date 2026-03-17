@@ -2,6 +2,12 @@
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_nat_rule
 
+locals {
+  nat_rule_ip_configuration_id = try(each.value.ip_configuration_id, null) != null ?
+    each.value.ip_configuration_id :
+    try(data.azurerm_virtual_network_gateway.this.ip_configuration[0].id, null)
+}
+
 resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   for_each                   = { for rule in var.nat_rules : rule.name => rule }
   name                       = each.value.name
@@ -10,13 +16,10 @@ resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   mode                       = each.value.mode
   type                       = each.value.type
 
-  # Optional: only use if provided or available
   ip_configuration_id = (
-    each.value.ip_configuration_id != null ? each.value.ip_configuration_id :
-    (length(azurerm_virtual_network_gateway.this) > 0 && length(azurerm_virtual_network_gateway.this[0].ip_configuration) > 0) ? 
-      data.azurerm_virtual_network_gateway.this.ip_configuration[0].id : null
+    try(each.value.ip_configuration_id, null) != null ? each.value.ip_configuration_id :
+    try(data.azurerm_virtual_network_gateway.this.ip_configuration[0].id, null)
   )
-
   dynamic "external_mapping" {
     for_each = each.value.external_mapping
     content {
