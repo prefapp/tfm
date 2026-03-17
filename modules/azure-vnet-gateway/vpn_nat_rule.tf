@@ -1,17 +1,20 @@
 ## VPN NAT RULE SECTION
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_nat_rule
+
 resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   for_each                   = { for rule in var.nat_rules : rule.name => rule }
   name                       = each.value.name
   resource_group_name        = var.vpn.resource_group_name
-  virtual_network_gateway_id = azurerm_virtual_network_gateway.this.id
+  virtual_network_gateway_id = azurerm_virtual_network_gateway.this[0].id
   mode                       = each.value.mode
   type                       = each.value.type
 
-  ip_configuration_id = try(
-    each.value.ip_configuration_id,
-    azurerm_virtual_network_gateway.this.ip_configuration[0].id
+  # Optional: only use if provided or available
+  ip_configuration_id = (
+    each.value.ip_configuration_id != null ? each.value.ip_configuration_id :
+    (length(azurerm_virtual_network_gateway.this) > 0 && length(azurerm_virtual_network_gateway.this[0].ip_configuration) > 0) ? 
+      azurerm_virtual_network_gateway.this[0].ip_configuration[0].id : null
   )
 
   dynamic "external_mapping" {
@@ -27,16 +30,6 @@ resource "azurerm_virtual_network_gateway_nat_rule" "this" {
     content {
       address_space = internal_mapping.value.address_space
       port_range    = internal_mapping.value.port_range
-    }
-  }
-
-  lifecycle {
-    precondition {
-      condition = (
-        try(each.value.ip_configuration_id, null) != null ||
-        length(azurerm_virtual_network_gateway.this.ip_configuration) > 0
-      )
-      error_message = "ip_configuration_id must be provided or derivable from the gateway"
     }
   }
 }
