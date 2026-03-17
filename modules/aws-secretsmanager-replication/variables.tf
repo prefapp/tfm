@@ -29,15 +29,7 @@ variable "prefix" {
 variable "destinations_json" {
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
-  validation {
-    condition = alltrue([
-      for account_id, dest in try(jsondecode(var.destinations_json), {}) : alltrue([
-        for region_name, region_cfg in try(dest.regions, {}) :
-        contains(keys(region_cfg), "kms_key_arn")
-      ])
-    ])
-    error_message = "Each region must contain 'kms_key_arn'."
-  }
+  # No validation: kms_key_arn is now optional per region. If omitted, AWS managed key will be used.
 }
 
 
