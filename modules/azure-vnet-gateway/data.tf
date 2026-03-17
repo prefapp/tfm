@@ -23,7 +23,7 @@ data "azurerm_public_ip" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network_gateway
 data "azurerm_virtual_network_gateway" "this" {
-  count               = var.vpn.gateway_name == null ? 1 : 0
+  count               = var.vpn.gateway_name != null ? 1 : 0
   name                = var.vpn.gateway_name
   resource_group_name = var.vpn.resource_group_name
 }
