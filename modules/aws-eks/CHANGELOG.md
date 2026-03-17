@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.4.0...aws-eks-v1.5.0) (2026-03-17)
+
+
+### Features
+
+* Update README.md ([438096b](https://github.com/prefapp/tfm/commit/438096b068f25a7b7974ca95b4409abefe03da67))
+
 ## [1.4.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.1...aws-eks-v1.4.0) (2025-12-16)
 
 
