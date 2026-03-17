@@ -11,7 +11,7 @@ resource "github_actions_secret" "this" {
   encrypted_value = each.value.encryptedValue
 
   lifecycle {
-    ignore_changes = ["encrypted_value"]
+    ignore_changes = [encrypted_value]
   }
 }
 
@@ -28,7 +28,7 @@ resource "github_codespaces_secret" "this" {
   encrypted_value = each.value.encryptedValue
 
   lifecycle {
-    ignore_changes = ["encrypted_value"]
+    ignore_changes = [encrypted_value]
   }
 }
 
@@ -45,6 +45,6 @@ resource "github_dependabot_secret" "this" {
   encrypted_value = each.value.encryptedValue
 
   lifecycle {
-    ignore_changes = ["encrypted_value"]
+    ignore_changes = [encrypted_value]
   }
 }
