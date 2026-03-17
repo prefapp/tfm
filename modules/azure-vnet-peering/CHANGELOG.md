@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/prefapp/tfm/compare/azure-vnet-peering-v1.3.1...azure-vnet-peering-v1.4.0) (2026-03-17)
+
+
+### Features
+
+* Update README.md ([438096b](https://github.com/prefapp/tfm/commit/438096b068f25a7b7974ca95b4409abefe03da67))
+
 ## [1.3.1](https://github.com/prefapp/tfm/compare/azure-vnet-peering-v1.3.0...azure-vnet-peering-v1.3.1) (2025-04-24)
 
 
