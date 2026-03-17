@@ -21,7 +21,7 @@ variable "tags" {
 
 # Data section public IP variables
 variable "public_ip_name" {
-  description = "The name of an existing public IP address to use for the AKS load balancer outbound profile. Only applicable when net_profile_outbound_type is 'loadBalancer'. If null, AKS manages outbound IPs automatically."
+  description = "The name of an existing public IP address in the same resource group as resource_group_name to use for the AKS load balancer outbound profile. This variable is only used when net_profile_outbound_type is set to 'loadBalancer'; for other values it is ignored. If null, AKS manages outbound IPs automatically."
   type        = string
   default     = null
 }
