@@ -1,7 +1,7 @@
 ## VARIABLES SECTION
 
 variable "connection" {
-  description = "List of Site-to-Site VPN connection objects"
+  description = "List of virtual network gateway connection objects (e.g., Site-to-Site VPN, VNet-to-VNet, ExpressRoute)"
   type = list(object({
     name                               = string
     location                           = string
