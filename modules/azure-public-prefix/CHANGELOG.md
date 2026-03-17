@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/prefapp/tfm/compare/azure-public-prefix-v0.3.2...azure-public-prefix-v0.4.0) (2026-03-17)
+
+
+### Features
+
+* Update README.md ([438096b](https://github.com/prefapp/tfm/commit/438096b068f25a7b7974ca95b4409abefe03da67))
+
 ## [0.3.2](https://github.com/prefapp/tfm/compare/azure-public-prefix-v0.3.1...azure-public-prefix-v0.3.2) (2025-12-03)
 
 
