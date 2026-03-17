@@ -177,6 +177,7 @@ module "azure_aks" {
 | <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | The node resource group of the AKS cluster. |
 | <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. |
 | <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | The outbound public IP address of the AKS cluster when an existing outbound public IP is configured and the outbound type is `loadBalancer`; otherwise `null`. |
+| <a name="output_outbound_public_ip_id"></a> [outbound\_public\_ip\_id](#output\_outbound\_public\_ip\_id) | The resource ID of the outbound public IP of the AKS cluster when an existing outbound public IP is configured and the outbound type is `loadBalancer`; otherwise `null`. |
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The subnet ID of the AKS cluster. |
 | <a name="output_vnet"></a> [vnet](#output\_vnet) | The virtual network name of the AKS cluster. |
 
