@@ -22,7 +22,14 @@ locals {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "this" {
-  for_each = { for idx, link in local.dns_zone_links : "${link.dns_zone_name}-${link.name}" => link }
+  for_each = {
+    for idx, link in local.dns_zone_links :
+    (
+      link.virtual_network_id == azurerm_virtual_network.this.id
+      ? link.dns_zone_name
+      : "${link.dns_zone_name}-${link.name}"
+    ) => link
+  }
   name                  = each.value.name
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = each.value.dns_zone_name
