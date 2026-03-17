@@ -5,7 +5,7 @@ resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   for_each                   = { for rule in var.nat_rules : rule.name => rule }
   name                       = each.value.name
   resource_group_name        = var.vpn.resource_group_name
-  virtual_network_gateway_id = azurerm_virtual_network_gateway.this[0].id
+  virtual_network_gateway_id = azurerm_virtual_network_gateway.this.id
   mode                       = each.value.mode
   type                       = each.value.type
 
