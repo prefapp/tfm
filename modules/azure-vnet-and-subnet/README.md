@@ -9,8 +9,6 @@ This module creates one or more virtual networks and subnets.
 - [Resource terraform - azurerm_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network)
 - [Resource terraform - azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet)
 - [Resource terraform - azurerm_virtual_network_peering](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering)
-- [Resource terraform - azurerm_private_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone)
-- [Resource terraform - azurerm_private_dns_zone_virtual_network_link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link)
 
 ## Usage
 
@@ -51,7 +49,6 @@ module "githuib-oidc" {
 | `virtual_network.subnets.delegation.service_delegation` | Service delegation details | object | n/a | yes |
 | `virtual_network.subnets.delegation.service_delegation.name` | The name of the service delegation | string | n/a | yes |
 | `virtual_network.subnets.delegation.service_delegation.actions` | List of actions for the service delegation | list(string) | n/a | yes |
-
 | `peerings` | List of virtual network peerings | list(object) | `[]` | no |
 | `peerings.peering_name` | The name of the peering | string | n/a | yes |
 | `peerings.allow_forwarded_traffic` | Whether forwarded traffic is allowed | bool | `false` | no |
