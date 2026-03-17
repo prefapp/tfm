@@ -29,6 +29,7 @@ module "azure_backup_vault" {
   # VAULT configuration
   vault = {
     name                       = "my-backup-vault"
+    location                   = "eastus"
     datastore_type             = "VaultStore"
     redundancy                 = "LocallyRedundant"
     retention_duration_in_days = 30
@@ -89,12 +90,14 @@ module "azure_backup_vault" {
   postgresql_instances = [
     {
       name                = "pg1-backup"
+      location            = "eastus"
       server_name         = "my-postgres-server-1"
       resource_group_name = "my-db-rg"
       policy_key          = "daily"
     },
     {
       name                = "pg2-backup"
+      location            = "eastus"
       server_name         = "my-postgres-server-2"
       resource_group_name = "my-db-rg-2"
       policy_key          = "weekly"
@@ -128,6 +131,7 @@ module "azure_backup_vault" {
   mysql_instances = [
     {
       name                = "mysql1-backup"
+      location            = "eastus"
       server_name         = "my-mysql-server-1"
       resource_group_name = "my-db-rg"
       policy_key          = "daily"
@@ -146,6 +150,7 @@ module "azure_backup_vault" {
   disk_instances = [
     {
       name                = "disk1-backup"
+      location            = "eastus"
       disk_resource_group = "my-disk-rg"
       policy_key          = "daily-disk-policy"
     }
@@ -170,6 +175,7 @@ module "azure_backup_vault" {
   blob_instances = [
     {
       name                          = "blob1-backup"
+      location                      = "eastus"
       storage_account_name          = "my-storage-account-1"
       storage_account_resource_group = "my-storage-rg"
       storage_account_container_names = ["container1"]
@@ -177,6 +183,7 @@ module "azure_backup_vault" {
     },
     {
       name                          = "blob2-backup"
+      location                      = "eastus"
       storage_account_name          = "my-storage-account-2"
       storage_account_resource_group = "my-storage-rg-2"
       storage_account_container_names = ["container2"]
@@ -201,6 +208,7 @@ module "azure_backup_vault" {
   kubernetes_instances = [
     {
       name                        = "k8s1-backup"
+      location                    = "eastus"
       cluster_name                = "my-k8s-cluster-1"
       resource_group_name         = "my-k8s-rg"
       snapshot_resource_group_name = "my-k8s-snapshots-rg"

@@ -22,6 +22,7 @@ variable "vault" {
   description = "Backup vault configuration"
   type = object({
     name                         = string
+    location                     = string
     datastore_type               = string
     redundancy                   = string
     cross_region_restore_enabled = optional(bool)
@@ -50,7 +51,7 @@ variable "disk_policies" {
       criteria = object({
         absolute_criteria = optional(string)
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -59,9 +60,11 @@ variable "disk_policies" {
 variable "disk_instances" {
   description = "List of backup instances for disks"
   type = list(object({
-    name                = string
-    disk_resource_group = string
-    policy_key          = string
+    name                         = string
+    location                     = string
+    disk_resource_group          = string
+    policy_key                   = string
+    snapshot_resource_group_name = string
   }))
   default = []
 }
@@ -90,7 +93,7 @@ variable "blob_policies" {
         data_store_type = string
         duration        = string
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -100,6 +103,7 @@ variable "blob_instances" {
   description = "List of backup instances for blobs"
   type = list(object({
     name                            = string
+    location                        = string
     storage_account_name            = string
     storage_account_resource_group  = string
     storage_account_container_names = optional(list(string))
@@ -135,7 +139,7 @@ variable "postgresql_policies" {
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -145,6 +149,7 @@ variable "postgresql_instances" {
   description = "List of backup instances for PostgreSQL Flexible Server"
   type = list(object({
     name                = string
+    location            = string
     server_name         = string
     policy_key          = string
     resource_group_name = string
@@ -179,7 +184,7 @@ variable "mysql_policies" {
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -189,6 +194,7 @@ variable "mysql_instances" {
   description = "List of MySQL Flexible Server backup instances"
   type = list(object({
     name                = string
+    location            = string
     server_name         = string
     resource_group_name = string
     policy_key          = string
@@ -223,7 +229,7 @@ variable "kubernetes_policies" {
         weeks_of_month         = optional(list(string))
         scheduled_backup_times = optional(list(string))
       })
-    })))
+    })), [])
   }))
   default = []
 }
@@ -233,6 +239,7 @@ variable "kubernetes_instances" {
   description = "List of Kubernetes cluster backup instances"
   type = list(object({
     name                         = string
+    location                     = string
     cluster_name                 = string
     resource_group_name          = string
     snapshot_resource_group_name = string

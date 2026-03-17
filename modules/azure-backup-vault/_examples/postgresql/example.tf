@@ -6,6 +6,7 @@ module "azure_backup_vault" {
   backup_resource_group_name = "my-backup-rg"
   vault = {
     name           = "my-backup-vault"
+    location       = "eastus"
     datastore_type = "VaultStore"
     redundancy     = "LocallyRedundant"
     retention_duration_in_days = 30
@@ -65,12 +66,14 @@ module "azure_backup_vault" {
   postgresql_instances = [
     {
       name = "pg1-backup"
+      location = "eastus"
       server_name = "my-postgres-server-1"
       resource_group_name = "my-db-rg"
       policy_key = "daily"
     },
     {
       name = "pg2-backup"
+      location = "eastus"
       server_name = "my-postgres-server-2"
       resource_group_name = "my-db-rg-2"
       policy_key = "weekly"

@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.1.10](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.9...azure-backup-vault-v0.1.10) (2026-03-12)
+
+
+### Bug Fixes
+
+* data reference blobs ([#980](https://github.com/prefapp/tfm/issues/980)) ([0f74612](https://github.com/prefapp/tfm/commit/0f746121f88505f5b04513848a32ca52fc7fed33))
+
+## [0.1.9](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.8...azure-backup-vault-v0.1.9) (2026-03-03)
+
+
+### Bug Fixes
+
+* Add new role on snapshot resource group and fix resouce group sna… ([#959](https://github.com/prefapp/tfm/issues/959)) ([689f871](https://github.com/prefapp/tfm/commit/689f8710b2475ca204525a47ad0c2befc7cc5631))
+
+## [0.1.8](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.7...azure-backup-vault-v0.1.8) (2026-03-03)
+
+
+### Bug Fixes
+
+* snapshot rg name in disk instance config ([#957](https://github.com/prefapp/tfm/issues/957)) ([883a517](https://github.com/prefapp/tfm/commit/883a51725a2c071b1e113c1faa3414de6a70b347))
+
+## [0.1.7](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.6...azure-backup-vault-v0.1.7) (2026-02-26)
+
+
+### Bug Fixes
+
+* add reader on MI backup vault over kubernetes cluster ([#945](https://github.com/prefapp/tfm/issues/945)) ([8766c93](https://github.com/prefapp/tfm/commit/8766c9311805993f4e7e84b42147e5c156eed6e8))
+
+## [0.1.6](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.5...azure-backup-vault-v0.1.6) (2026-02-25)
+
+
+### Bug Fixes
+
+* add location value to all resources ([#943](https://github.com/prefapp/tfm/issues/943)) ([10f9e68](https://github.com/prefapp/tfm/commit/10f9e68fd871e5b0f52b538d4a1b1e668d0e9e63))
+
+## [0.1.5](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.4...azure-backup-vault-v0.1.5) (2026-02-24)
+
+
+### Bug Fixes
+
+* add default values to variables ([#941](https://github.com/prefapp/tfm/issues/941)) ([b3554e3](https://github.com/prefapp/tfm/commit/b3554e37ce5b7b9fc480f4a0d04c6376b1c21c9f))
+
 ## [0.1.4](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.3...azure-backup-vault-v0.1.4) (2026-02-11)
 
 
