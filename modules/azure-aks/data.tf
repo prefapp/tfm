@@ -18,6 +18,6 @@ data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription.html
-data "azurerm_subscription" "current" {
+# https://registry.terraform.io/providers/hashicorp/Azurerm/latest/docs/data-sources/client_config
+data "azurerm_client_config" "current" {
 }
