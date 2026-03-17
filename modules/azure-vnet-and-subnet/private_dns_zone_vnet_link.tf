@@ -2,7 +2,7 @@
 locals {
   dns_zone_links = flatten([
     for zone in var.private_dns_zones : (
-      zone.virtual_network_links != null ? [
+      length(coalesce(zone.virtual_network_links, [])) > 0 ? [
         for vnet_link in zone.virtual_network_links : {
           dns_zone_name         = zone.name
           name                  = vnet_link.name
