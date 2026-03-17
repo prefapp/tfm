@@ -1,50 +1,24 @@
 variable "config" {
-  description = <<EOT
-GitHub repository secrets configuration as a single complex object.
+  description = <<-EOT
+    Complete configuration object for this module (single repository only).
 
-IMPORTANT:
-- encryptedValue must be ALREADY encrypted with libsodium using the target repository's public key.
-- Terraform does NOT encrypt anything — it only passes the pre-encrypted value.
-EOT
+    • repository          = GitHub repo in 'owner/repo' format (required)
+    • actions / codespaces / dependabot = map of secret_name => encrypted_value
+    • encrypted_value must be pre-encrypted with libsodium using the repo's public key.
+  EOT
 
   type = object({
-    actions = optional(map(object({
-      secretName     = string
-      repository     = string
-      encryptedValue = string
-    })), {})
+    repository = string
 
-    codespaces = optional(map(object({
-      secretName     = string
-      repository     = string
-      encryptedValue = string
-    })), {})
-
-    dependabot = optional(map(object({
-      secretName     = string
-      repository     = string
-      encryptedValue = string
-    })), {})
+    actions = optional(map(string), {})
+    codespaces = optional(map(string), {})
+    dependabot = optional(map(string), {})
   })
 
   validation {
-    condition = alltrue([
-      for k, v in var.config.actions : length(trimspace(v.secretName)) > 0 && length(trimspace(v.repository)) > 0
-    ])
-    error_message = "Every action secret must have non-empty secretName and repository."
+    condition = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", var.config.repository))
+    error_message = "config.repository must be in 'owner/repo' format."
   }
 
-  validation {
-    condition = alltrue([
-      for k, v in var.config.codespaces : length(trimspace(v.secretName)) > 0 && length(trimspace(v.repository)) > 0
-    ])
-    error_message = "Every codespaces secret must have non-empty secretName and repository."
-  }
-
-  validation {
-    condition = alltrue([
-      for k, v in var.config.dependabot : length(trimspace(v.secretName)) > 0 && length(trimspace(v.repository)) > 0
-    ])
-    error_message = "Every dependabot secret must have non-empty secretName and repository."
-  }
+  nullable = false
 }

@@ -33,27 +33,30 @@ module "repo_secrets" {
 
 ### Inline example
 
+Manages GitHub secrets for **one repository only**.
+
 ```hcl
-module "repo\_secrets" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repository-secrets"
+module "secrets" {
+  source = "github.com/prefapp/tfm//modules/gh-repo-secrets-section"
 
   config = {
+    repository = "prefapp/tfm"
+
     actions = {
-      SECRET\_A = {
-        secretName     = "SECRET\_A"
-        repository     = "component\_a"
-        encryptedValue = "r+RFBGIn8U7z2Opm5RN7PXKdgFzefXiV91IpG3O2DrClZl9dkTJBfhRZbi2uV2nu4ijn5yUfZ9O1eqjaXL2dWByFV+T2swZCQVQdDGmDlF24MPvEFh2ZbQ=="
-      }
+      "MY\_API\_KEY" = "r+RFBGIn8U7z2Opm5RN7PXKdgFzefXiV91IpG3O2DrClZl9dkTJBfhRZbi2uV2nu..."
     }
     codespaces = {}
     dependabot = {}
   }
 }
+```
+```
 
 ## Requirements
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 
 ## Providers
@@ -73,21 +76,23 @@ No modules.
 | [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
 | [github_codespaces_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/codespaces_secret) | resource |
 | [github_dependabot_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/dependabot_secret) | resource |
+| [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_config"></a> [config](#input\_config) | GitHub repository secrets configuration as a single complex object.<br/><br/>IMPORTANT:<br/>- encryptedValue must be ALREADY encrypted with libsodium using the target repository's public key.<br/>- Terraform does NOT encrypt anything — it only passes the pre-encrypted value. | <pre>object({<br/>    actions = optional(map(object({<br/>      secretName     = string<br/>      repository     = string<br/>      encryptedValue = string<br/>    })), {})<br/><br/>    codespaces = optional(map(object({<br/>      secretName     = string<br/>      repository     = string<br/>      encryptedValue = string<br/>    })), {})<br/><br/>    dependabot = optional(map(object({<br/>      secretName     = string<br/>      repository     = string<br/>      encryptedValue = string<br/>    })), {})<br/>  })</pre> | n/a | yes |
+| <a name="input_config"></a> [config](#input\_config) | Complete configuration object for this module (single repository only).<br/><br/>• repository          = GitHub repo in 'owner/repo' format (required)<br/>• actions / codespaces / dependabot = map of secret\_name => encrypted\_value<br/>• encrypted\_value must be pre-encrypted with libsodium using the repo's public key. | <pre>object({<br/>    repository = string<br/><br/>    actions = optional(map(string), {})<br/>    codespaces = optional(map(string), {})<br/>    dependabot = optional(map(string), {})<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_actions_secrets"></a> [actions\_secrets](#output\_actions\_secrets) | List of Action secrets created |
+| <a name="output_actions_secret_names"></a> [actions\_secret\_names](#output\_actions\_secret\_names) | List of created Actions secret names |
 | <a name="output_all_secret_names"></a> [all\_secret\_names](#output\_all\_secret\_names) | Combined list of all secret names |
-| <a name="output_codespaces_secrets"></a> [codespaces\_secrets](#output\_codespaces\_secrets) | List of Codespaces secrets created |
-| <a name="output_dependabot_secrets"></a> [dependabot\_secrets](#output\_dependabot\_secrets) | List of Dependabot secrets created |
+| <a name="output_codespaces_secret_names"></a> [codespaces\_secret\_names](#output\_codespaces\_secret\_names) | List of created Codespaces secret names |
+| <a name="output_dependabot_secret_names"></a> [dependabot\_secret\_names](#output\_dependabot\_secret\_names) | List of created Dependabot secret names |
+| <a name="output_repository"></a> [repository](#output\_repository) | The repository these secrets belong to |
 
 ### 3. `docs/footer.md`
 ```markdown

@@ -32,19 +32,20 @@ module "repo_secrets" {
 
 ### Inline example
 
+Manages GitHub secrets for **one repository only**.
+
 ```hcl
-module "repo_secrets" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repository-secrets"
+module "secrets" {
+  source = "github.com/prefapp/tfm//modules/gh-repo-secrets-section"
 
   config = {
+    repository = "prefapp/tfm"
+
     actions = {
-      SECRET_A = {
-        secretName     = "SECRET_A"
-        repository     = "component_a"
-        encryptedValue = "r+RFBGIn8U7z2Opm5RN7PXKdgFzefXiV91IpG3O2DrClZl9dkTJBfhRZbi2uV2nu4ijn5yUfZ9O1eqjaXL2dWByFV+T2swZCQVQdDGmDlF24MPvEFh2ZbQ=="
-      }
+      "MY_API_KEY" = "r+RFBGIn8U7z2Opm5RN7PXKdgFzefXiV91IpG3O2DrClZl9dkTJBfhRZbi2uV2nu..."
     }
     codespaces = {}
     dependabot = {}
   }
 }
+```
