@@ -169,7 +169,8 @@ resource "aws_db_subnet_group" "this" {
 }
 
 module "rds" {
-  source = "terraform-aws-modules/rds/aws"
+  source  = "terraform-aws-modules/rds/aws"
+  version = "6.13.1"
 
   identifier                                             = var.db_identifier
   engine                                                 = var.engine
