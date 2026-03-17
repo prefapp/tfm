@@ -51,6 +51,8 @@ def load_config() -> Config:
     source_region = os.environ.get("AWS_REGION", "eu-west-1")
     enable_tag_replication = os.environ.get("ENABLE_TAG_REPLICATION", "true").lower() == "true"
 
+    add_region_prefix_to_name = os.environ.get("ADD_REGION_PREFIX_TO_NAME", "false").lower() == "true"
+
     # Get source account ID automatically
     try:
         import boto3
@@ -63,4 +65,5 @@ def load_config() -> Config:
         source_region=source_region,
         enable_tag_replication=enable_tag_replication,
         source_account=source_account,
+        add_region_prefix_to_name=add_region_prefix_to_name,
     )

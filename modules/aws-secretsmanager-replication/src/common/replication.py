@@ -31,16 +31,24 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
     secret_metadata = source_sm.describe_secret(SecretId=secret_id)
     source_tags = secret_metadata.get("Tags", [])
 
+
+    add_region_prefix = getattr(config, "add_region_prefix_to_name", False)
+
     for account_id, dest in config.destinations.items():
         log("info", "Processing destination account", account_id=account_id)
 
         for region_name, region_cfg in dest.regions.items():
-
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
-            # Destination secret name: region-prefixed, max 512 chars
-            raw_dest_name = f"{region_name}-{secret_metadata['Name']}"
+            # Destination secret name: region-prefixed or original, max 512 chars
+            if add_region_prefix:
+                raw_dest_name = f"{region_name}-{secret_metadata['Name']}"
+            else:
+                raw_dest_name = secret_metadata['Name']
             dest_name = raw_dest_name[:512]
+
+            # KMS key: usar la de la región si está, si no None (AWS managed)
+            kms_key_arn = region_cfg.kms_key_arn if getattr(region_cfg, "kms_key_arn", None) else None
 
             # Build replication tags
             replication_tags = [
@@ -69,12 +77,15 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
             if not secret_exists:
                 log("info", "Creating secret in destination", account_id=account_id, region=region_name)
 
-                sm_dest.create_secret(
-                    Name=dest_name,
-                    KmsKeyId=region_cfg.kms_key_arn,
-                    Tags=all_tags,
-                    **{secret_value_key: secret_value}
-                )
+                create_args = {
+                    "Name": dest_name,
+                    "Tags": all_tags,
+                    secret_value_key: secret_value
+                }
+                if kms_key_arn:
+                    create_args["KmsKeyId"] = kms_key_arn
+                # Si no hay KmsKeyId, AWS managed
+                sm_dest.create_secret(**create_args)
             else:
                 sm_dest.put_secret_value(
                     SecretId=dest_name,

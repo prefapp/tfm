@@ -40,10 +40,27 @@ variable "destinations_json" {
   }
 }
 
+
+variable "add_region_prefix_to_name" {
+  description = <<-EOT
+If true, the destination secret name will be prefixed with the region (e.g., "us-east-1-mysecret").
+If false, the original name is used. Default: false.
+This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones.
+EOT
+  type        = bool
+  default     = false
+}
+
+# Nota sobre KMS:
+# Para cifrar el secreto en destino con una clave KMS específica, añade el campo opcional "kms_key_arn" en cada región dentro de destinations_json.
+# Si no se indica, se usará el cifrado gestionado por AWS (AWS managed key).
+
 variable "allowed_assume_roles" {
   description = "List of IAM roles the Lambda can assume for cross-account replication"
   type        = list(string)
 }
+
+
 
 variable "environment_variables" {
   description = "Additional environment variables passed to the Lambda"

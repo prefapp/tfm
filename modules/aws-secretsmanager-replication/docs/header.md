@@ -17,6 +17,31 @@ The module is designed for secure and automated secret replication, supporting f
 
 ## Secret Replication Logic
 
+## KMS Key Selection
+
+You can optionally specify a custom KMS key for each destination region in the `destinations_json` variable using the `kms_key_arn` field:
+
+```json
+{
+  "DEST_ACCOUNT_ID": {
+    "role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
+    "regions": {
+      "eu-west-1": {
+        "kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/abcd-1234-efgh-5678"
+      },
+      "us-east-1": {
+        // If omitted, AWS managed key will be used
+      }
+    }
+  }
+}
+```
+
+- If `kms_key_arn` is set for a region, the replicated secret will be encrypted with that KMS key.
+- If `kms_key_arn` is omitted for a region, the secret will be encrypted using the default AWS managed key for Secrets Manager in that region.
+
+This allows you to mix and match custom and managed keys as needed for your security requirements.
+
 This module deploys a Lambda function that listens for changes in AWS Secrets Manager via EventBridge (if enabled). When a secret is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both secret value and tags (if enabled).
 
 The Lambda determines:
@@ -29,9 +54,10 @@ The **destination secret name is always the same as the source secret name**, si
 
 ### Destination Configuration Format
 
-The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure.
- **Each region now only requires the key `kms_key_arn`.**
- The module no longer uses `source_secret_arn`, `destination_secret_name`, or `destination_secret_arn`.
+
+The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure:
+
+- For each region, you can optionally specify the `kms_key_arn` field. If omitted, the secret will be encrypted using the default AWS managed key for Secrets Manager in that region.
 
 ```json
 {
@@ -43,7 +69,8 @@ The destinations are configured via the `destinations_json` variable, which must
       },
       "eu-west-1": {
         "kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
-      }
+      },
+      "eu-north-1": {}
     }
   }
 }
