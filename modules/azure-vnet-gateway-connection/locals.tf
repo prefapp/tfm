@@ -6,9 +6,9 @@ locals {
     s.name => (
       coalesce(s.tags_from_rg, false)
       ? merge(
-          coalesce(try(data.azurerm_resource_group.this[s.name].tags, null), {}),
-          coalesce(s.tags, {})
-        )
+        coalesce(try(data.azurerm_resource_group.this[s.name].tags, null), {}),
+        coalesce(s.tags, {})
+      )
       : coalesce(s.tags, {})
     )
   }
