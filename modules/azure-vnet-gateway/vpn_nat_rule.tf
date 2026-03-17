@@ -1,13 +1,6 @@
 ## VPN NAT RULE SECTION
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_nat_rule
-
-locals {
-  nat_rule_ip_configuration_id = try(each.value.ip_configuration_id, null) != null ?
-    each.value.ip_configuration_id :
-    try(data.azurerm_virtual_network_gateway.this.ip_configuration[0].id, null)
-}
-
 resource "azurerm_virtual_network_gateway_nat_rule" "this" {
   for_each                   = { for rule in var.nat_rules : rule.name => rule }
   name                       = each.value.name
