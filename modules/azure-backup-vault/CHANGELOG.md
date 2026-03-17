@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.10...azure-backup-vault-v0.2.0) (2026-03-17)
+
+
+### Features
+
+* Update README.md ([438096b](https://github.com/prefapp/tfm/commit/438096b068f25a7b7974ca95b4409abefe03da67))
+
 ## [0.1.10](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.9...azure-backup-vault-v0.1.10) (2026-03-12)
 
 
