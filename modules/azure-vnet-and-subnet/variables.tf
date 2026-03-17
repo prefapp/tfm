@@ -27,8 +27,9 @@ variable "private_dns_zones" {
     link_name                 = optional(string)
     auto_registration_enabled = optional(bool, false)
     virtual_network_links     = optional(list(object({
-      name                = string
-      virtual_network_id = string
+      name                 = string
+      virtual_network_id   = string
+      virtual_network_name = optional(string)
     })))
   }))
   default = []
