@@ -51,14 +51,7 @@ module "githuib-oidc" {
 | `virtual_network.subnets.delegation.service_delegation` | Service delegation details | object | n/a | yes |
 | `virtual_network.subnets.delegation.service_delegation.name` | The name of the service delegation | string | n/a | yes |
 | `virtual_network.subnets.delegation.service_delegation.actions` | List of actions for the service delegation | list(string) | n/a | yes |
-| `private_dns_zones` | List of private DNS zones to create. Each zone can optionally define `virtual_network_links` (list of objects) to link the DNS zone to multiple VNets. If omitted, a default link to the main VNet is created. | list(object) | `[]` | no |
-| `private_dns_zones.name` | The name of the private DNS zone | string | n/a | yes |
-| `private_dns_zones.link_name` | The name of the private DNS zone VNET link (for default/main VNet link) | string | n/a | no |
-| `private_dns_zones.auto_registration_enabled` | Whether auto registration is enabled | bool | `false` | no |
-| `private_dns_zones.virtual_network_links` | List of additional VNet links for the DNS zone. Each object must have `name` y `virtual_network_id`. El campo `virtual_network_name` es opcional y, si no se especifica, será igual a `name`. | list(object) | n/a | no |
-| `private_dns_zones.virtual_network_links.name` | The name of the VNet link | string | n/a | yes |
-| `private_dns_zones.virtual_network_links.virtual_network_name` | The name of the virtual network (optional, defaults to `name`) | string | n/a | no |
-| `private_dns_zones.virtual_network_links.virtual_network_id` | The ID of the virtual network | string | n/a | yes |
+
 | `peerings` | List of virtual network peerings | list(object) | `[]` | no |
 | `peerings.peering_name` | The name of the peering | string | n/a | yes |
 | `peerings.allow_forwarded_traffic` | Whether forwarded traffic is allowed | bool | `false` | no |
