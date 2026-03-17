@@ -47,5 +47,7 @@
     "modules/aws-amq-rabbit": "0.3.0",
     "modules/dummy": "0.1.0",
     "modules/aws-waf": "0.2.0",
-    "modules/aws-secretsmanager-replication": "0.1.4"
+    "modules/aws-secretsmanager-replication": "0.1.4",
+    "modules/azure-private-dns": "1.0.0",
+    "modules/azure-private-dns-zone": "0.1.0"
 }
