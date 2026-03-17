@@ -153,6 +153,12 @@
         },
         "modules/gh-org-webhook": {
             "package-name": "gh-org-webhook"
+        },
+        "modules/azure-private-dns-zone": {
+            "package-name": "azure-private-dns-zone"
+        },
+        "modules/azure-dns-zone": {
+            "package-name": "azure-dns-zone"
         }
     }
 }
