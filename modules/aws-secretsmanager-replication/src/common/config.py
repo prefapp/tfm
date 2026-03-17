@@ -21,6 +21,7 @@ class Config:
     source_region: str
     enable_tag_replication: bool
     source_account: str
+    add_region_prefix_to_name: bool
 
 
 def load_config() -> Config:
