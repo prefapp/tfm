@@ -150,6 +150,12 @@
         },
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
+        },
+        "modules/azure-private-dns-zone": {
+            "package-name": "azure-private-dns-zone"
+        },
+        "modules/azure-dns-zone": {
+            "package-name": "azure-dns-zone"
         }
     }
 }
