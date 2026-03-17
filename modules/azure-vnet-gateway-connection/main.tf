@@ -57,6 +57,14 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
       sa_datasize      = ipsec_policy.value.sa_datasize
     }
   }
+  # NOTE: Changes to `shared_key` are intentionally ignored to avoid
+  #       unintended reconfiguration of existing VPN connections.
+  #       This means Terraform will NOT apply shared key rotations or
+  #       updates even if the input value or the backing Key Vault
+  #       secret changes. Operators who require Terraform-managed
+  #       key rotation should remove this `ignore_changes` setting
+  #       (e.g. in a forked module) and plan for the impact of
+  #       updating VPN connection shared keys.
   lifecycle {
     ignore_changes = [shared_key]
   }
