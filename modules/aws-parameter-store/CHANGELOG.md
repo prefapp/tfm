@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/prefapp/tfm/compare/aws-parameter-store-v0.4.1...aws-parameter-store-v0.5.0) (2026-03-17)
+
+
+### Features
+
+* Update README.md ([438096b](https://github.com/prefapp/tfm/commit/438096b068f25a7b7974ca95b4409abefe03da67))
+
 ## [0.4.1](https://github.com/prefapp/tfm/compare/aws-parameter-store-v0.4.0...aws-parameter-store-v0.4.1) (2025-04-24)
 
 
