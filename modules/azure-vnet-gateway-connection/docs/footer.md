@@ -9,7 +9,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 ## Remote resources
 
 - **Azure Virtual Network Gateway Connection**: [azurerm_virtual_network_gateway_connection documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_connection)
-- **Azure Key Vault Secret**: [azurerm_key_vault_secret documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret)
+- **Azure Key Vault Secret**: [azurerm_key_vault_secret documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)
 - **Terraform Azure Provider**: [Terraform Provider documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
 
 ## Support
