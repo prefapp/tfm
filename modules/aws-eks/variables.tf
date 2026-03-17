@@ -136,7 +136,7 @@ variable "vpc_id" {
 }
 
 variable "fargate_profiles" {
-  description = "Define dynamically the different fargate profiles"
+  description = "Define dynamically the different fargate profiles (compatibility list, old format)"
   type = list(object({
     name = string
     selectors = list(object({
@@ -145,7 +145,6 @@ variable "fargate_profiles" {
     }))
     tags = map(string)
   }))
-
   default = []
 }
 
