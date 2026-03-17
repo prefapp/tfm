@@ -18,14 +18,4 @@ vpn:
     - IkeV2
     - OpenVPN
   vpn_client_aad_tenant: https://login.microsoftonline.com/<tenant_id>
-nat_rules:
-  - name: egress-nat
-    mode: EgressSnat
-    type: Static
-    external_mapping:
-      - address_space: 203.0.113.0/24
-        port_range: 1-65535
-    internal_mapping:
-      - address_space: 10.0.0.0/24
-        port_range: 1-65535
 tags_from_rg: true

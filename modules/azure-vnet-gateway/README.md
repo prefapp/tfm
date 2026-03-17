@@ -136,30 +136,9 @@ No modules.
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples):
 
-- [basic\_route\_based](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples/basic\_route\_based) - Basic RouteBased gateway example.
+- [basic\_route\_based\_and\_nat\_rules](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples/basic\_route\_based\_and\_nat\_rules) - Basic RouteBased gateway example.
 - [active\_active\_bgp](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples/active\_active\_bgp) - Active-Active gateway with BGP enabled.
 - [vpn\_client\_aad](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway/_examples/vpn\_client\_aad) - Gateway with VPN Client and Azure AD authentication.
-- NAT rule example:
-
-```hcl
-nat_rules = [
-  {
-    name = "egress-nat"
-    mode = "EgressSnat"
-    type = "Static"
-    external_mapping = [
-      {
-        address_space = "203.0.113.0/24"
-      }
-    ]
-    internal_mapping = [
-      {
-        address_space = "10.0.0.0/24"
-      }
-    ]
-  }
-]
-```
 
 ## Remote resources
 
