@@ -50,5 +50,6 @@
     "modules/aws-secretsmanager-replication": "0.1.4",
     "modules/azure-private-dns": "1.0.0",
     "modules/azure-private-dns-zone": "0.1.0",
-    "modules/azure-dns-zone": "0.2.0"
+    "modules/azure-dns-zone": "0.2.0",
+    "modules/azure-vnet-gateway": "0.1.0"
 }
