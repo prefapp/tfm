@@ -154,6 +154,9 @@
         "modules/azure-vnet-gateway": {
             "package-name": "azure-vnet-gateway"
         },
+        "modules/azure-vnet-gateway-connection": {
+            "package-name": "azure-vnet-gateway-connection"
+        },
         "modules/azure-private-dns-zone": {
             "package-name": "azure-private-dns-zone"
         },
