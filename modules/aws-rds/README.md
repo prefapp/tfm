@@ -118,7 +118,7 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rds"></a> [rds](#module\_rds) | terraform-aws-modules/rds/aws | n/a |
+| <a name="module_rds"></a> [rds](#module\_rds) | terraform-aws-modules/rds/aws | 6.13.1 |
 
 ## Resources
 
@@ -193,6 +193,7 @@ No requirements.
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs for the RDS subnet group. If not set, subnet\_tag\_name will be used. | `list(string)` | `null` | no |
 | <a name="input_subnet_tag_key"></a> [subnet\_tag\_key](#input\_subnet\_tag\_key) | Tag key used to search the subnets when subnet\_ids is not provided | `string` | `"type"` | no |
 | <a name="input_subnet_tag_name"></a> [subnet\_tag\_name](#input\_subnet\_tag\_name) | Tag name of the subnets to look up | `string` | `""` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
 | <a name="input_use_secrets_manager"></a> [use\_secrets\_manager](#input\_use\_secrets\_manager) | If true, store RDS credentials in AWS Secrets Manager instead of SSM Parameter Store | `bool` | `false` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where the RDS instance will be deployed. If not set, vpc\_tag\_name will be used to look up the VPC. | `string` | `null` | no |
 | <a name="input_vpc_tag_key"></a> [vpc\_tag\_key](#input\_vpc\_tag\_key) | Tag key used to search the VPC when vpc\_id is not provided | `string` | `"Name"` | no |
