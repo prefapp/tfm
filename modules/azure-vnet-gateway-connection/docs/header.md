@@ -37,7 +37,7 @@ module "vnet_gateway_connection" {
     type                               = "IPsec"
     connection_mode                    = "InitiatorOnly"
     connection_protocol                = "IKEv2"
-    enable_bgp                         = false
+    bgp_enabled                        = false
     express_route_gateway_bypass       = false
     dpd_timeout_seconds                = 30
     routing_weight                     = 0
