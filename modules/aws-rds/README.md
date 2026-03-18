@@ -181,6 +181,7 @@ No requirements.
 | <a name="input_max_allocated_storage"></a> [max\_allocated\_storage](#input\_max\_allocated\_storage) | Maximum allocated storage for autoscaling | `number` | `0` | no |
 | <a name="input_multi_az"></a> [multi\_az](#input\_multi\_az) | Whether to deploy in Multi-AZ | `bool` | `false` | no |
 | <a name="input_parameters"></a> [parameters](#input\_parameters) | List of DB parameters to apply (parameter group will be created automatically) | `list(any)` | `[]` | no |
+| <a name="input_password_with_special_characters"></a> [password\_with\_special\_characters](#input\_password\_with\_special\_characters) | Whether to include special characters in the generated password | `bool` | `true` | no |
 | <a name="input_performance_insights_enabled"></a> [performance\_insights\_enabled](#input\_performance\_insights\_enabled) | Whether to enable Performance Insights | `bool` | `true` | no |
 | <a name="input_performance_insights_retention_period"></a> [performance\_insights\_retention\_period](#input\_performance\_insights\_retention\_period) | Retention period for Performance Insights (in days) | `number` | `7` | no |
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Whether the RDS instance should be publicly accessible | `bool` | `false` | no |

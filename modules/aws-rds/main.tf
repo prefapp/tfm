@@ -45,7 +45,7 @@ resource "aws_secretsmanager_secret_version" "rds" {
 
 resource "random_password" "this" {
   length  = 16
-  special = true
+  special = var.password_with_special_characters
   upper   = true
   lower   = true
   numeric = true
