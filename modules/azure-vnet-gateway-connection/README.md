@@ -16,6 +16,17 @@ It is suitable for production, staging, and development environments, and can be
 - **Tag Inheritance and Customization**: Inherit tags from the resource group or specify custom tags for all resources.
 - **Extensible and Modular**: Designed for easy extension and integration with other Azure network modules.
 
+## Shared Key Management and Key Rotation
+
+> **Important:** This module intentionally ignores changes to the `shared_key` attribute after the initial connection is created (via `lifecycle { ignore_changes = [shared_key] }`). This means:
+>
+> - If you rotate the Key Vault secret referenced by `keyvault_secret_name`, Terraform will **not** automatically update the VPN connection's shared key.
+> - If you change the `shared_key` input value directly, Terraform will **not** apply the new value to the existing connection.
+>
+> This behavior is by design to prevent unintended VPN disruptions caused by accidental or automated secret updates. The shared key is only applied when the connection is first created.
+>
+> **To enable Terraform-managed key rotation**, you must fork or override this module and remove the `ignore_changes = [shared_key]` line from the `lifecycle` block in `main.tf`. Be aware that applying a shared key change will reconfigure the active VPN connection and may cause a brief service interruption.
+
 ## Basic Usage
 
 See the main README and the `_examples/` directory for usage examples.
