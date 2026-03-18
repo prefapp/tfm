@@ -338,3 +338,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+variable "password_with_special_characters" {
+  description = "Whether to include special characters in the generated password"
+  type        = bool
+  default     = true
+}
