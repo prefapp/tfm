@@ -70,13 +70,13 @@ module "vnet_gateway_connection" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.64.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.64.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.64.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.64.0 |
 
 ## Modules
 
@@ -86,12 +86,12 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [azurerm_virtual_network_gateway_connection.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/resources/virtual_network_gateway_connection) | resource |
-| [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/data-sources/key_vault) | data source |
-| [azurerm_key_vault_secret.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/data-sources/key_vault_secret) | data source |
-| [azurerm_local_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/data-sources/local_network_gateway) | data source |
-| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/data-sources/resource_group) | data source |
-| [azurerm_virtual_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/data-sources/virtual_network_gateway) | data source |
+| [azurerm_virtual_network_gateway_connection.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_connection) | resource |
+| [azurerm_key_vault.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault) | data source |
+| [azurerm_key_vault_secret.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+| [azurerm_local_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/local_network_gateway) | data source |
+| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_virtual_network_gateway.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network_gateway) | data source |
 
 ## Inputs
 
@@ -109,7 +109,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [s2s\_basic](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/s2s\_basic) - Basic Site-to-Site connection example.
 - [with\_nat\_rules](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/with\_nat\_rules) - Example with ingress/egress NAT rules.
-- [with\_keyvault](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/with\_keyvault\_shared\_key) - Example using Azure Key Vault for shared key management.
+- [with\_keyvault\_shared\_key](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-gateway-connection/_examples/with\_keyvault\_shared\_key) - Example using Azure Key Vault for shared key management.
 
 ## Remote resources
 
