@@ -23,7 +23,10 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
     try(each.value.virtual_network_gateway_id, null) != null ? each.value.virtual_network_gateway_id : data.azurerm_virtual_network_gateway.this[each.key].id
   )
   local_network_gateway_id = (
-    try(each.value.local_network_gateway_id, null) != null ? each.value.local_network_gateway_id : data.azurerm_local_network_gateway.this[each.key].id
+    each.value.type == "IPsec" ?
+    (
+      try(each.value.local_network_gateway_id, null) != null ? each.value.local_network_gateway_id : data.azurerm_local_network_gateway.this[each.key].id
+    ) : null
   )
   shared_key = (
     try(each.value.shared_key, null) != null ? each.value.shared_key : (
