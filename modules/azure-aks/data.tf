@@ -8,6 +8,7 @@ data "azurerm_subnet" "aks_subnet" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip
 data "azurerm_public_ip" "aks_public_ip" {
+  count               = var.net_profile_outbound_type == "loadBalancer" && var.public_ip_name != null ? 1 : 0
   name                = var.public_ip_name
   resource_group_name = var.resource_group_name
 }
@@ -15,4 +16,8 @@ data "azurerm_public_ip" "aks_public_ip" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config
+data "azurerm_client_config" "current" {
 }
