@@ -15,7 +15,7 @@ data "azurerm_resource_group" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network_gateway
 data "azurerm_virtual_network_gateway" "this" {
-  for_each            = { for s in var.connection : s.name => s }
+  for_each            = { for s in var.connection : s.name => s if try(s.virtual_network_gateway_id, null) == null }
   name                = each.value.gateway_name
   resource_group_name = each.value.resource_group_name
 }
