@@ -1,6 +1,6 @@
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples/with_yaml_file):
 
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples) - Example showing group creation, members and PIM configuration.
 
