@@ -30,7 +30,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
       try(data.azurerm_key_vault_secret.this[each.key].value, null) != null ? data.azurerm_key_vault_secret.this[each.key].value : null
     )
   )
-  bgp_enabled                        = try(each.value.bgp_enabled, null)
+  bgp_enabled = try(each.value.bgp_enabled, null)
   dynamic "custom_bgp_addresses" {
     for_each = try(each.value.custom_bgp_addresses != null, false) ? [each.value.custom_bgp_addresses] : []
     content {
