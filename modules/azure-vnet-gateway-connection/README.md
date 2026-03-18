@@ -12,9 +12,11 @@ It is suitable for production, staging, and development environments, and can be
 - **S2S, VNet-to-VNet, and ExpressRoute Support**: Create connections between Azure VNets, on-premises networks, or ExpressRoute circuits.
 - **Custom IPsec/IKE Policies**: Fine-grained control over encryption, integrity, and key exchange settings.
 - **NAT Rule Integration**: Attach ingress and egress NAT rules to connections.
-- **Key Vault Integration**: Securely manage shared keys using Azure Key Vault.
+- **Key Vault Integration**: Securely manage shared keys using Azure Key Vault (see security note below regarding Terraform state).
 - **Tag Inheritance and Customization**: Inherit tags from the resource group or specify custom tags for all resources.
 - **Extensible and Modular**: Designed for easy extension and integration with other Azure network modules.
+
+> **Security note:** When using Key Vault integration, the resolved VPN shared key is still stored in Terraform state as `shared_key` (even if marked sensitive). Ensure your Terraform state backend is encrypted and access-controlled, or use an alternative workflow if the pre-shared key must never be written to state.
 
 ## Basic Usage
 
