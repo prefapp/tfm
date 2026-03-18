@@ -2,7 +2,7 @@
 
 locals {
   # Handle tags based on whether to use resource group tags or module-defined tags for each connection (key = s.name)
-  tags = { for idx, s in var.connection :
+  tags = { for s in var.connection :
     s.name => (
       coalesce(s.tags_from_rg, false)
       ? merge(
