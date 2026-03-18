@@ -187,7 +187,7 @@ No modules.
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples) - Example showing group creation, members and PIM configuration.
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples/with\_yaml\_file) - Example showing group creation, members and PIM configuration.
 
 ## Resources
 - [Terraform AzureAD Provider: group](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group)
