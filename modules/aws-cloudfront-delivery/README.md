@@ -3,7 +3,7 @@
 
 ## Overview
 
-This module provisions an **AWS CloudFront distribution** to deliver content from an **S3 bucket** created by the same module with the `-delivery` suffix.  
+This module provisions an **AWS CloudFront distribution** to deliver content from an **S3 bucket** created by the same module with the `-delivery` suffix.
 The S3 bucket is generated using the official **terraform-aws-modules/s3-bucket/aws** module.
 
 An **ACM certificate** can also be requested and validated via **domain validation**, allowing the CloudFront distribution to serve content over HTTPS with a custom domain.
@@ -27,6 +27,21 @@ This module provides a simple and standardized way to deploy a secure CDN backed
 - **ACM Certificate Management**: Optionally requests and validates an ACM certificate using domain validation for secure TLS communication.
 
 - **Route53 DNS Integration**: Creates the required Route53 hosted zone records to expose the CloudFront distribution via a custom domain.
+
+## Origin Access Control (OAC) Naming
+
+The name of the CloudFront Origin Access Control (OAC) must be unique within your AWS account. By default, this module generates the OAC name using the `name_prefix` variable and the suffix `-s3-oac`, truncated to 64 characters (the AWS limit). You can override this by providing your own value for the `oac_name` variable. If you set `oac_name`, it must be between 1 and 64 characters. This ensures compatibility with AWS requirements and avoids name collisions when deploying multiple instances of the module.
+
+Example:
+
+```hcl
+module "cloudfront" {
+  # ...other options...
+  # By default: OAC name will be "<name_prefix>-s3-oac" (truncated to 64 chars)
+  # Optionally, set your own unique OAC name:
+  oac_name = "my-unique-oac-name"
+}
+```
 
 ## Basic Usage
 
@@ -63,12 +78,14 @@ module "cloudfront" {
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.10 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
 
 ## Modules
 
@@ -87,6 +104,7 @@ module "cloudfront" {
 | [aws_iam_role_policy.gh_delivery_gh_policy_attach](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_route53_record.cdn_aliases](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_s3_bucket_policy.bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
+| [random_id.oac_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.gh_delivery_gh_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.s3_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -106,6 +124,7 @@ module "cloudfront" {
 | <a name="input_http_version"></a> [http\_version](#input\_http\_version) | The HTTP version to use for requests to your distribution. | `string` | `"http2and3"` | no |
 | <a name="input_is_ipv6_enabled"></a> [is\_ipv6\_enabled](#input\_is\_ipv6\_enabled) | Whether the CloudFront distribution is enabled for IPv6. | `bool` | `true` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | A prefix to use for naming resources. | `string` | `"cdn-bucket"` | no |
+| <a name="input_oac_name"></a> [oac\_name](#input\_oac\_name) | (Optional) Name for the CloudFront Origin Access Control. If not set, will default to '<name\_prefix>-s3-oac-<random>' (truncated to 64 chars) to ensure uniqueness across deployments. Must be unique per AWS account. | `string` | `null` | no |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for the CloudFront distribution. | `string` | `null` | no |
 | <a name="input_retain_on_delete"></a> [retain\_on\_delete](#input\_retain\_on\_delete) | Whether to retain the CloudFront distribution when the module is destroyed. | `bool` | `false` | no |
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | The name of the Route 53 hosted zone to use in resources that require it. | `string` | `null` | no |

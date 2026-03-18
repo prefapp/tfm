@@ -1,0 +1,17 @@
+users:
+  - name: "userA"
+    email: "test@test.test"
+    fullname: "userA"
+groups:
+  - name: "groupA"
+    users:
+      - userA
+permission-sets:
+  - name: "permission-set-basic"
+    managed-policies:
+      - "arn:aws:iam::aws:policy/ReadOnlyAccess"
+attachments:
+  "123456789012":
+    permission-set-basic:
+      groups:
+        - groupA
