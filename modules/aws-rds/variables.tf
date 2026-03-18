@@ -76,7 +76,7 @@ variable "db_name" {
 variable "db_username" {
   description = "Username for the database"
   type        = string
-  default     = "admin"
+  default     = "adminuser"
 }
 
 variable "db_name_ssm_name" {
@@ -332,4 +332,9 @@ variable "master_user_password_rotation_schedule_expression" {
     condition     = var.master_user_password_rotation_automatically_after_days == null || var.master_user_password_rotation_schedule_expression == null
     error_message = "Only one of 'master_user_password_rotation_automatically_after_days' or 'master_user_password_rotation_schedule_expression' should be set."
   }
+}
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
 }
