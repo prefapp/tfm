@@ -333,3 +333,8 @@ variable "master_user_password_rotation_schedule_expression" {
     error_message = "Only one of 'master_user_password_rotation_automatically_after_days' or 'master_user_password_rotation_schedule_expression' should be set."
   }
 }
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
