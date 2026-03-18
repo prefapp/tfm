@@ -9,7 +9,7 @@ data "azurerm_local_network_gateway" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/azurerm_resource_group
 data "azurerm_resource_group" "this" {
-  for_each = { for s in var.connection : s.name => s }
+  for_each = { for s in var.connection : s.name => s if try(s.tags_from_rg, false) }
   name     = each.value.resource_group_name
 }
 
