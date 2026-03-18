@@ -9,7 +9,7 @@ variable "connection" {
     local_gateway_name                 = optional(string)
     local_gateway_resource_group_name  = optional(string)
     type                               = string
-    gateway_name                       = string
+    gateway_name                       = optional(string)
     shared_key                         = optional(string)
     keyvault_secret_name               = optional(string)
     keyvault_vault_name                = optional(string)
@@ -51,6 +51,21 @@ variable "connection" {
       remote_address_cidrs = list(string)
     })))
   }))
+  validation {
+    condition = alltrue([
+      for c in var.connection :
+      (
+        (
+          c.virtual_network_gateway_id != null && c.virtual_network_gateway_id != ""
+        )
+        ||
+        (
+          c.gateway_name != null && c.gateway_name != "" && c.resource_group_name != ""
+        )
+      )
+    ])
+    error_message = "Each connection must specify either 'virtual_network_gateway_id' or both 'gateway_name' and 'resource_group_name'."
+  }
   default = []
 }
 
