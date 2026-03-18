@@ -2,10 +2,6 @@
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway_connection
 resource "azurerm_virtual_network_gateway_connection" "this" {
-  custom_bgp_addresses {
-    primary   = try(each.value.custom_bgp_addresses.primary, null)
-    secondary = try(each.value.custom_bgp_addresses.secondary, null)
-  }
   private_link_fast_path_enabled = try(each.value.private_link_fast_path_enabled, null)
   dynamic "traffic_selector_policy" {
     for_each = coalesce(each.value.traffic_selector_policy, [])
@@ -35,6 +31,13 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
     )
   )
   bgp_enabled                        = try(each.value.bgp_enabled, null)
+  dynamic "custom_bgp_addresses" {
+    for_each = try(each.value.custom_bgp_addresses != null, false) ? [each.value.custom_bgp_addresses] : []
+    content {
+      primary   = custom_bgp_addresses.value.primary
+      secondary = custom_bgp_addresses.value.secondary
+    }
+  }
   connection_protocol                = try(each.value.connection_protocol, null)
   routing_weight                     = try(each.value.routing_weight, null)
   authorization_key                  = try(each.value.authorization_key, null)
