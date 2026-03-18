@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.0...azure-aks-v3.0.0) (2026-03-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **azure-aks:** upgrade dependency to last major and add support for outbound type in aks values ([#961](https://github.com/prefapp/tfm/issues/961))
+
+### Features
+
+* **azure-aks:** upgrade dependency to last major and add support for outbound type in aks values ([#961](https://github.com/prefapp/tfm/issues/961)) ([ca01d09](https://github.com/prefapp/tfm/commit/ca01d0934f69ff9b8e14a0bbe2b73cc2517eab57))
+
 ## [2.0.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.3...azure-aks-v2.0.0) (2026-03-17)
 
 
