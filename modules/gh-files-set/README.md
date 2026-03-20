@@ -47,21 +47,21 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [github_repository_file.files](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [github_repository_file.managed](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [github_repository_file.user_managed](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_config"></a> [config](#input\_config) | Configuration for multiple GitHub repository files to be created/updated | <pre>object({<br/>    files = list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      repository        = string<br/>      overwriteOnCreate = optional(bool, true)<br/>      lifecycle         = optional(any, {})   # placeholder for future extensions<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_config"></a> [config](#input\_config) | GitHub files configuration — userManaged files are provisioned once and survive destroy | <pre>object({<br/>    files = list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      repository        = string<br/>      overwriteOnCreate = optional(bool, true)<br/>      userManaged       = optional(bool, false)<br/>    }))<br/><br/>    repository = string<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_commit_messages"></a> [commit\_messages](#output\_commit\_messages) | Commit messages that were used |
-| <a name="output_committed_files"></a> [committed\_files](#output\_committed\_files) | List of files that were successfully managed |
-| <a name="output_file_paths"></a> [file\_paths](#output\_file\_paths) | Flat list of managed file paths (repo/path) |
+| <a name="output_user_managed_files"></a> [user\_managed\_files](#output\_user\_managed\_files) | Files marked as userManaged (will survive destroy) |
 
 ### 5. `docs/footer.md`
 
