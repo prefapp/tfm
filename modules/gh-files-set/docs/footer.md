@@ -1,7 +1,3 @@
-
-### 5. `docs/footer.md`
-
-```markdown
 ## Examples
 
 See [_examples/basic](https://github.com/prefapp/tfm/tree/main/modules/gh-files-set/_examples/basic)
