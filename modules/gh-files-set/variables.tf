@@ -10,11 +10,18 @@ variable "config" {
       overwriteOnCreate = optional(bool, true)
       userManaged       = optional(bool, false)
     }))
+
+    repository = string
   })
 
   validation {
     condition     = length(var.config.files) > 0
     error_message = "At least one file must be defined in config.files"
+  }
+
+  validation {
+    condition = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", var.config.repository))
+    error_message = "config.repository must be in 'owner/repo' format."
   }
 
   validation {

@@ -1,3 +1,10 @@
+# ─────────────────────────────────────────────────────────────
+# Fetch repository info (validates existence + gives canonical name)
+# ─────────────────────────────────────────────────────────────
+data "github_repository" "this" {
+  full_name = var.config.repository
+}
+
 # Normal files — Terraform fully enforces content
 resource "github_repository_file" "managed" {
   for_each = {
@@ -5,7 +12,7 @@ resource "github_repository_file" "managed" {
     if !f.userManaged
   }
 
-  repository          = each.value.repository
+  repository          = data.github_repository.this.name
   branch              = each.value.branch
   file                = each.value.file
   content             = each.value.content
@@ -20,7 +27,7 @@ resource "github_repository_file" "user_managed" {
     if f.userManaged
   }
 
-  repository          = each.value.repository
+  repository          = data.github_repository.this.name
   branch              = each.value.branch
   file                = each.value.file
   content             = each.value.content
