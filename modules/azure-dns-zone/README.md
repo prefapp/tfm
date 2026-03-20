@@ -41,6 +41,18 @@ module "dns_zone" {
     environment = "production"
     owner       = "network-team"
   }
+  tags_from_rg = false
+}
+```
+
+### Using Resource Group Tags
+
+```hcl
+module "dns_zone" {
+  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
+  dns_zone_name       = "example.com"
+  resource_group_name = "my-rg"
+  tags_from_rg        = true
 }
 ```
 
@@ -76,6 +88,7 @@ module "dns_zone" {
 | `dns_zone_name` | The name of the DNS zone to create. | `string` | n/a | yes |
 | `resource_group_name` | The name of the resource group in which to create the DNS zone. | `string` | n/a | yes |
 | `tags` | A mapping of tags to assign to the DNS zone. | `map(string)` | `{}` | no |
+| `tags_from_rg` | Use the tags from the resource group. If true, the tags set in the tags variable will be ignored and the resource group tags will be used. | `bool` | `true` | no |
 
 ## Outputs
 

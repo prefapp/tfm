@@ -13,3 +13,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "tags_from_rg" {
+  description = "Use the tags from the resource group"
+  type        = bool
+  default     = true
+}
