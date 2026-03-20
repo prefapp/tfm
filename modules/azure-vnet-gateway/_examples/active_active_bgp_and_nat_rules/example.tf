@@ -1,0 +1,67 @@
+module "vnet_gateway" {
+  source = "../../"
+  vpn = {
+    vnet_name                             = "example-vnet"
+    gateway_subnet_name                   = "GatewaySubnet"
+    location                              = "westeurope"
+    resource_group_name                   = "example-rg"
+    gateway_name                          = "example-vpn-gw"
+    ip_configurations = [
+      {
+        name                   = "gw-ipconfig1"
+        public_ip_name         = "example-vpn-public-ip-1"
+        private_ip_address_allocation = "Dynamic"
+      },
+      {
+        name                   = "gw-ipconfig2"
+        public_ip_name         = "example-vpn-public-ip-2"
+        private_ip_address_allocation = "Dynamic"
+      }
+    ]
+    type                                  = "Vpn"
+    vpn_type                              = "RouteBased"
+    active_active                         = true
+    bgp_enabled                           = true
+    # To enable BGP, use the bgp_enabled variable from the main module and set it to true, and then provide the bgp_settings as shown below.
+    bgp_settings = {
+      asn = 65515
+      peer_weight = 0
+      peering_addresses = [
+        {
+          ip_configuration_name = "gw-ipconfig1"
+          apipa_addresses = ["169.254.21.2"]
+        },
+        {
+          ip_configuration_name = "gw-ipconfig2"
+          apipa_addresses = ["169.254.21.3"]
+        }
+      ]
+    }
+    sku                                   = "VpnGw2"
+    bgp_route_translation_for_nat_enabled = true
+  }
+  nat_rules = [
+    {
+      name = "egress-nat"
+      mode = "EgressSnat"
+      type = "Static"
+      external_mapping = [
+        {
+          address_space = "203.0.113.0/24"
+          port_range    = "1-65535"
+        }
+      ]
+      internal_mapping = [
+        {
+          address_space = "10.0.0.0/24"
+          port_range    = "1-65535"
+        }
+      ]
+    }
+  ]
+  tags = {
+    environment = "dev"
+    application = "example-app"
+  }
+  tags_from_rg = true
+}

@@ -153,6 +153,15 @@
         },
         "modules/gh-files-set": {
             "package-name": "gh-files-set"
+        },
+        "modules/azure-vnet-gateway": {
+            "package-name": "azure-vnet-gateway"
+        },
+        "modules/azure-private-dns-zone": {
+            "package-name": "azure-private-dns-zone"
+        },
+        "modules/azure-dns-zone": {
+            "package-name": "azure-dns-zone"
         }
     }
 }
