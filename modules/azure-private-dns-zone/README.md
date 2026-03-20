@@ -56,40 +56,6 @@ module "private_dns_zone" {
 }
 ```
 
-### With Custom Tags
-
-```hcl
-module "private_dns_zone" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-private-dns-zone"
-  dns_zone_name       = "privatelink.example.com"
-  resource_group_name = "my-rg"
-  vnet_ids            = {
-    vnet1 = "<vnet1_id>"
-    vnet2 = "<vnet2_id>"
-  }
-  tags = {
-    environment = "production"
-    owner       = "network-team"
-  }
-  tags_from_rg = false
-}
-```
-
-### Using Resource Group Tags
-
-```hcl
-module "private_dns_zone" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-private-dns-zone"
-  dns_zone_name       = "privatelink.example.com"
-  resource_group_name = "my-rg"
-  vnet_ids            = {
-    vnet1 = "<vnet1_id>"
-    vnet2 = "<vnet2_id>"
-  }
-  tags_from_rg        = true
-}
-```
-
 ## Examples
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-private-dns-zone/_examples):
