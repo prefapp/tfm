@@ -1,4 +1,3 @@
-
 <!-- BEGIN_TF_DOCS -->
 # Azure Private DNS Zone Terraform Module
 
