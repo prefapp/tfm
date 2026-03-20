@@ -24,3 +24,15 @@ variable "registration_enabled" {
   type        = bool
   default     = false
 }
+
+variable "tags" {
+  description = "Tags to apply to the Private DNS zone."
+  type        = map(string)
+  default     = {}
+}
+
+variable "tags_from_rg" {
+  description = "Use the tags from the resource group"
+  type        = bool
+  default     = true
+}
