@@ -17,5 +17,5 @@ variable "tags" {
 variable "tags_from_rg" {
   description = "Use the tags from the resource group"
   type        = bool
-  default     = true
+  default     = false
 }
