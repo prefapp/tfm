@@ -10,7 +10,7 @@ terraform {
 module "example_team" {
   source = "../../"   # points to the module root
 
-  config = jsondecode(file("${path.module}/team-config.json"))
+  config = jsondecode(file("${path.module}/config.json"))
 }
 
 output "team_id" {
