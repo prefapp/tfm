@@ -35,7 +35,7 @@ variable "config" {
       for f in var.config.files :
       length(trimspace(f.branch)) > 0 &&
       length(trimspace(f.commitMessage)) > 0 &&
-      length(trimspace(f.file)) > 0 
+      length(trimspace(f.file)) > 0
     ])
     error_message = "Every file must have non-empty branch, commitMessage, and file path."
   }
