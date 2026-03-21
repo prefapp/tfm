@@ -28,17 +28,14 @@ variable "config" {
       content           = string
       file              = string
       overwriteOnCreate = optional(bool, true)
-      repository        = string
     })), [])
 
     variables = optional(list(object({
       variableName = string
-      repository   = string
       value        = string
     })), [])
 
     oidc_subject_claim_customization_template = optional(object({
-      repository       = string
       useDefault       = optional(bool, true)
       includeClaimKeys = optional(list(string), [])
     }), null)
