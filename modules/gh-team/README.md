@@ -4,7 +4,7 @@
 ## Overview
 
 This module provisions a single GitHub Team and automatically manages its members using a single strongly-typed `config` object.  
-It supports nested teams (`parentTeamId`), privacy settings (`closed`/`secret`), and full membership roles while keeping the external interface minimal and JSON-friendly.
+It supports nested teams (`parentTeamId`), privacy settings (`closed`/`secret`), and manages all members with the standard `member` role while keeping the external interface minimal and JSON-friendly.
 
 The module is designed for Prefapp’s Internal Developer Platform and automated team provisioning pipelines. It accepts input directly from external programs (Python, Node.js, Go, etc.) via JSON, ensuring full Terraform validation and type safety.
 
@@ -23,7 +23,7 @@ The module is designed for Prefapp’s Internal Developer Platform and automated
 
 ```hcl
 module "my_team" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-team"
+  source = "git::https://github.com/prefapp/tfm.git//modules/gh-team"
 
   config = jsondecode(file("${path.root}/team-config.json"))
 }
@@ -33,6 +33,7 @@ module "my_team" {
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 
 ## Providers

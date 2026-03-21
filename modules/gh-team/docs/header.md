@@ -22,7 +22,7 @@ The module is designed for Prefapp’s Internal Developer Platform and automated
 
 ```hcl
 module "my_team" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-team"
+  source = "git::https://github.com/prefapp/tfm.git//modules/gh-team"
 
   config = jsondecode(file("${path.root}/team-config.json"))
 }
