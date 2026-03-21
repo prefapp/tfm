@@ -20,7 +20,6 @@ variable "config" {
     default_branch = object({
       branch     = string
       rename     = optional(bool, false)
-      repository = string
     })
 
     files = optional(list(object({
@@ -45,13 +44,11 @@ variable "config" {
     }), null)
 
     teams = optional(list(object({
-      repository = string
       teamId     = number      # Use numeric team ID to remain stable if team slugs change
       permission = string
     })), [])
 
     collaborators = optional(list(object({
-      repository = string
       username   = string
       permission = string
     })), [])
