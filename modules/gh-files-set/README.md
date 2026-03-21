@@ -3,15 +3,15 @@
 
 ## Overview
 
-This module creates or updates one or more files in GitHub repositories using the `github_repository_file` resource.  
+This module creates or updates one or more files in a single GitHub repository using the `github_repository_file` resource.  
 It is designed to be used in automated repository bootstrapping / golden-path workflows.
 
-It accepts a list of files in a single `config` object — ideal for YAML/JSON input from external tools.
+It accepts a list of files targeting one repository in a single `config` object — ideal for YAML/JSON input from external tools.
 
 ## Key Features
 
-- Multiple files in one module call
-- Per-file branch, commit message, overwrite control
+- Multiple files in one repository per module call
+- Per-file branch, commit message, overwrite control within that repository
 - Native GitHub provider integration
 - Input validation on required fields
 - Clean outputs for downstream usage
@@ -31,6 +31,7 @@ module "files" {
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 
 ## Providers
@@ -55,7 +56,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_config"></a> [config](#input\_config) | GitHub files configuration — userManaged files are provisioned once and survive destroy | <pre>object({<br/>    files = list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      repository        = string<br/>      overwriteOnCreate = optional(bool, true)<br/>      userManaged       = optional(bool, false)<br/>    }))<br/><br/>    repository = string<br/>  })</pre> | n/a | yes |
+| <a name="input_config"></a> [config](#input\_config) | GitHub files configuration — userManaged files are provisioned once and survive destroy | <pre>object({<br/>    files = list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>      userManaged       = optional(bool, false)<br/>    }))<br/><br/>    repository = string<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
@@ -63,20 +64,16 @@ No modules.
 |------|-------------|
 | <a name="output_user_managed_files"></a> [user\_managed\_files](#output\_user\_managed\_files) | Files marked as userManaged (will survive destroy) |
 
-### 5. `docs/footer.md`
-
-```markdown
 ## Examples
 
-See [_examples/basic](https://github.com/prefapp/tfm/tree/main/modules/gh-files-set/_examples/basic)
+See [\_examples/basic](https://github.com/prefapp/tfm/tree/main/modules/gh-files-set/_examples/basic)
 
 ## Resources
 
-- **github_repository_file**  
+- **github\_repository\_file**  
   https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file
 
 ## Support
 
 Open issues in https://github.com/prefapp/tfm/issues
-```
 <!-- END_TF_DOCS -->
