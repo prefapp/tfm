@@ -35,6 +35,6 @@ resource "github_repository_file" "user_managed" {
   overwrite_on_create = each.value.overwriteOnCreate
 
   lifecycle {
-    ignore_changes = [content]
+    ignore_changes = [content, commit_message]
   }
 }
