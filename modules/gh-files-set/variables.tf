@@ -37,6 +37,6 @@ variable "config" {
       length(trimspace(f.commitMessage)) > 0 &&
       length(trimspace(f.file)) > 0 
     ])
-    error_message = "Every file must have non-empty branch, commitMessage, file path, and repository."
+    error_message = "Every file must have non-empty branch, commitMessage, and file path."
   }
 }
