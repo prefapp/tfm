@@ -160,5 +160,8 @@
         "modules/azure-dns-zone": {
             "package-name": "azure-dns-zone"
         }
+        "modules/gh-membership": {
+            "package-name": "gh-membership"
+        }
     }
 }
