@@ -46,7 +46,7 @@ variable "config" {
 
     teams = optional(list(object({
       repository = string
-      teamId     = number      # ← CHANGED: teamId (number) instead of team_slug
+      teamId     = number      # Use numeric team ID to remain stable if team slugs change
       permission = string
     })), [])
 
