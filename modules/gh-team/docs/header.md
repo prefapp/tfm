@@ -26,3 +26,4 @@ module "my_team" {
 
   config = jsondecode(file("${path.root}/team-config.json"))
 }
+```
