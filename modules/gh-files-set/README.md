@@ -15,6 +15,13 @@ It accepts a list of files targeting one repository in a single `config` object 
 - Native GitHub provider integration
 - Input validation on required fields
 - Clean outputs for downstream usage
+- User-managed files are provisioned once and **preserved on `terraform destroy`** — the Terraform state entry is removed but the actual file in GitHub is left untouched
+
+## User-Managed Files
+
+Files with `userManaged: true` are created via the GitHub API and **never deleted by Terraform**. When `terraform destroy` runs, the state entry is removed but the file in GitHub is preserved.
+
+> **Note**: User-managed file provisioning requires the `GITHUB_TOKEN` environment variable to be set (the same token used to configure the GitHub provider).
 
 ## Basic Usage
 
@@ -39,6 +46,7 @@ module "files" {
 | Name | Version |
 |------|---------|
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
+| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | built-in |
 
 ## Modules
 
@@ -49,7 +57,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [github_repository_file.managed](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
-| [github_repository_file.user_managed](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [terraform_data.user_managed](https://developer.hashicorp.com/terraform/language/resources/terraform-data) | resource |
 | [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
 
 ## Inputs
@@ -72,6 +80,9 @@ See [\_examples/basic](https://github.com/prefapp/tfm/tree/main/modules/gh-files
 
 - **github\_repository\_file**  
   https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file
+
+- **terraform\_data**  
+  https://developer.hashicorp.com/terraform/language/resources/terraform-data
 
 ## Support
 

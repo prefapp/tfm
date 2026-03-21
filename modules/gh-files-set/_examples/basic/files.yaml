@@ -2,11 +2,18 @@ config:
   repository: org/my-repo
   files:
     - branch: main
-      commitMessage: "feat: hello-world-ee87ccfc-5d0a-4ad0-b9ee-4c142f40e00b main"
+      commitMessage: "feat: add hello.md"
       content: |
         # Hello World!
 
         From my-org/
       file: hello.md
       overwriteOnCreate: true
-      lifecycle: {}     # optional / placeholder
+
+    - branch: main
+      commitMessage: "feat: add user-managed codeowners"
+      content: |
+        * @my-org/platform-team
+      file: CODEOWNERS
+      userManaged: true
+      overwriteOnCreate: false
