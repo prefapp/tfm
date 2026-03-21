@@ -151,6 +151,9 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         },
+        "modules/gh-files-set": {
+            "package-name": "gh-files-set"
+        },
         "modules/azure-vnet-gateway": {
             "package-name": "azure-vnet-gateway"
         },
