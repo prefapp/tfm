@@ -25,3 +25,4 @@ module "repository" {
 
   config = var.config   # Terraform automatically loads terraform.tfvars.json
 }
+```
