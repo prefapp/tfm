@@ -24,6 +24,13 @@ variable "config" {
   }
 
   validation {
+    condition = length(var.config.files) == length(distinct([
+      for f in var.config.files : "${f.file}/${f.branch}"
+    ]))
+    error_message = "Duplicate file+branch combinations detected in config.files. Each combination of 'file' and 'branch' must be unique."
+  }
+
+  validation {
     condition = alltrue([
       for f in var.config.files :
       length(trimspace(f.branch)) > 0 &&
