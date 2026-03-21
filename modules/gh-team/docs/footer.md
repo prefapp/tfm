@@ -1,4 +1,3 @@
-
 ## Examples
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-team/_examples):
