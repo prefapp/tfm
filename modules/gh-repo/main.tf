@@ -26,7 +26,7 @@ resource "github_branch_default" "this" {
 resource "github_repository_file" "this" {
   for_each = { for f in var.config.files : f.file => f }
 
-  repository          = each.value.repository
+  repository          = github_repository.this.name
   branch              = each.value.branch
   file                = each.value.file
   content             = each.value.content
@@ -38,7 +38,7 @@ resource "github_repository_file" "this" {
 resource "github_actions_variable" "this" {
   for_each = { for v in var.config.variables : v.variableName => v }
 
-  repository    = each.value.repository
+  repository    = github_repository.this.name
   variable_name = each.value.variableName
   value         = each.value.value
 }
@@ -47,7 +47,7 @@ resource "github_actions_variable" "this" {
 resource "github_actions_repository_oidc_subject_claim_customization_template" "this" {
   count = var.config.oidc_subject_claim_customization_template != null ? 1 : 0
 
-  repository  = var.config.oidc_subject_claim_customization_template.repository
+  repository    = github_repository.this.name
   use_default = var.config.oidc_subject_claim_customization_template.useDefault
 
   include_claim_keys = (
@@ -58,18 +58,18 @@ resource "github_actions_repository_oidc_subject_claim_customization_template" "
 
 # Add teams to repository using teamId
 resource "github_team_repository" "this" {
-  for_each = { for t in var.config.teams : "${t.repository}-${t.teamId}" => t }
+    for_each = { for t in var.config.teams : "${t.repository}-${t.teamId}" => t }
 
-  repository = each.value.repository
-  team_id    = each.value.teamId      # ← CHANGED: now uses teamId
-  permission = each.value.permission
+    repository    = github_repository.this.name
+        team_id    = each.value.teamId      # ← CHANGED: now uses teamId
+        permission = each.value.permission
 }
 
 # Add outside collaborators
 resource "github_repository_collaborator" "this" {
-  for_each = { for c in var.config.collaborators : "${c.repository}-${c.username}" => c }
+    for_each = { for c in var.config.collaborators : "${c.repository}-${c.username}" => c }
 
-  repository = each.value.repository
-  username   = each.value.username
-  permission = each.value.permission
+    repository    = github_repository.this.name
+        username   = each.value.username
+        permission = each.value.permission
 }
