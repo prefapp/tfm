@@ -62,7 +62,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_user_managed_files"></a> [user\_managed\_files](#output\_user\_managed\_files) | Files marked as userManaged (will survive destroy) |
+| <a name="output_user_managed_files"></a> [user\_managed\_files](#output\_user\_managed\_files) | Files marked as userManaged in the config (intended to be managed outside this module) |
 
 ## Examples
 
