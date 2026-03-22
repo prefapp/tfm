@@ -39,8 +39,8 @@ For more details, see the [Terraform AKS module documentation](https://registry.
 > The following values are not configurable:
 > - `log_analytics_workspace_enabled`: `false`
 > - `rbac_aad_azure_rbac_enabled`: `true`
-> - `rbac_aad_managed`: `true`
 > - `role_based_access_control_enabled`: `true`
+> - With the upstream AKS module version `11.1.0`, Azure AD / RBAC integration is configured via the `rbac_aad_tenant_id` input. This wrapper module configures `rbac_aad_managed = true` along with Azure RBAC by default.
 
 It is designed to be flexible, production-ready, and easy to integrate into existing infrastructures.
 
@@ -93,13 +93,14 @@ module "azure_aks" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aks"></a> [aks](#module\_aks) | github.com/Azure/terraform-azurerm-aks | 9.1.0 |
+| <a name="module_aks"></a> [aks](#module\_aks) | github.com/Azure/terraform-azurerm-aks | 11.1.0 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [azurerm_role_assignment.role_assignment_network_contributor_over_public_ip_aks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 | [azurerm_public_ip.aks_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/public_ip) | data source |
 | [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
 | [azurerm_subnet.aks_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
@@ -145,10 +146,11 @@ module "azure_aks" {
 | <a name="input_key_vault_secrets_provider_enabled"></a> [key\_vault\_secrets\_provider\_enabled](#input\_key\_vault\_secrets\_provider\_enabled) | Boolean value to activate the csi-secrets-store-driver | `any` | n/a | yes |
 | <a name="input_load_balancer_profile_enabled"></a> [load\_balancer\_profile\_enabled](#input\_load\_balancer\_profile\_enabled) | Value to enable or not the load balancer profile | `bool` | `true` | no |
 | <a name="input_load_balancer_sku"></a> [load\_balancer\_sku](#input\_load\_balancer\_sku) | Load balancer sku (basic or standard) | `string` | `"standard"` | no |
-| <a name="input_location"></a> [location](#input\_location) | The Azure location where all resources in this example should be created | `any` | n/a | yes |
+| <a name="input_location"></a> [location](#input\_location) | The Azure location where all resources should be created | `any` | n/a | yes |
+| <a name="input_net_profile_outbound_type"></a> [net\_profile\_outbound\_type](#input\_net\_profile\_outbound\_type) | The outbound (egress) routing method which should be used for this Kubernetes Cluster | `string` | `"loadBalancer"` | no |
 | <a name="input_node_os_channel_upgrade"></a> [node\_os\_channel\_upgrade](#input\_node\_os\_channel\_upgrade) | The automatic node channel upgrade setting for the AKS cluster | `string` | `"None"` | no |
 | <a name="input_oidc_issuer_enabled"></a> [oidc\_issuer\_enabled](#input\_oidc\_issuer\_enabled) | Whether to enable OIDC Issuer for the AKS cluster | `any` | n/a | yes |
-| <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | The name of the public IP address to use for the AKS cluster | `any` | n/a | yes |
+| <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | The name of an existing public IP address in the same resource group as resource\_group\_name to use for the AKS load balancer outbound profile. This variable is only used when net\_profile\_outbound\_type is set to 'loadBalancer'; for other values it is ignored. If null, AKS manages outbound IPs automatically. | `string` | `null` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the resources | `any` | n/a | yes |
 | <a name="input_secret_rotation_enabled"></a> [secret\_rotation\_enabled](#input\_secret\_rotation\_enabled) | Boolean value to activate the secrets rotation csi-secrets-store-driver | `any` | n/a | yes |
 | <a name="input_secret_rotation_interval"></a> [secret\_rotation\_interval](#input\_secret\_rotation\_interval) | String value to activate the secrets rotation interval csi-secrets-store-driver | `any` | n/a | yes |
@@ -169,12 +171,13 @@ module "azure_aks" {
 | <a name="output_cluster_fqdn"></a> [cluster\_fqdn](#output\_cluster\_fqdn) | The FQDN of the AKS cluster. Example: `xxxx-predev-xxxxxxxx.hcp.westeurope.azmk8s.io` |
 | <a name="output_cluster_identity"></a> [cluster\_identity](#output\_cluster\_identity) | The cluster identity of the AKS cluster. See README for structure. |
 | <a name="output_cluster_issuer"></a> [cluster\_issuer](#output\_cluster\_issuer) | The OIDC issuer URL of the AKS cluster. |
-| <a name="output_kubelet_identity_client_id"></a> [kubelet\_identity\_client\_id](#output\_kubelet\_identity\_client\_id) | The kubelet identity of the AKS cluster. See README for structure. |
-| <a name="output_kubelet_identity_object_id"></a> [kubelet\_identity\_object\_id](#output\_kubelet\_identity\_object\_id) | The network profile of the AKS cluster. See README for structure. |
-| <a name="output_network_profile"></a> [network\_profile](#output\_network\_profile) | The node resource group of the AKS cluster. |
-| <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | The OIDC issuer URL of the AKS cluster. |
-| <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | The outbound IP address of the AKS cluster. |
-| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | The outbound IP address of the AKS cluster. |
+| <a name="output_kubelet_identity_client_id"></a> [kubelet\_identity\_client\_id](#output\_kubelet\_identity\_client\_id) | The kubelet identity client ID of the AKS cluster. |
+| <a name="output_kubelet_identity_object_id"></a> [kubelet\_identity\_object\_id](#output\_kubelet\_identity\_object\_id) | The kubelet identity object ID of the AKS cluster. |
+| <a name="output_network_profile"></a> [network\_profile](#output\_network\_profile) | The network profile of the AKS cluster. See README for structure. |
+| <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | The node resource group of the AKS cluster. |
+| <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. |
+| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | The outbound public IP address of the AKS cluster when an existing outbound public IP is configured and the outbound type is `loadBalancer`; otherwise `null`. |
+| <a name="output_outbound_public_ip_id"></a> [outbound\_public\_ip\_id](#output\_outbound\_public\_ip\_id) | The resource ID of the outbound public IP of the AKS cluster when an existing outbound public IP is configured and the outbound type is `loadBalancer`; otherwise `null`. |
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The subnet ID of the AKS cluster. |
 | <a name="output_vnet"></a> [vnet](#output\_vnet) | The virtual network name of the AKS cluster. |
 

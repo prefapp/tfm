@@ -2,9 +2,9 @@ variable "config" {
   description = "GitHub membership configuration (organization role + team relationships)"
   type = object({
     relationships = optional(list(object({
-      username = string
-      teamId   = string   # team slug (e.g. "jvazquez-prefapp-all")
-      role     = optional(string, "member")  # member | maintainer
+      username  = string
+      team_slug = string   # team slug (e.g. "jvazquez-prefapp-all")
+      role      = optional(string, "member")  # member | maintainer
     })), [])
 
     user = optional(object({

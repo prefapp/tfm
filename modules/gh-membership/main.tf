@@ -12,7 +12,7 @@ resource "github_team_membership" "relationships" {
     for r in var.config.relationships : "${r.username}-${r.teamId}" => r
   }
 
-  team_id  = each.value.teamId   # accepts slug directly
+  team_id  = each.value.teamId   # numeric team ID (not slug)
   username = each.value.username
   role     = each.value.role
 }
