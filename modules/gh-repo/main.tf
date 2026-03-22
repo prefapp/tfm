@@ -35,6 +35,7 @@ resource "github_repository_file" "this" {
   content             = each.value.content
   commit_message      = each.value.commitMessage
   overwrite_on_create = each.value.overwriteOnCreate
+  depends_on          = [github_branch_default.this]
 }
 
 # GitHub Repository Variables
