@@ -70,7 +70,7 @@ resource "github_team_repository" "this" {
 
 # Add outside collaborators
 resource "github_repository_collaborator" "this" {
-    for_each = { for c in var.config.collaborators : "${c.repository}-${c.username}" => c }
+    for_each = { for c in var.config.collaborators : "${c.permission}-${c.username}" => c }
 
     repository    = github_repository.this.name
         username   = each.value.username
