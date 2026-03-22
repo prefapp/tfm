@@ -117,7 +117,7 @@ No modules.
 
 ## Examples
 
-Basic usage examples are provided in the [Overview](#overview) and [Basic Usage](#basic-usage) sections above.
+-Basic usage examples are provided in the [Overview](#overview) and [Basic Usage](#basic-usage) sections above.
 
 ## Support
 

@@ -1,6 +1,6 @@
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-repo/_examples):
+-Basic usage examples are provided in the [Overview](#overview) and [Basic Usage](#basic-usage) sections above.
 
 ## Support
 
