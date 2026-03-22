@@ -159,6 +159,9 @@
         },
         "modules/azure-dns-zone": {
             "package-name": "azure-dns-zone"
+        },
+        "modules/gh-repo": {
+            "package-name": "gh-repo"
         }
     }
 }
