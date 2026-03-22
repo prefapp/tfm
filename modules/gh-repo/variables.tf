@@ -68,9 +68,9 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for f in var.config.files : length(trimspace(f.file)) > 0 && length(trimspace(f.commitMessage)) > 0
+      for f in var.config.files : length(trimspace(f.branch)) > 0 && length(trimspace(f.file)) > 0 && length(trimspace(f.commitMessage)) > 0
     ])
-    error_message = "Every file must have a non-empty 'file' path and 'commitMessage'."
+    error_message = "Every file must have a non-empty 'branch', 'file' path and 'commitMessage'."
   }
 
   validation {
