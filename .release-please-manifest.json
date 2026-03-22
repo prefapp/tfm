@@ -34,7 +34,7 @@
     "modules/azure-role-assignment": "0.2.0",
     "modules/azure-application": "1.0.0",
     "modules/aws-terraform-backend": "1.0.0",
-    "modules/aws-rds": "0.1.2",
+    "modules/aws-rds": "0.1.4",
     "modules/aws-s3": "0.1.0",
     "modules/aws-kms": "0.2.0",
     "modules/aws-kms-multiple": "0.1.0",
@@ -50,5 +50,6 @@
     "modules/aws-secretsmanager-replication": "0.1.4",
     "modules/azure-private-dns": "1.0.0",
     "modules/azure-private-dns-zone": "0.1.0",
-    "modules/azure-dns-zone": "0.2.0"
+    "modules/azure-dns-zone": "0.2.0",
+    "modules/azure-vnet-gateway": "0.1.0"
 }
