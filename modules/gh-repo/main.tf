@@ -50,13 +50,13 @@ resource "github_actions_variable" "this" {
 resource "github_actions_repository_oidc_subject_claim_customization_template" "this" {
   count = var.config.oidc_subject_claim_customization_template != null ? 1 : 0
 
-  repository    = github_repository.this.name
-  use_default = var.config.oidc_subject_claim_customization_template.useDefault
+  repository  = github_repository.this.name
+  use_default = try(var.config.oidc_subject_claim_customization_template.useDefault, true)
 
   include_claim_keys = (
-    var.config.oidc_subject_claim_customization_template.useDefault == false &&
-    length(coalesce(var.config.oidc_subject_claim_customization_template.includeClaimKeys, [])) > 0
-  ) ? var.config.oidc_subject_claim_customization_template.includeClaimKeys : null
+    try(var.config.oidc_subject_claim_customization_template.useDefault, true) == false &&
+    length(coalesce(try(var.config.oidc_subject_claim_customization_template.includeClaimKeys, []), [])) > 0
+  ) ? try(var.config.oidc_subject_claim_customization_template.includeClaimKeys, null) : null
 }
 
 # Add teams to repository using teamId
