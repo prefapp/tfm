@@ -10,7 +10,7 @@ It is designed for Prefapp’s Internal Developer Platform and automated reposit
 
 - **Single complex object**: All repository and default-branch settings live in one `config` variable.
 - **Full GitHub repository settings**: Merge strategies, visibility, topics, auto-init, archive on destroy, etc.
-- **Default branch management**: Automatic creation/renaming of the default branch.
+- **Default branch management**: Set or rename the default branch. Requires `autoInit = true` (so the initial branch exists) or a pre-existing branch in the repository.
 - **JSON-native**: Perfect for programmatic generation from external systems.
 - **Full validation**: Enforces required fields and valid values at plan time.
 - **Clean outputs**: Every important value exposed as a separate output.
