@@ -24,7 +24,10 @@ resource "github_branch_default" "this" {
 
 # Commit files
 resource "github_repository_file" "this" {
-  for_each = { for f in var.config.files : f.file => f }
+  for_each = {
+    for entry in var.config.files :
+    "${entry.file}__${entry.branch}" => entry
+  }
 
   repository          = github_repository.this.name
   branch              = each.value.branch
