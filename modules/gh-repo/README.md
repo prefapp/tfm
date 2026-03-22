@@ -28,6 +28,42 @@ module "repository" {
 }
 ```
 
+### With teams, collaborators, and OIDC (inline configuration)
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo"
+
+  config = {
+    repository = {
+      name        = "my-repo"
+      description = "My repository"
+      visibility  = "private"
+      topics      = ["terraform", "iac"]
+      autoInit    = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    teams = [
+      { teamId = 123456, permission = "push" },
+      { teamId = 789012, permission = "maintain" },
+    ]
+
+    collaborators = [
+      { username = "octocat", permission = "push" },
+    ]
+
+    oidc_subject_claim_customization_template = {
+      useDefault       = false
+      includeClaimKeys = ["repo", "ref", "job_workflow_ref"]
+    }
+  }
+}
+```
+
 ## Requirements
 
 | Name | Version |
