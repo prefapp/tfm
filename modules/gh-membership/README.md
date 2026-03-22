@@ -85,8 +85,6 @@ No modules.
 | <a name="output_team_memberships"></a> [team\_memberships](#output\_team\_memberships) | Team memberships created |
 | <a name="output_user"></a> [user](#output\_user) | User details |
 
-### 3. `docs/footer.md`
-```markdown
 ## Examples
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-membership/_examples):
@@ -95,12 +93,11 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Resources
 
-- **github_membership**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/membership)
-- **github_team_membership**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_membership)
+- **github\_membership**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/membership)
+- **github\_team\_membership**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_membership)
 - **GitHub Terraform Provider**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs)
 
 ## Support
 
 For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
-```
 <!-- END_TF_DOCS -->
