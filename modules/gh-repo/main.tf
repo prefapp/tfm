@@ -61,10 +61,10 @@ resource "github_actions_repository_oidc_subject_claim_customization_template" "
 
 # Add teams to repository using teamId
 resource "github_team_repository" "this" {
-    for_each = { for t in var.config.teams : "${t.repository}-${t.teamId}" => t }
+    for_each = { for t in var.config.teams : "${t.permission}-${t.teamId}" => t }
 
     repository    = github_repository.this.name
-        team_id    = each.value.teamId      # ← CHANGED: now uses teamId
+        team_id    = each.value.teamId      
         permission = each.value.permission
 }
 
