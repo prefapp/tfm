@@ -9,10 +9,10 @@ resource "github_team" "this" {
 # Add team memberships
 resource "github_team_membership" "members" {
   for_each = {
-    for m in var.config.group_members : m.username => m
+    for m in var.config.group_members : trimspace(m.username) => m
   }
 
   team_id  = github_team.this.id
-  username = each.value.username
-  role     = "member"
+  username = trimspace(each.value.username)
+  role     = "member"  
 }

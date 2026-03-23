@@ -31,4 +31,12 @@ variable "config" {
     ])
     error_message = "Every member in group_members must have a non-empty username."
   }
+
+  validation {
+   condition = (
+           length(var.config.group_members) ==
+           length(distinct([for m in var.config.group_members : trimspace(m.username)]))
+           )
+   error_message = "group_members contains duplicate usernames (whitespace is trimmed). Usernames must be unique."
+  }
 }
