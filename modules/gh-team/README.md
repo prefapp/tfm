@@ -6,12 +6,12 @@
 This module provisions a single GitHub Team and automatically manages its members using a single strongly-typed `config` object.  
 It supports nested teams (`parentTeamId`), privacy settings (`closed`/`secret`), and manages all members with the standard `member` role while keeping the external interface minimal and JSON-friendly.
 
-The module is designed for Prefapp’s Internal Developer Platform and automated team provisioning pipelines. It accepts input directly from external programs (Python, Node.js, Go, etc.) via JSON, ensuring full Terraform validation and type safety.
+The module is designed for Prefapp’s Internal Developer Platform and automated team provisioning pipelines. It accepts input directly from external programs (Python, Node.js, Go, etc.) via JSON, leveraging Terraform's built-in validation and type safety.
 
 ## Key Features
 
 - **Single complex object**: All configuration lives in one `config` variable — perfect for programmatic generation.
-- **Full validation**: Enforces name, privacy, username format, and required fields at plan time.
+- **Config validation**: Enforces team name, privacy setting, and required fields at plan time.
 - **Nested team support**: Automatic `parent_team_id` handling.
 - **JSON-native**: Feed `jsondecode(file("team-config.json"))` directly.
 - **Clean outputs**: Every value is exposed as a separate output for easy consumption in larger pipelines.
@@ -73,9 +73,9 @@ No modules.
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-team/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-team/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-team/_examples/basic) - Minimal team creation with JSON input
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-team/_examples/basic) - Minimal team creation with JSON input
 
 ## Resources
 
