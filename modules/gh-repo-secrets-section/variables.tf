@@ -16,7 +16,7 @@ variable "config" {
   })
 
   validation {
-    condition = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", var.config.repository))
+    condition = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", trimspace(var.config.repository)))
     error_message = "config.repository must be in 'owner/repo' format."
   }
 
