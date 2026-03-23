@@ -25,5 +25,28 @@ variable "config" {
     error_message = "config.repository must be in the format 'owner/repo' (e.g. 'acme/my-app')."
   }
 
-  nullable = false
+  validation {
+    condition = alltrue([
+      for name in concat(
+        keys(var.config.actions),
+        keys(var.config.codespaces),
+        keys(var.config.dependabot),
+      ) : can(regex("^[A-Z0-9_]+$", name))
+    ])
+    error_message = "All secret names must use GitHub's allowed pattern: only uppercase letters, digits, and underscores."
+  }
+
+  validation {
+    condition = alltrue([
+      for value in concat(
+        values(var.config.actions),
+        values(var.config.codespaces),
+        values(var.config.dependabot),
+      ) : trim(value) != "" && can(base64decode(value))
+    ])
+    error_message = "All encrypted secret values must be non-empty and valid base64-encoded strings."
+  }
+
+  nullable  = false
+  sensitive = true
 }
