@@ -36,7 +36,6 @@ module "repo_secrets" {
 Manages GitHub secrets for **one repository only**.
 
 ```hcl
-<<<<<<< HEAD
 module "repo_secrets" {
   source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo-secrets-section"
 
