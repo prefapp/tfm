@@ -48,5 +48,4 @@ variable "config" {
   }
 
   nullable  = false
-  sensitive = true
 }
