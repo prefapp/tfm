@@ -42,7 +42,7 @@ variable "config" {
         values(var.config.actions),
         values(var.config.codespaces),
         values(var.config.dependabot),
-      ) : trim(value) != "" )
+      ) : trim(value) != "" 
     ])
     error_message = "All encrypted secret values must be non-empty."
   }
