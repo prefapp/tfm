@@ -25,5 +25,8 @@ variable "config" {
     error_message = "config.repository must be in the format 'owner/repo' (e.g. 'acme/my-app')."
   }
 
+   
+
   nullable = false
+  sensitive = true
 }
