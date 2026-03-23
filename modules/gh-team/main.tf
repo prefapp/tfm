@@ -14,5 +14,5 @@ resource "github_team_membership" "members" {
 
   team_id  = github_team.this.id
   username = trimspace(each.value.username)
-  role     = "member"  
+  role     = "member"
 }
