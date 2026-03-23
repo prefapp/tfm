@@ -27,7 +27,7 @@ output "team_privacy" {
 
 output "team_members" {
   description = "List of usernames added to the team"
-  value       = keys(github_team_membership.members)
+  value       = sort(keys(github_team_membership.members))
 }
 
 output "team_parent_id" {
