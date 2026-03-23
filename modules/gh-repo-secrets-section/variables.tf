@@ -31,9 +31,9 @@ variable "config" {
         keys(var.config.actions),
         keys(var.config.codespaces),
         keys(var.config.dependabot),
-      ) : can(regex("^[A-Z0-9_]+$", name))
+      ) : can(regex("^[A-Za-z0-9_]+$", name))
     ])
-    error_message = "All secret names must use GitHub's allowed pattern: only uppercase letters, digits, and underscores."
+    error_message = "All secret names must contain only letters, digits, and underscores."
   }
 
   validation {
