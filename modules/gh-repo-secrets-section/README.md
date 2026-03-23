@@ -26,30 +26,30 @@ This approach is the most secure for automated pipelines (Prefapp IDP, GitHub Ac
 
 ```hcl
 module "repo_secrets" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repository-secrets"
+  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo-secrets-section"
 
   config = var.config   # Terraform automatically loads terraform.tfvars.json
 }
+```
 
 ### Inline example
 
 Manages GitHub secrets for **one repository only**.
 
 ```hcl
-module "secrets" {
-  source = "github.com/prefapp/tfm//modules/gh-repo-secrets-section"
+module "repo_secrets" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo-secrets-section"
 
   config = {
     repository = "prefapp/tfm"
 
     actions = {
-      "MY\_API\_KEY" = "r+RFBGIn8U7z2Opm5RN7PXKdgFzefXiV91IpG3O2DrClZl9dkTJBfhRZbi2uV2nu..."
+      "MY_API_KEY" = "r+RFBGIn8U7z2Opm5RN7PXKdgFzefXiV91IpG3O2DrClZl9dkTJBfhRZbi2uV2nu..."
     }
     codespaces = {}
     dependabot = {}
   }
 }
-```
 ```
 
 ## Requirements
@@ -94,24 +94,20 @@ No modules.
 | <a name="output_dependabot_secret_names"></a> [dependabot\_secret\_names](#output\_dependabot\_secret\_names) | List of created Dependabot secret names |
 | <a name="output_repository"></a> [repository](#output\_repository) | The repository these secrets belong to |
 
-### 3. `docs/footer.md`
-```markdown
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-repository-secrets/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-repository-secrets/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
 
 ## Resources
 
-- **github_actions_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret)
-- **github_codespaces_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/codespaces_secret)
-- **github_dependabot_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/dependabot_secret)
+- **github\_actions\_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret)
+- **github\_codespaces\_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/codespaces_secret)
+- **github\_dependabot\_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/dependabot_secret)
 - **GitHub Terraform Provider**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs)
 
 ## Support
 
 For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
-
-```
 <!-- END_TF_DOCS -->
