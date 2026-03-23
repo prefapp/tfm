@@ -20,5 +20,10 @@ variable "config" {
     error_message = "config.repository must be in 'owner/repo' format."
   }
 
+  validation {
+    condition     = length(split("/", trimspace(var.config.repository))) == 2
+    error_message = "config.repository must be in the format 'owner/repo' (e.g. 'acme/my-app')."
+  }
+
   nullable = false
 }
