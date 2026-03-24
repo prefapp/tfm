@@ -26,7 +26,7 @@ This approach is the most secure for automated pipelines (Prefapp IDP, GitHub Ac
 
 ```hcl
 module "repo_secrets" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo-secrets-section"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo-secrets-section"
 
   config = var.config   # Terraform automatically loads terraform.tfvars.json
 }
@@ -38,7 +38,7 @@ Manages GitHub secrets for **one repository only**.
 
 ```hcl
 module "repo_secrets" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo-secrets-section"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo-secrets-section"
 
   config = {
     repository = "prefapp/tfm"
@@ -96,9 +96,9 @@ No modules.
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-repo-secrets-section/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-repo-secrets-section/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
 
 ## Resources
 

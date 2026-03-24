@@ -1,8 +1,8 @@
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-repo-secrets-section/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-repo-secrets-section/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-repo-secrets-section/_examples/basic) - Full example with Actions, Codespaces, and Dependabot secrets
 
 ## Resources
 
