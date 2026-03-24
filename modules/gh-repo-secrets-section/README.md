@@ -6,15 +6,15 @@
 This module manages GitHub repository secrets for **Actions**, **Codespaces**, and **Dependabot** using a single strongly-typed `config` object.
 
 **Important**:  
-The `encryptedValue` values passed in the `config` **must already be encrypted** using **libsodium** against the target repository’s public key (GitHub’s recommended method).  
-**Terraform does not perform any encryption**. It simply forwards the pre-encrypted value to the GitHub API.
+The `encrypted_value` values (that is, the **map values** in the `actions`, `codespaces`, and `dependabot` secret maps within `config`) **must already be encrypted** using **libsodium** against the target repository’s public key (GitHub’s recommended method).  
+**Terraform does not perform any encryption**. It simply forwards these pre-encrypted map values to the GitHub API.
 
 This approach is the most secure for automated pipelines (Prefapp IDP, GitHub Actions, etc.).
 
 ## Key Features
 
 - **Single complex object**: All secrets are defined in one `config` variable.
-- **Pre-encrypted values**: `encryptedValue` must be provided already encrypted with libsodium.
+- **Pre-encrypted values**: The `encrypted_value` map values for each secret must be provided already encrypted with libsodium.
 - **Three secret types**: Actions, Codespaces, and Dependabot supported in the same module.
 - **Lifecycle protection**: `ignore_changes` on `encrypted_value` to prevent unnecessary drift.
 - **Repository validation**: Validates `config.repository` format; callers must ensure secret names and values are set and non-empty.
