@@ -1,6 +1,6 @@
 # Global variables
 variable "location" {
-  description = "The Azure location where all resources in this example should be created"
+  description = "The Azure location where all resources should be created"
 }
 
 variable "resource_group_name" {
@@ -21,7 +21,9 @@ variable "tags" {
 
 # Data section public IP variables
 variable "public_ip_name" {
-  description = "The name of the public IP address to use for the AKS cluster"
+  description = "The name of an existing public IP address in the same resource group as resource_group_name to use for the AKS load balancer outbound profile. This variable is only used when net_profile_outbound_type is set to 'loadBalancer'; for other values it is ignored. If null, AKS manages outbound IPs automatically."
+  type        = string
+  default     = null
 }
 
 # Data section subnet variables
@@ -241,6 +243,17 @@ variable "auto_scaler_profile_skip_nodes_with_system_pods" {
   description = "Whether to skip nodes with system pods for the auto scaler profile"
   type        = bool
   default     = false
+}
+
+variable "net_profile_outbound_type" {
+  description = "The outbound (egress) routing method which should be used for this Kubernetes Cluster"
+  type        = string
+  default     = "loadBalancer"
+
+  validation {
+    condition     = contains(["loadBalancer", "userAssignedNATGateway", "userDefinedRouting", "managedNATGateway", "none"], var.net_profile_outbound_type)
+    error_message = "You must use loadBalancer, userAssignedNATGateway, userDefinedRouting, managedNATGateway or none as outbound type value"
+  }
 }
 
 # Extra node pools variables

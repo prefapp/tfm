@@ -45,7 +45,7 @@ resource "aws_secretsmanager_secret_version" "rds" {
 
 resource "random_password" "this" {
   length  = 16
-  special = true
+  special = var.password_with_special_characters
   upper   = true
   lower   = true
   numeric = true
@@ -186,6 +186,7 @@ module "rds" {
   master_user_password_rotation_automatically_after_days = var.master_user_password_rotation_automatically_after_days
   master_user_password_rotation_duration                 = var.master_user_password_rotation_duration
   master_user_password_rotation_schedule_expression      = var.master_user_password_rotation_schedule_expression
+  tags                                                   = var.tags
 
   username = var.db_username
   password = var.manage_master_user_password ? null : random_password.this.result
