@@ -26,7 +26,7 @@ variable "registration_enabled" {
 }
 
 variable "tags" {
-  description = "Tags to apply to the Private DNS zone."
+  description = "Tags to apply to the Private DNS zone and its virtual network links."
   type        = map(string)
   default     = {}
 }
