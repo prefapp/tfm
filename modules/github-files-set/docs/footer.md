@@ -1,6 +1,6 @@
 ## Examples
 
-See [_examples/basic](https://github.com/prefapp/tfm/tree/main/modules/gh-files-set/_examples/basic)
+See [_examples/basic](https://github.com/prefapp/tfm/tree/main/modules/github-files-set/_examples/basic)
 
 ## Resources
 
