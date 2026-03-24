@@ -178,6 +178,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
         "kms:ListGrants",
         "kms:DescribeKey",
       ]
+      resources = ["*"]
     }
   }
 }
