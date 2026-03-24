@@ -23,7 +23,7 @@ The module is designed for Prefapp’s Internal Developer Platform and automated
 
 ```hcl
 module "my_team" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-team"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-team"
 
   config = jsondecode(file("${path.root}/team-config.json"))
 }
@@ -73,9 +73,9 @@ No modules.
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-team/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-team/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-team/_examples/basic) - Minimal team creation with JSON input
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-team/_examples/basic) - Minimal team creation with JSON input
 
 ## Resources
 
