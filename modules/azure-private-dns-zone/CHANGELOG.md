@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/azure-private-dns-zone-v0.1.0...azure-private-dns-zone-v0.2.0) (2026-03-24)
+
+
+### Features
+
+* Add tags on azure-private-dns-zone module ([#1105](https://github.com/prefapp/tfm/issues/1105)) ([bfad84f](https://github.com/prefapp/tfm/commit/bfad84f18f57090b070d150db3246c002730e95e))
+
 ## 0.1.0 (2026-03-17)
 
 
