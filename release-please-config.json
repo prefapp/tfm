@@ -154,8 +154,8 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         },
-        "modules/gh-repo-secrets-section": {
-            "package-name": "gh-repo-secrets-section"
+        "modules/github-repo-secrets-section": {
+            "package-name": "github-repo-secrets-section"
         },
         "modules/azure-vnet-gateway": {
             "package-name": "azure-vnet-gateway"
