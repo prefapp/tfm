@@ -22,7 +22,7 @@ It is designed for Prefapp’s Internal Developer Platform and automated reposit
 
 ```hcl
 module "repository" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
 
   config = var.config   # Terraform automatically loads terraform.tfvars.json
 }
@@ -32,7 +32,7 @@ module "repository" {
 
 ```hcl
 module "repository" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-repo"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
 
   config = {
     repository = {
