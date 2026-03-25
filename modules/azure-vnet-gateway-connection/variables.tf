@@ -66,6 +66,26 @@ variable "connection" {
     ])
     error_message = "Each connection must specify either 'virtual_network_gateway_id' or both 'gateway_name' and 'resource_group_name'."
   }
+  validation {
+    condition = alltrue([
+      for c in var.connection :
+      (
+        c.type != "IPsec"
+        ||
+        (
+          (
+            c.local_network_gateway_id != null && c.local_network_gateway_id != ""
+          )
+          ||
+          (
+            c.local_gateway_name != null && c.local_gateway_name != "" &&
+            c.local_gateway_resource_group_name != null && c.local_gateway_resource_group_name != ""
+          )
+        )
+      )
+    ])
+    error_message = "For IPsec connections, specify either 'local_network_gateway_id' or both 'local_gateway_name' and 'local_gateway_resource_group_name'."
+  }
   default = []
 }
 
