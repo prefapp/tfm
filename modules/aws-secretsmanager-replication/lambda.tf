@@ -19,7 +19,12 @@ module "lambda_automatic_replication" {
   memory_size = var.lambda_memory
   tags        = var.tags
 
-  environment_variables = local.environment
+  environment_variables = merge(
+    local.environment,
+    {
+      ADD_REGION_PREFIX_TO_NAME = tostring(var.add_region_prefix_to_name)
+    }
+  )
 
   attach_cloudwatch_logs_policy = false
 
@@ -109,6 +114,7 @@ module "lambda_manual_replication" {
       DESTINATIONS_JSON      = var.destinations_json
       ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
       ENABLE_FULL_SYNC       = tostring(var.enable_full_sync)
+      ADD_REGION_PREFIX_TO_NAME = tostring(var.add_region_prefix_to_name)
     }
   )
 

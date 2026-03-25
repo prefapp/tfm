@@ -41,6 +41,18 @@ module "dns_zone" {
     environment = "production"
     owner       = "network-team"
   }
+  tags_from_rg = false
+}
+```
+
+### Using Resource Group Tags
+
+```hcl
+module "dns_zone" {
+  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
+  dns_zone_name       = "example.com"
+  resource_group_name = "my-rg"
+  tags_from_rg        = true
 }
 ```
 
@@ -76,6 +88,7 @@ module "dns_zone" {
 | `dns_zone_name` | The name of the DNS zone to create. | `string` | n/a | yes |
 | `resource_group_name` | The name of the resource group in which to create the DNS zone. | `string` | n/a | yes |
 | `tags` | A mapping of tags to assign to the DNS zone. | `map(string)` | `{}` | no |
+| `tags_from_rg` | Use the tags from the resource group. If true, the tags set in the tags variable will be ignored and the resource group tags will be used. | `bool` | `true` | no |
 
 ## Outputs
 
@@ -100,4 +113,24 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 ## Support
 
 For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+## Tag Management
+
+By default, you can provide custom tags using the `tags` variable. If you set `tags_from_rg = true`, the module will merge the tags from the specified resource group with any extra tags you define in `tags`. This allows you to inherit tags from the resource group and add or override with your own.
+
+**Example: Inherit and extend tags**
+
+```hcl
+module "dns_zone" {
+  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
+  dns_zone_name       = "example.com"
+  resource_group_name = "my-rg"
+  tags_from_rg        = true
+  tags = {
+    environment = "dev"
+    owner       = "network-team"
+  }
+}
+```
+
+In this example, the final tags will be the union of the resource group's tags and the `tags` map above. If a key exists in both, the value from `tags` will take precedence.
 <!-- END_TF_DOCS -->
