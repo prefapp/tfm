@@ -20,7 +20,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
   tags                           = local.tags[each.key]
   type                           = each.value.type
   virtual_network_gateway_id = (
-    try(each.value.virtual_network_gateway_id, null) != null ? each.value.virtual_network_gateway_id : data.azurerm_virtual_network_gateway.this[each.key].id
+    try(trimspace(each.value.virtual_network_gateway_id), "") != "" ? each.value.virtual_network_gateway_id : data.azurerm_virtual_network_gateway.this[each.key].id
   )
   local_network_gateway_id = (
     each.value.type == "IPsec" ?
