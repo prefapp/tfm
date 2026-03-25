@@ -93,3 +93,9 @@ variable "enable_cross_account_backup" {
   type        = bool
   default     = false
 }
+
+variable "source_account_id" {
+  description = "Account id that copies backups into this vault"
+  type        = string
+  default     = null
+}
