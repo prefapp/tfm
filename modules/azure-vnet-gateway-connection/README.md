@@ -7,6 +7,8 @@ This module provisions and manages Azure Virtual Network Gateway Connections for
 
 It is suitable for production, staging, and development environments, and can be integrated into larger Terraform projects or used standalone.
 
+**Input notes:** The `gateway_name` input is declared as `optional(string)` in `variables.tf` and is only required when `virtual_network_gateway_id` is **not** set. Conversely, `virtual_network_gateway_id` is only required when `gateway_name` is not provided. Ensure that at least one of these two inputs is specified when using this module.
+
 ## Key Features
 
 - **S2S, VNet-to-VNet, and ExpressRoute Support**: Create connections between Azure VNets, on-premises networks, or ExpressRoute circuits.
