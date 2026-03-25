@@ -23,7 +23,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
     try(trimspace(each.value.virtual_network_gateway_id), "") != "" ? each.value.virtual_network_gateway_id : data.azurerm_virtual_network_gateway.this[each.key].id
   )
   local_network_gateway_id = (
-    each.value.type == "IPsec" ?
+    lower(each.value.type) == "ipsec" ?
     (
       try(each.value.local_network_gateway_id, null) != null ? each.value.local_network_gateway_id : data.azurerm_local_network_gateway.this[each.key].id
     ) : null
