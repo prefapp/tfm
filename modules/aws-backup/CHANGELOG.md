@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/prefapp/tfm/compare/aws-backup-v0.1.2...aws-backup-v0.1.3) (2026-03-25)
+
+
+### Bug Fixes
+
+* **aws-backup:** added sid to policy ([#1125](https://github.com/prefapp/tfm/issues/1125)) ([5ab7e18](https://github.com/prefapp/tfm/commit/5ab7e187ef3a65d04a572783c2d3eaf95be9b3a1))
+
 ## [0.1.2](https://github.com/prefapp/tfm/compare/aws-backup-v0.1.1...aws-backup-v0.1.2) (2026-03-25)
 
 
