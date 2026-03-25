@@ -43,7 +43,7 @@ variable "aws_backup_vault" {
       }))
       backup_selection_arn_resources = optional(list(string))
       lifecycle = optional(object({
-        cold_storage_after = number
+        cold_storage_after = optional(number)
         delete_after       = number
       }))
       advanced_backup_setting = optional(list(object({
