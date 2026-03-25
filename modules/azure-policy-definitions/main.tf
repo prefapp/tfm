@@ -10,5 +10,5 @@ resource "azurerm_policy_definition" "this" {
   management_group_id = each.value.management_group_id
   policy_rule         = each.value.policy_rule
   metadata            = each.value.metadata
-  parameters          = each.value.parameters
+  parameters          = each.value.parameters != null ? jsonencode(each.value.parameters) : null
 }
