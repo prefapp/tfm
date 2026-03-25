@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "source_copy" {
   ]
   statement {
     effect = "Allow"
-
+    sid    = "AllowSourceAccountCopy-${var.source_account_id}"
     principals {
       type        = "AWS"
       identifiers = [var.source_account_id]
