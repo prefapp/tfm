@@ -4,7 +4,7 @@ from config import load_config
 
 def extract_resources(detail):
     """
-    Extracts the resourcers from a CloudTrail event detail.
+    Extracts the resources from a CloudTrail event detail.
     Args:
         detail (dict): CloudTrail event detail.
     Returns:
