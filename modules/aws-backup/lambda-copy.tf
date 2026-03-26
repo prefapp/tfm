@@ -8,7 +8,7 @@ locals {
   destinations_json = {
     for entry in flatten([
       for vault in var.aws_backup_vault : [
-        for plan in try(vault.plan, []) : (
+        for plan in vault.plan != null ? vault.plan : [] : (
           length(try(plan.copy_action, [])) > 0 ?
           [for ca in plan.copy_action : {
             account_id        = regex("arn:aws:backup:[^:]+:([0-9]+):backup-vault:.*", ca.destination_vault_arn)[0]
