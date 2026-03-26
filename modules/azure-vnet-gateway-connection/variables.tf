@@ -86,6 +86,12 @@ variable "connection" {
     ])
     error_message = "For IPsec connections, specify either 'local_network_gateway_id' or both 'local_gateway_name' and 'local_gateway_resource_group_name'."
   }
+  validation {
+    condition = length(var.connection) == length(distinct([
+      for c in var.connection : c.name
+    ]))
+    error_message = "Each connection name must be unique; duplicate connection[*].name values are not allowed."
+  }
   default = []
 }
 
