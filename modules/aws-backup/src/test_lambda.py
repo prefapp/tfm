@@ -1,5 +1,12 @@
 # test_lambda.py
 ## File 4 local tests
+import os
+import sys
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+common_dir = os.path.join(current_dir, "common")
+if common_dir not in sys.path:
+    sys.path.insert(0, common_dir)
 from handler import lambda_handler
 
 if __name__ == "__main__":
