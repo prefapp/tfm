@@ -13,7 +13,7 @@ variable "localnet" {
   }))
 
   validation {
-    condition = length([for ln in var.localnet : ln.local_gateway_name]) == length(distinct([for ln in var.localnet : ln.local_gateway_name]))
+    condition     = length([for ln in var.localnet : ln.local_gateway_name]) == length(distinct([for ln in var.localnet : ln.local_gateway_name]))
     error_message = "Each entry in var.localnet must have a unique local_gateway_name value."
   }
   default = []

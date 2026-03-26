@@ -3,7 +3,7 @@
 
 ## Overview
 
-This module provisions and manages Azure Local Network Gateways for Site-to-Site VPN connections using the [azurerm\_local\_network\_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/local_network_gateway) resource. It is suitable for production, staging, and development environments and can be integrated into larger Terraform projects or used independently.
+This module provisions and manages Azure Local Network Gateways for Site-to-Site VPN connections using the [azurerm\_local\_network\_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/local_network_gateway) resource. It is suitable for production, staging, and development environments, and can be integrated into larger Terraform projects or used independently.
 
 ## Key Features
 
