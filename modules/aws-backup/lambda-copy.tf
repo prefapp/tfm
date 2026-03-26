@@ -88,12 +88,6 @@ module "lambda_automatic_replication" {
           Resource = "*"
         },
         {
-          Sid      = "CreateSecretDynamic"
-          Effect   = "Allow"
-          Action   = ["secretsmanager:CreateSecret"]
-          Resource = "*"
-        },
-        {
           Action   = "iam:PassRole"
           Effect   = "Allow"
           Resource = "${aws_iam_role.this[0].arn}"
