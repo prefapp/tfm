@@ -162,6 +162,7 @@
         },
         "modules/azure-localnet-gateway": {
             "package-name": "azure-localnet-gateway"
+        },
         "modules/azure-private-dns-zone": {
             "package-name": "azure-private-dns-zone"
         },
