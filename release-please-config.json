@@ -4,6 +4,9 @@
     "release-type": "terraform-module",
     "commit-search-depth": 5,
     "packages": {
+        "modules/aws-backup": {
+            "package-name": "aws-backup"
+        },
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
         },
