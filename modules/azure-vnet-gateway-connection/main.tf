@@ -29,7 +29,7 @@ resource "azurerm_virtual_network_gateway_connection" "this" {
     ) : null
   )
   shared_key = (
-    try(each.value.shared_key, null) != null ? each.value.shared_key : (
+    try(trimspace(each.value.shared_key), "") != "" ? each.value.shared_key : (
       try(data.azurerm_key_vault_secret.this[each.key].value, null) != null ? data.azurerm_key_vault_secret.this[each.key].value : null
     )
   )
