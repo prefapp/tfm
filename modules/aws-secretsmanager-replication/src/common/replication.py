@@ -31,15 +31,40 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
     secret_metadata = source_sm.describe_secret(SecretId=secret_id)
     source_tags = secret_metadata.get("Tags", [])
 
+
+    add_region_prefix = getattr(config, "add_region_prefix_to_name", False)
+
     for account_id, dest in config.destinations.items():
         log("info", "Processing destination account", account_id=account_id)
 
         for region_name, region_cfg in dest.regions.items():
-
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
-            # Destination secret name = same as source
-            dest_name = secret_metadata["Name"]
+            # Destination secret name: region-prefixed or original, max 512 chars
+            if add_region_prefix:
+                raw_dest_name = f"{region_name}-{secret_metadata['Name']}"
+            else:
+                raw_dest_name = secret_metadata['Name']
+            dest_name = raw_dest_name[:512]
+
+            # KMS key: usar la de la región si está, si no None (AWS managed)
+            kms_key_arn = getattr(region_cfg, "kms_key_arn", None)
+            # Solo usar si es un ARN válido (no None, no string vacío)
+            if not kms_key_arn or not isinstance(kms_key_arn, str) or not kms_key_arn.strip():
+                kms_key_arn = None
+
+            # Build replication tags
+            replication_tags = [
+                {"Key": "origin-account", "Value": str(config.source_account)},
+                {"Key": "origin-region", "Value": str(region_name)},
+                {"Key": "latest-version", "Value": str(secret_response.get("VersionId", ""))}
+            ]
+            # Merge original tags if enabled, avoiding duplicates
+            if config.enable_tag_replication and source_tags:
+                existing_keys = {t["Key"] for t in replication_tags}
+                all_tags = replication_tags + [t for t in source_tags if t["Key"] not in existing_keys]
+            else:
+                all_tags = replication_tags
 
             if get_sm_client is not None:
                 sm_dest = get_sm_client(dest.role_arn, region_name)
@@ -55,12 +80,15 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
             if not secret_exists:
                 log("info", "Creating secret in destination", account_id=account_id, region=region_name)
 
-                sm_dest.create_secret(
-                    Name=dest_name,
-                    KmsKeyId=region_cfg.kms_key_arn,
-                    Tags=source_tags if config.enable_tag_replication else [],
-                    **{secret_value_key: secret_value}
-                )
+                create_args = {
+                    "Name": dest_name,
+                    "Tags": all_tags,
+                    secret_value_key: secret_value
+                }
+                if kms_key_arn is not None:
+                    create_args["KmsKeyId"] = kms_key_arn
+                # Si no hay KmsKeyId, AWS managed
+                sm_dest.create_secret(**create_args)
             else:
                 sm_dest.put_secret_value(
                     SecretId=dest_name,

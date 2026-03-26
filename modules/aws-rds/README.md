@@ -118,7 +118,7 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rds"></a> [rds](#module\_rds) | terraform-aws-modules/rds/aws | n/a |
+| <a name="module_rds"></a> [rds](#module\_rds) | terraform-aws-modules/rds/aws | 6.13.1 |
 
 ## Resources
 
@@ -181,6 +181,7 @@ No requirements.
 | <a name="input_max_allocated_storage"></a> [max\_allocated\_storage](#input\_max\_allocated\_storage) | Maximum allocated storage for autoscaling | `number` | `0` | no |
 | <a name="input_multi_az"></a> [multi\_az](#input\_multi\_az) | Whether to deploy in Multi-AZ | `bool` | `false` | no |
 | <a name="input_parameters"></a> [parameters](#input\_parameters) | List of DB parameters to apply (parameter group will be created automatically) | `list(any)` | `[]` | no |
+| <a name="input_password_with_special_characters"></a> [password\_with\_special\_characters](#input\_password\_with\_special\_characters) | Whether to include special characters in the generated password | `bool` | `true` | no |
 | <a name="input_performance_insights_enabled"></a> [performance\_insights\_enabled](#input\_performance\_insights\_enabled) | Whether to enable Performance Insights | `bool` | `true` | no |
 | <a name="input_performance_insights_retention_period"></a> [performance\_insights\_retention\_period](#input\_performance\_insights\_retention\_period) | Retention period for Performance Insights (in days) | `number` | `7` | no |
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Whether the RDS instance should be publicly accessible | `bool` | `false` | no |
@@ -193,6 +194,7 @@ No requirements.
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs for the RDS subnet group. If not set, subnet\_tag\_name will be used. | `list(string)` | `null` | no |
 | <a name="input_subnet_tag_key"></a> [subnet\_tag\_key](#input\_subnet\_tag\_key) | Tag key used to search the subnets when subnet\_ids is not provided | `string` | `"type"` | no |
 | <a name="input_subnet_tag_name"></a> [subnet\_tag\_name](#input\_subnet\_tag\_name) | Tag name of the subnets to look up | `string` | `""` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
 | <a name="input_use_secrets_manager"></a> [use\_secrets\_manager](#input\_use\_secrets\_manager) | If true, store RDS credentials in AWS Secrets Manager instead of SSM Parameter Store | `bool` | `false` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where the RDS instance will be deployed. If not set, vpc\_tag\_name will be used to look up the VPC. | `string` | `null` | no |
 | <a name="input_vpc_tag_key"></a> [vpc\_tag\_key](#input\_vpc\_tag\_key) | Tag key used to search the VPC when vpc\_id is not provided | `string` | `"Name"` | no |

@@ -21,11 +21,16 @@ variable "virtual_network" {
 }
 
 variable "private_dns_zones" {
-  description = "List of private DNS zones to create"
+  description = "List of private DNS zones to create.\n\nEach zone can optionally define virtual_network_links (list of objects) to link the DNS zone to multiple VNets.\nIf virtual_network_links is omitted, a default link to the main VNet is created.\n\nExample:\nprivate_dns_zones = [\n  {\n    name = \"example.com\"\n    auto_registration_enabled = false\n    virtual_network_links = [\n      {\n        name = \"vnet-link-1\"\n        virtual_network_id = \"/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet1\"\n      },\n      {\n        name = \"vnet-link-2\"\n        virtual_network_id = \"/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet2\"\n      }\n    ]\n  },\n  {\n    name = \"other.com\"\n    auto_registration_enabled = true\n    # No virtual_network_links: will link to main VNet\n  }\n]\n"
   type = list(object({
     name                      = string
     link_name                 = optional(string)
     auto_registration_enabled = optional(bool, false)
+    virtual_network_links     = optional(list(object({
+      name                 = string
+      virtual_network_id   = string
+      virtual_network_name = optional(string)
+    })))
   }))
   default = []
 }
@@ -35,22 +40,6 @@ variable "peerings" {
   type = list(object({
     peering_name                 = string
     allow_forwarded_traffic      = optional(bool, false)
-    allow_gateway_transit        = optional(bool, false)
-    allow_virtual_network_access = optional(bool, true)
-    use_remote_gateways          = optional(bool, false)
-    resource_group_name          = string
-    vnet_name                    = string
-    remote_virtual_network_id    = string
-  }))
-  default = []
-}
-
-variable "resource_group_name" {
-  description = "The name of the resource group in which to create the virtual network"
-  type        = string
-}
-
-variable "tags" {
   description = "The tags to associate with your resources"
   type        = map(string)
   default     = {}
