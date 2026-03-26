@@ -99,3 +99,21 @@ variable "source_account_id" {
   type        = string
   default     = null
 }
+
+variable "allowed_assume_roles" {
+  description = "List of IAM roles the Lambda can assume for cross-account replication"
+  type        = list(string)
+  default     = []
+}
+
+variable "lambda_timeout" {
+  description = "Lambda timeout in seconds"
+  type        = number
+  default     = 600
+}
+
+variable "lambda_memory" {
+  description = "Lambda memory in MB"
+  type        = number
+  default     = 128
+}
