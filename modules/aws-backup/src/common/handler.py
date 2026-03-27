@@ -2,21 +2,21 @@
 from replication import replicate_cross_account_backup
 from config import load_config
 
-def extract_resources(detail):
+def extract_resources(event):
     """
-    Extracts the resources from a CloudTrail event detail.
+    Extracts the resources from an EventBridge event.
     Args:
-        detail (dict): CloudTrail event detail.
+        event (dict): EventBridge event containing a "resources" field.
     Returns:
-        list or None: The resource ID or ARN, or None if not found.
+        list or None: The list of resource IDs or ARNs, or None if not found.
     """
-    rp = detail.get("resources", [])
+    rp = event.get("resources", [])
 
     return rp if rp else None
 
 def lambda_handler(event, context):
     """
-    AWS Lambda entry point. Handles the event for secret replication.
+    AWS Lambda entry point. Handles AWS Backup events and triggers cross-account backup replication.
     Args:
         event (dict): Lambda event data.
         context: Lambda context object.
