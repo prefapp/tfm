@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/aws-backup-v0.1.3...aws-backup-v0.2.0) (2026-03-27)
+
+
+### Features
+
+* **aws-backup:** added lambda for cross-account copyes ([#1132](https://github.com/prefapp/tfm/issues/1132)) ([52fa070](https://github.com/prefapp/tfm/commit/52fa070d4726b50b7a56e5bf5c3bdc14c97760dc))
+
 ## [0.1.3](https://github.com/prefapp/tfm/compare/aws-backup-v0.1.2...aws-backup-v0.1.3) (2026-03-25)
 
 
