@@ -24,6 +24,7 @@ module "membership" {
 
   config = var.config
 }
+```
 
 #### Inline example
 ```hcl
