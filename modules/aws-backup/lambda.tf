@@ -9,7 +9,7 @@ locals {
     for entry in flatten([
       for vault in var.aws_backup_vault : [
         for plan in vault.plan != null ? vault.plan : [] : (
-          length(try(plan.copy_action, [])) > 0 ?
+          length(plan.copy_action == null ? [] : plan.copy_action) > 0 ?
           [for ca in plan.copy_action : {
             account_id        = regex("arn:aws:backup:[^:]+:([0-9]+):backup-vault:.*", ca.destination_vault_arn)[0]
             vault_arn         = ca.destination_vault_arn
@@ -18,16 +18,16 @@ locals {
           }] :
           [{
             account_id        = var.copy_action_default_values.destination_account_id
-            vault_arn         = "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${vault.vault_name}"
-            region            = var.copy_action_default_values.destination_region
+            vault_arn         = "arn:aws:backup:${coalesce(var.copy_action_default_values.destination_region, "eu-west-1")}:${coalesce(var.copy_action_default_values.destination_account_id, "000000000000")}:backup-vault:${vault.vault_name}"
+            region            = try(var.copy_action_default_values.destination_region, "eu-west-1")
             delete_after_days = var.copy_action_default_values.delete_after
           }]
         )
       ]
     ]) :
-    entry.account_id => {
+    coalesce(entry.account_id, var.copy_action_default_values.destination_account_id, "00000000000000") => {
       vault_arn         = entry.vault_arn
-      regions           = { (entry.region) = {} }
+      regions           = { (coalesce(entry.region, "eu-west-1")) = {} }
       delete_after_days = entry.delete_after_days
       iam_role_arn      = aws_iam_role.this[0].arn
     }

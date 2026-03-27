@@ -51,10 +51,10 @@ resource "aws_backup_plan" "this" {
     # --- COPY ACTIONS BASED ON DESTINATION AND SOURCE ACCOUNT ---
     # 1. If copy_action is defined in the plan:
     dynamic "copy_action" {
-      for_each = try(each.value.plan.copy_action, null) != null && length(each.value.plan.copy_action) > 0 ? each.value.plan.copy_action : []
+      for_each = try(each.value.plan.copy_action, null) != null && length(each.value.plan.copy_action == null ? [] : each.value.plan.copy_action) > 0 ? each.value.plan.copy_action : []
       content {
         # Extract destination account from destination vault ARN and compare inline
-        destination_vault_arn = regex("arn:aws:backup:[^:]+:([0-9]+):backup-vault:.*", try(copy_action.value.destination_vault_arn, ""))[0] != data.aws_caller_identity.current.account_id ? "arn:aws:backup:${try(each.value.vault.vault_region, data.aws_region.current.name)}:${data.aws_caller_identity.current.account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}" : try(copy_action.value.destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
+        destination_vault_arn = regex("arn:aws:backup:[^:]+:([0-9]+):backup-vault:.*", try(copy_action.value.destination_vault_arn, ""))[0] != data.aws_caller_identity.current.account_id ? "arn:aws:backup:${coalesce(each.value.vault.vault_region, data.aws_region.current.name)}:${data.aws_caller_identity.current.account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}" : try(copy_action.value.destination_vault_arn, "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}")
         lifecycle {
           delete_after = regex("arn:aws:backup:[^:]+:([0-9]+):backup-vault:.*", try(copy_action.value.destination_vault_arn, ""))[0] != data.aws_caller_identity.current.id ? 1 : try(copy_action.value.delete_after, var.copy_action_default_values.delete_after)
         }
@@ -63,10 +63,10 @@ resource "aws_backup_plan" "this" {
 
     # 2. If NO copy_action is defined in the plan, use default values:
     dynamic "copy_action" {
-      for_each = try(each.value.plan.copy_action, null) == null || length(each.value.plan.copy_action) == 0 ? [1] : []
+      for_each = length(coalesce(each.value.plan.copy_action, [])) == 0 && (var.copy_action_default_values.destination_account_id != null || var.copy_action_default_values.destination_region != null) ? [1] : []
       content {
         # If the destination account is different, copy in the same vault with 1 day lifecycle
-        destination_vault_arn = var.copy_action_default_values.destination_account_id != data.aws_caller_identity.current.id ? "arn:aws:backup:${try(each.value.vault.vault_region, data.aws_region.current.name)}:${data.aws_caller_identity.current.id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}" : "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}"
+        destination_vault_arn = var.copy_action_default_values.destination_account_id != data.aws_caller_identity.current.id ? "arn:aws:backup:${coalesce(each.value.vault.vault_region, data.aws_region.current.name)}:${data.aws_caller_identity.current.id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}" : "arn:aws:backup:${var.copy_action_default_values.destination_region}:${var.copy_action_default_values.destination_account_id}:backup-vault:${aws_backup_vault.this[each.value.vault.vault_name].name}"
         lifecycle {
           delete_after = var.copy_action_default_values.destination_account_id != data.aws_caller_identity.current.id ? 1 : var.copy_action_default_values.delete_after
         }
