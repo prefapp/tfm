@@ -3,7 +3,7 @@
     "relationships": [
       {
         "username": "johndoe",
-        "teamId": "foo-all",
+        "teamId": 123456,
         "role": "member"
       }
     ],
