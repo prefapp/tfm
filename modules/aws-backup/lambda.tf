@@ -42,7 +42,7 @@ module "lambda_automatic_replication" {
   function_name = "backups-automatic-replication"
   handler       = "handler.lambda_handler"
   runtime       = "python3.14"
-  region        = "eu-west-1"
+  region        = var.lambda_region
   source_path   = ["${path.module}/src/common"]
 
   timeout     = var.lambda_timeout

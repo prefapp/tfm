@@ -117,3 +117,10 @@ variable "lambda_memory" {
   type        = number
   default     = 128
 }
+
+variable "lambda_region" {
+  description = "Region where the Lambda function for automatic replication will be deployed. If not provided, it will be deployed in the same region as the backup vault."
+  type        = string
+  default     = null
+
+}
