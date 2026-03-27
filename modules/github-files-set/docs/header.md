@@ -19,7 +19,7 @@ It accepts a list of files targeting one repository in a single `config` object 
 
 ```hcl
 module "files" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-files-set"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-files-set"
 
   config = yamldecode(file("${path.module}/files.yaml"))
   # or jsondecode(...) if using JSON
