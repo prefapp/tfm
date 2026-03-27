@@ -1,8 +1,8 @@
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-membership/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-membership/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-membership/_examples/basic) - Organization membership + team relationship
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-membership/_examples/basic) - Organization membership + team relationship
 
 ## Resources
 
@@ -13,4 +13,3 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 ## Support
 
 For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
-

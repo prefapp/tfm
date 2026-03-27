@@ -54,5 +54,6 @@
     "modules/azure-dns-zone": "0.3.0",
     "modules/azure-vnet-gateway": "0.1.0",
     "modules/azure-vnet-gateway-connection": "0.1.0",
-    "modules/azure-localnet-gateway": "0.1.1"
+    "modules/azure-localnet-gateway": "0.1.1",
+    "modules/github-membership": "0.1.0"
 }

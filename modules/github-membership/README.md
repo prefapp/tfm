@@ -21,7 +21,7 @@ It is designed for Prefapp’s Internal Developer Platform and automated user/te
 
 ```hcl
 module "membership" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-membership"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-membership"
 
   config = var.config
 }
@@ -30,7 +30,7 @@ module "membership" {
 #### Inline example
 ```hcl
 module "membership" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-membership"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-membership"
 
   config = {
     user = {
@@ -40,7 +40,7 @@ module "membership" {
     relationships = [
       {
         username = "johndoe"
-        teamId   = "foo-all"
+        teamId   = 123456
         role     = "member"
       }
     ]
@@ -75,7 +75,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_config"></a> [config](#input\_config) | GitHub membership configuration (organization role + team relationships) | <pre>object({<br/>    relationships = optional(list(object({<br/>      username  = string<br/>      teamId   = string   <br/>      role      = optional(string, "member")  # member | maintainer<br/>    })), [])<br/><br/>    user = optional(object({<br/>      username = string<br/>      role     = optional(string, "member")  # member | admin<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_config"></a> [config](#input\_config) | GitHub membership configuration (organization role + team relationships) | <pre>object({<br/>    relationships = optional(list(object({<br/>      username  = string<br/>      teamId   = number<br/>      role      = optional(string, "member")  # member | maintainer<br/>    })), [])<br/><br/>    user = optional(object({<br/>      username = string<br/>      role     = optional(string, "member")  # member | admin<br/>    }))<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
@@ -87,9 +87,9 @@ No modules.
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-membership/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-membership/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-membership/_examples/basic) - Organization membership + team relationship
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-membership/_examples/basic) - Organization membership + team relationship
 
 ## Resources
 
