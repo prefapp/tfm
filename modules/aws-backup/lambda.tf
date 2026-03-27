@@ -3,7 +3,7 @@
 ###############################################################################
 
 
-# --- Construcción de DESTINATIONS_JSON dinámico ---
+# --- Dynamic construction of DESTINATIONS_JSON ---
 locals {
   destinations_json = {
     for entry in flatten([
@@ -51,7 +51,6 @@ module "lambda_automatic_replication" {
   environment_variables = {
     DESTINATIONS_JSON = jsonencode(local.destinations_json)
   }
-  #   DESTINATIONS_JSON = jsonencode({ "807867957104": { "vault_arn": "arn:aws:backup:eu-west-3:807867957104:backup-vault:common", "regions": { "eu-west-3": {} } ,"delete_after_days": 7, "iam_role_arn": "${aws_iam_role.this[0].arn}" } })
 
   attach_cloudwatch_logs_policy = false
 

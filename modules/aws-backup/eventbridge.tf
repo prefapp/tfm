@@ -22,7 +22,7 @@ resource "aws_cloudwatch_event_target" "invoke_lambda" {
   count = local.has_cross_account_copy ? 1 : 0
   rule  = aws_cloudwatch_event_rule.rds_backup_job_completed[0].name
   arn   = module.lambda_automatic_replication[0].lambda_function_arn
-  # optional: configure retry policy or input transformer if needed
+  # Optional: configure retry policy or input transformer if needed
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
