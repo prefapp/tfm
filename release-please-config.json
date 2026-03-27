@@ -165,9 +165,12 @@
         },
         "modules/azure-private-dns-zone": {
             "package-name": "azure-private-dns-zone"
-        },
+                },
         "modules/azure-dns-zone": {
             "package-name": "azure-dns-zone"
+        },
+        "modules/github-membership": {
+            "package-name": "github-membership"
         }
     }
 }
