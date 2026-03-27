@@ -56,15 +56,15 @@ resource "azurerm_dns_mx_record" "this" {
   }
 }
 
-# DNS TXT records
-resource "azurerm_dns_txt_record" "this" {
-  for_each            = var.txt_records
-  name                = each.key
-  zone_name           = azurerm_dns_zone.this.name
-  resource_group_name = var.resource_group_name
-  ttl                 = 3600
-  records             = each.value
-}
+# # DNS TXT records
+# resource "azurerm_dns_txt_record" "this" {
+#   for_each            = var.txt_records
+#   name                = each.key
+#   zone_name           = azurerm_dns_zone.this.name
+#   resource_group_name = var.resource_group_name
+#   ttl                 = 3600
+#   records             = each.value
+# }
 
 # # DNS NS records
 # resource "azurerm_dns_ns_record" "this" {
