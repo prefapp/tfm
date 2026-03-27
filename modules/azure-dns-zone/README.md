@@ -90,6 +90,12 @@ module "dns_zone" {
 | `tags` | A mapping of tags to assign to the DNS zone. | `map(string)` | `{}` | no |
 | `tags_from_rg` | Use the tags from the resource group. If true, the tags set in the tags variable will be ignored and the resource group tags will be used. | `bool` | `true` | no |
 
+| `a_records` | A records to create. Map of name => list of IPs. | `map(list(string))` | `{}` | no |
+| `cname_records` | CNAME records to create. Map of name => target (string). | `map(string)` | `{}` | no |
+| `mx_records` | MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) } | `list(object)` | `[]` | no |
+| `txt_records` | TXT records to create. Map of name => list of values. | `map(list(string))` | `{}` | no |
+| `ns_records` | NS records to create. List of objects: { name, ttl, records (list of strings) } | `list(object)` | `[]` | no |
+
 ## Outputs
 
 | Name | Description |
@@ -103,6 +109,48 @@ module "dns_zone" {
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples):
 
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples/basic) - Minimal configuration for a DNS zone
+
+### Example: DNS records
+
+```hcl
+module "dns_zone" {
+  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
+  dns_zone_name       = "example.com"
+  resource_group_name = "my-rg"
+
+  a_records = {
+    "www" = ["1.2.3.4"]
+    "api" = ["1.2.3.4", "5.6.7.8"]
+  }
+
+  cname_records = {
+    "mail" = "mail.external.com."
+  }
+
+  mx_records = [
+    {
+      name    = "@"
+      ttl     = 3600
+      records = [
+        { preference = 10, exchange = "mx1.example.com." },
+        { preference = 20, exchange = "mx2.example.com." }
+      ]
+    }
+  ]
+
+  txt_records = {
+    "@" = ["v=spf1 include:mailgun.org ~all"]
+  }
+
+  ns_records = [
+    {
+      name    = "customns"
+      ttl     = 3600
+      records = ["ns1.example.com.", "ns2.example.com."]
+    }
+  ]
+}
+```
 
 ## Resources
 
