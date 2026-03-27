@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.4...aws-secretsmanager-replication-v0.1.5) (2026-03-24)
+
+
+### Bug Fixes
+
+* add region prefix name env var ([#1121](https://github.com/prefapp/tfm/issues/1121)) ([f168c3f](https://github.com/prefapp/tfm/commit/f168c3f12d3c54ee3f89b2e636f2785ef56d0148))
+
 ## [0.1.4](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.3...aws-secretsmanager-replication-v0.1.4) (2026-03-17)
 
 
