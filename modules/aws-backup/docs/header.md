@@ -2,13 +2,15 @@
 
 ## Overview
 
-This module provides configuration for AWS Backup, including vault creation, backup plans, and resource selection. 
+This module provides a comprehensive configuration for AWS Backup, including vault creation, backup plans, resource selection, and advanced features such as cross-account and cross-region replication.
 
 ## Key Features
 
 - **Vault**: Creates a vault to store backups.
 - **Plan**: Creates backup plans with options to replicate backups to other vaults, including cross-account and cross-region replication.
-- **Selections**: Allows selection of resources for backup using tags or specifying the resource ARN. 
+- **Selections**: Allows selection of resources for backup using tags or by specifying the resource ARN.
+- **Lambda**: Creates a Lambda function if the backup is copied to another account.
+- **EventBridge**: Creates an EventBridge rule to trigger the Lambda function when a backup copy is finished (this is required to perform an additional copy to change the KMS encryption key).
 
 ## Basic Usage
 
@@ -22,6 +24,7 @@ module "backup" {
   }]
 }
 ```
+
 
 ### Example with plan and tag selection
 
@@ -52,21 +55,19 @@ module "backup" {
 
 ### With alias, replication to other regions, and access from other AWS accounts
 
-/!\ Important: Only works with aws organizations, you need to enable cross_account_backup in organization main account 
+**Note:** Cross-account backup only works with AWS Organizations. You must enable `cross_account_backup` in the organization's main account.
 
-
-This only works in organization main account
+In the main account:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
-
   enable_cross_account_backup  = true
 }
 ```
 
-For the accounts in your organization
+For the accounts in your organization:
 
-In the account that only receives backups:
+**In the account that only receives backups:**
 
 ```hcl
 module "backup" {
@@ -83,7 +84,7 @@ module "backup" {
 }
 ```
 
-In the account that will make backups and send them to another account
+**In the account that will make backups and send them to another account:**
 
 ```hcl
 module "backup" {
@@ -121,10 +122,14 @@ The module is organized with the following directory and file structure:
 
 ```
 ├── backup-global-configuration.tf
+├── CHANGELOG.md
 ├── docs
 │   ├── footer.md
 │   └── header.md
+├── eventbridge.tf
 ├── _examples
+│   ├── enable_cross_account
+│   │   └── main.tf
 │   ├── minimal
 │   │   └── main.tf
 │   ├── vault_with_plan_and_selection
@@ -132,12 +137,25 @@ The module is organized with the following directory and file structure:
 │   └── vault_with_plan_selection_with_replication
 │       └── main.tf
 ├── iam-policy-roles.tf
+├── lambda.tf
+├── local.tf
 ├── main.tf
-└── variables.tf
+├── README.md
+├── src
+│   ├── common
+│   │   ├── config.py
+│   │   ├── handler.py
+│   │   ├── __init__.py
+│   │   ├── replication.py
+│   │   └── utils.py
+│   └── test_lambda.py
+├── variables.tf
+└── versions.tf
 ```
 
-- **main.tf**: Entry point that wires together all module components, here they create vaults, plans and selections. 
-- **iam-policy-roles.tf**: Policy document for aws vaults.
-- **backup-global-configuration.tf**: Configuration for enable cross account backup in organizations. 
-
-
+- **main.tf**: Entry point that wires together all module components. Here, vaults, plans, and selections are created.
+- **iam-policy-roles.tf**: Policy document for AWS vaults.
+- **backup-global-configuration.tf**: Configuration to enable cross-account backup in organizations.
+- **eventbridge.tf**: Configuration to create the EventBridge trigger for Lambda.
+- **lambda.tf**: Configuration to create the Lambda function for cross-account copy events.
+- **src**: Folder containing the Lambda function code.
