@@ -1,0 +1,43 @@
+// Basic example: Azure Redis Cache with virtual network integration
+
+module "azure_redis_cache" {
+  source = "../../"
+
+  resource_group = "example-rg"
+
+  vnet = {
+    name                = "example-vnet"
+    resource_group_name = "example-rg"
+  }
+
+  subnet_name           = "redis-subnet"
+  dns_private_zone_name = "privatelink.redis.cache.windows.net"
+
+  redis = {
+    name         = "example-redis"
+    location     = "westeurope"
+    capacity     = 1
+    family       = "C"
+    sku_name     = "Standard"
+    redis_version = 6
+
+    minimum_tls_version           = "1.2"
+    public_network_access_enabled = false
+
+    redis_configuration = {
+      rdb_backup_enabled            = false
+      authentication_enabled        = true
+      maxmemory_policy              = "allkeys-lru"
+    }
+  }
+
+  private_endpoint = {
+    name                          = "example-redis-pe"
+    custom_network_interface_name = "example-redis-pe-nic"
+  }
+  
+  tags = {
+    environment = "dev"
+    application = "example"
+  }
+}
