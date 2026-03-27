@@ -25,6 +25,7 @@ module "membership" {
 
   config = var.config
 }
+```
 
 #### Inline example
 ```hcl
@@ -45,7 +46,6 @@ module "membership" {
     ]
   }
 }
-```
 ```
 
 ## Requirements
@@ -75,7 +75,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_config"></a> [config](#input\_config) | GitHub membership configuration (organization role + team relationships) | <pre>object({<br/>    relationships = optional(list(object({<br/>      username  = string<br/>      team_id   = string   <br/>      role      = optional(string, "member")  # member | maintainer<br/>    })), [])<br/><br/>    user = optional(object({<br/>      username = string<br/>      role     = optional(string, "member")  # member | admin<br/>    }))<br/>  })</pre> | n/a | yes |
+| <a name="input_config"></a> [config](#input\_config) | GitHub membership configuration (organization role + team relationships) | <pre>object({<br/>    relationships = optional(list(object({<br/>      username  = string<br/>      teamId   = string   <br/>      role      = optional(string, "member")  # member | maintainer<br/>    })), [])<br/><br/>    user = optional(object({<br/>      username = string<br/>      role     = optional(string, "member")  # member | admin<br/>    }))<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
