@@ -20,7 +20,7 @@ It is designed for Prefapp’s Internal Developer Platform and automated user/te
 
 ```hcl
 module "membership" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-membership"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-membership"
 
   config = var.config
 }
@@ -29,7 +29,7 @@ module "membership" {
 #### Inline example
 ```hcl
 module "membership" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-membership"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-membership"
 
   config = {
     user = {
@@ -39,7 +39,7 @@ module "membership" {
     relationships = [
       {
         username = "johndoe"
-        teamId   = "foo-all"
+        teamId   = 123456
         role     = "member"
       }
     ]

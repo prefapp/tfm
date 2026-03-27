@@ -3,7 +3,7 @@ variable "config" {
   type = object({
     relationships = optional(list(object({
       username  = string
-      teamId   = string   
+      teamId   = number
       role      = optional(string, "member")  # member | maintainer
     })), [])
 

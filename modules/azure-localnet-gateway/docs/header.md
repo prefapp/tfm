@@ -25,7 +25,7 @@ module "localnet_gateway" {
       resource_group_name         = "example-rg"
       local_gateway_ip            = "203.0.113.1"
       local_gateway_address_space = ["10.1.0.0/16"]
-      tags_from_rg                = true
+      # tags_from_rg: true # Will inherit the tags from the resource group
       tags                        = {
         environment = "dev"
       }
