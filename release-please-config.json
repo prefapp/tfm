@@ -168,6 +168,9 @@
         },
         "modules/azure-dns-zone": {
             "package-name": "azure-dns-zone"
+        },
+        "modules/github-repo": {
+            "package-name": "github-repo"
         }
     }
 }
