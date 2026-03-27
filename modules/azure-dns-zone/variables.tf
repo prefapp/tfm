@@ -1,13 +1,13 @@
 variable "a_record_ttl" {
   description = "TTL for A records. Default: 3600."
   type        = number
-  default     = 3600
+  default     = 60
 }
 
 variable "cname_record_ttl" {
   description = "TTL for CNAME records. Default: 3600."
   type        = number
-  default     = 3600
+  default     = 60
 }
 variable "dns_zone_name" {
   description = "Name of the Azure DNS Zone."
