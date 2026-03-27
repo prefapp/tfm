@@ -1,9 +1,8 @@
 # Organization membership (admin / member)
 resource "github_membership" "this" {
-  count = var.config.user != null ? 1 : 0
-  team_id  = var.config.user.team_id
-  username = var.config.user.username
-  role     = var.config.user.role
+  count    = var.config.user != null ? 1 : 0
+  username = try(var.config.user.username, null)
+  role     = try(var.config.user.role, null)
 }
 
 # Team memberships
