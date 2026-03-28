@@ -154,6 +154,9 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         },
+        "modules/github-files-set": {
+            "package-name": "github-files-set"
+        },
         "modules/azure-vnet-gateway": {
             "package-name": "azure-vnet-gateway"
         },
