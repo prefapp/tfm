@@ -1,3 +1,141 @@
+<!-- BEGIN_TF_DOCS -->
+# Azure Virtual Machine Scale Set (VMSS) Terraform Module
+
+## Overview
+
+This Terraform module allows you to create and manage Azure Linux Virtual Machine Scale Sets (VMSS) with advanced configuration options, including rolling upgrades, custom images, and cloud-init scripts.
+
+## Main features
+- Create a VMSS with custom name, SKU, and instance count.
+- Support for rolling upgrades, secure boot, and disk configuration.
+- Flexible network, identity, and tag options.
+- Use cloud-init and custom scripts for provisioning.
+- Realistic configuration example.
+
+## Example usage
+
+**values.yaml**
+
+```yaml
+common:
+  resource_group_name: example-rg
+  location: westeurope
+
+vmss:
+  name: example-vmss
+  sku: Standard_DS2_v2
+  instances: 2
+  admin_username: azureuser
+  admin_ssh_key_username: azureuser
+  first_public_key: "<your-ssh-public-key>"
+
+  disk_storage_account_type: Standard_LRS
+  disk_caching: ReadWrite
+
+  upgrade_mode: Rolling
+  rolling_upgrade_policy_max_batch_instance_percent: 20
+  rolling_upgrade_policy_max_unhealthy_instance_percent: 20
+  rolling_upgrade_policy_max_unhealthy_upgraded_instance_percent: 20
+  rolling_upgrade_policy_pause_time_between_batches: PT0S
+  rolling_upgrade_policy_cross_zone_upgrades_enabled: true
+  rolling_upgrade_policy_maximum_surge_instances_enabled: true
+  rolling_upgrade_policy_prioritize_unhealthy_instances_enabled: true
+
+  image_publisher: Canonical
+  image_offer: 0001-com-ubuntu-server-jammy
+  image_sku: server
+  image_version: latest
+
+  subnet_name: vmss-subnet
+  virtual_network_name: example-vnet
+  virtual_network_resource_group_name: example-rg
+
+  network_interface_public_ip_adress_public_ip_prefix_id: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Network/publicIPPrefixes/example-prefix
+
+  identity_type: SystemAssigned
+  cloud_init: "#cloud-config"
+  run_script: null
+
+tags_from_rg: false
+tags:
+  environment: dev
+```
+
+**main.tf**
+
+```hcl
+module "azure_vmss" {
+  source = "../../"
+
+  common = {
+    resource_group_name = "example-rg"
+    location            = "westeurope"
+  }
+
+  vmss = {
+    name                   = "example-vmss"
+    sku                    = "Standard_DS2_v2"
+    instances              = 2
+    admin_username         = "azureuser"
+    admin_ssh_key_username = "azureuser"
+    first_public_key       = "<your-ssh-public-key>"
+
+    disk_storage_account_type = "Standard_LRS"
+    disk_caching              = "ReadWrite"
+
+    upgrade_mode                                                   = "Rolling"
+    rolling_upgrade_policy_max_batch_instance_percent              = 20
+    rolling_upgrade_policy_max_unhealthy_instance_percent          = 20
+    rolling_upgrade_policy_max_unhealthy_upgraded_instance_percent = 20
+    rolling_upgrade_policy_pause_time_between_batches              = "PT0S"
+    rolling_upgrade_policy_cross_zone_upgrades_enabled             = true
+    rolling_upgrade_policy_maximum_surge_instances_enabled         = true
+    rolling_upgrade_policy_prioritize_unhealthy_instances_enabled  = true
+
+    image_publisher = "Canonical"
+    image_offer     = "0001-com-ubuntu-server-jammy"
+    image_sku       = "server"
+    image_version   = "latest"
+
+    subnet_name                         = "vmss-subnet"
+    virtual_network_name                = "example-vnet"
+    virtual_network_resource_group_name = "example-rg"
+
+    network_interface_public_ip_adress_public_ip_prefix_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Network/publicIPPrefixes/example-prefix"
+
+    identity_type = "SystemAssigned"
+
+    cloud_init = "#cloud-config"
+    run_script = null
+  }
+
+  tags_from_rg = false
+  tags = {
+    environment = "dev"
+  }
+}
+```
+
+## Notes
+- You can use both HCL and YAML for configuration.
+- Supports advanced VMSS features like rolling upgrades, custom images, and cloud-init.
+- Tags can be inherited from the resource group.
+
+## File structure
+
+```
+.
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── locals.tf
+├── README.md
+├── CHANGELOG.md
+└── docs/
+    ├── header.md
+    └── footer.md
+```
+
 ## Requirements
 
 | Name | Version |
@@ -10,6 +148,10 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.16.0 |
+
+## Modules
+
+No modules.
 
 ## Resources
 
@@ -38,68 +180,19 @@
 | <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | n/a |
 | <a name="output_vmss_id"></a> [vmss\_id](#output\_vmss\_id) | Outputs for linux\_virtual\_machine\_scale\_set |
 
-## Example usage
+## Examples
 
-```yaml
-  common = {
-    resource_group_name = "my-resource-group"
-    location            = "eastus"
-    tags_from_rg     = true
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples):
 
-  vmss = {
-    name                        = "my-vmss"
-    sku                         = "Standard_DS2_v2"
-    instances                   = 3
-    admin_username              = "azureuser"
-    admin_ssh_key_username      = "ssh-user"
-    first_public_key            = "ssh-rsa AAAAB3NzaC1yc2..."
-    eviction_policy             = "Delete"
-    secure_boot_enabled         = true
-    disk_storage_account_type   = "Standard_LRS"
-    disk_caching                = "ReadWrite"
-    upgrade_mode                = "Rolling"
-    rolling_upgrade_policy_max_batch_instance_percent = 20
-    rolling_upgrade_policy_max_unhealthy_instance_percent = 20
-    image_publisher = "Canonical"
-    image_offer     = "UbuntuServer"
-    image_sku       = "18.04-LTS"
-    image_version   = "latest"
-    identity_type   = "SystemAssigned"
-    cloud_init      = file("./cloud-init.yml")
-    run_script      = file("./init-script.sh")
-  }
-}
-```
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/basic) - Basic Linux VM Scale Set with rolling upgrade and custom image configuration.
 
-```hcl
-  common = {
-    resource_group_name = "my-resource-group"
-    location            = "eastus"
-    tags_from_rg     = true
-  }
+## Resources and support
 
-  vmss = {
-    name                        = "my-vmss"
-    sku                         = "Standard_DS2_v2"
-    instances                   = 3
-    admin_username              = "azureuser"
-    admin_ssh_key_username      = "ssh-user"
-    first_public_key            = "ssh-rsa AAAAB3NzaC1yc2..."
-    eviction_policy             = "Delete"
-    secure_boot_enabled         = true
-    disk_storage_account_type   = "Standard_LRS"
-    disk_caching                = "ReadWrite"
-    upgrade_mode                = "Rolling"
-    rolling_upgrade_policy_max_batch_instance_percent = 20
-    rolling_upgrade_policy_max_unhealthy_instance_percent = 20
-    image_publisher = "Canonical"
-    image_offer     = "UbuntuServer"
-    image_sku       = "18.04-LTS"
-    image_version   = "latest"
-    identity_type   = "SystemAssigned"
-    cloud_init      = file("./cloud-init.yml")
-    run_script      = file("./init-script.sh")
-  }
-}
-```
+- [Official Azure Virtual Machine Scale Set documentation](https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/)
+- [Terraform reference for azurerm\_linux\_virtual\_machine\_scale\_set](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine_scale_set)
+- [Terraform reference for azurerm\_virtual\_machine\_scale\_set\_extension](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_scale_set_extension)
 
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+<!-- END_TF_DOCS -->
