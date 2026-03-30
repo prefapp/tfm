@@ -95,7 +95,8 @@ module "dns_zone" {
 
 | Name | Version |
 |------|---------|
-| azurerm | >= 4.21.1 |
+| terraform | >= 1.3.0 |
+| azurerm   | >= 4.21.1 |
 
 ## Providers
 
