@@ -71,12 +71,12 @@ resource "azurerm_dns_txt_record" "this" {
   }
 }
 
-# # DNS NS records
-# resource "azurerm_dns_ns_record" "this" {
-#   for_each            = { for rec in var.ns_records : rec.name => rec }
-#   name                = each.value.name
-#   zone_name           = azurerm_dns_zone.this.name
-#   resource_group_name = var.resource_group_name
-#   ttl                 = each.value.ttl
-#   records             = each.value.records
-# }
+# DNS NS records
+resource "azurerm_dns_ns_record" "this" {
+  for_each            = { for rec in var.ns_records : rec.name => rec }
+  name                = each.value.name
+  zone_name           = azurerm_dns_zone.this.name
+  resource_group_name = var.resource_group_name
+  ttl                 = each.value.ttl
+  records             = each.value.records
+}
