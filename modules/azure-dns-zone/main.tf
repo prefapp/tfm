@@ -23,12 +23,12 @@ data "azurerm_resource_group" "resource_group" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_a_record
 # DNS A records (one or multiple IPs)
 resource "azurerm_dns_a_record" "this" {
-  for_each            = var.a_records
-  name                = each.key
+  for_each            = { for rec in var.a_records : rec.name => rec }
+  name                = each.value.name
   zone_name           = azurerm_dns_zone.this.name
   resource_group_name = var.resource_group_name
-  ttl                 = var.a_record_ttl
-  records             = each.value
+  ttl                 = each.value.ttl
+  records             = each.value.records
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_aaaa_record
@@ -45,12 +45,12 @@ resource "azurerm_dns_aaaa_record" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_cname_record
 # DNS CNAME records
 resource "azurerm_dns_cname_record" "this" {
-  for_each            = var.cname_records
-  name                = each.key
+  for_each            = { for rec in var.cname_records : rec.name => rec }
+  name                = each.value.name
   zone_name           = azurerm_dns_zone.this.name
   resource_group_name = var.resource_group_name
-  ttl                 = var.cname_record_ttl
-  record              = each.value
+  ttl                 = each.value.ttl
+  record              = each.value.record
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_mx_record

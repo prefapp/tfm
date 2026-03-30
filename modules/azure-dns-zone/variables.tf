@@ -1,14 +1,3 @@
-variable "a_record_ttl" {
-  description = "TTL for A records. Default: 3600."
-  type        = number
-  default     = 60
-}
-
-variable "cname_record_ttl" {
-  description = "TTL for CNAME records. Default: 3600."
-  type        = number
-  default     = 60
-}
 variable "dns_zone_name" {
   description = "Name of the Azure DNS Zone."
   type        = string
@@ -33,9 +22,13 @@ variable "tags_from_rg" {
 
 # DNS Records support
 variable "a_records" {
-  description = "A records to create. Map of name => list of IPs."
-  type        = map(list(string))
-  default     = {}
+  description = "A records to create. List of objects: { name, ttl, records (list of IPs) }"
+  type = list(object({
+    name    = string
+    ttl     = optional(number, 60)
+    records = list(string)
+  }))
+  default = []
 }
 
 variable "aaaa_records" {
@@ -49,9 +42,13 @@ variable "aaaa_records" {
 }
 
 variable "cname_records" {
-  description = "CNAME records to create. Map of name => target (string)."
-  type        = map(string)
-  default     = {}
+  description = "CNAME records to create. List of objects: { name, ttl, record (target) }"
+  type = list(object({
+    name   = string
+    ttl    = optional(number, 60)
+    record = string
+  }))
+  default = []
 }
 
 variable "mx_records" {

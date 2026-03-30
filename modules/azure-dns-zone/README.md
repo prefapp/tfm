@@ -16,6 +16,7 @@ This module is ideal for teams seeking a reusable way to manage DNS zones and re
 
 - **DNS Zone Creation**: Provisions an Azure DNS Zone.
 - **Record Management**: Supports A, AAAA, CNAME, MX, TXT, NS, CAA, PTR, and SRV records.
+- **Individual TTL Control**: Each record can have its own TTL configuration.
 - **Tag Strategy**: Supports direct tags or inheriting tags from the Resource Group and merging with custom tags.
 
 ## Basic Usage
@@ -53,10 +54,18 @@ module "dns_zone" {
   dns_zone_name       = "example.com"
   resource_group_name = "my-rg"
 
-  a_records = {
-    "www" = ["1.2.3.4"]
-    "api" = ["1.2.3.4", "5.6.7.8"]
-  }
+  a_records = [
+    {
+      name    = "www"
+      ttl     = 3600
+      records = ["1.2.3.4"]
+    },
+    {
+      name    = "api"
+      ttl     = 300
+      records = ["1.2.3.4", "5.6.7.8"]
+    }
+  ]
 
   aaaa_records = [
     {
@@ -66,9 +75,13 @@ module "dns_zone" {
     }
   ]
 
-  cname_records = {
-    "mail" = "mail.external.com."
-  }
+  cname_records = [
+    {
+      name   = "mail"
+      ttl    = 3600
+      record = "mail.external.com."
+    }
+  ]
 
   mx_records = [
     {
@@ -129,12 +142,10 @@ module "dns_zone" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| a_record_ttl | TTL for A records. Default: 3600. | number | 60 | no |
-| a_records | A records to create. Map of name => list of IPs. | map(list(string)) | {} | no |
+| a_records | A records to create. List of objects: { name, ttl (optional, default 60), records (list of IPs) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
 | aaaa_records | AAAA records to create. List of objects: { name, ttl, records (list of IPs) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
 | caa_records | CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ flags = number, tag = string, value = string })) })) | [] | no |
-| cname_record_ttl | TTL for CNAME records. Default: 3600. | number | 60 | no |
-| cname_records | CNAME records to create. Map of name => target (string). | map(string) | {} | no |
+| cname_records | CNAME records to create. List of objects: { name, ttl (optional, default 60), record (target) } | list(object({ name = string, ttl = optional(number, 60), record = string })) | [] | no |
 | dns_zone_name | Name of the Azure DNS Zone. | string | n/a | yes |
 | mx_records | MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ preference = number, exchange = string })) })) | [] | no |
 | ns_records | NS records to create. List of objects: { name, ttl, records (list of strings) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
