@@ -17,7 +17,26 @@ This module is ideal for teams seeking a reusable way to manage DNS zones and re
 - **DNS Zone Creation**: Provisions an Azure DNS Zone.
 - **Record Management**: Supports A, AAAA, CNAME, MX, TXT, NS, CAA, PTR, and SRV records.
 - **Individual TTL Control**: Each record can have its own TTL configuration.
+- **Duplicate Prevention**: Automatic validation to prevent duplicate record names within the same record type.
 - **Tag Strategy**: Supports direct tags or inheriting tags from the Resource Group and merging with custom tags.
+
+## Validation Rules
+
+This module enforces the following validation rules to prevent configuration errors and DNS inconsistencies:
+
+- **Unique Record Names per Type**: Each record type (A, AAAA, CNAME, MX, TXT, NS, CAA, PTR, SRV) must have unique names within that type. Duplicate record names will cause the plan to fail with a clear error message.
+  
+  Example error:
+  ```
+  Error: Invalid value for variable
+  
+  CNAME records must have unique names. Found duplicate record names.
+  ```
+
+This validation helps avoid:
+- **Redundancy**: Preventing accidental duplicate entries
+- **Collision Detection**: Catching configuration mistakes early
+- **DNS Consistency**: Ensuring each record name is defined only once per type
 
 ## Basic Usage
 
