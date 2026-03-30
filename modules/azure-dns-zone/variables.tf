@@ -73,7 +73,7 @@ variable "ns_records" {
   description = "NS records to create. List of objects: { name, ttl, records (list of strings) }"
   type = list(object({
     name    = string
-    ttl     = number
+    ttl     = optional(number, 60)
     records = list(string)
   }))
   default = []
