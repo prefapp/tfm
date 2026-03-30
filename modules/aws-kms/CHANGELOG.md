@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/prefapp/tfm/compare/aws-kms-v0.2.1...aws-kms-v0.2.2) (2026-03-27)
+
+
+### Bug Fixes
+
+* **aws-kms:** added viaservice in all regions that they need ([#1138](https://github.com/prefapp/tfm/issues/1138)) ([e8f3b18](https://github.com/prefapp/tfm/commit/e8f3b18680e9630669dde54ad108ec47a81237eb))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/aws-kms-v0.2.0...aws-kms-v0.2.1) (2026-03-24)
 
 

@@ -43,7 +43,7 @@ variable "aws_backup_vault" {
       }))
       backup_selection_arn_resources = optional(list(string))
       lifecycle = optional(object({
-        cold_storage_after = number
+        cold_storage_after = optional(number)
         delete_after       = number
       }))
       advanced_backup_setting = optional(list(object({
@@ -92,4 +92,28 @@ variable "enable_cross_account_backup" {
   description = "Enable cross-account backup in AWS Backup global settings. If set to true, the module will manage the global settings resource to enable cross-account backup. If set to false, you can configure it separately if needed."
   type        = bool
   default     = false
+}
+
+variable "source_account_id" {
+  description = "Account id that copies backups into this vault"
+  type        = string
+  default     = null
+}
+
+variable "allowed_assume_roles" {
+  description = "List of IAM roles the Lambda can assume for cross-account replication"
+  type        = list(string)
+  default     = []
+}
+
+variable "lambda_timeout" {
+  description = "Lambda timeout in seconds"
+  type        = number
+  default     = 600
+}
+
+variable "lambda_memory" {
+  description = "Lambda memory in MB"
+  type        = number
+  default     = 128
 }
