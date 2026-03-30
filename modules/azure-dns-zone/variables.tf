@@ -111,7 +111,7 @@ variable "ns_records" {
 }
 
 variable "caa_records" {
-  deƒmcscription = "CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) }"
+  description = "CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) }"
   type = list(object({
     name    = string
     ttl     = optional(number, 60)
