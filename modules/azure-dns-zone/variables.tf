@@ -64,10 +64,6 @@ variable "cname_records" {
 }
 
 variable "mx_records" {
-  validation {
-    condition     = length(var.mx_records) == length(distinct([for r in var.mx_records : r.name]))
-    error_message = "MX records must have unique names. Found duplicate record names."
-  }
   description = "MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) }"
   type = list(object({
     name    = string
@@ -79,8 +75,8 @@ variable "mx_records" {
   }))
   default = []
   validation {
-    condition     = length(var.txt_records) == length(distinct([for r in var.txt_records : r.name]))
-    error_message = "TXT records must have unique names. Found duplicate record names."
+    condition     = length(var.mx_records) == length(distinct([for r in var.mx_records : r.name]))
+    error_message = "MX records must have unique names. Found duplicate record names."
   }
 }
 
@@ -115,7 +111,7 @@ variable "ns_records" {
 }
 
 variable "caa_records" {
-  description = "CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) }"
+  deƒmcscription = "CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) }"
   type = list(object({
     name    = string
     ttl     = optional(number, 60)
