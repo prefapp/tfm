@@ -5,12 +5,12 @@ variable "config" {
       name         = string
       description  = optional(string, "")
       privacy      = optional(string, "closed")
-      parentTeamId = optional(number, null)   # null or team ID (number)
+      parentTeamId = optional(number, null) # null or team ID (number)
     })
 
     group_members = optional(list(object({
       username = string
-      teamId   = optional(string)   # kept for compatibility, ignored during creation
+      teamId   = optional(string) # kept for compatibility, ignored during creation
     })), [])
   })
 
@@ -33,10 +33,10 @@ variable "config" {
   }
 
   validation {
-   condition = (
-           length(var.config.group_members) ==
-           length(distinct([for m in var.config.group_members : trimspace(m.username)]))
-           )
-   error_message = "group_members contains duplicate usernames (whitespace is trimmed). Usernames must be unique."
+    condition = (
+      length(var.config.group_members) ==
+      length(distinct([for m in var.config.group_members : trimspace(m.username)]))
+    )
+    error_message = "group_members contains duplicate usernames (whitespace is trimmed). Usernames must be unique."
   }
 }
