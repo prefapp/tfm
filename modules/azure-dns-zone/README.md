@@ -3,20 +3,20 @@
 
 ## Overview
 
-This module provisions a standard Azure DNS Zone. It is designed for scenarios where you need to manage public DNS zones for your domains in Azure, supporting use cases such as application hosting, hybrid cloud, and multi-environment deployments (dev, staging, production).
+This module provisions an Azure DNS Zone and manages multiple DNS record types in the same zone. It is designed for scenarios where you need DNS management as code for environments such as dev, staging, and production.
 
 Key capabilities include:
 - Automated creation of a DNS zone
-- Tagging support for resource management
-- Integration with Azure Resource Groups
+- Tag inheritance from Resource Group with override support
+- Management of A, AAAA, CNAME, MX, TXT, NS, CAA, PTR, and SRV records
 
-This module is ideal for teams seeking a simple, reusable way to manage DNS zones as code.
+This module is ideal for teams seeking a reusable way to manage DNS zones and records from a single Terraform module.
 
 ## Key Features
 
-- **DNS Zone Creation**: Provisions a standard Azure DNS Zone.
-- **Tagging Support**: Allows custom tags for resource organization.
-- **Resource Group Integration**: DNS zone is created in the specified resource group.
+- **DNS Zone Creation**: Provisions an Azure DNS Zone.
+- **Record Management**: Supports A, AAAA, CNAME, MX, TXT, NS, CAA, PTR, and SRV records.
+- **Tag Strategy**: Supports direct tags or inheriting tags from the Resource Group and merging with custom tags.
 
 ## Basic Usage
 
@@ -30,142 +30,7 @@ module "dns_zone" {
 }
 ```
 
-### With Custom Tags
-
-```hcl
-module "dns_zone" {
-  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
-  dns_zone_name       = "example.com"
-  resource_group_name = "my-rg"
-  tags = {
-    environment = "production"
-    owner       = "network-team"
-  }
-  tags_from_rg = false
-}
-```
-
-### Using Resource Group Tags
-
-```hcl
-module "dns_zone" {
-  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
-  dns_zone_name       = "example.com"
-  resource_group_name = "my-rg"
-  tags_from_rg        = true
-}
-```
-
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 1.3.0 |
-| azurerm | >= 3.0.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| azurerm | >= 3.0.0 |
-
-## Modules
-
-| Name | Source | Version |
-|------|--------|---------|
-| n/a | n/a | n/a |
-
-## Resources
-
-| Name | Type |
-|------|------|
-| azurerm_dns_zone.this | resource |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| `dns_zone_name` | The name of the DNS zone to create. | `string` | n/a | yes |
-| `resource_group_name` | The name of the resource group in which to create the DNS zone. | `string` | n/a | yes |
-| `tags` | A mapping of tags to assign to the DNS zone. | `map(string)` | `{}` | no |
-| `tags_from_rg` | Use the tags from the resource group. If true, the tags set in the tags variable will be ignored and the resource group tags will be used. | `bool` | `true` | no |
-
-| `a_records` | A records to create. Map of name => list of IPs. | `map(list(string))` | `{}` | no |
-| `cname_records` | CNAME records to create. Map of name => target (string). | `map(string)` | `{}` | no |
-| `mx_records` | MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) } | `list(object)` | `[]` | no |
-| `txt_records` | TXT records to create. Map of name => list of values. | `map(list(string))` | `{}` | no |
-| `ns_records` | NS records to create. List of objects: { name, ttl, records (list of strings) } | `list(object)` | `[]` | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| `id` | The ID of the DNS zone. |
-| `name` | The name of the DNS zone. |
-| `name_servers` | A list of name servers for the DNS zone. |
-
-## Examples
-
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples):
-
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples/basic) - Minimal configuration for a DNS zone
-
-### Example: DNS records
-
-```hcl
-module "dns_zone" {
-  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
-  dns_zone_name       = "example.com"
-  resource_group_name = "my-rg"
-
-  a_records = {
-    "www" = ["1.2.3.4"]
-    "api" = ["1.2.3.4", "5.6.7.8"]
-  }
-
-  cname_records = {
-    "mail" = "mail.external.com."
-  }
-
-  mx_records = [
-    {
-      name    = "@"
-      ttl     = 3600
-      records = [
-        { preference = 10, exchange = "mx1.example.com." },
-        { preference = 20, exchange = "mx2.example.com." }
-      ]
-    }
-  ]
-
-  txt_records = {
-    "@" = ["v=spf1 include:mailgun.org ~all"]
-  }
-
-  ns_records = [
-    {
-      name    = "customns"
-      ttl     = 3600
-      records = ["ns1.example.com.", "ns2.example.com."]
-    }
-  ]
-}
-```
-
-## Resources
-
-
-- **Azure DNS Zone**: [https://learn.microsoft.com/en-us/azure/dns/dns-overview](https://learn.microsoft.com/en-us/azure/dns/dns-overview)
-- **Terraform Azure Provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_zone)
-
-## Support
-
-For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
-## Tag Management
-
-By default, you can provide custom tags using the `tags` variable. If you set `tags_from_rg = true`, the module will merge the tags from the specified resource group with any extra tags you define in `tags`. This allows you to inherit tags from the resource group and add or override with your own.
-
-**Example: Inherit and extend tags**
+### With Tags Inherited From Resource Group
 
 ```hcl
 module "dns_zone" {
@@ -180,5 +45,125 @@ module "dns_zone" {
 }
 ```
 
-In this example, the final tags will be the union of the resource group's tags and the `tags` map above. If a key exists in both, the value from `tags` will take precedence.
+### With DNS Records
+
+```hcl
+module "dns_zone" {
+  source              = "git::https://github.com/prefapp/tfm.git//modules/azure-dns-zone"
+  dns_zone_name       = "example.com"
+  resource_group_name = "my-rg"
+
+  a_records = {
+    "www" = ["1.2.3.4"]
+    "api" = ["1.2.3.4", "5.6.7.8"]
+  }
+
+  aaaa_records = [
+    {
+      name    = "ipv6"
+      ttl     = 300
+      records = ["2001:db8::1"]
+    }
+  ]
+
+  cname_records = {
+    "mail" = "mail.external.com."
+  }
+
+  mx_records = [
+    {
+      name = "@"
+      records = [
+        { preference = 10, exchange = "mx1.example.com." },
+        { preference = 20, exchange = "mx2.example.com." }
+      ]
+    }
+  ]
+
+  txt_records = [
+    {
+      name = "@"
+      records = [
+        { value = "v=spf1 include:mailgun.org ~all" }
+      ]
+    }
+  ]
+}
+```
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| azurerm | >= 4.21.1 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| azurerm | >= 4.21.1 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| n/a | n/a | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| azurerm_dns_a_record.this | resource |
+| azurerm_dns_aaaa_record.this | resource |
+| azurerm_dns_caa_record.this | resource |
+| azurerm_dns_cname_record.this | resource |
+| azurerm_dns_mx_record.this | resource |
+| azurerm_dns_ns_record.this | resource |
+| azurerm_dns_ptr_record.this | resource |
+| azurerm_dns_srv_record.this | resource |
+| azurerm_dns_txt_record.this | resource |
+| azurerm_dns_zone.this | resource |
+| azurerm_resource_group.resource_group | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| a_record_ttl | TTL for A records. Default: 3600. | number | 60 | no |
+| a_records | A records to create. Map of name => list of IPs. | map(list(string)) | {} | no |
+| aaaa_records | AAAA records to create. List of objects: { name, ttl, records (list of IPs) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
+| caa_records | CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ flags = number, tag = string, value = string })) })) | [] | no |
+| cname_record_ttl | TTL for CNAME records. Default: 3600. | number | 60 | no |
+| cname_records | CNAME records to create. Map of name => target (string). | map(string) | {} | no |
+| dns_zone_name | Name of the Azure DNS Zone. | string | n/a | yes |
+| mx_records | MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ preference = number, exchange = string })) })) | [] | no |
+| ns_records | NS records to create. List of objects: { name, ttl, records (list of strings) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
+| ptr_records | PTR records to create. List of objects: { name, ttl, records (list of strings) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
+| resource_group_name | Resource group name where DNS zone will be created. | string | n/a | yes |
+| srv_records | SRV records to create. List of objects: { name, ttl, records (list of { priority, weight, port, target }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ priority = number, weight = number, port = number, target = string })) })) | [] | no |
+| tags | Tags to apply to the DNS zone. | map(string) | {} | no |
+| tags_from_rg | Use the tags from the resource group | bool | false | no |
+| txt_records | TXT records to create. List of objects: { name, ttl, records (list of { value }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ value = string })) })) | [] | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| dns_zone_id | ID of the DNS Zone. |
+| dns_zone_name | Name of the DNS Zone. |
+
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-dns-zone/_examples/basic) - Minimal configuration for a DNS zone
+
+## Resources
+
+- **Azure DNS Zone**: [https://learn.microsoft.com/en-us/azure/dns/dns-overview](https://learn.microsoft.com/en-us/azure/dns/dns-overview)
+- **Terraform Azure Provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_zone)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
