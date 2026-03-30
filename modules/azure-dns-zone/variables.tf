@@ -38,6 +38,16 @@ variable "a_records" {
   default     = {}
 }
 
+variable "aaaa_records" {
+  description = "AAAA records to create. List of objects: { name, ttl, records (list of IPs) }"
+  type = list(object({
+    name    = string
+    ttl     = optional(number, 60)
+    records = list(string)
+  }))
+  default = []
+}
+
 variable "cname_records" {
   description = "CNAME records to create. Map of name => target (string)."
   type        = map(string)
@@ -75,6 +85,45 @@ variable "ns_records" {
     name    = string
     ttl     = optional(number, 60)
     records = list(string)
+  }))
+  default = []
+}
+
+variable "caa_records" {
+  description = "CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) }"
+  type = list(object({
+    name    = string
+    ttl     = optional(number, 60)
+    records = list(object({
+      flags = number
+      tag   = string
+      value = string
+    }))
+  }))
+  default = []
+}
+
+variable "ptr_records" {
+  description = "PTR records to create. List of objects: { name, ttl, records (list of strings) }"
+  type = list(object({
+    name    = string
+    ttl     = optional(number, 60)
+    records = list(string)
+  }))
+  default = []
+}
+
+variable "srv_records" {
+  description = "SRV records to create. List of objects: { name, ttl, records (list of { priority, weight, port, target }) }"
+  type = list(object({
+    name    = string
+    ttl     = optional(number, 60)
+    records = list(object({
+      priority = number
+      weight   = number
+      port     = number
+      target   = string
+    }))
   }))
   default = []
 }
