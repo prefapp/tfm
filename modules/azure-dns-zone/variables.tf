@@ -48,7 +48,7 @@ variable "mx_records" {
   description = "MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) }"
   type = list(object({
     name    = string
-    ttl     = number
+    ttl     = optional(number, 60)
     records = list(object({
       preference = number
       exchange   = string
@@ -58,9 +58,15 @@ variable "mx_records" {
 }
 
 variable "txt_records" {
-  description = "TXT records to create. Map of name => list of values."
-  type        = map(list(string))
-  default     = {}
+  description = "TXT records to create. List of objects: { name, ttl, records (list of { value }) }"
+  type = list(object({
+    name    = string
+    ttl     = optional(number, 60)
+    records = list(object({
+      value = string
+    }))
+  }))
+  default = []
 }
 
 variable "ns_records" {
