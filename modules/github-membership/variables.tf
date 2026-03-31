@@ -15,7 +15,7 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for r in var.config.relationships : contains(["member", "maintainer"], r.role)
+      for r in coalesce(var.config.relationships, []) : contains(["member", "maintainer"], r.role)
     ])
     error_message = "relationship.role must be 'member' or 'maintainer'."
   }
