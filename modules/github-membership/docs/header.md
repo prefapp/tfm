@@ -18,6 +18,8 @@ It is designed for Prefapp’s Internal Developer Platform and automated user/te
 
 ### Using `terraform.tfvars.json` (recommended)
 
+Define the module in your `.tf` file, referencing `var.config`:
+
 ```hcl
 module "membership" {
   source = "git::https://github.com/prefapp/tfm.git//modules/github-membership"
@@ -26,7 +28,28 @@ module "membership" {
 }
 ```
 
-#### Inline example
+Supply the config value in a `terraform.tfvars.json` file:
+
+```json
+{
+  "config": {
+    "user": {
+      "username": "johndoe",
+      "role": "admin"
+    },
+    "relationships": [
+      {
+        "username": "johndoe",
+        "teamId": 123456,
+        "role": "member"
+      }
+    ]
+  }
+}
+```
+
+### Inline example
+
 ```hcl
 module "membership" {
   source = "git::https://github.com/prefapp/tfm.git//modules/github-membership"
