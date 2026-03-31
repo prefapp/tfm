@@ -3,13 +3,13 @@
 data "external" "script_executor" {
   # Execute the node binary directly for better reliability and bypass complex shell nesting issues.
   program = [
-    "node", 
+    "node",
     "${path.module}/script.js"
   ]
 
   # Pass only the variables relevant to the PLAN phase to the script
   query = {
-    instance_name = var.instance_name
+    instance_name  = var.instance_name
     sleep_duration = var.sleep_on_plan
     enable_crash   = var.crash_on_plan
   }
@@ -30,11 +30,11 @@ resource "null_resource" "conditional_sleep" {
   triggers = {
     run_always = timestamp()
   }
-  
+
   provisioner "local-exec" {
     # Executes the command using a standard sh interpreter
-    interpreter = ["sh", "-c"] 
-    
+    interpreter = ["sh", "-c"]
+
     # Echo message and then sleep. We use count[0] to access the instance.
     command = "echo '--- APPLY-TIME DELAY --- Sleeping for ${var.sleep_on_apply} seconds...' && sleep ${var.sleep_on_apply}"
     when    = create
@@ -44,7 +44,7 @@ resource "null_resource" "conditional_sleep" {
 # 3. Conditional Crash: This resource is only created if 'crash_on_apply' is true.
 resource "null_resource" "conditional_crash" {
   count = var.crash_on_apply ? 1 : 0
-  
+
   # Force re-creation on every apply to ensure the provisioner runs
   triggers = {
     run_always = timestamp()
@@ -52,13 +52,38 @@ resource "null_resource" "conditional_crash" {
 
   provisioner "local-exec" {
     # Executes the command using a standard sh interpreter
-    interpreter = ["sh", "-c"] 
-    
+    interpreter = ["sh", "-c"]
+
     # Echo message and then use 'exit 1' to deliberately cause failure
     command = "echo '--- APPLY-TIME CRASH --- INTENTIONAL FAILURE' && exit 1"
     when    = create
   }
 }
+
+
+# 4. Conditional Sleep on DESTROY
+resource "null_resource" "conditional_destroy_sleep" {
+  count = var.sleep_on_destroy > 0 ? 1 : 0
+
+  # No create provisioner needed – this resource only exists to run destroy logic
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+    command     = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}"
+  }
+}
+
+# 5. Conditional Crash on DESTROY
+resource "null_resource" "conditional_destroy_crash" {
+  count = var.crash_on_destroy ? 1 : 0
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+    command     = "echo '--- DESTROY-TIME CRASH --- INTENTIONAL FAILURE' && exit 1"
+  }
+}
+
 
 # --- Module Outputs ---
 
@@ -76,6 +101,9 @@ output "script_timestamp" {
 
 # Check to ensure the base apply-time resource was created
 output "apply_resource_id" {
-    description = "The ID of the base null resource, indicating apply logic executed."
-    value       = null_resource.diagnostic_base_logic.id
+  description = "The ID of the base null resource, indicating apply logic executed."
+  value       = null_resource.diagnostic_base_logic.id
 }
+
+
+

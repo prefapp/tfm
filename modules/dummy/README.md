@@ -32,6 +32,11 @@ module "diagnostic_test" {
   # APPLY TIME CONTROLS
   sleep_on_apply   = 10          # Delays 'terraform apply' by 10 seconds
   crash_on_apply   = false       # Set to true to force 'terraform apply' failure
+
+  # DESTROY TIME CONTROLS
+  sleep_on_destroy = 15          # Delays 'terraform destroy' by 15 seconds
+  crash_on_destroy = false       # Set to true to force 'terraform destroy' failure
+
 }
 
 output "plan_status" {

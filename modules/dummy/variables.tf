@@ -32,3 +32,16 @@ variable "crash_on_plan" {
   default     = false
 }
 
+# 5. Sleep during 'terraform destroy'
+variable "sleep_on_destroy" {
+  description = "Number of seconds to sleep during the 'destroy' phase."
+  type        = number
+  default     = 0
+}
+
+# 6. Crash during 'terraform destroy'
+variable "crash_on_destroy" {
+  description = "Set to true to force a non-zero exit code during the 'destroy' phase."
+  type        = bool
+  default     = false
+}
