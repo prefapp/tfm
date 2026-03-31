@@ -154,6 +154,9 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         },
+        "modules/github-repo-secrets-section": {
+            "package-name": "github-repo-secrets-section"
+        },
         "modules/github-team": {
             "package-name": "github-team"
         },
