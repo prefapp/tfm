@@ -157,6 +157,12 @@
         "modules/github-files-set": {
             "package-name": "github-files-set"
         },
+        "modules/github-repo-secrets-section": {
+            "package-name": "github-repo-secrets-section"
+        },
+        "modules/github-team": {
+            "package-name": "github-team"
+        },
         "modules/azure-vnet-gateway": {
             "package-name": "azure-vnet-gateway"
         },
