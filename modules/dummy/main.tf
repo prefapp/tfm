@@ -63,24 +63,28 @@ resource "null_resource" "conditional_crash" {
 
 # 4. Conditional Sleep on DESTROY
 resource "null_resource" "conditional_destroy_sleep" {
-  count = var.sleep_on_destroy > 0 ? 1 : 0
+  # Always create this resource so that destroy-time behavior is reliably available.
+  # The actual sleep is gated inside the destroy-time command based on 'sleep_on_destroy'.
+  count = 1
 
   # No create provisioner needed – this resource only exists to run destroy logic
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
-    command     = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}"
+    command     = "if [ \"${var.sleep_on_destroy}\" -gt 0 ]; then echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}; else echo '--- DESTROY-TIME DELAY --- Skipping sleep; sleep_on_destroy <= 0 ---'; fi"
   }
 }
 
 # 5. Conditional Crash on DESTROY
 resource "null_resource" "conditional_destroy_crash" {
-  count = var.crash_on_destroy ? 1 : 0
+  # Always create this resource so that destroy-time behavior is reliably available.
+  # The actual crash is gated inside the destroy-time command based on 'crash_on_destroy'.
+  count = 1
 
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
-    command     = "echo '--- DESTROY-TIME CRASH --- INTENTIONAL FAILURE' && exit 1"
+    command     = "if [ \"${var.crash_on_destroy}\" = \"true\" ]; then echo '--- DESTROY-TIME CRASH --- INTENTIONAL FAILURE' && exit 1; else echo '--- DESTROY-TIME CRASH --- Skipping crash; crash_on_destroy = false ---'; fi"
   }
 }
 
