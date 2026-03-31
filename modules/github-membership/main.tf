@@ -8,7 +8,7 @@ resource "github_membership" "this" {
 # Team memberships
 resource "github_team_membership" "relationships" {
   for_each = {
-    for r in var.config.relationships : "${r.username}-${r.teamId}" => r
+    for r in coalesce(var.config.relationships, []) : "${r.username}-${r.teamId}" => r
   }
 
   team_id  = each.value.teamId   # numeric team ID (not slug)
