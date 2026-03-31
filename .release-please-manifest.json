@@ -57,5 +57,6 @@
     "modules/azure-vnet-gateway-connection": "0.1.0",
     "modules/azure-localnet-gateway": "0.1.1",
     "modules/github-repo-secrets-section": "0.1.0",
-    "modules/github-files-set": "0.1.0"
+    "modules/github-files-set": "0.1.0",
+    "modules/github-repo": "0.1.0"
 }
