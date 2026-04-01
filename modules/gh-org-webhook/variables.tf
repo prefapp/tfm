@@ -6,10 +6,10 @@ variable "config" {
       events = list(string)
 
       configuration = object({
-        url           = string
-        contentType   = optional(string, "json")
-        secret        = optional(string)
-        insecureSsl   = optional(bool, false)
+        url         = string
+        contentType = optional(string, "json")
+        secret      = optional(string)
+        insecureSsl = optional(bool, false)
       })
     })
   })

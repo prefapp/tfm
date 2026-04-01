@@ -67,13 +67,13 @@ module "org_webhook" {
 ### Inline example
 
 ```hcl
-module "org_webhook" {
+module "org\_webhook" {
   source = "git::https://github.com/prefapp/tfm.git//modules/gh-org-webhook"
 
   config = {
     webhook = {
       active = true
-      events = ["push", "pull_request", "issues", "workflow_run"]
+      events = ["push", "pull\_request", "issues", "workflow\_run"]
       configuration = {
         url         = "https://example.com/webhook"
         contentType = "json"
@@ -90,6 +90,7 @@ module "org_webhook" {
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 
 ## Providers
@@ -123,21 +124,18 @@ No modules.
 | <a name="output_webhook_id"></a> [webhook\_id](#output\_webhook\_id) | ID of the created organization webhook |
 | <a name="output_webhook_url"></a> [webhook\_url](#output\_webhook\_url) | URL of the webhook |
 
-### `docs/footer.md`
-```markdown
 ## Examples
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples/basic) - Organization webhook with push/pull_request/issues
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples/basic) - Organization webhook with push/pull\_request/issues
 
 ## Resources
 
-- **github_organization_webhook**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/organization_webhook)
+- **github\_organization\_webhook**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/organization_webhook)
 - **GitHub Terraform Provider**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs)
 
 ## Support
 
 For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
-```
 <!-- END_TF_DOCS -->

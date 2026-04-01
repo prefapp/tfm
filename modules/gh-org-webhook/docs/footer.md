@@ -1,5 +1,3 @@
-### `docs/footer.md`
-```markdown
 ## Examples
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples):
