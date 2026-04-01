@@ -21,7 +21,7 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for e in var.config.webhook.events : length(trim(e)) > 0
+      for e in var.config.webhook.events : length(trimspace(e)) > 0
     ])
     error_message = "Each webhook event must be a non-empty string."
   }
