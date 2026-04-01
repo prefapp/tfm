@@ -21,8 +21,8 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for e in var.config.webhook.events : contains(["push", "pull_request", "issues", "commit_comment", "create", "delete", "fork", "gollum", "member", "public", "release", "status", "watch", "workflow_dispatch"], e)
+      for e in var.config.webhook.events : length(trim(e)) > 0
     ])
-    error_message = "Invalid event type in webhook.events."
+    error_message = "Each webhook event must be a non-empty string."
   }
 }
