@@ -63,17 +63,18 @@ module "org_webhook" {
 
   config = var.config
 }
+```
 
 ### Inline example
 
 ```hcl
-module "org\_webhook" {
+module "org_webhook" {
   source = "git::https://github.com/prefapp/tfm.git//modules/gh-org-webhook"
 
   config = {
     webhook = {
       active = true
-      events = ["push", "pull\_request", "issues", "workflow\_run"]
+      events = ["push", "pull_request", "issues", "workflow_run"]
       configuration = {
         url         = "https://example.com/webhook"
         contentType = "json"
@@ -83,7 +84,6 @@ module "org\_webhook" {
     }
   }
 }
-```
 ```
 
 ## Requirements
@@ -113,7 +113,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_config"></a> [config](#input\_config) | GitHub organization webhook configuration | <pre>object({<br/>    webhook = object({<br/>      active = optional(bool, true)<br/>      events = list(string)<br/><br/>      configuration = object({<br/>        url           = string<br/>        contentType   = optional(string, "json")<br/>        secret        = optional(string)<br/>        insecureSsl   = optional(bool, false)<br/>      })<br/>    })<br/>  })</pre> | n/a | yes |
+| <a name="input_config"></a> [config](#input\_config) | GitHub organization webhook configuration | <pre>object({<br/>    webhook = object({<br/>      active = optional(bool, true)<br/>      events = list(string)<br/><br/>      configuration = object({<br/>        url         = string<br/>        contentType = optional(string, "json")<br/>        secret      = optional(string)<br/>        insecureSsl = optional(bool, false)<br/>      })<br/>    })<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 

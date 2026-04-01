@@ -62,6 +62,7 @@ module "org_webhook" {
 
   config = var.config
 }
+```
 
 ### Inline example
 
