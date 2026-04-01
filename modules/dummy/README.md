@@ -56,6 +56,8 @@ output "plan_status" {
 | `crash_on_plan` | If set to true, forces `terraform plan` to fail immediately. | `bool` | `false` | Plan | 
 | `sleep_on_apply` | Duration in seconds to delay the `terraform apply` execution. | `number` | `0` | Apply | 
 | `crash_on_apply` | If set to true, forces `terraform apply` to fail immediately. | `bool` | `false` | Apply |
+| `sleep_on_destroy` | Duration in seconds to delay the `terraform destroy` execution. Must be a non-negative integer. | `number` | `0` | Destroy |
+| `crash_on_destroy` | If set to true, forces `terraform destroy` to fail immediately. | `bool` | `false` | Destroy |
 
 
 ## Outputs
