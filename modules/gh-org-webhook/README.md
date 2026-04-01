@@ -67,13 +67,13 @@ module "org_webhook" {
 ### Inline example
 
 ```hcl
-module "org\_webhook" {
+module "org_webhook" {
   source = "git::https://github.com/prefapp/tfm.git//modules/gh-org-webhook"
 
   config = {
     webhook = {
       active = true
-      events = ["push", "pull\_request", "issues", "workflow\_run"]
+      events = ["push", "pull_request", "issues", "workflow_run"]
       configuration = {
         url         = "https://example.com/webhook"
         contentType = "json"
