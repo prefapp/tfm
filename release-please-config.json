@@ -156,7 +156,7 @@
         },
         "modules/gh-org-webhook": {
             "package-name": "gh-org-webhook"
-        }
+        },
         "modules/github-files-set": {
             "package-name": "github-files-set"
         },
