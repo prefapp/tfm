@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.1.2...azure-vnet-subnet-v2.2.0) (2026-03-17)
+
+
+### Features
+
+* Extend azure-vnet-and-subnet to support vnet-links ([#979](https://github.com/prefapp/tfm/issues/979)) ([4f70107](https://github.com/prefapp/tfm/commit/4f70107b1aaf0865644df2d233d4bc9986fadc31))
+
 ## [2.1.2](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.1.1...azure-vnet-subnet-v2.1.2) (2026-01-12)
 
 

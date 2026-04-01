@@ -162,7 +162,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
       condition {
         test     = "StringEquals"
         variable = "kms:ViaService"
-        values   = var.via_service == null ? ["${var.alias}.${each.key}.amazonaws.com"] : [for service in var.via_service : "${service}.${each.key}.amazonaws.com"]
+        values   = var.via_service == null ? [for region in toset(concat(var.aws_regions_replica, [var.aws_region])) : "${var.alias}.${region}.amazonaws.com"] : flatten([for service in var.via_service : [for region in toset(concat(var.aws_regions_replica, [var.aws_region])) : "${service}.${region}.amazonaws.com"]])
       }
       condition {
         test     = "StringEquals"
@@ -178,6 +178,7 @@ data "aws_iam_policy_document" "kms_default_statement" {
         "kms:ListGrants",
         "kms:DescribeKey",
       ]
+      resources = ["*"]
     }
   }
 }

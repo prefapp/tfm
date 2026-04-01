@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.10](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.9...azure-backup-vault-v0.1.10) (2026-03-12)
+
+
+### Bug Fixes
+
+* data reference blobs ([#980](https://github.com/prefapp/tfm/issues/980)) ([0f74612](https://github.com/prefapp/tfm/commit/0f746121f88505f5b04513848a32ca52fc7fed33))
+
 ## [0.1.9](https://github.com/prefapp/tfm/compare/azure-backup-vault-v0.1.8...azure-backup-vault-v0.1.9) (2026-03-03)
 
 
