@@ -60,32 +60,46 @@ resource "null_resource" "conditional_crash" {
   }
 }
 
-
 # 4. Conditional Sleep on DESTROY
 resource "null_resource" "conditional_destroy_sleep" {
-  # Always create this resource so that destroy-time behavior is reliably available.
-  # The actual sleep is gated inside the destroy-time command based on 'sleep_on_destroy'.
   count = 1
 
-  # No create provisioner needed – this resource only exists to run destroy logic
+  triggers = {
+    sleep_on_destroy = var.sleep_on_destroy
+  }
+
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
-    command     = "if [ \"${var.sleep_on_destroy}\" -gt 0 ]; then echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}; else echo '--- DESTROY-TIME DELAY --- Skipping sleep; sleep_on_destroy <= 0 ---'; fi"
+    command     = <<-EOT
+      if [ "${self.triggers.sleep_on_destroy}" -gt 0 ]; then
+        echo '--- DESTROY-TIME DELAY --- Sleeping for ${self.triggers.sleep_on_destroy} seconds...'
+        sleep ${self.triggers.sleep_on_destroy}
+      else
+        echo '--- DESTROY-TIME DELAY --- Skipping sleep; sleep_on_destroy <= 0 ---'
+      fi
+    EOT
   }
 }
 
 # 5. Conditional Crash on DESTROY
 resource "null_resource" "conditional_destroy_crash" {
-  # Always create this resource so that destroy-time behavior is reliably available.
-  # The actual crash is gated inside the destroy-time command based on 'crash_on_destroy'.
   count = 1
+
+  triggers = {
+    crash_on_destroy = var.crash_on_destroy
+  }
 
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
-    command     = "if [ \"${var.crash_on_destroy}\" = \"true\" ]; then echo '--- DESTROY-TIME CRASH --- INTENTIONAL FAILURE' && exit 1; else echo '--- DESTROY-TIME CRASH --- Skipping crash; crash_on_destroy = false ---'; fi"
+    command     = <<-EOT
+      if [ "${self.triggers.crash_on_destroy}" = "true" ]; then
+        echo '--- DESTROY-TIME CRASH --- INTENTIONAL FAILURE'
+        exit 1
+      else
+        echo '--- DESTROY-TIME CRASH --- Skipping crash; crash_on_destroy = false ---'
+      fi
+    EOT
   }
 }
-
-
