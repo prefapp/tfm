@@ -177,6 +177,12 @@
         },
         "modules/azure-dns-zone": {
             "package-name": "azure-dns-zone"
+        },
+        "modules/github-membership": {
+            "package-name": "github-membership"
+        },
+        "modules/github-repo": {
+            "package-name": "github-repo"
         }
     }
 }
