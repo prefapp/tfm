@@ -6,6 +6,7 @@ output "webhook_id" {
 output "webhook_url" {
   description = "URL of the webhook"
   value       = github_organization_webhook.this.configuration[0].url
+  sensitive   = true
 }
 
 output "active" {
