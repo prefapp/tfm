@@ -60,5 +60,5 @@
     "modules/github-repo-secrets-section": "0.1.0",
     "modules/github-files-set": "0.1.0",
     "modules/github-repo": "0.1.0",
-    "modules/gh-org-webhook": "0.1.0"
+    "modules/github-org-webhook": "0.1.0"
 }

@@ -59,7 +59,7 @@ For the **complete and up-to-date list** of all available webhook events and the
 
 ```hcl
 module "org_webhook" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-org-webhook"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-org-webhook"
 
   config = var.config
 }
@@ -69,7 +69,7 @@ module "org_webhook" {
 
 ```hcl
 module "org_webhook" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-org-webhook"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-org-webhook"
 
   config = {
     webhook = {
@@ -126,9 +126,9 @@ No modules.
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-org-webhook/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples/basic) - Organization webhook with push/pull\_request/issues
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-org-webhook/_examples/basic) - Organization webhook with push/pull\_request/issues
 
 ## Resources
 
