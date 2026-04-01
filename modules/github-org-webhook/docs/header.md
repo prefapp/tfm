@@ -58,7 +58,7 @@ For the **complete and up-to-date list** of all available webhook events and the
 
 ```hcl
 module "org_webhook" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-org-webhook"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-org-webhook"
 
   config = var.config
 }
@@ -68,7 +68,7 @@ module "org_webhook" {
 
 ```hcl
 module "org_webhook" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/gh-org-webhook"
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-org-webhook"
 
   config = {
     webhook = {

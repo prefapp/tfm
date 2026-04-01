@@ -1,8 +1,8 @@
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples):
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-org-webhook/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/gh-org-webhook/_examples/basic) - Organization webhook with push/pull_request/issues
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-org-webhook/_examples/basic) - Organization webhook with push/pull_request/issues
 
 ## Resources
 

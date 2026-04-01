@@ -154,8 +154,8 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         },
-        "modules/gh-org-webhook": {
-            "package-name": "gh-org-webhook"
+        "modules/github-org-webhook": {
+            "package-name": "github-org-webhook"
         },
         "modules/github-files-set": {
             "package-name": "github-files-set"
