@@ -12,7 +12,7 @@ It is designed for Prefapp’s Internal Developer Platform and automated webhook
 - **Full event support**: Subscribe to any GitHub organization webhook event
 - **Secure by default**: Supports secret, content type, and SSL validation
 - **JSON-native**: Perfect for programmatic generation
-- **Strong validation**: Ensures only valid events and required fields
+- **Input validation**: Ensures required fields and a non-empty events list
 
 ## Supported Events
 
