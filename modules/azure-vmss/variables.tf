@@ -10,9 +10,9 @@ variable "common" {
 variable "vmss" {
   description = "Scale set, image, disks, upgrade policy, networking, identity, and optional cloud-init / custom script. See Inputs table for the full object shape."
   type = object({
-    name                        = string
-    resource_group_name         = string
-    sku                         = string
+    name                = string
+    resource_group_name = optional(string)
+    sku                 = string
     instances                   = optional(number)
     admin_username              = string
     admin_ssh_key_username      = string

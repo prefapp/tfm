@@ -4,7 +4,7 @@
 
 This module creates a **Linux Virtual Machine Scale Set** in an existing resource group, attaches it to an existing **subnet** (via data sources), applies optional **tags** (with optional merge from a resource group data source), and can run a **CustomScript** extension when `run_script` is set.
 
-The module does **not** create the resource group, virtual network, or subnet. `vmss.resource_group_name` is used by the `azurerm_resource_group` data source (for `tags_from_rg`); it is often the same value as `common.resource_group_name`.
+The module does **not** create the resource group, virtual network, or subnet. For `tags_from_rg`, the `azurerm_resource_group` data source reads **`coalesce(vmss.resource_group_name, common.resource_group_name)`** — by default (field omitted) tags come from the **same** resource group where the scale set is deployed (`common.resource_group_name`). Set `vmss.resource_group_name` only when you intentionally need tags from another existing resource group.
 
 ## Key features
 
@@ -39,9 +39,9 @@ module "vmss" {
   }
 
   vmss = {
-    name                   = "my-vmss"
-    resource_group_name    = "my-resource-group"
-    sku                    = "Standard_B2s"
+    name = "my-vmss"
+    # resource_group_name optional; omit to use common.resource_group_name for tag lookup
+    sku = "Standard_B2s"
     instances              = 2
     admin_username         = "azureuser"
     admin_ssh_key_username = "azureuser"

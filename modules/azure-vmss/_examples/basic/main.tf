@@ -29,9 +29,8 @@ module "vmss" {
   }
 
   vmss = {
-    name                   = "example-vmss"
-    resource_group_name    = "example-rg"
-    sku                    = "Standard_B2s"
+    name = "example-vmss"
+    sku  = "Standard_B2s"
     instances              = 1
     admin_username         = "azureuser"
     admin_ssh_key_username = "azureuser"
