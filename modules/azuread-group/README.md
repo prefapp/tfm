@@ -17,7 +17,7 @@ Use it when you want one place to declare group metadata, membership resolution 
 
 ## Basic usage
 
-Configure providers in your root module (`azuread` and `azurerm` with `features {}` as required). Pass at least `name`, `description`, `members`, `owners`, `subscription_roles`, and `directory_roles`. Lists can be empty when you truly want no members, owners, or roles.
+Configure providers in your root module (`azuread` and `azurerm` with `features {}` as required). Pass at least `name`, `description`, `subscription_roles`, and `directory_roles`. The `members` and `owners` inputs are optional and default to empty lists, so you only need to set them when you want to add explicit members or owners. Role lists can be empty when you truly want no subscription or directory role assignments.
 
 ### Minimal example
 
@@ -222,7 +222,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_group_id"></a> [group\_id](#output\_group\_id) | n/a |
+| <a name="output_group_id"></a> [group\_id](#output\_group\_id) | Object ID of the Microsoft Entra ID (Azure AD) group created by this module. |
 
 ## Examples
 
