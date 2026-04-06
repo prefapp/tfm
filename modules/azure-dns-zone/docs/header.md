@@ -52,10 +52,18 @@ module "dns_zone" {
   dns_zone_name       = "example.com"
   resource_group_name = "my-rg"
 
-  a_records = {
-    "www" = ["1.2.3.4"]
-    "api" = ["1.2.3.4", "5.6.7.8"]
-  }
+  a_records = [
+    {
+      name    = "www"
+      ttl     = 300
+      records = ["1.2.3.4"]
+    },
+    {
+      name    = "api"
+      ttl     = 300
+      records = ["1.2.3.4", "5.6.7.8"]
+    }
+  ]
 
   aaaa_records = [
     {
