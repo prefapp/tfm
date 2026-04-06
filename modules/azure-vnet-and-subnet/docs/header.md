@@ -1,4 +1,4 @@
-## Azure Virtual Network and Subnet Module
+# Azure Virtual Network and Subnet Module
 
 This Terraform module creates and manages a Virtual Network (VNet) and subnets in Azure, including private DNS zones, peerings, and tagging. It is designed for deploying complex and reusable network infrastructures in Azure environments.
 
@@ -84,7 +84,6 @@ module "azure_vnet_and_subnet" {
   peerings = [
     {
       peering_name              = "myPeeringName"
-      resource_group_name       = "myResourceGroupName"
       vnet_name                 = "myVnetName"
       remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
     }
@@ -102,13 +101,13 @@ module "azure_vnet_and_subnet" {
 
 ```hcl
 private_dns_zone_ids = [
-  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net",
   "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net",
 ]
 
 private_dns_zone_virtual_network_link_ids = [
-  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/redis_link",
   "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com/virtualNetworkLinks/foo.councilbox.postgres.database.azure.com",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/redis_link",
 ]
 
 subnet_ids = {

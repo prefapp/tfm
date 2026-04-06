@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-## Azure Virtual Network and Subnet Module
+# Azure Virtual Network and Subnet Module
 
 This Terraform module creates and manages a Virtual Network (VNet) and subnets in Azure, including private DNS zones, peerings, and tagging. It is designed for deploying complex and reusable network infrastructures in Azure environments.
 
@@ -84,7 +84,6 @@ module "azure_vnet_and_subnet" {
   peerings = [
     {
       peering_name              = "myPeeringName"
-      resource_group_name       = "myResourceGroupName"
       vnet_name                 = "myVnetName"
       remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
     }
@@ -98,17 +97,17 @@ module "azure_vnet_and_subnet" {
 }
 ```
 
-## Output
+## Outputs
 
 ```hcl
 private_dns_zone_ids = [
-  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net",
   "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net",
 ]
 
 private_dns_zone_virtual_network_link_ids = [
-  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/redis_link",
   "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com/virtualNetworkLinks/foo.councilbox.postgres.database.azure.com",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/redis_link",
 ]
 
 subnet_ids = {
@@ -176,7 +175,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-vnet-and-subnet/_examples/basic) - Virtual network with one internal subnet.
 
-## Resources
+## Additional resources
 - [Official Azure Virtual Network documentation](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview)
 - [Terraform AzureRM Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network)
 
