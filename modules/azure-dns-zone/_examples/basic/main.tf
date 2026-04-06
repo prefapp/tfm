@@ -4,9 +4,13 @@ module "dns_zone" {
   resource_group_name = "my-rg"
 
   # A Records
-  a_records = {
-    "www" = ["1.2.3.4"]
-  }
+  a_records = [
+    {
+      name    = "www"
+      ttl     = 3600
+      records = ["1.2.3.4"]
+    }
+  ]
 
   # MX Records
   mx_records = [
