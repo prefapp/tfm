@@ -108,7 +108,7 @@ private_dns_zone_ids = [
 
 private_dns_zone_virtual_network_link_ids = [
   "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net/virtualNetworkLinks/redis_link",
-  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com/virtualNetworkLinks/redis_link",
+  "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/privateDnsZones/foo.councilbox.postgres.database.azure.com/virtualNetworkLinks/foo.councilbox.postgres.database.azure.com",
 ]
 
 subnet_ids = {
