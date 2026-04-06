@@ -12,7 +12,7 @@ Below is a summary of the main capabilities:
 - **Virtual network and subnets**: One VNet with a map of subnets; supports service endpoints, private endpoint / private link policies, and delegations.
 - **Private DNS zones**: Optional zones with default linkage to the module VNet, or explicit `virtual_network_links` to attach additional VNets per zone.
 - **VNet peering**: Optional peerings using `azurerm_virtual_network_peering`; peering uses the module-level `resource_group_name` and each entry’s `vnet_name` for the local VNet side.
-- **Tags**: `tags` is always applied; with the default `tags_from_rg = true`, resource group tags are merged into it. Use `tags_from_rg = false` to skip that merge.
+- **Tags**: `tags` is applied to resources that support tagging (for example the VNet, private DNS zones, and their VNet links). With the default `tags_from_rg = true`, resource group tags are merged with the provided `tags` for those resources; set `tags_from_rg = false` to skip that merge.
 
 ## Key Features
 
