@@ -74,7 +74,7 @@ module "azure_vnet_peering" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=3.85.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.67.0 |
 
 ## Modules
 
@@ -93,12 +93,12 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_destination_name_peering"></a> [destination\_name\_peering](#input\_destination\_name\_peering) | (Required) The name of the destination to origin peering. Changing this forces a new resource to be created. | `string` | n/a | yes |
-| <a name="input_destination_resource_group_name"></a> [destination\_resource\_group\_name](#input\_destination\_resource\_group\_name) | (Required) The name of the resource group in which to create the destination virtual network. Changing this forces a new resource to be created. | `string` | n/a | yes |
-| <a name="input_destination_virtual_network_name"></a> [destination\_virtual\_network\_name](#input\_destination\_virtual\_network\_name) | (Required) The name of the destination virtual network. Changing this forces a new resource to be created. | `string` | n/a | yes |
-| <a name="input_origin_name_peering"></a> [origin\_name\_peering](#input\_origin\_name\_peering) | (Required) The name of the origin to destination peering. Changing this forces a new resource to be created. | `string` | n/a | yes |
-| <a name="input_origin_resource_group_name"></a> [origin\_resource\_group\_name](#input\_origin\_resource\_group\_name) | (Required) The name of the resource group in which to create the origin virtual network. Changing this forces a new resource to be created. | `string` | n/a | yes |
-| <a name="input_origin_virtual_network_name"></a> [origin\_virtual\_network\_name](#input\_origin\_virtual\_network\_name) | (Required) The name of the origin virtual network. Changing this forces a new resource to be created. | `string` | n/a | yes |
+| <a name="input_destination_name_peering"></a> [destination\_name\_peering](#input\_destination\_name\_peering) | (Required) Name of the destination→origin virtual network peering resource on the destination VNet. Changing this forces a new peering to be created. | `string` | n/a | yes |
+| <a name="input_destination_resource_group_name"></a> [destination\_resource\_group\_name](#input\_destination\_resource\_group\_name) | (Required) Resource group that contains the existing destination virtual network (used for the data source lookup and as `resource_group_name` on the destination→origin peering). | `string` | n/a | yes |
+| <a name="input_destination_virtual_network_name"></a> [destination\_virtual\_network\_name](#input\_destination\_virtual\_network\_name) | (Required) Name of the existing destination virtual network to look up. This module does not create the VNet. | `string` | n/a | yes |
+| <a name="input_origin_name_peering"></a> [origin\_name\_peering](#input\_origin\_name\_peering) | (Required) Name of the origin→destination virtual network peering resource on the origin VNet. Changing this forces a new peering to be created. | `string` | n/a | yes |
+| <a name="input_origin_resource_group_name"></a> [origin\_resource\_group\_name](#input\_origin\_resource\_group\_name) | (Required) Resource group that contains the existing origin virtual network (used for the data source lookup and as `resource_group_name` on the origin→destination peering). | `string` | n/a | yes |
+| <a name="input_origin_virtual_network_name"></a> [origin\_virtual\_network\_name](#input\_origin\_virtual\_network\_name) | (Required) Name of the existing origin virtual network to look up. This module does not create the VNet. | `string` | n/a | yes |
 
 ## Outputs
 
