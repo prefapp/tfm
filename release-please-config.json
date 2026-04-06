@@ -4,6 +4,9 @@
     "release-type": "terraform-module",
     "commit-search-depth": 5,
     "packages": {
+        "modules/aws-backup": {
+            "package-name": "aws-backup"
+        },
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
         },
@@ -151,14 +154,38 @@
         "modules/aws-secretsmanager-replication": {
             "package-name": "aws-secretsmanager-replication"
         },
+        "modules/github-org-webhook": {
+            "package-name": "github-org-webhook"
+        },
+        "modules/github-files-set": {
+            "package-name": "github-files-set"
+        },
+        "modules/github-repo-secrets-section": {
+            "package-name": "github-repo-secrets-section"
+        },
+        "modules/github-team": {
+            "package-name": "github-team"
+        },
         "modules/azure-vnet-gateway": {
             "package-name": "azure-vnet-gateway"
+        },
+        "modules/azure-vnet-gateway-connection": {
+            "package-name": "azure-vnet-gateway-connection"
+        },
+        "modules/azure-localnet-gateway": {
+            "package-name": "azure-localnet-gateway"
         },
         "modules/azure-private-dns-zone": {
             "package-name": "azure-private-dns-zone"
         },
         "modules/azure-dns-zone": {
             "package-name": "azure-dns-zone"
+        },
+        "modules/github-membership": {
+            "package-name": "github-membership"
+        },
+        "modules/github-repo": {
+            "package-name": "github-repo"
         }
     }
 }
