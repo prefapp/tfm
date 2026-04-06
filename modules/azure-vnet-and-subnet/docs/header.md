@@ -4,14 +4,14 @@
 
 This Terraform module provisions and manages **Azure Virtual Networks (VNets)** and **subnets**, with optional **Private DNS zones** (including multi-VNet links), **virtual network peering**, and flexible **tagging**. It targets reusable network foundations for Azure workloads and aligns with common patterns for private endpoints, service endpoints, and subnet delegation (for example PostgreSQL Flexible Server).
 
-The module reads an existing resource group (data source), creates the VNet and subnets from a single structured object, and can merge tags from that resource group with your own map when `tags_from_rg` is true.
+The module reads an existing resource group (data source), creates the VNet and subnets from a single structured object. By default (`tags_from_rg = true`), tags on the resource group are merged with the `tags` you pass; set `tags_from_rg = false` to apply only `tags` and ignore resource group tags.
 
 Below is a summary of the main capabilities:
 
 - **Virtual network and subnets**: One VNet with a map of subnets; supports service endpoints, private endpoint / private link policies, and delegations.
 - **Private DNS zones**: Optional zones with default linkage to the module VNet, or explicit `virtual_network_links` to attach additional VNets per zone.
 - **VNet peering**: Optional peerings using `azurerm_virtual_network_peering`; peering uses the module-level `resource_group_name` and each entry’s `vnet_name` for the local VNet side.
-- **Tags**: Per-resource tags with optional inheritance from the resource group.
+- **Tags**: `tags` is always applied; with the default `tags_from_rg = true`, resource group tags are merged into it. Use `tags_from_rg = false` to skip that merge.
 
 ## Key Features
 
@@ -26,7 +26,7 @@ Below is a summary of the main capabilities:
 
 - **Prerequisites**: An Azure resource group must exist. Configure the AzureRM provider in your root module (subscription, features, and authentication as required).
 - **Configure variables**: Set `resource_group_name` and the `virtual_network` object (including `subnets`). Use `private_dns_zones` and `peerings` when needed; both default to empty lists.
-- **Tags**: Set `tags` and optionally `tags_from_rg = true` to merge resource group tags with `tags`.
+- **Tags**: Set `tags` as needed. Merging with resource group tags is the default (`tags_from_rg` defaults to `true`); set `tags_from_rg = false` if you want only `tags` and no inheritance from the resource group.
 - **Apply**: Run `terraform init` and `terraform apply` to create or update resources.
 
 #### Minimal example
