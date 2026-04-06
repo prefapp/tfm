@@ -16,7 +16,7 @@ The module does **not** create the resource group, virtual network, or subnet. `
 
 - Existing **resource group** (`common.resource_group_name`) and **location** (`common.location`).
 - Existing **VNet** and **subnet** matching `vmss.subnet_name`, `vmss.virtual_network_name`, and `vmss.virtual_network_resource_group_name`.
-- **SSH public key** and a valid **`network_interface_public_ip_adress_public_ip_prefix_id`** for your subscription when using the default public IP block.
+- **SSH public key** and a valid **`network_interface_public_ip_adress_public_ip_prefix_id`** for your subscription.
 
 ## Basic usage
 
