@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.5...aws-cloudfront-delivery-v0.2.6) (2026-02-26)
+
+
+### Bug Fixes
+
+* add optional OAC name or calculate it ([#948](https://github.com/prefapp/tfm/issues/948)) ([87f8b1f](https://github.com/prefapp/tfm/commit/87f8b1f8a8fe72b485f75d574f28caf81768f40b))
+
 ## [0.2.5](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.4...aws-cloudfront-delivery-v0.2.5) (2025-11-19)
 
 

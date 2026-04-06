@@ -30,6 +30,7 @@ data "azurerm_resource_group" "disk_rg" {
   for_each = { for rg in local.unique_disk_resource_groups : rg => rg }
   name     = each.value
 }
+
 # Data source to get the managed disk by name
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/managed_disk
 data "azurerm_managed_disk" "this" {

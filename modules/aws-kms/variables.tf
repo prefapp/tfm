@@ -63,8 +63,32 @@ variable "alias" {
   default     = null
 }
 
+variable "kms_alias_prefix" {
+  description = "The prefix for the alias that will use the KMS key. The full alias will be in the format alias/{prefix}{alias}"
+  type        = string
+  default     = ""
+}
+
 variable "administrator_role_name" {
   description = "Name of the IAM role to grant KMS administrator permissions. Set to null to disable granting permissions to this role."
   type        = string
   default     = "Administrator"
+}
+
+variable "via_service" {
+  description = "AWS services that are allowed to use the KMS key. This is used to create a condition in the key policy that allows access through these services. Example: 'rds', 's3'"
+  type        = list(string)
+  default     = null
+}
+
+variable "user_roles_with_read_write" {
+  description = "List of IAM role names to grant read/write permissions to the KMS key. Set to null to disable granting permissions to any additional roles."
+  type        = list(string)
+  default     = []
+}
+
+variable "user_roles_with_read" {
+  description = "List of IAM role names or users to grant read permissions to the KMS key. Set to null to disable granting permissions to any additional roles."
+  type        = list(string)
+  default     = []
 }
