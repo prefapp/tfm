@@ -4,16 +4,16 @@ locals {
     for zone in var.private_dns_zones : (
       length(coalesce(zone.virtual_network_links, [])) > 0 ? [
         for vnet_link in zone.virtual_network_links : {
-          dns_zone_name        = zone.name
-          name                 = coalesce(vnet_link.virtual_network_name, vnet_link.name)
-          virtual_network_id   = vnet_link.virtual_network_id
-          registration_enabled = zone.auto_registration_enabled
+          dns_zone_name         = zone.name
+          name                  = vnet_link.name
+          virtual_network_id    = vnet_link.virtual_network_id
+          registration_enabled  = zone.auto_registration_enabled
         }
-        ] : [{
-          dns_zone_name        = zone.name
-          name                 = coalesce(zone.link_name, zone.name)
-          virtual_network_id   = azurerm_virtual_network.this.id
-          registration_enabled = zone.auto_registration_enabled
+      ] : [{
+        dns_zone_name         = zone.name
+        name                  = coalesce(zone.link_name, zone.name)
+        virtual_network_id    = azurerm_virtual_network.this.id
+        registration_enabled  = zone.auto_registration_enabled
       }]
     )
   ])
