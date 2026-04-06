@@ -22,9 +22,13 @@ module "dns_zone" {
   ]
 
   # CNAME Records
-  cname_records = {
-    "mail" = "mail.external.com."
-  }
+  cname_records = [
+    {
+      name   = "mail"
+      record = "mail.external.com."
+      ttl    = 3600
+    }
+  ]
 
   # MX Records (Mail Exchange)
   mx_records = [
