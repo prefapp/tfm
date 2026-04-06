@@ -72,6 +72,7 @@ variable "mx_records" {
       preference = number
       exchange   = string
     }))
+    tags    = optional(map(string), {})
   }))
   default = []
   validation {
@@ -88,6 +89,7 @@ variable "txt_records" {
     records = list(object({
       value = string
     }))
+    tags    = optional(map(string), {})
   }))
   default = []
   validation {
@@ -102,6 +104,7 @@ variable "ns_records" {
     name    = string
     ttl     = optional(number, 60)
     records = list(string)
+    tags    = optional(map(string), {})
   }))
   default = []
   validation {
@@ -120,6 +123,7 @@ variable "caa_records" {
       tag   = string
       value = string
     }))
+    tags    = optional(map(string), {})
   }))
   default = []
   validation {
@@ -153,6 +157,7 @@ variable "srv_records" {
       port     = number
       target   = string
     }))
+    tags    = optional(map(string), {})
   }))
   default = []
   validation {

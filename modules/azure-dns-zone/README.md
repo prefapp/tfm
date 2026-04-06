@@ -9,6 +9,7 @@ Key capabilities include:
 - Automated creation of a DNS zone
 - Tag inheritance from Resource Group with override support
 - Management of A, AAAA, CNAME, MX, TXT, NS, CAA, PTR, and SRV records
+- Optional tag support on MX, TXT, NS, CAA, and SRV records
 
 This module is ideal for teams seeking a reusable way to manage DNS zones and records from a single Terraform module.
 
@@ -19,6 +20,7 @@ This module is ideal for teams seeking a reusable way to manage DNS zones and re
 - **Individual TTL Control**: Each record can have its own TTL configuration.
 - **Duplicate Prevention**: Automatic validation to prevent duplicate record names within the same record type.
 - **Tag Strategy**: Supports direct tags or inheriting tags from the Resource Group and merging with custom tags.
+- **Record-Level Tags**: Supports optional `tags` per MX, TXT, NS, CAA, and SRV record.
 
 ## Validation Rules
 
@@ -109,6 +111,9 @@ module "dns_zone" {
         { preference = 10, exchange = "mx1.example.com." },
         { preference = 20, exchange = "mx2.example.com." }
       ]
+      tags = {
+        service = "mail"
+      }
     }
   ]
 
@@ -118,6 +123,9 @@ module "dns_zone" {
       records = [
         { value = "v=spf1 include:mailgun.org ~all" }
       ]
+      tags = {
+        service = "mail"
+      }
     }
   ]
 }
@@ -164,17 +172,17 @@ module "dns_zone" {
 |------|-------------|------|---------|:--------:|
 | a_records | A records to create. List of objects: { name, ttl (optional, default 60), records (list of IPs) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
 | aaaa_records | AAAA records to create. List of objects: { name, ttl, records (list of IPs) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
-| caa_records | CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ flags = number, tag = string, value = string })) })) | [] | no |
+| caa_records | CAA records to create. List of objects: { name, ttl, records (list of { flags, tag, value }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ flags = number, tag = string, value = string })), tags = optional(map(string), {}) })) | [] | no |
 | cname_records | CNAME records to create. List of objects: { name, ttl (optional, default 60), record (target) } | list(object({ name = string, ttl = optional(number, 60), record = string })) | [] | no |
 | dns_zone_name | Name of the Azure DNS Zone. | string | n/a | yes |
-| mx_records | MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ preference = number, exchange = string })) })) | [] | no |
-| ns_records | NS records to create. List of objects: { name, ttl, records (list of strings) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
+| mx_records | MX records to create. List of objects: { name, ttl, records (list of { preference, exchange }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ preference = number, exchange = string })), tags = optional(map(string), {}) })) | [] | no |
+| ns_records | NS records to create. List of objects: { name, ttl, records (list of strings) } | list(object({ name = string, ttl = optional(number, 60), records = list(string), tags = optional(map(string), {}) })) | [] | no |
 | ptr_records | PTR records to create. List of objects: { name, ttl, records (list of strings) } | list(object({ name = string, ttl = optional(number, 60), records = list(string) })) | [] | no |
 | resource_group_name | Resource group name where DNS zone will be created. | string | n/a | yes |
-| srv_records | SRV records to create. List of objects: { name, ttl, records (list of { priority, weight, port, target }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ priority = number, weight = number, port = number, target = string })) })) | [] | no |
+| srv_records | SRV records to create. List of objects: { name, ttl, records (list of { priority, weight, port, target }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ priority = number, weight = number, port = number, target = string })), tags = optional(map(string), {}) })) | [] | no |
 | tags | Tags to apply to the DNS zone. | map(string) | {} | no |
 | tags_from_rg | Use the tags from the resource group | bool | false | no |
-| txt_records | TXT records to create. List of objects: { name, ttl, records (list of { value }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ value = string })) })) | [] | no |
+| txt_records | TXT records to create. List of objects: { name, ttl, records (list of { value }) } | list(object({ name = string, ttl = optional(number, 60), records = list(object({ value = string })), tags = optional(map(string), {}) })) | [] | no |
 
 ## Outputs
 

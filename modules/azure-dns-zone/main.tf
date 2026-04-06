@@ -68,6 +68,7 @@ resource "azurerm_dns_mx_record" "this" {
       exchange   = record.value.exchange
     }
   }
+  tags                = each.value.tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_txt_record
@@ -84,6 +85,7 @@ resource "azurerm_dns_txt_record" "this" {
       value = record.value.value
     }
   }
+  tags                = each.value.tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_ns_record
@@ -95,6 +97,7 @@ resource "azurerm_dns_ns_record" "this" {
   resource_group_name = var.resource_group_name
   ttl                 = each.value.ttl
   records             = each.value.records
+  tags                = each.value.tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_caa_record
@@ -113,6 +116,7 @@ resource "azurerm_dns_caa_record" "this" {
       value = record.value.value
     }
   }
+  tags                = each.value.tags
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_ptr_record
@@ -143,4 +147,5 @@ resource "azurerm_dns_srv_record" "this" {
       target   = record.value.target
     }
   }
+  tags                = each.value.tags
 }
