@@ -98,7 +98,7 @@ module "azure_vnet_and_subnet" {
 }
 ```
 
-## Output
+## Outputs
 
 ```hcl
 private_dns_zone_ids = [
