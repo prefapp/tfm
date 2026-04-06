@@ -98,7 +98,7 @@ locals {
 }
 
 module "azuread-group" {
-  source = "../.."
+  source             = "git::https://github.com/prefapp/tfm.git//modules/azuread-group?ref=<version>"
   name              = local.values.name
   description       = local.values.description
   members           = local.values.members
@@ -107,7 +107,7 @@ module "azuread-group" {
 }
 ```
 
-> For a more complete example configuration, see the `_examples/with_yaml_file` folder in this repository. Ensure that provider versions in the example align with the Requirements section above.
+> For a more complete example configuration, see the `_examples/with_yaml_file` folder in this repository. Ensure that provider versions in the example align with the Requirements section.
 ## Known issues
 - Removing a `azuread_privileged_access_group_eligibility_schedule` resource may crash the provider ([issue #1399](https://github.com/hashicorp/terraform-provider-azuread/issues/1399)).
 - Updating a `azuread_privileged_access_group_eligibility_schedule` may show a wrong log error; sometimes you must remove and recreate the resource ([issue #1412](https://github.com/hashicorp/terraform-provider-azuread/issues/1412)).
@@ -187,7 +187,7 @@ No modules.
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples/with\_yaml\_file) - Example showing group creation, members and PIM configuration.
+- [with\_yaml\_file](https://github.com/prefapp/tfm/tree/main/modules/azuread-group/_examples/with\_yaml\_file) - Example showing group creation, members and PIM configuration.
 
 ## Resources
 - [Terraform AzureAD Provider: group](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/group)
