@@ -43,7 +43,6 @@ variable "peerings" {
     allow_gateway_transit        = optional(bool, false)
     allow_virtual_network_access = optional(bool, true)
     use_remote_gateways          = optional(bool, false)
-    resource_group_name          = string
     vnet_name                    = string
     remote_virtual_network_id    = string
   }))
