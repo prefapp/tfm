@@ -73,9 +73,12 @@ module "dns_zone" {
     }
   ]
 
-  cname_records = {
-    "mail" = "mail.external.com."
-  }
+  cname_records = [
+    {
+      name   = "mail"
+      record = "mail.external.com."
+    }
+  ]
 
   mx_records = [
     {
