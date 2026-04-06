@@ -1,7 +1,7 @@
 # Output section
 output "cloud_init" {
-  description = "Base64-encoded `vmss.cloud_init` when set (same encoding as scale set `custom_data`)."
-  value       = var.vmss.cloud_init != null ? base64encode(var.vmss.cloud_init) : null
+  description = "Base64-encoded `vmss.cloud_init` (same encoding as scale set `custom_data`)."
+  value       = base64encode(var.vmss.cloud_init)
 }
 
 output "run_script" {
