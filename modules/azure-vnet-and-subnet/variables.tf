@@ -26,7 +26,7 @@ variable "private_dns_zones" {
     name                      = string
     link_name                 = optional(string)
     auto_registration_enabled = optional(bool, false)
-    virtual_network_links     = optional(list(object({
+    virtual_network_links = optional(list(object({
       name                 = string
       virtual_network_id   = string
       virtual_network_name = optional(string)
@@ -40,8 +40,18 @@ variable "peerings" {
   type = list(object({
     peering_name                 = string
     allow_forwarded_traffic      = optional(bool, false)
+    allow_gateway_transit        = optional(bool, false)
+    allow_virtual_network_access = optional(bool, true)
+    use_remote_gateways          = optional(bool, false)
+    vnet_name                    = string
+    remote_virtual_network_id    = string
   }))
   default = []
+}
+
+variable "resource_group_name" {
+  description = "The name of the resource group in which to create the virtual network"
+  type        = string
 }
 
 variable "tags" {

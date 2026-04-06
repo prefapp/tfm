@@ -1,5 +1,7 @@
 # Basic example values for azure-vnet-and-subnet module
 
+resource_group_name: example-rg
+
 virtual_network:
   name: example-vnet
   location: westeurope

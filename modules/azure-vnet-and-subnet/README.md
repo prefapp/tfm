@@ -14,6 +14,7 @@ This Terraform module creates and manages a Virtual Network (VNet) and subnets i
 ```hcl
 module "azure_vnet_and_subnet" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-and-subnet?ref=<version>"
+  resource_group_name = "example-rg"
 
   virtual_network = {
     name          = "example-vnet"
@@ -40,6 +41,7 @@ module "azure_vnet_and_subnet" {
 ```hcl
 module "azure_vnet_and_subnet" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-and-subnet?ref=<version>"
+  resource_group_name = "myResourceGroupName"
 
   virtual_network = {
     name          = "myVnetName"
@@ -79,8 +81,13 @@ module "azure_vnet_and_subnet" {
 
   peerings = [
     {
-      peering_name              = "myPeeringName"
-      allow_forwarded_traffic   = false
+      peering_name                 = "myPeeringName"
+      vnet_name                    = "myVnetName"
+      remote_virtual_network_id    = "/subscriptions/mySubscriptionId/resourceGroups/myRemoteResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
+      allow_virtual_network_access = true
+      allow_forwarded_traffic      = false
+      allow_gateway_transit        = false
+      use_remote_gateways          = false
     }
   ]
 
@@ -92,7 +99,7 @@ module "azure_vnet_and_subnet" {
 }
 ```
 
-## Outputs
+### Output example
 
 ```hcl
 private_dns_zone_ids = [
@@ -147,8 +154,9 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_peerings"></a> [peerings](#input\_peerings) | List of virtual network peerings | <pre>list(object({<br/>    peering_name                 = string<br/>    allow_forwarded_traffic      = optional(bool, false)<br/>  }))</pre> | `[]` | no |
+| <a name="input_peerings"></a> [peerings](#input\_peerings) | List of virtual network peerings | <pre>list(object({<br/>    peering_name                 = string<br/>    allow_forwarded_traffic      = optional(bool, false)<br/>    allow_gateway_transit        = optional(bool, false)<br/>    allow_virtual_network_access = optional(bool, true)<br/>    use_remote_gateways          = optional(bool, false)<br/>    vnet_name                    = string<br/>    remote_virtual_network_id    = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_private_dns_zones"></a> [private\_dns\_zones](#input\_private\_dns\_zones) | List of private DNS zones to create.<br/><br/>Each zone can optionally define virtual\_network\_links (list of objects) to link the DNS zone to multiple VNets.<br/>If virtual\_network\_links is omitted, a default link to the main VNet is created.<br/><br/>Example:<br/>private\_dns\_zones = [<br/>  {<br/>    name = "example.com"<br/>    auto\_registration\_enabled = false<br/>    virtual\_network\_links = [<br/>      {<br/>        name = "vnet-link-1"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet1"<br/>      },<br/>      {<br/>        name = "vnet-link-2"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet2"<br/>      }<br/>    ]<br/>  },<br/>  {<br/>    name = "other.com"<br/>    auto\_registration\_enabled = true<br/>    # No virtual\_network\_links: will link to main VNet<br/>  }<br/>] | <pre>list(object({<br/>    name                      = string<br/>    link_name                 = optional(string)<br/>    auto_registration_enabled = optional(bool, false)<br/>    virtual_network_links     = optional(list(object({<br/>      name                 = string<br/>      virtual_network_id   = string<br/>      virtual_network_name = optional(string)<br/>    })))<br/>  }))</pre> | `[]` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the virtual network | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | The tags to associate with your resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use the tags from the resource group | `bool` | `true` | no |
 | <a name="input_virtual_network"></a> [virtual\_network](#input\_virtual\_network) | Properties of the virtual network | <pre>object({<br/>    name          = string<br/>    location      = string<br/>    address_space = list(string)<br/>    subnets = map(object({<br/>      address_prefixes                              = list(string)<br/>      private_endpoint_network_policies_enabled     = optional(string, "Enabled")<br/>      private_link_service_network_policies_enabled = optional(bool, true)<br/>      service_endpoints                             = optional(list(string))<br/>      delegation = optional(list(object({<br/>        name = string<br/>        service_delegation = object({<br/>          name    = string<br/>          actions = list(string)<br/>        })<br/>      })))<br/>    }))<br/>  })</pre> | n/a | yes |

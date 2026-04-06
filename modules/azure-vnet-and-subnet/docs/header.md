@@ -14,6 +14,7 @@ This Terraform module creates and manages a Virtual Network (VNet) and subnets i
 ```hcl
 module "azure_vnet_and_subnet" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-and-subnet?ref=<version>"
+  resource_group_name = "example-rg"
 
   virtual_network = {
     name          = "example-vnet"
@@ -40,6 +41,7 @@ module "azure_vnet_and_subnet" {
 ```hcl
 module "azure_vnet_and_subnet" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-vnet-and-subnet?ref=<version>"
+  resource_group_name = "myResourceGroupName"
 
   virtual_network = {
     name          = "myVnetName"
@@ -79,8 +81,13 @@ module "azure_vnet_and_subnet" {
 
   peerings = [
     {
-      peering_name              = "myPeeringName"
-      allow_forwarded_traffic   = false
+      peering_name                 = "myPeeringName"
+      vnet_name                    = "myVnetName"
+      remote_virtual_network_id    = "/subscriptions/mySubscriptionId/resourceGroups/myRemoteResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
+      allow_virtual_network_access = true
+      allow_forwarded_traffic      = false
+      allow_gateway_transit        = false
+      use_remote_gateways          = false
     }
   ]
 
@@ -92,7 +99,7 @@ module "azure_vnet_and_subnet" {
 }
 ```
 
-## Outputs
+### Output example
 
 ```hcl
 private_dns_zone_ids = [

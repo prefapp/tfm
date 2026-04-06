@@ -7,7 +7,8 @@ locals {
 module "azure_vnet_and_subnet" {
   source = "../../"
 
-  virtual_network   = local.values.virtual_network
-  private_dns_zones = local.values.private_dns_zones
-  peerings          = local.values.peerings
+  resource_group_name = local.values.resource_group_name
+  virtual_network     = local.values.virtual_network
+  private_dns_zones   = local.values.private_dns_zones
+  peerings            = local.values.peerings
 }
