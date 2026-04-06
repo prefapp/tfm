@@ -17,11 +17,11 @@ The module does **not** create the resource group, virtual network, or subnet. `
 
 - Existing **resource group** (`common.resource_group_name`) and **location** (`common.location`).
 - Existing **VNet** and **subnet** matching `vmss.subnet_name`, `vmss.virtual_network_name`, and `vmss.virtual_network_resource_group_name`.
-- **SSH public key** and a valid **`network_interface_public_ip_adress_public_ip_prefix_id`** for your subscription. This value is currently required because the module always configures a `public_ip_address` block for the VMSS network interface.
+- **SSH public key** and a valid **`network_interface_public_ip_adress_public_ip_prefix_id`** for your subscription.
 
 ## Basic usage
 
-Pass `common`, `vmss`, and optionally `tags` / `tags_from_rg`. The `vmss` object has many fields; see the **Inputs** table for types and required attributes. In particular, `network_interface_public_ip_adress_public_ip_prefix_id` must be set because the module always configures the VMSS public IP block.
+Pass `common`, `vmss`, and optionally `tags` / `tags_from_rg`. The `vmss` object has many fields; see the **Inputs** table for types and required attributes.
 
 ### Example
 
@@ -139,7 +139,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_cloud_init"></a> [cloud\_init](#output\_cloud\_init) | Base64-encoded `vmss.cloud_init` when set (same encoding as scale set `custom_data`). |
+| <a name="output_cloud_init"></a> [cloud\_init](#output\_cloud\_init) | Base64-encoded `vmss.cloud_init` (same encoding as scale set `custom_data`). |
 | <a name="output_run_script"></a> [run\_script](#output\_run\_script) | JSON settings for the CustomScript extension when `vmss.run_script` is set. |
 | <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | Platform-assigned unique ID of the scale set. |
 | <a name="output_vmss_id"></a> [vmss\_id](#output\_vmss\_id) | Resource ID of the Linux virtual machine scale set. |
