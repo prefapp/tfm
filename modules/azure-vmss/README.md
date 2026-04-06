@@ -17,11 +17,11 @@ The module does **not** create the resource group, virtual network, or subnet. `
 
 - Existing **resource group** (`common.resource_group_name`) and **location** (`common.location`).
 - Existing **VNet** and **subnet** matching `vmss.subnet_name`, `vmss.virtual_network_name`, and `vmss.virtual_network_resource_group_name`.
-- **SSH public key** and a valid **`network_interface_public_ip_adress_public_ip_prefix_id`** for your subscription when using the default public IP block.
+- **SSH public key** and a valid **`network_interface_public_ip_adress_public_ip_prefix_id`** for your subscription. This value is currently required because the module always configures a `public_ip_address` block for the VMSS network interface.
 
 ## Basic usage
 
-Pass `common`, `vmss`, and optionally `tags` / `tags_from_rg`. The `vmss` object has many fields; see the **Inputs** table for types and required attributes.
+Pass `common`, `vmss`, and optionally `tags` / `tags_from_rg`. The `vmss` object has many fields; see the **Inputs** table for types and required attributes. In particular, `network_interface_public_ip_adress_public_ip_prefix_id` must be set because the module always configures the VMSS public IP block.
 
 ### Example
 
