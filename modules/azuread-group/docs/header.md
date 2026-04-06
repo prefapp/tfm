@@ -1,9 +1,26 @@
-# Azure AD Group Module
+**Azure AD Group Module**
 
-This Terraform module creates and manages Azure Active Directory (AD) groups, including role assignments, PIM (Privileged Identity Management), owners, and members. It supports configuration via YAML for easier management and reproducibility.
+## Overview
 
+This Terraform module creates and manages Azure Active Directory (AD) groups, including role assignments, PIM (Privileged Identity Management), owners, and members.
 
-### Provisioner actor and permissions
+It supports configuration via YAML for easier management and reproducibility in platform and identity workflows.
+
+## Key Features
+
+- **Group lifecycle management**: Create and manage Azure AD groups with custom names and descriptions.
+- **Role assignment support**: Assign directory roles and subscription roles to groups.
+- **Owner and member management**: Manage users and service principals as owners and members.
+- **PIM capabilities**: Configure Privileged Identity Management options for eligible and active assignments.
+- **YAML-driven configuration**: Define group settings via YAML for easier reuse and automation.
+
+## Basic Usage
+
+### Minimal usage example
+
+> For a more complete example configuration, see the `_examples/with_yaml_file` folder in this repository. Ensure that provider versions in the example align with the Requirements section.
+
+## Provisioner Actor and Permissions
 
 > The provisioner actor must be a Service Principal due to a bug in the provider. See [issue #1386](https://github.com/hashicorp/terraform-provider-azuread/issues/1386).
 
@@ -71,15 +88,6 @@ $GraphServicePrincipal = Get-AzureADServicePrincipal -Filter "appId eq '$GraphAp
 $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $PermissionName -and $_.AllowedMemberTypes -contains "Application"}; New-AzureAdServiceAppRoleAssignment -ObjectId $MSI -PrincipalId $MSI -ResourceId $GraphServicePrincipal.ObjectId -Id $AppRole.Id
 ```
 
-## Features
-- Create Azure AD groups with custom name and description
-- Assign directory and subscription roles
-- Manage group owners and members (users, service principals)
-- Enable and configure PIM for groups
-- YAML-driven configuration for scalable examples
-
-## Minimal usage example
-
 **values.yaml**
 ```yaml
 name: example-group-1
@@ -99,15 +107,14 @@ locals {
 
 module "azuread-group" {
   source             = "git::https://github.com/prefapp/tfm.git//modules/azuread-group?ref=<version>"
-  name              = local.values.name
-  description       = local.values.description
-  members           = local.values.members
-  directory_roles   = local.values.directory_roles
+  name               = local.values.name
+  description        = local.values.description
+  members            = local.values.members
+  directory_roles    = local.values.directory_roles
   subscription_roles = local.values.subscription_roles
 }
 ```
 
-> For a more complete example configuration, see the `_examples/with_yaml_file` folder in this repository. Ensure that provider versions in the example align with the Requirements section.
 ## Known issues
 - Removing a `azuread_privileged_access_group_eligibility_schedule` resource may crash the provider ([issue #1399](https://github.com/hashicorp/terraform-provider-azuread/issues/1399)).
 - Updating a `azuread_privileged_access_group_eligibility_schedule` may show a wrong log error; sometimes you must remove and recreate the resource ([issue #1412](https://github.com/hashicorp/terraform-provider-azuread/issues/1412)).
