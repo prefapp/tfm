@@ -1,0 +1,58 @@
+# Example: Configure a Quota Alert (YAML representation)
+
+values:
+  common:
+    location: eastus
+    resource_group_name: example-alerts-rg
+    tags:
+      environment: production
+      project: azure-alerts
+
+  identity:
+    name: quota-alert-reader
+    scope: /subscriptions/00000000-0000-0000-0000-000000000000
+    role_definition_name: Reader
+
+  action_group:
+    name: quota-alert-action-group
+    resource_group_name: example-alerts-rg
+    short_name: QuotaAG
+
+    email_receivers:
+      platform_team:
+        name: Platform Team
+        email_address: platform@example.com
+
+  quota_alert:
+    name: vcpu-quota-alert
+    display_name: vCPU Quota Usage Alert
+    description: Alert when vCPU quota usage exceeds 80%
+    enabled: true
+    location: eastus
+    evaluation_frequency: PT1H
+    window_duration: PT1H
+    severity: 2
+    scopes:
+      - /subscriptions/00000000-0000-0000-0000-000000000000
+    skip_query_validation: false
+    workspace_alerts_storage_enabled: false
+
+    criteria:
+      query: "Resources | where type == 'microsoft.compute/virtualmachines' | summarize count() by location"
+      operator: GreaterThan
+      threshold: 800
+      metric_measure_column: count_
+      time_aggregation_method: Total
+      dimension:
+        - name: location
+          operator: Include
+          values:
+            - eastus
+            - westus
+      failing_periods:
+        minimum_failing_periods_to_trigger_alert: 1
+        number_of_evaluation_periods: 1
+
+    identity:
+      type: UserAssigned
+      identity_ids: []
