@@ -32,8 +32,6 @@ values:
         category: Administrative
         resource_types:
           - Microsoft.Compute/virtualMachines
-        operation_names:
-          - Microsoft.Compute/virtualMachines/delete
         statuses:
           - Succeeded
 
