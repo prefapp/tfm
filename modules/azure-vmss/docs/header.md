@@ -80,6 +80,8 @@ module "vmss" {
 
 Use `run_script` with a shell script body when you need the CustomScript extension. The module outputs `cloud_init` and `run_script` are `null` when those optional inputs are unset; you must still pass a non-null `cloud_init` if you use the default `custom_data` wiring in `main.tf`.
 
+A **longer reference** (Rolling upgrade, `Standard_DS2_v2`, `file()` for cloud-init and script) lives under [`_examples/comprehensive`](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/comprehensive) so the generated README stays short.
+
 ## File structure
 
 ```
@@ -94,7 +96,8 @@ Use `run_script` with a shell script body when you need the CustomScript extensi
 │   ├── footer.md
 │   └── header.md
 ├── _examples
-│   └── basic
+│   ├── basic
+│   └── comprehensive
 ├── README.md
 └── .terraform-docs.yml
 ```

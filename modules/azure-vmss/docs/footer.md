@@ -1,6 +1,7 @@
 ## Examples
 
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/basic) — Skeleton with placeholders; replace RG, VNet, subnet, SSH key, and public IP prefix before apply.
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/comprehensive) — **`module.reference.hcl`** / **`values.reference.yaml`**: legacy-style Rolling + Ubuntu 18.04 example from the old README, completed with required `vmss` fields; **`legacy-readme-fragment.txt`** notes the old fencing mistakes.
 
 ## Remote resources
 
