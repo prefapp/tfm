@@ -167,6 +167,14 @@ variable "quota_alert" {
     })
   })
   default = null
+
+  validation {
+    condition = var.quota_alert == null || contains(
+      ["UserAssigned", "SystemAssigned, UserAssigned"],
+      var.quota_alert.identity.type
+    )
+    error_message = "quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\" when this module manages and assigns a user-assigned identity."
+  }
 }
 
 # Activity Log Alerts
