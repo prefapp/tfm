@@ -17,7 +17,7 @@ additional_allowed_subnet_ids:
   - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
 
 storage_account:
-  name: "mystorageaccount"
+  name: "mystorageacct001xyz" # Example only; Azure storage account names must be globally unique.
   account_tier: "Standard"
   account_replication_type: "LRS"
   account_kind: "StorageV2"
