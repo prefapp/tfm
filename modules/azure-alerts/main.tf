@@ -263,7 +263,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
     webhook_properties = try(each.value.action.webhook_properties, {})
   }
 
-  tags = var.common.tags
+  tags = local.tags
 }
 
 # Alert Processing Rule to suppress the alerts during the backup window
