@@ -180,7 +180,7 @@ variable "log_alert" {
     enabled             = optional(bool, true)
     scopes              = list(string)
     action = object({
-      action_group_id    = string
+      action_group_id    = optional(string, null)
       webhook_properties = optional(map(string), {})
     })
     criteria = object({
