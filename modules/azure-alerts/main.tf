@@ -276,5 +276,5 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   description          = try(var.backup_alert.description, null)
   add_action_group_ids = var.backup_alert.add_action_group_ids
 
-  tags = var.common.tags
+  tags = local.tags
 }
