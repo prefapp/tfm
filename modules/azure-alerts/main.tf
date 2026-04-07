@@ -1,5 +1,5 @@
 # Managed Identity for Quota Alert to read the quota metrics from the subscription
-## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group
+## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
   count               = var.quota_alert != null ? 1 : 0
   name                = var.identity.name
