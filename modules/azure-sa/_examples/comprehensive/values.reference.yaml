@@ -13,8 +13,8 @@ allowed_subnets:
     resource_group: "rg-test1"
 
 additional_allowed_subnet_ids:
-  - "/subscriptions/324ca80b-cea7-41ff-ac13-25441f452f33/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
-  - "/subscriptions/c9e99a2d-e0cd-473b-935c-bc2e37ea8511/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
+  - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
+  - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
 
 storage_account:
   name: "mystorageaccount"
