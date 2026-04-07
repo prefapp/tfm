@@ -40,10 +40,9 @@ module "azure_alerts" {
       scopes      = ["/subscriptions/00000000-0000-0000-0000-000000000000"]  # Replace with your subscription ID
       
       criteria = {
-        category           = "Administrative"
-        resource_types    = ["Microsoft.Compute/virtualMachines"]
-        operation_names   = ["Microsoft.Compute/virtualMachines/delete"]
-        statuses          = ["Succeeded"]
+        category        = "Administrative"
+        resource_types  = ["Microsoft.Compute/virtualMachines"]
+        statuses        = ["Succeeded"]
       }
 
       action = {
