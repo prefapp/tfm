@@ -10,7 +10,7 @@ The module does **not** create managed identities, users, or groups — it only 
 
 - **Declarative map**: `for_each` over `role_assignments` keys.
 - **Flexible role reference**: Built-in role by **name** or custom role by **resource ID**.
-- **Validations**: Ensures XOR between name and ID, and allowed `type` values.
+- **Validations**: Ensures **exactly one** of `role_definition_name` and `role_definition_id` per entry, and allowed `type` values.
 
 ## Prerequisites
 
