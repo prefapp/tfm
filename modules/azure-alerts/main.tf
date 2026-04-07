@@ -1,7 +1,7 @@
 # Managed Identity for Quota Alert to read the quota metrics from the subscription
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
-  count               = var.quota_alert != null ? 1 : 0
+  count               = var.quota_alert != null && var.identity != null ? 1 : 0
   name                = var.identity.name
   resource_group_name = coalesce(var.action_group.resource_group_name, var.common.resource_group_name)
   location            = var.common.location
@@ -10,7 +10,7 @@ resource "azurerm_user_assigned_identity" "quota_alert_reader" {
 # Role Assignment for the Managed Identity to have Reader access on the subscription to read the quota metrics
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "quota_reader" {
-  count                = var.quota_alert != null ? 1 : 0
+  count                = var.quota_alert != null && var.identity != null ? 1 : 0
   scope                = var.identity.scope
   role_definition_name = var.identity.role_definition_name
   principal_id         = azurerm_user_assigned_identity.quota_alert_reader[0].principal_id
@@ -216,7 +216,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
   identity {
     type         = var.quota_alert.identity.type
-    identity_ids = [azurerm_user_assigned_identity.quota_alert_reader[0].id]
+    identity_ids = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : var.quota_alert.identity.identity_ids
   }
 
   action {
@@ -224,6 +224,13 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
   }
 
   tags = local.tags
+
+  lifecycle {
+    precondition {
+      condition     = var.identity != null || length(var.quota_alert.identity.identity_ids) > 0
+      error_message = "When quota_alert is set, either var.identity must be configured (to let the module create a managed identity) or quota_alert.identity.identity_ids must be provided with at least one identity ID."
+    }
+  }
 }
 
 # Activity Log Alerts to monitor the activity logs at the subscription level and send notifications when the specified conditions are met
