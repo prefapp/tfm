@@ -1,12 +1,12 @@
 # VARIABLES SECTION
 ## General
 variable "backup_resource_group_name" {
-  description = "The name for the resource group for the backups"
+  description = "Name of the existing resource group where backup vaults and policies are created (also used for the data source and optional tag merge)."
   type        = string
 }
 
 variable "storage_account_id" {
-  description = "The ID of the storage account"
+  description = "Full Azure resource ID of the storage account to protect (file shares and/or blob backup)."
   type        = string
 }
 
@@ -113,6 +113,7 @@ variable "backup_blob" {
 }
 
 variable "lifecycle_policy_rule" {
+  description = "Declared for future use; no resources in this module consume this variable yet."
   type = list(object({
     name    = string
     enabled = bool
