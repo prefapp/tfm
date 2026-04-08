@@ -9,7 +9,7 @@ Optional **tag merge** from the resource group is available via `tags_from_rg`.
 
 ## Key features
 
-- **Standard SKU** public IP prefix with configurable **prefix length**, **IP version** (IPv4/IPv6), **SKU tier** (Regional/Global), and optional **availability zones**.
+- **Standard SKU** public IP prefix with configurable **prefix length**, **IP version** (IPv4), **SKU tier** (Regional/Global), and optional **availability zones**.
 - **Tags**: `tags` plus optional merge from the resource group when `tags_from_rg = true`.
 
 ## Prerequisites
