@@ -173,7 +173,7 @@ variable "quota_alert" {
       ["UserAssigned", "SystemAssigned, UserAssigned"],
       var.quota_alert.identity.type
     )
-    error_message = "quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\" when this module manages and assigns a user-assigned identity."
+    error_message = "When quota_alert is set, quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\"."
   }
 }
 
