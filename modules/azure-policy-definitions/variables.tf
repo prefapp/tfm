@@ -1,4 +1,3 @@
-# VARIABLES SECTION
 variable "policies" {
   description = "List of objects containing all the variables for the policy definitions."
   type = list(object({
