@@ -19,7 +19,7 @@ The module includes **`moved`** blocks for state migration from older resource a
 2. You can locate the VNet by **`name` + `resource_group_name`** or by **`tags`** (see `data.tf`).
 3. Setting **`redis.subnet_id`** on the cache is incompatible with using this module’s **private endpoint** pattern for the same workflow; see [Azure Redis VNet documentation](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-how-to-premium-vnet).
 4. Creating a Redis instance often takes **on the order of ~25 minutes**.
-5. **`private_endpoint.private_service_connection`** must be provided (with **`is_manual_connection`**) — the module references it directly; omitting the block causes evaluation errors.
+5. **`private_endpoint.private_service_connection`** may be omitted; it defaults to **`{ is_manual_connection = false }`**. Set the block explicitly when you need a manual connection.
 6. **`dns_private_zone_name`** is resolved with **`resource_group_name = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)`** (the **VNet’s resource group**), not a separate DNS resource group. Layouts with the private DNS zone in another RG are **not supported** by the current module unless that zone happens to live in the same RG as the resolved VNet.
 
 ## Prerequisites
