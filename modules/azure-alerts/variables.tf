@@ -6,7 +6,7 @@ variable "common" {
     tags                = optional(map(string), {})
     tags_from_rg        = optional(bool, false)
   })
-  default = {} # ambos campos tienen default → el bloque entero es opcional
+  default = {} # both fields have defaults, so the entire block is optional
 }
 
 # Identity for Quota Alert
