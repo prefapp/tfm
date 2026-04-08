@@ -1,4 +1,5 @@
 # Two map entries are illustrative only (name vs id, RG vs resource scope); use one key or {} if you prefer.
+# `foo` sets principal type explicitly; `bar` omits `type` and uses the module default (ServicePrincipal).
 # Replace scope, principal ID, and role with values from your tenant.
 terraform {
   required_version = ">= 1.7.3"
@@ -23,6 +24,7 @@ module "azure_role_assignment" {
       scope                = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup"
       role_definition_name = "Reader"
       target_id            = "00000000-0000-0000-0000-000000000000"
+      type                 = "ServicePrincipal"
     }
     bar = {
       scope                = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
