@@ -3,7 +3,6 @@ locals {
   tags = var.common.tags_from_rg ? merge(
     try(
       data.azurerm_resource_group.this[0].tags,
-      data.azurerm_resource_group.this.tags,
       {}
     ),
     var.common.tags
