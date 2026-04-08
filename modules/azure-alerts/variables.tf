@@ -16,7 +16,7 @@ variable "identity" {
     scope                = string
     role_definition_name = optional(string, "Reader")
   })
-  default = null # null = no crear MI ni role assignment
+  default = null # null = do not create a managed identity or role assignment
 }
 
 # Action Group
