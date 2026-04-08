@@ -3,7 +3,10 @@ data "azurerm_subscription" "current" {}
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/data-sources/policy_definition
 data "azurerm_policy_definition" "this" {
-  for_each     = { for k, v in var.assignments : k => v if can(v.policy_name) }
+  for_each = {
+    for k, v in var.assignments : k => v
+    if v.policy_name != null && try(v.policy_definition_id, null) == null
+  }
   display_name = each.value.policy_name
 }
 
