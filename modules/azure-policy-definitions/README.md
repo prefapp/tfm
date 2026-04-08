@@ -9,8 +9,12 @@ An empty **`policies`** list (`[]`, default) creates no definitions.
 
 ## Key features
 
-- **`for_each`** over `policies` (indexed by list position).
+- **`for_each`** keyed by **`policy.name`** (must be unique per entry); reordering the list does not change resource addresses. Output list order follows **lexicographic sort of `name`**, not the input list order.
 - **Outputs**: collected IDs and names of created definitions.
+
+## Notes
+
+- **State migration**: If you previously used a module version that keyed `for_each` by **list index**, upgrading to **`policy.name` keys** changes resource addresses. Use `terraform state mv` (from `azurerm_policy_definition.this[\"0\"]` to `azurerm_policy_definition.this[\"<policy-name>\"]`) or accept one-time replacement—plan carefully.
 
 ## Prerequisites
 
@@ -89,14 +93,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_policies"></a> [policies](#input\_policies) | List of objects containing all the variables for the policy definitions. | <pre>list(object({<br/>    name                = string<br/>    policy_type         = string<br/>    mode                = string<br/>    display_name        = string<br/>    description         = optional(string)<br/>    management_group_id = optional(string)<br/>    policy_rule         = optional(string)<br/>    metadata            = optional(string)<br/>    parameters          = optional(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_policies"></a> [policies](#input\_policies) | Policy definitions to create; empty list creates no resources. | <pre>list(object({<br/>    name                = string<br/>    policy_type         = string<br/>    mode                = string<br/>    display_name        = string<br/>    description         = optional(string)<br/>    management_group_id = optional(string)<br/>    policy_rule         = optional(string)<br/>    metadata            = optional(string)<br/>    parameters          = optional(string)<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_policy_definition_ids"></a> [policy\_definition\_ids](#output\_policy\_definition\_ids) | List of all Azure Policy definition IDs |
-| <a name="output_policy_definition_names"></a> [policy\_definition\_names](#output\_policy\_definition\_names) | List of all Azure Policy definition names |
+| <a name="output_policy_definition_ids"></a> [policy\_definition\_ids](#output\_policy\_definition\_ids) | IDs of created policy definitions, in lexicographic order of `name` (for\_each key)—not necessarily input list order. |
+| <a name="output_policy_definition_names"></a> [policy\_definition\_names](#output\_policy\_definition\_names) | Names of created policy definitions, in lexicographic order of `name`. |
 
 ## Examples
 

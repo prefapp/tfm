@@ -8,8 +8,12 @@ An empty **`policies`** list (`[]`, default) creates no definitions.
 
 ## Key features
 
-- **`for_each`** over `policies` (indexed by list position).
+- **`for_each`** keyed by **`policy.name`** (must be unique per entry); reordering the list does not change resource addresses. Output list order follows **lexicographic sort of `name`**, not the input list order.
 - **Outputs**: collected IDs and names of created definitions.
+
+## Notes
+
+- **State migration**: If you previously used a module version that keyed `for_each` by **list index**, upgrading to **`policy.name` keys** changes resource addresses. Use `terraform state mv` (from `azurerm_policy_definition.this[\"0\"]` to `azurerm_policy_definition.this[\"<policy-name>\"]`) or accept one-time replacement—plan carefully.
 
 ## Prerequisites
 

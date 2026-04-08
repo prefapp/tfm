@@ -1,6 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition
 resource "azurerm_policy_definition" "this" {
-  for_each            = { for i, policy in var.policies : i => policy }
+  for_each            = { for policy in var.policies : policy.name => policy }
   name                = each.value.name
   policy_type         = each.value.policy_type
   mode                = each.value.mode
