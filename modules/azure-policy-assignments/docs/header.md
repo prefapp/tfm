@@ -11,7 +11,7 @@ This module creates **Azure Policy assignments** at one of four **scopes**, driv
 | `subscription` | `azurerm_subscription_policy_assignment` (current subscription from provider) |
 | `management group` | `azurerm_management_group_policy_assignment` |
 
-Policy definition resolution: resources use **`coalesce(policy_definition_id, data lookup)`**. The **`azurerm_policy_definition`** data source runs only when **`policy_name` is non-null** and **`policy_definition_id` is not set**, so assignments that pass only an ID do not trigger a display-name lookup. Optional **`parameters`** are a map and are **JSON-encoded** for the assignment resource.
+Policy definition resolution: resources use **`coalesce(policy_definition_id, data lookup)`**. The **`azurerm_policy_definition`** data source runs only when **`policy_name` is non-null** and **`policy_definition_id` is omitted or `null`** (not an empty string `""`—use `null` or omit the attribute so the lookup by display name runs). Assignments that pass only an ID do not trigger that data source. Optional **`parameters`** are a map and are **JSON-encoded** for the assignment resource.
 
 An empty **`assignments`** list (`[]`, default) creates nothing.
 
