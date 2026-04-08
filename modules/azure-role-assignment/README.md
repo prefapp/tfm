@@ -11,7 +11,7 @@ The module does **not** create managed identities, users, or groups — it only 
 
 - **Declarative map**: `for_each` over `role_assignments` keys.
 - **Flexible role reference**: Built-in role by **name** or custom role by **resource ID**.
-- **Validations**: Ensures XOR between name and ID, and allowed `type` values.
+- **Validations**: Ensures **exactly one** of `role_definition_name` and `role_definition_id` per entry, and allowed `type` values.
 
 ## Prerequisites
 
@@ -84,7 +84,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments) | A map of role assignments to create. The key is the scope, and the value is a map containing the role definition name and target ID. | <pre>map(object({<br/>    scope                = string<br/>    target_id            = string<br/>    type                 = optional(string, "ServicePrincipal")<br/>    role_definition_name = optional(string)<br/>    role_definition_id   = optional(string)<br/>  }))</pre> | `{}` | no |
+| <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments) | Map of role assignments to create. Each map key is an arbitrary assignment name (used only by Terraform); each value must include scope, target\_id, optional principal type, and exactly one of role\_definition\_name or role\_definition\_id. | <pre>map(object({<br/>    scope                  = string<br/>    target_id              = string<br/>    type                   = optional(string, "ServicePrincipal")<br/>    role_definition_name   = optional(string)<br/>    role_definition_id     = optional(string)<br/>  }))</pre> | `{}` | no |
 
 ## Outputs
 

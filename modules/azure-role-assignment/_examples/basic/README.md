@@ -1,8 +1,8 @@
 # Basic example
 
-Single role assignment at a resource group scope using **`role_definition_name`**.
+Minimal runnable root: two **`role_assignments`** entries — **`foo`** at resource group scope with **`role_definition_name`**, **`bar`** at a VM resource scope with **`role_definition_id`**. Principal **`type`** defaults to `ServicePrincipal` in the module.
 
-Update `scope`, `target_id` (principal object ID), and optionally `type` / role before `terraform plan`.
+Replace IDs and resource paths in [`main.tf`](./main.tf) before `terraform plan`.
 
 ## Usage
 
