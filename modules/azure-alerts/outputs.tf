@@ -15,12 +15,12 @@ output "quota_alert_id" {
 
 output "quota_alert_reader_identity_id" {
   description = "The ID of the User Assigned Managed Identity used for the quota alert. Null if not created."
-  value       = var.quota_alert != null ? azurerm_user_assigned_identity.quota_alert_reader[0].id : null
+  value       = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? azurerm_user_assigned_identity.quota_alert_reader[0].id : null
 }
 
 output "quota_alert_reader_principal_id" {
   description = "The principal ID of the quota alert Managed Identity. Null if not created."
-  value       = var.quota_alert != null ? azurerm_user_assigned_identity.quota_alert_reader[0].principal_id : null
+  value       = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? azurerm_user_assigned_identity.quota_alert_reader[0].principal_id : null
 }
 
 output "budget_alert_id" {
