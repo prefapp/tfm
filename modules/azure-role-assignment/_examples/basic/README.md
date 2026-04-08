@@ -1,6 +1,6 @@
 # Basic example
 
-Minimal runnable root: two **`role_assignments`** entries — **`foo`** at resource group scope with **`role_definition_name`**, **`bar`** at a VM resource scope with **`role_definition_id`**. Principal **`type`** defaults to `ServicePrincipal` in the module.
+Runnable root module. The module accepts **any number** of **`role_assignments`** map entries (including **one** or **none** — an empty `{}` creates no resources). This example uses **two** keys only to show **different scope shapes** and **`role_definition_name`** vs **`role_definition_id`**; remove **`bar`** (or **`foo`**) if you only need a single assignment. Principal **`type`** defaults to `ServicePrincipal` in the module.
 
 Replace IDs and resource paths in [`main.tf`](./main.tf) before `terraform plan`.
 
