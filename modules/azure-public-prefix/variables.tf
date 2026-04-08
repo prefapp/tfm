@@ -1,20 +1,20 @@
 variable "name" {
-  description = "(Required) Name of the public IP prefix."
+  description = "The name of the Public IP Prefix."
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "(Required) Resource group where the prefix is created (must already exist)."
+  description = "The name of the resource group in which to create the Public IP Prefix."
   type        = string
 }
 
 variable "location" {
-  description = "(Required) Azure region for the public IP prefix."
+  description = "The location/region where the Public IP Prefix is created."
   type        = string
 }
 
 variable "sku" {
-  description = "(Optional) SKU of the public IP prefix. Only `Standard` is supported."
+  description = "The SKU of the Public IP Prefix."
   type        = string
   nullable    = true
   default     = "Standard"
@@ -25,7 +25,7 @@ variable "sku" {
 }
 
 variable "sku_tier" {
-  description = "(Optional) SKU tier: `Regional` or `Global`."
+  description = "The SKU tier of the Public IP Prefix."
   type        = string
   nullable    = true
   default     = "Regional"
@@ -36,7 +36,7 @@ variable "sku_tier" {
 }
 
 variable "ip_version" {
-  description = "(Optional) `IPv4` or `IPv6`."
+  description = "The IP version of the Public IP Prefix."
   type        = string
   nullable    = true
   default     = "IPv4"
@@ -47,7 +47,7 @@ variable "ip_version" {
 }
 
 variable "prefix_length" {
-  description = "(Optional) Prefix length (CIDR size). Must be between 0 and 32 per variable validation; check Azure limits for your scenario."
+  description = "The length of the Public IP Prefix."
   type        = number
   nullable    = true
   default     = 28
@@ -58,20 +58,20 @@ variable "prefix_length" {
 }
 
 variable "zones" {
-  description = "(Optional) Availability zones for the prefix (region-dependent); empty list for no zone pinning."
+  description = "The availability zone to allocate the Public IP Prefix in."
   type        = list(string)
   nullable    = true
   default     = []
 }
 
 variable "tags_from_rg" {
-  description = "(Optional) Merge tags from the resource group with `tags` (`tags` win on key conflicts)."
+  description = "Use resource group tags as base for module tags"
   type        = bool
   default     = false
 }
 
 variable "tags" {
-  description = "(Optional) Tags applied to the public IP prefix."
+  description = "Tags to apply to resources"
   type        = map(string)
   default     = {}
 }

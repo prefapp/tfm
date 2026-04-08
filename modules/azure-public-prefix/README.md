@@ -85,16 +85,16 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ip_version"></a> [ip\_version](#input\_ip\_version) | (Optional) `IPv4` or `IPv6`. | `string` | `"IPv4"` | no |
-| <a name="input_location"></a> [location](#input\_location) | (Required) Azure region for the public IP prefix. | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | (Required) Name of the public IP prefix. | `string` | n/a | yes |
-| <a name="input_prefix_length"></a> [prefix\_length](#input\_prefix\_length) | (Optional) Prefix length (CIDR size). Must be between 0 and 32 per variable validation; check Azure limits for your scenario. | `number` | `28` | no |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | (Required) Resource group where the prefix is created (must already exist). | `string` | n/a | yes |
-| <a name="input_sku"></a> [sku](#input\_sku) | (Optional) SKU of the public IP prefix. Only `Standard` is supported. | `string` | `"Standard"` | no |
-| <a name="input_sku_tier"></a> [sku\_tier](#input\_sku\_tier) | (Optional) SKU tier: `Regional` or `Global`. | `string` | `"Regional"` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Tags applied to the public IP prefix. | `map(string)` | `{}` | no |
-| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | (Optional) Merge tags from the resource group with `tags` (`tags` win on key conflicts). | `bool` | `false` | no |
-| <a name="input_zones"></a> [zones](#input\_zones) | (Optional) Availability zones for the prefix (region-dependent); empty list for no zone pinning. | `list(string)` | `[]` | no |
+| <a name="input_ip_version"></a> [ip\_version](#input\_ip\_version) | The IP version of the Public IP Prefix. | `string` | `"IPv4"` | no |
+| <a name="input_location"></a> [location](#input\_location) | The location/region where the Public IP Prefix is created. | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | The name of the Public IP Prefix. | `string` | n/a | yes |
+| <a name="input_prefix_length"></a> [prefix\_length](#input\_prefix\_length) | The length of the Public IP Prefix. | `number` | `28` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Public IP Prefix. | `string` | n/a | yes |
+| <a name="input_sku"></a> [sku](#input\_sku) | The SKU of the Public IP Prefix. | `string` | `"Standard"` | no |
+| <a name="input_sku_tier"></a> [sku\_tier](#input\_sku\_tier) | The SKU tier of the Public IP Prefix. | `string` | `"Regional"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
+| <a name="input_zones"></a> [zones](#input\_zones) | The availability zone to allocate the Public IP Prefix in. | `list(string)` | `[]` | no |
 
 ## Outputs
 
