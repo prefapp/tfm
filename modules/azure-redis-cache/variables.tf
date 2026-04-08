@@ -75,5 +75,3 @@ variable "private_endpoint" {
     }))
   })
 }
-
-

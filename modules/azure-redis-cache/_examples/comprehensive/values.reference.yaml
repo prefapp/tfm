@@ -1,0 +1,65 @@
+# Reference YAML for module inputs (illustrative).
+# --- Standard-style (non-Premium family) ---
+standard_example:
+  resource_group: "example-rg"
+  vnet:
+    tags:
+      env: "shared"
+    # name: "example-vnet-name"
+    # resource_group_name: "example-network-rg"
+  subnet_name: "example-subnet"
+  dns_private_zone_name: "privatelink.redis.cache.windows.net"
+  redis:
+    location: "westeurope"
+    name: "redis-test"
+    capacity: 1
+    family: "C"
+    sku_name: "Standard"
+    non_ssl_port_enabled: false
+    public_network_access_enabled: false
+    minimum_tls_version: "1.2"
+    redis_version: 6
+  private_endpoint:
+    name: "pe-example-redis"
+    custom_network_interface_name: "pe-example-redis-nic"
+    private_service_connection:
+      is_manual_connection: false
+
+# --- Premium-style (family P, optional redis_configuration) ---
+premium_example:
+  resource_group: "example-rg"
+  vnet:
+    tags:
+      env: "shared"
+  subnet_name: "example-subnet"
+  dns_private_zone_name: "privatelink.redis.cache.windows.net"
+  redis:
+    location: "westeurope"
+    name: "redis-test"
+    capacity: 1
+    family: "P"
+    sku_name: "Premium"
+    non_ssl_port_enabled: false
+    public_network_access_enabled: false
+    minimum_tls_version: "1.2"
+    redis_version: 6
+    patch_schedule:
+      day_of_week: "Monday"
+      start_hour_utc: 0
+    redis_configuration:
+      aof_backup_enabled: true
+      aof_storage_connection_string_0: "<primary-storage-connection-string>"
+      aof_storage_connection_string_1: "<secondary-storage-connection-string>"
+      authentication_enabled: true
+      active_directory_authentication_enabled: false
+      maxmemory_reserved: 200
+      maxmemory_delta: 200
+      maxmemory_policy: "volatile-lru"
+      maxfragmentationmemory_reserved: 200
+      rdb_backup_enabled: false
+      storage_account_subscription_id: "00000000-0000-0000-0000-000000000000"
+  private_endpoint:
+    name: "pe-example-redis"
+    custom_network_interface_name: "pe-example-redis-nic"
+    private_service_connection:
+      is_manual_connection: false
