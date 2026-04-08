@@ -3,7 +3,7 @@
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
   count               = var.quota_alert != null && var.identity != null ? 1 : 0
   name                = var.identity.name
-  resource_group_name = coalesce(var.action_group.resource_group_name, var.common.resource_group_name)
+  resource_group_name = local.resource_group_name
   location            = var.common.location
 }
 
@@ -20,7 +20,7 @@ resource "azurerm_role_assignment" "quota_reader" {
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group
 resource "azurerm_monitor_action_group" "this" {
   name                = var.action_group.name
-  resource_group_name = coalesce(var.action_group.resource_group_name, var.common.resource_group_name)
+  resource_group_name = local.resource_group_name
   location            = var.common.location
   short_name          = var.action_group.short_name
 
@@ -178,7 +178,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
   count = var.quota_alert != null ? 1 : 0
 
   name                             = var.quota_alert.name
-  resource_group_name              = coalesce(var.action_group.resource_group_name, var.common.resource_group_name)
+  resource_group_name              = local.resource_group_name
   location                         = coalesce(var.quota_alert.location, var.common.location)
   display_name                     = var.quota_alert.display_name
   description                      = try(var.quota_alert.description, null)
@@ -239,7 +239,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
   for_each = { for idx, alert in var.log_alert : alert.name => alert }
 
   name                = each.value.name
-  resource_group_name = coalesce(each.value.resource_group_name, var.common.resource_group_name, var.action_group.resource_group_name)
+  resource_group_name = coalesce(each.value.resource_group_name, local.resource_group_name)
   location            = coalesce(each.value.location, var.common.location)
   scopes              = each.value.scopes
   description         = try(each.value.description, null)
@@ -278,7 +278,7 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   count = var.backup_alert != null ? 1 : 0
 
   name                 = var.backup_alert.name
-  resource_group_name  = coalesce(var.backup_alert.resource_group_name, var.common.resource_group_name, var.action_group.resource_group_name)
+  resource_group_name  = coalesce(var.backup_alert.resource_group_name, local.resource_group_name)
   scopes               = var.backup_alert.scopes
   description          = try(var.backup_alert.description, null)
   add_action_group_ids = var.backup_alert.add_action_group_ids
