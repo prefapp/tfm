@@ -266,7 +266,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
   }
 
   action {
-    action_group_id    = each.value.action.action_group_id
+    action_group_id    = coalesce(each.value.action.action_group_id, azurerm_monitor_action_group.this.id)
     webhook_properties = try(each.value.action.webhook_properties, {})
   }
 

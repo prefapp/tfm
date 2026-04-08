@@ -45,9 +45,7 @@ module "azure_alerts" {
         statuses        = ["Succeeded"]
       }
 
-      action = {
-        action_group_id = "azurerm_monitor_action_group.this.id"
-      }
+      action = {}
     },
     {
       name        = "security-policy-change-alert"
@@ -61,9 +59,7 @@ module "azure_alerts" {
         statuses          = ["Succeeded"]
       }
 
-      action = {
-        action_group_id = "azurerm_monitor_action_group.this.id"
-      }
+      action = {}
     },
     {
       name        = "service-health-alert"
@@ -80,9 +76,7 @@ module "azure_alerts" {
         }
       }
 
-      action = {
-        action_group_id = "azurerm_monitor_action_group.this.id"
-      }
+      action = {}
     }
   ]
 }

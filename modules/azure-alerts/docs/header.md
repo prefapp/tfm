@@ -58,9 +58,10 @@ module "azure_alerts" {
 
   # Budget Alert - Optional
   budget = {
-    name       = "monthly-budget"
-    amount     = 10000
-    time_grain = "Monthly"
+    name            = "monthly-budget"
+    subscription_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    amount          = 10000
+    time_grain      = "Monthly"
     time_period = {
       start_date = "2026-01-01"
     }
@@ -81,12 +82,10 @@ module "azure_alerts" {
       enabled = true
       scopes  = ["/subscriptions/00000000-0000-0000-0000-000000000000"]
       criteria = {
-        category        = "Administrative"
+        category       = "Administrative"
         resource_types = ["Microsoft.Compute/virtualMachines"]
       }
-      action = {
-        action_group_id = "azurerm_monitor_action_group.this.id"
-      }
+      action = {}
     }
   ]
 }
