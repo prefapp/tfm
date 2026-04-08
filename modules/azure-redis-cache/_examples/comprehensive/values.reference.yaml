@@ -25,7 +25,8 @@ standard_example:
     private_service_connection:
       is_manual_connection: false
 
-# --- Premium-style (family P, optional redis_configuration) ---
+# --- Premium-style (family P) ---
+# In the current module, redis_configuration is effectively required for Premium (dynamic block always dereferences redis_configuration.*).
 premium_example:
   resource_group: "example-rg"
   vnet:

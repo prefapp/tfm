@@ -12,7 +12,7 @@ The module includes **`moved`** blocks for state migration from older resource a
 - **Networking**: Private endpoint to Redis (`redisCache` subresource) with DNS zone group.
 - **VNet resolution**: `vnet.name` + `vnet.resource_group_name` and/or `vnet.tags` via `azurerm_resources`.
 - **Tags**: Optional merge from the Redis resource group when `tags_from_rg = true`.
-- **Premium options**: Optional `patch_schedule` and `redis_configuration` when `redis.family = "P"` (Premium).
+- **Premium options**: Optional `patch_schedule`; when `redis.family = "P"` (Premium), **`redis_configuration` must be set** in the current implementation (the resource block always dereferences `redis.redis_configuration.*`).
 
 ## Notes
 
@@ -21,12 +21,13 @@ The module includes **`moved`** blocks for state migration from older resource a
 3. Setting **`redis.subnet_id`** on the cache is incompatible with using this module’s **private endpoint** pattern for the same workflow; see [Azure Redis VNet documentation](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-how-to-premium-vnet).
 4. Creating a Redis instance often takes **on the order of ~25 minutes**.
 5. **`private_endpoint.private_service_connection`** must be provided (with **`is_manual_connection`**) — the module references it directly; omitting the block causes evaluation errors.
+6. **`dns_private_zone_name`** is resolved with **`resource_group_name = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)`** (the **VNet’s resource group**), not a separate DNS resource group. Layouts with the private DNS zone in another RG are **not supported** by the current module unless that zone happens to live in the same RG as the resolved VNet.
 
 ## Prerequisites
 
 - Existing **resource group** for Redis and the private endpoint.
 - **Virtual network** and **subnet** suitable for the private endpoint.
-- **Private DNS zone** for Redis private link (commonly `privatelink.redis.cache.windows.net` in the DNS zone’s resource group).
+- **Private DNS zone** for Redis private link (commonly `privatelink.redis.cache.windows.net`) **in the same resource group the module uses for the VNet** (`vnet.resource_group_name` or the RG inferred from tag-based VNet lookup)—not a separate “shared DNS” RG unless it is that same RG.
 - **azurerm** provider configured.
 
 ## Basic usage
@@ -129,8 +130,8 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_private_endpoint_id"></a> [private\_endpoint\_id](#output\_private\_endpoint\_id) | n/a |
-| <a name="output_redis_id"></a> [redis\_id](#output\_redis\_id) | n/a |
+| <a name="output_private_endpoint_id"></a> [private\_endpoint\_id](#output\_private\_endpoint\_id) | Resource ID of the private endpoint for the Redis cache. |
+| <a name="output_redis_id"></a> [redis\_id](#output\_redis\_id) | Resource ID of the Azure Cache for Redis instance. |
 
 ## Examples
 
