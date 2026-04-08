@@ -239,7 +239,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
   for_each = { for idx, alert in var.log_alert : alert.name => alert }
 
   name                = each.value.name
-  resource_group_name = coalesce(each.value.resource_group_name, var.common.resource_group_name)
+  resource_group_name = coalesce(each.value.resource_group_name, var.common.resource_group_name, var.action_group.resource_group_name)
   location            = coalesce(each.value.location, var.common.location)
   scopes              = each.value.scopes
   description         = try(each.value.description, null)
