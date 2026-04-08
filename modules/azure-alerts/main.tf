@@ -278,7 +278,7 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   count = var.backup_alert != null ? 1 : 0
 
   name                 = var.backup_alert.name
-  resource_group_name  = coalesce(var.backup_alert.resource_group_name, var.common.resource_group_name)
+  resource_group_name  = coalesce(var.backup_alert.resource_group_name, var.common.resource_group_name, var.action_group.resource_group_name)
   scopes               = var.backup_alert.scopes
   description          = try(var.backup_alert.description, null)
   add_action_group_ids = var.backup_alert.add_action_group_ids
