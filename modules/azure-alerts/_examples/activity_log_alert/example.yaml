@@ -35,8 +35,7 @@ values:
         statuses:
           - Succeeded
 
-      action:
-        action_group_id: azurerm_monitor_action_group.this.id
+      action: {}
 
     - name: security-policy-change-alert
       description: Alert when security policies are created or updated
@@ -51,8 +50,7 @@ values:
         statuses:
           - Succeeded
 
-      action:
-        action_group_id: azurerm_monitor_action_group.this.id
+      action: {}
 
     - name: service-health-alert
       description: Alert on Azure service health incidents
@@ -72,5 +70,4 @@ values:
           services:
             - All
 
-      action:
-        action_group_id: azurerm_monitor_action_group.this.id
+      action: {}
