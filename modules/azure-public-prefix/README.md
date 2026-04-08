@@ -1,3 +1,62 @@
+<!-- BEGIN_TF_DOCS -->
+# Azure public IP prefix Terraform module (`azure-public-prefix`)
+
+## Overview
+
+This module creates an **`azurerm_public_ip_prefix`** in an existing resource group. Public IP prefixes provide a contiguous range of public addresses for use with Standard SKU public IPs (NAT gateways, load balancers, etc.).
+
+Optional **tag merge** from the resource group is available via `tags_from_rg`.
+
+## Key features
+
+- **Standard SKU** public IP prefix with configurable **prefix length**, **IP version** (IPv4/IPv6), **SKU tier** (Regional/Global), and optional **availability zones**.
+- **Tags**: `tags` plus optional merge from the resource group when `tags_from_rg = true`.
+
+## Prerequisites
+
+- Existing **resource group** (`resource_group_name`).
+- **azurerm** provider configured.
+
+## Basic usage
+
+```hcl
+module "public_ip_prefix" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-public-prefix?ref=<version>"
+
+  name                = "example-prefix"
+  resource_group_name = "example-rg"
+  location            = "westeurope"
+
+  prefix_length = 29
+  zones         = ["1"]
+
+  tags_from_rg = false
+  tags = {
+    environment = "dev"
+  }
+}
+```
+
+## File structure
+
+```
+.
+├── CHANGELOG.md
+├── main.tf
+├── locals.tf
+├── variables.tf
+├── versions.tf
+├── outputs.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
+├── README.md
+└── .terraform-docs.yml
+```
+
 ## Requirements
 
 | Name | Version |
@@ -20,42 +79,41 @@ No modules.
 | Name | Type |
 |------|------|
 | [azurerm_public_ip_prefix.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix) | resource |
+| [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ip_version"></a> [ip\_version](#input\_ip\_version) | The IP version of the Public IP Prefix. | `optional(s)` | `IPv4` | no |
-| <a name="input_location"></a> [location](#input\_location) | The location/region where the Public IP Prefix is created. | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | The name of the Public IP Prefix. | `string` | n/a | yes |
-| <a name="input_prefix_length"></a> [prefix\_length](#input\_prefix\_length) | The length of the Public IP Prefix. | `optional(number)` | `28` | no |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Public IP Prefix. | `string` | n/a | yes |
-| <a name="input_sku"></a> [sku](#input\_sku) | The SKU of the Public IP Prefix. | `optional(string)` | `Standard` | no |
-| <a name="input_sku_tier"></a> [sku\_tier](#input\_sku\_tier) | The SKU tier of the Public IP Prefix. | `optional(string)` | `Regional` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | A mapping of tags to assign to the resource. | `optional(map(string))` | `{}` | no |
-| <a name="input_zones"></a> [zones](#input\_zones) | The availability zone to allocate the Public IP Prefix in. | `optional(list(string))` | `[]` | no |
+| <a name="input_ip_version"></a> [ip\_version](#input\_ip\_version) | (Optional) `IPv4` or `IPv6`. | `string` | `"IPv4"` | no |
+| <a name="input_location"></a> [location](#input\_location) | (Required) Azure region for the public IP prefix. | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | (Required) Name of the public IP prefix. | `string` | n/a | yes |
+| <a name="input_prefix_length"></a> [prefix\_length](#input\_prefix\_length) | (Optional) Prefix length (CIDR size). Must be between 0 and 32 per variable validation; check Azure limits for your scenario. | `number` | `28` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | (Required) Resource group where the prefix is created (must already exist). | `string` | n/a | yes |
+| <a name="input_sku"></a> [sku](#input\_sku) | (Optional) SKU of the public IP prefix. Only `Standard` is supported. | `string` | `"Standard"` | no |
+| <a name="input_sku_tier"></a> [sku\_tier](#input\_sku\_tier) | (Optional) SKU tier: `Regional` or `Global`. | `string` | `"Regional"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Tags applied to the public IP prefix. | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | (Optional) Merge tags from the resource group with `tags` (`tags` win on key conflicts). | `bool` | `false` | no |
+| <a name="input_zones"></a> [zones](#input\_zones) | (Optional) Availability zones for the prefix (region-dependent); empty list for no zone pinning. | `list(string)` | `[]` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | # OUTPUTS SECTION Public IP Prefix |
-| <a name="output_ip_prefix"></a> [ip\_prefix](#output\_ip\_prefix) | n/a |
+| <a name="output_id"></a> [id](#output\_id) | Resource ID of the public IP prefix. |
+| <a name="output_ip_prefix"></a> [ip\_prefix](#output\_ip\_prefix) | IP prefix range allocated by Azure (CIDR notation). |
 
-## Example
+## Examples
 
-```yaml
-    values:
-      name: "example_name"
-      resource_group_name: "example_rg"
-      location: "westeurope"
-      sku: "Standard"
-      sku_tier: "Regional"
-      ip_version: "IPv4"
-      prefix_length: 29
-      zones: ["1"]
-      tags:
-        application: "example_app"
-        env: "example_env"
-        tenant: "example_tenant"
-```
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-public-prefix/_examples/basic) — Minimal HCL module call.
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-public-prefix/_examples/comprehensive) — **`values.reference.yaml`**: illustrative YAML shape for inputs.
+
+## Remote resources
+
+- **Terraform `azurerm_public_ip_prefix`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->
