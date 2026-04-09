@@ -108,7 +108,7 @@ variable "budget" {
   description = "Configuration for the subscription consumption budget alert. Set to null to disable."
   type = object({
     name            = string
-    subscription_id = string
+    subscription_id = optional(string, null)
     amount          = number
     time_grain      = string
     time_period = object({

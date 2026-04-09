@@ -149,7 +149,7 @@ resource "azurerm_monitor_action_group" "this" {
 resource "azurerm_consumption_budget_subscription" "this" {
   count           = var.budget != null ? 1 : 0
   name            = var.budget.name
-  subscription_id = trimprefix(var.budget.subscription_id, "/subscriptions/")
+  subscription_id = trimprefix(coalesce(var.budget.subscription_id, data.azurerm_client_config.current.subscription_id), "/subscriptions/")
   amount          = var.budget.amount
   time_grain      = var.budget.time_grain
 
