@@ -1,11 +1,11 @@
 variable "name" {
   type        = string
-  description = "The name of the User Assigned Identity."
+  description = "Name of the user-assigned managed identity."
 }
 
 variable "resource_group" {
   type        = string
-  description = "The name of the Resource Group."
+  description = "Resource group name where the identity is created (must exist)."
 }
 
 variable "location" {
