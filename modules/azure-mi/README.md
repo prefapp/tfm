@@ -15,7 +15,7 @@ Tags: if `tags_from_rg` is **`true`**, tags come from the resource group data so
 
 | `type` | Behaviour |
 |--------|-----------|
-| `github` | `issuer` defaults to `https://token.actions.githubusercontent.com` if omitted. `subject` is built as `repo:{organization}/{repository}:{entity}`. |
+| `github` | `issuer` defaults to `https://token.actions.githubusercontent.com` if omitted. `subject` is `repo:{organization}/{repository}:{entity}`; if `entity` is omitted it defaults to `ref:refs/heads/main`. |
 | `kubernetes` | `subject` is `system:serviceaccount:{namespace}:{service_account_name}`. |
 | `other` | You must set `issuer` and `subject`. |
 
@@ -88,7 +88,7 @@ module "mi" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.16.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.16.0 |
 
 ## Modules
 
@@ -109,15 +109,15 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | List of access policies for the Key Vault | <pre>list(object({<br/>    key_vault_id = string<br/>    key_permissions = optional(list(string), [])<br/>    secret_permissions = optional(list(string), [])<br/>    certificate_permissions = optional(list(string), [])<br/>    storage_permissions = optional(list(string), [])<br/>  }))</pre> | `[]` | no |
-| <a name="input_audience"></a> [audience](#input\_audience) | The audience for the federated identity credential. | `list(string)` | <pre>[<br/>  "api://AzureADTokenExchange"<br/>]</pre> | no |
-| <a name="input_federated_credentials"></a> [federated\_credentials](#input\_federated\_credentials) | A list of objects containing the federated credentials to assign to the User Assigned Identity. | <pre>list(object({<br/>    name                 = string<br/>    type                 = string<br/>    issuer               = optional(string)<br/>    namespace            = optional(string)<br/>    service_account_name = optional(string)<br/>    organization         = optional(string)<br/>    repository           = optional(string)<br/>    entity               = optional(string)<br/>    subject              = optional(string)<br/>  }))</pre> | `[]` | no |
-| <a name="input_location"></a> [location](#input\_location) | The location/region where the User Assigned Identity should be created. | `string` | n/a | yes |
+| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Key Vault access policies for this identity (one object per key\_vault\_id). | <pre>list(object({<br/>    key_vault_id = string<br/>    key_permissions = optional(list(string), [])<br/>    secret_permissions = optional(list(string), [])<br/>    certificate_permissions = optional(list(string), [])<br/>    storage_permissions = optional(list(string), [])<br/>  }))</pre> | `[]` | no |
+| <a name="input_audience"></a> [audience](#input\_audience) | Audience list passed to every federated identity credential. | `list(string)` | <pre>[<br/>  "api://AzureADTokenExchange"<br/>]</pre> | no |
+| <a name="input_federated_credentials"></a> [federated\_credentials](#input\_federated\_credentials) | Federated identity credentials (GitHub Actions, Kubernetes, or custom issuer/subject). | <pre>list(object({<br/>    name                 = string<br/>    type                 = string<br/>    issuer               = optional(string)<br/>    namespace            = optional(string)<br/>    service_account_name = optional(string)<br/>    organization         = optional(string)<br/>    repository           = optional(string)<br/>    entity               = optional(string)<br/>    subject              = optional(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_location"></a> [location](#input\_location) | Azure region for the identity. | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name of the user-assigned managed identity. | `string` | n/a | yes |
-| <a name="input_rbac"></a> [rbac](#input\_rbac) | A list of objects containing the RBAC roles to assign to the User Assigned Identity. | <pre>list(object({<br/>    name  = string<br/>    scope = string<br/>    roles = list(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_rbac"></a> [rbac](#input\_rbac) | RBAC blocks: each entry expands to one role assignment per role in roles. | <pre>list(object({<br/>    name  = string<br/>    scope = string<br/>    roles = list(string)<br/>  }))</pre> | n/a | yes |
 | <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Resource group name where the identity is created (must exist). | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | A mapping of tags to assign to the User Assigned Identity. | `map(string)` | <pre>{<br/>  "name": "value"<br/>}</pre> | no |
-| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | If true, the User Assigned Identity will inherit the tags from the Resource Group. | `bool` | `false` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags for the identity when tags\_from\_rg is false. | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | If true, use tags from the resource group data source instead of var.tags. | `bool` | `false` | no |
 
 ## Outputs
 

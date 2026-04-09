@@ -14,7 +14,7 @@ Tags: if `tags_from_rg` is **`true`**, tags come from the resource group data so
 
 | `type` | Behaviour |
 |--------|-----------|
-| `github` | `issuer` defaults to `https://token.actions.githubusercontent.com` if omitted. `subject` is built as `repo:{organization}/{repository}:{entity}`. |
+| `github` | `issuer` defaults to `https://token.actions.githubusercontent.com` if omitted. `subject` is `repo:{organization}/{repository}:{entity}`; if `entity` is omitted it defaults to `ref:refs/heads/main`. |
 | `kubernetes` | `subject` is `system:serviceaccount:{namespace}:{service_account_name}`. |
 | `other` | You must set `issuer` and `subject`. |
 

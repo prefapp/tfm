@@ -43,7 +43,7 @@ resource "azurerm_federated_identity_credential" "that" {
   audience            = var.audience
   issuer              = each.value.type == "github" ? coalesce(each.value.issuer, "https://token.actions.githubusercontent.com") : each.value.issuer
   parent_id           = azurerm_user_assigned_identity.this.id
-  subject             = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${each.value.entity}" : each.value.type == "kubernetes" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
+  subject             = each.value.type == "github" ? "repo:${each.value.organization}/${each.value.repository}:${coalesce(each.value.entity, "ref:refs/heads/main")}" : each.value.type == "kubernetes" ? "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}" : each.value.subject
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy
