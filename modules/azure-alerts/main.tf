@@ -227,7 +227,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
   lifecycle {
     precondition {
-      condition     = var.identity != null || length(var.quota_alert.identity.identity_ids) > 0
+      condition     = var.identity != null || length(coalesce(var.quota_alert.identity.identity_ids, [])) > 0
       error_message = "When quota_alert is set, either var.identity must be configured (to let the module create a managed identity) or quota_alert.identity.identity_ids must be provided with at least one identity ID."
     }
   }
