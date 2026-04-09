@@ -166,7 +166,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
       threshold      = notification.value.threshold
       threshold_type = try(notification.value.threshold_type, "Actual")
       contact_emails = notification.value.contact_emails
-      contact_groups = try(notification.value.contact_groups, [])
+      contact_groups = [for group_name in notification.value.contact_groups : data.azurerm_monitor_action_group.budget[group_name].id]
       contact_roles  = try(notification.value.contact_roles, [])
     }
   }
