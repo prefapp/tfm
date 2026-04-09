@@ -1,81 +1,79 @@
 <!-- BEGIN_TF_DOCS -->
-# Azure Key Vault Terraform Module
+# Azure Key Vault (`azure-kv`)
 
 ## Overview
 
-This Terraform module allows you to create and manage an Azure Key Vault with support for:
-- Custom access policies and/or RBAC authorization.
-- Integration with Resource Group and tag inheritance.
-- Soft delete protection and retention configuration.
-- Detailed permissions for keys, secrets, certificates, and storage.
+Creates one **Key Vault** (`azurerm_key_vault`) in an existing resource group. You choose either **Azure RBAC** for the data plane (`enable_rbac_authorization = true`) or **classic access policies** (`enable_rbac_authorization = false`).
 
-## Main features
-- Create Key Vault with advanced security options.
-- Support for access policies and RBAC.
-- Integration with Azure AD groups, users, and service principals.
-- Realistic configuration example.
+When RBAC is enabled, **`access_policies` must be empty**; otherwise the module fails with a lifecycle precondition.
 
-## Complete usage example
+## Tags
 
-```yaml
-# kv.yaml
-values:
-  name: "keyvault_name"
-  tags_from_rg: true
-  tags:
-    extra_tags: "example"
-  enabled_for_disk_encryption: true
-  resource_group: "resource_group_name"
-  soft_delete_retention_days: 7
-  purge_protection_enabled: true
-  sku_name: "standard"
-  enable_rbac_authorization: false # If RBAC is true, access policies will fail if any are defined.
-  access_policies:
-    - name: "Name for the Object ID"
-      type: "" # Leave empty if you provide the object ID directly
-      object_id: "1a9590f4-27d3-4abf-9e30-5be7f46959bb"
-      key_permissions: ["Get", "List"]
-      secret_permissions: ["Get", "List"]
-      certificate_permissions: ["Get", "List"]
-      storage_permissions: ["Get", "List"]
-    - name: "Group display name"
-      type: "group"
-      object_id: ""  # Leave empty to look up the group ID
-      key_permissions: ["Get", "List"]
-      secret_permissions: ["Get", "List"]
-      certificate_permissions: ["Get", "List"]
-      storage_permissions: ["Get", "List"]
-    - name: "Service Principal display name"
-      type: "service_principal"
-      object_id: ""  # Leave empty to look up the service principal ID
-      key_permissions: ["Get", "List"]
-      secret_permissions: ["Get", "List"]
-      certificate_permissions: ["Get", "List"]
-      storage_permissions: ["Get", "List"]
-    - name: "User principal name"
-      type: "user"
-      object_id: "" # Leave empty to look up the user ID
-      key_permissions: ["Get", "List"]
-      secret_permissions: ["Get", "List"]
+If **`tags_from_rg`** is `true`, tags are **`merge(resource_group.tags, var.tags)`** (values in `var.tags` win on duplicate keys). If `false`, only **`var.tags`** are applied.
+
+## Access policies (RBAC disabled)
+
+Each list entry must have a **unique, non-empty `name`** (internal map key).
+
+- **`object_id` set** (non-empty): that principal is used; no Entra ID lookup.
+- **`type`** one of **`user`**, **`group`**, **`service_principal`**: `name` is the UPN or display name resolved via `azuread_*` data sources.
+
+Permission lists default to empty lists in the resource if omitted.
+
+## Prerequisites
+
+- Existing **resource group**.
+- **azurerm** and **azuread** providers configured (data sources need appropriate directory read permissions when resolving principals).
+
+## Basic usage
+
+```hcl
+module "kv" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-kv?ref=<version>"
+
+  name                        = "examplekv001"
+  resource_group              = "example-rg"
+  sku_name                    = "standard"
+  enabled_for_disk_encryption = true
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+  enable_rbac_authorization   = false
+
+  tags_from_rg = false
+  tags = {
+    environment = "dev"
+  }
+
+  access_policies = [
+    {
+      name                    = "bootstrap-principal"
+      object_id               = "00000000-0000-0000-0000-000000000000"
+      key_permissions         = ["Get", "List"]
+      secret_permissions      = ["Get", "List"]
+      certificate_permissions = []
+      storage_permissions     = []
+    }
+  ]
+}
 ```
-
-## Notes
-- If `enable_rbac_authorization` is true, you must not define access policies.
-- You can inherit tags from the resource group with `tags_from_rg`.
-- Configure retention and soft delete protection according to your security needs.
 
 ## File structure
 
 ```
 .
+├── CHANGELOG.md
 ├── main.tf
 ├── variables.tf
+├── versions.tf
 ├── outputs.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
 ├── README.md
-├── CHANGELOG.md
-└── docs/
-  ├── header.md
-  └── footer.md
+└── .terraform-docs.yml
 ```
 
 ## Requirements
@@ -90,8 +88,8 @@ values:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 2.53.0 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.21.0 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.53.1 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.67.0 |
 
 ## Modules
 
@@ -112,34 +110,34 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | n/a | <pre>list(object({<br/>    type                    = optional(string)<br/>    name                    = optional(string)<br/>    object_id               = optional(string, "")<br/>    key_permissions         = optional(list(string))<br/>    secret_permissions      = optional(list(string))<br/>    certificate_permissions = optional(list(string))<br/>    storage_permissions     = optional(list(string))<br/>  }))</pre> | `[]` | no |
-| <a name="input_enable_rbac_authorization"></a> [enable\_rbac\_authorization](#input\_enable\_rbac\_authorization) | n/a | `bool` | n/a | yes |
-| <a name="input_enabled_for_disk_encryption"></a> [enabled\_for\_disk\_encryption](#input\_enabled\_for\_disk\_encryption) | n/a | `bool` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
-| <a name="input_purge_protection_enabled"></a> [purge\_protection\_enabled](#input\_purge\_protection\_enabled) | n/a | `bool` | n/a | yes |
-| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | n/a | `string` | n/a | yes |
-| <a name="input_sku_name"></a> [sku\_name](#input\_sku\_name) | n/a | `string` | n/a | yes |
-| <a name="input_soft_delete_retention_days"></a> [soft\_delete\_retention\_days](#input\_soft\_delete\_retention\_days) | n/a | `number` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
-| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | n/a | `bool` | `false` | no |
+| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Access-policy entries when enable\_rbac\_authorization is false. Each entry needs a unique `name` (used as internal key).<br/>Set `object_id` to use a principal directly; otherwise set `type` to `user`, `group`, or `service_principal` and `name` to the UPN / display name for lookup. | <pre>list(object({<br/>    type                    = optional(string)<br/>    name                    = optional(string)<br/>    object_id               = optional(string, "")<br/>    key_permissions         = optional(list(string))<br/>    secret_permissions      = optional(list(string))<br/>    certificate_permissions = optional(list(string))<br/>    storage_permissions     = optional(list(string))<br/>  }))</pre> | `[]` | no |
+| <a name="input_enable_rbac_authorization"></a> [enable\_rbac\_authorization](#input\_enable\_rbac\_authorization) | Use Azure RBAC for data plane; when true, access\_policies must be empty (enforced by precondition). | `bool` | n/a | yes |
+| <a name="input_enabled_for_disk_encryption"></a> [enabled\_for\_disk\_encryption](#input\_enabled\_for\_disk\_encryption) | Whether Azure Disk Encryption can retrieve secrets from this vault. | `bool` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | Key Vault name (globally unique, 3–24 alphanumeric characters). | `string` | n/a | yes |
+| <a name="input_purge_protection_enabled"></a> [purge\_protection\_enabled](#input\_purge\_protection\_enabled) | Enable purge protection (irreversible once enabled). | `bool` | n/a | yes |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Name of the existing resource group for the Key Vault. | `string` | n/a | yes |
+| <a name="input_sku_name"></a> [sku\_name](#input\_sku\_name) | SKU: standard or premium. | `string` | n/a | yes |
+| <a name="input_soft_delete_retention_days"></a> [soft\_delete\_retention\_days](#input\_soft\_delete\_retention\_days) | Soft-delete retention in days (7–90 for new vaults; see provider docs). | `number` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags for the Key Vault; merged with resource group tags when tags\_from\_rg is true. | `map(string)` | `{}` | no |
+| <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | If true, merge tags from the resource group with var.tags (var.tags override on key conflicts). | `bool` | `false` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | n/a |
+| <a name="output_id"></a> [id](#output\_id) | Resource ID of the Key Vault. |
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples):
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/basic) — Key Vault with access policies (`main.tf` + `values.yaml`).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/comprehensive) — **`values.reference.yaml`**: illustrative inputs (RBAC vs policies, tags).
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/basic) - Key Vault with basic access policies and optional RBAC.
+## Remote resources
 
-## Resources and support
-
-- [Official Azure Key Vault documentation](https://learn.microsoft.com/en-us/azure/key-vault/)
-- [Terraform reference for azurerm\_key\_vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault)
-- [Community support](https://github.com/prefapp/terraform-modules/discussions)
+- **Microsoft Learn — Key Vault**: [https://learn.microsoft.com/azure/key-vault/](https://learn.microsoft.com/azure/key-vault/)
+- **Terraform `azurerm_key_vault`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+- **Terraform AzureAD provider**: [https://registry.terraform.io/providers/hashicorp/azuread/latest](https://registry.terraform.io/providers/hashicorp/azuread/latest)
 
 ## Support
 

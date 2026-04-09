@@ -1,9 +1,30 @@
-// Basic example: Azure Key Vault with a simple access policy
+# Basic example: Key Vault with access policy by object_id
+
+terraform {
+  required_version = ">= 1.7.0"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 4.21.0"
+    }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 2.53.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+provider "azuread" {}
 
 module "azure_kv" {
-  source = "../../"
+  source = "../.."
 
-  name                        = "example-kv"
+  name                        = "examplekv001"
   resource_group              = "example-rg"
   sku_name                    = "standard"
   enabled_for_disk_encryption = true
@@ -13,8 +34,7 @@ module "azure_kv" {
 
   access_policies = [
     {
-      type                    = "User"
-      name                    = "example-user"
+      name                    = "example-principal"
       object_id               = "00000000-0000-0000-0000-000000000000"
       key_permissions         = ["Get", "List"]
       secret_permissions      = ["Get", "List", "Set"]
@@ -23,6 +43,7 @@ module "azure_kv" {
     }
   ]
 
+  tags_from_rg = false
   tags = {
     environment = "dev"
     application = "example"

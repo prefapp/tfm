@@ -1,14 +1,14 @@
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples):
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/basic) — Key Vault with access policies (`main.tf` + `values.yaml`).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/comprehensive) — **`values.reference.yaml`**: illustrative inputs (RBAC vs policies, tags).
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/basic) - Key Vault with basic access policies and optional RBAC.
+## Remote resources
 
-## Resources and support
-
-- [Official Azure Key Vault documentation](https://learn.microsoft.com/en-us/azure/key-vault/)
-- [Terraform reference for azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault)
-- [Community support](https://github.com/prefapp/terraform-modules/discussions)
+- **Microsoft Learn — Key Vault**: [https://learn.microsoft.com/azure/key-vault/](https://learn.microsoft.com/azure/key-vault/)
+- **Terraform `azurerm_key_vault`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+- **Terraform AzureAD provider**: [https://registry.terraform.io/providers/hashicorp/azuread/latest](https://registry.terraform.io/providers/hashicorp/azuread/latest)
 
 ## Support
 
