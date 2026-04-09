@@ -247,20 +247,20 @@ resource "azurerm_monitor_activity_log_alert" "this" {
 
   criteria {
     category           = each.value.criteria.category
-    levels             = length(try(each.value.criteria.levels, [])) > 0 ? each.value.criteria.levels : null
-    resource_groups    = length(try(each.value.criteria.resource_groups, [])) > 0 ? each.value.criteria.resource_groups : null
-    resource_ids       = length(try(each.value.criteria.resource_ids, [])) > 0 ? each.value.criteria.resource_ids : null
-    resource_providers = length(try(each.value.criteria.resource_providers, [])) > 0 ? each.value.criteria.resource_providers : null
-    resource_types     = length(try(each.value.criteria.resource_types, [])) > 0 ? each.value.criteria.resource_types : null
-    statuses           = length(try(each.value.criteria.statuses, [])) > 0 ? each.value.criteria.statuses : null
-    sub_statuses       = length(try(each.value.criteria.sub_statuses, [])) > 0 ? each.value.criteria.sub_statuses : null
+    levels             = length(coalesce(try(each.value.criteria.levels, null), [])) > 0 ? coalesce(try(each.value.criteria.levels, null), []) : null
+    resource_groups    = length(coalesce(try(each.value.criteria.resource_groups, null), [])) > 0 ? coalesce(try(each.value.criteria.resource_groups, null), []) : null
+    resource_ids       = length(coalesce(try(each.value.criteria.resource_ids, null), [])) > 0 ? coalesce(try(each.value.criteria.resource_ids, null), []) : null
+    resource_providers = length(coalesce(try(each.value.criteria.resource_providers, null), [])) > 0 ? coalesce(try(each.value.criteria.resource_providers, null), []) : null
+    resource_types     = length(coalesce(try(each.value.criteria.resource_types, null), [])) > 0 ? coalesce(try(each.value.criteria.resource_types, null), []) : null
+    statuses           = length(coalesce(try(each.value.criteria.statuses, null), [])) > 0 ? coalesce(try(each.value.criteria.statuses, null), []) : null
+    sub_statuses       = length(coalesce(try(each.value.criteria.sub_statuses, null), [])) > 0 ? coalesce(try(each.value.criteria.sub_statuses, null), []) : null
 
     dynamic "service_health" {
       for_each = try(each.value.criteria.service_health, null) != null ? [each.value.criteria.service_health] : []
       content {
-        events    = length(try(service_health.value.events, [])) > 0 ? service_health.value.events : null
-        locations = length(try(service_health.value.locations, [])) > 0 ? service_health.value.locations : null
-        services  = length(try(service_health.value.services, [])) > 0 ? service_health.value.services : null
+        events    = length(coalesce(try(service_health.value.events, null), [])) > 0 ? coalesce(try(service_health.value.events, null), []) : null
+        locations = length(coalesce(try(service_health.value.locations, null), [])) > 0 ? coalesce(try(service_health.value.locations, null), []) : null
+        services  = length(coalesce(try(service_health.value.services, null), [])) > 0 ? coalesce(try(service_health.value.services, null), []) : null
       }
     }
   }
