@@ -147,11 +147,15 @@ resource "azurerm_monitor_action_group" "this" {
 # Budget Alert at the subscription level to monitor the costs and send notifications when the specified threshold is reached
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/consumption_budget_subscription
 resource "azurerm_consumption_budget_subscription" "this" {
-  count           = var.budget != null ? 1 : 0
-  name            = var.budget.name
-  subscription_id = trimprefix(coalesce(var.budget.subscription_id, data.azurerm_client_config.current.subscription_id), "/subscriptions/")
-  amount          = var.budget.amount
-  time_grain      = var.budget.time_grain
+  count = var.budget != null ? 1 : 0
+  name  = var.budget.name
+  subscription_id = replace(
+    coalesce(var.budget.subscription_id, "/subscriptions/${data.azurerm_client_config.current.subscription_id}"),
+    "/subscriptions/",
+    ""
+  )
+  amount     = var.budget.amount
+  time_grain = var.budget.time_grain
 
   time_period {
     start_date = var.budget.time_period.start_date
