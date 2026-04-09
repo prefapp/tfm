@@ -41,7 +41,8 @@ settings:
   hide-empty: false
   html: true
   indent: 2
-  lockfile: true
+  # Use version constraints from required_providers (versions.tf), not .terraform.lock.hcl.
+  lockfile: false
   read-comments: true
   required: true
   sensitive: true

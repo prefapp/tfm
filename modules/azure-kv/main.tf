@@ -47,7 +47,8 @@ locals {
 
   object_ids = [for id in local.entity_ids : id if id != null]
 
-  has_access_policies = length(var.access_policies) > 0 && var.enable_rbac_authorization
+  # Invalid: classic access policies are not used when RBAC is enabled for the data plane.
+  access_policies_with_rbac_enabled = length(var.access_policies) > 0 && var.enable_rbac_authorization
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault
@@ -65,7 +66,7 @@ resource "azurerm_key_vault" "this" {
 
   lifecycle {
     precondition {
-      condition     = !local.has_access_policies
+      condition     = !local.access_policies_with_rbac_enabled
       error_message = "Access policies cannot be defined when RBAC authorization is enabled."
     }
   }
