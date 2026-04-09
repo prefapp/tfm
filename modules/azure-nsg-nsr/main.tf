@@ -1,9 +1,9 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.nsg.resource_group_name
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_group
 resource "azurerm_network_security_group" "this" {
   name                = var.nsg.name
   location            = var.nsg.location
@@ -11,7 +11,7 @@ resource "azurerm_network_security_group" "this" {
   tags                = local.tags
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_rule
 resource "azurerm_network_security_rule" "this" {
   for_each                     = var.rules
   name                         = each.value.name
