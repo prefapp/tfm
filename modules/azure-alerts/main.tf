@@ -240,7 +240,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
 
   name                = each.value.name
   resource_group_name = coalesce(each.value.resource_group_name, local.resource_group_name)
-  location            = coalesce(each.value.location, var.common.location)
+  location            = each.value.location
   scopes              = each.value.scopes
   description         = try(each.value.description, null)
   enabled             = each.value.enabled
