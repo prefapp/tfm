@@ -75,10 +75,10 @@ resource "azurerm_key_vault" "this" {
     content {
       tenant_id               = data.azurerm_client_config.current.tenant_id
       object_id               = lookup(local.entity_ids, access_policy.value.name, null)
-      key_permissions         = coalesce(access_policy.value.key_permissions, [])
-      secret_permissions      = coalesce(access_policy.value.secret_permissions, [])
-      certificate_permissions = coalesce(access_policy.value.certificate_permissions, [])
-      storage_permissions     = coalesce(access_policy.value.storage_permissions, [])
+      key_permissions         = access_policy.value.key_permissions
+      secret_permissions      = access_policy.value.secret_permissions
+      certificate_permissions = access_policy.value.certificate_permissions
+      storage_permissions     = access_policy.value.storage_permissions
     }
   }
 }

@@ -12,12 +12,12 @@ If **`tags_from_rg`** is `true`, tags are **`merge(resource_group.tags, var.tags
 
 ## Access policies (RBAC disabled)
 
-Each list entry must have a **unique, non-empty `name`** (internal map key).
+Each entry uses **`name`** as the internal map key (keep names unique).
 
-- **`object_id` set** (non-empty): that principal is used; no Entra ID lookup.
-- **`type`** one of **`user`**, **`group`**, **`service_principal`**: `name` is the UPN or display name resolved via `azuread_*` data sources.
+- Non-empty **`object_id`**: that ID is applied to the Key Vault access policy (preferred for known object IDs).
+- Empty **`object_id`**: set **`type`** to **`user`**, **`group`**, or **`service_principal`** (matched **case-sensitively** in code) and **`name`** for UPN / display name lookup via `azuread_*` data sources.
 
-Permission lists default to empty lists in the resource if omitted.
+If both **`object_id`** and a lookup **`type`** are set, **`object_id`** is used for the policy, but Terraform may still evaluate the Azure AD data source for that `type`; avoid mixing unless you understand that behaviour.
 
 ## Prerequisites
 

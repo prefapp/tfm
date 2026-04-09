@@ -10,7 +10,7 @@ variable "enabled_for_disk_encryption" {
 
 variable "soft_delete_retention_days" {
   type        = number
-  description = "Soft-delete retention in days (7–90 for new vaults; see provider docs)."
+  description = "Soft-delete retention in days (see provider documentation for allowed values)."
 }
 
 variable "purge_protection_enabled" {
@@ -56,18 +56,8 @@ variable "access_policies" {
     storage_permissions     = optional(list(string))
   }))
   description = <<-EOT
-    Access-policy entries when enable_rbac_authorization is false. Each entry needs a unique `name` (used as internal key).
-    Set `object_id` to use a principal directly; otherwise set `type` to `user`, `group`, or `service_principal` and `name` to the UPN / display name for lookup.
+    Access-policy entries when enable_rbac_authorization is false.
+    Each entry uses `name` as the internal key. If `object_id` is non-empty, it is used for the policy; otherwise `type` must be `user`, `group`, or `service_principal` and `name` is resolved via Azure AD data sources.
   EOT
-  validation {
-    condition = alltrue([
-      for p in var.access_policies : try(trimspace(p.name), "") != ""
-    ])
-    error_message = "Each access_policies entry must have a non-empty name."
-  }
-  validation {
-    condition     = length(distinct([for p in var.access_policies : try(p.name, "")])) == length(var.access_policies)
-    error_message = "Each access_policies entry must have a unique name."
-  }
-  default = []
+  default     = []
 }

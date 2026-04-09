@@ -13,12 +13,12 @@ If **`tags_from_rg`** is `true`, tags are **`merge(resource_group.tags, var.tags
 
 ## Access policies (RBAC disabled)
 
-Each list entry must have a **unique, non-empty `name`** (internal map key).
+Each entry uses **`name`** as the internal map key (keep names unique).
 
-- **`object_id` set** (non-empty): that principal is used; no Entra ID lookup.
-- **`type`** one of **`user`**, **`group`**, **`service_principal`**: `name` is the UPN or display name resolved via `azuread_*` data sources.
+- Non-empty **`object_id`**: that ID is applied to the Key Vault access policy (preferred for known object IDs).
+- Empty **`object_id`**: set **`type`** to **`user`**, **`group`**, or **`service_principal`** (matched **case-sensitively** in code) and **`name`** for UPN / display name lookup via `azuread_*` data sources.
 
-Permission lists default to empty lists in the resource if omitted.
+If both **`object_id`** and a lookup **`type`** are set, **`object_id`** is used for the policy, but Terraform may still evaluate the Azure AD data source for that `type`; avoid mixing unless you understand that behaviour.
 
 ## Prerequisites
 
@@ -110,14 +110,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Access-policy entries when enable\_rbac\_authorization is false. Each entry needs a unique `name` (used as internal key).<br/>Set `object_id` to use a principal directly; otherwise set `type` to `user`, `group`, or `service_principal` and `name` to the UPN / display name for lookup. | <pre>list(object({<br/>    type                    = optional(string)<br/>    name                    = optional(string)<br/>    object_id               = optional(string, "")<br/>    key_permissions         = optional(list(string))<br/>    secret_permissions      = optional(list(string))<br/>    certificate_permissions = optional(list(string))<br/>    storage_permissions     = optional(list(string))<br/>  }))</pre> | `[]` | no |
+| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Access-policy entries when enable\_rbac\_authorization is false.<br/>Each entry uses `name` as the internal key. If `object_id` is non-empty, it is used for the policy; otherwise `type` must be `user`, `group`, or `service_principal` and `name` is resolved via Azure AD data sources. | <pre>list(object({<br/>    type                    = optional(string)<br/>    name                    = optional(string)<br/>    object_id               = optional(string, "")<br/>    key_permissions         = optional(list(string))<br/>    secret_permissions      = optional(list(string))<br/>    certificate_permissions = optional(list(string))<br/>    storage_permissions     = optional(list(string))<br/>  }))</pre> | `[]` | no |
 | <a name="input_enable_rbac_authorization"></a> [enable\_rbac\_authorization](#input\_enable\_rbac\_authorization) | Use Azure RBAC for data plane; when true, access\_policies must be empty (enforced by precondition). | `bool` | n/a | yes |
 | <a name="input_enabled_for_disk_encryption"></a> [enabled\_for\_disk\_encryption](#input\_enabled\_for\_disk\_encryption) | Whether Azure Disk Encryption can retrieve secrets from this vault. | `bool` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Key Vault name (globally unique, 3–24 alphanumeric characters). | `string` | n/a | yes |
 | <a name="input_purge_protection_enabled"></a> [purge\_protection\_enabled](#input\_purge\_protection\_enabled) | Enable purge protection (irreversible once enabled). | `bool` | n/a | yes |
 | <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Name of the existing resource group for the Key Vault. | `string` | n/a | yes |
 | <a name="input_sku_name"></a> [sku\_name](#input\_sku\_name) | SKU: standard or premium. | `string` | n/a | yes |
-| <a name="input_soft_delete_retention_days"></a> [soft\_delete\_retention\_days](#input\_soft\_delete\_retention\_days) | Soft-delete retention in days (7–90 for new vaults; see provider docs). | `number` | n/a | yes |
+| <a name="input_soft_delete_retention_days"></a> [soft\_delete\_retention\_days](#input\_soft\_delete\_retention\_days) | Soft-delete retention in days (see provider documentation for allowed values). | `number` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags for the Key Vault; merged with resource group tags when tags\_from\_rg is true. | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | If true, merge tags from the resource group with var.tags (var.tags override on key conflicts). | `bool` | `false` | no |
 
