@@ -1,6 +1,6 @@
-# settings.lockfile: false keeps the Requirements/Providers tables aligned with constraints in versions.tf
-# (not exact versions from .terraform.lock.hcl). After `terraform-docs .`, replace any .../latest in the
-# Resources table with azurerm/4.35.0 and random/3.6.0 if you avoid linking to latest.
+# Same terraform-docs defaults as other tfm modules (e.g. azure-resource-group): lockfile: true uses
+# .terraform.lock.hcl for provider versions in generated tables when the file is present.
+# Resource links in the README may still show registry .../latest; replace with pinned versions if desired.
 formatter: "markdown"
 
 version: ""
@@ -44,7 +44,7 @@ settings:
   hide-empty: false
   html: true
   indent: 2
-  lockfile: false
+  lockfile: true
   read-comments: true
   required: true
   sensitive: true

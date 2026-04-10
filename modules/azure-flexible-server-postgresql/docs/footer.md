@@ -8,7 +8,7 @@
 - [azurerm_postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server)
 - [azurerm_key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/key_vault_secret)
 - [azurerm_resources](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/resources)
-- [random_password](https://registry.terraform.io/providers/hashicorp/random/3.6.0/docs/resources/password) (implicit provider; not declared in this module’s `versions.tf`)
+- [random_password](https://registry.terraform.io/providers/hashicorp/random/3.6.0/docs/resources/password) (uses `hashicorp/random`; Terraform installs it implicitly because `random_password` is declared in this module)
 
 ## Point-in-time restore
 
