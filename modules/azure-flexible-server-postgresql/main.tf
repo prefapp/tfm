@@ -1,5 +1,7 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "this" {
+  depends_on = [azurerm_key_vault_secret.password_create]
+
   name                              = var.postgresql_flexible_server.name
   resource_group_name               = data.azurerm_resource_group.resource_group.name
   location                          = var.postgresql_flexible_server.location
@@ -8,7 +10,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   delegated_subnet_id               = var.postgresql_flexible_server.public_network_access_enabled == false ? try(data.azurerm_subnet.subnet[0].id, null) : null
   private_dns_zone_id               = var.postgresql_flexible_server.public_network_access_enabled == false ? try(data.azurerm_private_dns_zone.dns_private_zone[0].id, null) : null
   administrator_login               = var.postgresql_flexible_server.administrator_login
-  administrator_password            = coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)
+  administrator_password            = data.azurerm_key_vault_secret.administrator_password[0].value
   zone                              = var.postgresql_flexible_server.zone
   storage_tier                      = var.postgresql_flexible_server.storage_tier
   storage_mb                        = var.postgresql_flexible_server.storage_mb
@@ -56,12 +58,16 @@ resource "random_password" "password" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/key_vault_secret
 resource "azurerm_key_vault_secret" "password_create" {
-  key_vault_id = coalesce(try(data.azurerm_resources.key_vault_from_name.resources[0].id, null), local.key_vault_id_from_data)
+  key_vault_id = local.key_vault_id
   name         = var.administrator_password_key_vault_secret_name
   value        = random_password.password.result
   depends_on   = [random_password.password]
   lifecycle {
     ignore_changes = [value]
+    precondition {
+      condition     = local.key_vault_id != null
+      error_message = "Key Vault could not be resolved: provide key_vault.name and key_vault.resource_group_name, or non-empty key_vault.tags matching exactly one vault."
+    }
   }
 }
 

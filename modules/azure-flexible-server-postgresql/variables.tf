@@ -28,7 +28,7 @@ variable "key_vault" {
     tags                = optional(map(string))
   })
   default     = {}
-  description = "Locate the Key Vault either via `name` + `resource_group_name` together, or via non-empty `tags` used as `required_tags` on `azurerm_resources`."
+  description = "Locate the Key Vault: use `name` + `resource_group_name` together (queried via `azurerm_resources` only when both are set), or use non-empty `tags` as `required_tags`. When both are provided, the name-based match wins for `local.key_vault_id`. Tag lookup must resolve to exactly one vault (`resources[0]`)."
 
   validation {
     condition = (

@@ -1,5 +1,5 @@
-# With lockfile: false, terraform-docs uses .../latest in the Resources table. After `terraform-docs .`,
-# replace azurerm URLs with 4.35.0 (per versions.tf); for random_* resources pin random (e.g. 3.6.0) manually if you avoid `latest`.
+# With settings.lockfile: true, terraform-docs uses provider versions from .terraform.lock.hcl in generated links when present.
+# If you regenerate without a lockfile or want README links to match versions.tf constraints instead, adjust links manually.
 formatter: "markdown"
 
 version: ""
