@@ -1,5 +1,7 @@
-# Aligns with other tfm modules (e.g. azure-resource-group). Resource URLs in the README may still use
-# registry .../latest; replace with pinned versions after `terraform-docs .` if you avoid `latest`.
+# settings.lockfile: true (aligned with other tfm modules): the README "Requirements" section shows provider
+# constraints from versions.tf; the "Providers" section shows the resolved versions from .terraform.lock.hcl
+# at the time `terraform-docs` was run (not an extra minimum requirement).
+# Resource links in the README may still show registry .../latest; replace with pinned versions after generate if desired.
 formatter: "markdown"
 
 version: ""

@@ -1,11 +1,11 @@
 variable "tags_from_rg" {
-  description = "When true, merge tags from the resource group with `tags` (module tags win on key conflicts)."
+  description = "Use resource group tags as base for module tags"
   type        = bool
   default     = false
 }
 
 variable "tags" {
-  description = "Tags applied to the Event Hubs namespace, Event Grid system topics, and related taggable resources in this module."
+  description = "Tags to apply to resources"
   type        = map(string)
   default     = {}
 }
@@ -70,5 +70,5 @@ variable "namespace" {
       })), [])
     })
   })
-  description = "Event Hubs namespace configuration, including SKU, capacity, managed identity type, and `network_rulesets` inputs."
+  description = "Event Hubs namespace configuration (SKU, capacity, managed identity type). Use nested `ruleset` for network rules; it maps to the `network_rulesets` block on `azurerm_eventhub_namespace`."
 }

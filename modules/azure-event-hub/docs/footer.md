@@ -1,3 +1,7 @@
+## Generated README tables
+
+When this module’s README is produced with **terraform-docs** and `settings.lockfile: true`, **Requirements** lists provider **constraints** from `versions.tf`, while **Providers** lists the **resolved** versions recorded in `.terraform.lock.hcl` at generation time. They are complementary, not contradictory.
+
 ## Examples
 
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples/basic)
