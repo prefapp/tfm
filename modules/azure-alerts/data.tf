@@ -10,9 +10,10 @@ data "azurerm_client_config" "current" {}
 # Fetch the existing action group when create = false (brownfield / import mode).
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/monitor_action_group
 data "azurerm_monitor_action_group" "this" {
-  count               = var.action_group.create ? 0 : 1
-  name                = var.action_group.name
-  resource_group_name = coalesce(var.action_group.resource_group_name, local.resource_group_name)
+  for_each = local.existing_action_groups
+
+  name                = each.value.name
+  resource_group_name = each.value.resource_group_name
 }
 
 # Resolve contact_group names to IDs for budget notifications.

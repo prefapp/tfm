@@ -19,14 +19,17 @@ resource "azurerm_role_assignment" "quota_reader" {
 # Action Group for the alerts to send notifications to the specified email receivers
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group
 resource "azurerm_monitor_action_group" "this" {
-  count               = var.action_group.create ? 1 : 0
-  name                = var.action_group.name
-  resource_group_name = local.resource_group_name
+  for_each            = local.managed_action_groups
+  name                = each.value.name
+  resource_group_name = each.value.resource_group_name
   location            = var.common.location
-  short_name          = var.action_group.short_name
+  short_name          = each.value.short_name
 
   dynamic "arm_role_receiver" {
-    for_each = local.arm_role_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.arm_role_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.arm_role_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                    = arm_role_receiver.key
       role_id                 = arm_role_receiver.value.role_id
@@ -35,7 +38,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "automation_runbook_receiver" {
-    for_each = local.automation_runbook_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.automation_runbook_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.automation_runbook_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                    = automation_runbook_receiver.key
       automation_account_id   = automation_runbook_receiver.value.automation_account_id
@@ -48,7 +54,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "azure_app_push_receiver" {
-    for_each = local.azure_app_push_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.azure_app_push_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.azure_app_push_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name          = azure_app_push_receiver.key
       email_address = azure_app_push_receiver.value.email_address
@@ -56,7 +65,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "azure_function_receiver" {
-    for_each = local.azure_function_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.azure_function_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.azure_function_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                     = azure_function_receiver.key
       function_app_resource_id = azure_function_receiver.value.function_app_resource_id
@@ -67,7 +79,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "email_receiver" {
-    for_each = local.email_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.email_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.email_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                    = email_receiver.key
       email_address           = email_receiver.value.email_address
@@ -76,7 +91,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "event_hub_receiver" {
-    for_each = local.event_hub_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.event_hub_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.event_hub_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                    = event_hub_receiver.key
       event_hub_name          = event_hub_receiver.value.event_hub_name
@@ -86,7 +104,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "itsm_receiver" {
-    for_each = local.itsm_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.itsm_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.itsm_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                 = itsm_receiver.key
       workspace_id         = itsm_receiver.value.workspace_id
@@ -97,7 +118,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "logic_app_receiver" {
-    for_each = local.logic_app_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.logic_app_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.logic_app_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                    = logic_app_receiver.key
       resource_id             = logic_app_receiver.value.resource_id
@@ -107,7 +131,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "sms_receiver" {
-    for_each = local.sms_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.sms_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.sms_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name         = sms_receiver.key
       country_code = sms_receiver.value.country_code
@@ -116,7 +143,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "voice_receiver" {
-    for_each = local.voice_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.voice_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.voice_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name         = voice_receiver.key
       country_code = voice_receiver.value.country_code
@@ -125,7 +155,10 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "webhook_receiver" {
-    for_each = local.webhook_receivers_sorted
+    for_each = {
+      for name in sort([for receiver in values(each.value.webhook_receivers) : receiver.name]) : name =>
+      [for receiver in values(each.value.webhook_receivers) : receiver if receiver.name == name][0]
+    }
     content {
       name                    = webhook_receiver.key
       service_uri             = webhook_receiver.value.service_uri
@@ -190,14 +223,22 @@ resource "azurerm_consumption_budget_subscription" "this" {
       threshold_type = try(notification.value.threshold_type, "Actual")
       contact_emails = notification.value.contact_emails
       contact_groups = [
-        for g in try(notification.value.contact_groups, []) :
-        can(tostring(g)) && startswith(tostring(g), "/")
-        ? tostring(g)
-        : data.azurerm_monitor_action_group.budget[
-          can(tostring(g))
-          ? "${local.resource_group_name}/${tostring(g)}"
-          : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
-        ].id
+        for g in try(notification.value.contact_groups, []) : (
+          can(tostring(g)) && startswith(tostring(g), "/")
+          ? tostring(g)
+          : try(
+            local.action_group_ids_by_ref[
+              can(tostring(g))
+              ? "${local.resource_group_name}/${tostring(g)}"
+              : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
+            ],
+            data.azurerm_monitor_action_group.budget[
+              can(tostring(g))
+              ? "${local.resource_group_name}/${tostring(g)}"
+              : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
+            ].id
+          )
+        )
       ]
       contact_roles = try(notification.value.contact_roles, [])
     }
@@ -252,7 +293,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
   }
 
   action {
-    action_groups = [local.action_group_id]
+    action_groups = local.quota_action_group_ids
   }
 
   tags = local.tags
@@ -261,6 +302,11 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
     precondition {
       condition     = var.identity != null || length(coalesce(var.quota_alert.identity.identity_ids, [])) > 0
       error_message = "When quota_alert is set, either var.identity must be configured (to let the module create a managed identity) or quota_alert.identity.identity_ids must be provided with at least one identity ID."
+    }
+
+    precondition {
+      condition     = length(local.quota_action_group_ids) > 0
+      error_message = "When quota_alert is set, configure at least one action group via action_group/action_groups or provide quota_alert.action_group_ids explicitly."
     }
   }
 }
@@ -303,6 +349,13 @@ resource "azurerm_monitor_activity_log_alert" "this" {
   }
 
   tags = local.tags
+
+  lifecycle {
+    precondition {
+      condition     = try(each.value.action.action_group_id, null) != null || local.action_group_id != null
+      error_message = "When multiple action groups are configured, each log_alert.action.action_group_id must be set explicitly."
+    }
+  }
 }
 
 # Alert Processing Rule to suppress the alerts during the backup window

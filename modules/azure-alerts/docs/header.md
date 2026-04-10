@@ -43,6 +43,7 @@ module "azure_alerts" {
   }
 
   # Action Group for notifications
+  # This block is optional. If omitted, the module will not create an Action Group.
   action_group = {
     # Optional: set to false to reuse an existing Action Group
     # (module will use data source lookup instead of creating it)
@@ -58,6 +59,20 @@ module "azure_alerts" {
       }
     }
   }
+
+  # Optional alternative: define multiple Action Groups instead of a single one.
+  # action_groups = {
+  #   operations = {
+  #     name                = "ops-action-group"
+  #     resource_group_name = "my-alerts-rg"
+  #     short_name          = "OpsAG"
+  #   }
+  #   finance = {
+  #     name                = "finance-action-group"
+  #     resource_group_name = "my-alerts-rg"
+  #     short_name          = "FinAG"
+  #   }
+  # }
 
   # Budget Alert - Optional
   budget = {
@@ -85,7 +100,8 @@ module "azure_alerts" {
         threshold      = 75
         contact_emails = ["admin@example.com"]
 
-        # Accepts either Action Group names or full resource IDs
+        # Accepts Action Group names, full resource IDs,
+        # or objects with `name` + `resource_group_name`
         contact_groups = [
           "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-alerts-rg/providers/Microsoft.Insights/actionGroups/my-action-group"
         ]

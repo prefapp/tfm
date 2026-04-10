@@ -1,7 +1,11 @@
 locals {
   # Effective resource group name: prefer common.resource_group_name when set,
-  # fall back to the required action_group.resource_group_name.
-  resource_group_name = coalesce(var.common.resource_group_name, var.action_group.resource_group_name)
+  # otherwise fall back to the single action_group or the first action_groups resource group.
+  resource_group_name = coalesce(
+    var.common.resource_group_name,
+    try(var.action_group.resource_group_name, null),
+    try(values(var.action_groups)[0].resource_group_name, null)
+  )
 
   # Handle tags based on whether to use resource group tags or module-defined tags
   tags = var.common.tags_from_rg ? merge(
@@ -12,11 +16,50 @@ locals {
     var.common.tags
   ) : var.common.tags
 
-  # Resolved Action Group ID and name.
-  # When create = true  → use the managed resource.
-  # When create = false → use the data source (brownfield / import mode).
-  action_group_id   = var.action_group.create ? azurerm_monitor_action_group.this[0].id : data.azurerm_monitor_action_group.this[0].id
-  action_group_name = var.action_group.create ? azurerm_monitor_action_group.this[0].name : data.azurerm_monitor_action_group.this[0].name
+  configured_action_groups = merge(
+    var.action_group != null ? { default = var.action_group } : {},
+    var.action_groups
+  )
+
+  managed_action_groups = {
+    for key, ag in local.configured_action_groups : key => ag
+    if try(ag.create, true)
+  }
+
+  existing_action_groups = {
+    for key, ag in local.configured_action_groups : key => ag
+    if !try(ag.create, true)
+  }
+
+  action_group_ids_by_key = merge(
+    { for key, ag in local.managed_action_groups : key => azurerm_monitor_action_group.this[key].id },
+    { for key, ag in local.existing_action_groups : key => data.azurerm_monitor_action_group.this[key].id }
+  )
+
+  action_group_names_by_key = merge(
+    { for key, ag in local.managed_action_groups : key => azurerm_monitor_action_group.this[key].name },
+    { for key, ag in local.existing_action_groups : key => data.azurerm_monitor_action_group.this[key].name }
+  )
+
+  action_group_ids_by_ref = merge(
+    {
+      for key, ag in local.managed_action_groups :
+      "${ag.resource_group_name}/${ag.name}" => azurerm_monitor_action_group.this[key].id
+    },
+    {
+      for key, ag in local.existing_action_groups :
+      "${ag.resource_group_name}/${ag.name}" => data.azurerm_monitor_action_group.this[key].id
+    }
+  )
+
+  action_group_id   = length(local.action_group_ids_by_key) == 1 ? values(local.action_group_ids_by_key)[0] : null
+  action_group_name = length(local.action_group_names_by_key) == 1 ? values(local.action_group_names_by_key)[0] : null
+
+  quota_action_group_ids = var.quota_alert == null ? [] : (
+    length(try(var.quota_alert.action_group_ids, [])) > 0
+    ? var.quota_alert.action_group_ids
+    : values(local.action_group_ids_by_key)
+  )
 
   # Normalize budget notification contact groups so each entry can be:
   # - a full Action Group resource ID string,
@@ -34,54 +77,6 @@ locals {
       ]) : "${entry.resource_group_name}/${entry.name}" => {
       name                = entry.name
       resource_group_name = entry.resource_group_name
-    } if !entry.is_id
-  }
-
-  # Sort all receiver types by their `name` attribute for stable ordering across
-  # plan/apply cycles. This prevents positional drift when Azure returns receivers
-  # in a different order than Terraform's map-key alphabetical sort.
-  email_receivers_sorted = {
-    for r in sort([for v in var.action_group.email_receivers : v.name]) : r =>
-    [for v in var.action_group.email_receivers : v if v.name == r][0]
-  }
-  arm_role_receivers_sorted = {
-    for r in sort([for v in var.action_group.arm_role_receivers : v.name]) : r =>
-    [for v in var.action_group.arm_role_receivers : v if v.name == r][0]
-  }
-  automation_runbook_receivers_sorted = {
-    for r in sort([for v in var.action_group.automation_runbook_receivers : v.name]) : r =>
-    [for v in var.action_group.automation_runbook_receivers : v if v.name == r][0]
-  }
-  azure_app_push_receivers_sorted = {
-    for r in sort([for v in var.action_group.azure_app_push_receivers : v.name]) : r =>
-    [for v in var.action_group.azure_app_push_receivers : v if v.name == r][0]
-  }
-  azure_function_receivers_sorted = {
-    for r in sort([for v in var.action_group.azure_function_receivers : v.name]) : r =>
-    [for v in var.action_group.azure_function_receivers : v if v.name == r][0]
-  }
-  event_hub_receivers_sorted = {
-    for r in sort([for v in var.action_group.event_hub_receivers : v.name]) : r =>
-    [for v in var.action_group.event_hub_receivers : v if v.name == r][0]
-  }
-  itsm_receivers_sorted = {
-    for r in sort([for v in var.action_group.itsm_receivers : v.name]) : r =>
-    [for v in var.action_group.itsm_receivers : v if v.name == r][0]
-  }
-  logic_app_receivers_sorted = {
-    for r in sort([for v in var.action_group.logic_app_receivers : v.name]) : r =>
-    [for v in var.action_group.logic_app_receivers : v if v.name == r][0]
-  }
-  sms_receivers_sorted = {
-    for r in sort([for v in var.action_group.sms_receivers : v.name]) : r =>
-    [for v in var.action_group.sms_receivers : v if v.name == r][0]
-  }
-  voice_receivers_sorted = {
-    for r in sort([for v in var.action_group.voice_receivers : v.name]) : r =>
-    [for v in var.action_group.voice_receivers : v if v.name == r][0]
-  }
-  webhook_receivers_sorted = {
-    for r in sort([for v in var.action_group.webhook_receivers : v.name]) : r =>
-    [for v in var.action_group.webhook_receivers : v if v.name == r][0]
+    } if !entry.is_id && !contains(keys(local.action_group_ids_by_ref), "${entry.resource_group_name}/${entry.name}")
   }
 }

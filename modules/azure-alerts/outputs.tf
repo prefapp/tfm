@@ -1,11 +1,21 @@
 output "action_group_id" {
-  description = "The ID of the Azure Monitor Action Group."
+  description = "The ID of the Azure Monitor Action Group when exactly one is configured; otherwise null."
   value       = local.action_group_id
 }
 
 output "action_group_name" {
-  description = "The name of the Azure Monitor Action Group."
+  description = "The name of the Azure Monitor Action Group when exactly one is configured; otherwise null."
   value       = local.action_group_name
+}
+
+output "action_group_ids" {
+  description = "Map of configured action group keys to their resource IDs."
+  value       = local.action_group_ids_by_key
+}
+
+output "action_group_names" {
+  description = "Map of configured action group keys to their names."
+  value       = local.action_group_names_by_key
 }
 
 output "quota_alert_id" {

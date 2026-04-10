@@ -19,9 +19,9 @@ variable "identity" {
   default = null # null = do not create a managed identity or role assignment
 }
 
-# Action Group
+# Action Group (single)
 variable "action_group" {
-  description = "Configuration for the Azure Monitor Action Group."
+  description = "Optional single Azure Monitor Action Group configuration. When null, no single action group is created. Prefer `action_groups` when you need more than one."
   type = object({
     create              = optional(bool, true)
     name                = string
@@ -97,18 +97,18 @@ variable "action_group" {
       }), null)
     })), {})
   })
+  default = null
 
   validation {
-    condition = (
-      var.action_group.create && var.action_group.short_name != null && length(var.action_group.short_name) > 0 && length(var.action_group.short_name) <= 12
-      ) || (
-      !var.action_group.create
+    condition = var.action_group == null || (
+      (var.action_group.create && var.action_group.short_name != null && length(var.action_group.short_name) > 0 && length(var.action_group.short_name) <= 12) ||
+      (!var.action_group.create)
     )
     error_message = "When action_group.create is true, action_group.short_name is required and must be 12 characters or fewer."
   }
 
   validation {
-    condition = alltrue([
+    condition = var.action_group == null || alltrue([
       length(toset([for v in var.action_group.arm_role_receivers : v.name])) == length([for v in var.action_group.arm_role_receivers : v.name]),
       length(toset([for v in var.action_group.automation_runbook_receivers : v.name])) == length([for v in var.action_group.automation_runbook_receivers : v.name]),
       length(toset([for v in var.action_group.azure_app_push_receivers : v.name])) == length([for v in var.action_group.azure_app_push_receivers : v.name]),
@@ -122,6 +122,116 @@ variable "action_group" {
       length(toset([for v in var.action_group.webhook_receivers : v.name])) == length([for v in var.action_group.webhook_receivers : v.name])
     ])
     error_message = "Each receiver type in action_group must use unique receiver 'name' values to avoid ordering collisions."
+  }
+}
+
+# Action Groups (multiple)
+variable "action_groups" {
+  description = "Optional map of Azure Monitor Action Groups keyed by logical name. Use this when you need to define more than one action group."
+  type = map(object({
+    create              = optional(bool, true)
+    name                = string
+    resource_group_name = string
+    short_name          = optional(string, null)
+    arm_role_receivers = optional(map(object({
+      name                    = string
+      role_id                 = string
+      use_common_alert_schema = optional(bool, true)
+    })), {})
+    automation_runbook_receivers = optional(map(object({
+      name                    = string
+      automation_account_id   = string
+      runbook_name            = string
+      webhook_resource_id     = optional(string, null)
+      service_uri             = optional(string, null)
+      is_global_runbook       = optional(bool, false)
+      use_common_alert_schema = optional(bool, true)
+    })), {})
+    azure_app_push_receivers = optional(map(object({
+      name          = string
+      email_address = string
+    })), {})
+    azure_function_receivers = optional(map(object({
+      name                     = string
+      function_app_resource_id = string
+      function_name            = string
+      http_trigger_url         = string
+      use_common_alert_schema  = optional(bool, true)
+    })), {})
+    email_receivers = optional(map(object({
+      name                    = string
+      email_address           = string
+      use_common_alert_schema = optional(bool, true)
+    })), {})
+    event_hub_receivers = optional(map(object({
+      name                    = string
+      event_hub_name          = string
+      event_hub_namespace     = string
+      use_common_alert_schema = optional(bool, true)
+    })), {})
+    itsm_receivers = optional(map(object({
+      name                 = string
+      workspace_id         = string
+      connection_id        = string
+      region               = optional(string, null)
+      ticket_configuration = optional(string, null)
+    })), {})
+    logic_app_receivers = optional(map(object({
+      name                    = string
+      resource_id             = string
+      callback_url            = string
+      use_common_alert_schema = optional(bool, true)
+    })), {})
+    sms_receivers = optional(map(object({
+      name         = string
+      country_code = string
+      phone_number = string
+    })), {})
+    voice_receivers = optional(map(object({
+      name         = string
+      country_code = string
+      phone_number = string
+    })), {})
+    webhook_receivers = optional(map(object({
+      name                    = string
+      service_uri             = string
+      use_common_alert_schema = optional(bool, true)
+      aad_auth = optional(object({
+        object_id      = string
+        identifier_uri = optional(string, null)
+        tenant_id      = string
+      }), null)
+    })), {})
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for _, ag in var.action_groups : (
+        (ag.create && ag.short_name != null && length(ag.short_name) > 0 && length(ag.short_name) <= 12) ||
+        (!ag.create)
+      )
+    ])
+    error_message = "When an action_groups entry has create = true, short_name is required and must be 12 characters or fewer."
+  }
+
+  validation {
+    condition = alltrue([
+      for _, ag in var.action_groups : alltrue([
+        length(toset([for v in ag.arm_role_receivers : v.name])) == length([for v in ag.arm_role_receivers : v.name]),
+        length(toset([for v in ag.automation_runbook_receivers : v.name])) == length([for v in ag.automation_runbook_receivers : v.name]),
+        length(toset([for v in ag.azure_app_push_receivers : v.name])) == length([for v in ag.azure_app_push_receivers : v.name]),
+        length(toset([for v in ag.azure_function_receivers : v.name])) == length([for v in ag.azure_function_receivers : v.name]),
+        length(toset([for v in ag.email_receivers : v.name])) == length([for v in ag.email_receivers : v.name]),
+        length(toset([for v in ag.event_hub_receivers : v.name])) == length([for v in ag.event_hub_receivers : v.name]),
+        length(toset([for v in ag.itsm_receivers : v.name])) == length([for v in ag.itsm_receivers : v.name]),
+        length(toset([for v in ag.logic_app_receivers : v.name])) == length([for v in ag.logic_app_receivers : v.name]),
+        length(toset([for v in ag.sms_receivers : v.name])) == length([for v in ag.sms_receivers : v.name]),
+        length(toset([for v in ag.voice_receivers : v.name])) == length([for v in ag.voice_receivers : v.name]),
+        length(toset([for v in ag.webhook_receivers : v.name])) == length([for v in ag.webhook_receivers : v.name])
+      ])
+    ])
+    error_message = "Each receiver type in action_groups must use unique receiver 'name' values to avoid ordering collisions."
   }
 }
 
@@ -213,6 +323,7 @@ variable "quota_alert" {
       type         = string
       identity_ids = optional(list(string), [])
     })
+    action_group_ids = optional(list(string), [])
   })
   default = null
 
