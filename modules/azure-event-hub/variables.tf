@@ -1,21 +1,20 @@
-# VARIABLES SECTION
 variable "tags_from_rg" {
-  description = "Use resource group tags as base for module tags"
+  description = "When true, merge tags from the resource group with `tags` (module tags win on key conflicts)."
   type        = bool
   default     = false
 }
 
 variable "tags" {
-  description = "Tags to apply to resources"
+  description = "Tags applied to the Event Hubs namespace, Event Grid system topics, and related taggable resources in this module."
   type        = map(string)
   default     = {}
 }
 
 variable "eventhub" {
   type = map(object({
-    name                = string
-    partition_count     = number
-    message_retention   = number
+    name                 = string
+    partition_count      = number
+    message_retention    = number
     consumer_group_names = list(string)
     auth_rules = list(object({
       name   = string
@@ -31,6 +30,11 @@ variable "eventhub" {
     }))
     system_topic_name = optional(string)
   }))
+  description = <<-EOT
+    Map of event hubs to create inside the namespace. Map keys are internal identifiers used for consumer groups,
+    authorization rules, and Event Grid wiring. To enable Event Grid delivery for a hub, set both `event_subscription`
+    and `system_topic_name` (matching a key in `system_topic`).
+  EOT
 }
 
 variable "system_topic" {
@@ -40,6 +44,7 @@ variable "system_topic" {
     topic_type         = string
     source_resource_id = string
   }))
+  description = "Event Grid system topics keyed by name referenced from `eventhub.*.system_topic_name`. Use an empty map `{}` when Event Grid is not used."
 }
 
 variable "namespace" {
@@ -65,5 +70,5 @@ variable "namespace" {
       })), [])
     })
   })
+  description = "Event Hubs namespace configuration, including SKU, capacity, managed identity type, and `network_rulesets` inputs."
 }
-
