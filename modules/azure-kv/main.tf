@@ -1,13 +1,13 @@
-# DATA SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/data-sources/client_config
+# Current tenant and subscription context for the Key Vault resource.
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/client_config
 data "azurerm_client_config" "current" {}
 
-## https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/data-sources/resource_group
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.resource_group
 }
 
-## https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/user
+# https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/user
 data "azuread_user" "this" {
   for_each = {
     for entity in var.access_policies : entity.name => entity
@@ -16,7 +16,7 @@ data "azuread_user" "this" {
   user_principal_name = each.value.name
 }
 
-## https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/group
+# https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/group
 data "azuread_group" "this" {
   for_each = {
     for entity in var.access_policies : entity.name => entity
@@ -26,7 +26,7 @@ data "azuread_group" "this" {
   security_enabled = true
 }
 
-## https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/service_principal
+# https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/service_principal
 data "azuread_service_principal" "this" {
   for_each = {
     for entity in var.access_policies : entity.name => entity
@@ -35,9 +35,8 @@ data "azuread_service_principal" "this" {
   display_name = each.value.name
 }
 
-## Locals for the datas of the entities
 locals {
-  # Creating a map with entity names as keys and their object_ids as values
+  # Map policy entry name -> object_id (explicit, or resolved from Azure AD, or null if unresolved).
   entity_ids = {
     for entity in var.access_policies : entity.name => (
       entity.object_id != "" ? entity.object_id :
@@ -48,16 +47,11 @@ locals {
     )
   }
 
-  # Convert the map values to a list and filter out nulls
-  object_ids = [for id in local.entity_ids : id if id != null]
-
-  # Check if access policies are defined when RBAC is enabled
-  has_access_policies = length(var.access_policies) > 0 && var.enable_rbac_authorization
+  # True when RBAC is enabled but access policies are also supplied (invalid combination).
+  rbac_authorization_conflicts_with_access_policies = length(var.access_policies) > 0 && var.enable_rbac_authorization
 }
 
-
-# RESOURCES SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/resources/key_vault
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault
 resource "azurerm_key_vault" "this" {
   name                        = var.name
   location                    = data.azurerm_resource_group.this.location
@@ -71,7 +65,7 @@ resource "azurerm_key_vault" "this" {
   tags                        = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
   lifecycle {
     precondition {
-      condition     = !local.has_access_policies
+      condition     = !local.rbac_authorization_conflicts_with_access_policies
       error_message = "Access policies cannot be defined when RBAC authorization is enabled."
     }
   }

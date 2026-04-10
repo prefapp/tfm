@@ -1,0 +1,20 @@
+# Illustrative values aligned with the module inputs (for wrappers / Helm-style tooling).
+values:
+  name: "example-kv-basic-001"
+  resource_group: "example-rg"
+  enabled_for_disk_encryption: true
+  soft_delete_retention_days: 7
+  purge_protection_enabled: false
+  sku_name: "standard"
+  enable_rbac_authorization: false
+  tags_from_rg: false
+  tags:
+    example: "basic"
+  access_policies:
+    - name: "policy-key"
+      type: ""
+      object_id: "00000000-0000-0000-0000-000000000000"
+      key_permissions: ["Get", "List"]
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: ["Get", "List"]
+      storage_permissions: []

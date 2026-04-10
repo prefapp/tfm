@@ -1,0 +1,60 @@
+# Reference only — replace with real tenant/subscription data.
+values:
+  name: "example-kv-comprehensive-001"
+  resource_group: "example-rg"
+  enabled_for_disk_encryption: true
+  soft_delete_retention_days: 90
+  purge_protection_enabled: true
+  sku_name: "standard"
+  enable_rbac_authorization: false
+  tags_from_rg: true
+  tags:
+    cost_center: "engineering"
+    environment: "nonprod"
+  access_policies:
+    # Direct object id (type left empty; name is only a map key / label in the module)
+    - name: "breakglass-spn"
+      type: ""
+      object_id: "11111111-1111-1111-1111-111111111111"
+      key_permissions: ["Get", "List", "Create", "Delete"]
+      secret_permissions: ["Get", "List", "Set", "Delete"]
+      certificate_permissions: ["Get", "List"]
+      storage_permissions: []
+    # Group resolved by display name
+    - name: "Contoso-KeyVault-Readers"
+      type: "group"
+      object_id: ""
+      key_permissions: ["Get", "List"]
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: ["Get", "List"]
+      storage_permissions: []
+    # User resolved by UPN
+    - name: "alice@contoso.com"
+      type: "user"
+      object_id: ""
+      key_permissions: []
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: []
+      storage_permissions: []
+    # Service principal resolved by display name
+    - name: "My Automation SP"
+      type: "service_principal"
+      object_id: ""
+      key_permissions: ["Get", "List"]
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: []
+      storage_permissions: []
+
+# When using RBAC on the vault, leave access_policies empty and assign roles separately.
+values_rbac_example:
+  name: "example-kv-rbac-001"
+  resource_group: "example-rg"
+  enabled_for_disk_encryption: true
+  soft_delete_retention_days: 7
+  purge_protection_enabled: false
+  sku_name: "standard"
+  enable_rbac_authorization: true
+  tags_from_rg: false
+  tags:
+    example: "rbac"
+  access_policies: []
