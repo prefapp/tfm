@@ -190,8 +190,14 @@ resource "azurerm_consumption_budget_subscription" "this" {
       threshold_type = try(notification.value.threshold_type, "Actual")
       contact_emails = notification.value.contact_emails
       contact_groups = [
-        for g in notification.value.contact_groups :
-        startswith(g, "/") ? g : data.azurerm_monitor_action_group.budget[g].id
+        for g in try(notification.value.contact_groups, []) :
+        can(tostring(g)) && startswith(tostring(g), "/")
+        ? tostring(g)
+        : data.azurerm_monitor_action_group.budget[
+          can(tostring(g))
+          ? "${local.resource_group_name}/${tostring(g)}"
+          : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
+        ].id
       ]
       contact_roles = try(notification.value.contact_roles, [])
     }

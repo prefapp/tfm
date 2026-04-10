@@ -16,15 +16,11 @@ data "azurerm_monitor_action_group" "this" {
 }
 
 # Resolve contact_group names to IDs for budget notifications.
-# Only entries that are NOT already full resource IDs (i.e. do not start with "/") are looked up.
+# Only entries that are NOT already full resource IDs are looked up.
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/monitor_action_group
 data "azurerm_monitor_action_group" "budget" {
-  for_each = toset(try(flatten([
-    for n in var.budget.notification : [
-      for g in n.contact_groups : g if !startswith(g, "/")
-    ]
-  ]), []))
+  for_each = local.budget_contact_group_lookups
 
-  name                = each.key
-  resource_group_name = local.resource_group_name
+  name                = each.value.name
+  resource_group_name = each.value.resource_group_name
 }

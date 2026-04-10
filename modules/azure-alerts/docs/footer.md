@@ -3,6 +3,7 @@
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples):
 
 - [action_group](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action_group) - Example provisioning an Action Group with multiple receiver types (email, SMS, webhook, ARM role, etc.).
+- [action_group_existing](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action_group_existing) - Example reusing an existing Action Group with `action_group.create = false`.
 - [budget_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/budget_alert) - Example provisioning a Budget Alert to monitor subscription spending.
 - [quota_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/quota_alert) - Example provisioning a Quota Alert to monitor subscription-level quotas (vCPU, storage, etc.).
 - [activity_log_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/activity_log_alert) - Example provisioning Activity Log Alerts to monitor administrative activities, VM deletion, and service health events.
@@ -18,12 +19,22 @@ Use an Action Group to define notification channels for your alerts. Supports mu
 - Logic Apps for automation workflows
 - ARM role receivers for permission-based routing
 
+> Note: receiver `name` values must be unique per receiver type to guarantee stable ordering and avoid plan churn.
+
 ### Budget Alert
 Monitor your Azure subscription spending and receive early warnings when costs approach budget limits:
 - Set budget thresholds at different percentage levels (e.g., 75%, 100%)
 - Notify specific contacts when thresholds are exceeded
+- Reference contact groups by Action Group name, full resource ID, or object `{ name, resource_group_name }`
+- Preserve Azure-side budget filtering using the optional `budget.filter` block (e.g. `ChargeType = Usage`)
 - Configure recurring monthly, quarterly, or annual budgets
 - Useful for cost governance and preventing budget overruns
+
+## Upgrade Notes
+
+- The Action Group resource now uses `count` to support `action_group.create = false`.
+- If you already manage an existing state at `azurerm_monitor_action_group.this`, move it once to indexed form:
+	- `terraform state mv azurerm_monitor_action_group.this 'azurerm_monitor_action_group.this[0]'`
 
 ### Quota Alert
 Track subscription-level quota usage to prevent hitting Azure limits:

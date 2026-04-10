@@ -41,6 +41,16 @@ module "azure_alerts" {
       start_date = "2026-01-01"
       end_date   = "2027-12-31"
     }
+
+    # Optional: keep an existing Azure budget filter to avoid drift.
+    filter = {
+      dimension = [{
+        name     = "ChargeType"
+        operator = "In"
+        values   = ["Usage"]
+      }]
+    }
+
     notification = [
       {
         enabled        = true
@@ -48,6 +58,8 @@ module "azure_alerts" {
         threshold      = 75  # Alert at 75% of budget
         threshold_type = "Actual"
         contact_emails = ["finance@example.com"]
+        # Can be either action group name or full resource ID
+        contact_groups = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-alerts-rg/providers/Microsoft.Insights/actionGroups/budget-alert-action-group"]
       },
       {
         enabled        = true
@@ -55,6 +67,11 @@ module "azure_alerts" {
         threshold      = 100  # Alert at 100% of budget
         threshold_type = "Actual"
         contact_emails = ["finance@example.com"]
+        # Object entries support Action Groups in another resource group.
+        contact_groups = [{
+          name                = "shared-monitoring-action-group"
+          resource_group_name = "shared-monitoring-rg"
+        }]
       }
     ]
   }

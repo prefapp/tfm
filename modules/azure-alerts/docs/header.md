@@ -44,6 +44,9 @@ module "azure_alerts" {
 
   # Action Group for notifications
   action_group = {
+    # Optional: set to false to reuse an existing Action Group
+    # (module will use data source lookup instead of creating it)
+    create              = true
     name                = "my-action-group"
     resource_group_name = "my-alerts-rg"
     short_name          = "MyAG"
@@ -65,13 +68,39 @@ module "azure_alerts" {
     time_period = {
       start_date = "2026-01-01"
     }
+
+    # Optional: preserve existing budget filters to avoid drift
+    filter = {
+      dimension = [{
+        name     = "ChargeType"
+        operator = "In"
+        values   = ["Usage"]
+      }]
+    }
+
     notification = [
       {
         enabled        = true
         operator       = "GreaterThan"
         threshold      = 75
         contact_emails = ["admin@example.com"]
+
+        # Accepts either Action Group names or full resource IDs
+        contact_groups = [
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-alerts-rg/providers/Microsoft.Insights/actionGroups/my-action-group"
+        ]
       }
+      # Also supports objects for cross-resource-group lookups:
+      # {
+      #   enabled        = true
+      #   operator       = "GreaterThan"
+      #   threshold      = 100
+      #   contact_emails = ["admin@example.com"]
+      #   contact_groups = [{
+      #     name                = "shared-monitoring-action-group"
+      #     resource_group_name = "shared-monitoring-rg"
+      #   }]
+      # }
     ]
   }
 

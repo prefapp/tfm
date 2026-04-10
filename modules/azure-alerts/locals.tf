@@ -18,6 +18,25 @@ locals {
   action_group_id   = var.action_group.create ? azurerm_monitor_action_group.this[0].id : data.azurerm_monitor_action_group.this[0].id
   action_group_name = var.action_group.create ? azurerm_monitor_action_group.this[0].name : data.azurerm_monitor_action_group.this[0].name
 
+  # Normalize budget notification contact groups so each entry can be:
+  # - a full Action Group resource ID string,
+  # - a name string resolved in local.resource_group_name,
+  # - an object with `name` and optional `resource_group_name`.
+  budget_contact_group_lookups = var.budget == null ? {} : {
+    for entry in flatten([
+      for notification in var.budget.notification : [
+        for group in try(notification.contact_groups, []) : {
+          is_id               = can(tostring(group)) && startswith(tostring(group), "/")
+          name                = can(tostring(group)) ? tostring(group) : group.name
+          resource_group_name = can(tostring(group)) ? local.resource_group_name : try(group.resource_group_name, local.resource_group_name)
+        }
+      ]
+      ]) : "${entry.resource_group_name}/${entry.name}" => {
+      name                = entry.name
+      resource_group_name = entry.resource_group_name
+    } if !entry.is_id
+  }
+
   # Sort all receiver types by their `name` attribute for stable ordering across
   # plan/apply cycles. This prevents positional drift when Azure returns receivers
   # in a different order than Terraform's map-key alphabetical sort.

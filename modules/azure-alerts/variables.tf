@@ -26,7 +26,7 @@ variable "action_group" {
     create              = optional(bool, true)
     name                = string
     resource_group_name = string
-    short_name          = string
+    short_name          = optional(string, null)
     arm_role_receivers = optional(map(object({
       name                    = string
       role_id                 = string
@@ -99,8 +99,29 @@ variable "action_group" {
   })
 
   validation {
-    condition     = length(var.action_group.short_name) <= 12
-    error_message = "action_group.short_name must be 12 characters or fewer."
+    condition = (
+      var.action_group.create && var.action_group.short_name != null && length(var.action_group.short_name) > 0 && length(var.action_group.short_name) <= 12
+      ) || (
+      !var.action_group.create
+    )
+    error_message = "When action_group.create is true, action_group.short_name is required and must be 12 characters or fewer."
+  }
+
+  validation {
+    condition = alltrue([
+      length(toset([for v in var.action_group.arm_role_receivers : v.name])) == length([for v in var.action_group.arm_role_receivers : v.name]),
+      length(toset([for v in var.action_group.automation_runbook_receivers : v.name])) == length([for v in var.action_group.automation_runbook_receivers : v.name]),
+      length(toset([for v in var.action_group.azure_app_push_receivers : v.name])) == length([for v in var.action_group.azure_app_push_receivers : v.name]),
+      length(toset([for v in var.action_group.azure_function_receivers : v.name])) == length([for v in var.action_group.azure_function_receivers : v.name]),
+      length(toset([for v in var.action_group.email_receivers : v.name])) == length([for v in var.action_group.email_receivers : v.name]),
+      length(toset([for v in var.action_group.event_hub_receivers : v.name])) == length([for v in var.action_group.event_hub_receivers : v.name]),
+      length(toset([for v in var.action_group.itsm_receivers : v.name])) == length([for v in var.action_group.itsm_receivers : v.name]),
+      length(toset([for v in var.action_group.logic_app_receivers : v.name])) == length([for v in var.action_group.logic_app_receivers : v.name]),
+      length(toset([for v in var.action_group.sms_receivers : v.name])) == length([for v in var.action_group.sms_receivers : v.name]),
+      length(toset([for v in var.action_group.voice_receivers : v.name])) == length([for v in var.action_group.voice_receivers : v.name]),
+      length(toset([for v in var.action_group.webhook_receivers : v.name])) == length([for v in var.action_group.webhook_receivers : v.name])
+    ])
+    error_message = "Each receiver type in action_group must use unique receiver 'name' values to avoid ordering collisions."
   }
 }
 
@@ -122,7 +143,7 @@ variable "budget" {
       threshold      = number
       threshold_type = optional(string, "Actual")
       contact_emails = list(string)
-      contact_groups = optional(list(string), [])
+      contact_groups = optional(list(any), [])
       contact_roles  = optional(list(string), [])
     }))
     filter = optional(object({
@@ -139,6 +160,20 @@ variable "budget" {
     }), null)
   })
   default = null
+
+  validation {
+    condition     = var.budget == null || length(var.budget.notification) > 0
+    error_message = "When budget is set, budget.notification must contain at least one notification block."
+  }
+
+  validation {
+    condition = var.budget == null || alltrue(flatten([
+      for n in var.budget.notification : [
+        for g in try(n.contact_groups, []) : can(tostring(g)) || can(g.name)
+      ]
+    ]))
+    error_message = "budget.notification[*].contact_groups entries must be either a string (Action Group name or full resource ID) or an object with a 'name' attribute."
+  }
 }
 
 # Quota Alert (Scheduled Query Rules V2)

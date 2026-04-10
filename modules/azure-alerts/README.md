@@ -45,6 +45,9 @@ module "azure_alerts" {
 
   # Action Group for notifications
   action_group = {
+    # Optional: set to false to reuse an existing Action Group
+    # (module will use data source lookup instead of creating it)
+    create              = true
     name                = "my-action-group"
     resource_group_name = "my-alerts-rg"
     short_name          = "MyAG"
@@ -66,13 +69,39 @@ module "azure_alerts" {
     time_period = {
       start_date = "2026-01-01"
     }
+
+    # Optional: preserve existing budget filters to avoid drift
+    filter = {
+      dimension = [{
+        name     = "ChargeType"
+        operator = "In"
+        values   = ["Usage"]
+      }]
+    }
+
     notification = [
       {
         enabled        = true
         operator       = "GreaterThan"
         threshold      = 75
         contact_emails = ["admin@example.com"]
+
+        # Accepts either Action Group names or full resource IDs
+        contact_groups = [
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-alerts-rg/providers/Microsoft.Insights/actionGroups/my-action-group"
+        ]
       }
+      # Also supports objects for cross-resource-group lookups:
+      # {
+      #   enabled        = true
+      #   operator       = "GreaterThan"
+      #   threshold      = 100
+      #   contact_emails = ["admin@example.com"]
+      #   contact_groups = [{
+      #     name                = "shared-monitoring-action-group"
+      #     resource_group_name = "shared-monitoring-rg"
+      #   }]
+      # }
     ]
   }
 
@@ -129,9 +158,9 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_action_group"></a> [action\_group](#input\_action\_group) | Configuration for the Azure Monitor Action Group. | <pre>object({<br/>    create              = optional(bool, true)<br/>    name                = string<br/>    resource_group_name = string<br/>    short_name          = string<br/>    arm_role_receivers = optional(map(object({<br/>      name                    = string<br/>      role_id                 = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    automation_runbook_receivers = optional(map(object({<br/>      name                    = string<br/>      automation_account_id   = string<br/>      runbook_name            = string<br/>      webhook_resource_id     = optional(string, null)<br/>      service_uri             = optional(string, null)<br/>      is_global_runbook       = optional(bool, false)<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    azure_app_push_receivers = optional(map(object({<br/>      name          = string<br/>      email_address = string<br/>    })), {})<br/>    azure_function_receivers = optional(map(object({<br/>      name                     = string<br/>      function_app_resource_id = string<br/>      function_name            = string<br/>      http_trigger_url         = string<br/>      use_common_alert_schema  = optional(bool, true)<br/>    })), {})<br/>    email_receivers = optional(map(object({<br/>      name                    = string<br/>      email_address           = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    event_hub_receivers = optional(map(object({<br/>      name                    = string<br/>      event_hub_name          = string<br/>      event_hub_namespace     = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    itsm_receivers = optional(map(object({<br/>      name                 = string<br/>      workspace_id         = string<br/>      connection_id        = string<br/>      region               = optional(string, null)<br/>      ticket_configuration = optional(string, null)<br/>    })), {})<br/>    logic_app_receivers = optional(map(object({<br/>      name                    = string<br/>      resource_id             = string<br/>      callback_url            = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    sms_receivers = optional(map(object({<br/>      name         = string<br/>      country_code = string<br/>      phone_number = string<br/>    })), {})<br/>    voice_receivers = optional(map(object({<br/>      name         = string<br/>      country_code = string<br/>      phone_number = string<br/>    })), {})<br/>    webhook_receivers = optional(map(object({<br/>      name                    = string<br/>      service_uri             = string<br/>      use_common_alert_schema = optional(bool, true)<br/>      aad_auth = optional(object({<br/>        object_id      = string<br/>        identifier_uri = optional(string, null)<br/>        tenant_id      = string<br/>      }), null)<br/>    })), {})<br/>  })</pre> | n/a | yes |
+| <a name="input_action_group"></a> [action\_group](#input\_action\_group) | Configuration for the Azure Monitor Action Group. | <pre>object({<br/>    create              = optional(bool, true)<br/>    name                = string<br/>    resource_group_name = string<br/>    short_name          = optional(string, null)<br/>    arm_role_receivers = optional(map(object({<br/>      name                    = string<br/>      role_id                 = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    automation_runbook_receivers = optional(map(object({<br/>      name                    = string<br/>      automation_account_id   = string<br/>      runbook_name            = string<br/>      webhook_resource_id     = optional(string, null)<br/>      service_uri             = optional(string, null)<br/>      is_global_runbook       = optional(bool, false)<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    azure_app_push_receivers = optional(map(object({<br/>      name          = string<br/>      email_address = string<br/>    })), {})<br/>    azure_function_receivers = optional(map(object({<br/>      name                     = string<br/>      function_app_resource_id = string<br/>      function_name            = string<br/>      http_trigger_url         = string<br/>      use_common_alert_schema  = optional(bool, true)<br/>    })), {})<br/>    email_receivers = optional(map(object({<br/>      name                    = string<br/>      email_address           = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    event_hub_receivers = optional(map(object({<br/>      name                    = string<br/>      event_hub_name          = string<br/>      event_hub_namespace     = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    itsm_receivers = optional(map(object({<br/>      name                 = string<br/>      workspace_id         = string<br/>      connection_id        = string<br/>      region               = optional(string, null)<br/>      ticket_configuration = optional(string, null)<br/>    })), {})<br/>    logic_app_receivers = optional(map(object({<br/>      name                    = string<br/>      resource_id             = string<br/>      callback_url            = string<br/>      use_common_alert_schema = optional(bool, true)<br/>    })), {})<br/>    sms_receivers = optional(map(object({<br/>      name         = string<br/>      country_code = string<br/>      phone_number = string<br/>    })), {})<br/>    voice_receivers = optional(map(object({<br/>      name         = string<br/>      country_code = string<br/>      phone_number = string<br/>    })), {})<br/>    webhook_receivers = optional(map(object({<br/>      name                    = string<br/>      service_uri             = string<br/>      use_common_alert_schema = optional(bool, true)<br/>      aad_auth = optional(object({<br/>        object_id      = string<br/>        identifier_uri = optional(string, null)<br/>        tenant_id      = string<br/>      }), null)<br/>    })), {})<br/>  })</pre> | n/a | yes |
 | <a name="input_backup_alert"></a> [backup\_alert](#input\_backup\_alert) | Configuration for the alert processing rule action group (e.g. backup alerts). Set to null to disable. | <pre>object({<br/>    name                 = string<br/>    resource_group_name  = optional(string, null)<br/>    scopes               = list(string)<br/>    description          = optional(string)<br/>    add_action_group_ids = list(string)<br/>  })</pre> | `null` | no |
-| <a name="input_budget"></a> [budget](#input\_budget) | Configuration for the subscription consumption budget alert. Set to null to disable. | <pre>object({<br/>    name            = string<br/>    subscription_id = optional(string, null)<br/>    amount          = number<br/>    time_grain      = string<br/>    time_period = object({<br/>      start_date = string<br/>      end_date   = optional(string)<br/>    })<br/>    notification = list(object({<br/>      enabled        = bool<br/>      operator       = string<br/>      threshold      = number<br/>      threshold_type = optional(string, "Actual")<br/>      contact_emails = list(string)<br/>      contact_groups = optional(list(string), [])<br/>      contact_roles  = optional(list(string), [])<br/>    }))<br/>    filter = optional(object({<br/>      dimension = optional(list(object({<br/>        name     = string<br/>        operator = optional(string, "In")<br/>        values   = list(string)<br/>      })), [])<br/>      tag = optional(list(object({<br/>        name     = string<br/>        operator = optional(string, "In")<br/>        values   = list(string)<br/>      })), [])<br/>    }), null)<br/>  })</pre> | `null` | no |
+| <a name="input_budget"></a> [budget](#input\_budget) | Configuration for the subscription consumption budget alert. Set to null to disable. | <pre>object({<br/>    name            = string<br/>    subscription_id = optional(string, null)<br/>    amount          = number<br/>    time_grain      = string<br/>    time_period = object({<br/>      start_date = string<br/>      end_date   = optional(string)<br/>    })<br/>    notification = list(object({<br/>      enabled        = bool<br/>      operator       = string<br/>      threshold      = number<br/>      threshold_type = optional(string, "Actual")<br/>      contact_emails = list(string)<br/>      contact_groups = optional(list(any), [])<br/>      contact_roles  = optional(list(string), [])<br/>    }))<br/>    filter = optional(object({<br/>      dimension = optional(list(object({<br/>        name     = string<br/>        operator = optional(string, "In")<br/>        values   = list(string)<br/>      })), [])<br/>      tag = optional(list(object({<br/>        name     = string<br/>        operator = optional(string, "In")<br/>        values   = list(string)<br/>      })), [])<br/>    }), null)<br/>  })</pre> | `null` | no |
 | <a name="input_common"></a> [common](#input\_common) | Common variables for the module | <pre>object({<br/>    location            = optional(string, "westeurope")<br/>    resource_group_name = optional(string, null)<br/>    tags                = optional(map(string), {})<br/>    tags_from_rg        = optional(bool, false)<br/>  })</pre> | `{}` | no |
 | <a name="input_identity"></a> [identity](#input\_identity) | Identity for Quota Alert | <pre>object({<br/>    name                 = string<br/>    scope                = string<br/>    role_definition_name = optional(string, "Reader")<br/>  })</pre> | `null` | no |
 | <a name="input_log_alert"></a> [log\_alert](#input\_log\_alert) | List of activity log alert configurations. Set to empty list to disable. | <pre>list(object({<br/>    name                = string<br/>    resource_group_name = optional(string, null)<br/>    location            = optional(string, "global")<br/>    description         = optional(string)<br/>    enabled             = optional(bool, true)<br/>    scopes              = list(string)<br/>    action = object({<br/>      action_group_id    = optional(string, null)<br/>      webhook_properties = optional(map(string), {})<br/>    })<br/>    criteria = object({<br/>      category           = string<br/>      levels             = optional(list(string), [])<br/>      resource_groups    = optional(list(string), [])<br/>      resource_ids       = optional(list(string), [])<br/>      resource_providers = optional(list(string), [])<br/>      resource_types     = optional(list(string), [])<br/>      statuses           = optional(list(string), [])<br/>      sub_statuses       = optional(list(string), [])<br/>      service_health = optional(object({<br/>        events    = optional(list(string), [])<br/>        locations = optional(list(string), [])<br/>        services  = optional(list(string), [])<br/>      }))<br/>    })<br/>  }))</pre> | `[]` | no |
@@ -155,6 +184,7 @@ No modules.
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples):
 
 - [action\_group](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action\_group) - Example provisioning an Action Group with multiple receiver types (email, SMS, webhook, ARM role, etc.).
+- [action\_group\_existing](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action\_group\_existing) - Example reusing an existing Action Group with `action_group.create = false`.
 - [budget\_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/budget\_alert) - Example provisioning a Budget Alert to monitor subscription spending.
 - [quota\_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/quota\_alert) - Example provisioning a Quota Alert to monitor subscription-level quotas (vCPU, storage, etc.).
 - [activity\_log\_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/activity\_log\_alert) - Example provisioning Activity Log Alerts to monitor administrative activities, VM deletion, and service health events.
@@ -170,12 +200,22 @@ Use an Action Group to define notification channels for your alerts. Supports mu
 - Logic Apps for automation workflows
 - ARM role receivers for permission-based routing
 
+> Note: receiver `name` values must be unique per receiver type to guarantee stable ordering and avoid plan churn.
+
 ### Budget Alert
 Monitor your Azure subscription spending and receive early warnings when costs approach budget limits:
 - Set budget thresholds at different percentage levels (e.g., 75%, 100%)
 - Notify specific contacts when thresholds are exceeded
+- Reference contact groups by Action Group name, full resource ID, or object `{ name, resource_group_name }`
+- Preserve Azure-side budget filtering using the optional `budget.filter` block (e.g. `ChargeType = Usage`)
 - Configure recurring monthly, quarterly, or annual budgets
 - Useful for cost governance and preventing budget overruns
+
+## Upgrade Notes
+
+- The Action Group resource now uses `count` to support `action_group.create = false`.
+- If you already manage an existing state at `azurerm_monitor_action_group.this`, move it once to indexed form:
+	- `terraform state mv azurerm_monitor_action_group.this 'azurerm_monitor_action_group.this[0]'`
 
 ### Quota Alert
 Track subscription-level quota usage to prevent hitting Azure limits:
