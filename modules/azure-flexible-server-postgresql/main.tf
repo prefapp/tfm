@@ -1,4 +1,4 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server
 resource "azurerm_postgresql_flexible_server" "this" {
   name                              = var.postgresql_flexible_server.name
   resource_group_name               = data.azurerm_resource_group.resource_group.name
@@ -40,7 +40,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   }
 }
 
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_configuration
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server_configuration
 resource "azurerm_postgresql_flexible_server_configuration" "this" {
   for_each  = var.postgresql_flexible_server_configuration
   name      = each.value.name
@@ -48,13 +48,13 @@ resource "azurerm_postgresql_flexible_server_configuration" "this" {
   value     = each.value.value
 }
 
-#https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
+# https://registry.terraform.io/providers/hashicorp/random/3.6.0/docs/resources/password
 resource "random_password" "password" {
   length  = var.password_length
   special = true
 }
 
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/key_vault_secret
 resource "azurerm_key_vault_secret" "password_create" {
   key_vault_id = coalesce(data.azurerm_resources.key_vault_from_name.resources[0].id, local.key_vault_id_from_data)
   name         = var.administrator_password_key_vault_secret_name
@@ -65,7 +65,7 @@ resource "azurerm_key_vault_secret" "password_create" {
   }
 }
 
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_firewall_rule
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server_firewall_rule
 resource "azurerm_postgresql_flexible_server_firewall_rule" "this" {
   for_each         = { for idx, rule in var.firewall_rule : idx => rule if rule.name != null }
   server_id        = azurerm_postgresql_flexible_server.this.id
@@ -74,4 +74,3 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "this" {
   end_ip_address   = each.value.end_ip_address
 
 }
-

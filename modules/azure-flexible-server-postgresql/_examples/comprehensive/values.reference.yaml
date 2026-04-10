@@ -1,0 +1,65 @@
+values_public:
+  resource_group: "example-rg"
+  tags_from_rg: true
+  key_vault:
+    name: "example-kv"
+    resource_group_name: "example-rg"
+  vnet:
+    name: "example-vnet"
+    resource_group_name: "example-rg"
+  administrator_password_key_vault_secret_name: "pg-admin-password"
+  postgresql_flexible_server:
+    name: "example-pg"
+    location: "westeurope"
+    version: 15
+    public_network_access_enabled: true
+    administrator_login: "psqladmin"
+    storage_mb: 131072
+    sku_name: "GP_Standard_D4ds_v5"
+    backup_retention_days: 35
+    maintenance_window:
+      day_of_week: 0
+      start_hour: 2
+      start_minute: 0
+    authentication:
+      active_directory_auth_enabled: false
+      password_auth_enabled: true
+  postgresql_flexible_server_configuration:
+    azure.extensions:
+      name: "azure.extensions"
+      value: "PGCRYPTO"
+  firewall_rule:
+    - name: "office"
+      start_ip_address: "198.51.100.0"
+      end_ip_address: "198.51.100.255"
+
+values_private:
+  resource_group: "example-rg"
+  subnet_name: "subnet-pgflex"
+  dns_private_zone_name: "privatelink.postgres.database.azure.com"
+  key_vault:
+    tags:
+      workload: "secrets"
+  vnet:
+    tags:
+      environment: "nonprod"
+  administrator_password_key_vault_secret_name: "pg-admin-password"
+  postgresql_flexible_server:
+    name: "example-pg-private"
+    location: "westeurope"
+    version: 16
+    public_network_access_enabled: false
+    administrator_login: "psqladmin"
+    storage_mb: 65536
+    sku_name: "GP_Standard_D2ds_v5"
+    backup_retention_days: 14
+    maintenance_window:
+      day_of_week: 5
+      start_hour: 3
+      start_minute: 30
+    authentication:
+      active_directory_auth_enabled: true
+      password_auth_enabled: true
+      tenant_id: "00000000-0000-0000-0000-000000000000"
+  postgresql_flexible_server_configuration: {}
+  firewall_rule: []
