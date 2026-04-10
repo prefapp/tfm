@@ -23,6 +23,7 @@ variable "identity" {
 variable "action_group" {
   description = "Configuration for the Azure Monitor Action Group."
   type = object({
+    create              = optional(bool, true)
     name                = string
     resource_group_name = string
     short_name          = string
@@ -124,6 +125,18 @@ variable "budget" {
       contact_groups = optional(list(string), [])
       contact_roles  = optional(list(string), [])
     }))
+    filter = optional(object({
+      dimension = optional(list(object({
+        name     = string
+        operator = optional(string, "In")
+        values   = list(string)
+      })), [])
+      tag = optional(list(object({
+        name     = string
+        operator = optional(string, "In")
+        values   = list(string)
+      })), [])
+    }), null)
   })
   default = null
 }

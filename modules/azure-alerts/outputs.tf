@@ -1,11 +1,11 @@
 output "action_group_id" {
   description = "The ID of the Azure Monitor Action Group."
-  value       = azurerm_monitor_action_group.this.id
+  value       = local.action_group_id
 }
 
 output "action_group_name" {
   description = "The name of the Azure Monitor Action Group."
-  value       = azurerm_monitor_action_group.this.name
+  value       = local.action_group_name
 }
 
 output "quota_alert_id" {

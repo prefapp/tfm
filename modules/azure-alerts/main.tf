@@ -19,24 +19,25 @@ resource "azurerm_role_assignment" "quota_reader" {
 # Action Group for the alerts to send notifications to the specified email receivers
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group
 resource "azurerm_monitor_action_group" "this" {
+  count               = var.action_group.create ? 1 : 0
   name                = var.action_group.name
   resource_group_name = local.resource_group_name
   location            = var.common.location
   short_name          = var.action_group.short_name
 
   dynamic "arm_role_receiver" {
-    for_each = var.action_group.arm_role_receivers
+    for_each = local.arm_role_receivers_sorted
     content {
-      name                    = arm_role_receiver.value.name
+      name                    = arm_role_receiver.key
       role_id                 = arm_role_receiver.value.role_id
       use_common_alert_schema = try(arm_role_receiver.value.use_common_alert_schema, true)
     }
   }
 
   dynamic "automation_runbook_receiver" {
-    for_each = var.action_group.automation_runbook_receivers
+    for_each = local.automation_runbook_receivers_sorted
     content {
-      name                    = automation_runbook_receiver.value.name
+      name                    = automation_runbook_receiver.key
       automation_account_id   = automation_runbook_receiver.value.automation_account_id
       runbook_name            = automation_runbook_receiver.value.runbook_name
       webhook_resource_id     = automation_runbook_receiver.value.webhook_resource_id
@@ -47,17 +48,17 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "azure_app_push_receiver" {
-    for_each = var.action_group.azure_app_push_receivers
+    for_each = local.azure_app_push_receivers_sorted
     content {
-      name          = azure_app_push_receiver.value.name
+      name          = azure_app_push_receiver.key
       email_address = azure_app_push_receiver.value.email_address
     }
   }
 
   dynamic "azure_function_receiver" {
-    for_each = var.action_group.azure_function_receivers
+    for_each = local.azure_function_receivers_sorted
     content {
-      name                     = azure_function_receiver.value.name
+      name                     = azure_function_receiver.key
       function_app_resource_id = azure_function_receiver.value.function_app_resource_id
       function_name            = azure_function_receiver.value.function_name
       http_trigger_url         = azure_function_receiver.value.http_trigger_url
@@ -66,18 +67,18 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "email_receiver" {
-    for_each = var.action_group.email_receivers
+    for_each = local.email_receivers_sorted
     content {
-      name                    = email_receiver.value.name
+      name                    = email_receiver.key
       email_address           = email_receiver.value.email_address
       use_common_alert_schema = try(email_receiver.value.use_common_alert_schema, true)
     }
   }
 
   dynamic "event_hub_receiver" {
-    for_each = var.action_group.event_hub_receivers
+    for_each = local.event_hub_receivers_sorted
     content {
-      name                    = event_hub_receiver.value.name
+      name                    = event_hub_receiver.key
       event_hub_name          = event_hub_receiver.value.event_hub_name
       event_hub_namespace     = event_hub_receiver.value.event_hub_namespace
       use_common_alert_schema = try(event_hub_receiver.value.use_common_alert_schema, true)
@@ -85,9 +86,9 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "itsm_receiver" {
-    for_each = var.action_group.itsm_receivers
+    for_each = local.itsm_receivers_sorted
     content {
-      name                 = itsm_receiver.value.name
+      name                 = itsm_receiver.key
       workspace_id         = itsm_receiver.value.workspace_id
       connection_id        = itsm_receiver.value.connection_id
       region               = itsm_receiver.value.region
@@ -96,9 +97,9 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "logic_app_receiver" {
-    for_each = var.action_group.logic_app_receivers
+    for_each = local.logic_app_receivers_sorted
     content {
-      name                    = logic_app_receiver.value.name
+      name                    = logic_app_receiver.key
       resource_id             = logic_app_receiver.value.resource_id
       callback_url            = logic_app_receiver.value.callback_url
       use_common_alert_schema = try(logic_app_receiver.value.use_common_alert_schema, true)
@@ -106,27 +107,27 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "sms_receiver" {
-    for_each = var.action_group.sms_receivers
+    for_each = local.sms_receivers_sorted
     content {
-      name         = sms_receiver.value.name
+      name         = sms_receiver.key
       country_code = sms_receiver.value.country_code
       phone_number = sms_receiver.value.phone_number
     }
   }
 
   dynamic "voice_receiver" {
-    for_each = var.action_group.voice_receivers
+    for_each = local.voice_receivers_sorted
     content {
-      name         = voice_receiver.value.name
+      name         = voice_receiver.key
       country_code = voice_receiver.value.country_code
       phone_number = voice_receiver.value.phone_number
     }
   }
 
   dynamic "webhook_receiver" {
-    for_each = var.action_group.webhook_receivers
+    for_each = local.webhook_receivers_sorted
     content {
-      name                    = webhook_receiver.value.name
+      name                    = webhook_receiver.key
       service_uri             = webhook_receiver.value.service_uri
       use_common_alert_schema = try(webhook_receiver.value.use_common_alert_schema, true)
 
@@ -158,6 +159,28 @@ resource "azurerm_consumption_budget_subscription" "this" {
     end_date   = try(var.budget.time_period.end_date, null)
   }
 
+  dynamic "filter" {
+    for_each = var.budget.filter != null ? [var.budget.filter] : []
+    content {
+      dynamic "dimension" {
+        for_each = filter.value.dimension
+        content {
+          name     = dimension.value.name
+          operator = dimension.value.operator
+          values   = dimension.value.values
+        }
+      }
+      dynamic "tag" {
+        for_each = filter.value.tag
+        content {
+          name     = tag.value.name
+          operator = tag.value.operator
+          values   = tag.value.values
+        }
+      }
+    }
+  }
+
   dynamic "notification" {
     for_each = var.budget.notification
     content {
@@ -166,8 +189,11 @@ resource "azurerm_consumption_budget_subscription" "this" {
       threshold      = notification.value.threshold
       threshold_type = try(notification.value.threshold_type, "Actual")
       contact_emails = notification.value.contact_emails
-      contact_groups = [for group_name in notification.value.contact_groups : data.azurerm_monitor_action_group.budget[group_name].id]
-      contact_roles  = try(notification.value.contact_roles, [])
+      contact_groups = [
+        for g in notification.value.contact_groups :
+        startswith(g, "/") ? g : data.azurerm_monitor_action_group.budget[g].id
+      ]
+      contact_roles = try(notification.value.contact_roles, [])
     }
   }
 }
@@ -220,7 +246,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
   }
 
   action {
-    action_groups = [azurerm_monitor_action_group.this.id]
+    action_groups = [local.action_group_id]
   }
 
   tags = local.tags
@@ -266,7 +292,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
   }
 
   action {
-    action_group_id    = coalesce(each.value.action.action_group_id, azurerm_monitor_action_group.this.id)
+    action_group_id    = coalesce(each.value.action.action_group_id, local.action_group_id)
     webhook_properties = try(each.value.action.webhook_properties, {})
   }
 
