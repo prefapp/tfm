@@ -28,7 +28,26 @@ variable "key_vault" {
     tags                = optional(map(string))
   })
   default     = {}
-  description = "Locate the Key Vault via `name` + `resource_group_name`, or via `required_tags` on `azurerm_resources` when `tags` is non-empty."
+  description = "Locate the Key Vault either via `name` + `resource_group_name` together, or via non-empty `tags` used as `required_tags` on `azurerm_resources`."
+
+  validation {
+    condition = (
+      (
+        try(var.key_vault.name, null) != null &&
+        try(var.key_vault.resource_group_name, null) != null
+      ) ||
+      length(try(var.key_vault.tags, {})) > 0
+    )
+    error_message = "key_vault must be specified either with both `name` and `resource_group_name`, or with non-empty `tags`."
+  }
+
+  validation {
+    condition = (
+      (try(var.key_vault.name, null) == null && try(var.key_vault.resource_group_name, null) == null) ||
+      (try(var.key_vault.name, null) != null && try(var.key_vault.resource_group_name, null) != null)
+    )
+    error_message = "When using name-based Key Vault lookup, both `name` and `resource_group_name` must be provided together."
+  }
 }
 
 variable "administrator_password_key_vault_secret_name" {
