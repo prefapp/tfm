@@ -2,12 +2,12 @@
 
 ## Overview
 
-Terraform module that provisions an **Azure Database for PostgreSQL Flexible Server** (`azurerm_postgresql_flexible_server`) plus optional **server parameters**, **firewall rules**, and a **Key Vault secret** workflow for the administrator password.
+Terraform module that provisions an **Azure Database for PostgreSQL Flexible Server** (`azurerm_postgresql_flexible_server`) plus optional **server parameters**, **firewall rules**, and a **Key Vault secret** workflow related to the administrator password.
 
 **Typical dependencies**
 
 - An existing **resource group** (`resource_group`).
-- A **Key Vault** and secret name for the admin password: the module creates `azurerm_key_vault_secret.password_create` from `random_password` (with `lifecycle.ignore_changes` on the secret `value` after the first write) and uses `data.azurerm_key_vault_secret.administrator_password` together with `coalesce` in `administrator_password` (see `main.tf`). You may need an initial `terraform apply` focused on the Key Vault secret before the flexible server can be created successfully, depending on your pipeline and secret state.
+- A **Key Vault** and secret name for the admin password: the module creates `azurerm_key_vault_secret.password_create` from `random_password` (with `lifecycle.ignore_changes` on the secret `value` after the first write) and reads `data.azurerm_key_vault_secret.administrator_password`, but the current `coalesce(var.administrator_password_key_vault_secret_name, data.azurerm_key_vault_secret.administrator_password[0].value)` logic in `main.tf` prefers the configured secret **name** whenever it is set rather than the looked-up secret **value**. In other words, the current implementation does **not** reliably set `administrator_password` from the Key Vault secret value; see `main.tf` before relying on this flow. You may need an initial `terraform apply` focused on the Key Vault secret before the flexible server can be created successfully, depending on your pipeline and secret state.
 - For **private access** (`public_network_access_enabled = false`): resolve a **virtual network** (by name and resource group, or by tags through `azurerm_resources`), supply a **delegated subnet** (`subnet_name`) and **private DNS zone** (`dns_private_zone_name`) as required by Azure for Flexible Server.
 - For **public access** (`public_network_access_enabled = true`): configure **`firewall_rule`** entries instead of relying on the private subnet path.
 
