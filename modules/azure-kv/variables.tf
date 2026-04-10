@@ -58,7 +58,8 @@ variable "access_policies" {
   default     = []
   description = <<-EOT
     Access policy entries when `enable_rbac_authorization` is false. Use a non-empty `object_id` to skip Azure AD lookup,
-    or set `type` to `user`, `group`, or `service_principal` and `name` for lookup. Entries that do not resolve to an
-    object id are omitted from the vault access policies. Must be empty when `enable_rbac_authorization` is true.
+    or set `type` to `user`, `group`, or `service_principal` and `name` for lookup. Entries that use Azure AD lookup
+    must resolve to an existing principal; otherwise the lookup will fail the Terraform plan. Must be empty when
+    `enable_rbac_authorization` is true.
   EOT
 }
