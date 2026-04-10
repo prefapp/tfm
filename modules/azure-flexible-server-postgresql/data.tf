@@ -1,4 +1,3 @@
-# Locals section
 locals {
   tags                          = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
   vnet_from_data                = can(data.azurerm_resources.vnet_from_tags[0].resources) ? data.azurerm_resources.vnet_from_tags[0].resources[0].name : null
@@ -8,13 +7,12 @@ locals {
   key_vault_id_from_data        = can(data.azurerm_resources.key_vault_from_tags[0].resources) ? data.azurerm_resources.key_vault_from_tags[0].resources[0].id : null
 }
 
-# Data section
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "resource_group" {
   name = var.resource_group
 }
 
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/resources
 data "azurerm_resources" "vnet_from_name" {
   type                = "Microsoft.Network/virtualNetworks"
   name                = var.vnet.name
@@ -39,7 +37,7 @@ data "azurerm_resources" "key_vault_from_tags" {
   required_tags = var.key_vault.tags
 }
 
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/subnet
 data "azurerm_subnet" "subnet" {
   count                = var.subnet_name != null && var.subnet_name != "" ? 1 : 0
   name                 = var.subnet_name
@@ -47,14 +45,14 @@ data "azurerm_subnet" "subnet" {
   resource_group_name  = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/private_dns_zone
 data "azurerm_private_dns_zone" "dns_private_zone" {
   count               = var.dns_private_zone_name != null && var.dns_private_zone_name != "" ? 1 : 0
   name                = var.dns_private_zone_name
   resource_group_name = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secrets
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/key_vault_secret
 data "azurerm_key_vault_secret" "administrator_password" {
   count        = var.administrator_password_key_vault_secret_name != null && var.administrator_password_key_vault_secret_name != "" ? 1 : 0
   name         = var.administrator_password_key_vault_secret_name

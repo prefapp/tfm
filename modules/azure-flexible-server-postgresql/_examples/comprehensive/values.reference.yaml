@@ -1,0 +1,82 @@
+# Reference only — align names, IDs, and networking with your subscription.
+values_public:
+  resource_group: "example-rg"
+  tags_from_rg: true
+  tags:
+    cost_center: "platform"
+  password_length: 24
+  key_vault:
+    name: "example-kv"
+    resource_group_name: "example-rg"
+  vnet:
+    name: "example-vnet"
+    resource_group_name: "example-rg"
+  subnet_name: null
+  dns_private_zone_name: null
+  administrator_password_key_vault_secret_name: "pg-admin-password"
+  postgresql_flexible_server:
+    name: "example-pg-public"
+    location: "westeurope"
+    version: 15
+    public_network_access_enabled: true
+    administrator_login: "psqladmin"
+    storage_tier: null
+    storage_mb: 131072
+    sku_name: "GP_Standard_D4ds_v5"
+    backup_retention_days: 35
+    maintenance_window:
+      day_of_week: 0
+      start_hour: 2
+      start_minute: 0
+    authentication:
+      active_directory_auth_enabled: false
+      password_auth_enabled: true
+  postgresql_flexible_server_configuration:
+    azure.extensions:
+      name: "azure.extensions"
+      value: "PGCRYPTO"
+  firewall_rule:
+    - name: "office"
+      start_ip_address: "198.51.100.0"
+      end_ip_address: "198.51.100.255"
+
+# Private access: set public_network_access_enabled to false and supply subnet + private DNS zone.
+values_private:
+  resource_group: "example-rg"
+  key_vault:
+    tags:
+      workload: "secrets"
+  vnet:
+    tags:
+      environment: "nonprod"
+  subnet_name: "subnet-pgflex"
+  dns_private_zone_name: "privatelink.postgres.database.azure.com"
+  administrator_password_key_vault_secret_name: "pg-admin-password"
+  postgresql_flexible_server:
+    name: "example-pg-private"
+    location: "westeurope"
+    version: 16
+    public_network_access_enabled: false
+    administrator_login: "psqladmin"
+    storage_mb: 65536
+    sku_name: "GP_Standard_D2ds_v5"
+    backup_retention_days: 14
+    maintenance_window:
+      day_of_week: 5
+      start_hour: 3
+      start_minute: 30
+    authentication:
+      active_directory_auth_enabled: true
+      password_auth_enabled: true
+      tenant_id: "00000000-0000-0000-0000-000000000000"
+  postgresql_flexible_server_configuration: {}
+  firewall_rule: []
+
+# Point-in-time restore (uncomment and set real IDs / timestamps when needed).
+values_pitr_example:
+  postgresql_flexible_server:
+    name: "example-pg-restored"
+    location: "westeurope"
+    create_mode: "PointInTimeRestore"
+    source_server_id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.DBforPostgreSQL/flexibleServers/source-server"
+    point_in_time_restore_time_in_utc: "2025-02-21T09:35:43Z"
