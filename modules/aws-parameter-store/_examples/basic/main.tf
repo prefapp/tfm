@@ -1,11 +1,11 @@
-# Example: Basic CloudFront Distribution with S3 Origin
+# Example: Basic Parameter Store access from EKS
 
 terraform {
   required_version = ">= 1.10"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.0"
+      version = "~> 6.40"
     }
   }
 }
@@ -14,7 +14,7 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-module "cloudfront-delivery" {
+module "parameter-store" {
   source = "../../"
 
   cluster_name = "common-env"
