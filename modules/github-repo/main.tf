@@ -3,7 +3,6 @@ resource "github_repository" "this" {
   name                 = var.config.repository.name
   description          = var.config.repository.description
   visibility           = var.config.repository.visibility
-  topics               = var.config.repository.topics
   auto_init            = var.config.repository.autoInit
   archive_on_destroy   = var.config.repository.archiveOnDestroy
   allow_merge_commit   = var.config.repository.allowMergeCommit
@@ -83,4 +82,10 @@ resource "github_repository_collaborator" "this" {
     repository    = github_repository.this.name
         username   = each.value.username
         permission = each.value.permission
+}
+
+# Add topics to the repository
+resource "github_repository_topics" "this" {
+  repository = github_repository.this.name
+  topics     = var.config.repository.topics
 }
