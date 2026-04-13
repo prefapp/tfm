@@ -29,6 +29,11 @@ variable "principal_id" {
   description = "The ID of the principal to assign the role definition to."
   type        = string
   default     = ""
+
+  validation {
+    condition     = !var.assign_role || trimspace(var.principal_id) != ""
+    error_message = "principal_id must be provided and non-empty when assign_role is true."
+  }
 }
 
 variable "tags_from_rg" {
