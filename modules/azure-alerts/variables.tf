@@ -17,6 +17,11 @@ variable "identity" {
     role_definition_name = optional(string, "Reader")
   })
   default = null # null = do not create a managed identity or role assignment
+
+  validation {
+    condition     = var.identity == null || var.quota_alert != null
+    error_message = "The identity variable can only be set when quota_alert is also configured."
+  }
 }
 
 # Action Group(s)
