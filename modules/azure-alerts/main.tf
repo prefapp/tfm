@@ -252,7 +252,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
   name                             = var.quota_alert.name
   resource_group_name              = local.resource_group_name
-  location                         = coalesce(var.quota_alert.location, var.common.location)
+  location                         = var.quota_alert.location
   display_name                     = var.quota_alert.display_name
   description                      = try(var.quota_alert.description, null)
   enabled                          = var.quota_alert.enabled
