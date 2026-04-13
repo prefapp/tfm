@@ -22,14 +22,16 @@ module "azure_alerts" {
 
   # Action Group for alert notifications
   action_group = {
-    name                = "quota-alert-action-group"
-    resource_group_name = "example-alerts-rg"
-    short_name          = "QuotaAG"
+    quota = {
+      name                = "quota-alert-action-group"
+      resource_group_name = "example-alerts-rg"
+      short_name          = "QuotaAG"
 
-    email_receivers = {
-      platform_team = {
-        name          = "Platform Team"
-        email_address = "platform@example.com"
+      email_receivers = {
+        platform_team = {
+          name          = "Platform Team"
+          email_address = "platform@example.com"
+        }
       }
     }
   }
@@ -71,6 +73,8 @@ module "azure_alerts" {
       type         = "UserAssigned"
       identity_ids = []  # Will be populated by the module
     }
+
+    action_groups = ["quota-alert-action-group"]
   }
 }
 

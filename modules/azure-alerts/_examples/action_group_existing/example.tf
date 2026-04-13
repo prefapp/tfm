@@ -1,4 +1,4 @@
-# Example: Reuse an existing Action Group (brownfield mode)
+# Example: Reference an existing Action Group by name (brownfield mode)
 
 module "azure_alerts" {
   source = "../../"
@@ -12,12 +12,7 @@ module "azure_alerts" {
     }
   }
 
-  # Reuse an existing Action Group instead of creating a new one.
-  action_group = {
-    create              = false
-    name                = "existing-action-group"
-    resource_group_name = "example-alerts-rg"
-  }
+  # No action_group block: this module will not create Action Groups.
 
   log_alert = [
     {
@@ -29,12 +24,17 @@ module "azure_alerts" {
         resource_groups = ["example-alerts-rg"]
         statuses        = ["Succeeded"]
       }
-      action = {}
+      action = {
+        action_group = {
+          name                = "existing-action-group"
+          resource_group_name = "example-alerts-rg"
+        }
+      }
     }
   ]
 }
 
 output "action_group_id" {
-  description = "The ID of the reused Action Group"
+  description = "Null in this example because no Action Group is created by the module"
   value       = module.azure_alerts.action_group_id
 }

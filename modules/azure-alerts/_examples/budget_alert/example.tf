@@ -15,18 +15,20 @@ module "azure_alerts" {
 
   # Action Group for alert notifications
   action_group = {
-    name                = "budget-alert-action-group"
-    resource_group_name = "example-alerts-rg"
-    short_name          = "BudgetAG"
+    budget = {
+      name                = "budget-alert-action-group"
+      resource_group_name = "example-alerts-rg"
+      short_name          = "BudgetAG"
 
-    email_receivers = {
-      finance_team = {
-        name          = "Finance Team"
-        email_address = "finance@example.com"
-      }
-      ops_team = {
-        name          = "Operations Team"
-        email_address = "ops@example.com"
+      email_receivers = {
+        finance_team = {
+          name          = "Finance Team"
+          email_address = "finance@example.com"
+        }
+        ops_team = {
+          name          = "Operations Team"
+          email_address = "ops@example.com"
+        }
       }
     }
   }

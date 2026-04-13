@@ -232,7 +232,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
               ? "${local.resource_group_name}/${tostring(g)}"
               : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
             ],
-            data.azurerm_monitor_action_group.budget[
+            data.azurerm_monitor_action_group.referenced[
               can(tostring(g))
               ? "${local.resource_group_name}/${tostring(g)}"
               : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
@@ -306,7 +306,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
     precondition {
       condition     = length(local.quota_action_group_ids) > 0
-      error_message = "When quota_alert is set, configure at least one action group via action_group/action_groups or provide quota_alert.action_group_ids explicitly."
+      error_message = "When quota_alert is set, configure at least one action_group entry or provide quota_alert.action_groups explicitly."
     }
   }
 }
@@ -344,7 +344,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
   }
 
   action {
-    action_group_id    = coalesce(each.value.action.action_group_id, local.action_group_id)
+    action_group_id    = local.log_action_group_ids[each.key]
     webhook_properties = try(each.value.action.webhook_properties, {})
   }
 
@@ -352,8 +352,8 @@ resource "azurerm_monitor_activity_log_alert" "this" {
 
   lifecycle {
     precondition {
-      condition     = try(each.value.action.action_group_id, null) != null || local.action_group_id != null
-      error_message = "When multiple action groups are configured, each log_alert.action.action_group_id must be set explicitly."
+      condition     = local.log_action_group_ids[each.key] != null
+      error_message = "Each log_alert requires action.action_group (name/object/id), action.action_group_id, or exactly one configured action_group entry."
     }
   }
 }

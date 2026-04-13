@@ -15,18 +15,20 @@ module "azure_alerts" {
 
   # Action Group for alert notifications
   action_group = {
-    name                = "activity-log-action-group"
-    resource_group_name = "example-alerts-rg"
-    short_name          = "ActivityAG"
+    activity = {
+      name                = "activity-log-action-group"
+      resource_group_name = "example-alerts-rg"
+      short_name          = "ActivityAG"
 
-    email_receivers = {
-      security_team = {
-        name          = "Security Team"
-        email_address = "security@example.com"
-      }
-      ops_team = {
-        name          = "Operations Team"
-        email_address = "ops@example.com"
+      email_receivers = {
+        security_team = {
+          name          = "Security Team"
+          email_address = "security@example.com"
+        }
+        ops_team = {
+          name          = "Operations Team"
+          email_address = "ops@example.com"
+        }
       }
     }
   }

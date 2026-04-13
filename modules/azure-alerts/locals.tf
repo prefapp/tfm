@@ -1,70 +1,39 @@
 locals {
   # Effective resource group name: prefer common.resource_group_name when set,
-  # otherwise fall back to the single action_group or the first action_groups resource group.
+  # otherwise fall back to the first action_group resource group.
   resource_group_name = coalesce(
     var.common.resource_group_name,
-    try(var.action_group.resource_group_name, null),
-    try(values(var.action_groups)[0].resource_group_name, null)
+    try(values(var.action_group)[0].resource_group_name, null)
   )
 
   # Handle tags based on whether to use resource group tags or module-defined tags
   tags = var.common.tags_from_rg ? merge(
-    try(
-      data.azurerm_resource_group.this[0].tags,
-      {}
-    ),
+    try(data.azurerm_resource_group.this[0].tags, {}),
     var.common.tags
   ) : var.common.tags
 
-  configured_action_groups = merge(
-    var.action_group != null ? { default = var.action_group } : {},
-    var.action_groups
-  )
+  managed_action_groups = var.action_group
 
-  managed_action_groups = {
-    for key, ag in local.configured_action_groups : key => ag
-    if try(ag.create, true)
+  managed_action_group_ref_keys = {
+    for _, ag in var.action_group : "${ag.resource_group_name}/${ag.name}" => true
   }
 
-  existing_action_groups = {
-    for key, ag in local.configured_action_groups : key => ag
-    if !try(ag.create, true)
+  action_group_ids_by_key = {
+    for key, _ in local.managed_action_groups : key => azurerm_monitor_action_group.this[key].id
   }
 
-  action_group_ids_by_key = merge(
-    { for key, ag in local.managed_action_groups : key => azurerm_monitor_action_group.this[key].id },
-    { for key, ag in local.existing_action_groups : key => data.azurerm_monitor_action_group.this[key].id }
-  )
+  action_group_names_by_key = {
+    for key, _ in local.managed_action_groups : key => azurerm_monitor_action_group.this[key].name
+  }
 
-  action_group_names_by_key = merge(
-    { for key, ag in local.managed_action_groups : key => azurerm_monitor_action_group.this[key].name },
-    { for key, ag in local.existing_action_groups : key => data.azurerm_monitor_action_group.this[key].name }
-  )
-
-  action_group_ids_by_ref = merge(
-    {
-      for key, ag in local.managed_action_groups :
-      "${ag.resource_group_name}/${ag.name}" => azurerm_monitor_action_group.this[key].id
-    },
-    {
-      for key, ag in local.existing_action_groups :
-      "${ag.resource_group_name}/${ag.name}" => data.azurerm_monitor_action_group.this[key].id
-    }
-  )
+  action_group_ids_by_ref = {
+    for key, ag in local.managed_action_groups : "${ag.resource_group_name}/${ag.name}" => azurerm_monitor_action_group.this[key].id
+  }
 
   action_group_id   = length(local.action_group_ids_by_key) == 1 ? values(local.action_group_ids_by_key)[0] : null
   action_group_name = length(local.action_group_names_by_key) == 1 ? values(local.action_group_names_by_key)[0] : null
 
-  quota_action_group_ids = var.quota_alert == null ? [] : (
-    length(try(var.quota_alert.action_group_ids, [])) > 0
-    ? var.quota_alert.action_group_ids
-    : values(local.action_group_ids_by_key)
-  )
-
-  # Normalize budget notification contact groups so each entry can be:
-  # - a full Action Group resource ID string,
-  # - a name string resolved in local.resource_group_name,
-  # - an object with `name` and optional `resource_group_name`.
+  # Name/object based references that must be resolved by data source (excluding groups managed in this module)
   budget_contact_group_lookups = var.budget == null ? {} : {
     for entry in flatten([
       for notification in var.budget.notification : [
@@ -77,6 +46,96 @@ locals {
       ]) : "${entry.resource_group_name}/${entry.name}" => {
       name                = entry.name
       resource_group_name = entry.resource_group_name
-    } if !entry.is_id && !contains(keys(local.action_group_ids_by_ref), "${entry.resource_group_name}/${entry.name}")
+    } if !entry.is_id && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+  }
+
+  quota_contact_group_lookups = var.quota_alert == null ? {} : {
+    for entry in flatten([
+      for group in(
+        length(try(var.quota_alert.action_groups, [])) > 0
+        ? var.quota_alert.action_groups
+        : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
+        ) : {
+        is_id               = can(tostring(group)) && startswith(tostring(group), "/")
+        name                = can(tostring(group)) ? tostring(group) : group.name
+        resource_group_name = can(tostring(group)) ? local.resource_group_name : try(group.resource_group_name, local.resource_group_name)
+      }
+      ]) : "${entry.resource_group_name}/${entry.name}" => {
+      name                = entry.name
+      resource_group_name = entry.resource_group_name
+    } if !entry.is_id && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+  }
+
+  log_contact_group_lookups = {
+    for entry in flatten([
+      for alert in var.log_alert : (
+        try(alert.action.action_group, null) != null
+        ? [{
+          is_id               = can(tostring(alert.action.action_group)) && startswith(tostring(alert.action.action_group), "/")
+          name                = can(tostring(alert.action.action_group)) ? tostring(alert.action.action_group) : alert.action.action_group.name
+          resource_group_name = can(tostring(alert.action.action_group)) ? local.resource_group_name : try(alert.action.action_group.resource_group_name, local.resource_group_name)
+        }]
+        : []
+      )
+      ]) : "${entry.resource_group_name}/${entry.name}" => {
+      name                = entry.name
+      resource_group_name = entry.resource_group_name
+    } if !entry.is_id && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+  }
+
+  referenced_action_group_lookups = merge(
+    local.budget_contact_group_lookups,
+    local.quota_contact_group_lookups,
+    local.log_contact_group_lookups
+  )
+
+  quota_action_group_ids = var.quota_alert == null ? [] : [
+    for group in(
+      length(try(var.quota_alert.action_groups, [])) > 0
+      ? var.quota_alert.action_groups
+      : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
+      ) : (
+      can(tostring(group)) && startswith(tostring(group), "/")
+      ? tostring(group)
+      : try(
+        local.action_group_ids_by_ref[
+          can(tostring(group))
+          ? "${local.resource_group_name}/${tostring(group)}"
+          : "${try(group.resource_group_name, local.resource_group_name)}/${group.name}"
+        ],
+        data.azurerm_monitor_action_group.referenced[
+          can(tostring(group))
+          ? "${local.resource_group_name}/${tostring(group)}"
+          : "${try(group.resource_group_name, local.resource_group_name)}/${group.name}"
+        ].id
+      )
+    )
+  ]
+
+  log_action_group_ids = {
+    for alert in var.log_alert : alert.name => (
+      try(alert.action.action_group_id, null) != null
+      ? alert.action.action_group_id
+      : (
+        try(alert.action.action_group, null) != null
+        ? (
+          can(tostring(alert.action.action_group)) && startswith(tostring(alert.action.action_group), "/")
+          ? tostring(alert.action.action_group)
+          : try(
+            local.action_group_ids_by_ref[
+              can(tostring(alert.action.action_group))
+              ? "${local.resource_group_name}/${tostring(alert.action.action_group)}"
+              : "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
+            ],
+            data.azurerm_monitor_action_group.referenced[
+              can(tostring(alert.action.action_group))
+              ? "${local.resource_group_name}/${tostring(alert.action.action_group)}"
+              : "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
+            ].id
+          )
+        )
+        : local.action_group_id
+      )
+    )
   }
 }

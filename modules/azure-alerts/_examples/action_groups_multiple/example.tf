@@ -12,7 +12,7 @@ module "azure_alerts" {
     }
   }
 
-  action_groups = {
+  action_group = {
     operations = {
       name                = "ops-action-group"
       resource_group_name = "example-alerts-rg"
