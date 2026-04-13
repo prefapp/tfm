@@ -223,9 +223,9 @@ Use `action_groups` when you need to manage more than one Action Group in the sa
 
 ## Upgrade Notes
 
-- The Action Group resource now uses `count` to support `action_group.create = false`.
-- If you already manage an existing state at `azurerm_monitor_action_group.this`, move it once to indexed form:
-	- `terraform state mv azurerm_monitor_action_group.this 'azurerm_monitor_action_group.this[0]'`
+- Action Groups are managed from the `action_groups` map and use `for_each`-based resource addressing.
+- Do not apply the old `count`-style state migration `azurerm_monitor_action_group.this -> azurerm_monitor_action_group.this[0]`; it does not match the current implementation.
+- If you are upgrading from an older version and need to adjust Terraform state manually, review the current `action_groups` keys and align state addresses with the corresponding `for_each` instances.
 
 ### Quota Alert
 Track subscription-level quota usage to prevent hitting Azure limits:
