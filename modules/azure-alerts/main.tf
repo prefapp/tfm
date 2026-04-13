@@ -246,17 +246,22 @@ resource "azurerm_consumption_budget_subscription" "this" {
         for g in try(notification.value.contact_groups, []) : (
           can(tostring(g)) && startswith(tostring(g), "/")
           ? tostring(g)
-          : try(
-            local.action_group_ids_by_ref[
-              can(tostring(g))
-              ? "${local.resource_group_name}/${tostring(g)}"
-              : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
-            ],
-            data.azurerm_monitor_action_group.referenced[
-              can(tostring(g))
-              ? "${local.resource_group_name}/${tostring(g)}"
-              : "${try(g.resource_group_name, local.resource_group_name)}/${g.name}"
-            ].id
+          : can(tostring(g))
+          ? (
+            local.resource_group_name != null
+            ? try(
+              local.action_group_ids_by_ref["${local.resource_group_name}/${tostring(g)}"],
+              data.azurerm_monitor_action_group.referenced["${local.resource_group_name}/${tostring(g)}"].id
+            )
+            : ""
+          )
+          : (
+            try(g.resource_group_name, local.resource_group_name) != null
+            ? try(
+              local.action_group_ids_by_ref["${try(g.resource_group_name, local.resource_group_name)}/${g.name}"],
+              data.azurerm_monitor_action_group.referenced["${try(g.resource_group_name, local.resource_group_name)}/${g.name}"].id
+            )
+            : ""
           )
         )
       ]
