@@ -130,17 +130,32 @@ locals {
         ? (
           can(tostring(alert.action.action_group)) && startswith(tostring(alert.action.action_group), "/")
           ? tostring(alert.action.action_group)
-          : try(
-            local.action_group_ids_by_ref[
-              can(tostring(alert.action.action_group))
-              ? "${local.resource_group_name}/${tostring(alert.action.action_group)}"
-              : "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
-            ],
-            data.azurerm_monitor_action_group.referenced[
-              can(tostring(alert.action.action_group))
-              ? "${local.resource_group_name}/${tostring(alert.action.action_group)}"
-              : "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
-            ].id
+          : (
+            can(tostring(alert.action.action_group))
+            ? (
+              local.resource_group_name == null
+              ? null
+              : try(
+                local.action_group_ids_by_ref[
+                  "${local.resource_group_name}/${tostring(alert.action.action_group)}"
+                ],
+                data.azurerm_monitor_action_group.referenced[
+                  "${local.resource_group_name}/${tostring(alert.action.action_group)}"
+                ].id
+              )
+            )
+            : (
+              try(alert.action.action_group.resource_group_name, local.resource_group_name) == null
+              ? null
+              : try(
+                local.action_group_ids_by_ref[
+                  "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
+                ],
+                data.azurerm_monitor_action_group.referenced[
+                  "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
+                ].id
+              )
+            )
           )
         )
         : local.action_group_id
