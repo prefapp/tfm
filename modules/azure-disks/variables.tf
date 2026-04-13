@@ -9,8 +9,8 @@ variable "resource_group_name" {
 }
 
 variable "disks" {
-  description = "A map of managed disk configurations."  
-  type        = any
+  description = "A list of managed disk configurations."
+  type        = list(any)
 }
 
 variable "assign_role" {
