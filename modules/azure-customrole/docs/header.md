@@ -13,7 +13,7 @@ Terraform module that creates an **Azure custom RBAC role definition** (`azurerm
 **Behaviour notes (as implemented)**
 
 - **`scope`** on the resource is set to **`assignable_scopes[0]`** (first list element). **`assignable_scopes`** can list additional scopes where the definition may be assigned; confirm behaviour against [provider docs](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_definition) for your use case.
-- **`permissions`** lists default to empty when omitted (`optional(..., [])` in [`variables.tf`](variables.tf)).
+- **`permissions`** lists default to empty when omitted (`optional(..., [])` in `variables.tf`).
 
 ## Basic usage
 
