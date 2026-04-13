@@ -44,37 +44,21 @@ module "azure_alerts" {
   }
 
   # Action Group for notifications
-  # This block is optional. If omitted, the module will not create an Action Group.
+  # This block is optional. If omitted, the module will not create any Action Groups.
   action_group = {
-    # Optional: set to false to reuse an existing Action Group
-    # (module will use data source lookup instead of creating it)
-    create              = true
-    name                = "my-action-group"
-    resource_group_name = "my-alerts-rg"
-    short_name          = "MyAG"
+    operations = {
+      name                = "my-action-group"
+      resource_group_name = "my-alerts-rg"
+      short_name          = "MyAG"
 
-    email_receivers = {
-      admin = {
-        name          = "Admin"
-        email_address = "admin@example.com"
+      email_receivers = {
+        admin = {
+          name          = "Admin"
+          email_address = "admin@example.com"
+        }
       }
     }
   }
-
-  # Optional alternative: define multiple Action Groups instead of a single one.
-  # action_groups = {
-  #   operations = {
-  #     name                = "ops-action-group"
-  #     resource_group_name = "my-alerts-rg"
-  #     short_name          = "OpsAG"
-  #   }
-  #   finance = {
-  #     name                = "finance-action-group"
-  #     resource_group_name = "my-alerts-rg"
-  #     short_name          = "FinAG"
-  #   }
-  # }
-
   # Budget Alert - Optional
   budget = {
     name            = "monthly-budget"
