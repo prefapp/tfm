@@ -23,6 +23,16 @@ check "action_group_resource_group_fallback" {
   }
 }
 
+check "action_group_resource_group_mismatch" {
+  assert {
+    condition = var.common.resource_group_name == null || length([
+      for rg in local.action_group_resource_group_names : rg
+      if rg != var.common.resource_group_name
+    ]) == 0
+    error_message = "common.resource_group_name and action_group[*].resource_group_name must match when both are set."
+  }
+}
+
 check "resource_group_name_required_when_needed" {
   assert {
     condition = !(

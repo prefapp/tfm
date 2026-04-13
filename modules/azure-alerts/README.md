@@ -248,7 +248,7 @@ This effective value is used for:
 - Creating module-managed resources (`identity`, `quota_alert`, `backup_alert`, `log_alert` entries without an explicit `resource_group_name`).
 - Resolving external Action Group references that are specified by **name** (plain string) or by **object without `resource_group_name`** in `budget.notification[*].contact_groups`, `quota_alert.action_groups`, and `log_alert[*].action.action_group`.
 
-> **No mismatch validation** is performed between `common.resource_group_name` and `action_group.*.resource_group_name`. Each `action_group` entry declares its own explicit `resource_group_name` for where that Action Group is created, which is independent of the common fallback. Managed Action Groups can reside in a different resource group from the common one.
+> **Mismatch validation is enforced** when both values are set: if `common.resource_group_name` is provided, every `action_group.*.resource_group_name` must be equal to it. Terraform fails fast with a clear check error when they differ.
 
 If name-based external Action Group references are used without an explicit `resource_group_name`, the module will fail at plan time with a descriptive `precondition` error if the effective resource group name cannot be inferred. Use a full resource ID (e.g. `/subscriptions/.../resourceGroups/.../providers/microsoft.insights/actionGroups/...`) or provide `resource_group_name` in the reference object to avoid this requirement.
 
