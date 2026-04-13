@@ -44,7 +44,7 @@ Use real subscription or management-group scope IDs for `assignable_scopes`.
 | `outputs.tf` | Role definition ID |
 | `versions.tf` | Terraform and provider constraints |
 | `CHANGELOG.md` | Release history |
-| `docs/header.md` | Overview (this file) |
+| `docs/header.md` | README header content (used for terraform-docs generation) |
 | `docs/footer.md` | Examples and provider links |
 | `_examples/basic` | Minimal example |
 | `_examples/comprehensive` | Reference YAML |
