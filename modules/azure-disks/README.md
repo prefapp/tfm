@@ -86,7 +86,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_assign_role"></a> [assign\_role](#input\_assign\_role) | Whether to assign a role definition to the managed disk. | `bool` | `false` | no |
-| <a name="input_disks"></a> [disks](#input\_disks) | A map of managed disk configurations. | `any` | n/a | yes |
+| <a name="input_disks"></a> [disks](#input\_disks) | A list of managed disk configurations. | `list(any)` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The Azure region where the managed disk should be created. | `string` | n/a | yes |
 | <a name="input_principal_id"></a> [principal\_id](#input\_principal\_id) | The ID of the principal to assign the role definition to. | `string` | `""` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which the managed disk should be created. | `string` | n/a | yes |
