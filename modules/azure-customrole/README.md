@@ -14,7 +14,7 @@ Terraform module that creates an **Azure custom RBAC role definition** (`azurerm
 **Behaviour notes (as implemented)**
 
 - **`scope`** on the resource is set to **`assignable_scopes[0]`** (first list element). **`assignable_scopes`** can list additional scopes where the definition may be assigned; confirm behaviour against [provider docs](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_definition) for your use case.
-- **`permissions`** lists default to empty when omitted (`optional(..., [])` in [`variables.tf`](variables.tf)).
+- **`permissions`** lists default to empty when omitted (`optional(..., [])` in `variables.tf`).
 
 ## Basic usage
 
@@ -45,7 +45,7 @@ Use real subscription or management-group scope IDs for `assignable_scopes`.
 | `outputs.tf` | Role definition ID |
 | `versions.tf` | Terraform and provider constraints |
 | `CHANGELOG.md` | Release history |
-| `docs/header.md` | Overview (this file) |
+| `docs/header.md` | README header content (used for terraform-docs generation) |
 | `docs/footer.md` | Examples and provider links |
 | `_examples/basic` | Minimal example |
 | `_examples/comprehensive` | Reference YAML |
@@ -91,7 +91,7 @@ No modules.
 
 ## Generated README tables
 
-With **terraform-docs** and `settings.lockfile: true`, **Requirements** shows provider constraints from `versions.tf` and **Providers** shows versions resolved from `.terraform.lock.hcl` at doc generation time.
+With **terraform-docs**, **Requirements** shows provider constraints from `versions.tf`. If `settings.lockfile: true` is enabled and a `.terraform.lock.hcl` is present/used during doc generation, **Providers** may show versions resolved from the lockfile; otherwise it may show the configured provider constraint instead.
 
 ## Examples
 
