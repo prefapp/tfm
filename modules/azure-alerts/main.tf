@@ -252,8 +252,8 @@ resource "azurerm_consumption_budget_subscription" "this" {
       threshold      = notification.value.threshold
       threshold_type = try(notification.value.threshold_type, "Actual")
       contact_emails = notification.value.contact_emails
-      contact_groups = [
-        for g in try(notification.value.contact_groups, []) : (
+      contact_groups = compact([
+        for g in coalesce(try(notification.value.contact_groups, null), []) : (
           can(tostring(g)) && startswith(tostring(g), "/")
           ? tostring(g)
           : can(tostring(g))
@@ -263,18 +263,18 @@ resource "azurerm_consumption_budget_subscription" "this" {
               local.action_group_ids_by_ref["${local.resource_group_name}/${tostring(g)}"],
               data.azurerm_monitor_action_group.referenced["${local.resource_group_name}/${tostring(g)}"].id
             )
-            : ""
+            : null
           )
           : (
-            try(g.resource_group_name, local.resource_group_name) != null
+            coalesce(try(g.resource_group_name, null), local.resource_group_name) != null
             ? try(
-              local.action_group_ids_by_ref["${try(g.resource_group_name, local.resource_group_name)}/${g.name}"],
-              data.azurerm_monitor_action_group.referenced["${try(g.resource_group_name, local.resource_group_name)}/${g.name}"].id
+              local.action_group_ids_by_ref["${coalesce(try(g.resource_group_name, null), local.resource_group_name)}/${g.name}"],
+              data.azurerm_monitor_action_group.referenced["${coalesce(try(g.resource_group_name, null), local.resource_group_name)}/${g.name}"].id
             )
-            : ""
+            : null
           )
         )
-      ]
+      ])
       contact_roles = try(notification.value.contact_roles, [])
     }
   }
@@ -284,7 +284,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
       condition = local.resource_group_name != null || !anytrue([
         for notification in var.budget.notification :
         anytrue([
-          for group in try(notification.contact_groups, []) : (
+          for group in coalesce(try(notification.contact_groups, null), []) : (
             can(tostring(group)) ? !startswith(tostring(group), "/") :
             try(group.resource_group_name, null) == null
           )

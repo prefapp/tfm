@@ -41,33 +41,33 @@ locals {
   budget_contact_group_lookups = var.budget == null ? {} : {
     for entry in flatten([
       for notification in var.budget.notification : [
-        for group in try(notification.contact_groups, []) : {
+        for group in coalesce(try(notification.contact_groups, null), []) : {
           is_id               = can(tostring(group)) && startswith(tostring(group), "/")
           name                = can(tostring(group)) ? tostring(group) : group.name
-          resource_group_name = can(tostring(group)) ? local.resource_group_name : try(group.resource_group_name, local.resource_group_name)
+          resource_group_name = can(tostring(group)) ? local.resource_group_name : coalesce(try(group.resource_group_name, null), local.resource_group_name)
         }
       ]
       ]) : "${entry.resource_group_name}/${entry.name}" => {
       name                = entry.name
       resource_group_name = entry.resource_group_name
-    } if !entry.is_id && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+    } if !entry.is_id && entry.resource_group_name != null && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
   }
 
   quota_contact_group_lookups = var.quota_alert == null ? {} : {
     for entry in flatten([
       for group in(
-        length(try(var.quota_alert.action_groups, [])) > 0
-        ? var.quota_alert.action_groups
+        length(coalesce(try(var.quota_alert.action_groups, null), [])) > 0
+        ? coalesce(try(var.quota_alert.action_groups, null), [])
         : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
         ) : {
         is_id               = can(tostring(group)) && startswith(tostring(group), "/")
         name                = can(tostring(group)) ? tostring(group) : group.name
-        resource_group_name = can(tostring(group)) ? local.resource_group_name : try(group.resource_group_name, local.resource_group_name)
+        resource_group_name = can(tostring(group)) ? local.resource_group_name : coalesce(try(group.resource_group_name, null), local.resource_group_name)
       }
       ]) : "${entry.resource_group_name}/${entry.name}" => {
       name                = entry.name
       resource_group_name = entry.resource_group_name
-    } if !entry.is_id && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+    } if !entry.is_id && entry.resource_group_name != null && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
   }
 
   log_contact_group_lookups = {
@@ -77,14 +77,14 @@ locals {
         ? [{
           is_id               = can(tostring(alert.action.action_group)) && startswith(tostring(alert.action.action_group), "/")
           name                = can(tostring(alert.action.action_group)) ? tostring(alert.action.action_group) : alert.action.action_group.name
-          resource_group_name = can(tostring(alert.action.action_group)) ? local.resource_group_name : try(alert.action.action_group.resource_group_name, local.resource_group_name)
+          resource_group_name = can(tostring(alert.action.action_group)) ? local.resource_group_name : coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name)
         }]
         : []
       )
       ]) : "${entry.resource_group_name}/${entry.name}" => {
       name                = entry.name
       resource_group_name = entry.resource_group_name
-    } if !entry.is_id && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+    } if !entry.is_id && entry.resource_group_name != null && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
   }
 
   referenced_action_group_lookups = merge(
@@ -93,10 +93,10 @@ locals {
     local.log_contact_group_lookups
   )
 
-  quota_action_group_ids = var.quota_alert == null ? [] : [
+  quota_action_group_ids = var.quota_alert == null ? [] : compact([
     for group in(
-      length(try(var.quota_alert.action_groups, [])) > 0
-      ? var.quota_alert.action_groups
+      length(coalesce(try(var.quota_alert.action_groups, null), [])) > 0
+      ? coalesce(try(var.quota_alert.action_groups, null), [])
       : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
       ) : (
       can(tostring(group)) && startswith(tostring(group), "/")
@@ -111,15 +111,15 @@ locals {
         )
       )
       : (
-        try(group.resource_group_name, local.resource_group_name) == null
+        coalesce(try(group.resource_group_name, null), local.resource_group_name) == null
         ? null
         : try(
-          local.action_group_ids_by_ref["${try(group.resource_group_name, local.resource_group_name)}/${group.name}"],
-          data.azurerm_monitor_action_group.referenced["${try(group.resource_group_name, local.resource_group_name)}/${group.name}"].id
+          local.action_group_ids_by_ref["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"],
+          data.azurerm_monitor_action_group.referenced["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"].id
         )
       )
     )
-  ]
+  ])
 
   log_action_group_ids = {
     for alert in var.log_alert : alert.name => (
@@ -145,14 +145,14 @@ locals {
               )
             )
             : (
-              try(alert.action.action_group.resource_group_name, local.resource_group_name) == null
+              coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name) == null
               ? null
               : try(
                 local.action_group_ids_by_ref[
-                  "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
+                  "${coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name)}/${alert.action.action_group.name}"
                 ],
                 data.azurerm_monitor_action_group.referenced[
-                  "${try(alert.action.action_group.resource_group_name, local.resource_group_name)}/${alert.action.action_group.name}"
+                  "${coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name)}/${alert.action.action_group.name}"
                 ].id
               )
             )
