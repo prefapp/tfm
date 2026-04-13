@@ -8,11 +8,6 @@ values:
       environment: production
       project: azure-alerts
 
-  action_group:
-    create: false
-    name: existing-action-group
-    resource_group_name: example-alerts-rg
-
   log_alert:
     - name: resource-group-write-alert
       enabled: true
@@ -24,4 +19,7 @@ values:
           - example-alerts-rg
         statuses:
           - Succeeded
-      action: {}
+      action:
+        action_group:
+          name: existing-action-group
+          resource_group_name: example-alerts-rg

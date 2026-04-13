@@ -43,8 +43,8 @@ module "azure_alerts" {
     }
   }
 
-  # Action Group for notifications
-  # This block is optional. If omitted, the module will not create any Action Groups.
+  # Action Group(s) for notifications
+  # This block is optional. If omitted, the module will not create any Action Group.
   action_group = {
     operations = {
       name                = "my-action-group"
@@ -59,6 +59,7 @@ module "azure_alerts" {
       }
     }
   }
+
   # Budget Alert - Optional
   budget = {
     name            = "monthly-budget"
@@ -185,7 +186,7 @@ No modules.
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples):
 
 - [action\_group](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action\_group) - Example provisioning an Action Group with multiple receiver types (email, SMS, webhook, ARM role, etc.).
-- [action\_group\_existing](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action\_group\_existing) - Example reusing an existing Action Group with `action_group.create = false`.
+- [action\_group\_existing](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action\_group\_existing) - Example referencing an existing Action Group by name/resource group from a log alert.
 - [action\_groups\_multiple](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/action\_groups\_multiple) - Example provisioning multiple Action Groups in the same module instance.
 - [budget\_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/budget\_alert) - Example provisioning a Budget Alert to monitor subscription spending.
 - [quota\_alert](https://github.com/prefapp/tfm/tree/main/modules/azure-alerts/_examples/quota\_alert) - Example provisioning a Quota Alert to monitor subscription-level quotas (vCPU, storage, etc.).
@@ -194,7 +195,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 ## Use Cases
 
 ### Action Group
-Use one or more Action Groups to define notification channels for your alerts. The `action_group` block is optional, and the module can also manage multiple groups through `action_groups`.
+Use one or more Action Groups to define notification channels for your alerts. The `action_group` block is optional and can contain zero or more named groups.
 
 Supports multiple receiver types:
 - Email notifications for alerting teams
@@ -216,16 +217,15 @@ Monitor your Azure subscription spending and receive early warnings when costs a
 - Useful for cost governance and preventing budget overruns
 
 ### Multiple Action Groups
-Use `action_groups` when you need to manage more than one Action Group in the same module instance:
+Use multiple entries inside `action_group` when you need to manage more than one Action Group in the same module instance:
 - Budget notifications can reference any configured group by name
-- Quota alerts can target all configured groups by default, or explicit `quota_alert.action_group_ids`
-- Activity log alerts should set `action.action_group_id` explicitly when more than one Action Group is configured
+- Quota alerts can target all configured groups by default, or explicit `quota_alert.action_groups`
+- Activity log alerts should set `action.action_group` or `action.action_group_id` explicitly when more than one Action Group is configured
 
 ## Upgrade Notes
 
-- Action Groups are managed from the `action_groups` map and use `for_each`-based resource addressing.
-- Do not apply the old `count`-style state migration `azurerm_monitor_action_group.this -> azurerm_monitor_action_group.this[0]`; it does not match the current implementation.
-- If you are upgrading from an older version and need to adjust Terraform state manually, review the current `action_groups` keys and align state addresses with the corresponding `for_each` instances.
+- Action Groups are managed from the `action_group` map and use `for_each`-based resource addressing.
+- If you are upgrading from an older version, align Terraform state addresses with the `action_group` map keys you configure.
 
 ### Quota Alert
 Track subscription-level quota usage to prevent hitting Azure limits:

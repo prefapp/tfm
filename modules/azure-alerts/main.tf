@@ -16,6 +16,26 @@ resource "azurerm_role_assignment" "quota_reader" {
   principal_id         = azurerm_user_assigned_identity.quota_alert_reader[0].principal_id
 }
 
+check "action_group_resource_group_fallback" {
+  assert {
+    condition     = var.common.resource_group_name != null || length(local.action_group_resource_group_names) <= 1
+    error_message = "Set common.resource_group_name when action_group entries span multiple resource groups."
+  }
+}
+
+check "resource_group_name_required_when_needed" {
+  assert {
+    condition = !(
+      var.common.tags_from_rg ||
+      var.identity != null ||
+      var.quota_alert != null ||
+      var.backup_alert != null ||
+      length([for alert in var.log_alert : alert if try(alert.resource_group_name, null) == null]) > 0
+    ) || local.resource_group_name != null
+    error_message = "common.resource_group_name must be set when tags_from_rg, identity, quota_alert, backup_alert, or log_alert entries without resource_group_name are used and no single action_group resource group can be inferred."
+  }
+}
+
 # Action Group for the alerts to send notifications to the specified email receivers
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group
 resource "azurerm_monitor_action_group" "this" {

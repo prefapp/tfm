@@ -1,9 +1,13 @@
 locals {
+  action_group_resource_group_names = distinct([
+    for _, ag in var.action_group : ag.resource_group_name
+  ])
+
   # Effective resource group name: prefer common.resource_group_name when set,
-  # otherwise fall back to the first action_group resource group.
+  # otherwise fall back only when all configured action groups share the same RG.
   resource_group_name = coalesce(
     var.common.resource_group_name,
-    try(values(var.action_group)[0].resource_group_name, null)
+    length(local.action_group_resource_group_names) == 1 ? local.action_group_resource_group_names[0] : null
   )
 
   # Handle tags based on whether to use resource group tags or module-defined tags
