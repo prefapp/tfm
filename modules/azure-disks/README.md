@@ -98,8 +98,8 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_disk_ids"></a> [disk\_ids](#output\_disk\_ids) | Resource IDs of created managed disks, in no guaranteed order. |
-| <a name="output_disk_names"></a> [disk\_names](#output\_disk\_names) | Names of created managed disks, in no guaranteed order. |
+| <a name="output_disk_ids"></a> [disk\_ids](#output\_disk\_ids) | Resource IDs of created managed disks. |
+| <a name="output_disk_names"></a> [disk\_names](#output\_disk\_names) | Names of created managed disks. |
 
 ## Generated README tables
 
