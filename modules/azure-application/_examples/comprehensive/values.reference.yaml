@@ -1,0 +1,21 @@
+# Reference values (illustrative; wire into a root module as needed).
+values:
+  name: "My Enterprise App"
+  redirects:
+    - platform: "SPA"
+      redirect_uris:
+        - "https://app.example.com/"
+        - "https://app.example.com/auth/callback"
+  members:
+    - "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+  msgraph_roles:
+    - id: "e1fe6dd8-ba31-4d61-89e7-88639da4683d" # example: User.Read
+      delegated: true
+  client_secret:
+    enabled: true
+    rotation_days: 30
+    keyvault: null
+  federated_credentials: []
+  extra_role_assignments:
+    - role_definition_name: "Reader"
+      scope: "/subscriptions/00000000-0000-0000-0000-000000000000"

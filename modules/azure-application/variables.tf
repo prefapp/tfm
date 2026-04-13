@@ -51,6 +51,11 @@ variable "client_secret" {
     enabled  = false
     keyvault = null
   }
+
+  validation {
+    condition     = !var.client_secret.enabled || var.client_secret.rotation_days != null
+    error_message = "client_secret.rotation_days must be set when client_secret.enabled is true."
+  }
 }
 
 variable "federated_credentials" {
