@@ -1,6 +1,6 @@
 ## Generated README tables
 
-With **terraform-docs** and `settings.lockfile: true`, **Requirements** shows provider constraints from `versions.tf` and **Providers** shows versions resolved from `.terraform.lock.hcl` at doc generation time.
+With **terraform-docs**, **Requirements** shows provider constraints from `versions.tf`. The provider documentation links below use **4.5.0** as the reference baseline aligned with that constraint.
 
 ## Examples
 
