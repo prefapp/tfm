@@ -56,8 +56,8 @@ locals {
   quota_contact_group_lookups = var.quota_alert == null ? {} : {
     for entry in flatten([
       for group in(
-        length(try(var.quota_alert.action_groups, [])) > 0
-        ? var.quota_alert.action_groups
+        length(coalesce(try(var.quota_alert.action_groups, null), [])) > 0
+        ? coalesce(try(var.quota_alert.action_groups, null), [])
         : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
         ) : {
         is_id               = can(tostring(group)) && startswith(tostring(group), "/")
