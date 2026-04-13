@@ -1,3 +1,61 @@
+<!-- BEGIN_TF_DOCS -->
+# `azure-disks`
+
+## Overview
+
+Terraform module that creates one or more **Azure managed disks** (`azurerm_managed_disk`) in an existing resource group, with optional **Azure RBAC role assignments** scoped to each disk. Tags can be merged from the resource group or set only from module input.
+
+**Prerequisites**
+
+- Existing **resource group** (`resource_group_name`).
+- **`location`** consistent with that resource group (the module does not read location from the data source).
+
+**Behaviour notes (as implemented)**
+
+- **`disks`** must be a **list** of objects; each object must include **`name`** (used as the Terraform `for_each` key and as the Azure disk name). Optional keys supported by `lookup` in [`main.tf`](main.tf): `storage_account_type` (default `StandardSSD_LRS`), `create_option` (default `Empty`), `source_resource_id` (default `null`), `disk_size_gb` (default `4`).
+- **`lifecycle.ignore_changes`** includes **`disk_size_gb`** so in-cluster resizes (for example via CSI) do not fight Terraform.
+- **`assign_role`**: when `true`, creates `azurerm_role_assignment` per disk. The resource uses `lookup(each.value, "role_definition_name", "Contributor")` where `each.value` is the **managed disk resource**, not your `disks` list entry—so the lookup does not read per-disk settings from `var.disks`; the effective role name is **`Contributor`** in normal use. The root module variable **`role_definition_name`** is **not referenced** in the current implementation.
+- **`principal_id`**: required when `assign_role` is `true` (use a valid object ID; the default empty string will fail assignment).
+
+## Basic usage
+
+```hcl
+module "disks" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-disks?ref=azure-disks-v1.1.2"
+
+  resource_group_name = "example-rg"
+  location              = "westeurope"
+
+  disks = [
+    { name = "data-01", disk_size_gb = 64, storage_account_type = "Premium_LRS" },
+    { name = "data-02" }
+  ]
+
+  assign_role  = false
+  principal_id = ""
+
+  tags_from_rg = true
+  tags         = { workload = "example" }
+}
+```
+
+## Module layout
+
+| Path | Purpose |
+|------|---------|
+| `main.tf` | Resource group data source, managed disks, role assignments |
+| `locals.tf` | Tag merge |
+| `variables.tf` | Inputs |
+| `outputs.tf` | Disk names and IDs |
+| `versions.tf` | Terraform and provider constraints |
+| `CHANGELOG.md` | Release history |
+| `docs/header.md` | Overview (this file) |
+| `docs/footer.md` | Examples and provider links |
+| `_examples/basic` | Minimal example |
+| `_examples/comprehensive` | Reference YAML |
+| `README.md` | Generated tables (terraform-docs) |
+| `.terraform-docs.yml` | terraform-docs configuration |
+
 ## Requirements
 
 | Name | Version |
@@ -9,7 +67,11 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.5.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.5.0 |
+
+## Modules
+
+No modules.
 
 ## Resources
 
@@ -36,28 +98,27 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_disk_ids"></a> [disk\_ids](#output\_disk\_ids) | n/a |
-| <a name="output_disk_names"></a> [disk\_names](#output\_disk\_names) | Output section |
+| <a name="output_disk_ids"></a> [disk\_ids](#output\_disk\_ids) | Resource IDs of created managed disks, in no guaranteed order. |
+| <a name="output_disk_names"></a> [disk\_names](#output\_disk\_names) | Names of created managed disks, in no guaranteed order. |
 
-## Notes
+## Generated README tables
 
-- Empty disks or disks based on another disk can be created.
-- It is not necessary to assign a role to a disk.
-- **There is a lifecycle rule to ignore changes to disk size, as the CSI Driver may resize the disk outside of Terraform.**
+With **terraform-docs** and `settings.lockfile: true`, **Requirements** shows provider constraints from `versions.tf` and **Providers** shows versions resolved from `.terraform.lock.hcl` at doc generation time.
 
-## Example
+## Examples
 
-```yaml
-values:
-  tags_from_rg: true
-  resource_group_name: "REDACTED-RESOURCE-GROUP"
-  location: "REDACTED-LOCATION"
-  disks:
-      - name: disk-1
-        storage_account_type: StandardSSD_LRS
-      - name: disk-2
-      - name: disk-3
-      - name: disk-4
-        storage_account_type: Premium_LRS
-  principal_id: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
-```
+- [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples/basic)
+- [Comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples/comprehensive)
+
+## Provider documentation (aligned with `versions.tf`)
+
+Constraint: `azurerm` `~> 4.5.0` — doc links use **4.5.0** as the reference baseline.
+
+- [azurerm\_managed\_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/managed_disk)
+- [azurerm\_role\_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment)
+- [azurerm\_resource\_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group)
+
+## Issues
+
+[https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->

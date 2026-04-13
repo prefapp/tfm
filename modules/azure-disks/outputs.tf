@@ -1,8 +1,9 @@
-# Output section
 output "disk_names" {
-  value = [for disk in azurerm_managed_disk.disks : disk.name]
+  description = "Names of created managed disks, in no guaranteed order."
+  value       = [for disk in azurerm_managed_disk.disks : disk.name]
 }
 
 output "disk_ids" {
-  value = [for disk in azurerm_managed_disk.disks : disk.id]
+  description = "Resource IDs of created managed disks, in no guaranteed order."
+  value       = [for disk in azurerm_managed_disk.disks : disk.id]
 }
