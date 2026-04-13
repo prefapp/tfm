@@ -14,14 +14,15 @@ values:
     role_definition_name: Reader
 
   action_group:
-    name: quota-alert-action-group
-    resource_group_name: example-alerts-rg
-    short_name: QuotaAG
+    quota_alert_action_group:
+      name: quota-alert-action-group
+      resource_group_name: example-alerts-rg
+      short_name: QuotaAG
 
-    email_receivers:
-      platform_team:
-        name: Platform Team
-        email_address: platform@example.com
+      email_receivers:
+        platform_team:
+          name: Platform Team
+          email_address: platform@example.com
 
   quota_alert:
     name: vcpu-quota-alert
