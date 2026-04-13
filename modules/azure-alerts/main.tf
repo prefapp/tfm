@@ -263,6 +263,21 @@ resource "azurerm_consumption_budget_subscription" "this" {
       contact_roles = try(notification.value.contact_roles, [])
     }
   }
+
+  lifecycle {
+    precondition {
+      condition = local.resource_group_name != null || !anytrue([
+        for notification in var.budget.notification :
+        anytrue([
+          for group in try(notification.contact_groups, []) : (
+            can(tostring(group)) ? !startswith(tostring(group), "/") :
+            try(group.resource_group_name, null) == null
+          )
+        ])
+      ])
+      error_message = "When budget.notification[*].contact_groups references an Action Group by name or by object without resource_group_name, either common.resource_group_name must be set or a single action_group entry must be configured so its resource group can be inferred."
+    }
+  }
 }
 
 # Rule for Quota Alert to monitor the quota metrics at the subscription level and send notifications when the specified threshold is reached
@@ -374,6 +389,15 @@ resource "azurerm_monitor_activity_log_alert" "this" {
     precondition {
       condition     = local.log_action_group_ids[each.key] != null
       error_message = "Each log_alert requires action.action_group (name/object/id), action.action_group_id, or exactly one configured action_group entry."
+    }
+
+    precondition {
+      condition = local.resource_group_name != null || (
+        try(each.value.action.action_group, null) == null ||
+        (can(tostring(each.value.action.action_group)) && startswith(tostring(each.value.action.action_group), "/")) ||
+        try(each.value.action.action_group.resource_group_name, null) != null
+      )
+      error_message = "log_alert '${each.key}' references an Action Group by name or by object without resource_group_name. Set common.resource_group_name (or configure a single action_group entry so its resource group can be inferred) to resolve the Action Group."
     }
   }
 }

@@ -53,6 +53,22 @@ Monitor administrative and operational events across your subscription:
 - Resource group and RBAC changes
 - Audit and compliance monitoring
 
+## Resource Group Name Resolution
+
+The module derives an effective `resource_group_name` using this order of precedence:
+
+1. **`common.resource_group_name`** – always preferred when set.
+2. **Single configured `action_group` entry** – if exactly one entry exists in the `action_group` map and it shares a single `resource_group_name`, that value is used as the fallback.
+3. **`null`** – when neither of the above is available.
+
+This effective value is used for:
+- Creating module-managed resources (`identity`, `quota_alert`, `backup_alert`, `log_alert` entries without an explicit `resource_group_name`).
+- Resolving external Action Group references that are specified by **name** (plain string) or by **object without `resource_group_name`** in `budget.notification[*].contact_groups`, `quota_alert.action_groups`, and `log_alert[*].action.action_group`.
+
+> **No mismatch validation** is performed between `common.resource_group_name` and `action_group.*.resource_group_name`. Each `action_group` entry declares its own explicit `resource_group_name` for where that Action Group is created, which is independent of the common fallback. Managed Action Groups can reside in a different resource group from the common one.
+
+If name-based external Action Group references are used without an explicit `resource_group_name`, the module will fail at plan time with a descriptive `precondition` error if the effective resource group name cannot be inferred. Use a full resource ID (e.g. `/subscriptions/.../resourceGroups/.../providers/microsoft.insights/actionGroups/...`) or provide `resource_group_name` in the reference object to avoid this requirement.
+
 ## Remote Resources
 
 - **Azure Monitor Action Group**: [azurerm_monitor_action_group documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group)
