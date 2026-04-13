@@ -101,17 +101,22 @@ locals {
       ) : (
       can(tostring(group)) && startswith(tostring(group), "/")
       ? tostring(group)
-      : try(
-        local.action_group_ids_by_ref[
-          can(tostring(group))
-          ? "${local.resource_group_name}/${tostring(group)}"
-          : "${try(group.resource_group_name, local.resource_group_name)}/${group.name}"
-        ],
-        data.azurerm_monitor_action_group.referenced[
-          can(tostring(group))
-          ? "${local.resource_group_name}/${tostring(group)}"
-          : "${try(group.resource_group_name, local.resource_group_name)}/${group.name}"
-        ].id
+      : can(tostring(group))
+      ? (
+        local.resource_group_name == null
+        ? null
+        : try(
+          local.action_group_ids_by_ref["${local.resource_group_name}/${tostring(group)}"],
+          data.azurerm_monitor_action_group.referenced["${local.resource_group_name}/${tostring(group)}"].id
+        )
+      )
+      : (
+        try(group.resource_group_name, local.resource_group_name) == null
+        ? null
+        : try(
+          local.action_group_ids_by_ref["${try(group.resource_group_name, local.resource_group_name)}/${group.name}"],
+          data.azurerm_monitor_action_group.referenced["${try(group.resource_group_name, local.resource_group_name)}/${group.name}"].id
+        )
       )
     )
   ]
