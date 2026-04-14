@@ -1,9 +1,82 @@
+<!-- BEGIN_TF_DOCS -->
+# Azure Application (App Registration) Terraform module
+
+## Overview
+
+This Terraform module creates a **Microsoft Entra ID (Azure AD) application registration** (`azuread_application`), optional **redirect URIs**, a linked **enterprise application** (service principal), optional **Microsoft Graph delegated permissions** (`required_resource_access` and `azuread_app_role_assignment` against Microsoft Graph), **default app role assignments** for listed members, optional **rotating client secrets** stored in **Key Vault**, **federated identity credentials** (for example workload federation / OIDC), and optional **Azure RBAC** role assignments for the service principal.
+
+Use it when you want a single module to declare an app’s display name, redirect platforms, Graph API access, secrets, and related Azure assignments.
+
+## Key features
+
+- **App registration**: `azuread_application` with `requested_access_token_version = 2` and optional `required_resource_access` for Microsoft Graph when `msgraph_roles` is non-empty.
+- **Redirect URIs**: Separate `azuread_application_redirect_uris` resources per platform (`PublicClient`, `SPA`, or `Web`), validated on the `redirects` input.
+- **Enterprise app**: `azuread_service_principal` with `use_existing = true` tied to the registered application.
+- **Members**: `azuread_app_role_assignment` for each object ID in `members` using the default app role (`00000000-0000-0000-0000-000000000000`).
+- **Microsoft Graph**: For entries with `delegated = true`, assigns the corresponding Graph permission to the app’s service principal via `azuread_app_role_assignment` (permission identifiers must match Microsoft Graph published metadata).
+- **Client secret (optional)**: `time_rotating` + `azuread_application_password`, optionally written to `azurerm_key_vault_secret` when `client_secret.keyvault` is set.
+- **Federated credentials**: `azuread_application_federated_identity_credential` from `federated_credentials`.
+- **Azure RBAC (optional)**: `azurerm_role_assignment` from `extra_role_assignments`.
+
+## Basic usage
+
+Configure **AzureAD** and **AzureRM** in your root module (`azurerm` requires `features {}`). Provide `name`, `redirects`, `members`, and `msgraph_roles` (these lists may be empty when you do not need redirects, members, or Graph permissions yet).
+
+When `client_secret.enabled` is `true`, set `client_secret.rotation_days` so `time_rotating` can schedule rotation.
+
+### Minimal example
+
+```hcl
+module "azure_application" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-application?ref=<version>"
+
+  name = "example-app-registration"
+
+  redirects = [
+    {
+      platform      = "Web"
+      redirect_uris = ["https://localhost/signin-oidc"]
+    }
+  ]
+
+  members       = []
+  msgraph_roles = []
+}
+```
+
+For a fuller layout (optional secret, federated credentials, and RBAC), see `_examples/comprehensive`.
+
+## Provisioner actor and permissions
+
+The automation identity running Terraform needs sufficient **Microsoft Graph** and **Azure** permissions to manage applications, service principals, app role assignments, optional secrets, and optional Key Vault / role assignments. Exact roles depend on which optional features you enable; follow your tenant’s least-privilege guidelines.
+
+## File structure
+
+```
+.
+├── CHANGELOG.md
+├── main.tf
+├── outputs.tf
+├── variables.tf
+├── versions.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
+├── README.md
+└── .terraform-docs.yml
+```
+
+- **`main.tf`**: Application, redirects, service principal, optional secret rotation and Key Vault secret, Graph and member assignments, federated credentials, Azure role assignments.
+- **`variables.tf` / `outputs.tf` / `versions.tf`**: Inputs, outputs, and provider version constraints.
+
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 2.3.0 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 3.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.16.0 |
 
@@ -45,7 +118,7 @@ No modules.
 | <a name="input_extra_role_assignments"></a> [extra\_role\_assignments](#input\_extra\_role\_assignments) | The list of extra role assignments to be added to the Azure App Registration. | <pre>list(object({<br/>    role_definition_name = string<br/>    scope                = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_federated_credentials"></a> [federated\_credentials](#input\_federated\_credentials) | The federated credentials configuration for the Azure App Registration. | <pre>list(object({<br/>    display_name = string<br/>    audiences    = list(string)<br/>    issuer       = string<br/>    subject      = string<br/>    description  = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_members"></a> [members](#input\_members) | The list of members to be added to the Azure App Registration. | `list(string)` | n/a | yes |
-| <a name="input_msgraph_roles"></a> [msgraph\_roles](#input\_msgraph\_roles) | The list of Microsoft Graph roles to be assigned to the Azure App Registration. e.g. User.Read.All | `list(string)` | n/a | yes |
+| <a name="input_msgraph_roles"></a> [msgraph\_roles](#input\_msgraph\_roles) | Microsoft Graph OAuth2 permission ids (GUIDs) for `required_resource_access` and, when `delegated` is true, delegated role assignments on the Microsoft Graph service principal. Values must match published permission ids for your tenant, not display names. | <pre>list(object({<br/>    id        = string<br/>    delegated = bool<br/>  }))</pre> | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | The name of the Azure App Registration. | `string` | n/a | yes |
 | <a name="input_redirects"></a> [redirects](#input\_redirects) | The redirect configuration for the Azure App Registration. | <pre>list(object({<br/>    platform      = string<br/>    redirect_uris = list(string)<br/>  }))</pre> | n/a | yes |
 
@@ -53,5 +126,27 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_application_client_id"></a> [application\_client\_id](#output\_application\_client\_id) | The client ID of the Azure application |
-| <a name="output_application_object_id"></a> [application\_object\_id](#output\_application\_object\_id) | The object ID of the Azure application |
+| <a name="output_application_client_id"></a> [application\_client\_id](#output\_application\_client\_id) | Application (client) ID of the app registration. |
+| <a name="output_application_object_id"></a> [application\_object\_id](#output\_application\_object\_id) | Object ID of the app registration. |
+
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-application/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-application/_examples/basic) — Minimal module call with empty `members` and `msgraph_roles` (adjust redirects and authentication for your tenant).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-application/_examples/comprehensive) — Optional client secret, federated credential, and Azure RBAC assignment patterns; see `values.reference.yaml` for copy-paste shapes.
+
+## Providers and `time`
+
+This module uses the **`time_rotating`** resource for optional client secret rotation. The module’s `versions.tf` does not pin **`hashicorp/time`**; ensure your root module (or lockfile) includes a compatible `time` provider if you enable `client_secret`.
+
+## Remote resources
+
+- **App registrations**: [https://learn.microsoft.com/entra/identity-platform/quickstart-register-app](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app)
+- **Terraform AzureAD provider**: [https://registry.terraform.io/providers/hashicorp/azuread/latest](https://registry.terraform.io/providers/hashicorp/azuread/latest)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->

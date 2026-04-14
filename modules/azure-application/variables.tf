@@ -25,7 +25,7 @@ variable "msgraph_roles" {
     id        = string
     delegated = bool
   }))
-  description = "The list of Microsoft Graph roles to be assigned to the Azure App Registration. Each role includes a name and whether it is delegated."
+  description = "Microsoft Graph OAuth2 permission ids (GUIDs) for `required_resource_access` and, when `delegated` is true, delegated role assignments on the Microsoft Graph service principal. Values must match published permission ids for your tenant, not display names."
 }
 
 variable "extra_role_assignments" {
