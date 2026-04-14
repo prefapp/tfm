@@ -1,3 +1,14 @@
+## Preserve state when migrating from count to for_each for legacy single budget/quota entries.
+moved {
+  from = azurerm_consumption_budget_subscription.this[0]
+  to   = azurerm_consumption_budget_subscription.this["default"]
+}
+
+moved {
+  from = azurerm_monitor_scheduled_query_rules_alert_v2.quota[0]
+  to   = azurerm_monitor_scheduled_query_rules_alert_v2.quota["default"]
+}
+
 # Managed Identity for Quota Alert to read the quota metrics from the subscription
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
@@ -213,7 +224,7 @@ resource "azurerm_monitor_action_group" "this" {
 resource "azurerm_consumption_budget_subscription" "this" {
   for_each        = local.budget_entries
   name            = each.value.name
-  subscription_id = each.value.subscription_id != null ? each.value.subscription_id : "/subscriptions/${data.azurerm_client_config.current.subscription_id}"
+  subscription_id = try(each.value.subscription_id, null) != null ? each.value.subscription_id : "/subscriptions/${data.azurerm_client_config.current.subscription_id}"
   amount          = each.value.amount
   time_grain      = each.value.time_grain
 
@@ -223,10 +234,10 @@ resource "azurerm_consumption_budget_subscription" "this" {
   }
 
   dynamic "filter" {
-    for_each = each.value.filter != null ? [each.value.filter] : []
+    for_each = try(each.value.filter, null) != null ? [each.value.filter] : []
     content {
       dynamic "dimension" {
-        for_each = filter.value.dimension
+        for_each = coalesce(try(filter.value.dimension, null), [])
         content {
           name     = dimension.value.name
           operator = dimension.value.operator
@@ -234,7 +245,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
         }
       }
       dynamic "tag" {
-        for_each = filter.value.tag
+        for_each = coalesce(try(filter.value.tag, null), [])
         content {
           name     = tag.value.name
           operator = tag.value.operator
