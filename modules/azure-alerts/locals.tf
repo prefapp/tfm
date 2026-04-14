@@ -1,4 +1,24 @@
 locals {
+  # Normalized budget entries: accepts either a legacy single object or a map of objects.
+  budget_entries = (
+    var.budget == null ? {} :
+    (
+      can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
+      ? { default = var.budget }
+      : tomap(var.budget)
+    )
+  )
+
+  # Normalized quota alert entries: accepts either a legacy single object or a map of objects.
+  quota_alert_entries = (
+    var.quota_alert == null ? {} :
+    (
+      can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
+      ? { default = var.quota_alert }
+      : tomap(var.quota_alert)
+    )
+  )
+
   # Distinct resource group names used by configured action groups.
   action_group_resource_group_names = distinct([
     for _, ag in var.action_group : ag.resource_group_name
@@ -47,14 +67,14 @@ locals {
 
   # Source groups referenced by budget notifications.
   budget_contact_group_sources = flatten([
-    for _, budget in var.budget : [
+    for _, budget in local.budget_entries : [
       for notification in budget.notification : coalesce(try(notification.contact_groups, null), [])
     ]
   ])
 
   # Source groups referenced by quota alert, with fallback to managed action groups.
   quota_contact_group_sources = flatten([
-    for _, quota in var.quota_alert : (
+    for _, quota in local.quota_alert_entries : (
       length(coalesce(try(quota.action_groups, null), [])) > 0
       ? coalesce(try(quota.action_groups, null), [])
       : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
@@ -93,7 +113,7 @@ locals {
 
   # Resolved quota action group IDs per quota alert from explicit IDs, managed groups, or external lookups.
   quota_action_group_ids = {
-    for quota_key, quota in var.quota_alert : quota_key => compact([
+    for quota_key, quota in local.quota_alert_entries : quota_key => compact([
       for group in(
         length(coalesce(try(quota.action_groups, null), [])) > 0
         ? coalesce(try(quota.action_groups, null), [])

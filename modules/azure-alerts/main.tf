@@ -1,7 +1,7 @@
 # Managed Identity for Quota Alert to read the quota metrics from the subscription
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
-  count               = length(var.quota_alert) > 0 && var.identity != null ? 1 : 0
+  count               = length(local.quota_alert_entries) > 0 && var.identity != null ? 1 : 0
   name                = var.identity.name
   resource_group_name = local.resource_group_name
   location            = var.common.location
@@ -10,7 +10,7 @@ resource "azurerm_user_assigned_identity" "quota_alert_reader" {
 # Role Assignment for the Managed Identity to have Reader access on the subscription to read the quota metrics
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "quota_reader" {
-  count                = length(var.quota_alert) > 0 && var.identity != null ? 1 : 0
+  count                = length(local.quota_alert_entries) > 0 && var.identity != null ? 1 : 0
   scope                = var.identity.scope
   role_definition_name = var.identity.role_definition_name
   principal_id         = azurerm_user_assigned_identity.quota_alert_reader[0].principal_id
@@ -38,7 +38,7 @@ check "resource_group_name_required_when_needed" {
     condition = !(
       var.common.tags_from_rg ||
       var.identity != null ||
-      length(var.quota_alert) > 0 ||
+      length(local.quota_alert_entries) > 0 ||
       var.backup_alert != null ||
       length([for alert in var.log_alert : alert if try(alert.resource_group_name, null) == null]) > 0
     ) || local.resource_group_name != null
@@ -211,7 +211,7 @@ resource "azurerm_monitor_action_group" "this" {
 # Budget Alert at the subscription level to monitor the costs and send notifications when the specified threshold is reached
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/consumption_budget_subscription
 resource "azurerm_consumption_budget_subscription" "this" {
-  for_each        = var.budget
+  for_each        = local.budget_entries
   name            = each.value.name
   subscription_id = each.value.subscription_id != null ? each.value.subscription_id : "/subscriptions/${data.azurerm_client_config.current.subscription_id}"
   amount          = each.value.amount
@@ -298,7 +298,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
 # Rule for Quota Alert to monitor the quota metrics at the subscription level and send notifications when the specified threshold is reached
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_scheduled_query_rules_alert_v2
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
-  for_each = var.quota_alert
+  for_each = local.quota_alert_entries
 
   name                             = each.value.name
   resource_group_name              = local.resource_group_name

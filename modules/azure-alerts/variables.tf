@@ -19,7 +19,13 @@ variable "identity" {
   default = null # null = do not create a managed identity or role assignment
 
   validation {
-    condition     = var.identity == null || length(var.quota_alert) > 0
+    condition = var.identity == null || length(
+      var.quota_alert == null ? {} : (
+        can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
+        ? { default = var.quota_alert }
+        : tomap(var.quota_alert)
+      )
+    ) > 0
     error_message = "The identity variable can only be set when at least one quota_alert entry is configured."
   }
 }
@@ -132,50 +138,41 @@ variable "action_group" {
 
 # Budget Alert
 variable "budget" {
-  description = "Optional map of subscription consumption budget alerts keyed by logical name. Can contain zero or more entries."
-  type = map(object({
-    name            = string
-    subscription_id = optional(string, null)
-    amount          = number
-    time_grain      = string
-    time_period = object({
-      start_date = string
-      end_date   = optional(string)
-    })
-    notification = list(object({
-      enabled        = bool
-      operator       = string
-      threshold      = number
-      threshold_type = optional(string, "Actual")
-      contact_emails = list(string)
-      contact_groups = optional(list(any), [])
-      contact_roles  = optional(list(string), [])
-    }))
-    filter = optional(object({
-      dimension = optional(list(object({
-        name     = string
-        operator = optional(string, "In")
-        values   = list(string)
-      })), [])
-      tag = optional(list(object({
-        name     = string
-        operator = optional(string, "In")
-        values   = list(string)
-      })), [])
-    }), null)
-  }))
-  default = {}
+  description = "Budget alert configuration(s). Accepts either a legacy single object or a map of objects keyed by logical name."
+  type        = any
+  default     = {}
+
+  validation {
+    condition = var.budget == null || can(
+      var.budget.notification
+      ) || can(
+      tomap(var.budget)
+    )
+    error_message = "budget must be either a single budget object or a map of budget objects."
+  }
 
   validation {
     condition = alltrue([
-      for _, budget in var.budget : length(budget.notification) > 0
+      for _, budget in(
+        var.budget == null ? {} : (
+          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
+          ? { default = var.budget }
+          : tomap(var.budget)
+        )
+      ) : length(budget.notification) > 0
     ])
     error_message = "Each budget entry must contain at least one notification block."
   }
 
   validation {
     condition = alltrue(flatten([
-      for _, budget in var.budget : [
+      for _, budget in(
+        var.budget == null ? {} : (
+          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
+          ? { default = var.budget }
+          : tomap(var.budget)
+        )
+        ) : [
         for n in budget.notification : [
           for g in try(n.contact_groups, []) : can(tostring(g)) || can(g.name)
         ]
@@ -187,48 +184,28 @@ variable "budget" {
 
 # Quota Alert (Scheduled Query Rules V2)
 variable "quota_alert" {
-  description = "Optional map of quota scheduled query rule alerts keyed by logical name. Can contain zero or more entries."
-  type = map(object({
-    auto_mitigation_enabled          = optional(bool, true)
-    display_name                     = string
-    description                      = optional(string)
-    enabled                          = optional(bool, true)
-    evaluation_frequency             = string
-    location                         = string
-    name                             = string
-    scopes                           = list(string)
-    severity                         = number
-    skip_query_validation            = optional(bool, false)
-    target_resource_types            = optional(list(string), [])
-    window_duration                  = string
-    workspace_alerts_storage_enabled = optional(bool, false)
-    criteria = object({
-      metric_measure_column   = string
-      operator                = string
-      query                   = string
-      threshold               = number
-      time_aggregation_method = string
-      dimension = list(object({
-        name     = string
-        operator = string
-        values   = list(string)
-      }))
-      failing_periods = object({
-        minimum_failing_periods_to_trigger_alert = number
-        number_of_evaluation_periods             = number
-      })
-    })
-    identity = object({
-      type         = string
-      identity_ids = optional(list(string), [])
-    })
-    action_groups = optional(list(any), [])
-  }))
-  default = {}
+  description = "Quota alert configuration(s). Accepts either a legacy single object or a map of objects keyed by logical name."
+  type        = any
+  default     = {}
+
+  validation {
+    condition = var.quota_alert == null || can(
+      var.quota_alert.criteria
+      ) || can(
+      tomap(var.quota_alert)
+    )
+    error_message = "quota_alert must be either a single quota alert object or a map of quota alert objects."
+  }
 
   validation {
     condition = alltrue([
-      for _, quota in var.quota_alert : contains(
+      for _, quota in(
+        var.quota_alert == null ? {} : (
+          can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
+          ? { default = var.quota_alert }
+          : tomap(var.quota_alert)
+        )
+        ) : contains(
         ["UserAssigned", "SystemAssigned, UserAssigned"],
         quota.identity.type
       )
