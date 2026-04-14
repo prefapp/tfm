@@ -88,19 +88,19 @@ values:
             match_variables:
               - variable_name: "RequestHeaders"
                 selector: "Host"
-    - name: "BlockUserAgentWindows"
-      enabled: true
-      priority: 2
-      rule_type: "MatchRule"
-      action: "Block"
-      match_conditions:
-        - operator: "Contains"
-          negation_condition: false
-          match_values:
-            - "Windows"
-          match_variables:
-            - variable_name: "RequestHeaders"
-              selector: "UserAgent"
+      - name: "BlockUserAgentWindows"
+        enabled: true
+        priority: 2
+        rule_type: "MatchRule"
+        action: "Block"
+        match_conditions:
+          - operator: "Contains"
+            negation_condition: false
+            match_values:
+              - "Windows"
+            match_variables:
+              - variable_name: "RequestHeaders"
+                selector: "UserAgent"
     managed_rule_set:
       - type: "OWASP"
         version: "3.2"
