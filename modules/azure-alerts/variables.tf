@@ -22,7 +22,7 @@ variable "identity" {
     condition = var.identity == null || length(
       var.quota_alert == null ? [] : (
         can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-        ? [var.quota_alert]
+        ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
         : values(tomap(var.quota_alert))
       )
     ) > 0
