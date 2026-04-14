@@ -1,6 +1,6 @@
 # Reference-only: copy fragments into your Terraform (e.g. locals or .tfvars), not consumed by this example automatically.
 
-# Optional rotating client secret (requires hashicorp/time in the root module when enabled).
+# Optional rotating client secret when enabled (the module declares `hashicorp/time` in `versions.tf`).
 client_secret:
   enabled: true
   rotation_days: 30
