@@ -166,19 +166,19 @@ variable "budget" {
 
   validation {
     condition = length(distinct([
-      for budget in(
-        var.budget == null ? [] : (
+      for _, budget in(
+        var.budget == null ? {} : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? [var.budget]
-          : values(tomap(var.budget))
+          ? { (var.budget.name) = var.budget }
+          : { for _, b in tomap(var.budget) : b.name => b }
         )
       ) : budget.name
       ])) == length([
-      for budget in(
-        var.budget == null ? [] : (
+      for _, budget in(
+        var.budget == null ? {} : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? [var.budget]
-          : values(tomap(var.budget))
+          ? { (var.budget.name) = var.budget }
+          : { for _, b in tomap(var.budget) : b.name => b }
         )
       ) : budget.name
     ])
@@ -236,19 +236,19 @@ variable "quota_alert" {
 
   validation {
     condition = length(distinct([
-      for quota in(
-        var.quota_alert == null ? [] : (
+      for _, quota in(
+        var.quota_alert == null ? {} : (
           can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? [var.quota_alert]
-          : values(tomap(var.quota_alert))
+          ? { (var.quota_alert.name) = var.quota_alert }
+          : { for _, q in tomap(var.quota_alert) : q.name => q }
         )
       ) : quota.name
       ])) == length([
-      for quota in(
-        var.quota_alert == null ? [] : (
+      for _, quota in(
+        var.quota_alert == null ? {} : (
           can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? [var.quota_alert]
-          : values(tomap(var.quota_alert))
+          ? { (var.quota_alert.name) = var.quota_alert }
+          : { for _, q in tomap(var.quota_alert) : q.name => q }
         )
       ) : quota.name
     ])
