@@ -4,8 +4,8 @@ locals {
     var.budget == null ? {} :
     (
       can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-      ? { default = var.budget }
-      : tomap(var.budget)
+      ? { (var.budget.name) = var.budget }
+      : { for _, budget in tomap(var.budget) : budget.name => budget }
     )
   )
 
@@ -14,8 +14,8 @@ locals {
     var.quota_alert == null ? {} :
     (
       can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-      ? { default = var.quota_alert }
-      : tomap(var.quota_alert)
+      ? { (var.quota_alert.name) = var.quota_alert }
+      : { for _, quota in tomap(var.quota_alert) : quota.name => quota }
     )
   )
 

@@ -20,10 +20,10 @@ variable "identity" {
 
   validation {
     condition = var.identity == null || length(
-      var.quota_alert == null ? {} : (
+      var.quota_alert == null ? [] : (
         can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-        ? { default = var.quota_alert }
-        : tomap(var.quota_alert)
+        ? [var.quota_alert]
+        : values(tomap(var.quota_alert))
       )
     ) > 0
     error_message = "The identity variable can only be set when at least one quota_alert entry is configured."
@@ -156,8 +156,8 @@ variable "budget" {
       for _, budget in(
         var.budget == null ? {} : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? { default = var.budget }
-          : tomap(var.budget)
+          ? { (var.budget.name) = var.budget }
+          : { for _, b in tomap(var.budget) : b.name => b }
         )
       ) : length(budget.notification) > 0
     ])
@@ -165,12 +165,33 @@ variable "budget" {
   }
 
   validation {
+    condition = length(distinct([
+      for budget in(
+        var.budget == null ? [] : (
+          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
+          ? [var.budget]
+          : values(tomap(var.budget))
+        )
+      ) : budget.name
+      ])) == length([
+      for budget in(
+        var.budget == null ? [] : (
+          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
+          ? [var.budget]
+          : values(tomap(var.budget))
+        )
+      ) : budget.name
+    ])
+    error_message = "Each budget.name must be unique."
+  }
+
+  validation {
     condition = alltrue(flatten([
       for _, budget in(
         var.budget == null ? {} : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? { default = var.budget }
-          : tomap(var.budget)
+          ? { (var.budget.name) = var.budget }
+          : { for _, b in tomap(var.budget) : b.name => b }
         )
         ) : [
         for n in budget.notification : [
@@ -202,8 +223,8 @@ variable "quota_alert" {
       for _, quota in(
         var.quota_alert == null ? {} : (
           can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? { default = var.quota_alert }
-          : tomap(var.quota_alert)
+          ? { (var.quota_alert.name) = var.quota_alert }
+          : { for _, q in tomap(var.quota_alert) : q.name => q }
         )
         ) : contains(
         ["UserAssigned", "SystemAssigned, UserAssigned"],
@@ -211,6 +232,27 @@ variable "quota_alert" {
       )
     ])
     error_message = "Each quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\"."
+  }
+
+  validation {
+    condition = length(distinct([
+      for quota in(
+        var.quota_alert == null ? [] : (
+          can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
+          ? [var.quota_alert]
+          : values(tomap(var.quota_alert))
+        )
+      ) : quota.name
+      ])) == length([
+      for quota in(
+        var.quota_alert == null ? [] : (
+          can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
+          ? [var.quota_alert]
+          : values(tomap(var.quota_alert))
+        )
+      ) : quota.name
+    ])
+    error_message = "Each quota_alert.name must be unique."
   }
 }
 

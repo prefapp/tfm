@@ -1,14 +1,3 @@
-## Preserve state when migrating from count to for_each for legacy single budget/quota entries.
-moved {
-  from = azurerm_consumption_budget_subscription.this[0]
-  to   = azurerm_consumption_budget_subscription.this["default"]
-}
-
-moved {
-  from = azurerm_monitor_scheduled_query_rules_alert_v2.quota[0]
-  to   = azurerm_monitor_scheduled_query_rules_alert_v2.quota["default"]
-}
-
 # Managed Identity for Quota Alert to read the quota metrics from the subscription
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
