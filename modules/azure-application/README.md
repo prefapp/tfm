@@ -79,6 +79,7 @@ The automation identity running Terraform needs sufficient **Microsoft Graph** a
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 3.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.16.0 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.13.0 |
 
 ## Providers
 
@@ -138,7 +139,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Providers and `time`
 
-This module uses the **`time_rotating`** resource for optional client secret rotation. The module’s `versions.tf` does not pin **`hashicorp/time`**; ensure your root module (or lockfile) includes a compatible `time` provider if you enable `client_secret`.
+This module uses the **`time_rotating`** resource when `client_secret.enabled` is true. **`hashicorp/time`** is declared in `versions.tf` as a required provider alongside AzureAD and AzureRM.
 
 ## Remote resources
 

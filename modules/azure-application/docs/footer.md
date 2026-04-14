@@ -7,7 +7,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Providers and `time`
 
-This module uses the **`time_rotating`** resource for optional client secret rotation. The module’s `versions.tf` does not pin **`hashicorp/time`**; ensure your root module (or lockfile) includes a compatible `time` provider if you enable `client_secret`.
+This module uses the **`time_rotating`** resource when `client_secret.enabled` is true. **`hashicorp/time`** is declared in `versions.tf` as a required provider alongside AzureAD and AzureRM.
 
 ## Remote resources
 
