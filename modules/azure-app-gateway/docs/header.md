@@ -13,17 +13,20 @@ Use it when you already have a **resource group**, **delegated subnet**, and **u
 - **Public IP**: `azurerm_public_ip` from `public_ip` input.
 - **Networking & identity**: Data sources for **resource group**, **subnet**, and **user-assigned identity** referenced by name and resource group.
 - **Tags**: Optional merge of resource group tags via `tags_from_rg` plus explicit `tags` (see `locals_rg.tf`).
-- **SSL profiles & CA bundles**: When `ssl_profiles` is non-empty, **`data.external`** scripts list and download `.pem`/`.cer` assets from the **GitHub Contents API** (`wget`, `jq`, `bash` required at plan/apply time and outbound HTTPS access).
+- **SSL profiles & CA bundles**: When `ssl_profiles` is non-empty, **`data.external`** scripts list and download `.pem`/`.cer` assets from the **GitHub Contents API** (`wget`, `jq`, `bash` required at plan/apply time and outbound HTTPS access). The script calls `/contents/<directory>` **without** a `ref=` query parameter, so it follows the repository **default branch**; `ca_certs_origin.github_branch` in the variable schema is **not currently honored** by that fetch (see also `ssl_profiles` variable description).
 
 ## Prerequisites
 
 - **AzureRM** provider configured (this module pins **`azurerm`** in `versions.tf`).
 - **`hashicorp/external`** is declared in `versions.tf` because of the GitHub certificate fetch logic.
 - Subnet delegated/sized appropriately for Application Gateway; managed identity with permissions to referenced Key Vault secrets for TLS.
+- If you load CA bundles from GitHub, place the `.pem`/`.cer` files on the repo **default branch** path you configure; do not rely on `github_branch` until `data.tf` is updated to pass a Git ref to the Contents API.
 
 ## Basic usage
 
 Point the module at your resource group, subnet, identity, and pass the large **`application_gateway`**, **`public_ip`**, **`web_application_firewall_policy`**, and optional **`ssl_profiles`** / **`rewrite_rule_sets`** objects. See `_examples/comprehensive/values.reference.yaml` for a full illustrative `values` tree.
+
+> **GitHub CA fetch:** unauthenticated `wget` to `api.github.com` (see footer). For Git-backed CAs, the module currently uses the **default branch** only; `ca_certs_origin.github_branch` does not select another branch unless the implementation is extended.
 
 ```hcl
 module "app_gateway" {

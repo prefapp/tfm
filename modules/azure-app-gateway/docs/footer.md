@@ -5,7 +5,7 @@
 
 ## Operational notes
 
-- **`external` data sources** run `bash` with `wget` and `jq` against **api.github.com** when `ssl_profiles` pulls CA material. Ensure the Terraform runtime has those tools and network egress, or keep `ssl_profiles` empty if you do not need that path.
+- **`external` data sources** run `bash` with `wget` and `jq` against **api.github.com** when `ssl_profiles` pulls CA material. Requests use **no GitHub authentication headers**, so this path is suited to **public** repositories; private repos or heavy use may hit **unauthenticated rate limits** or fail. Ensure the Terraform runtime has those tools and network egress, or keep `ssl_profiles` empty if you do not need that path.
 
 ## Remote resources
 

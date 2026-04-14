@@ -42,7 +42,7 @@ variable "subnet" {
 }
 
 variable "ssl_profiles" {
-  description = "List of SSL profiles for Application Gateway."
+  description = "List of SSL profiles for Application Gateway. CA files under `ca_certs_origin.github_directory` are listed via the GitHub Contents API in `data.tf`; `ca_certs_origin.github_branch` is accepted for forward compatibility but is not passed to that API today (content is read from the repository default branch)."
   type = list(object({
     name                                     = string
     trusted_client_certificate_names         = optional(list(string))

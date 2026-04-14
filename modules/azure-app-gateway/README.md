@@ -14,17 +14,20 @@ Use it when you already have a **resource group**, **delegated subnet**, and **u
 - **Public IP**: `azurerm_public_ip` from `public_ip` input.
 - **Networking & identity**: Data sources for **resource group**, **subnet**, and **user-assigned identity** referenced by name and resource group.
 - **Tags**: Optional merge of resource group tags via `tags_from_rg` plus explicit `tags` (see `locals_rg.tf`).
-- **SSL profiles & CA bundles**: When `ssl_profiles` is non-empty, **`data.external`** scripts list and download `.pem`/`.cer` assets from the **GitHub Contents API** (`wget`, `jq`, `bash` required at plan/apply time and outbound HTTPS access).
+- **SSL profiles & CA bundles**: When `ssl_profiles` is non-empty, **`data.external`** scripts list and download `.pem`/`.cer` assets from the **GitHub Contents API** (`wget`, `jq`, `bash` required at plan/apply time and outbound HTTPS access). The script calls `/contents/<directory>` **without** a `ref=` query parameter, so it follows the repository **default branch**; `ca_certs_origin.github_branch` in the variable schema is **not currently honored** by that fetch (see also `ssl_profiles` variable description).
 
 ## Prerequisites
 
 - **AzureRM** provider configured (this module pins **`azurerm`** in `versions.tf`).
 - **`hashicorp/external`** is declared in `versions.tf` because of the GitHub certificate fetch logic.
 - Subnet delegated/sized appropriately for Application Gateway; managed identity with permissions to referenced Key Vault secrets for TLS.
+- If you load CA bundles from GitHub, place the `.pem`/`.cer` files on the repo **default branch** path you configure; do not rely on `github_branch` until `data.tf` is updated to pass a Git ref to the Contents API.
 
 ## Basic usage
 
 Point the module at your resource group, subnet, identity, and pass the large **`application_gateway`**, **`public_ip`**, **`web_application_firewall_policy`**, and optional **`ssl_profiles`** / **`rewrite_rule_sets`** objects. See `_examples/comprehensive/values.reference.yaml` for a full illustrative `values` tree.
+
+> **GitHub CA fetch:** unauthenticated `wget` to `api.github.com` (see footer). For Git-backed CAs, the module currently uses the **default branch** only; `ca_certs_origin.github_branch` does not select another branch unless the implementation is extended.
 
 ```hcl
 module "app_gateway" {
@@ -112,7 +115,7 @@ No modules.
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Application Gateway. | `string` | n/a | yes |
 | <a name="input_rewrite_rule_sets"></a> [rewrite\_rule\_sets](#input\_rewrite\_rule\_sets) | List of Rewrite Rule Sets for Application Gateway | <pre>list(object({<br/>    name = string<br/>    rewrite_rules = list(object({<br/>      name          = string<br/>      rule_sequence = number<br/>      conditions = optional(list(object({<br/>        variable    = string<br/>        pattern     = string<br/>        ignore_case = optional(bool, false)<br/>        negate      = optional(bool, false)<br/>      })), [])<br/>      request_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      response_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      url_rewrite = optional(object({<br/>        source_path = optional(string)<br/>        query_string = optional(string)<br/>        components = optional(string)<br/>        reroute = optional(bool)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | Gateway-level SSL policy (`policy_type`, optional `policy_name`, `cipher_suites`, `min_protocol_version`). | <pre>object({<br/>    policy_type          = string<br/>    policy_name          = optional(string)<br/>    cipher_suites        = optional(list(string))<br/>    min_protocol_version = optional(string)<br/>  })</pre> | <pre>{<br/>  "policy_name": "AppGwSslPolicy20220101",<br/>  "policy_type": "Predefined"<br/>}</pre> | no |
-| <a name="input_ssl_profiles"></a> [ssl\_profiles](#input\_ssl\_profiles) | List of SSL profiles for Application Gateway. | <pre>list(object({<br/>    name                                     = string<br/>    trusted_client_certificate_names         = optional(list(string))<br/>    verify_client_cert_issuer_dn             = optional(bool, false)<br/>    verify_client_certificate_revocation     = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols                     = optional(list(string))<br/>      min_protocol_version                   = optional(string)<br/>      policy_name                            = optional(string)<br/>      cipher_suites                          = optional(list(string))<br/>    }))<br/>    ca_certs_origin = object({<br/>      github_owner       = string<br/>      github_repository  = string<br/>      github_branch      = string<br/>      github_directory   = string<br/>    })<br/>  }))</pre> | `[]` | no |
+| <a name="input_ssl_profiles"></a> [ssl\_profiles](#input\_ssl\_profiles) | List of SSL profiles for Application Gateway. CA files under `ca_certs_origin.github_directory` are listed via the GitHub Contents API in `data.tf`; `ca_certs_origin.github_branch` is accepted for forward compatibility but is not passed to that API today (content is read from the repository default branch). | <pre>list(object({<br/>    name                                     = string<br/>    trusted_client_certificate_names         = optional(list(string))<br/>    verify_client_cert_issuer_dn             = optional(bool, false)<br/>    verify_client_certificate_revocation     = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols                     = optional(list(string))<br/>      min_protocol_version                   = optional(string)<br/>      policy_name                            = optional(string)<br/>      cipher_suites                          = optional(list(string))<br/>    }))<br/>    ca_certs_origin = object({<br/>      github_owner       = string<br/>      github_repository  = string<br/>      github_branch      = string<br/>      github_directory   = string<br/>    })<br/>  }))</pre> | `[]` | no |
 | <a name="input_subnet"></a> [subnet](#input\_subnet) | Subnet where the gateway is deployed (`name`, `virtual_network_name` within `resource_group_name`). | `any` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
@@ -132,7 +135,7 @@ No modules.
 
 ## Operational notes
 
-- **`external` data sources** run `bash` with `wget` and `jq` against **api.github.com** when `ssl_profiles` pulls CA material. Ensure the Terraform runtime has those tools and network egress, or keep `ssl_profiles` empty if you do not need that path.
+- **`external` data sources** run `bash` with `wget` and `jq` against **api.github.com** when `ssl_profiles` pulls CA material. Requests use **no GitHub authentication headers**, so this path is suited to **public** repositories; private repos or heavy use may hit **unauthenticated rate limits** or fail. Ensure the Terraform runtime has those tools and network egress, or keep `ssl_profiles` empty if you do not need that path.
 
 ## Remote resources
 
