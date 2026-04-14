@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Terraform module creates a **Microsoft Entra ID (Azure AD) application registration** (`azuread_application`), optional **redirect URIs**, a linked **enterprise application** (service principal), optional **Microsoft Graph delegated permissions** (`required_resource_access` and `azuread_app_role_assignment` against Microsoft Graph), **default app role assignments** for listed members, optional **rotating client secrets** stored in **Key Vault**, **federated identity credentials** (for example workload federation / OIDC), and optional **Azure RBAC** role assignments for the service principal.
+This Terraform module creates a **Microsoft Entra ID (Azure AD) application registration** (`azuread_application`), optional **redirect URIs**, a linked **enterprise application** (service principal), optional **Microsoft Graph API access** declared in `required_resource_access` (as OAuth2 **scopes**) plus optional **Graph `azuread_app_role_assignment`** when `msgraph_roles[*].delegated` is true, **default app role assignments** for listed members, optional **rotating client secrets** stored in **Key Vault**, **federated identity credentials** (for example workload federation / OIDC), and optional **Azure RBAC** role assignments for the service principal.
 
 Use it when you want a single module to declare an app’s display name, redirect platforms, Graph API access, secrets, and related Azure assignments.
 
@@ -12,7 +12,7 @@ Use it when you want a single module to declare an app’s display name, redirec
 - **Redirect URIs**: Separate `azuread_application_redirect_uris` resources per platform (`PublicClient`, `SPA`, or `Web`), validated on the `redirects` input.
 - **Enterprise app**: `azuread_service_principal` with `use_existing = true` tied to the registered application.
 - **Members**: `azuread_app_role_assignment` for each object ID in `members` using the default app role (`00000000-0000-0000-0000-000000000000`).
-- **Microsoft Graph**: For entries with `delegated = true`, assigns the corresponding Graph permission to the app’s service principal via `azuread_app_role_assignment` (permission identifiers must match Microsoft Graph published metadata).
+- **Microsoft Graph**: Every entry adds Graph to `required_resource_access` with `type = Scope` and `id` from the input (OAuth2 **delegated permission scope id** on Microsoft Graph). If `delegated = true`, the module also creates `azuread_app_role_assignment` on Microsoft Graph using `lookup(data.azuread_service_principal.msgraph.app_role_ids, id)`; that lookup expects `id` to be a **key** in `app_role_ids` (provider: keys are Graph **app role value** strings), which may differ from the scope UUID used in `required_resource_access`—check the data source or plan output if the assignment does not resolve.
 - **Client secret (optional)**: `time_rotating` + `azuread_application_password`, optionally written to `azurerm_key_vault_secret` when `client_secret.keyvault` is set.
 - **Federated credentials**: `azuread_application_federated_identity_credential` from `federated_credentials`.
 - **Azure RBAC (optional)**: `azurerm_role_assignment` from `extra_role_assignments`.

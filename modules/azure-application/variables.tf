@@ -25,7 +25,7 @@ variable "msgraph_roles" {
     id        = string
     delegated = bool
   }))
-  description = "Microsoft Graph OAuth2 permission ids (GUIDs) for `required_resource_access` and, when `delegated` is true, delegated role assignments on the Microsoft Graph service principal. Values must match published permission ids for your tenant, not display names."
+  description = "Microsoft Graph entries for this app. Each `id` is written to `azuread_application.required_resource_access` as `type = Scope` (use the OAuth2 delegated **permission scope id** / UUID for Microsoft Graph from the manifest or portal, not a display name). When `delegated` is true, the module also creates `azuread_app_role_assignment` on Microsoft Graph and sets `app_role_id` via `lookup(data.azuread_service_principal.msgraph.app_role_ids, id)`; that map is keyed by Graph **application role values** (per the AzureAD provider), which are not always the same string as the OAuth2 scope UUID—verify keys from the data source or `terraform plan` if assignments fail. When `delegated` is false, only the `required_resource_access` entry is created (no Graph app role assignment)."
 }
 
 variable "extra_role_assignments" {

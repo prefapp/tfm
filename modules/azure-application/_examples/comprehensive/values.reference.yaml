@@ -21,7 +21,10 @@ extra_role_assignments:
   - role_definition_name: "Reader"
     scope: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-example"
 
-# Microsoft Graph delegated permissions: use OAuth2 permission id GUIDs from Graph / Entra portal, not display names.
+# Microsoft Graph: `required_resource_access` uses each `id` as an OAuth2 scope UUID (`type = Scope`).
+# If `delegated: true`, the same `id` is also used as the key in
+# `data.azuread_service_principal.msgraph.app_role_ids` for `azuread_app_role_assignment` (keys are
+# typically Graph app-role *value* strings, not the scope UUID). Confirm in your tenant / provider output.
 msgraph_roles:
-  - id: "<oauth2PermissionId-from-Microsoft-Graph-service-principal>"
+  - id: "<match-required_resource_access-and-app_role_ids-lookup-for-your-tenant>"
     delegated: true
