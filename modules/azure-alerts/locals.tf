@@ -76,7 +76,11 @@ locals {
   quota_contact_group_sources = flatten([
     for _, quota in local.quota_alert_entries : (
       length(coalesce(try(quota.action_groups, null), [])) > 0
-      ? coalesce(try(quota.action_groups, null), [])
+      ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
+        can(regex("^/subscriptions/", ag_ref))
+        ? { id = ag_ref }
+        : { name = ag_ref }
+      )]
       : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
     )
   ])
