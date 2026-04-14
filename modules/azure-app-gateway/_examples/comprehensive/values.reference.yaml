@@ -203,7 +203,7 @@ values:
             redirect_configuration: {}
             backend_address_pool:
               ip_addresses:
-               - 10.0.0.2
+                - 10.0.0.2
             http_listeners:
               https:
                 host_names:
