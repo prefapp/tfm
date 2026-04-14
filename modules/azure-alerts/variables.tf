@@ -19,8 +19,8 @@ variable "identity" {
   default = null # null = do not create a managed identity or role assignment
 
   validation {
-    condition     = var.identity == null || var.quota_alert != null
-    error_message = "The identity variable can only be set when quota_alert is also configured."
+    condition     = var.identity == null || length(var.quota_alert) > 0
+    error_message = "The identity variable can only be set when at least one quota_alert entry is configured."
   }
 }
 
@@ -132,8 +132,8 @@ variable "action_group" {
 
 # Budget Alert
 variable "budget" {
-  description = "Configuration for the subscription consumption budget alert. Set to null to disable."
-  type = object({
+  description = "Optional map of subscription consumption budget alerts keyed by logical name. Can contain zero or more entries."
+  type = map(object({
     name            = string
     subscription_id = optional(string, null)
     amount          = number
@@ -163,28 +163,32 @@ variable "budget" {
         values   = list(string)
       })), [])
     }), null)
-  })
-  default = null
+  }))
+  default = {}
 
   validation {
-    condition     = var.budget == null || length(var.budget.notification) > 0
-    error_message = "When budget is set, budget.notification must contain at least one notification block."
+    condition = alltrue([
+      for _, budget in var.budget : length(budget.notification) > 0
+    ])
+    error_message = "Each budget entry must contain at least one notification block."
   }
 
   validation {
-    condition = var.budget == null || alltrue(flatten([
-      for n in var.budget.notification : [
-        for g in try(n.contact_groups, []) : can(tostring(g)) || can(g.name)
+    condition = alltrue(flatten([
+      for _, budget in var.budget : [
+        for n in budget.notification : [
+          for g in try(n.contact_groups, []) : can(tostring(g)) || can(g.name)
+        ]
       ]
     ]))
-    error_message = "budget.notification[*].contact_groups entries must be either a string (Action Group name or full resource ID) or an object with a 'name' attribute."
+    error_message = "Each budget.notification[*].contact_groups entry must be either a string (Action Group name or full resource ID) or an object with a 'name' attribute."
   }
 }
 
 # Quota Alert (Scheduled Query Rules V2)
 variable "quota_alert" {
-  description = "Configuration for the quota scheduled query rules alert. Set to null to disable."
-  type = object({
+  description = "Optional map of quota scheduled query rule alerts keyed by logical name. Can contain zero or more entries."
+  type = map(object({
     auto_mitigation_enabled          = optional(bool, true)
     display_name                     = string
     description                      = optional(string)
@@ -219,15 +223,17 @@ variable "quota_alert" {
       identity_ids = optional(list(string), [])
     })
     action_groups = optional(list(any), [])
-  })
-  default = null
+  }))
+  default = {}
 
   validation {
-    condition = var.quota_alert == null || contains(
-      ["UserAssigned", "SystemAssigned, UserAssigned"],
-      var.quota_alert.identity.type
-    )
-    error_message = "When quota_alert is set, quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\"."
+    condition = alltrue([
+      for _, quota in var.quota_alert : contains(
+        ["UserAssigned", "SystemAssigned, UserAssigned"],
+        quota.identity.type
+      )
+    ])
+    error_message = "Each quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\"."
   }
 }
 
@@ -263,6 +269,11 @@ variable "log_alert" {
     })
   }))
   default = []
+
+  validation {
+    condition     = length(toset([for alert in var.log_alert : alert.name])) == length(var.log_alert)
+    error_message = "Each log_alert.name must be unique."
+  }
 }
 
 # Backup Alert Processing Rule

@@ -41,23 +41,25 @@ module "azure_alerts" {
   }
 
   budget = {
-    name            = "monthly-subscription-budget"
-    subscription_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
-    amount          = 5000
-    time_grain      = "Monthly"
-    time_period = {
-      start_date = "2026-01-01"
-      end_date   = "2027-12-31"
-    }
-    notification = [
-      {
-        enabled        = true
-        operator       = "GreaterThan"
-        threshold      = 80
-        contact_emails = ["finance@example.com"]
-        contact_groups = ["finance-action-group", "ops-action-group"]
+    monthly = {
+      name            = "monthly-subscription-budget"
+      subscription_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+      amount          = 5000
+      time_grain      = "Monthly"
+      time_period = {
+        start_date = "2026-01-01"
+        end_date   = "2027-12-31"
       }
-    ]
+      notification = [
+        {
+          enabled        = true
+          operator       = "GreaterThan"
+          threshold      = 80
+          contact_emails = ["finance@example.com"]
+          contact_groups = ["finance-action-group", "ops-action-group"]
+        }
+      ]
+    }
   }
 }
 

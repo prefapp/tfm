@@ -19,8 +19,13 @@ output "action_group_names" {
 }
 
 output "quota_alert_id" {
-  description = "The ID of the quota scheduled query rules alert. Null if not created."
-  value       = var.quota_alert != null ? azurerm_monitor_scheduled_query_rules_alert_v2.quota[0].id : null
+  description = "The ID of the quota scheduled query rules alert when exactly one is configured; otherwise null."
+  value       = length(azurerm_monitor_scheduled_query_rules_alert_v2.quota) == 1 ? values(azurerm_monitor_scheduled_query_rules_alert_v2.quota)[0].id : null
+}
+
+output "quota_alert_ids" {
+  description = "Map of configured quota_alert keys to their resource IDs."
+  value       = { for k, v in azurerm_monitor_scheduled_query_rules_alert_v2.quota : k => v.id }
 }
 
 output "quota_alert_reader_identity_id" {
@@ -34,8 +39,13 @@ output "quota_alert_reader_principal_id" {
 }
 
 output "budget_alert_id" {
-  description = "The ID of the consumption budget subscription alert. Null if not created."
-  value       = var.budget != null ? azurerm_consumption_budget_subscription.this[0].id : null
+  description = "The ID of the consumption budget subscription alert when exactly one is configured; otherwise null."
+  value       = length(azurerm_consumption_budget_subscription.this) == 1 ? values(azurerm_consumption_budget_subscription.this)[0].id : null
+}
+
+output "budget_alert_ids" {
+  description = "Map of configured budget keys to their resource IDs."
+  value       = { for k, v in azurerm_consumption_budget_subscription.this : k => v.id }
 }
 
 output "activity_log_alert_ids" {

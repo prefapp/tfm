@@ -1,7 +1,7 @@
 # Managed Identity for Quota Alert to read the quota metrics from the subscription
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
-  count               = var.quota_alert != null && var.identity != null ? 1 : 0
+  count               = length(var.quota_alert) > 0 && var.identity != null ? 1 : 0
   name                = var.identity.name
   resource_group_name = local.resource_group_name
   location            = var.common.location
@@ -10,7 +10,7 @@ resource "azurerm_user_assigned_identity" "quota_alert_reader" {
 # Role Assignment for the Managed Identity to have Reader access on the subscription to read the quota metrics
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "quota_reader" {
-  count                = var.quota_alert != null && var.identity != null ? 1 : 0
+  count                = length(var.quota_alert) > 0 && var.identity != null ? 1 : 0
   scope                = var.identity.scope
   role_definition_name = var.identity.role_definition_name
   principal_id         = azurerm_user_assigned_identity.quota_alert_reader[0].principal_id
@@ -38,7 +38,7 @@ check "resource_group_name_required_when_needed" {
     condition = !(
       var.common.tags_from_rg ||
       var.identity != null ||
-      var.quota_alert != null ||
+      length(var.quota_alert) > 0 ||
       var.backup_alert != null ||
       length([for alert in var.log_alert : alert if try(alert.resource_group_name, null) == null]) > 0
     ) || local.resource_group_name != null
@@ -211,19 +211,19 @@ resource "azurerm_monitor_action_group" "this" {
 # Budget Alert at the subscription level to monitor the costs and send notifications when the specified threshold is reached
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/consumption_budget_subscription
 resource "azurerm_consumption_budget_subscription" "this" {
-  count           = var.budget != null ? 1 : 0
-  name            = var.budget.name
-  subscription_id = var.budget.subscription_id != null ? var.budget.subscription_id : "/subscriptions/${data.azurerm_client_config.current.subscription_id}"
-  amount          = var.budget.amount
-  time_grain      = var.budget.time_grain
+  for_each        = var.budget
+  name            = each.value.name
+  subscription_id = each.value.subscription_id != null ? each.value.subscription_id : "/subscriptions/${data.azurerm_client_config.current.subscription_id}"
+  amount          = each.value.amount
+  time_grain      = each.value.time_grain
 
   time_period {
-    start_date = var.budget.time_period.start_date
-    end_date   = try(var.budget.time_period.end_date, null)
+    start_date = each.value.time_period.start_date
+    end_date   = try(each.value.time_period.end_date, null)
   }
 
   dynamic "filter" {
-    for_each = var.budget.filter != null ? [var.budget.filter] : []
+    for_each = each.value.filter != null ? [each.value.filter] : []
     content {
       dynamic "dimension" {
         for_each = filter.value.dimension
@@ -245,7 +245,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
   }
 
   dynamic "notification" {
-    for_each = var.budget.notification
+    for_each = each.value.notification
     content {
       enabled        = notification.value.enabled
       operator       = notification.value.operator
@@ -282,7 +282,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
   lifecycle {
     precondition {
       condition = local.resource_group_name != null || !anytrue([
-        for notification in var.budget.notification :
+        for notification in each.value.notification :
         anytrue([
           for group in coalesce(try(notification.contact_groups, null), []) : (
             can(tostring(group)) ? !startswith(tostring(group), "/") :
@@ -290,7 +290,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
           )
         ])
       ])
-      error_message = "When budget.notification[*].contact_groups references an Action Group by name or by object without resource_group_name, either common.resource_group_name must be set or a single action_group entry must be configured so its resource group can be inferred."
+      error_message = "When budget '${each.key}' uses notification[*].contact_groups by name or by object without resource_group_name, either common.resource_group_name must be set or a single action_group entry must be configured so its resource group can be inferred."
     }
   }
 }
@@ -298,32 +298,32 @@ resource "azurerm_consumption_budget_subscription" "this" {
 # Rule for Quota Alert to monitor the quota metrics at the subscription level and send notifications when the specified threshold is reached
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_scheduled_query_rules_alert_v2
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
-  count = var.quota_alert != null ? 1 : 0
+  for_each = var.quota_alert
 
-  name                             = var.quota_alert.name
+  name                             = each.value.name
   resource_group_name              = local.resource_group_name
-  location                         = var.quota_alert.location
-  display_name                     = var.quota_alert.display_name
-  description                      = try(var.quota_alert.description, null)
-  enabled                          = var.quota_alert.enabled
-  auto_mitigation_enabled          = var.quota_alert.auto_mitigation_enabled
-  evaluation_frequency             = var.quota_alert.evaluation_frequency
-  scopes                           = var.quota_alert.scopes
-  severity                         = var.quota_alert.severity
-  skip_query_validation            = var.quota_alert.skip_query_validation
-  target_resource_types            = var.quota_alert.target_resource_types
-  window_duration                  = var.quota_alert.window_duration
-  workspace_alerts_storage_enabled = var.quota_alert.workspace_alerts_storage_enabled
+  location                         = each.value.location
+  display_name                     = each.value.display_name
+  description                      = try(each.value.description, null)
+  enabled                          = each.value.enabled
+  auto_mitigation_enabled          = each.value.auto_mitigation_enabled
+  evaluation_frequency             = each.value.evaluation_frequency
+  scopes                           = each.value.scopes
+  severity                         = each.value.severity
+  skip_query_validation            = each.value.skip_query_validation
+  target_resource_types            = each.value.target_resource_types
+  window_duration                  = each.value.window_duration
+  workspace_alerts_storage_enabled = each.value.workspace_alerts_storage_enabled
 
   criteria {
-    metric_measure_column   = var.quota_alert.criteria.metric_measure_column
-    operator                = var.quota_alert.criteria.operator
-    query                   = var.quota_alert.criteria.query
-    threshold               = var.quota_alert.criteria.threshold
-    time_aggregation_method = var.quota_alert.criteria.time_aggregation_method
+    metric_measure_column   = each.value.criteria.metric_measure_column
+    operator                = each.value.criteria.operator
+    query                   = each.value.criteria.query
+    threshold               = each.value.criteria.threshold
+    time_aggregation_method = each.value.criteria.time_aggregation_method
 
     dynamic "dimension" {
-      for_each = var.quota_alert.criteria.dimension
+      for_each = each.value.criteria.dimension
       content {
         name     = dimension.value.name
         operator = dimension.value.operator
@@ -332,31 +332,31 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
     }
 
     failing_periods {
-      minimum_failing_periods_to_trigger_alert = var.quota_alert.criteria.failing_periods.minimum_failing_periods_to_trigger_alert
-      number_of_evaluation_periods             = var.quota_alert.criteria.failing_periods.number_of_evaluation_periods
+      minimum_failing_periods_to_trigger_alert = each.value.criteria.failing_periods.minimum_failing_periods_to_trigger_alert
+      number_of_evaluation_periods             = each.value.criteria.failing_periods.number_of_evaluation_periods
     }
   }
 
   identity {
-    type         = var.quota_alert.identity.type
-    identity_ids = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : var.quota_alert.identity.identity_ids
+    type         = each.value.identity.type
+    identity_ids = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : each.value.identity.identity_ids
   }
 
   action {
-    action_groups = local.quota_action_group_ids
+    action_groups = local.quota_action_group_ids[each.key]
   }
 
   tags = local.tags
 
   lifecycle {
     precondition {
-      condition     = var.identity != null || length(coalesce(var.quota_alert.identity.identity_ids, [])) > 0
-      error_message = "When quota_alert is set, either var.identity must be configured (to let the module create a managed identity) or quota_alert.identity.identity_ids must be provided with at least one identity ID."
+      condition     = var.identity != null || length(coalesce(each.value.identity.identity_ids, [])) > 0
+      error_message = "When quota_alert '${each.key}' is set, either var.identity must be configured (to let the module create a managed identity) or quota_alert['${each.key}'].identity.identity_ids must include at least one identity ID."
     }
 
     precondition {
-      condition     = length(local.quota_action_group_ids) > 0
-      error_message = "When quota_alert is set, configure at least one action_group entry or provide quota_alert.action_groups explicitly."
+      condition     = length(local.quota_action_group_ids[each.key]) > 0
+      error_message = "When quota_alert '${each.key}' is set, configure at least one action_group entry or provide quota_alert['${each.key}'].action_groups explicitly."
     }
   }
 }
