@@ -31,12 +31,12 @@ values:
         cipher_suites:
           - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
           - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-          ca_certs_origin:
-            github_owner: "gh-owner"
-            github_repository: "gh-repo"
-            # github_branch: accepted by the module schema but not used by data.tf (default branch only).
-            github_branch: "gh-branch"
-            github_directory: "gh-dir"
+      ca_certs_origin:
+        github_owner: "gh-owner"
+        github_repository: "gh-repo"
+        # github_branch: accepted by the module schema but not used by data.tf (default branch only).
+        github_branch: "gh-branch"
+        github_directory: "gh-dir"
 
   # Rewrite Rule Sets
   rewrite_rule_sets:
