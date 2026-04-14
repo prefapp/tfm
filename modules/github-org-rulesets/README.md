@@ -1,0 +1,175 @@
+<!-- BEGIN_TF_DOCS -->
+# **GitHub Organization Ruleset Terraform Module**
+
+## Overview
+
+This module creates and manages **GitHub Organization Rulesets** using the `github_organization_ruleset` resource. It accepts a map of ruleset definitions, creating one ruleset resource per entry via `for_each`.
+
+Organization Rulesets are a modern GitHub feature that supersedes branch protection rules, offering finer-grained control over branch and tag governance across all repositories in an organization. They support targeting by ref name patterns or repository name patterns, defining bypass actors, and enforcing a comprehensive set of rules including pull request requirements, status checks, commit message patterns, and more.
+
+This module is designed to be driven by JSON configuration. It natively accepts the **GitHub API export format**, so you can use a ruleset exported directly from the GitHub API or the GitHub CLI as input — extra fields such as `id`, `source_type`, `source`, and `required_reviewers` are silently ignored.
+
+## Key Features
+
+- **GitHub API export compatible**: Drop in a ruleset exported from `gh api` or the GitHub web UI without any manual reformatting
+- **Multi-ruleset composition**: Manage multiple rulesets from a single module call using a `rulesets` map
+- **All bypass actor types**: Supports `Integration`, `OrganizationAdmin`, `Team`, `RepositoryRole`, and `DeployKey`
+- **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern or protected status
+- **Full rules coverage**: All boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) plus all block rules (`pull_request`, `required_status_checks`, and all pattern rules)
+- **All dynamic blocks**: Every optional block is conditional, so unused rules add zero noise to the Terraform plan
+
+## Known limitations
+
+### `ref_name` with empty include
+
+The GitHub API can export rulesets where `ref_name.include` is `[]` (displayed in the UI as \_"Branch targeting has not been configured"\_). The Terraform provider **requires** at least one entry in `ref_name.include` and panics with empty arrays — this state is irrepresentable through the provider.
+
+When the module receives `ref_name.include = []`, it automatically substitutes a safe fallback based on the target type:
+
+| `target` | Default `ref_name.include` |
+|----------|---------------------------|
+| `branch` | `["~DEFAULT_BRANCH"]` |
+| `tag`    | `["~ALL"]` |
+
+If you need a different value, set `ref_name.include` explicitly in your JSON before applying.
+
+### Push target rulesets with no push-specific rules (provider bug)
+
+`target = "push"` rulesets that do not include at least one of the push-only rule types (`file_path_restriction`, `max_file_path_length`, `file_extension_restriction`, `max_file_size`) trigger a **panic in terraform-provider-github v6.11.1**:
+
+```
+panic: interface conversion: interface {} is nil, not map[string]interface {}
+github.com/integrations/terraform-provider-github/v6/github.validateRules(...)
+    util_ruleset_validation.go:94
+```
+
+This is a provider-level nil pointer dereference in `validateRulesForPushTarget` — the SDK passes `[nil]` for unset optional blocks and the provider does not guard against it. There is no module-level workaround.
+
+**Options until the provider is fixed:**
+- Pin to a provider version that does not have this bug (check the [provider changelog](https://github.com/integrations/terraform-provider-github/releases))
+- Add at least one push-specific rule to any push target ruleset
+- Track the upstream issue: [integrations/terraform-provider-github](https://github.com/integrations/terraform-provider-github/issues)
+
+## Rules format
+
+Rules follow the GitHub API array format — a list of objects with a `type` field and an optional `parameters` field:
+
+```json
+"rules": [
+  { "type": "deletion" },
+  { "type": "non_fast_forward" },
+  {
+    "type": "pull_request",
+    "parameters": {
+      "required_approving_review_count": 1,
+      "dismiss_stale_reviews_on_push": true
+    }
+  }
+]
+```
+
+Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) require no `parameters` block. Complex rules (`pull_request`, `required_status_checks`, pattern rules) carry their configuration inside `parameters`.
+
+## Basic Usage
+
+### Org-wide default branch protection
+
+```hcl
+module "org_rulesets" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-org-rulesets"
+
+  rulesets = {
+    default-branch-protection = {
+      name        = "default-branch-protection"
+      target      = "branch"
+      enforcement = "active"
+
+      conditions = {
+        ref_name = {
+          include = ["~DEFAULT_BRANCH"]
+          exclude = []
+        }
+      }
+
+      rules = [
+        { type = "deletion" },
+        { type = "non_fast_forward" },
+        {
+          type = "pull_request"
+          parameters = {
+            required_approving_review_count   = 1
+            dismiss_stale_reviews_on_push     = true
+            require_last_push_approval        = true
+            required_review_thread_resolution = true
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+### Using `terraform.tfvars.json` (recommended for GitOps)
+
+```hcl
+module "org_rulesets" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-org-rulesets"
+
+  rulesets = var.rulesets
+}
+```
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [github_organization_ruleset.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/organization_ruleset) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_rulesets"></a> [rulesets](#input\_rulesets) | Map of GitHub organization rulesets. Accepts the GitHub API export format directly — top-level export fields (id, source\_type, source) and unknown rule parameters are silently ignored. | <pre>map(object({<br/>    name        = string<br/>    target      = string # "branch" | "tag" | "push"<br/>    enforcement = string # "disabled" | "evaluate" | "active"<br/><br/>    # GitHub API export fields — present in exports, ignored by the module<br/>    id          = optional(number)<br/>    source_type = optional(string)<br/>    source      = optional(string)<br/><br/>    bypass_actors = optional(list(object({<br/>      actor_id    = optional(number)<br/>      actor_type  = string # "Integration" | "OrganizationAdmin" | "Team" | "RepositoryRole" | "DeployKey"<br/>      bypass_mode = string # "always" | "pull_request"<br/>    })), [])<br/><br/>    conditions = optional(object({<br/>      ref_name = optional(object({<br/>        include = optional(list(string), [])<br/>        exclude = optional(list(string), [])<br/>      }))<br/>      repository_name = optional(object({<br/>        include   = optional(list(string), [])<br/>        exclude   = optional(list(string), [])<br/>        protected = optional(bool, false)<br/>      }))<br/>    }))<br/><br/>    # Rules in GitHub API array format: [{ "type": "...", "parameters": {...} }]<br/>    # Boolean rules (creation, deletion, update, non_fast_forward,<br/>    # required_linear_history, required_signatures) carry no parameters.<br/>    rules = optional(list(object({<br/>      type = string<br/>      parameters = optional(object({<br/>        # pull_request<br/>        required_approving_review_count   = optional(number)<br/>        dismiss_stale_reviews_on_push     = optional(bool)<br/>        require_code_owner_review         = optional(bool)<br/>        require_last_push_approval        = optional(bool)<br/>        required_review_thread_resolution = optional(bool)<br/>        allowed_merge_methods             = optional(list(string))<br/>        required_reviewers                = optional(list(any)) # GitHub API field, not forwarded to provider<br/><br/>        # required_status_checks<br/>        required_status_checks               = optional(list(object({<br/>          context        = string<br/>          integration_id = optional(number)<br/>        })))<br/>        strict_required_status_checks_policy = optional(bool)<br/>        do_not_enforce_on_create             = optional(bool)<br/><br/>        # Pattern rules: commit_message_pattern, commit_author_email_pattern,<br/>        # committer_email_pattern, branch_name_pattern, tag_name_pattern<br/>        operator = optional(string) # "starts_with" | "ends_with" | "contains" | "regex"<br/>        pattern  = optional(string)<br/>        name     = optional(string)<br/>        negate   = optional(bool)<br/><br/>        # update rule — GitHub API field, not forwarded (provider uses a boolean)<br/>        update_allows_fetch_and_merge = optional(bool)<br/><br/>        # Push-only rules<br/>        restricted_file_paths      = optional(list(string))   # file_path_restriction<br/>        restricted_file_extensions = optional(list(string))   # file_extension_restriction<br/>        max_file_size              = optional(number)          # max_file_size (MB, 1-100)<br/>        max_file_path_length       = optional(number)          # max_file_path_length (1-32767)<br/>      }))<br/>    })), [])<br/>  }))</pre> | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_node_ids"></a> [node\_ids](#output\_node\_ids) | Map of ruleset logical key to ruleset GraphQL node\_id |
+| <a name="output_ruleset_etags"></a> [ruleset\_etags](#output\_ruleset\_etags) | Map of ruleset logical key to ruleset etag |
+| <a name="output_ruleset_ids"></a> [ruleset\_ids](#output\_ruleset\_ids) | Map of ruleset logical key to ruleset GraphQL node\_id |
+
+## Examples
+
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples):
+
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples/basic) - Org-wide default branch protection with CI status check and bypass actor (`rulesets.json`)
+- [advanced](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples/advanced) - Multiple rulesets using full GitHub API export format, including extra fields that are silently ignored (`rulesets.json`)
+
+## Resources
+
+- **github\_organization\_ruleset**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/6.11.1/docs/resources/organization_ruleset)
+- **GitHub Terraform Provider**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs)
+- **GitHub Organization Rulesets**: [GitHub Docs](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+<!-- END_TF_DOCS -->

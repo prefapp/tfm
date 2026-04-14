@@ -186,6 +186,9 @@
         },
         "modules/github-repo": {
             "package-name": "github-repo"
+        },
+        "modules/github-org-rulesets": {
+            "package-name": "github-org-rulesets"
         }
     }
 }
