@@ -8,7 +8,7 @@ variable "redirects" {
     platform      = string
     redirect_uris = list(string)
   }))
-  description = "The redirect configuration for the Azure App Registration."
+  description = "Redirect URIs per platform. The module creates one `azuread_application_redirect_uris` per list element (by index); each platform (`PublicClient`, `SPA`, `Web`) may appear only once—merge all URIs for a platform into a single object."
   validation {
     condition     = alltrue([for r in var.redirects : contains(["PublicClient", "SPA", "Web"], r.platform)])
     error_message = "Each platform must be one of: PublicClient, SPA, or Web."

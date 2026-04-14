@@ -9,7 +9,7 @@ Use it when you want a single module to declare an app’s display name, redirec
 ## Key features
 
 - **App registration**: `azuread_application` with `requested_access_token_version = 2` and optional `required_resource_access` for Microsoft Graph when `msgraph_roles` is non-empty.
-- **Redirect URIs**: Separate `azuread_application_redirect_uris` resources per platform (`PublicClient`, `SPA`, or `Web`), validated on the `redirects` input.
+- **Redirect URIs**: One `azuread_application_redirect_uris` resource per element of `redirects` (indexed `for_each`), each with a `platform` of `PublicClient`, `SPA`, or `Web`. Because the resource is keyed by `application_id` and `type` (platform), supply **at most one list entry per platform** and put every URI for that platform in `redirect_uris` for that entry—do not repeat the same `platform` in multiple list items.
 - **Enterprise app**: `azuread_service_principal` with `use_existing = true` tied to the registered application.
 - **Members**: `azuread_app_role_assignment` for each object ID in `members` using the default app role (`00000000-0000-0000-0000-000000000000`).
 - **Microsoft Graph**: Every entry adds Graph to `required_resource_access` with `type = Scope` and `id` from the input (OAuth2 **delegated permission scope id** on Microsoft Graph). If `delegated = true`, the module also creates `azuread_app_role_assignment` on Microsoft Graph using `lookup(data.azuread_service_principal.msgraph.app_role_ids, id)`; that lookup expects `id` to be a **key** in `app_role_ids` (provider: keys are Graph **app role value** strings), which may differ from the scope UUID used in `required_resource_access`—check the data source or plan output if the assignment does not resolve.
