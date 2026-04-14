@@ -18,8 +18,8 @@ resource "azurerm_role_assignment" "quota_reader" {
 
 check "action_group_resource_group_fallback" {
   assert {
-    condition     = var.common.resource_group_name != null || length(local.action_group_resource_group_names) <= 1
-    error_message = "Set common.resource_group_name when action_group entries span multiple resource groups."
+    condition     = length(local.action_group_resource_group_names) <= 1
+    error_message = "All action_group entries must use the same resource_group_name. Multiple resource groups are not supported."
   }
 }
 
