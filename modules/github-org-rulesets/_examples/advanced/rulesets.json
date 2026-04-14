@@ -1,10 +1,7 @@
 {
   "default-branch-protection": {
-    "id": 11111,
     "name": "default-branch-protection",
     "target": "branch",
-    "source_type": "Organization",
-    "source": "my-org",
     "enforcement": "active",
     "bypass_actors": [
       {
@@ -31,7 +28,6 @@
           "require_code_owner_review": false,
           "require_last_push_approval": true,
           "required_review_thread_resolution": true,
-          "required_reviewers": [],
           "allowed_merge_methods": ["merge", "squash", "rebase"]
         }
       },
@@ -45,11 +41,8 @@
     ]
   },
   "production-strict": {
-    "id": 22222,
     "name": "production-strict",
     "target": "branch",
-    "source_type": "Organization",
-    "source": "my-org",
     "enforcement": "active",
     "bypass_actors": [
       {
@@ -86,7 +79,6 @@
           "require_code_owner_review": true,
           "require_last_push_approval": true,
           "required_review_thread_resolution": true,
-          "required_reviewers": [],
           "allowed_merge_methods": ["squash", "rebase"]
         }
       },
