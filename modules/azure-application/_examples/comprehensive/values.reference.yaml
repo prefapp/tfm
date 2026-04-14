@@ -21,10 +21,10 @@ extra_role_assignments:
   - role_definition_name: "Reader"
     scope: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-example"
 
-# Microsoft Graph: `required_resource_access` uses each `id` as an OAuth2 scope UUID (`type = Scope`).
-# If `delegated: true`, the same `id` is also used as the key in
-# `data.azuread_service_principal.msgraph.app_role_ids` for `azuread_app_role_assignment` (keys are
-# typically Graph app-role *value* strings, not the scope UUID). Confirm in your tenant / provider output.
+# Microsoft Graph: this reference example uses application permissions only.
+# Set `id` to the key expected by `data.azuread_service_principal.msgraph.app_role_ids`
+# (typically the Microsoft Graph app-role *value* string, not a delegated scope UUID).
+# Do not use this shape for delegated permissions unless the module accepts separate identifiers.
 msgraph_roles:
-  - id: "<match-required_resource_access-and-app_role_ids-lookup-for-your-tenant>"
-    delegated: true
+  - id: "User.Read.All"
+    delegated: false
