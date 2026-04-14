@@ -120,7 +120,11 @@ locals {
     for quota_key, quota in local.quota_alert_entries : quota_key => compact([
       for group in(
         length(coalesce(try(quota.action_groups, null), [])) > 0
-        ? coalesce(try(quota.action_groups, null), [])
+        ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
+          can(regex("^/subscriptions/", tostring(ag_ref)))
+          ? { id = tostring(ag_ref) }
+          : { name = tostring(ag_ref) }
+        )]
         : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
         ) : (
         can(tostring(group)) && startswith(tostring(group), "/")
