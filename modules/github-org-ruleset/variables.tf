@@ -115,4 +115,16 @@ variable "config" {
     ])
     error_message = "required_approving_review_count must be between 0 and 10."
   }
+
+  validation {
+    condition = var.config.target != "push" || anytrue([
+      for r in var.config.rules : contains([
+        "file_path_restriction",
+        "file_extension_restriction",
+        "max_file_size",
+        "max_file_path_length",
+      ], r.type)
+    ])
+    error_message = "Push target rulesets must include at least one push-only rule: file_path_restriction, file_extension_restriction, max_file_size, or max_file_path_length. See Known Limitations in the module README."
+  }
 }

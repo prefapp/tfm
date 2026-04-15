@@ -66,12 +66,7 @@ github.com/integrations/terraform-provider-github/v6/github.validateRules(...)
     util_ruleset_validation.go:94
 ```
 
-This is a provider-level nil pointer dereference in `validateRulesForPushTarget` — the SDK passes `[nil]` for unset optional blocks and the provider does not guard against it. There is no module-level workaround.
-
-**Options until the provider is fixed:**
-- Pin to a provider version that does not have this bug (check the [provider changelog](https://github.com/integrations/terraform-provider-github/releases))
-- Add at least one push-specific rule to any push target ruleset
-- Track the upstream issue: [integrations/terraform-provider-github](https://github.com/integrations/terraform-provider-github/issues)
+This is a provider-level nil pointer dereference in `validateRulesForPushTarget`. The module guards against this at the input validation layer — attempting to apply a `push` ruleset with no push-specific rules will produce a clear Terraform validation error rather than a provider panic.
 
 ## Rules format
 
