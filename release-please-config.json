@@ -189,6 +189,9 @@
         },
         "modules/github-org-rulesets": {
             "package-name": "github-org-rulesets"
+        },
+        "modules/github-org-ruleset": {
+            "package-name": "github-org-ruleset"
         }
     }
 }

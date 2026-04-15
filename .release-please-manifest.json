@@ -38,7 +38,7 @@
     "modules/aws-rds": "0.1.4",
     "modules/aws-s3": "0.1.0",
     "modules/aws-kms-multiple": "0.2.0",
-    "modules/aws-kms": "0.3.0",   
+    "modules/aws-kms": "0.3.0",
     "modules/azure-backup-vault": "0.1.10",
     "modules/azure-event-hub": "0.1.1",
     "modules/aws-cloudfront-delivery": "0.2.6",
@@ -61,5 +61,6 @@
     "modules/github-files-set": "0.1.0",
     "modules/github-repo": "0.1.0",
     "modules/github-org-webhook": "0.2.0",
-    "modules/github-org-rulesets": "0.1.0"
+    "modules/github-org-rulesets": "0.1.0",
+    "modules/github-org-ruleset": "0.1.0"
 }
