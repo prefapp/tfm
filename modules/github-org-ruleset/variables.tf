@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub organization ruleset configuration. Accepts the GitHub API export format directly — top-level export fields (id, source_type, source) and unknown rule parameters are silently ignored."
+  description = "GitHub organization ruleset configuration. Accepts the GitHub API export format directly for top-level export fields (id, source_type, source), which are ignored by the module. Within rules[*].parameters, only the explicitly modeled fields are accepted."
   type = object({
     name        = string
     target      = string # "branch" | "tag" | "push"
