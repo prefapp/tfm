@@ -106,6 +106,23 @@ variable "config" {
   }
 
   validation {
+    condition     = length(distinct([for r in var.config.rules : r.type])) == length(var.config.rules)
+    error_message = "Each rule type must appear at most once in the rules list. Duplicate rule types are not supported."
+  }
+
+  validation {
+    condition = alltrue([
+      for r in var.config.rules :
+      r.type != "pull_request" ? true :
+      r.parameters == null ? true :
+      alltrue([
+        for rr in coalesce(r.parameters.required_reviewers, []) : rr.reviewer != null
+      ])
+    ])
+    error_message = "Every required_reviewers entry must include a non-null 'reviewer' block."
+  }
+
+  validation {
     condition = alltrue([
       for r in var.config.rules :
       r.type != "pull_request" ? true :
