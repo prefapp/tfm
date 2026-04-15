@@ -85,22 +85,22 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for k, v in var.config : contains(["branch", "tag", "push"], v.target)
+      for k, v in coalesce(var.config, {}) : contains(["branch", "tag", "push"], v.target)
     ])
     error_message = "Each ruleset target must be one of: 'branch', 'tag', 'push'."
   }
 
   validation {
     condition = alltrue([
-      for k, v in var.config : contains(["disabled", "evaluate", "active"], v.enforcement)
+      for k, v in coalesce(var.config, {}) : contains(["disabled", "evaluate", "active"], v.enforcement)
     ])
     error_message = "Each ruleset enforcement must be one of: 'disabled', 'evaluate', 'active'."
   }
 
   validation {
     condition = alltrue(flatten([
-      for k, v in var.config : [
-        for a in v.bypass_actors : contains(["Integration", "OrganizationAdmin", "Team", "RepositoryRole", "DeployKey"], a.actor_type)
+      for k, v in coalesce(var.config, {}) : [
+        for a in coalesce(v.bypass_actors, []) : contains(["Integration", "OrganizationAdmin", "Team", "RepositoryRole", "DeployKey"], a.actor_type)
       ]
     ]))
     error_message = "Each bypass_actor actor_type must be one of: 'Integration', 'OrganizationAdmin', 'Team', 'RepositoryRole', 'DeployKey'."
@@ -108,8 +108,8 @@ variable "config" {
 
   validation {
     condition = alltrue(flatten([
-      for k, v in var.config : [
-        for a in v.bypass_actors : contains(["always", "pull_request"], a.bypass_mode)
+      for k, v in coalesce(var.config, {}) : [
+        for a in coalesce(v.bypass_actors, []) : contains(["always", "pull_request"], a.bypass_mode)
       ]
     ]))
     error_message = "Each bypass_actor bypass_mode must be one of: 'always', 'pull_request'."
@@ -117,16 +117,16 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for k, v in var.config :
-      length(distinct([for r in v.rules : r.type])) == length(v.rules)
+      for k, v in coalesce(var.config, {}) :
+      length(distinct([for r in coalesce(v.rules, []) : r.type])) == length(coalesce(v.rules, []))
     ])
     error_message = "Each rule type must appear at most once per ruleset in the rules list. Duplicate rule types are not supported."
   }
 
   validation {
     condition = alltrue([
-      for k, v in var.config : alltrue([
-        for r in v.rules :
+      for k, v in coalesce(var.config, {}) : alltrue([
+        for r in coalesce(v.rules, []) :
         r.type != "pull_request" ? true :
         r.parameters == null ? true :
         alltrue([
@@ -139,8 +139,8 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for k, v in var.config : alltrue([
-        for r in v.rules :
+      for k, v in coalesce(var.config, {}) : alltrue([
+        for r in coalesce(v.rules, []) :
         r.type != "pull_request" ? true :
         r.parameters == null ? true :
         r.parameters.required_approving_review_count == null ? true :
@@ -152,8 +152,8 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for k, v in var.config : alltrue([
-        for r in v.rules : contains([
+      for k, v in coalesce(var.config, {}) : alltrue([
+        for r in coalesce(v.rules, []) : contains([
           "creation", "deletion", "update", "non_fast_forward",
           "required_linear_history", "required_signatures",
           "pull_request", "required_status_checks",
@@ -170,8 +170,8 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for k, v in var.config : alltrue([
-        for r in v.rules :
+      for k, v in coalesce(var.config, {}) : alltrue([
+        for r in coalesce(v.rules, []) :
         contains(["creation", "deletion", "update", "non_fast_forward",
                   "required_linear_history", "required_signatures"], r.type)
         ? true
@@ -183,8 +183,8 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for k, v in var.config : alltrue([
-        for r in v.rules :
+      for k, v in coalesce(var.config, {}) : alltrue([
+        for r in coalesce(v.rules, []) :
         # Push-only rules — valid only for push target
         contains(["file_path_restriction", "file_extension_restriction",
                   "max_file_size", "max_file_path_length"], r.type)
@@ -210,8 +210,8 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for k, v in var.config : v.target != "push" || anytrue([
-        for r in v.rules : contains([
+      for k, v in coalesce(var.config, {}) : v.target != "push" || anytrue([
+        for r in coalesce(v.rules, []) : contains([
           "file_path_restriction",
           "file_extension_restriction",
           "max_file_size",
