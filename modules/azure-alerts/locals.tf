@@ -170,14 +170,14 @@ locals {
               )
             )
             : (
-              coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name) == null
+              coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name) == null || try(alert.action.action_group.name, null) == null
               ? null
               : try(
                 local.action_group_ids_by_ref[
-                  "${coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name)}/${alert.action.action_group.name}"
+                  "${coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name)}/${try(alert.action.action_group.name, null)}"
                 ],
                 data.azurerm_monitor_action_group.referenced[
-                  "${coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name)}/${alert.action.action_group.name}"
+                  "${coalesce(try(alert.action.action_group.resource_group_name, null), local.resource_group_name)}/${try(alert.action.action_group.name, null)}"
                 ].id
               )
             )
