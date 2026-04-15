@@ -1,4 +1,4 @@
-variable "rulesets" {
+variable "config" {
   description = "Map of GitHub organization rulesets. Accepts the GitHub API export format directly — top-level export fields (id, source_type, source) and unknown rule parameters are silently ignored."
   type = map(object({
     name        = string
@@ -85,21 +85,21 @@ variable "rulesets" {
 
   validation {
     condition = alltrue([
-      for k, v in var.rulesets : contains(["branch", "tag", "push"], v.target)
+      for k, v in var.config : contains(["branch", "tag", "push"], v.target)
     ])
     error_message = "Each ruleset target must be one of: 'branch', 'tag', 'push'."
   }
 
   validation {
     condition = alltrue([
-      for k, v in var.rulesets : contains(["disabled", "evaluate", "active"], v.enforcement)
+      for k, v in var.config : contains(["disabled", "evaluate", "active"], v.enforcement)
     ])
     error_message = "Each ruleset enforcement must be one of: 'disabled', 'evaluate', 'active'."
   }
 
   validation {
     condition = alltrue(flatten([
-      for k, v in var.rulesets : [
+      for k, v in var.config : [
         for a in v.bypass_actors : contains(["Integration", "OrganizationAdmin", "Team", "RepositoryRole", "DeployKey"], a.actor_type)
       ]
     ]))
@@ -108,7 +108,7 @@ variable "rulesets" {
 
   validation {
     condition = alltrue(flatten([
-      for k, v in var.rulesets : [
+      for k, v in var.config : [
         for a in v.bypass_actors : contains(["always", "pull_request"], a.bypass_mode)
       ]
     ]))
@@ -117,7 +117,7 @@ variable "rulesets" {
 
   validation {
     condition = alltrue([
-      for k, v in var.rulesets : alltrue([
+      for k, v in var.config : alltrue([
         for r in v.rules :
         r.type != "pull_request" ? true :
         r.parameters == null ? true :

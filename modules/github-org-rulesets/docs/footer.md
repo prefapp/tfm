@@ -2,8 +2,8 @@
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples/basic) - Org-wide default branch protection with CI status check and bypass actor (`rulesets.json`)
-- [advanced](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples/advanced) - Multiple rulesets using full GitHub API export format, including extra fields that are silently ignored (`rulesets.json`)
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples/basic) - Org-wide default branch protection with CI status check and bypass actor (`config.json`)
+- [advanced](https://github.com/prefapp/tfm/tree/main/modules/github-org-rulesets/_examples/advanced) - Multiple rulesets using full GitHub API export format, including required_reviewers, copilot_code_review, and extra fields that are silently ignored (`config.json`)
 
 ## Resources
 

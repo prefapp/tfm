@@ -9,13 +9,13 @@ terraform {
 }
 
 locals {
-  rulesets = jsondecode(file("${path.module}/rulesets.json"))
+  config = jsondecode(file("${path.module}/config.json")).config
 }
 
 module "org_rulesets" {
   source = "../../"
 
-  rulesets = local.rulesets
+  config = local.config
 }
 
 output "ruleset_ids" {

@@ -2,16 +2,18 @@
 
 ## Overview
 
-This module creates and manages **GitHub Organization Rulesets** using the `github_organization_ruleset` resource. It accepts a map of ruleset definitions, creating one ruleset resource per entry via `for_each`.
+This module creates and manages **multiple GitHub Organization Rulesets** by calling the [`github-org-ruleset`](../github-org-ruleset) module with `for_each`. It accepts a map of ruleset definitions, creating one ruleset per map entry.
 
 Organization Rulesets are a modern GitHub feature that supersedes branch protection rules, offering finer-grained control over branch and tag governance across all repositories in an organization. They support targeting by ref name patterns or repository name patterns, defining bypass actors, and enforcing a comprehensive set of rules including pull request requirements, status checks, commit message patterns, and more.
 
 This module is designed to be driven by JSON configuration. It natively accepts the **GitHub API export format**, so you can use a ruleset exported directly from the GitHub API or the GitHub CLI as input — export-only fields such as `id`, `source_type`, and `source` are silently ignored.
 
+To manage a **single ruleset**, use the [`github-org-ruleset`](../github-org-ruleset) module directly.
+
 ## Key Features
 
 - **GitHub API export compatible**: Drop in a ruleset exported from `gh api` or the GitHub web UI without any manual reformatting
-- **Multi-ruleset composition**: Manage multiple rulesets from a single module call using a `rulesets` map
+- **Multi-ruleset composition**: Manage multiple rulesets from a single module call using a `config` map
 - **All bypass actor types**: Supports `Integration`, `OrganizationAdmin`, `Team`, `RepositoryRole`, and `DeployKey`
 - **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern or protected status
 - **Full rules coverage**: All boolean rules, `pull_request` (including `required_reviewers`), `required_status_checks`, all five pattern rules, `copilot_code_review`, and all four push-only rules
@@ -20,7 +22,7 @@ This module is designed to be driven by JSON configuration. It natively accepts 
 ## Supported rule types
 
 | Rule type | Target | Parameters |
-|-----------|--------|-----------|
+| --------- | ------ | ---------- |
 | `creation` | branch, tag | — |
 | `deletion` | branch, tag | — |
 | `update` | branch, tag | — |
@@ -49,7 +51,7 @@ The GitHub API can export rulesets where `ref_name.include` is `[]` (displayed i
 When the module receives `ref_name.include = []`, it automatically substitutes a safe fallback based on the target type:
 
 | `target` | Default `ref_name.include` |
-|----------|---------------------------|
+| -------- | ------------------------- |
 | `branch` | `["~DEFAULT_BRANCH"]` |
 | `tag`    | `["~ALL"]` |
 
@@ -114,7 +116,7 @@ Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_l
 module "org_rulesets" {
   source = "git::https://github.com/prefapp/tfm.git//modules/github-org-rulesets"
 
-  rulesets = {
+  config = {
     default-branch-protection = {
       name        = "default-branch-protection"
       target      = "branch"
@@ -145,16 +147,37 @@ module "org_rulesets" {
 }
 ```
 
-### Using `rulesets.json` (recommended for GitOps)
+### Using `config.json` (recommended for GitOps)
 
 ```hcl
 locals {
-  rulesets = jsondecode(file("${path.module}/rulesets.json"))
+  config = jsondecode(file("${path.module}/config.json")).config
 }
 
 module "org_rulesets" {
   source = "git::https://github.com/prefapp/tfm.git//modules/github-org-rulesets"
 
-  rulesets = local.rulesets
+  config = local.config
+}
+```
+
+`config.json`:
+
+```json
+{
+  "config": {
+    "default-branch-protection": {
+      "name": "default-branch-protection",
+      "target": "branch",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] }
+      },
+      "rules": [
+        { "type": "deletion" },
+        { "type": "non_fast_forward" }
+      ]
+    }
+  }
 }
 ```
