@@ -298,7 +298,7 @@ resource "azurerm_consumption_budget_subscription" "this" {
 # Rule for Quota Alert to monitor the quota metrics at the subscription level and send notifications when the specified threshold is reached
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_scheduled_query_rules_alert_v2
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
-  for_each = local.quota_alert_entries
+  for_each = local.resource_group_name != null ? local.quota_alert_entries : {}
 
   name                             = each.value.name
   resource_group_name              = local.resource_group_name
@@ -364,7 +364,10 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 # Activity Log Alerts to monitor the activity logs at the subscription level and send notifications when the specified conditions are met
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_activity_log_alert
 resource "azurerm_monitor_activity_log_alert" "this" {
-  for_each = { for idx, alert in var.log_alert : alert.name => alert }
+  for_each = {
+    for alert in var.log_alert : alert.name => alert
+    if coalesce(try(alert.resource_group_name, null), local.resource_group_name) != null
+  }
 
   name                = each.value.name
   resource_group_name = coalesce(each.value.resource_group_name, local.resource_group_name)

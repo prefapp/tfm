@@ -40,6 +40,7 @@ locals {
   managed_action_groups = var.action_group
 
   # Membership map of managed action groups by "resource_group/name".
+  # Validated: no two entries may share the same (resource_group_name, name) pair.
   managed_action_group_ref_keys = {
     for _, ag in var.action_group : "${ag.resource_group_name}/${ag.name}" => true
   }

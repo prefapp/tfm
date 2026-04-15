@@ -134,6 +134,13 @@ variable "action_group" {
     ])
     error_message = "Each receiver type in action_group must use unique receiver 'name' values to avoid ordering collisions."
   }
+
+  validation {
+    condition = length(distinct([
+      for _, ag in var.action_group : "${ag.resource_group_name}/${ag.name}"
+    ])) == length(var.action_group)
+    error_message = "Each action_group entry must have a unique (resource_group_name, name) combination. Duplicate pairs would cause a key collision in the internal reference map."
+  }
 }
 
 # Budget Alert
