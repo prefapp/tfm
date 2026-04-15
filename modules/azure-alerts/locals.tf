@@ -75,14 +75,16 @@ locals {
 
   # Source groups referenced by quota alert, with fallback to managed action groups.
   # Normalize all entries to objects so conditional branches keep a consistent type.
+  # Guard string conversion so unexpected object/list/map values in quota.action_groups
+  # do not fail local evaluation with an Invalid function argument error.
   quota_contact_group_sources = flatten([
     for _, quota in local.quota_alert_entries : (
       length(coalesce(try(quota.action_groups, null), [])) > 0
-      ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
-        can(regex("^/subscriptions/", tostring(ag_ref)))
-        ? { id = tostring(ag_ref), name = null, resource_group_name = null }
-        : { id = null, name = tostring(ag_ref), resource_group_name = null }
-      )]
+      ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : {
+        id = can(regex("^/subscriptions/", try(tostring(ag_ref), ""))) ? try(tostring(ag_ref), null) : null
+        name = can(regex("^/subscriptions/", try(tostring(ag_ref), ""))) ? null : try(tostring(ag_ref), null)
+        resource_group_name = null
+      }]
       : [for _, ag in var.action_group : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
     )
   ])
