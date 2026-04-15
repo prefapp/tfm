@@ -243,8 +243,8 @@ Monitor administrative and operational events across your subscription:
 The module derives an effective `resource_group_name` using this order of precedence:
 
 1. **`common.resource_group_name`** – always preferred when set.
-2. **Single configured `action_group` entry** – if exactly one entry exists in the `action_group` map and it shares a single `resource_group_name`, that value is used as the fallback.
-3. **`null`** – when neither of the above is available.
+2. **Configured `action_group` entries with a shared resource group** – if one or more entries exist in the `action_group` map and they all use the same `resource_group_name`, that shared value is used as the fallback.
+3. **`null`** – when neither of the above can be determined.
 
 This effective value is used for:
 - Creating module-managed resources (`identity`, `quota_alert`, `backup_alert`, `log_alert` entries without an explicit `resource_group_name`).
