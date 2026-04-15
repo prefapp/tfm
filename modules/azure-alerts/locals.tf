@@ -125,10 +125,10 @@ locals {
       for group in(
         length(coalesce(try(quota.action_groups, null), [])) > 0
         ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
-          can(regex("^/subscriptions/", tostring(ag_ref)))
-          ? { id = tostring(ag_ref), name = null, resource_group_name = null }
-          : { id = null, name = tostring(ag_ref), resource_group_name = null }
-        )]
+          can(regex("^/subscriptions/", try(tostring(ag_ref), "")))
+          ? { id = try(tostring(ag_ref), null), name = null, resource_group_name = null }
+          : { id = null, name = try(tostring(ag_ref), null), resource_group_name = null }
+        ) if try(tostring(ag_ref), null) != null]
         : [for _, ag in var.action_group : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
         ) : (
         try(group.id, null) != null
