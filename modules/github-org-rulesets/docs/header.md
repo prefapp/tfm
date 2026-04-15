@@ -1,4 +1,4 @@
-# **GitHub Organization Ruleset Terraform Module**
+# **GitHub Organization Rulesets Terraform Module**
 
 ## Overview
 
@@ -6,7 +6,7 @@ This module creates and manages **GitHub Organization Rulesets** using the `gith
 
 Organization Rulesets are a modern GitHub feature that supersedes branch protection rules, offering finer-grained control over branch and tag governance across all repositories in an organization. They support targeting by ref name patterns or repository name patterns, defining bypass actors, and enforcing a comprehensive set of rules including pull request requirements, status checks, commit message patterns, and more.
 
-This module is designed to be driven by JSON configuration. It natively accepts the **GitHub API export format**, so you can use a ruleset exported directly from the GitHub API or the GitHub CLI as input — extra fields such as `id`, `source_type`, `source`, and `required_reviewers` are silently ignored.
+This module is designed to be driven by JSON configuration. It natively accepts the **GitHub API export format**, so you can use a ruleset exported directly from the GitHub API or the GitHub CLI as input — export-only fields such as `id`, `source_type`, and `source` are silently ignored.
 
 ## Key Features
 
@@ -14,8 +14,31 @@ This module is designed to be driven by JSON configuration. It natively accepts 
 - **Multi-ruleset composition**: Manage multiple rulesets from a single module call using a `rulesets` map
 - **All bypass actor types**: Supports `Integration`, `OrganizationAdmin`, `Team`, `RepositoryRole`, and `DeployKey`
 - **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern or protected status
-- **Full rules coverage**: All boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) plus all block rules (`pull_request`, `required_status_checks`, and all pattern rules)
+- **Full rules coverage**: All boolean rules, `pull_request` (including `required_reviewers`), `required_status_checks`, all five pattern rules, `copilot_code_review`, and all four push-only rules
 - **All dynamic blocks**: Every optional block is conditional, so unused rules add zero noise to the Terraform plan
+
+## Supported rule types
+
+| Rule type | Target | Parameters |
+|-----------|--------|-----------|
+| `creation` | branch, tag | — |
+| `deletion` | branch, tag | — |
+| `update` | branch, tag | — |
+| `non_fast_forward` | branch, tag | — |
+| `required_linear_history` | branch, tag | — |
+| `required_signatures` | branch, tag | — |
+| `pull_request` | branch | `required_approving_review_count`, `dismiss_stale_reviews_on_push`, `require_code_owner_review`, `require_last_push_approval`, `required_review_thread_resolution`, `allowed_merge_methods`, `required_reviewers[]` |
+| `required_status_checks` | branch | `required_status_checks[]`, `strict_required_status_checks_policy`, `do_not_enforce_on_create` |
+| `commit_message_pattern` | branch, tag | `operator`, `pattern`, `name`, `negate` |
+| `commit_author_email_pattern` | branch, tag | `operator`, `pattern`, `name`, `negate` |
+| `committer_email_pattern` | branch, tag | `operator`, `pattern`, `name`, `negate` |
+| `branch_name_pattern` | branch | `operator`, `pattern`, `name`, `negate` |
+| `tag_name_pattern` | tag | `operator`, `pattern`, `name`, `negate` |
+| `copilot_code_review` | branch | `review_on_push`, `review_draft_pull_requests` |
+| `file_path_restriction` | push | `restricted_file_paths[]` |
+| `file_extension_restriction` | push | `restricted_file_extensions[]` |
+| `max_file_size` | push | `max_file_size` (MB, 1–100) |
+| `max_file_path_length` | push | `max_file_path_length` (1–32767) |
 
 ## Known limitations
 
@@ -61,13 +84,27 @@ Rules follow the GitHub API array format — a list of objects with a `type` fie
     "type": "pull_request",
     "parameters": {
       "required_approving_review_count": 1,
-      "dismiss_stale_reviews_on_push": true
+      "dismiss_stale_reviews_on_push": true,
+      "required_reviewers": [
+        {
+          "minimum_approvals": 1,
+          "file_patterns": ["src/payments/**"],
+          "reviewer": { "id": 12345, "type": "Team" }
+        }
+      ]
+    }
+  },
+  {
+    "type": "copilot_code_review",
+    "parameters": {
+      "review_on_push": true,
+      "review_draft_pull_requests": false
     }
   }
 ]
 ```
 
-Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) require no `parameters` block. Complex rules (`pull_request`, `required_status_checks`, pattern rules) carry their configuration inside `parameters`.
+Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) require no `parameters` block. All other rules carry their configuration inside `parameters`.
 
 ## Basic Usage
 
@@ -108,12 +145,16 @@ module "org_rulesets" {
 }
 ```
 
-### Using `terraform.tfvars.json` (recommended for GitOps)
+### Using `rulesets.json` (recommended for GitOps)
 
 ```hcl
+locals {
+  rulesets = jsondecode(file("${path.module}/rulesets.json"))
+}
+
 module "org_rulesets" {
   source = "git::https://github.com/prefapp/tfm.git//modules/github-org-rulesets"
 
-  rulesets = var.rulesets
+  rulesets = local.rulesets
 }
 ```

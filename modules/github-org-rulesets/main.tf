@@ -72,6 +72,18 @@ resource "github_organization_ruleset" "this" {
         required_approving_review_count   = pull_request.value.required_approving_review_count
         required_review_thread_resolution = pull_request.value.required_review_thread_resolution
         allowed_merge_methods             = pull_request.value.allowed_merge_methods
+
+        dynamic "required_reviewers" {
+          for_each = [for r in coalesce(pull_request.value.required_reviewers, []) : r if r.reviewer != null]
+          content {
+            reviewer {
+              id   = required_reviewers.value.reviewer.id
+              type = required_reviewers.value.reviewer.type
+            }
+            file_patterns     = required_reviewers.value.file_patterns
+            minimum_approvals = required_reviewers.value.minimum_approvals
+          }
+        }
       }
     }
 
@@ -138,6 +150,14 @@ resource "github_organization_ruleset" "this" {
         pattern  = tag_name_pattern.value.pattern
         name     = tag_name_pattern.value.name
         negate   = tag_name_pattern.value.negate
+      }
+    }
+
+    dynamic "copilot_code_review" {
+      for_each = lookup(local.rules_by_type[each.key], "copilot_code_review", null) != null ? [local.rules_by_type[each.key]["copilot_code_review"]] : []
+      content {
+        review_on_push             = copilot_code_review.value.review_on_push
+        review_draft_pull_requests = copilot_code_review.value.review_draft_pull_requests
       }
     }
 

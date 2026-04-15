@@ -41,7 +41,14 @@ variable "rulesets" {
         require_last_push_approval        = optional(bool)
         required_review_thread_resolution = optional(bool)
         allowed_merge_methods             = optional(list(string))
-        required_reviewers                = optional(list(any)) # GitHub API field, not forwarded to provider
+        required_reviewers = optional(list(object({
+          minimum_approvals = optional(number, 0)
+          file_patterns     = optional(list(string), [])
+          reviewer = optional(object({
+            id   = number
+            type = string # "Team"
+          }))
+        })), [])
 
         # required_status_checks
         required_status_checks               = optional(list(object({
@@ -57,6 +64,10 @@ variable "rulesets" {
         pattern  = optional(string)
         name     = optional(string)
         negate   = optional(bool)
+
+        # copilot_code_review
+        review_on_push             = optional(bool)
+        review_draft_pull_requests = optional(bool)
 
         # update rule — GitHub API field, not forwarded (provider uses a boolean)
         update_allows_fetch_and_merge = optional(bool)
