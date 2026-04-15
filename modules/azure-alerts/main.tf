@@ -306,7 +306,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
   display_name                     = each.value.display_name
   description                      = try(each.value.description, null)
   enabled                          = each.value.enabled
-  auto_mitigation_enabled          = each.value.auto_mitigation_enabled
+  auto_mitigation_enabled          = try(each.value.auto_mitigation_enabled, null)
   evaluation_frequency             = each.value.evaluation_frequency
   scopes                           = each.value.scopes
   severity                         = each.value.severity
