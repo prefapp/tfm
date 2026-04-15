@@ -5,7 +5,7 @@ locals {
     (
       can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
       ? { (var.budget.name) = var.budget }
-      : { for _, budget in tomap(var.budget) : budget.name => budget }
+      : { for k, budget in tomap(var.budget) : k => budget }
     )
   )
 
@@ -15,7 +15,7 @@ locals {
     (
       can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
       ? { (var.quota_alert.name) = var.quota_alert }
-      : { for _, quota in tomap(var.quota_alert) : quota.name => quota }
+      : { for quota_key, quota in tomap(var.quota_alert) : quota_key => quota }
     )
   )
 
@@ -74,12 +74,14 @@ locals {
   ])
 
   # Source groups referenced by quota alert, with fallback to managed action groups.
+  # Keep full resource IDs as plain strings so downstream logic can treat them as IDs
+  # without assuming object entries have a `name` attribute.
   quota_contact_group_sources = flatten([
     for _, quota in local.quota_alert_entries : (
       length(coalesce(try(quota.action_groups, null), [])) > 0
       ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
         can(regex("^/subscriptions/", ag_ref))
-        ? { id = ag_ref }
+        ? ag_ref
         : { name = ag_ref }
       )]
       : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
