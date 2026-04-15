@@ -193,7 +193,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_ruleset"></a> [ruleset](#module\_ruleset) | git::https://github.com/prefapp/tfm.git//modules/github-org-ruleset | feat/github-org-ruleset |
+| <a name="module_ruleset"></a> [ruleset](#module\_ruleset) | ../github-org-ruleset | n/a |
 
 ## Resources
 
