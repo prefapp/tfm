@@ -87,7 +87,7 @@ module "postgresql" {
 | `outputs.tf` | Outputs |
 | `versions.tf` | Terraform and provider constraints |
 | `CHANGELOG.md` | Release history |
-| `docs/header.md` | Overview (this file) |
+| `docs/header.md` | Overview (terraform-docs header) |
 | `docs/footer.md` | Examples and links |
 | `_examples/basic` | Minimal example |
 | `_examples/comprehensive` | Reference YAML |
