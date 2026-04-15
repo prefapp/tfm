@@ -160,48 +160,56 @@ variable "budget" {
 
   validation {
     condition = alltrue([
-      for _, budget in(
-        var.budget == null ? {} : (
+      for budget in(
+        var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? { (var.budget.name) = var.budget }
-          : { for _, b in tomap(var.budget) : b.name => b }
+          ? [var.budget]
+          : [for _, b in tomap(var.budget) : b]
         )
-      ) : length(budget.notification) > 0
+      ) : try(length(budget.notification), 0) > 0
     ])
     error_message = "Each budget entry must contain at least one notification block."
   }
 
   validation {
-    condition = length(distinct([
-      for _, budget in(
-        var.budget == null ? {} : (
+    condition = alltrue([
+      for budget in(
+        var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? { (var.budget.name) = var.budget }
-          : { for _, b in tomap(var.budget) : b.name => b }
+          ? [var.budget]
+          : [for _, b in tomap(var.budget) : b]
         )
-      ) : budget.name
-      ])) == length([
-      for _, budget in(
-        var.budget == null ? {} : (
+      ) : try(budget.name, null) != null
+    ]) && length(distinct([
+      for budget in(
+        var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? { (var.budget.name) = var.budget }
-          : { for _, b in tomap(var.budget) : b.name => b }
+          ? [var.budget]
+          : [for _, b in tomap(var.budget) : b]
         )
-      ) : budget.name
+      ) : try(budget.name, null)
+    ])) == length([
+      for budget in(
+        var.budget == null ? [] : (
+          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
+          ? [var.budget]
+          : [for _, b in tomap(var.budget) : b]
+        )
+      ) : try(budget.name, null)
     ])
     error_message = "Each budget.name must be unique."
   }
 
   validation {
     condition = alltrue(flatten([
-      for _, budget in(
-        var.budget == null ? {} : (
+      for budget in(
+        var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? { (var.budget.name) = var.budget }
-          : { for _, b in tomap(var.budget) : b.name => b }
+          ? [var.budget]
+          : [for _, b in tomap(var.budget) : b]
         )
         ) : [
-        for n in budget.notification : [
+        for n in try(budget.notification, []) : [
           for g in try(n.contact_groups, []) : can(tostring(g)) || can(g.name)
         ]
       ]
