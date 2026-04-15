@@ -18,8 +18,19 @@ resource "azurerm_role_assignment" "quota_reader" {
 
 check "action_group_resource_group_fallback" {
   assert {
-    condition     = length(local.action_group_resource_group_names) <= 1
-    error_message = "All action_group entries must use the same resource_group_name. Multiple resource groups are not supported."
+    condition = (
+      length(local.action_group_resource_group_names) <= 1 ||
+      !(
+        var.common.resource_group_name == null && (
+          var.common.tags_from_rg ||
+          var.identity != null ||
+          length(local.quota_alert_entries) > 0 ||
+          var.backup_alert != null ||
+          length([for alert in var.log_alert : alert if try(alert.resource_group_name, null) == null]) > 0
+        )
+      )
+    )
+    error_message = "action_group entries may use different resource_group_name values unless a single resource group must be inferred for tags_from_rg, identity, quota_alert, backup_alert, or log_alert entries without resource_group_name."
   }
 }
 
