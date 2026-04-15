@@ -1,5 +1,5 @@
 variable "config" {
-  description = "Map of GitHub organization rulesets. Accepts the GitHub API export format directly — top-level export fields (id, source_type, source) and unknown rule parameters are silently ignored."
+  description = "Map of GitHub organization rulesets. Accepts the GitHub API export format directly for modeled fields, including top-level export fields (id, source_type, source), which are ignored by the module. Rule parameters must be limited to the supported attributes declared by this variable type; callers must strip any unknown or unmodeled parameter keys before passing input to the module."
   type = map(object({
     name        = string
     target      = string # "branch" | "tag" | "push"
