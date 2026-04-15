@@ -3,7 +3,7 @@ locals {
   # Boolean rules (deletion, non_fast_forward, …) have null parameters — that's fine,
   # we only check key presence for those. Complex rules carry their parameters object.
   rules_by_type = {
-    for r in var.config.rules : r.type => r.parameters
+    for r in coalesce(var.config.rules, []) : r.type => r.parameters
   }
 }
 
