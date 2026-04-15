@@ -13,7 +13,7 @@ resource "github_organization_ruleset" "this" {
   enforcement = var.config.enforcement
 
   dynamic "bypass_actors" {
-    for_each = var.config.bypass_actors
+    for_each = coalesce(var.config.bypass_actors, [])
     content {
       actor_id    = bypass_actors.value.actor_id
       actor_type  = bypass_actors.value.actor_type
@@ -32,10 +32,10 @@ resource "github_organization_ruleset" "this" {
           # The Terraform provider requires at least one entry and panics with empty
           # arrays. Since this state is irrepresentable in the provider, we default
           # to ~DEFAULT_BRANCH for branch targets and ~ALL for tag targets.
-          include = length(ref_name.value.include) > 0 ? ref_name.value.include : (
+          include = length(coalesce(ref_name.value.include, [])) > 0 ? coalesce(ref_name.value.include, []) : (
             var.config.target == "branch" ? ["~DEFAULT_BRANCH"] : ["~ALL"]
           )
-          exclude = ref_name.value.exclude
+          exclude = coalesce(ref_name.value.exclude, [])
         }
       }
 
