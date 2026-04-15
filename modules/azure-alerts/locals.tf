@@ -73,12 +73,14 @@ locals {
   ])
 
   # Source groups referenced by quota alert, with fallback to managed action groups.
+  # Keep full resource IDs as plain strings so downstream logic can treat them as IDs
+  # without assuming object entries have a `name` attribute.
   quota_contact_group_sources = flatten([
     for _, quota in local.quota_alert_entries : (
       length(coalesce(try(quota.action_groups, null), [])) > 0
       ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
         can(regex("^/subscriptions/", ag_ref))
-        ? { id = ag_ref }
+        ? ag_ref
         : { name = ag_ref }
       )]
       : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
