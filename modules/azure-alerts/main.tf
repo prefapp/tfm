@@ -350,7 +350,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
   identity {
     type         = each.value.identity.type
-    identity_ids = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : each.value.identity.identity_ids
+    identity_ids = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : coalesce(try(each.value.identity.identity_ids, null), [])
   }
 
   action {
@@ -361,7 +361,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
   lifecycle {
     precondition {
-      condition     = var.identity != null || length(coalesce(each.value.identity.identity_ids, [])) > 0
+      condition     = var.identity != null || length(coalesce(try(each.value.identity.identity_ids, null), [])) > 0
       error_message = "When quota_alert '${each.key}' is set, either var.identity must be configured (to let the module create a managed identity) or quota_alert['${each.key}'].identity.identity_ids must include at least one identity ID."
     }
 
@@ -433,7 +433,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
 
 # Alert Processing Rule to suppress the alerts during the backup window
 resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
-  count = var.backup_alert != null ? 1 : 0
+  count = var.backup_alert != null && coalesce(try(var.backup_alert.resource_group_name, null), local.resource_group_name) != null ? 1 : 0
 
   name                 = var.backup_alert.name
   resource_group_name  = coalesce(var.backup_alert.resource_group_name, local.resource_group_name)

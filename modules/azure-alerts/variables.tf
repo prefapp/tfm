@@ -180,15 +180,15 @@ variable "budget" {
           : [for _, b in tomap(var.budget) : b]
         )
       ) : try(budget.name, null) != null
-    ]) && length(distinct([
-      for budget in(
-        var.budget == null ? [] : (
-          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? [var.budget]
-          : [for _, b in tomap(var.budget) : b]
-        )
-      ) : try(budget.name, null)
-    ])) == length([
+      ]) && length(distinct([
+        for budget in(
+          var.budget == null ? [] : (
+            can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
+            ? [var.budget]
+            : [for _, b in tomap(var.budget) : b]
+          )
+        ) : try(budget.name, null)
+      ])) == length([
       for budget in(
         var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)

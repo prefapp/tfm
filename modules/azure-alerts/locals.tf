@@ -81,8 +81,8 @@ locals {
     for _, quota in local.quota_alert_entries : (
       length(coalesce(try(quota.action_groups, null), [])) > 0
       ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : {
-        id = can(regex("^/subscriptions/", try(tostring(ag_ref), ""))) ? try(tostring(ag_ref), null) : null
-        name = can(regex("^/subscriptions/", try(tostring(ag_ref), ""))) ? null : try(tostring(ag_ref), null)
+        id                  = can(regex("^/subscriptions/", try(tostring(ag_ref), ""))) ? try(tostring(ag_ref), null) : null
+        name                = can(regex("^/subscriptions/", try(tostring(ag_ref), ""))) ? null : try(tostring(ag_ref), null)
         resource_group_name = null
       }]
       : [for _, ag in var.action_group : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
