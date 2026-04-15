@@ -22,7 +22,7 @@ To manage **multiple rulesets** from a single module call, use the companion [`g
 ## Supported rule types
 
 | Rule type | Target | Parameters |
-|-----------|--------|-----------|
+| --------- | ------ | ---------- |
 | `creation` | branch, tag | — |
 | `deletion` | branch, tag | — |
 | `update` | branch, tag | — |
@@ -51,7 +51,7 @@ The GitHub API can export rulesets where `ref_name.include` is `[]` (displayed i
 When the module receives `ref_name.include = []`, it automatically substitutes a safe fallback based on the target type:
 
 | `target` | Default `ref_name.include` |
-|----------|---------------------------|
+| -------- | ------------------------- |
 | `branch` | `["~DEFAULT_BRANCH"]` |
 | `tag`    | `["~ALL"]` |
 
