@@ -50,7 +50,7 @@ check "resource_group_name_required_when_needed" {
       var.common.tags_from_rg ||
       var.identity != null ||
       length(local.quota_alert_entries) > 0 ||
-      var.backup_alert != null ||
+      (var.backup_alert != null && try(var.backup_alert.resource_group_name, null) == null) ||
       length([for alert in var.log_alert : alert if try(alert.resource_group_name, null) == null]) > 0
     ) || local.resource_group_name != null
     error_message = "common.resource_group_name must be set when tags_from_rg, identity, quota_alert, backup_alert, or log_alert entries without resource_group_name are used and no single action_group resource group can be inferred."
