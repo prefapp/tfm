@@ -107,6 +107,8 @@ Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_l
 The module also validates that:
 - Rule types are restricted to the supported set listed above — unknown types produce a clear error instead of being silently ignored.
 - Rule types are compatible with the ruleset `target` — e.g., `tag_name_pattern` is rejected on a `branch` target, and push-only rules are rejected on `branch` or `tag` targets.
+- Each rule type appears at most once per ruleset.
+- Every entry in `required_reviewers` must include a `reviewer` block — omitting it produces a clear error instead of silently dropping the entry.
 
 ## Basic Usage
 
