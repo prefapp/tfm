@@ -88,7 +88,7 @@ module "postgresql" {
 | `outputs.tf` | Outputs |
 | `versions.tf` | Terraform and provider constraints |
 | `CHANGELOG.md` | Release history |
-| `docs/header.md` | Overview (this file) |
+| `docs/header.md` | Overview (terraform-docs header) |
 | `docs/footer.md` | Examples and links |
 | `_examples/basic` | Minimal example |
 | `_examples/comprehensive` | Reference YAML |
@@ -135,7 +135,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_administrator_password_key_vault_secret_name"></a> [administrator\_password\_key\_vault\_secret\_name](#input\_administrator\_password\_key\_vault\_secret\_name) | Name of the Key Vault secret for the PostgreSQL administrator password (read by `data.azurerm_key_vault_secret`, written by `azurerm_key_vault_secret.password_create`). | `string` | `null` | no |
+| <a name="input_administrator_password_key_vault_secret_name"></a> [administrator\_password\_key\_vault\_secret\_name](#input\_administrator\_password\_key\_vault\_secret\_name) | Required name of the Key Vault secret for the PostgreSQL administrator password (read by `data.azurerm_key_vault_secret`, written by `azurerm_key_vault_secret.password_create`). | `string` | n/a | yes |
 | <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | Private DNS zone name for the flexible server when using private networking. | `string` | `null` | no |
 | <a name="input_firewall_rule"></a> [firewall\_rule](#input\_firewall\_rule) | Firewall rules for public access; entries with `name == null` are skipped. | <pre>list(object({<br/>    name             = optional(string)<br/>    start_ip_address = optional(string)<br/>    end_ip_address   = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_key_vault"></a> [key\_vault](#input\_key\_vault) | Key Vault lookup by `name` + `resource_group_name`, or by `tags` via `azurerm_resources` when the tags map is non-empty. | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
