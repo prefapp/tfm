@@ -210,11 +210,24 @@ variable "budget" {
         )
         ) : [
         for n in try(budget.notification, []) : [
-          for g in try(n.contact_groups, []) : can(tostring(g)) || can(g.name)
+          for g in try(n.contact_groups, []) : (
+            can(tostring(g)) || (
+              can(g.name) &&
+              try(g.name, null) != null &&
+              trimspace(try(g.name, "")) != "" &&
+              (
+                !can(g.resource_group_name) ||
+                (
+                  try(g.resource_group_name, null) != null &&
+                  trimspace(try(g.resource_group_name, "")) != ""
+                )
+              )
+            )
+          )
         ]
       ]
     ]))
-    error_message = "Each budget.notification[*].contact_groups entry must be either a string (Action Group name or full resource ID) or an object with a 'name' attribute."
+    error_message = "Each budget.notification[*].contact_groups entry must be either a string (Action Group name or full resource ID) or an object with a non-empty 'name' attribute; if 'resource_group_name' is provided, it must also be non-empty."
   }
 }
 

@@ -25,7 +25,7 @@ check "action_group_resource_group_fallback" {
           var.common.tags_from_rg ||
           var.identity != null ||
           length(local.quota_alert_entries) > 0 ||
-          var.backup_alert != null ||
+          (var.backup_alert != null && try(var.backup_alert.resource_group_name, null) == null) ||
           length([for alert in var.log_alert : alert if try(alert.resource_group_name, null) == null]) > 0
         )
       )
