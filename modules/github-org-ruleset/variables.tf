@@ -187,7 +187,7 @@ variable "config" {
 
   validation {
     condition = var.config.target != "push" || anytrue([
-      for r in var.config.rules : contains([
+      for r in coalesce(var.config.rules, []) : contains([
         "file_path_restriction",
         "file_extension_restriction",
         "max_file_size",
