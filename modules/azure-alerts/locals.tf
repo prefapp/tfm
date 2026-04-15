@@ -5,7 +5,7 @@ locals {
     (
       can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
       ? { (var.budget.name) = var.budget }
-      : { for _, budget in tomap(var.budget) : budget.name => budget }
+      : { for k, budget in tomap(var.budget) : k => budget }
     )
   )
 
