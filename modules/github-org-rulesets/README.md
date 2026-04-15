@@ -187,7 +187,7 @@ module "org_rulesets" {
 
 ## Providers
 
-No providers.
+This wrapper module does not expose any direct provider entries in terraform-docs, but it **does require** the [`integrations/github`](https://registry.terraform.io/providers/integrations/github/latest) provider because it calls the nested [`github-org-ruleset`](../github-org-ruleset) module. Consumers of this module must configure the GitHub provider, using version `~> 6.0` as shown in the [Requirements](#requirements) section above.
 
 ## Modules
 
