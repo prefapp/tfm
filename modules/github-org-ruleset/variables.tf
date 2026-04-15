@@ -118,6 +118,22 @@ variable "config" {
 
   validation {
     condition = alltrue([
+      for r in var.config.rules : contains([
+        "creation", "deletion", "update", "non_fast_forward",
+        "required_linear_history", "required_signatures",
+        "pull_request", "required_status_checks",
+        "commit_message_pattern", "commit_author_email_pattern", "committer_email_pattern",
+        "branch_name_pattern", "tag_name_pattern",
+        "copilot_code_review",
+        "file_path_restriction", "file_extension_restriction",
+        "max_file_size", "max_file_path_length",
+      ], r.type)
+    ])
+    error_message = "Unknown rule type. Supported types: creation, deletion, update, non_fast_forward, required_linear_history, required_signatures, pull_request, required_status_checks, commit_message_pattern, commit_author_email_pattern, committer_email_pattern, branch_name_pattern, tag_name_pattern, copilot_code_review, file_path_restriction, file_extension_restriction, max_file_size, max_file_path_length."
+  }
+
+  validation {
+    condition = alltrue([
       for r in var.config.rules :
       contains(["creation", "deletion", "update", "non_fast_forward",
                 "required_linear_history", "required_signatures"], r.type)
@@ -125,6 +141,31 @@ variable "config" {
       : r.parameters != null
     ])
     error_message = "Non-boolean rule types (pull_request, required_status_checks, pattern rules, copilot_code_review, and push-only rules) require a 'parameters' block."
+  }
+
+  validation {
+    condition = alltrue([
+      for r in var.config.rules :
+      # Push-only rules — valid only for push target
+      contains(["file_path_restriction", "file_extension_restriction",
+                "max_file_size", "max_file_path_length"], r.type)
+      ? var.config.target == "push"
+      # Branch-only rules — valid only for branch target
+      : contains(["pull_request", "required_status_checks",
+                  "branch_name_pattern", "copilot_code_review"], r.type)
+      ? var.config.target == "branch"
+      # Tag-only rules — valid only for tag target
+      : r.type == "tag_name_pattern"
+      ? var.config.target == "tag"
+      # Boolean and pattern rules — valid for branch and tag, not push
+      : contains(["creation", "deletion", "update", "non_fast_forward",
+                  "required_linear_history", "required_signatures",
+                  "commit_message_pattern", "commit_author_email_pattern",
+                  "committer_email_pattern"], r.type)
+      ? contains(["branch", "tag"], var.config.target)
+      : true
+    ])
+    error_message = "One or more rules are incompatible with the ruleset target. See the supported rule types table in the module README for target compatibility."
   }
 
   validation {

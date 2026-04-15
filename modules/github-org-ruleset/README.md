@@ -103,6 +103,10 @@ Rules follow the GitHub API array format — a list of objects with a `type` fie
 
 Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) require no `parameters` block. All other rules **must** include a `parameters` block — the module validates this and will produce a clear error if `parameters` is omitted for a non-boolean rule type.
 
+The module also validates that:
+- Rule types are restricted to the supported set listed above — unknown types produce a clear error instead of being silently ignored.
+- Rule types are compatible with the ruleset `target` — e.g., `tag_name_pattern` is rejected on a `branch` target, and push-only rules are rejected on `branch` or `tag` targets.
+
 ## Basic Usage
 
 ### Inline HCL
