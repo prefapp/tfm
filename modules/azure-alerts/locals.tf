@@ -74,17 +74,16 @@ locals {
   ])
 
   # Source groups referenced by quota alert, with fallback to managed action groups.
-  # Keep full resource IDs as plain strings so downstream logic can treat them as IDs
-  # without assuming object entries have a `name` attribute.
+  # Normalize all entries to objects so conditional branches keep a consistent type.
   quota_contact_group_sources = flatten([
     for _, quota in local.quota_alert_entries : (
       length(coalesce(try(quota.action_groups, null), [])) > 0
       ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
-        can(regex("^/subscriptions/", ag_ref))
-        ? ag_ref
-        : { name = ag_ref }
+        can(regex("^/subscriptions/", tostring(ag_ref)))
+        ? { id = tostring(ag_ref), name = null, resource_group_name = null }
+        : { id = null, name = tostring(ag_ref), resource_group_name = null }
       )]
-      : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
+      : [for _, ag in var.action_group : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
     )
   ])
 
@@ -104,9 +103,9 @@ locals {
       local.quota_contact_group_sources,
       local.log_contact_group_sources
       ) : {
-      is_id               = can(tostring(group)) && startswith(tostring(group), "/")
-      name                = can(tostring(group)) ? tostring(group) : group.name
-      resource_group_name = can(tostring(group)) ? local.resource_group_name : coalesce(try(group.resource_group_name, null), local.resource_group_name)
+      is_id               = try(group.id, null) != null || (can(tostring(group)) && startswith(tostring(group), "/"))
+      name                = try(group.id, null) != null ? group.id : (can(tostring(group)) ? tostring(group) : group.name)
+      resource_group_name = try(group.id, null) != null ? null : (can(tostring(group)) ? local.resource_group_name : coalesce(try(group.resource_group_name, null), local.resource_group_name))
     }
   ]
 
@@ -125,22 +124,13 @@ locals {
         length(coalesce(try(quota.action_groups, null), [])) > 0
         ? [for _, ag_ref in coalesce(try(quota.action_groups, null), []) : (
           can(regex("^/subscriptions/", tostring(ag_ref)))
-          ? { id = tostring(ag_ref) }
-          : { name = tostring(ag_ref) }
+          ? { id = tostring(ag_ref), name = null, resource_group_name = null }
+          : { id = null, name = tostring(ag_ref), resource_group_name = null }
         )]
-        : [for _, ag in var.action_group : { name = ag.name, resource_group_name = ag.resource_group_name }]
+        : [for _, ag in var.action_group : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
         ) : (
-        can(tostring(group)) && startswith(tostring(group), "/")
-        ? tostring(group)
-        : can(tostring(group))
-        ? (
-          local.resource_group_name == null
-          ? null
-          : try(
-            local.action_group_ids_by_ref["${local.resource_group_name}/${tostring(group)}"],
-            data.azurerm_monitor_action_group.referenced["${local.resource_group_name}/${tostring(group)}"].id
-          )
-        )
+        try(group.id, null) != null
+        ? group.id
         : (
           coalesce(try(group.resource_group_name, null), local.resource_group_name) == null
           ? null
