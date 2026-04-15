@@ -15,7 +15,7 @@ locals {
     (
       can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
       ? { (var.quota_alert.name) = var.quota_alert }
-      : { for _, quota in tomap(var.quota_alert) : quota.name => quota }
+      : { for quota_key, quota in tomap(var.quota_alert) : quota_key => quota }
     )
   )
 
