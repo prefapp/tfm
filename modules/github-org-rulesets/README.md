@@ -102,7 +102,7 @@ Rules follow the GitHub API array format — a list of objects with a `type` fie
 ]
 ```
 
-Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) require no `parameters` block. All other rules carry their configuration inside `parameters`.
+Boolean rules (`creation`, `deletion`, `update`, `non_fast_forward`, `required_linear_history`, `required_signatures`) require no `parameters` block. All other rules **must** include a `parameters` block — the module validates this and will produce a clear error if `parameters` is omitted for a non-boolean rule type.
 
 ## Basic Usage
 

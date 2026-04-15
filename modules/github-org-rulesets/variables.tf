@@ -130,6 +130,19 @@ variable "config" {
 
   validation {
     condition = alltrue([
+      for k, v in var.config : alltrue([
+        for r in v.rules :
+        contains(["creation", "deletion", "update", "non_fast_forward",
+                  "required_linear_history", "required_signatures"], r.type)
+        ? true
+        : r.parameters != null
+      ])
+    ])
+    error_message = "Non-boolean rule types (pull_request, required_status_checks, pattern rules, copilot_code_review, and push-only rules) require a 'parameters' block."
+  }
+
+  validation {
+    condition = alltrue([
       for k, v in var.config : v.target != "push" || anytrue([
         for r in v.rules : contains([
           "file_path_restriction",
