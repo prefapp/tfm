@@ -119,7 +119,7 @@ module "org_rulesets" {
   source = "git::https://github.com/prefapp/tfm.git//modules/github-org-rulesets"
 
   config = {
-    default-branch-protection = {
+    "default-branch-protection" = {
       name        = "default-branch-protection"
       target      = "branch"
       enforcement = "active"
