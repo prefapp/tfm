@@ -45,13 +45,10 @@ variable "peerings" {
   type = list(object({
     peering_name                 = string
     allow_forwarded_traffic      = optional(bool, false)
-    allow_gateway_transit        = optional(bool, false)
-    allow_virtual_network_access = optional(bool, true)
-    use_remote_gateways          = optional(bool, false)
-    vnet_name                    = string
-    remote_virtual_network_id    = string
+  description = "The tags to associate with your resources"
+  type        = map(string)
   }))
-  default = []
+  default     = {}
 }
 
 variable "tags" {
@@ -65,3 +62,4 @@ variable "tags_from_rg" {
   type        = bool
   default     = true
 }
+
