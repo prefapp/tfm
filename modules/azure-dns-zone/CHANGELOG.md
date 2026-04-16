@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/prefapp/tfm/compare/azure-dns-zone-v0.3.0...azure-dns-zone-v0.4.0) (2026-04-06)
+
+
+### Features
+
+* Add records on azure-dns-zone module ([#1137](https://github.com/prefapp/tfm/issues/1137)) ([33a74f1](https://github.com/prefapp/tfm/commit/33a74f1355c4fcea6ef5c92e0a750492245ac771))
+
 ## [0.3.0](https://github.com/prefapp/tfm/compare/azure-dns-zone-v0.2.0...azure-dns-zone-v0.3.0) (2026-03-24)
 
 
