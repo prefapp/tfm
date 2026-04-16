@@ -136,6 +136,28 @@ variable "config" {
   validation {
     condition = alltrue([
       for r in coalesce(var.config.rules, []) :
+      r.type != "max_file_size" ? true :
+      r.parameters == null ? true :
+      r.parameters.max_file_size == null ? true :
+      (r.parameters.max_file_size >= 1 && r.parameters.max_file_size <= 100)
+    ])
+    error_message = "max_file_size must be between 1 and 100 MB."
+  }
+
+  validation {
+    condition = alltrue([
+      for r in coalesce(var.config.rules, []) :
+      r.type != "max_file_path_length" ? true :
+      r.parameters == null ? true :
+      r.parameters.max_file_path_length == null ? true :
+      (r.parameters.max_file_path_length >= 1 && r.parameters.max_file_path_length <= 32767)
+    ])
+    error_message = "max_file_path_length must be between 1 and 32767."
+  }
+
+  validation {
+    condition = alltrue([
+      for r in coalesce(var.config.rules, []) :
       !contains(["commit_message_pattern", "commit_author_email_pattern",
                  "committer_email_pattern", "branch_name_pattern", "tag_name_pattern"], r.type)
       ? true
