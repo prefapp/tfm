@@ -1,0 +1,41 @@
+# Reference values (illustrative; wire into a root module as needed).
+values:
+  name: "keyvault_name"
+  tags_from_rg: true
+  tags:
+    extra_tags: "example"
+  enabled_for_disk_encryption: true
+  resource_group: "resource_group_name"
+  soft_delete_retention_days: 7
+  purge_protection_enabled: true
+  sku_name: "standard"
+  enable_rbac_authorization: false
+  access_policies:
+    - name: "policy-by-object-id"
+      type: ""
+      object_id: "1a9590f4-27d3-4abf-9e30-5be7f46959bb"
+      key_permissions: ["Get", "List"]
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: ["Get", "List"]
+      storage_permissions: ["Get", "List"]
+    - name: "Group display name"
+      type: "group"
+      object_id: ""
+      key_permissions: ["Get", "List"]
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: ["Get", "List"]
+      storage_permissions: ["Get", "List"]
+    - name: "Service Principal display name"
+      type: "service_principal"
+      object_id: ""
+      key_permissions: ["Get", "List"]
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: ["Get", "List"]
+      storage_permissions: ["Get", "List"]
+    - name: "user@domain.com"
+      type: "user"
+      object_id: ""
+      key_permissions: ["Get", "List"]
+      secret_permissions: ["Get", "List"]
+      certificate_permissions: ["Get", "List"]
+      storage_permissions: ["Get", "List"]
