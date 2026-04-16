@@ -135,6 +135,22 @@ variable "config" {
 
   validation {
     condition = alltrue([
+      for r in coalesce(var.config.rules, []) :
+      !contains(["commit_message_pattern", "commit_author_email_pattern",
+                 "committer_email_pattern", "branch_name_pattern", "tag_name_pattern"], r.type)
+      ? true
+      : r.parameters == null ? true :
+      (
+        r.parameters.operator != null &&
+        contains(["starts_with", "ends_with", "contains", "regex"], r.parameters.operator) &&
+        r.parameters.pattern != null
+      )
+    ])
+    error_message = "Pattern rule types (commit_message_pattern, commit_author_email_pattern, committer_email_pattern, branch_name_pattern, tag_name_pattern) require non-null 'operator' (one of: starts_with, ends_with, contains, regex) and 'pattern' in parameters."
+  }
+
+  validation {
+    condition = alltrue([
       for r in coalesce(var.config.rules, []) : contains([
         "creation", "deletion", "update", "non_fast_forward",
         "required_linear_history", "required_signatures",

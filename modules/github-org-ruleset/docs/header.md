@@ -107,6 +107,7 @@ The module also validates that:
 - Rule types are compatible with the ruleset `target` — e.g., `tag_name_pattern` is rejected on a `branch` target, and push-only rules are rejected on `branch` or `tag` targets.
 - Each rule type appears at most once per ruleset.
 - Every entry in `required_reviewers` must include a `reviewer` block — omitting it produces a clear error instead of silently dropping the entry.
+- Pattern rule types (`commit_message_pattern`, `commit_author_email_pattern`, `committer_email_pattern`, `branch_name_pattern`, `tag_name_pattern`) require `operator` (one of: `starts_with`, `ends_with`, `contains`, `regex`) and `pattern` to be non-null in `parameters`.
 
 ## Basic Usage
 
