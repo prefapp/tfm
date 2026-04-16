@@ -81,6 +81,8 @@ module "vmss" {
 
 Use `run_script` with a shell script body when you need the CustomScript extension. The module outputs `cloud_init` and `run_script` are `null` when those optional inputs are unset; you must still pass a non-null `cloud_init` if you use the default `custom_data` wiring in `main.tf`.
 
+A **longer reference** (Rolling upgrade, `Standard_DS2_v2`, `file()` for cloud-init and script) lives under [`_examples/comprehensive`](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/comprehensive) so the generated README stays short.
+
 ## File structure
 
 ```
@@ -95,7 +97,8 @@ Use `run_script` with a shell script body when you need the CustomScript extensi
 │   ├── footer.md
 │   └── header.md
 ├── _examples
-│   └── basic
+│   ├── basic
+│   └── comprehensive
 ├── README.md
 └── .terraform-docs.yml
 ```
@@ -147,6 +150,7 @@ No modules.
 ## Examples
 
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/basic) — Skeleton with placeholders; replace RG, VNet, subnet, SSH key, and public IP prefix before apply.
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/comprehensive) — **`module.reference.hcl`** / **`values.reference.yaml`**: legacy-style Rolling + Ubuntu 18.04 example from the old README, completed with required `vmss` fields; **`legacy-readme-fragment.txt`** notes the old fencing mistakes.
 
 ## Remote resources
 
