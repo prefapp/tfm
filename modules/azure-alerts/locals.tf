@@ -116,7 +116,7 @@ locals {
     for entry in local.external_contact_group_entries : "${entry.resource_group_name}/${entry.name}" => {
       name                = entry.name
       resource_group_name = entry.resource_group_name
-    } if !entry.is_id && entry.resource_group_name != null && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+    } if !entry.is_id && entry.resource_group_name != null && entry.name != null && trimspace(entry.name) != "" && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
   }
 
   # Resolved quota action group IDs per quota alert from explicit IDs, managed groups, or external lookups.
@@ -134,7 +134,7 @@ locals {
         try(group.id, null) != null
         ? group.id
         : (
-          coalesce(try(group.resource_group_name, null), local.resource_group_name) == null
+          coalesce(try(group.resource_group_name, null), local.resource_group_name) == null || try(group.name, null) == null || trimspace(group.name) == ""
           ? null
           : try(
             local.action_group_ids_by_ref["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"],
