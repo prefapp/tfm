@@ -47,7 +47,7 @@ To manage a **single ruleset**, use the [`github-org-ruleset`](../github-org-rul
 
 ### `ref_name` with empty include
 
-The GitHub API can export rulesets where `ref_name.include` is `[]` (displayed in the UI as \_"Branch targeting has not been configured"\_). The Terraform provider **requires** at least one entry in `ref_name.include` and panics with empty arrays — this state is irrepresentable through the provider.
+The GitHub API can export rulesets where `ref_name.include` is `[]` (displayed in the UI as *"Branch targeting has not been configured"*). The Terraform provider **requires** at least one entry in `ref_name.include` and panics with empty arrays — this state is irrepresentable through the provider.
 
 When the module receives `ref_name.include = []`, it automatically substitutes a safe fallback based on the target type:
 
