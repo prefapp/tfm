@@ -163,7 +163,7 @@ variable "budget" {
       for budget in(
         var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? [var.budget]
+          ? values(tomap({ (var.budget.name) = var.budget }))
           : [for _, b in tomap(var.budget) : b]
         )
       ) : try(length(budget.notification), 0) > 0
@@ -176,7 +176,7 @@ variable "budget" {
       for budget in(
         var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? [var.budget]
+          ? values(tomap({ (var.budget.name) = var.budget }))
           : [for _, b in tomap(var.budget) : b]
         )
       ) : try(budget.name, null) != null
@@ -184,7 +184,7 @@ variable "budget" {
         for budget in(
           var.budget == null ? [] : (
             can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-            ? [var.budget]
+            ? values(tomap({ (var.budget.name) = var.budget }))
             : [for _, b in tomap(var.budget) : b]
           )
         ) : try(budget.name, null)
@@ -192,7 +192,7 @@ variable "budget" {
       for budget in(
         var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? [var.budget]
+          ? values(tomap({ (var.budget.name) = var.budget }))
           : [for _, b in tomap(var.budget) : b]
         )
       ) : try(budget.name, null)
@@ -205,7 +205,7 @@ variable "budget" {
       for budget in(
         var.budget == null ? [] : (
           can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? [var.budget]
+          ? values(tomap({ (var.budget.name) = var.budget }))
           : [for _, b in tomap(var.budget) : b]
         )
         ) : [
