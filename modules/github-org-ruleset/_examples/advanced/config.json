@@ -1,0 +1,84 @@
+{
+  "config": {
+    "name": "branch-advanced",
+    "target": "branch",
+    "enforcement": "active",
+    "bypass_actors": [
+      {
+        "actor_id": null,
+        "actor_type": "OrganizationAdmin",
+        "bypass_mode": "always"
+      },
+      {
+        "actor_id": 5,
+        "actor_type": "RepositoryRole",
+        "bypass_mode": "always"
+      }
+    ],
+    "conditions": {
+      "ref_name": {
+        "include": ["~DEFAULT_BRANCH"],
+        "exclude": []
+      },
+      "repository_name": {
+        "include": ["app-*"],
+        "exclude": []
+      }
+    },
+    "rules": [
+      { "type": "deletion" },
+      { "type": "non_fast_forward" },
+      { "type": "required_linear_history" },
+      { "type": "required_signatures" },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 2,
+          "dismiss_stale_reviews_on_push": true,
+          "require_code_owner_review": true,
+          "require_last_push_approval": true,
+          "required_review_thread_resolution": true,
+          "allowed_merge_methods": ["squash", "rebase"],
+          "required_reviewers": [
+            {
+              "minimum_approvals": 1,
+              "file_patterns": ["src/payments/**"],
+              "reviewer": {
+                "id": 17078798,
+                "type": "Team"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "required_status_checks": [
+            { "context": "ci / build" },
+            { "context": "ci / test" },
+            { "context": "security / scan" }
+          ],
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false
+        }
+      },
+      {
+        "type": "commit_message_pattern",
+        "parameters": {
+          "operator": "regex",
+          "pattern": "^(feat|fix|chore|docs|refactor|test|style)(\\(.+\\))?!?: .+",
+          "name": "Conventional Commits",
+          "negate": false
+        }
+      },
+      {
+        "type": "copilot_code_review",
+        "parameters": {
+          "review_on_push": true,
+          "review_draft_pull_requests": false
+        }
+      }
+    ]
+  }
+}
