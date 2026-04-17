@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/prefapp/tfm/compare/aws-parameter-store-v0.4.1...aws-parameter-store-v0.5.0) (2026-04-15)
+
+
+### Features
+
+* **aws-parameter-store:** add aws provider version and fix documentation ([#1174](https://github.com/prefapp/tfm/issues/1174)) ([dd80001](https://github.com/prefapp/tfm/commit/dd800016cefcf346a188a702029fdd325041ae29))
+
 ## [0.4.1](https://github.com/prefapp/tfm/compare/aws-parameter-store-v0.4.0...aws-parameter-store-v0.4.1) (2025-04-24)
 
 

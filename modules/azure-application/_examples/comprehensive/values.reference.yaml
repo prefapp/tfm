@@ -1,0 +1,30 @@
+# Reference-only: copy fragments into your Terraform (e.g. locals or .tfvars), not consumed by this example automatically.
+
+# Optional rotating client secret when enabled (the module declares `hashicorp/time` in `versions.tf`).
+client_secret:
+  enabled: true
+  rotation_days: 30
+  keyvault:
+    id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-example/providers/Microsoft.KeyVault/vaults/kv-example"
+    key_name: "app-registration-client-secret"
+
+# Workload identity / OIDC style federated credential (example shape).
+federated_credentials:
+  - display_name: "example-fic"
+    audiences: ["api://AzureADTokenExchange"]
+    issuer: "https://token.actions.githubusercontent.com"
+    subject: "repo:org/repo:ref:refs/heads/main"
+    description: "GitHub Actions OIDC"
+
+# Azure RBAC on a scope for the enterprise application's object ID (module output).
+extra_role_assignments:
+  - role_definition_name: "Reader"
+    scope: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-example"
+
+# Microsoft Graph: this reference example uses application permissions only.
+# Set `id` to the key expected by `data.azuread_service_principal.msgraph.app_role_ids`
+# (typically the Microsoft Graph app-role *value* string, not a delegated scope UUID).
+# Do not use this shape for delegated permissions unless the module accepts separate identifiers.
+msgraph_roles:
+  - id: "User.Read.All"
+    delegated: false
