@@ -1,6 +1,6 @@
 ## Generated README tables
 
-When this module’s README is produced with **terraform-docs**, **Requirements** lists provider **constraints** from `versions.tf`. If `settings.lockfile: true` is used and a `.terraform.lock.hcl` file is present at generation time, **Providers** can list the **resolved** provider versions from that lockfile; otherwise, regenerated docs may show different or no resolved provider versions. These tables are complementary, not contradictory.
+When this module’s README is produced with **terraform-docs**, **Requirements** lists provider **constraints** from `versions.tf`. If `settings.lockfile: true` is used and a `.terraform.lock.hcl` only when that lockfile is present at generation time, **Providers** can list the **resolved** provider versions from that lockfile; otherwise, regenerated docs may show different or no resolved provider versions. These tables are complementary, not contradictory.
 
 ## Examples
 
