@@ -89,22 +89,21 @@ No modules.
 |------|-------------|
 | <a name="output_id"></a> [id](#output\_id) | GUID of the custom role definition (`role_definition_id` from the created resource). |
 
-## Generated README tables
-
-With **terraform-docs**, **Requirements** shows provider constraints from `versions.tf`. If `settings.lockfile: true` is enabled and a `.terraform.lock.hcl` is present/used during doc generation, **Providers** may show versions resolved from the lockfile; otherwise it may show the configured provider constraint instead.
-
 ## Examples
 
-- [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/basic)
-- [Comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/comprehensive)
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples):
 
-## Provider documentation (aligned with `versions.tf`)
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/basic) — Runnable minimal example: one custom role at subscription scope (see the folder README for `terraform plan` / `apply` notes).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/comprehensive) — Documentation-only reference with `values.reference.yaml` for assignable scopes and permissions.
 
-Constraint: `azurerm` `~> 4.16.0` — doc links use **4.16.0** as the reference baseline.
+## Resources
 
-- [azurerm\_role\_definition](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_definition)
+Doc links match the `azurerm` constraint in `versions.tf` (~> 4.16.0); resource docs use **4.16.0** as the baseline.
 
-## Issues
+- **azurerm\_role\_definition**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_definition](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_definition)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0)
 
-[https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
