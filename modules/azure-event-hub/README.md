@@ -16,7 +16,7 @@ Terraform module that creates an **Event Hubs namespace**, one or more **event h
 - **Event Grid path**: for an `eventhub` entry, if `event_subscription` and `system_topic_name` are both set, the module creates an `azurerm_eventgrid_system_topic_event_subscription` targeting that hub. `system_topic_name` must match a **key** in the `system_topic` map. The module also creates `azurerm_role_assignment` (`Azure Event Hubs Data Sender`) scoped to the hub when `system_topic_name` is set; `principal_id` comes from the system topic’s managed identity (`try(..., null)` in code—ensure the topic exists so assignment is valid).
 - **`system_topic`**: pass **`system_topic = {}`** when you do not use Event Grid; the variable is required by the module interface but an empty map disables those resources (`for_each` over `{}`).
 - **Tags**: `tags_from_rg` merges resource group tags with `tags` (module tags override on duplicate keys).
-- **`locals.virtual_network_rules` / `locals.ip_rules`**: defined from `namespace.ruleset` but **not referenced** elsewhere in this module; network rules are passed directly via `var.namespace.ruleset` into `azurerm_eventhub_namespace`. The redundant locals remain for backward compatibility.
+- **`locals.virtual_network_rules` / `locals.ip_rules`**: defined from `namespace.ruleset` but **not referenced** elsewhere in this module; network rules are passed directly via `var.namespace.ruleset` into `azurerm_eventhub_namespace`. These locals are redundant implementation leftovers and do not affect the module interface.
 
 ## Basic usage
 
@@ -126,27 +126,29 @@ No modules.
 | <a name="output_eventhub_id"></a> [eventhub\_id](#output\_eventhub\_id) | Map of event hub keys to their Azure resource IDs. |
 | <a name="output_eventhub_namespace_id"></a> [eventhub\_namespace\_id](#output\_eventhub\_namespace\_id) | Resource ID of the Event Hubs namespace. |
 
-## Generated README tables
-
-When this module’s README is produced with **terraform-docs**, **Requirements** lists provider **constraints** from `versions.tf`. If `settings.lockfile: true` is used and a `.terraform.lock.hcl` only when that lockfile is present at generation time, **Providers** can list the **resolved** provider versions from that lockfile; otherwise, regenerated docs may show different or no resolved provider versions. These tables are complementary, not contradictory.
-
 ## Examples
 
-- [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples/basic)
-- [Comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples/comprehensive)
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples):
 
-## Provider documentation (aligned with `versions.tf`)
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples/basic) — Namespace, one hub, consumer group, and auth rule; empty `system_topic` so no Event Grid (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-event-hub/_examples/comprehensive) — Illustrative `values.reference.yaml` including network rules and Event Grid-style configuration (see folder README).
 
-- [azurerm\_eventhub\_namespace](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_namespace)
-- [azurerm\_eventhub](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub)
-- [azurerm\_eventhub\_consumer\_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_consumer_group)
-- [azurerm\_eventhub\_authorization\_rule](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_authorization_rule)
-- [azurerm\_eventgrid\_system\_topic](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventgrid_system_topic)
-- [azurerm\_eventgrid\_system\_topic\_event\_subscription](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventgrid_system_topic\_event\_subscription)
-- [azurerm\_role\_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/role_assignment)
-- [azurerm\_resource\_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/data-sources/resource_group)
+## Resources
 
-## Issues
+Terraform resource docs use **4.51.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`>= 4.51.0`).
 
-[https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+- **Azure Event Hubs**: [https://learn.microsoft.com/azure/event-hubs/event-hubs-about](https://learn.microsoft.com/azure/event-hubs/event-hubs-about)
+- **azurerm\_eventhub\_namespace**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_namespace](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_namespace)
+- **azurerm\_eventhub**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub)
+- **azurerm\_eventhub\_consumer\_group**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_consumer_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_consumer_group)
+- **azurerm\_eventhub\_authorization\_rule**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_authorization_rule](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventhub_authorization_rule)
+- **azurerm\_eventgrid\_system\_topic**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventgrid_system_topic](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventgrid_system_topic)
+- **azurerm\_eventgrid\_system\_topic\_event\_subscription**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventgrid_system_topic\_event\_subscription](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/eventgrid_system_topic\_event\_subscription)
+- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/resources/role_assignment)
+- **azurerm\_resource\_group** (data source): [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/data-sources/resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0/docs/data-sources/resource_group)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.51.0)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->

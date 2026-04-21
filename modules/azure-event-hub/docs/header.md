@@ -15,7 +15,7 @@ Terraform module that creates an **Event Hubs namespace**, one or more **event h
 - **Event Grid path**: for an `eventhub` entry, if `event_subscription` and `system_topic_name` are both set, the module creates an `azurerm_eventgrid_system_topic_event_subscription` targeting that hub. `system_topic_name` must match a **key** in the `system_topic` map. The module also creates `azurerm_role_assignment` (`Azure Event Hubs Data Sender`) scoped to the hub when `system_topic_name` is set; `principal_id` comes from the system topic’s managed identity (`try(..., null)` in code—ensure the topic exists so assignment is valid).
 - **`system_topic`**: pass **`system_topic = {}`** when you do not use Event Grid; the variable is required by the module interface but an empty map disables those resources (`for_each` over `{}`).
 - **Tags**: `tags_from_rg` merges resource group tags with `tags` (module tags override on duplicate keys).
-- **`locals.virtual_network_rules` / `locals.ip_rules`**: defined from `namespace.ruleset` but **not referenced** elsewhere in this module; network rules are passed directly via `var.namespace.ruleset` into `azurerm_eventhub_namespace`. The redundant locals remain for backward compatibility.
+- **`locals.virtual_network_rules` / `locals.ip_rules`**: defined from `namespace.ruleset` but **not referenced** elsewhere in this module; network rules are passed directly via `var.namespace.ruleset` into `azurerm_eventhub_namespace`. These locals are redundant implementation leftovers and do not affect the module interface.
 
 ## Basic usage
 
