@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/aws-kms-multiple-v0.1.1...aws-kms-multiple-v0.2.0) (2026-04-13)
+
+
+### Features
+
+* **aws-kms:** update aws provider version ([#1170](https://github.com/prefapp/tfm/issues/1170)) ([72cd83f](https://github.com/prefapp/tfm/commit/72cd83ff0127e9c4a0c617e09f68810d0f6c8de0))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/aws-kms-multiple-v0.1.0...aws-kms-multiple-v0.1.1) (2026-03-24)
 
 
