@@ -109,16 +109,23 @@ No modules.
 
 ## Examples
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-policy-assignments/_examples/basic) — Single subscription-scope assignment (illustrative).
-- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-policy-assignments/_examples/comprehensive) — **`values.reference.yaml`**: multiple scopes (replace IDs and names for your tenant).
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-policy-assignments/_examples):
 
-## Remote resources
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-policy-assignments/_examples/basic) — One subscription-scoped assignment using a built-in policy display name (configure `azurerm` and validate the policy exists — see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-policy-assignments/_examples/comprehensive) — Illustrative `assignments` across several scopes (`values.reference.yaml`; replace IDs — see folder README).
 
-- **Azure Policy assignments**: [https://learn.microsoft.com/azure/governance/policy/concepts/assignment-structure](https://learn.microsoft.com/azure/governance/policy/concepts/assignment-structure)
-- **Terraform assignment resources** (subscription, RG, resource, management group): [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subscription_policy_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subscription_policy_assignment)
-- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+## Resources
+
+Terraform resource docs use **4.22.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`>= 4.22.0`).
+
+- **Azure Policy — assignment structure**: [https://learn.microsoft.com/azure/governance/policy/concepts/assignment-structure](https://learn.microsoft.com/azure/governance/policy/concepts/assignment-structure)
+- **azurerm\_subscription\_policy\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/subscription_policy_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/subscription_policy_assignment)
+- **azurerm\_resource\_group\_policy\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/resource_group_policy_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/resource_group_policy_assignment)
+- **azurerm\_resource\_policy\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/resource_policy_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/resource_policy_assignment)
+- **azurerm\_management\_group\_policy\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/management_group_policy_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0/docs/resources/management_group_policy_assignment)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.22.0)
 
 ## Support
 
-For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
