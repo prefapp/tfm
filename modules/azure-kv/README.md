@@ -118,27 +118,28 @@ No modules.
 |------|-------------|
 | <a name="output_id"></a> [id](#output\_id) | Azure resource ID of the Key Vault. |
 
-## Generated README tables
-
-With **terraform-docs** and `settings.lockfile: true`, **Requirements** shows provider constraints from `versions.tf` and **Providers** shows versions resolved from `.terraform.lock.hcl` at doc generation time.
-
 ## Examples
 
-- [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/basic)
-- [Comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/comprehensive)
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples):
 
-## Provider documentation (aligned with `versions.tf`)
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/basic) — Resource group plus Key Vault with one access policy by `object_id`; configure `azurerm` / `azuread` and replace placeholders before plan/apply (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/comprehensive) — Illustrative `values.reference.yaml` for tags, access policies (object ID and Entra lookups), and RBAC notes (see folder README).
 
-Baseline: **`azurerm`** `>= 4.21.0` (doc links use **4.21.0**), **`azuread`** `~> 2.53.0` (links use **2.53.0**).
+## Resources
 
-- [azurerm\_key\_vault](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault)
-- [azurerm\_client\_config](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/client_config)
-- [azurerm\_resource\_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/resource_group)
-- [azuread\_user](https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/user)
-- [azuread\_group](https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/group)
-- [azuread\_service\_principal](https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/service_principal)
+Terraform **azurerm** docs use **4.21.0** as a baseline aligned with `versions.tf` (`>= 4.21.0`). **azuread** docs use **2.53.0** (`~> 2.53.0`).
 
-## Issues
+- **Azure Key Vault**: [https://learn.microsoft.com/azure/key-vault/general/overview](https://learn.microsoft.com/azure/key-vault/general/overview)
+- **azurerm\_key\_vault**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault)
+- **azurerm\_client\_config** (data source): [https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/client_config](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/client_config)
+- **azurerm\_resource\_group** (data source): [https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/resource_group)
+- **azuread\_user** (data source): [https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/user](https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/user)
+- **azuread\_group** (data source): [https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/group](https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/group)
+- **azuread\_service\_principal** (data source): [https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/service_principal](https://registry.terraform.io/providers/hashicorp/azuread/2.53.0/docs/data-sources/service_principal)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0)
+- **Terraform AzureAD provider**: [https://registry.terraform.io/providers/hashicorp/azuread/2.53.0](https://registry.terraform.io/providers/hashicorp/azuread/2.53.0)
 
-[https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
