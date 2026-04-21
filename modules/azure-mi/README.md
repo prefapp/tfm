@@ -109,7 +109,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Key Vault access policies for this identity (one object per key\_vault\_id). | <pre>list(object({<br/>    key_vault_id = string<br/>    key_permissions = optional(list(string), [])<br/>    secret_permissions = optional(list(string), [])<br/>    certificate_permissions = optional(list(string), [])<br/>    storage_permissions = optional(list(string), [])<br/>  }))</pre> | `[]` | no |
+| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Key Vault access policies for this identity (one object per key\_vault\_id). | <pre>list(object({<br/>    key_vault_id            = string<br/>    key_permissions         = optional(list(string), [])<br/>    secret_permissions      = optional(list(string), [])<br/>    certificate_permissions = optional(list(string), [])<br/>    storage_permissions     = optional(list(string), [])<br/>  }))</pre> | `[]` | no |
 | <a name="input_audience"></a> [audience](#input\_audience) | Audience list passed to every federated identity credential. | `list(string)` | <pre>[<br/>  "api://AzureADTokenExchange"<br/>]</pre> | no |
 | <a name="input_federated_credentials"></a> [federated\_credentials](#input\_federated\_credentials) | Federated identity credentials (GitHub Actions, Kubernetes, or custom issuer/subject). | <pre>list(object({<br/>    name                 = string<br/>    type                 = string<br/>    issuer               = optional(string)<br/>    namespace            = optional(string)<br/>    service_account_name = optional(string)<br/>    organization         = optional(string)<br/>    repository           = optional(string)<br/>    entity               = optional(string)<br/>    subject              = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_location"></a> [location](#input\_location) | Azure region for the identity. | `string` | n/a | yes |
@@ -127,18 +127,23 @@ No modules.
 
 ## Examples
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/basic) — Managed identity with RBAC only.
-- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/comprehensive) — **`values.reference.yaml`**: RBAC, federated credentials, and optional Key Vault policies.
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples):
 
-## Remote resources
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/basic) — User-assigned managed identity with one subscription-scope RBAC assignment (replace RG, scope, and names — see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/comprehensive) — Illustrative YAML for RBAC, federated credentials, and optional Key Vault access policies (`values.reference.yaml`; see folder README).
 
-- **Terraform `azurerm_user_assigned_identity`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity)
-- **Terraform `azurerm_role_assignment`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment)
-- **Terraform `azurerm_federated_identity_credential`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential)
-- **Terraform `azurerm_key_vault_access_policy`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy)
-- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+## Resources
+
+Terraform resource docs use **4.16.0**, matching the pinned `azurerm` range in `versions.tf` (`~> 4.16.0`).
+
+- **Managed identities for Azure resources**: [https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
+- **azurerm\_user\_assigned\_identity**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/user_assigned_identity)
+- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_assignment)
+- **azurerm\_federated\_identity\_credential**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/federated_identity_credential](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/federated_identity_credential)
+- **azurerm\_key\_vault\_access\_policy**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/key_vault_access_policy)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0)
 
 ## Support
 
-For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
