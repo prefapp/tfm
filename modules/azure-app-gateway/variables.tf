@@ -22,12 +22,12 @@ variable "resource_group_name" {
 }
 
 variable "application_gateway" {
-  description = "The Application Gateway object."
-    type        = any
+  description = "Structured Application Gateway configuration (SKU, autoscale, identity, listeners, `blocks_defaults`, `blocks`, SSL certificates, etc.). See `_examples/comprehensive/values.reference.yaml` for a full shape."
+  type        = any
 }
 
 variable "public_ip" {
-  description = "The Azure Public IP object."
+  description = "Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, etc.)."
   type        = any
 }
 
@@ -37,7 +37,7 @@ variable "user_assigned_identity" {
 }
 
 variable "subnet" {
-  description = "The subnet object."
+  description = "Subnet where the gateway is deployed (`name`, `virtual_network_name` within `resource_group_name`)."
   type        = any
 }
 
@@ -144,7 +144,7 @@ variable "web_application_firewall_policy" {
 }
 
 variable "ssl_policy" {
-  description = "Application Gateway configuration"
+  description = "Gateway-level SSL policy (`policy_type`, optional `policy_name`, `cipher_suites`, `min_protocol_version`)."
   type = object({
     policy_type          = string
     policy_name          = optional(string)
