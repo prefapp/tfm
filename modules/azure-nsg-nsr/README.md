@@ -105,8 +105,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_nsg"></a> [nsg](#input\_nsg) | NSG name, location, and resource group (group must exist). | <pre>object({<br/>    name                = string<br/>    location            = string<br/>    resource_group_name = string<br/>  })</pre> | n/a | yes |
-| <a name="input_rules"></a> [rules](#input\_rules) | Map of security rules (map keys are arbitrary; rule `name` is the Azure rule name). Use either `*_range` or `*_ranges` / `*_prefix` or `*_prefixes` per field, not both. | <pre>map(object({<br/>    name                         = string<br/>    priority                     = number<br/>    direction                    = string<br/>    access                       = string<br/>    protocol                     = string<br/>    source_port_range            = optional(string)<br/>    source_port_ranges           = optional(list(string))<br/>    destination_port_range       = optional(string)<br/>    destination_port_ranges      = optional(list(string))<br/>    source_address_prefix        = optional(string)<br/>    source_address_prefixes      = optional(list(string))<br/>    destination_address_prefix   = optional(string)<br/>    destination_address_prefixes = optional(list(string))<br/>  }))</pre> | n/a | yes |
+| <a name="input_nsg"></a> [nsg](#input\_nsg) | Network Security Group configuration | <pre>object({<br/>    name                = string<br/>    location            = string<br/>    resource_group_name = string<br/>  })</pre> | n/a | yes |
+| <a name="input_rules"></a> [rules](#input\_rules) | Network Security Rule configuration | <pre>map(object({<br/>    name                         = string<br/>    priority                     = number<br/>    direction                    = string<br/>    access                       = string<br/>    protocol                     = string<br/>    source_port_range            = optional(string)<br/>    source_port_ranges           = optional(list(string))<br/>    destination_port_range       = optional(string)<br/>    destination_port_ranges      = optional(list(string))<br/>    source_address_prefix        = optional(string)<br/>    source_address_prefixes      = optional(list(string))<br/>    destination_address_prefix   = optional(string)<br/>    destination_address_prefixes = optional(list(string))<br/>  }))</pre> | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
 
@@ -118,16 +118,21 @@ No modules.
 
 ## Examples
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-nsg-nsr/_examples/basic) — Minimal NSG + two rules.
-- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-nsg-nsr/_examples/comprehensive) — **`values.reference.yaml`**: same shape as HCL (illustrative).
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-nsg-nsr/_examples):
 
-## Remote resources
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-nsg-nsr/_examples/basic) — NSG with two inbound rules; set a real resource group before apply (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-nsg-nsr/_examples/comprehensive) — Illustrative `values.reference.yaml` matching the HCL shape (see folder README).
 
-- **Terraform `azurerm_network_security_group`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group)
-- **Terraform `azurerm_network_security_rule`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule)
-- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+## Resources
+
+Terraform resource docs use **4.16.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`>= 4.16.0`).
+
+- **Azure network security groups**: [https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview](https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview)
+- **azurerm\_network\_security\_group**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_group)
+- **azurerm\_network\_security\_rule**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_rule](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_rule)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0)
 
 ## Support
 
-For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
