@@ -134,27 +134,27 @@ No modules.
 |------|-------------|
 | <a name="output_vault_id"></a> [vault\_id](#output\_vault\_id) | Resource ID of the Data Protection backup vault. |
 
-## Generated README tables
-
-With **terraform-docs** and `settings.lockfile: true`, **Requirements** shows provider constraints from `versions.tf` and **Providers** shows versions resolved from `.terraform.lock.hcl` at doc generation time.
-
 ## Examples
 
-- [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-disks-backup/_examples/basic)
-- [Comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-disks-backup/_examples/comprehensive)
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-disks-backup/_examples):
 
-## Provider documentation (aligned with `versions.tf`)
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-disks-backup/_examples/basic) — Backup vault, policies, and disk backup instances; ensure managed disks exist or adjust inputs before apply (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-disks-backup/_examples/comprehensive) — Illustrative `values.reference.yaml` for multiple policies and instances (documentation-oriented; see folder README).
 
-Provider is pinned to **4.5.0** in `versions.tf`.
+## Resources
 
-- [azurerm\_data\_protection\_backup\_vault](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_vault)
-- [azurerm\_data\_protection\_backup\_policy\_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_policy_disk)
-- [azurerm\_data\_protection\_backup\_instance\_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_instance_disk)
-- [azurerm\_role\_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment)
-- [azurerm\_resource\_group (data)](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group)
-- [azurerm\_managed\_disk (data)](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/managed_disk)
+Terraform resource docs use **4.5.0**, matching the pinned `azurerm` version in `versions.tf`.
 
-## Issues
+- **Azure Backup for managed disks**: [https://learn.microsoft.com/azure/backup/disk-backup-overview](https://learn.microsoft.com/azure/backup/disk-backup-overview)
+- **azurerm\_data\_protection\_backup\_vault**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_vault](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_vault)
+- **azurerm\_data\_protection\_backup\_policy\_disk**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_policy_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_policy_disk)
+- **azurerm\_data\_protection\_backup\_instance\_disk**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_instance_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_instance_disk)
+- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment)
+- **azurerm\_resource\_group** (data source): [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group)
+- **azurerm\_managed\_disk** (data source): [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/managed_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/managed_disk)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0)
 
-[https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
