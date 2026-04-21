@@ -101,24 +101,24 @@ No modules.
 | <a name="output_disk_ids"></a> [disk\_ids](#output\_disk\_ids) | Resource IDs of created managed disks. |
 | <a name="output_disk_names"></a> [disk\_names](#output\_disk\_names) | Names of created managed disks. |
 
-## Generated README tables
-
-With **terraform-docs**, **Requirements** shows provider constraints from `versions.tf`. The provider documentation links below use **4.5.0** as the reference baseline aligned with that constraint.
-
 ## Examples
 
-- [Basic](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples/basic)
-- [Comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples/comprehensive)
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples):
 
-## Provider documentation (aligned with `versions.tf`)
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples/basic) — Resource group plus one managed disk via the module; configure `azurerm` and adjust names before apply (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-disks/_examples/comprehensive) — Illustrative `values.reference.yaml` for multiple disks, tags, and optional `assign_role` (documentation-oriented; see folder README).
 
-Constraint: `azurerm` `~> 4.5.0` — doc links use **4.5.0** as the reference baseline.
+## Resources
 
-- [azurerm\_managed\_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/managed_disk)
-- [azurerm\_role\_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment)
-- [azurerm\_resource\_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group)
+Terraform resource docs use **4.5.0**, matching the pinned `azurerm` range in `versions.tf` (`~> 4.5.0`).
 
-## Issues
+- **Azure managed disks**: [https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview](https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview)
+- **azurerm\_managed\_disk**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/managed_disk](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/managed_disk)
+- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment)
+- **azurerm\_resource\_group** (data source): [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0)
 
-[https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
