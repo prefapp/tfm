@@ -105,15 +105,20 @@ No modules.
 
 ## Examples
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-public-prefix/_examples/basic) — Minimal HCL module call.
-- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-public-prefix/_examples/comprehensive) — **`values.reference.yaml`**: illustrative YAML shape for inputs.
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-public-prefix/_examples):
 
-## Remote resources
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-public-prefix/_examples/basic) — Minimal module call for one public IP prefix; set RG, location, and prefix options per Azure constraints (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-public-prefix/_examples/comprehensive) — Illustrative `values.reference.yaml` for module inputs (documentation-oriented; see folder README).
 
-- **Terraform `azurerm_public_ip_prefix`**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix)
-- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
+## Resources
+
+Terraform resource docs use **4.16.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`>= 4.16.0`).
+
+- **Public IP address prefix (Azure)**: [https://learn.microsoft.com/azure/virtual-network/ip-services/public-ip-address-prefix](https://learn.microsoft.com/azure/virtual-network/ip-services/public-ip-address-prefix)
+- **azurerm\_public\_ip\_prefix**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/public_ip_prefix](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/public_ip_prefix)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0)
 
 ## Support
 
-For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
 <!-- END_TF_DOCS -->
