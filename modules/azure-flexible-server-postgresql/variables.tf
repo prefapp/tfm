@@ -36,7 +36,7 @@ variable "administrator_password_key_vault_secret_name" {
   description = "Required name of the Key Vault secret for the PostgreSQL administrator password (read by `data.azurerm_key_vault_secret`, written by `azurerm_key_vault_secret.password_create`)."
 
   validation {
-    condition     = trim(var.administrator_password_key_vault_secret_name) != ""
+    condition     = trimspace(var.administrator_password_key_vault_secret_name) != ""
     error_message = "administrator_password_key_vault_secret_name must be a non-empty Key Vault secret name."
   }
 }
