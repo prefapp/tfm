@@ -12,6 +12,7 @@ The module does **not** create managed identities, users, or groups — it only 
 - **Declarative map**: `for_each` over `role_assignments` keys.
 - **Flexible role reference**: Built-in role by **name** or custom role by **resource ID**.
 - **Validations**: Ensures **exactly one** of `role_definition_name` and `role_definition_id` per entry, and allowed `type` values.
+- **Output**: `role_assignment_id` maps each assignment key to its Azure RBAC assignment resource ID.
 
 ## Prerequisites
 
@@ -44,6 +45,7 @@ module "azure_role_assignment" {
 ```
 .
 ├── CHANGELOG.md
+├── outputs.tf
 ├── role_assignment.tf
 ├── variables.tf
 ├── versions.tf
@@ -88,7 +90,9 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_role_assignment_id"></a> [role\_assignment\_id](#output\_role\_assignment\_id) | Map from each key in `var.role_assignments` to the created role assignment resource ID. |
 
 ## Examples
 
