@@ -52,3 +52,8 @@ output "collaborators" {
   description = "List of collaborators added to the repository"
   value       = [for c in var.config.collaborators : c.username]
 }
+
+output "pages" {
+  description = "GitHub Pages configuration (if enabled)"
+  value       = github_repository.this.pages
+}

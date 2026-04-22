@@ -49,6 +49,16 @@ variable "config" {
       username   = string
       permission = string
     })), [])
+
+    pages = optional(object({
+      buildType = optional(string, null)
+      cname     = optional(string, null)
+      source = optional(object({
+        branch = string
+        path   = optional(string, "/")
+      }), null)
+    }), null)
+
   })
 
   validation {
