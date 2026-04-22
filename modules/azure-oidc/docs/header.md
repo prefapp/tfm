@@ -10,7 +10,7 @@ This module provisions **Microsoft Entra ID (Azure AD)** resources for **OIDC / 
 
 The input variable **`data`** is typically produced with **`yamldecode(file(...))`**. The YAML (or HCL object) **must** expose an **`applications`** list at the top level—this is what the module reads (`var.data.applications`). Older samples that used another root key (e.g. `app_registrations`) are **not** read by this module.
 
-If an application **omits** `scope`, the module uses the **current subscription ID** from **`azurerm_subscription.primary`** for every role (same idea as assigning at subscription scope).
+If an application **omits** `scope`, the module uses the **current subscription scope** from **`azurerm_subscription.primary`** for every role (that is, the subscription resource ID used for assigning at subscription scope).
 
 ## Key features
 
@@ -52,6 +52,7 @@ applications:
 ├── CHANGELOG.md
 ├── data.tf
 ├── oidc.tf
+├── outputs.tf
 ├── variables.tf
 ├── versions.tf
 ├── docs

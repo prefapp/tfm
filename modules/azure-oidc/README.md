@@ -11,7 +11,7 @@ This module provisions **Microsoft Entra ID (Azure AD)** resources for **OIDC / 
 
 The input variable **`data`** is typically produced with **`yamldecode(file(...))`**. The YAML (or HCL object) **must** expose an **`applications`** list at the top level—this is what the module reads (`var.data.applications`). Older samples that used another root key (e.g. `app_registrations`) are **not** read by this module.
 
-If an application **omits** `scope`, the module uses the **current subscription ID** from **`azurerm_subscription.primary`** for every role (same idea as assigning at subscription scope).
+If an application **omits** `scope`, the module uses the **current subscription scope** from **`azurerm_subscription.primary`** for every role (that is, the subscription resource ID used for assigning at subscription scope).
 
 ## Key features
 
@@ -53,6 +53,7 @@ applications:
 ├── CHANGELOG.md
 ├── data.tf
 ├── oidc.tf
+├── outputs.tf
 ├── variables.tf
 ├── versions.tf
 ├── docs
@@ -99,11 +100,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_data"></a> [data](#input\_data) | Configuration object (often from yamldecode). Must include `applications` (see module README). | `any` | n/a | yes |
+| <a name="input_data"></a> [data](#input\_data) | YAML data for configuring resources | `any` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_application_id"></a> [application\_id](#output\_application\_id) | Map of application names to Entra application (client) IDs. |
+| <a name="output_service_principal_id"></a> [service\_principal\_id](#output\_service\_principal\_id) | Map of application names to service principal object IDs (RBAC `principal_id`). |
 
 ## Examples
 

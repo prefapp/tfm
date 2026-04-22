@@ -17,4 +17,4 @@ applications:
     federated_credentials:
       - subject: "repo:my-org/infra:environment:production"
         issuer: "https://token.actions.githubusercontent.com"
-    # Omitting `scope` uses the current subscription ID for each role (module default).
+    # Omitting `scope` uses the current subscription scope (subscription resource ID) for each role (module default).
