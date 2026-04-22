@@ -19,7 +19,7 @@ Below is a summary of the main capabilities:
 - **Structured network input**: `virtual_network` groups name, region, address space, and a map of subnets in one object.
 - **Private DNS**: Create zones in the same resource group and manage virtual network links, including extra spokes via `virtual_network_links`.
 - **Peering options**: Configure forwarded traffic, gateway transit, remote gateways, and VNet access per peering.
-- **Operational clarity**: Outputs expose VNet ID, subnet IDs (keys `vnet_name.subnet_key`), private DNS zone and link IDs, and peering IDs keyed by peering name.
+- **Operational clarity**: Outputs expose VNet `id` and `name`, subnet IDs (keys `vnet_name.subnet_key`), private DNS zone and VNet link IDs as **maps** (stable keys), and peering IDs keyed by peering name.
 
 ## Basic Usage
 
@@ -137,17 +137,21 @@ module "azure_vnet_and_subnet" {
 After apply, outputs may look like the following (IDs will differ in your subscription):
 
 ```hcl
-private_dns_zone_ids = [
-  "/subscriptions/.../privateDnsZones/privatelink.redis.cache.windows.net",
-  "/subscriptions/.../privateDnsZones/foo.bar.postgres.database.azure.com",
-]
+private_dns_zone_id = {
+  "privatelink.redis.cache.windows.net" = "/subscriptions/.../privateDnsZones/privatelink.redis.cache.windows.net"
+}
+
+private_dns_zone_virtual_network_link_id = {
+  "privatelink.redis.cache.windows.net" = "/subscriptions/.../virtualNetworkLinks/redis_link"
+}
 
 subnet_ids = {
   "myVnetName.subnet1" = "/subscriptions/.../subnets/subnet1"
   "myVnetName.subnet2" = "/subscriptions/.../subnets/subnet2"
 }
 
-vnet_id = "/subscriptions/.../virtualNetworks/myVnetName"
+vnet_id   = "/subscriptions/.../virtualNetworks/myVnetName"
+vnet_name = "myVnetName"
 
 vnet_peering_ids = {
   "myPeeringName" = "/subscriptions/.../virtualNetworkPeerings/myPeeringName"
@@ -229,11 +233,12 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_private_dns_zone_ids"></a> [private\_dns\_zone\_ids](#output\_private\_dns\_zone\_ids) | Output the IDs of the private DNS zones |
-| <a name="output_private_dns_zone_virtual_network_link_ids"></a> [private\_dns\_zone\_virtual\_network\_link\_ids](#output\_private\_dns\_zone\_virtual\_network\_link\_ids) | Output the IDs of the private DNS zone virtual network links |
-| <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | Output the IDs of the subnets with their names as keys |
-| <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | Output the ID of the virtual network |
-| <a name="output_vnet_peering_ids"></a> [vnet\_peering\_ids](#output\_vnet\_peering\_ids) | Output the IDs of the virtual network peerings with their names as keys |
+| <a name="output_private_dns_zone_id"></a> [private\_dns\_zone\_id](#output\_private\_dns\_zone\_id) | Map from private DNS zone name (for\_each key) to private DNS zone resource ID. |
+| <a name="output_private_dns_zone_virtual_network_link_id"></a> [private\_dns\_zone\_virtual\_network\_link\_id](#output\_private\_dns\_zone\_virtual\_network\_link\_id) | Map from VNet link for\_each keys (zone name when linking this VNet, or `<zone_name>-<link_name>` for other VNets) to private DNS zone virtual network link resource ID. |
+| <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | Map from subnet composite keys (`<vnet_name>.<subnet_name>`) to subnet resource IDs. |
+| <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | Resource ID of the virtual network. |
+| <a name="output_vnet_name"></a> [vnet\_name](#output\_vnet\_name) | Name of the virtual network. |
+| <a name="output_vnet_peering_ids"></a> [vnet\_peering\_ids](#output\_vnet\_peering\_ids) | Map from peering name to virtual network peering resource ID. |
 
 ## Examples
 

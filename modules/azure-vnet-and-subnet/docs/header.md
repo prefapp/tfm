@@ -18,7 +18,7 @@ Below is a summary of the main capabilities:
 - **Structured network input**: `virtual_network` groups name, region, address space, and a map of subnets in one object.
 - **Private DNS**: Create zones in the same resource group and manage virtual network links, including extra spokes via `virtual_network_links`.
 - **Peering options**: Configure forwarded traffic, gateway transit, remote gateways, and VNet access per peering.
-- **Operational clarity**: Outputs expose VNet ID, subnet IDs (keys `vnet_name.subnet_key`), private DNS zone and link IDs, and peering IDs keyed by peering name.
+- **Operational clarity**: Outputs expose VNet `id` and `name`, subnet IDs (keys `vnet_name.subnet_key`), private DNS zone and VNet link IDs as **maps** (stable keys), and peering IDs keyed by peering name.
 
 ## Basic Usage
 
@@ -136,17 +136,21 @@ module "azure_vnet_and_subnet" {
 After apply, outputs may look like the following (IDs will differ in your subscription):
 
 ```hcl
-private_dns_zone_ids = [
-  "/subscriptions/.../privateDnsZones/privatelink.redis.cache.windows.net",
-  "/subscriptions/.../privateDnsZones/foo.bar.postgres.database.azure.com",
-]
+private_dns_zone_id = {
+  "privatelink.redis.cache.windows.net" = "/subscriptions/.../privateDnsZones/privatelink.redis.cache.windows.net"
+}
+
+private_dns_zone_virtual_network_link_id = {
+  "privatelink.redis.cache.windows.net" = "/subscriptions/.../virtualNetworkLinks/redis_link"
+}
 
 subnet_ids = {
   "myVnetName.subnet1" = "/subscriptions/.../subnets/subnet1"
   "myVnetName.subnet2" = "/subscriptions/.../subnets/subnet2"
 }
 
-vnet_id = "/subscriptions/.../virtualNetworks/myVnetName"
+vnet_id   = "/subscriptions/.../virtualNetworks/myVnetName"
+vnet_name = "myVnetName"
 
 vnet_peering_ids = {
   "myPeeringName" = "/subscriptions/.../virtualNetworkPeerings/myPeeringName"
