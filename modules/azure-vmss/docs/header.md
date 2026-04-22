@@ -11,6 +11,7 @@ The module does **not** create the resource group, virtual network, or subnet. F
 - **Compute**: `azurerm_linux_virtual_machine_scale_set` with marketplace image, admin SSH key, OS disk, optional data disk, rolling upgrade policy, and managed identity.
 - **Networking**: NIC in the resolved subnet; optional LB/AGW/ASG associations; public IP configuration with a **public IP prefix** ID.
 - **Bootstrap**: `cloud_init` is passed as `custom_data` (base64-encoded by Terraform). Optional `run_script` enables the CustomScript extension.
+- **Outputs**: Scale set `name`, `vmss_id`, `unique_id`, managed identity `principal_id` when present, CustomScript extension ID when created, plus helpers for encoded `cloud_init` / `run_script` settings.
 
 ## Prerequisites
 

@@ -12,6 +12,7 @@ The module does **not** create the resource group, virtual network, or subnet. F
 - **Compute**: `azurerm_linux_virtual_machine_scale_set` with marketplace image, admin SSH key, OS disk, optional data disk, rolling upgrade policy, and managed identity.
 - **Networking**: NIC in the resolved subnet; optional LB/AGW/ASG associations; public IP configuration with a **public IP prefix** ID.
 - **Bootstrap**: `cloud_init` is passed as `custom_data` (base64-encoded by Terraform). Optional `run_script` enables the CustomScript extension.
+- **Outputs**: Scale set `name`, `vmss_id`, `unique_id`, managed identity `principal_id` when present, CustomScript extension ID when created, plus helpers for encoded `cloud_init` / `run_script` settings.
 
 ## Prerequisites
 
@@ -143,8 +144,11 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_cloud_init"></a> [cloud\_init](#output\_cloud\_init) | Base64-encoded `vmss.cloud_init` (same encoding as scale set `custom_data`). |
+| <a name="output_name"></a> [name](#output\_name) | Name of the Linux virtual machine scale set. |
+| <a name="output_principal_id"></a> [principal\_id](#output\_principal\_id) | Principal ID of the scale set managed identity when Azure exposes it (e.g. SystemAssigned). |
 | <a name="output_run_script"></a> [run\_script](#output\_run\_script) | JSON settings for the CustomScript extension when `vmss.run_script` is set. |
 | <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | Platform-assigned unique ID of the scale set. |
+| <a name="output_virtual_machine_scale_set_extension_id"></a> [virtual\_machine\_scale\_set\_extension\_id](#output\_virtual\_machine\_scale\_set\_extension\_id) | Resource ID of the CustomScript extension; null if `vmss.run_script` is not set. |
 | <a name="output_vmss_id"></a> [vmss\_id](#output\_vmss\_id) | Resource ID of the Linux virtual machine scale set. |
 
 ## Examples
