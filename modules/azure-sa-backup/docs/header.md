@@ -13,6 +13,7 @@ You can enable **only shares**, **only blobs**, or **both**. The module reads an
 
 - **Tags**: `tags` plus optional merge from the backup resource group when `tags_from_rg = true` (default `false`).
 - **Conditional resources**: `backup_share` and `backup_blob` are each optional (`null` disables that path).
+- **Outputs**: vault and instance IDs for the blob path; Recovery Services vault ID and a map of protected file share item IDs for the share path (see `outputs.tf`).
 - **Known limitation (file shares)**: Only one value in `backup_share.source_file_share_name` is supported today.
 - **Known caveat (blobs)**: Omitting `backup_blob.identity_type` is unsafe with the current Terraform logic; set it explicitly for blob backup.
 
@@ -68,6 +69,7 @@ module "storage_backup" {
 ├── blobs.tf
 ├── locals.tf
 ├── main.tf
+├── outputs.tf
 ├── shares.tf
 ├── variables.tf
 ├── versions.tf

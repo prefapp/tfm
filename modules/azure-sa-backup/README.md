@@ -14,6 +14,7 @@ You can enable **only shares**, **only blobs**, or **both**. The module reads an
 
 - **Tags**: `tags` plus optional merge from the backup resource group when `tags_from_rg = true` (default `false`).
 - **Conditional resources**: `backup_share` and `backup_blob` are each optional (`null` disables that path).
+- **Outputs**: vault and instance IDs for the blob path; Recovery Services vault ID and a map of protected file share item IDs for the share path (see `outputs.tf`).
 - **Known limitation (file shares)**: Only one value in `backup_share.source_file_share_name` is supported today.
 - **Known caveat (blobs)**: Omitting `backup_blob.identity_type` is unsafe with the current Terraform logic; set it explicitly for blob backup.
 
@@ -69,6 +70,7 @@ module "storage_backup" {
 ├── blobs.tf
 ├── locals.tf
 ├── main.tf
+├── outputs.tf
 ├── shares.tf
 ├── variables.tf
 ├── versions.tf
@@ -127,7 +129,12 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_blob_backup_instance_id"></a> [blob\_backup\_instance\_id](#output\_blob\_backup\_instance\_id) | Resource ID of the blob backup instance; null if `backup_blob` is not configured. |
+| <a name="output_blob_data_protection_vault_id"></a> [blob\_data\_protection\_vault\_id](#output\_blob\_data\_protection\_vault\_id) | Resource ID of the Data Protection backup vault for blob backup; null if `backup_blob` is not configured. |
+| <a name="output_file_share_protected_item_id"></a> [file\_share\_protected\_item\_id](#output\_file\_share\_protected\_item\_id) | Map from each name in `backup_share.source_file_share_name` to its backup protected item resource ID; empty if `backup_share` is not configured. |
+| <a name="output_file_share_recovery_services_vault_id"></a> [file\_share\_recovery\_services\_vault\_id](#output\_file\_share\_recovery\_services\_vault\_id) | Resource ID of the Recovery Services vault for file share backup; null if `backup_share` is not configured. |
 
 ## Examples
 
