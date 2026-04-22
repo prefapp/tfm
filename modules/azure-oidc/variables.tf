@@ -1,4 +1,4 @@
 variable "data" {
-  description = "Configuration object (often from yamldecode). Must include `applications` (see module README)."
+  description = "YAML data for configuring resources"
   type        = any
 }
