@@ -11,6 +11,7 @@ The module does **not** create the resource group or virtual networks; it looks 
 - **Storage account**: Tier, replication, kind, TLS, public access, optional managed identity and blob service properties (versioning, retention, restore policy) with validations on common combinations.
 - **Network**: `azurerm_storage_account_network_rules` combining subnets from `allowed_subnets`, `additional_allowed_subnet_ids`, optional IP rules, bypass, and private link access entries.
 - **Data plane resources**: Optional containers, shares, queues, and tables via `for_each` maps.
+- **Outputs**: Storage account `id`, `name`, `primary_blob_endpoint`, and maps of child resource IDs (`container_id`, `share_id`, `queue_id`, `table_id`).
 - **Lifecycle**: Optional `azurerm_storage_management_policy` when `lifecycle_policy_rules` is set.
 - **Tags**: `tags` map; with `tags_from_rg = true` (default is `false`), resource group tags are merged with `tags`.
 
