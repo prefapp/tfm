@@ -14,7 +14,7 @@ variable "datastore_type" {
   default     = "VaultStore"
 
   validation {
-    condition = contains(["ArchiveStore", "OperationalStore", "SnapshotStore", "VaultStore"], var.datastore_type)
+    condition     = contains(["ArchiveStore", "OperationalStore", "SnapshotStore", "VaultStore"], var.datastore_type)
     error_message = "Valid values for datastore_type are (ArchiveStore, OperationalStore, SnapshotStore, VaultStore)"
   }
 }
@@ -25,18 +25,18 @@ variable "redundancy" {
   default     = "LocallyRedundant"
 
   validation {
-    condition = contains(["GeoRedundant", "LocallyRedundant", "ZoneRedundant"], var.redundancy)
+    condition     = contains(["GeoRedundant", "LocallyRedundant", "ZoneRedundant"], var.redundancy)
     error_message = "Valid values for redundancy are (GeoRedundant, LocallyRedundant, ZoneRedundant)"
   }
 }
 
 variable "soft_delete" {
-  description = "Enable soft delete."
+  description = "Soft delete setting for the vault (`AlwaysOn`, `On`, or `Off`)."
   type        = string
   default     = "Off"
 
   validation {
-    condition = contains(["AlwaysOn", "Off", "On"], var.soft_delete)
+    condition     = contains(["AlwaysOn", "Off", "On"], var.soft_delete)
     error_message = "Valid values for soft_delete are (AlwaysOn, Off, On)"
   }
 }
@@ -68,9 +68,9 @@ variable "backup_policies" {
 variable "backup_instances" {
   description = "List of backup instances."
   type = list(object({
-    disk_name                    = string
-    disk_resource_group          = string
-    backup_policy_name           = string
+    disk_name           = string
+    disk_resource_group = string
+    backup_policy_name  = string
   }))
 }
 
