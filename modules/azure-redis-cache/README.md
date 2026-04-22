@@ -130,8 +130,10 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_hostname"></a> [hostname](#output\_hostname) | Redis hostname for TLS client connections. |
 | <a name="output_private_endpoint_id"></a> [private\_endpoint\_id](#output\_private\_endpoint\_id) | Resource ID of the private endpoint for the Redis cache. |
 | <a name="output_redis_id"></a> [redis\_id](#output\_redis\_id) | Resource ID of the Azure Cache for Redis instance. |
+| <a name="output_ssl_port"></a> [ssl\_port](#output\_ssl\_port) | TLS port exposed by the Redis cache. |
 
 ## Examples
 
