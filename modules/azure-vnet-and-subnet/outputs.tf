@@ -1,24 +1,29 @@
-# Output the ID of the virtual network
 output "vnet_id" {
-  value = azurerm_virtual_network.this.id
+  description = "Resource ID of the virtual network."
+  value       = azurerm_virtual_network.this.id
 }
 
-# Output the IDs of the subnets with their names as keys
+output "vnet_name" {
+  description = "Name of the virtual network."
+  value       = azurerm_virtual_network.this.name
+}
+
 output "subnet_ids" {
-  value = { for name, subnet in azurerm_subnet.subnet : name => subnet.id }
+  description = "Map from subnet composite keys (`<vnet_name>.<subnet_name>`) to subnet resource IDs."
+  value       = { for name, subnet in azurerm_subnet.subnet : name => subnet.id }
 }
 
-# Output the IDs of the private DNS zones
-output "private_dns_zone_ids" {
-  value = [for zone in azurerm_private_dns_zone.this : zone.id]
+output "private_dns_zone_id" {
+  description = "Map from private DNS zone name (for_each key) to private DNS zone resource ID."
+  value       = { for k, z in azurerm_private_dns_zone.this : k => z.id }
 }
 
-# Output the IDs of the private DNS zone virtual network links
-output "private_dns_zone_virtual_network_link_ids" {
-  value = [for link in azurerm_private_dns_zone_virtual_network_link.this : link.id]
+output "private_dns_zone_virtual_network_link_id" {
+  description = "Map from VNet link for_each keys (zone name when linking this VNet, or `<zone_name>-<link_name>` for other VNets) to private DNS zone virtual network link resource ID."
+  value       = { for k, link in azurerm_private_dns_zone_virtual_network_link.this : k => link.id }
 }
 
-# Output the IDs of the virtual network peerings with their names as keys
 output "vnet_peering_ids" {
-  value = { for name, peering in azurerm_virtual_network_peering.this : name => peering.id }
+  description = "Map from peering name to virtual network peering resource ID."
+  value       = { for name, peering in azurerm_virtual_network_peering.this : name => peering.id }
 }
