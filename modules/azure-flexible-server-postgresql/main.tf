@@ -48,7 +48,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "this" {
   value     = each.value.value
 }
 
-# https://registry.terraform.io/providers/hashicorp/random/3.6.0/docs/resources/password
+# https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
 resource "random_password" "password" {
   length  = var.password_length
   special = true

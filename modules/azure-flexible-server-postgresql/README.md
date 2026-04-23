@@ -152,7 +152,10 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_administrator_password_key_vault_secret_id"></a> [administrator\_password\_key\_vault\_secret\_id](#output\_administrator\_password\_key\_vault\_secret\_id) | Resource ID of the Key Vault secret for the administrator password. |
+| <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | FQDN of the server (hostname for client connection strings). |
 | <a name="output_id"></a> [id](#output\_id) | Resource ID of the PostgreSQL Flexible Server. |
+| <a name="output_name"></a> [name](#output\_name) | Name of the PostgreSQL Flexible Server. |
 
 ## Examples
 
@@ -163,7 +166,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Resources
 
-Terraform **azurerm** docs use **4.35.0** as a baseline aligned with `versions.tf` (`>= 4.35.0`). **random** uses **3.8.1** (see the module lockfile; `random_password` is used without a separate `required_providers` block for `random` in `versions.tf`).
+**azurerm** links below use **4.35.0**, aligned with `versions.tf`. **random** links use `/latest` (implicit dependency via `random_password`; no separate `required_providers` entry). Pinned versions for your workspace appear in the **Providers** table after regenerating this README with `terraform-docs .`, as described in [README.md generation](https://github.com/prefapp/tfm/blob/main/CONTRIBUTING.md#5-readmemd-generation).
 
 - **Azure Database for PostgreSQL — Flexible Server**: [https://learn.microsoft.com/azure/postgresql/flexible-server/overview](https://learn.microsoft.com/azure/postgresql/flexible-server/overview)
 - **azurerm\_postgresql\_flexible\_server**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server)
@@ -171,9 +174,9 @@ Terraform **azurerm** docs use **4.35.0** as a baseline aligned with `versions.t
 - **azurerm\_postgresql\_flexible\_server\_firewall\_rule**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server\_firewall\_rule](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/postgresql_flexible_server\_firewall\_rule)
 - **azurerm\_key\_vault\_secret**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/key_vault_secret](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/resources/key_vault_secret)
 - **azurerm\_resources** (data source): [https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/resources](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0/docs/data-sources/resources)
-- **random\_password**: [https://registry.terraform.io/providers/hashicorp/random/3.8.1/docs/resources/password](https://registry.terraform.io/providers/hashicorp/random/3.8.1/docs/resources/password)
+- **random\_password**: [https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password)
 - **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.35.0)
-- **Terraform Random provider**: [https://registry.terraform.io/providers/hashicorp/random/3.8.1](https://registry.terraform.io/providers/hashicorp/random/3.8.1)
+- **Terraform Random provider**: [https://registry.terraform.io/providers/hashicorp/random/latest](https://registry.terraform.io/providers/hashicorp/random/latest)
 
 ## Point-in-time restore
 
