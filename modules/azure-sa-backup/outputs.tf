@@ -13,7 +13,7 @@ output "file_share_recovery_services_vault_id" {
   value       = var.backup_share != null ? azurerm_recovery_services_vault.this[0].id : null
 }
 
-output "file_share_protected_item_id" {
+output "file_share_protected_item_ids" {
   description = "Map from each name in `backup_share.source_file_share_name` to its backup protected item resource ID; empty if `backup_share` is not configured."
   value = var.backup_share == null ? {} : {
     for idx, name in var.backup_share.source_file_share_name :
