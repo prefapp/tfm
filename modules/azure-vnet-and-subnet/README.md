@@ -121,6 +121,10 @@ module "azure_vnet_and_subnet" {
       peering_name              = "myPeeringName"
       vnet_name                 = "myVnetName"
       remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
+      allow_forwarded_traffic      = true
+      allow_gateway_transit        = true
+      allow_virtual_network_access = true
+      use_remote_gateways          = false
     }
   ]
 
@@ -201,7 +205,7 @@ The module is organized as follows:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.67.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=4.21.1 |
 
 ## Modules
 
@@ -222,7 +226,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_peerings"></a> [peerings](#input\_peerings) | List of virtual network peerings | <pre>list(object({<br/>    peering_name                 = string<br/>    allow_forwarded_traffic      = optional(bool, false)<br/>  description = "The tags to associate with your resources"<br/>  type        = map(string)<br/>  }))</pre> | `{}` | no |
+| <a name="input_peerings"></a> [peerings](#input\_peerings) | List of virtual network peerings to create from this VNet (local side). | <pre>list(object({<br/>    peering_name                 = string<br/>    vnet_name                    = string<br/>    remote_virtual_network_id    = string<br/><br/>    allow_forwarded_traffic      = optional(bool, false)<br/>    allow_gateway_transit        = optional(bool, false)<br/>    allow_virtual_network_access = optional(bool, true)<br/>    use_remote_gateways          = optional(bool, false)<br/>  }))</pre> | `[]` | no |
 | <a name="input_private_dns_zones"></a> [private\_dns\_zones](#input\_private\_dns\_zones) | List of private DNS zones to create.<br/><br/>Each zone can optionally define virtual\_network\_links (list of objects) to link the DNS zone to multiple VNets.<br/>If virtual\_network\_links is omitted, a default link to the main VNet is created.<br/><br/>Example:<br/>private\_dns\_zones = [<br/>  {<br/>    name = "example.com"<br/>    auto\_registration\_enabled = false<br/>    virtual\_network\_links = [<br/>      {<br/>        name = "vnet-link-1"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet1"<br/>      },<br/>      {<br/>        name = "vnet-link-2"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet2"<br/>      }<br/>    ]<br/>  },<br/>  {<br/>    name = "other.com"<br/>    auto\_registration\_enabled = true<br/>    # No virtual\_network\_links: will link to main VNet<br/>  }<br/>] | <pre>list(object({<br/>    name                      = string<br/>    link_name                 = optional(string)<br/>    auto_registration_enabled = optional(bool, false)<br/>    virtual_network_links     = optional(list(object({<br/>      name                 = string<br/>      virtual_network_id   = string<br/>      virtual_network_name = optional(string)<br/>    })))<br/>  }))</pre> | `[]` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the virtual network | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | The tags to associate with your resources | `map(string)` | `{}` | no |

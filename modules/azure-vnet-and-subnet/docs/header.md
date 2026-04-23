@@ -120,6 +120,10 @@ module "azure_vnet_and_subnet" {
       peering_name              = "myPeeringName"
       vnet_name                 = "myVnetName"
       remote_virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myRemoteVnetName"
+      allow_forwarded_traffic      = true
+      allow_gateway_transit        = true
+      allow_virtual_network_access = true
+      use_remote_gateways          = false
     }
   ]
 

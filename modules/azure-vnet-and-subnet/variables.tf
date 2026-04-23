@@ -41,14 +41,18 @@ variable "resource_group_name" {
 }
 
 variable "peerings" {
-  description = "List of virtual network peerings"
+  description = "List of virtual network peerings to create from this VNet (local side)."
   type = list(object({
     peering_name                 = string
+    vnet_name                    = string
+    remote_virtual_network_id    = string
+
     allow_forwarded_traffic      = optional(bool, false)
-  description = "The tags to associate with your resources"
-  type        = map(string)
+    allow_gateway_transit        = optional(bool, false)
+    allow_virtual_network_access = optional(bool, true)
+    use_remote_gateways          = optional(bool, false)
   }))
-  default     = {}
+  default = []
 }
 
 variable "tags" {
