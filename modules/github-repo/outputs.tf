@@ -55,5 +55,5 @@ output "collaborators" {
 
 output "pages" {
   description = "GitHub Pages configuration (if enabled)"
-  value       = github_repository.this.pages
+  value       = length(github_repository.this.pages) > 0 ? github_repository.this.pages[0] : null
 }
