@@ -79,7 +79,7 @@ module "vmss" {
 }
 ```
 
-Use `run_script` with a shell script body when you need the CustomScript extension. The module outputs `cloud_init` and `run_script` are `null` when those optional inputs are unset; you must still pass a non-null `cloud_init` if you use the default `custom_data` wiring in `main.tf`.
+Use `run_script` with a shell script body when you need the CustomScript extension; it is optional and may be left unset/`null`. By contrast, `cloud_init` must currently be provided as a non-null string, because the module base64-encodes it for `custom_data` in `main.tf` (and related helper/output wiring), so omitting it or setting it to `null` is not supported by the current implementation.
 
 A **longer reference** (Rolling upgrade, `Standard_DS2_v2`, `file()` for cloud-init and script) lives under [`_examples/comprehensive`](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/comprehensive) so the generated README stays short.
 
