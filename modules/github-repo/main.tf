@@ -15,7 +15,7 @@ resource "github_repository" "this" {
   has_issues           = var.config.repository.hasIssues
 
   dynamic "pages" {
-    for_each = var.config.repository.pages != null ? [var.config.repository.pages] : []
+    for_each = var.config.pages != null ? [var.config.pages] : []
     content {
       build_type = pages.value.buildType
       cname      = pages.value.cname
