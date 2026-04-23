@@ -1,9 +1,9 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_disk
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/managed_disk
 resource "azurerm_managed_disk" "disks" {
   for_each             = { for disk in var.disks : disk.name => disk }
   name                 = each.key
@@ -22,7 +22,7 @@ resource "azurerm_managed_disk" "disks" {
   }
 }
 
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/role_assignment
 resource "azurerm_role_assignment" "role_assignment_over_managed_disk" {
   for_each             = var.assign_role ? azurerm_managed_disk.disks : {}
   scope                = each.value.id
