@@ -1,33 +1,39 @@
-# Variable section
 variable "location" {
   description = "The Azure region where the managed disk should be created."
-  type = string
+  type        = string
 }
 
 variable "resource_group_name" {
   description = "The name of the resource group in which the managed disk should be created."
-  type = string
+  type        = string
 }
 
 variable "disks" {
-  description = "A map of managed disk configurations."
+  description = "A list of managed disk configurations."
+  type        = list(any)
 }
 
 variable "assign_role" {
   description = "Whether to assign a role definition to the managed disk."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "role_definition_name" {
   description = "The name of the role definition to assign to the managed disk."
-  default = "Contributor"
+  type        = string
+  default     = "Contributor"
 }
 
 variable "principal_id" {
   description = "The ID of the principal to assign the role definition to."
-  type = string
-  default = ""
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = !var.assign_role || trimspace(var.principal_id) != ""
+    error_message = "principal_id must be provided and non-empty when assign_role is true."
+  }
 }
 
 variable "tags_from_rg" {
