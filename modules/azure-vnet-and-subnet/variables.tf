@@ -35,11 +35,27 @@ variable "private_dns_zones" {
   default = []
 }
 
+variable "resource_group_name" {
+  description = "The name of the resource group in which to create the virtual network"
+  type        = string
+}
+
 variable "peerings" {
-  description = "List of virtual network peerings"
+  description = "List of virtual network peerings to create from this VNet (local side)."
   type = list(object({
     peering_name                 = string
+    vnet_name                    = string
+    remote_virtual_network_id    = string
+
     allow_forwarded_traffic      = optional(bool, false)
+    allow_gateway_transit        = optional(bool, false)
+    allow_virtual_network_access = optional(bool, true)
+    use_remote_gateways          = optional(bool, false)
+  }))
+  default = []
+}
+
+variable "tags" {
   description = "The tags to associate with your resources"
   type        = map(string)
   default     = {}
@@ -50,3 +66,4 @@ variable "tags_from_rg" {
   type        = bool
   default     = true
 }
+
