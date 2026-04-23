@@ -7,10 +7,10 @@ resource_group_name: "rg_test"
 allowed_subnets:
   - name: "data"
     vnet: "test-vnet"
-    resource_group: "rg-test"
+    resource_group: "rg_test"
   - name: "video"
     vnet: "test-vnet1"
-    resource_group: "rg-test1"
+    resource_group: "rg_test"
 
 additional_allowed_subnet_ids:
   - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
