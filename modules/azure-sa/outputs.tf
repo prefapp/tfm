@@ -13,7 +13,7 @@ output "primary_blob_endpoint" {
   value       = azurerm_storage_account.this.primary_blob_endpoint
 }
 
-output "container_id" {
+output "container_ids" {
   description = "Map from each container name (for_each key) to the blob container resource ID."
   value       = { for k, v in azurerm_storage_container.this : k => v.id }
 }
