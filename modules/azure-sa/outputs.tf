@@ -28,7 +28,7 @@ output "queue_ids" {
   value       = { for k, v in azurerm_storage_queue.this : k => v.id }
 }
 
-output "table_id" {
+output "table_ids" {
   description = "Map from each table name to the table resource ID."
   value       = { for k, v in azurerm_storage_table.this : k => v.id }
 }
