@@ -51,7 +51,7 @@ variable "config" {
     })), [])
 
     pages = optional(object({
-      buildType = optional(string, null)
+      buildType = optional(string, "workflow")
       cname     = optional(string, null)
       source = optional(object({
         branch = string
@@ -88,5 +88,10 @@ variable "config" {
       for v in var.config.variables : length(trimspace(v.variableName)) > 0 && length(trimspace(v.value)) > 0
     ])
     error_message = "Every repository variable must have a non-empty variableName and value."
+  }
+
+  validation {
+    condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
+    error_message = "pages.buildType must be 'legacy' or 'workflow'."
   }
 }
