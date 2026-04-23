@@ -12,7 +12,7 @@ The module does **not** create the resource group or virtual networks; it looks 
 - **Storage account**: Tier, replication, kind, TLS, public access, optional managed identity and blob service properties (versioning, retention, restore policy) with validations on common combinations.
 - **Network**: `azurerm_storage_account_network_rules` combining subnets from `allowed_subnets`, `additional_allowed_subnet_ids`, optional IP rules, bypass, and private link access entries.
 - **Data plane resources**: Optional containers, shares, queues, and tables via `for_each` maps.
-- **Outputs**: Storage account `id`, `name`, `primary_blob_endpoint`, and maps of child resource IDs (`container_id`, `share_id`, `queue_id`, `table_id`).
+- **Outputs**: Storage account `id`, `name`, `primary_blob_endpoint`, and maps of child resource IDs (`container_ids`, `share_ids`, `queue_ids`, `table_ids`).
 - **Lifecycle**: Optional `azurerm_storage_management_policy` when `lifecycle_policy_rules` is set.
 - **Tags**: `tags` map; with `tags_from_rg = true` (default is `false`), resource group tags are merged with `tags`.
 
@@ -129,13 +129,13 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_container_id"></a> [container\_id](#output\_container\_id) | Map from each container name (for\_each key) to the blob container resource ID. |
+| <a name="output_container_ids"></a> [container\_ids](#output\_container\_ids) | Map from each container name (for\_each key) to the blob container resource ID. |
 | <a name="output_id"></a> [id](#output\_id) | Resource ID of the storage account. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the storage account. |
 | <a name="output_primary_blob_endpoint"></a> [primary\_blob\_endpoint](#output\_primary\_blob\_endpoint) | Primary blob service endpoint URL. |
-| <a name="output_queue_id"></a> [queue\_id](#output\_queue\_id) | Map from each queue name to the queue resource ID. |
-| <a name="output_share_id"></a> [share\_id](#output\_share\_id) | Map from each file share name to the file share resource ID. |
-| <a name="output_table_id"></a> [table\_id](#output\_table\_id) | Map from each table name to the table resource ID. |
+| <a name="output_queue_ids"></a> [queue\_ids](#output\_queue\_ids) | Map from each queue name to the queue resource ID. |
+| <a name="output_share_ids"></a> [share\_ids](#output\_share\_ids) | Map from each file share name to the file share resource ID. |
+| <a name="output_table_ids"></a> [table\_ids](#output\_table\_ids) | Map from each table name to the table resource ID. |
 
 ## Examples
 
