@@ -48,13 +48,25 @@ variable "tags" {
 variable "access_policies" {
   type = list(object({
     type                    = optional(string)
-    name                    = optional(string)
+    name                    = string
     object_id               = optional(string, "")
     key_permissions         = optional(list(string))
     secret_permissions      = optional(list(string))
     certificate_permissions = optional(list(string))
     storage_permissions     = optional(list(string))
   }))
-  description = "Legacy access policies when `enable_rbac_authorization` is false. Each entry needs a unique `name`. Provide `object_id` or set `type` to `user` / `group` / `service_principal` with `name` for lookup."
+  description = "Legacy access policies when `enable_rbac_authorization` is false. Each entry requires a unique, non-empty `name` (used as the stable key in Terraform maps and in lookups). Provide `object_id` or set `type` to `user` / `group` / `service_principal` and use `name` for Entra lookup."
   default     = []
+
+  validation {
+    condition = alltrue([
+      for p in var.access_policies : trimspace(p.name) != ""
+    ])
+    error_message = "Each access_policies entry must have a non-empty name."
+  }
+
+  validation {
+    condition     = length(distinct([for p in var.access_policies : p.name])) == length(var.access_policies)
+    error_message = "Each access_policies entry must have a unique name."
+  }
 }

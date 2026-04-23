@@ -101,7 +101,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Legacy access policies when `enable_rbac_authorization` is false. Each entry needs a unique `name`. Provide `object_id` or set `type` to `user` / `group` / `service_principal` with `name` for lookup. | <pre>list(object({<br/>    type                    = optional(string)<br/>    name                    = optional(string)<br/>    object_id               = optional(string, "")<br/>    key_permissions         = optional(list(string))<br/>    secret_permissions      = optional(list(string))<br/>    certificate_permissions = optional(list(string))<br/>    storage_permissions     = optional(list(string))<br/>  }))</pre> | `[]` | no |
+| <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Legacy access policies when `enable_rbac_authorization` is false. Each entry requires a unique, non-empty `name` (used as the stable key in Terraform maps and in lookups). Provide `object_id` or set `type` to `user` / `group` / `service_principal` and use `name` for Entra lookup. | <pre>list(object({<br/>    type                    = optional(string)<br/>    name                    = string<br/>    object_id               = optional(string, "")<br/>    key_permissions         = optional(list(string))<br/>    secret_permissions      = optional(list(string))<br/>    certificate_permissions = optional(list(string))<br/>    storage_permissions     = optional(list(string))<br/>  }))</pre> | `[]` | no |
 | <a name="input_enable_rbac_authorization"></a> [enable\_rbac\_authorization](#input\_enable\_rbac\_authorization) | When true, use Azure RBAC for data plane access; access policies must be empty (see precondition in main.tf). | `bool` | n/a | yes |
 | <a name="input_enabled_for_disk_encryption"></a> [enabled\_for\_disk\_encryption](#input\_enabled\_for\_disk\_encryption) | Whether the vault can be used for Azure Disk Encryption. | `bool` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name of the Key Vault (must be globally unique, 3–24 alphanumeric characters). | `string` | n/a | yes |
@@ -127,7 +127,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Resources
 
-Terraform **azurerm** docs use **4.21.0** as a baseline aligned with `versions.tf` (`>= 4.21.0`). **azuread** docs use **2.53.0** (`~> 2.53.0`).
+**azurerm** links below use **4.21.0** (see `versions.tf`); **azuread** uses **2.53.0**. Pinned provider versions in the **Providers** table appear after regenerating this README with `terraform-docs .` from a workspace that has run `terraform init` (see [README.md generation](https://github.com/prefapp/tfm/blob/main/CONTRIBUTING.md#5-readmemd-generation)).
 
 - **Azure Key Vault**: [https://learn.microsoft.com/azure/key-vault/general/overview](https://learn.microsoft.com/azure/key-vault/general/overview)
 - **azurerm\_key\_vault**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault)

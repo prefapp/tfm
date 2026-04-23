@@ -1,5 +1,5 @@
-# settings.lockfile: true: README "Requirements" = constraints from versions.tf; "Providers" = versions from
-# .terraform.lock.hcl when docs were generated. Resource table links may use .../latest; pin manually if needed.
+# settings.lockfile: true: README "Requirements" from versions.tf; "Providers" from local .terraform.lock.hcl when
+# terraform-docs runs (repo .gitignore excludes lockfiles — versions are reproducible per contributor after terraform init).
 formatter: "markdown"
 
 version: ""

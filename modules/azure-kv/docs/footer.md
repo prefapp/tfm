@@ -7,7 +7,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Resources
 
-Terraform **azurerm** docs use **4.21.0** as a baseline aligned with `versions.tf` (`>= 4.21.0`). **azuread** docs use **2.53.0** (`~> 2.53.0`).
+**azurerm** links below use **4.21.0** (see `versions.tf`); **azuread** uses **2.53.0**. Pinned provider versions in the **Providers** table appear after regenerating this README with `terraform-docs .` from a workspace that has run `terraform init` (see [README.md generation](https://github.com/prefapp/tfm/blob/main/CONTRIBUTING.md#5-readmemd-generation)).
 
 - **Azure Key Vault**: [https://learn.microsoft.com/azure/key-vault/general/overview](https://learn.microsoft.com/azure/key-vault/general/overview)
 - **azurerm_key_vault**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault)
