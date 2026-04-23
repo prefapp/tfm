@@ -18,7 +18,7 @@ output "container_ids" {
   value       = { for k, v in azurerm_storage_container.this : k => v.id }
 }
 
-output "share_id" {
+output "share_ids" {
   description = "Map from each file share name to the file share resource ID."
   value       = { for k, v in azurerm_storage_share.this : k => v.id }
 }
