@@ -23,7 +23,7 @@ output "share_id" {
   value       = { for k, v in azurerm_storage_share.this : k => v.id }
 }
 
-output "queue_id" {
+output "queue_ids" {
   description = "Map from each queue name to the queue resource ID."
   value       = { for k, v in azurerm_storage_queue.this : k => v.id }
 }
