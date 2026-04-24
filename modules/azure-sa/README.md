@@ -130,11 +130,16 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_container_ids"></a> [container\_ids](#output\_container\_ids) | Map from each container name (for\_each key) to the blob container resource ID. |
-| <a name="output_id"></a> [id](#output\_id) | Resource ID of the storage account. |
-| <a name="output_name"></a> [name](#output\_name) | Name of the storage account. |
+| <a name="output_primary_access_key"></a> [primary\_access\_key](#output\_primary\_access\_key) | Primary access key for the storage account. |
 | <a name="output_primary_blob_endpoint"></a> [primary\_blob\_endpoint](#output\_primary\_blob\_endpoint) | Primary blob service endpoint URL. |
+| <a name="output_primary_connection_string"></a> [primary\_connection\_string](#output\_primary\_connection\_string) | Primary connection string for the storage account. |
+| <a name="output_primary_endpoints"></a> [primary\_endpoints](#output\_primary\_endpoints) | Primary endpoints for the storage account. |
 | <a name="output_queue_ids"></a> [queue\_ids](#output\_queue\_ids) | Map from each queue name to the queue resource ID. |
+| <a name="output_secondary_blob_endpoint"></a> [secondary\_blob\_endpoint](#output\_secondary\_blob\_endpoint) | Secondary blob service endpoint URL. |
+| <a name="output_secondary_endpoints"></a> [secondary\_endpoints](#output\_secondary\_endpoints) | Secondary endpoints for the storage account. |
 | <a name="output_share_ids"></a> [share\_ids](#output\_share\_ids) | Map from each file share name to the file share resource ID. |
+| <a name="output_storage_account_id"></a> [storage\_account\_id](#output\_storage\_account\_id) | Resource ID of the storage account. |
+| <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | Name of the storage account. |
 | <a name="output_table_ids"></a> [table\_ids](#output\_table\_ids) | Map from each table name to the table resource ID. |
 
 ## Examples
