@@ -124,7 +124,7 @@ locals {
       local.log_contact_group_sources
       ) : {
       is_id               = try(group.id, null) != null || (can(tostring(group)) && startswith(tostring(group), "/"))
-      name                = try(group.id, null) != null ? group.id : (can(tostring(group)) ? tostring(group) : group.name)
+      name                = try(group.id, null) != null ? group.id : (can(tostring(group)) ? tostring(group) : try(group.name, null))
       resource_group_name = try(group.id, null) != null ? null : (can(tostring(group)) ? local.resource_group_name : coalesce(try(group.resource_group_name, null), local.resource_group_name))
     }
   ]
