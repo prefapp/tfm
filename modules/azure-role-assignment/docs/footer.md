@@ -5,7 +5,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-role-assignment/_examples/basic) — Runnable root module with a small `role_assignments` map (scopes, `role_definition_name` / `role_definition_id`; replace IDs before plan — see folder README).
 - [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-role-assignment/_examples/comprehensive) — `module.reference.hcl` and `values.reference.yaml` mirroring the historical README samples (documentation-oriented; see folder README).
 
-## Resources
+## Remote Resources
 
 Terraform resource docs use **4.26.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`~> 4.26.0`).
 
