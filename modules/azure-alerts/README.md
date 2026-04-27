@@ -16,7 +16,7 @@ This module is suitable for production, staging, and development environments, e
 - **Alert Processing Rules**: Suppress or modify alerts based on custom rules (e.g., during maintenance windows).
 - **Managed Identity Integration**: Automatic creation and role assignment of managed identities for quota alert execution.
 - **Tag Inheritance and Customization**: Inherit tags from the resource group or specify custom tags for all resources.
-- **Flexible Configuration**: Use maps and optional parameters for granular control over each alert type.
+- **Flexible Configuration**: Use list-of-objects inputs for each multi-instance resource family.
 
 ## Supported Resources
 
@@ -45,8 +45,8 @@ module "azure_alerts" {
 
   # Action Group(s) for notifications
   # This block is optional. If omitted, the module will not create any Action Group.
-  action_group = {
-    operations = {
+  action_group = [
+    {
       name                = "my-action-group"
       resource_group_name = "my-alerts-rg"
       short_name          = "MyAG"
@@ -58,40 +58,41 @@ module "azure_alerts" {
         }
       }
     }
-  }
+  ]
 
   # Budget Alert - Optional
-  budget = {
-    name            = "monthly-budget"
-    subscription_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
-    amount          = 10000
-    time_grain      = "Monthly"
-    time_period = {
-      start_date = "2026-01-01"
-    }
-
-    # Optional: preserve existing budget filters to avoid drift
-    filter = {
-      dimension = [{
-        name     = "ChargeType"
-        operator = "In"
-        values   = ["Usage"]
-      }]
-    }
-
-    notification = [
-      {
-        enabled        = true
-        operator       = "GreaterThan"
-        threshold      = 75
-        contact_emails = ["admin@example.com"]
-
-        # Accepts Action Group names, full resource IDs,
-        # or objects with `name` + `resource_group_name`
-        contact_groups = [
-          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-alerts-rg/providers/Microsoft.Insights/actionGroups/my-action-group"
-        ]
+  budget = [
+    {
+      name            = "monthly-budget"
+      subscription_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+      amount          = 10000
+      time_grain      = "Monthly"
+      time_period = {
+        start_date = "2026-01-01"
       }
+
+      # Optional: preserve existing budget filters to avoid drift
+      filter = {
+        dimension = [{
+          name     = "ChargeType"
+          operator = "In"
+          values   = ["Usage"]
+        }]
+      }
+
+      notification = [
+        {
+          enabled        = true
+          operator       = "GreaterThan"
+          threshold      = 75
+          contact_emails = ["admin@example.com"]
+
+          # Accepts Action Group names, full resource IDs,
+          # or objects with `name` + `resource_group_name`
+          contact_groups = [
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-alerts-rg/providers/Microsoft.Insights/actionGroups/my-action-group"
+          ]
+        }
       # Also supports objects for cross-resource-group lookups:
       # {
       #   enabled        = true
@@ -103,8 +104,9 @@ module "azure_alerts" {
       #     resource_group_name = "shared-monitoring-rg"
       #   }]
       # }
-    ]
-  }
+      ]
+    }
+  ]
 
   # Activity Log Alerts - Optional
   log_alert = [
