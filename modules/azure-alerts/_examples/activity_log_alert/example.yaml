@@ -9,8 +9,7 @@ values:
       project: azure-alerts
 
   action_group:
-    activity_log_action_group:
-      name: activity-log-action-group
+    - name: activity-log-action-group
       resource_group_name: example-alerts-rg
       short_name: ActivityAG
 

@@ -1,11 +1,24 @@
 locals {
+  # Normalized action group entries: accepts legacy single object, map, or list.
+  action_group_entries = (
+    var.action_group == null ? [] : (
+      can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
+      ? [var.action_group]
+      : can(tolist(var.action_group))
+      ? [for ag in tolist(var.action_group) : ag]
+      : [for _, ag in tomap(var.action_group) : ag]
+    )
+  )
+
   # Normalized budget entries: accepts either a legacy single object or a map of objects.
   budget_entries = (
     var.budget == null ? {} :
     (
       can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
       ? { (var.budget.name) = var.budget }
-      : { for k, budget in tomap(var.budget) : k => budget }
+      : can(tolist(var.budget))
+      ? { for budget in tolist(var.budget) : budget.name => budget }
+      : { for _, budget in tomap(var.budget) : budget.name => budget }
     )
   )
 
@@ -15,13 +28,26 @@ locals {
     (
       can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
       ? { (var.quota_alert.name) = var.quota_alert }
-      : { for quota_key, quota in tomap(var.quota_alert) : quota_key => quota }
+      : can(tolist(var.quota_alert))
+      ? { for quota in tolist(var.quota_alert) : quota.name => quota }
+      : { for _, quota in tomap(var.quota_alert) : quota.name => quota }
+    )
+  )
+
+  # Normalized backup alert entries: accepts legacy single object, map, or list.
+  backup_alert_entries = (
+    var.backup_alert == null ? {} : (
+      can(var.backup_alert.name) && can(var.backup_alert.scopes)
+      ? { (var.backup_alert.name) = var.backup_alert }
+      : can(tolist(var.backup_alert))
+      ? { for alert in tolist(var.backup_alert) : alert.name => alert }
+      : { for _, alert in tomap(var.backup_alert) : alert.name => alert }
     )
   )
 
   # Distinct resource group names used by configured action groups.
   action_group_resource_group_names = distinct([
-    for _, ag in var.action_group : ag.resource_group_name
+    for _, ag in local.managed_action_groups : ag.resource_group_name
   ])
 
   # Effective resource group name: prefer common.resource_group_name; otherwise infer only when there is a single RG.
@@ -37,12 +63,14 @@ locals {
   ) : var.common.tags
 
   # Alias to simplify references to action_group input.
-  managed_action_groups = var.action_group
+  managed_action_groups = {
+    for ag in local.action_group_entries : ag.name => ag
+  }
 
   # Membership map of managed action groups by "resource_group/name".
   # Validated: no two entries may share the same (resource_group_name, name) pair.
   managed_action_group_ref_keys = {
-    for _, ag in var.action_group : "${ag.resource_group_name}/${ag.name}" => true
+    for _, ag in local.managed_action_groups : "${ag.resource_group_name}/${ag.name}" => true
   }
 
   # Map managed action group input keys to created action group IDs.
@@ -85,7 +113,7 @@ locals {
         name                = can(regex("^/subscriptions/", try(tostring(ag_ref), ""))) ? null : try(tostring(ag_ref), null)
         resource_group_name = null
       }]
-      : [for _, ag in var.action_group : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
+      : [for _, ag in local.managed_action_groups : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
     )
   ])
 
@@ -129,7 +157,7 @@ locals {
           ? { id = try(tostring(ag_ref), null), name = null, resource_group_name = null }
           : { id = null, name = try(tostring(ag_ref), null), resource_group_name = null }
         ) if try(tostring(ag_ref), null) != null]
-        : [for _, ag in var.action_group : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
+        : [for _, ag in local.managed_action_groups : { id = null, name = ag.name, resource_group_name = ag.resource_group_name }]
         ) : (
         try(group.id, null) != null
         ? group.id

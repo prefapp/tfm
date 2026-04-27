@@ -9,8 +9,7 @@ values:
       project: azure-alerts
 
   action_group:
-    example:
-      name: example-action-group
+    - name: example-action-group
       resource_group_name: example-alerts-rg
       short_name: ExmplAG
 

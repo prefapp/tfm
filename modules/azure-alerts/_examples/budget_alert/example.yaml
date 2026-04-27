@@ -9,8 +9,7 @@ values:
       project: azure-alerts
 
   action_group:
-    budget_alert_action_group:
-      name: budget-alert-action-group
+    - name: budget-alert-action-group
       resource_group_name: example-alerts-rg
       short_name: BudgetAG
 
@@ -23,34 +22,34 @@ values:
           email_address: ops@example.com
 
   budget:
-    name: monthly-subscription-budget
-    subscription_id: /subscriptions/00000000-0000-0000-0000-000000000000
-    amount: 5000
-    time_grain: Monthly
-    time_period:
-      start_date: "2026-01-01"
-      end_date: "2027-12-31"
-    filter:
-      dimension:
-        - name: ChargeType
-          operator: In
-          values:
-            - Usage
-    notification:
-      - enabled: true
-        operator: GreaterThan
-        threshold: 75
-        threshold_type: Actual
-        contact_emails:
-          - finance@example.com
-        contact_groups:
-          - /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-alerts-rg/providers/Microsoft.Insights/actionGroups/budget-alert-action-group
-      - enabled: true
-        operator: GreaterThan
-        threshold: 100
-        threshold_type: Actual
-        contact_emails:
-          - finance@example.com
-        contact_groups:
-          - name: shared-monitoring-action-group
-            resource_group_name: shared-monitoring-rg
+    - name: monthly-subscription-budget
+      subscription_id: /subscriptions/00000000-0000-0000-0000-000000000000
+      amount: 5000
+      time_grain: Monthly
+      time_period:
+        start_date: "2026-01-01"
+        end_date: "2027-12-31"
+      filter:
+        dimension:
+          - name: ChargeType
+            operator: In
+            values:
+              - Usage
+      notification:
+        - enabled: true
+          operator: GreaterThan
+          threshold: 75
+          threshold_type: Actual
+          contact_emails:
+            - finance@example.com
+          contact_groups:
+            - /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-alerts-rg/providers/Microsoft.Insights/actionGroups/budget-alert-action-group
+        - enabled: true
+          operator: GreaterThan
+          threshold: 100
+          threshold_type: Actual
+          contact_emails:
+            - finance@example.com
+          contact_groups:
+            - name: shared-monitoring-action-group
+              resource_group_name: shared-monitoring-rg

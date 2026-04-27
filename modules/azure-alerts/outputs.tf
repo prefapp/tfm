@@ -9,12 +9,12 @@ output "action_group_name" {
 }
 
 output "action_group_ids" {
-  description = "Map of configured action group keys to their resource IDs."
+  description = "Map of configured action_group names to their resource IDs."
   value       = local.action_group_ids_by_key
 }
 
 output "action_group_names" {
-  description = "Map of configured action group keys to their names."
+  description = "Map of configured action_group names to their names."
   value       = local.action_group_names_by_key
 }
 
@@ -24,7 +24,7 @@ output "quota_alert_id" {
 }
 
 output "quota_alert_ids" {
-  description = "Map of configured quota_alert keys to their resource IDs."
+  description = "Map of configured quota_alert names to their resource IDs."
   value       = { for k, v in azurerm_monitor_scheduled_query_rules_alert_v2.quota : k => v.id }
 }
 
@@ -44,7 +44,7 @@ output "budget_alert_id" {
 }
 
 output "budget_alert_ids" {
-  description = "Map of configured budget keys to their resource IDs."
+  description = "Map of configured budget names to their resource IDs."
   value       = { for k, v in azurerm_consumption_budget_subscription.this : k => v.id }
 }
 
@@ -54,6 +54,11 @@ output "activity_log_alert_ids" {
 }
 
 output "backup_alert_id" {
-  description = "The ID of the alert processing rule for backup alerts. Null if not created."
-  value       = var.backup_alert != null ? azurerm_monitor_alert_processing_rule_action_group.backup[0].id : null
+  description = "The ID of the alert processing rule when exactly one backup_alert is configured; otherwise null."
+  value       = length(azurerm_monitor_alert_processing_rule_action_group.backup) == 1 ? values(azurerm_monitor_alert_processing_rule_action_group.backup)[0].id : null
+}
+
+output "backup_alert_ids" {
+  description = "Map of configured backup_alert names to their resource IDs."
+  value       = { for k, v in azurerm_monitor_alert_processing_rule_action_group.backup : k => v.id }
 }
