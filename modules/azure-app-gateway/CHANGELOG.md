@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.8.1...azure-app-gateway-v0.9.0) (2026-04-27)
+
+
+### Features
+
+* **azure-app-gateway-docs:** update docs and add provider dependency ([#1186](https://github.com/prefapp/tfm/issues/1186)) ([8cfc7c3](https://github.com/prefapp/tfm/commit/8cfc7c32acdb1c0cd5767434b349186edc47d9f4))
+
 ## [0.8.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.8.0...azure-app-gateway-v0.8.1) (2025-12-03)
 
 
