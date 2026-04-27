@@ -72,6 +72,12 @@ variable "eventbridge_enabled" {
   default     = true
 }
 
+variable "allow_auto_create_cloudtrail_bucket" {
+  description = "Fallback mode. If true, and s3_bucket_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket."
+  type        = bool
+  default     = false
+}
+
 variable "lambda_timeout" {
   description = "Lambda timeout in seconds"
   type        = number
@@ -101,17 +107,21 @@ variable "manual_replication_enabled" {
 # ---------------------------------------------------------------------------
 
 variable "s3_bucket_arn" {
-  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation."
+  description = "ARN of an existing S3 bucket where CloudTrail logs are stored. This is required by default when eventbridge_enabled is true. Set allow_auto_create_cloudtrail_bucket=true only as a fallback to let the module create a dedicated bucket automatically. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation."
   type        = string
   default     = ""
   validation {
     condition     = var.s3_bucket_arn == "" || can(regex("^arn:aws:s3:::[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$", var.s3_bucket_arn))
     error_message = "If provided, s3_bucket_arn must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name) with a lowercase bucket name (3-63 chars, only lowercase letters, numbers, hyphens, and periods)."
   }
+  validation {
+    condition     = !(var.eventbridge_enabled && !var.allow_auto_create_cloudtrail_bucket) || var.s3_bucket_arn != ""
+    error_message = "When eventbridge_enabled is true, s3_bucket_arn is required by default. Set allow_auto_create_cloudtrail_bucket=true only as a fallback to let the module create a dedicated bucket."
+  }
 }
 
 variable "cloudtrail_arn" {
-  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail. Only the CloudTrail ARN is required when using an existing trail (cloudtrail_name is no longer needed)."
+  description = "(Optional) ARN of an existing CloudTrail. If omitted and eventbridge_enabled is true, the module creates a dedicated trail."
   type        = string
   default     = ""
 }
