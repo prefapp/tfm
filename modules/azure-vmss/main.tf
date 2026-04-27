@@ -7,7 +7,7 @@ data "azurerm_subnet" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
-  name = var.vmss.resource_group_name
+  name = coalesce(var.vmss.resource_group_name, var.common.resource_group_name)
 }
 
 # RESOURCES SECTION
