@@ -26,6 +26,12 @@ locals {
     )
   )
 
+  # True when the module should create its own managed identity: at least one quota alert
+  # is configured and at least one does not supply its own identity_ids.
+  needs_module_identity = length(local.quota_alert_entries) > 0 && anytrue([
+    for _, quota in local.quota_alert_entries : length(coalesce(try(quota.identity.identity_ids, null), [])) == 0
+  ])
+
   # Normalized backup alert entries: accepts a list (preferred) or a legacy map.
   backup_alert_entries = (
     var.backup_alert == null ? {} : (

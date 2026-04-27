@@ -130,7 +130,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
   identity {
     type         = try(each.value.identity.type, "UserAssigned")
-    identity_ids = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : coalesce(try(each.value.identity.identity_ids, null), [])
+    identity_ids = length(coalesce(try(each.value.identity.identity_ids, null), [])) > 0 ? coalesce(try(each.value.identity.identity_ids, null), []) : (length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : [])
   }
 
   action {
