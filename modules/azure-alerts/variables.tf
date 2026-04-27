@@ -113,17 +113,17 @@ variable "action_group" {
           : [for _, item in tomap(var.action_group) : item]
         )
         ) : alltrue([
-          length(toset([for v in values(ag.arm_role_receivers) : v.name])) == length([for v in values(ag.arm_role_receivers) : v.name]),
-          length(toset([for v in values(ag.automation_runbook_receivers) : v.name])) == length([for v in values(ag.automation_runbook_receivers) : v.name]),
-          length(toset([for v in values(ag.azure_app_push_receivers) : v.name])) == length([for v in values(ag.azure_app_push_receivers) : v.name]),
-          length(toset([for v in values(ag.azure_function_receivers) : v.name])) == length([for v in values(ag.azure_function_receivers) : v.name]),
-          length(toset([for v in values(ag.email_receivers) : v.name])) == length([for v in values(ag.email_receivers) : v.name]),
-          length(toset([for v in values(ag.event_hub_receivers) : v.name])) == length([for v in values(ag.event_hub_receivers) : v.name]),
-          length(toset([for v in values(ag.itsm_receivers) : v.name])) == length([for v in values(ag.itsm_receivers) : v.name]),
-          length(toset([for v in values(ag.logic_app_receivers) : v.name])) == length([for v in values(ag.logic_app_receivers) : v.name]),
-          length(toset([for v in values(ag.sms_receivers) : v.name])) == length([for v in values(ag.sms_receivers) : v.name]),
-          length(toset([for v in values(ag.voice_receivers) : v.name])) == length([for v in values(ag.voice_receivers) : v.name]),
-          length(toset([for v in values(ag.webhook_receivers) : v.name])) == length([for v in values(ag.webhook_receivers) : v.name])
+          length(toset([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.email_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.email_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.sms_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.sms_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.voice_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.voice_receivers, null), {})) : v.name]),
+          length(toset([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : v.name])
       ])
     ])
     error_message = "Each receiver type in action_group must use unique receiver 'name' values to avoid ordering collisions."
