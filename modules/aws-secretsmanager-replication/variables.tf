@@ -69,7 +69,7 @@ variable "enable_tag_replication" {
 variable "eventbridge_enabled" {
   description = "Whether to create the EventBridge rule that triggers the Lambda"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "allow_auto_create_cloudtrail_bucket" {
