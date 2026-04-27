@@ -3,7 +3,7 @@
 ###############################################################################
 
 resource "random_integer" "suffix" {
-  count = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
+  count = var.s3_bucket_arn == "" && var.eventbridge_enabled && var.allow_auto_create_cloudtrail_bucket ? 1 : 0
   min   = 10000
   max   = 99999
 }
@@ -11,19 +11,19 @@ resource "random_integer" "suffix" {
 
 
 ###############################################################################
-# S3 bucket for CloudTrail (create only if not provided)
+# S3 bucket for CloudTrail (create only in explicit fallback mode)
 ###############################################################################
 
 resource "aws_s3_bucket" "cloudtrail" {
-  count         = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
-  bucket        = var.s3_bucket_arn != "" ? regexall("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0][0] : "${var.prefix}-cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
+  count         = var.s3_bucket_arn == "" && var.eventbridge_enabled && var.allow_auto_create_cloudtrail_bucket ? 1 : 0
+  bucket        = var.s3_bucket_arn != "" ? regexall("^arn:aws:s3:::(.+)$", var.s3_bucket_arn)[0][0] : "cloudtrail-${data.aws_caller_identity.current.account_id}-${random_integer.suffix[0].result}"
   force_destroy = false
   tags          = var.tags
 }
 
 # Baseline hardening for CloudTrail S3 bucket
 resource "aws_s3_bucket_public_access_block" "cloudtrail" {
-  count  = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
+  count  = var.s3_bucket_arn == "" && var.eventbridge_enabled && var.allow_auto_create_cloudtrail_bucket ? 1 : 0
   bucket = aws_s3_bucket.cloudtrail[0].id
 
   block_public_acls       = true
@@ -33,7 +33,7 @@ resource "aws_s3_bucket_public_access_block" "cloudtrail" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail" {
-  count  = var.s3_bucket_arn == "" && var.eventbridge_enabled ? 1 : 0
+  count  = var.s3_bucket_arn == "" && var.eventbridge_enabled && var.allow_auto_create_cloudtrail_bucket ? 1 : 0
   bucket = aws_s3_bucket.cloudtrail[0].id
 
   rule {
