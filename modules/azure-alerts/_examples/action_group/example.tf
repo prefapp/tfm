@@ -34,7 +34,7 @@ module "azure_alerts" {
       sms_receivers = {
         on_call = {
           name         = "On Call"
-          country_code = "US"
+          country_code = "1"
           phone_number = "+12345678900"
         }
       }

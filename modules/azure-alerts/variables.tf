@@ -83,7 +83,7 @@ variable "action_group" {
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
         )
-      ) : length(try(ag.short_name, "")) > 0 && length(try(ag.short_name, "")) <= 12
+      ) : length(coalesce(try(ag.short_name, null), "")) > 0 && length(coalesce(try(ag.short_name, null), "")) <= 12
     ])
     error_message = "Each action_group.short_name must be 1 to 12 characters."
   }

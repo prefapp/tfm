@@ -2,7 +2,7 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config
 data "azurerm_client_config" "current" {}
 
-# Data source to resolve existing action groups by name for reference in alerts
+# Data source to fetch the resource group (used for tag inheritance when common.tags_from_rg is enabled)
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   count = var.common.tags_from_rg && local.resource_group_name != null ? 1 : 0
