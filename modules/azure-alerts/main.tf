@@ -424,7 +424,7 @@ resource "azurerm_monitor_activity_log_alert" "this" {
       condition = local.resource_group_name != null || (
         try(each.value.action.action_group, null) == null ||
         (can(tostring(each.value.action.action_group)) && startswith(tostring(each.value.action.action_group), "/")) ||
-        try(each.value.action.action_group.resource_group_name, null) != null
+        try(trimspace(each.value.action.action_group.resource_group_name), "") != ""
       )
       error_message = "log_alert '${each.key}' references an Action Group by name or by object without resource_group_name. Set common.resource_group_name (or configure a single action_group entry so its resource group can be inferred) to resolve the Action Group."
     }
