@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.5...aws-secretsmanager-replication-v1.0.0) (2026-04-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* update variables ([#1206](https://github.com/prefapp/tfm/issues/1206))
+
+### Features
+
+* update variables ([#1206](https://github.com/prefapp/tfm/issues/1206)) ([44b8d32](https://github.com/prefapp/tfm/commit/44b8d3204022803d16658708c1143b9583242c78))
+
 ## [0.1.5](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.4...aws-secretsmanager-replication-v0.1.5) (2026-03-24)
 
 
