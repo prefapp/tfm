@@ -62,7 +62,7 @@ variable "action_group" {
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
         )
-      ) : ag.name
+      ) : try(ag.name, null) if try(ag.name, null) != null
       ])) == length([
       for ag in(
         var.action_group == null ? [] : (
@@ -70,7 +70,7 @@ variable "action_group" {
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
         )
-      ) : ag.name
+      ) : try(ag.name, null) if try(ag.name, null) != null
     ])
     error_message = "Each action_group.name must be unique."
   }
@@ -97,17 +97,17 @@ variable "action_group" {
           : [for _, a in tomap(var.action_group) : a]
         )
         ) : alltrue([
-          length(toset([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.email_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.email_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.sms_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.sms_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.voice_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.voice_receivers, null), {})) : v.name]),
-          length(toset([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : v.name])
+          length(toset([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.email_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.email_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.sms_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.sms_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.voice_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.voice_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null]),
+          length(toset([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])) == length([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : try(v.name, null) if try(v.name, null) != null])
       ])
     ])
     error_message = "Each receiver type in action_group must use unique receiver 'name' values to avoid ordering collisions."
@@ -251,10 +251,10 @@ variable "quota_alert" {
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
-        ) : contains(
+        ) : try(contains(
         ["UserAssigned", "SystemAssigned, UserAssigned"],
         quota.identity.type
-      )
+      ), false)
     ])
     error_message = "Each quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\"."
   }
@@ -267,7 +267,7 @@ variable "quota_alert" {
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
-      ) : quota.name
+      ) : try(quota.name, null) if try(quota.name, null) != null
       ])) == length([
       for quota in(
         var.quota_alert == null ? [] : (
@@ -275,7 +275,7 @@ variable "quota_alert" {
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
-      ) : quota.name
+      ) : try(quota.name, null) if try(quota.name, null) != null
     ])
     error_message = "Each quota_alert.name must be unique."
   }
@@ -352,7 +352,7 @@ variable "backup_alert" {
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
         )
-      ) : alert.name
+      ) : try(alert.name, null) if try(alert.name, null) != null
       ])) == length([
       for alert in(
         var.backup_alert == null ? [] : (
@@ -360,7 +360,7 @@ variable "backup_alert" {
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
         )
-      ) : alert.name
+      ) : try(alert.name, null) if try(alert.name, null) != null
     ])
     error_message = "Each backup_alert.name must be unique."
   }
