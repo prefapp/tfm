@@ -121,18 +121,18 @@ variable "action_group" {
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
         )
-      ) : alltrue([
-        alltrue([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.email_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.sms_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.voice_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
-        alltrue([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""])
+        ) : alltrue([
+          alltrue([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.automation_runbook_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.azure_app_push_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.azure_function_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.email_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.event_hub_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.itsm_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.logic_app_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.sms_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.voice_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""]),
+          alltrue([for v in values(coalesce(try(ag.webhook_receivers, null), {})) : try(v.name, null) != null && trimspace(try(v.name, "")) != ""])
       ])
     ])
     error_message = "Each receiver entry in action_group must define a non-empty name."
