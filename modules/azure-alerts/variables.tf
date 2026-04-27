@@ -180,7 +180,10 @@ variable "budget" {
           ? [for b in tolist(var.budget) : b]
           : [for _, b in tomap(var.budget) : b]
         )
-      ) : try(budget.name, null) != null
+      ) : (
+        try(budget.name, null) != null &&
+        trimspace(try(budget.name, "")) != ""
+      )
       ]) && length(distinct([
         for budget in(
           var.budget == null ? [] : (
@@ -260,6 +263,22 @@ variable "quota_alert" {
   }
 
   validation {
+    condition = alltrue([
+      for quota in(
+        var.quota_alert == null ? [] : (
+          can(tolist(var.quota_alert))
+          ? [for q in tolist(var.quota_alert) : q]
+          : [for _, q in tomap(var.quota_alert) : q]
+        )
+      ) : (
+        try(quota.name, null) != null &&
+        trimspace(try(quota.name, "")) != ""
+      )
+    ])
+    error_message = "Each quota_alert entry must have a non-empty 'name' attribute."
+  }
+
+  validation {
     condition = length(distinct([
       for quota in(
         var.quota_alert == null ? [] : (
@@ -267,7 +286,7 @@ variable "quota_alert" {
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
-      ) : try(quota.name, null) if try(quota.name, null) != null
+      ) : try(quota.name, null)
       ])) == length([
       for quota in(
         var.quota_alert == null ? [] : (
@@ -275,7 +294,7 @@ variable "quota_alert" {
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
-      ) : try(quota.name, null) if try(quota.name, null) != null
+      ) : try(quota.name, null)
     ])
     error_message = "Each quota_alert.name must be unique."
   }

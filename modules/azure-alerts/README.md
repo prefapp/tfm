@@ -226,6 +226,7 @@ Use multiple entries inside `action_group` when you need to manage more than one
 - Budget notifications can reference any configured group by name
 - Quota alerts can target all configured groups by default, or explicit `quota_alert.action_groups`
 - Activity log alerts should set `action.action_group` or `action.action_group_id` explicitly when more than one Action Group is configured
+
 ### Quota Alert
 Track subscription-level quota usage to prevent hitting Azure limits:
 - Monitor vCPU quotas across regions
