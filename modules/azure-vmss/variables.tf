@@ -1,5 +1,6 @@
 # VARIABLES SECTION
 variable "common" {
+  description = "Resource group and region where the scale set is created (must already exist)."
   type = object({
     resource_group_name = string
     location            = string
@@ -7,9 +8,11 @@ variable "common" {
 }
 
 variable "vmss" {
+  description = "Scale set, image, disks, upgrade policy, networking, identity, and optional cloud-init / custom script. See Inputs table for the full object shape."
   type = object({
-    name                        = string
-    sku                         = string
+    name                = string
+    resource_group_name = optional(string)
+    sku                 = string
     instances                   = optional(number)
     admin_username              = string
     admin_ssh_key_username      = string
