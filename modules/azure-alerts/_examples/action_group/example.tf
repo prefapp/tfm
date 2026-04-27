@@ -13,9 +13,9 @@ module "azure_alerts" {
     }
   }
 
-  # One or more Action Groups using the singular key `action_group`
-  action_group = {
-    example = {
+  # One or more Action Groups using list-of-objects
+  action_group = [
+    {
       name                = "example-action-group"
       resource_group_name = "example-alerts-rg"
       short_name          = "ExmplAG"
@@ -53,7 +53,7 @@ module "azure_alerts" {
         }
       }
     }
-  }
+  ]
 }
 
 output "action_group_id" {

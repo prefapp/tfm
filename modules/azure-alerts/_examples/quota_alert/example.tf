@@ -21,8 +21,8 @@ module "azure_alerts" {
   }
 
   # Action Group for alert notifications
-  action_group = {
-    quota = {
+  action_group = [
+    {
       name                = "quota-alert-action-group"
       resource_group_name = "example-alerts-rg"
       short_name          = "QuotaAG"
@@ -34,11 +34,11 @@ module "azure_alerts" {
         }
       }
     }
-  }
+  ]
 
   # Quota Alert - Monitor vCPU quota usage and alert when threshold is exceeded
-  quota_alert = {
-    vcpu = {
+  quota_alert = [
+    {
       name                             = "vcpu-quota-alert"
       display_name                     = "vCPU Quota Usage Alert"
       description                      = "Alert when vCPU quota usage exceeds 80%"
@@ -77,7 +77,7 @@ module "azure_alerts" {
 
       action_groups = ["quota-alert-action-group"]
     }
-  }
+  ]
 }
 
 output "quota_alert_id" {

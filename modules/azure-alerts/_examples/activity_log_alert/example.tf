@@ -14,8 +14,8 @@ module "azure_alerts" {
   }
 
   # Action Group for alert notifications
-  action_group = {
-    activity = {
+  action_group = [
+    {
       name                = "activity-log-action-group"
       resource_group_name = "example-alerts-rg"
       short_name          = "ActivityAG"
@@ -31,7 +31,7 @@ module "azure_alerts" {
         }
       }
     }
-  }
+  ]
 
   # Activity Log Alerts - Monitor specific activities
   log_alert = [

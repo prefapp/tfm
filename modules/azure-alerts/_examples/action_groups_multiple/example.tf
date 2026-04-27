@@ -12,8 +12,8 @@ module "azure_alerts" {
     }
   }
 
-  action_group = {
-    operations = {
+  action_group = [
+    {
       name                = "ops-action-group"
       resource_group_name = "example-alerts-rg"
       short_name          = "OpsAG"
@@ -24,9 +24,9 @@ module "azure_alerts" {
           email_address = "ops@example.com"
         }
       }
-    }
+    },
 
-    finance = {
+    {
       name                = "finance-action-group"
       resource_group_name = "example-alerts-rg"
       short_name          = "FinAG"
@@ -38,10 +38,10 @@ module "azure_alerts" {
         }
       }
     }
-  }
+  ]
 
-  budget = {
-    monthly = {
+  budget = [
+    {
       name            = "monthly-subscription-budget"
       subscription_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
       amount          = 5000
@@ -60,7 +60,7 @@ module "azure_alerts" {
         }
       ]
     }
-  }
+  ]
 }
 
 output "action_group_ids" {

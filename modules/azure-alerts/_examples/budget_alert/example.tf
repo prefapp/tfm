@@ -14,8 +14,8 @@ module "azure_alerts" {
   }
 
   # Action Group for alert notifications
-  action_group = {
-    budget = {
+  action_group = [
+    {
       name                = "budget-alert-action-group"
       resource_group_name = "example-alerts-rg"
       short_name          = "BudgetAG"
@@ -31,11 +31,11 @@ module "azure_alerts" {
         }
       }
     }
-  }
+  ]
 
   # Budget Alert - Monitor monthly spending and alert when thresholds are reached
-  budget = {
-    monthly = {
+  budget = [
+    {
       name            = "monthly-subscription-budget"
       subscription_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
       amount          = 5000
@@ -78,7 +78,7 @@ module "azure_alerts" {
         }
       ]
     }
-  }
+  ]
 }
 
 output "budget_alert_id" {
