@@ -52,7 +52,7 @@ variable "action_group" {
       for ag in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
@@ -67,7 +67,7 @@ variable "action_group" {
       for ag in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
@@ -77,7 +77,7 @@ variable "action_group" {
       for ag in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
@@ -92,7 +92,7 @@ variable "action_group" {
       for ag in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for item in tolist(var.action_group) : item]
           : [for _, item in tomap(var.action_group) : item]
@@ -107,7 +107,7 @@ variable "action_group" {
       for ag in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for item in tolist(var.action_group) : item]
           : [for _, item in tomap(var.action_group) : item]
@@ -134,7 +134,7 @@ variable "action_group" {
       for ag in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for item in tolist(var.action_group) : item]
           : [for _, item in tomap(var.action_group) : item]
@@ -144,7 +144,7 @@ variable "action_group" {
       for idx, a in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for item in tolist(var.action_group) : item]
           : [for _, item in tomap(var.action_group) : item]
@@ -159,7 +159,7 @@ variable "action_group" {
       for ag in(
         var.action_group == null ? [] : (
           can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? [var.action_group]
+          ? values(tomap({ (var.action_group.name) = var.action_group }))
           : can(tolist(var.action_group))
           ? [for item in tolist(var.action_group) : item]
           : [for _, item in tomap(var.action_group) : item]
@@ -294,7 +294,7 @@ variable "quota_alert" {
       for quota in(
         var.quota_alert == null ? [] : (
           can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? [var.quota_alert]
+          ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
           : can(tolist(var.quota_alert))
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
@@ -312,7 +312,7 @@ variable "quota_alert" {
       for quota in(
         var.quota_alert == null ? [] : (
           can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? [var.quota_alert]
+          ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
           : can(tolist(var.quota_alert))
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
@@ -322,7 +322,7 @@ variable "quota_alert" {
       for quota in(
         var.quota_alert == null ? [] : (
           can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? [var.quota_alert]
+          ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
           : can(tolist(var.quota_alert))
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
@@ -392,7 +392,7 @@ variable "backup_alert" {
       for alert in(
         var.backup_alert == null ? [] : (
           can(var.backup_alert.name) && can(var.backup_alert.scopes)
-          ? [var.backup_alert]
+          ? values(tomap({ (var.backup_alert.name) = var.backup_alert }))
           : can(tolist(var.backup_alert))
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
@@ -407,7 +407,7 @@ variable "backup_alert" {
       for alert in(
         var.backup_alert == null ? [] : (
           can(var.backup_alert.name) && can(var.backup_alert.scopes)
-          ? [var.backup_alert]
+          ? values(tomap({ (var.backup_alert.name) = var.backup_alert }))
           : can(tolist(var.backup_alert))
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
@@ -417,7 +417,7 @@ variable "backup_alert" {
       for alert in(
         var.backup_alert == null ? [] : (
           can(var.backup_alert.name) && can(var.backup_alert.scopes)
-          ? [var.backup_alert]
+          ? values(tomap({ (var.backup_alert.name) = var.backup_alert }))
           : can(tolist(var.backup_alert))
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
