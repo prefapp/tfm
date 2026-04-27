@@ -49,6 +49,13 @@ variable "config" {
       username   = string
       permission = string
     })), [])
+
+    labels = optional(list(object({
+      name        = string
+      description = optional(string, null)
+      color       = string   # 6-digit hex without # (e.g. "d73a4a")
+    })), [])
+
   })
 
   validation {
@@ -78,5 +85,24 @@ variable "config" {
       for v in var.config.variables : length(trimspace(v.variableName)) > 0 && length(trimspace(v.value)) > 0
     ])
     error_message = "Every repository variable must have a non-empty variableName and value."
+  }
+
+  validation {
+    condition = alltrue([
+      for l in var.config.labels : length(trimspace(l.name)) > 0
+    ])
+    error_message = "Every label must have a non-empty 'name'."
+  }
+
+  validation {
+    condition = length(var.config.labels) == length(distinct([for l in var.config.labels : l.name]))
+    error_message = "Label names must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for l in var.config.labels : can(regex("^([A-Fa-f0-9]{6})$", l.color))
+    ])
+    error_message = "Label color must be a valid 6-character hex code without '#' (example: d73a4a)."
   }
 }
