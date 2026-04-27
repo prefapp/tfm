@@ -1,8 +1,8 @@
 # Managed Identity for Quota Alert to read the quota metrics from the subscription
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity
 resource "azurerm_user_assigned_identity" "quota_alert_reader" {
-  count               = length(local.quota_alert_entries) > 0 && var.identity != null && local.resource_group_name != null ? 1 : 0
-  name                = var.identity.name
+  count               = length(local.quota_alert_entries) > 0 && local.resource_group_name != null ? 1 : 0
+  name                = coalesce(try(var.identity.name, null), "quota-alert-reader")
   resource_group_name = local.resource_group_name
   location            = var.common.location
 }
@@ -10,9 +10,9 @@ resource "azurerm_user_assigned_identity" "quota_alert_reader" {
 # Role Assignment for the Managed Identity to have Reader access on the subscription to read the quota metrics
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "quota_reader" {
-  count                = length(local.quota_alert_entries) > 0 && var.identity != null && local.resource_group_name != null ? 1 : 0
-  scope                = var.identity.scope
-  role_definition_name = var.identity.role_definition_name
+  count                = length(local.quota_alert_entries) > 0 && local.resource_group_name != null ? 1 : 0
+  scope                = coalesce(try(var.identity.scope, null), "/subscriptions/${data.azurerm_client_config.current.subscription_id}")
+  role_definition_name = coalesce(try(var.identity.role_definition_name, null), "Reader")
   principal_id         = azurerm_user_assigned_identity.quota_alert_reader[0].principal_id
 }
 

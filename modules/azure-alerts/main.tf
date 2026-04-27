@@ -129,7 +129,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
   }
 
   identity {
-    type         = each.value.identity.type
+    type         = try(each.value.identity.type, "UserAssigned")
     identity_ids = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 ? [azurerm_user_assigned_identity.quota_alert_reader[0].id] : coalesce(try(each.value.identity.identity_ids, null), [])
   }
 
@@ -141,8 +141,8 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "quota" {
 
   lifecycle {
     precondition {
-      condition     = var.identity != null || length(coalesce(try(each.value.identity.identity_ids, null), [])) > 0
-      error_message = "When quota_alert '${each.key}' is set, either var.identity must be configured (to let the module create a managed identity) or quota_alert['${each.key}'].identity.identity_ids must include at least one identity ID."
+      condition     = length(azurerm_user_assigned_identity.quota_alert_reader) > 0 || length(coalesce(try(each.value.identity.identity_ids, null), [])) > 0
+      error_message = "When quota_alert '${each.key}' is set, either provide quota_alert['${each.key}'].identity.identity_ids or let the module create the Reader identity automatically (default)."
     }
 
     precondition {

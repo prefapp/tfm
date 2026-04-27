@@ -8,10 +8,7 @@ values:
       environment: production
       project: azure-alerts
 
-  identity:
-    name: quota-alert-reader
-    scope: /subscriptions/00000000-0000-0000-0000-000000000000
-    role_definition_name: Reader
+  # Optional: omit `identity` to let the module create a Reader identity automatically
 
   action_group:
     - name: quota-alert-action-group
@@ -53,6 +50,4 @@ values:
           minimum_failing_periods_to_trigger_alert: 1
           number_of_evaluation_periods: 1
 
-      identity:
-        type: UserAssigned
-        identity_ids: []
+      # Optional: omit `identity`; defaults to type UserAssigned and module-managed identity IDs

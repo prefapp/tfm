@@ -13,12 +13,7 @@ module "azure_alerts" {
     }
   }
 
-  # Managed Identity for the Quota Alert to read quota metrics
-  identity = {
-    name                 = "quota-alert-reader"
-    scope                = "/subscriptions/00000000-0000-0000-0000-000000000000"  # Replace with your subscription ID
-    role_definition_name = "Reader"
-  }
+  # Optional: omit `identity` to let the module create a Reader identity automatically
 
   # Action Group for alert notifications
   action_group = [
@@ -68,11 +63,6 @@ module "azure_alerts" {
           minimum_failing_periods_to_trigger_alert = 1
           number_of_evaluation_periods             = 1
         }
-      }
-
-      identity = {
-        type         = "UserAssigned"
-        identity_ids = [] # Will be populated by the module
       }
 
       action_groups = ["quota-alert-action-group"]

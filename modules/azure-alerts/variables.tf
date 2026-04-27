@@ -13,7 +13,7 @@ variable "common" {
 variable "identity" {
   type = object({
     name                 = string
-    scope                = string
+    scope                = optional(string)
     role_definition_name = optional(string, "Reader")
   })
   default = null # null = do not create a managed identity or role assignment
@@ -180,7 +180,7 @@ variable "budget" {
           ? [for b in tolist(var.budget) : b]
           : [for _, b in tomap(var.budget) : b]
         )
-      ) : (
+        ) : (
         try(budget.name, null) != null &&
         trimspace(try(budget.name, "")) != ""
       )
@@ -254,12 +254,14 @@ variable "quota_alert" {
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
-        ) : try(contains(
-        ["UserAssigned", "SystemAssigned, UserAssigned"],
-        quota.identity.type
-      ), false)
+        ) : (
+        try(quota.identity, null) == null || contains(
+          ["UserAssigned", "SystemAssigned, UserAssigned"],
+          try(quota.identity.type, "UserAssigned")
+        )
+      )
     ])
-    error_message = "Each quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\"."
+    error_message = "If provided, each quota_alert.identity.type must be \"UserAssigned\" or \"SystemAssigned, UserAssigned\"."
   }
 
   validation {
@@ -270,7 +272,7 @@ variable "quota_alert" {
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
-      ) : (
+        ) : (
         try(quota.name, null) != null &&
         trimspace(try(quota.name, "")) != ""
       )
