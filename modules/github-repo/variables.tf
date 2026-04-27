@@ -51,7 +51,7 @@ variable "config" {
     })), [])
 
     pages = optional(object({
-      buildType = optional(string, "workflow")
+      buildType = optional(string, "legacy")
       cname     = optional(string, null)
       source = optional(object({
         branch = string
