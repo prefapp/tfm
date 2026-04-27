@@ -92,7 +92,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_role_assignment_id"></a> [role\_assignment\_id](#output\_role\_assignment\_id) | Map from each key in `var.role_assignments` to the created role assignment resource ID. |
+| <a name="output_role_assignment_ids"></a> [role\_assignment\_ids](#output\_role\_assignment\_ids) | Map from each key in `var.role_assignments` to the created role assignment resource ID. |
 
 ## Examples
 
