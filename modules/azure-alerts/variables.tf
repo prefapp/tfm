@@ -21,9 +21,7 @@ variable "identity" {
   validation {
     condition = var.identity == null || length(
       var.quota_alert == null ? [] : (
-        can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-        ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
-        : can(tolist(var.quota_alert))
+        can(tolist(var.quota_alert))
         ? [for quota in tolist(var.quota_alert) : quota]
         : values(tomap(var.quota_alert))
       )
@@ -34,26 +32,20 @@ variable "identity" {
 
 # Action Group(s)
 variable "action_group" {
-  description = "Action Group configuration(s). Accepts a list (preferred), a map (legacy), or a single object."
+  description = "Action Group configuration(s). Accepts a list of objects (preferred) or a legacy map of objects."
   type        = any
   default     = []
 
   validation {
-    condition = var.action_group == null || (
-      (can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)) ||
-      can(tolist(var.action_group)) ||
-      can(tomap(var.action_group))
-    )
-    error_message = "action_group must be a single object, a list of objects, or a map of objects."
+    condition     = var.action_group == null || can(tolist(var.action_group)) || can(tomap(var.action_group))
+    error_message = "action_group must be a list of objects or a map of objects."
   }
 
   validation {
     condition = alltrue([
       for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
+          can(tolist(var.action_group))
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
         )
@@ -66,9 +58,7 @@ variable "action_group" {
     condition = length(distinct([
       for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
+          can(tolist(var.action_group))
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
         )
@@ -76,9 +66,7 @@ variable "action_group" {
       ])) == length([
       for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
+          can(tolist(var.action_group))
           ? [for a in tolist(var.action_group) : a]
           : [for _, a in tomap(var.action_group) : a]
         )
@@ -91,13 +79,11 @@ variable "action_group" {
     condition = alltrue([
       for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
-          ? [for item in tolist(var.action_group) : item]
-          : [for _, item in tomap(var.action_group) : item]
+          can(tolist(var.action_group))
+          ? [for a in tolist(var.action_group) : a]
+          : [for _, a in tomap(var.action_group) : a]
         )
-      ) : length(ag.short_name) > 0 && length(ag.short_name) <= 12
+      ) : length(try(ag.short_name, "")) > 0 && length(try(ag.short_name, "")) <= 12
     ])
     error_message = "Each action_group.short_name must be 1 to 12 characters."
   }
@@ -106,11 +92,9 @@ variable "action_group" {
     condition = alltrue([
       for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
-          ? [for item in tolist(var.action_group) : item]
-          : [for _, item in tomap(var.action_group) : item]
+          can(tolist(var.action_group))
+          ? [for a in tolist(var.action_group) : a]
+          : [for _, a in tomap(var.action_group) : a]
         )
         ) : alltrue([
           length(toset([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : v.name])) == length([for v in values(coalesce(try(ag.arm_role_receivers, null), {})) : v.name]),
@@ -133,40 +117,32 @@ variable "action_group" {
     condition = length(distinct([
       for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
-          ? [for item in tolist(var.action_group) : item]
-          : [for _, item in tomap(var.action_group) : item]
+          can(tolist(var.action_group))
+          ? [for a in tolist(var.action_group) : a]
+          : [for _, a in tomap(var.action_group) : a]
         )
       ) : "${ag.resource_group_name}/${ag.name}"
-      ])) == length({
-      for idx, a in(
+      ])) == length([
+      for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
-          ? [for item in tolist(var.action_group) : item]
-          : [for _, item in tomap(var.action_group) : item]
+          can(tolist(var.action_group))
+          ? [for a in tolist(var.action_group) : a]
+          : [for _, a in tomap(var.action_group) : a]
         )
-      ) : idx => a
-    })
-    error_message = "Each action_group entry must have a unique (resource_group_name, name) combination. Duplicate pairs would cause a key collision in the internal reference map."
+      ) : "${ag.resource_group_name}/${ag.name}"
+    ])
+    error_message = "Each action_group entry must have a unique (resource_group_name, name) combination."
   }
 
   validation {
     condition = alltrue([
       for ag in(
         var.action_group == null ? [] : (
-          can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-          ? values(tomap({ (var.action_group.name) = var.action_group }))
-          : can(tolist(var.action_group))
-          ? [for item in tolist(var.action_group) : item]
-          : [for _, item in tomap(var.action_group) : item]
+          can(tolist(var.action_group))
+          ? [for a in tolist(var.action_group) : a]
+          : [for _, a in tomap(var.action_group) : a]
         )
-        ) : (
-        try(ag.resource_group_name, null) != null && trimspace(try(ag.resource_group_name, "")) != ""
-      )
+      ) : try(ag.resource_group_name, null) != null && trimspace(try(ag.resource_group_name, "")) != ""
     ])
     error_message = "Each action_group entry must define a non-empty resource_group_name."
   }
@@ -174,28 +150,20 @@ variable "action_group" {
 
 # Budget Alert
 variable "budget" {
-  description = "Budget alert configuration(s). Accepts a list (preferred), a map (legacy), or a single object."
+  description = "Budget alert configuration(s). Accepts a list of objects (preferred) or a legacy map of objects."
   type        = any
   default     = []
 
   validation {
-    condition = var.budget == null || can(
-      var.budget.notification
-      ) || can(
-      tolist(var.budget)
-      ) || can(
-      tomap(var.budget)
-    )
-    error_message = "budget must be a single budget object, a list of budget objects, or a map of budget objects."
+    condition     = var.budget == null || can(tolist(var.budget)) || can(tomap(var.budget))
+    error_message = "budget must be a list of budget objects or a map of budget objects."
   }
 
   validation {
     condition = alltrue([
       for budget in(
         var.budget == null ? [] : (
-          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? values(tomap({ (var.budget.name) = var.budget }))
-          : can(tolist(var.budget))
+          can(tolist(var.budget))
           ? [for b in tolist(var.budget) : b]
           : [for _, b in tomap(var.budget) : b]
         )
@@ -208,9 +176,7 @@ variable "budget" {
     condition = alltrue([
       for budget in(
         var.budget == null ? [] : (
-          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? values(tomap({ (var.budget.name) = var.budget }))
-          : can(tolist(var.budget))
+          can(tolist(var.budget))
           ? [for b in tolist(var.budget) : b]
           : [for _, b in tomap(var.budget) : b]
         )
@@ -218,9 +184,7 @@ variable "budget" {
       ]) && length(distinct([
         for budget in(
           var.budget == null ? [] : (
-            can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-            ? values(tomap({ (var.budget.name) = var.budget }))
-            : can(tolist(var.budget))
+            can(tolist(var.budget))
             ? [for b in tolist(var.budget) : b]
             : [for _, b in tomap(var.budget) : b]
           )
@@ -228,9 +192,7 @@ variable "budget" {
       ])) == length([
       for budget in(
         var.budget == null ? [] : (
-          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? values(tomap({ (var.budget.name) = var.budget }))
-          : can(tolist(var.budget))
+          can(tolist(var.budget))
           ? [for b in tolist(var.budget) : b]
           : [for _, b in tomap(var.budget) : b]
         )
@@ -243,9 +205,7 @@ variable "budget" {
     condition = alltrue(flatten([
       for budget in(
         var.budget == null ? [] : (
-          can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-          ? values(tomap({ (var.budget.name) = var.budget }))
-          : can(tolist(var.budget))
+          can(tolist(var.budget))
           ? [for b in tolist(var.budget) : b]
           : [for _, b in tomap(var.budget) : b]
         )
@@ -274,28 +234,20 @@ variable "budget" {
 
 # Quota Alert (Scheduled Query Rules V2)
 variable "quota_alert" {
-  description = "Quota alert configuration(s). Accepts a list (preferred), a map (legacy), or a single object."
+  description = "Quota alert configuration(s). Accepts a list of objects (preferred) or a legacy map of objects."
   type        = any
   default     = []
 
   validation {
-    condition = var.quota_alert == null || can(
-      var.quota_alert.criteria
-      ) || can(
-      tolist(var.quota_alert)
-      ) || can(
-      tomap(var.quota_alert)
-    )
-    error_message = "quota_alert must be a single quota alert object, a list of quota alert objects, or a map of quota alert objects."
+    condition     = var.quota_alert == null || can(tolist(var.quota_alert)) || can(tomap(var.quota_alert))
+    error_message = "quota_alert must be a list of quota alert objects or a map of quota alert objects."
   }
 
   validation {
     condition = alltrue([
       for quota in(
         var.quota_alert == null ? [] : (
-          can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
-          : can(tolist(var.quota_alert))
+          can(tolist(var.quota_alert))
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
@@ -311,9 +263,7 @@ variable "quota_alert" {
     condition = length(distinct([
       for quota in(
         var.quota_alert == null ? [] : (
-          can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
-          : can(tolist(var.quota_alert))
+          can(tolist(var.quota_alert))
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
@@ -321,9 +271,7 @@ variable "quota_alert" {
       ])) == length([
       for quota in(
         var.quota_alert == null ? [] : (
-          can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-          ? values(tomap({ (var.quota_alert.name) = var.quota_alert }))
-          : can(tolist(var.quota_alert))
+          can(tolist(var.quota_alert))
           ? [for q in tolist(var.quota_alert) : q]
           : [for _, q in tomap(var.quota_alert) : q]
         )
@@ -374,26 +322,20 @@ variable "log_alert" {
 
 # Backup Alert Processing Rule(s)
 variable "backup_alert" {
-  description = "Backup alert processing rule configuration(s). Accepts a list (preferred), a map (legacy), or a single object."
+  description = "Backup alert processing rule configuration(s). Accepts a list of objects (preferred) or a legacy map of objects."
   type        = any
   default     = []
 
   validation {
-    condition = var.backup_alert == null || (
-      (can(var.backup_alert.name) && can(var.backup_alert.scopes)) ||
-      can(tolist(var.backup_alert)) ||
-      can(tomap(var.backup_alert))
-    )
-    error_message = "backup_alert must be a single object, a list of objects, or a map of objects."
+    condition     = var.backup_alert == null || can(tolist(var.backup_alert)) || can(tomap(var.backup_alert))
+    error_message = "backup_alert must be a list of objects or a map of objects."
   }
 
   validation {
     condition = alltrue([
       for alert in(
         var.backup_alert == null ? [] : (
-          can(var.backup_alert.name) && can(var.backup_alert.scopes)
-          ? values(tomap({ (var.backup_alert.name) = var.backup_alert }))
-          : can(tolist(var.backup_alert))
+          can(tolist(var.backup_alert))
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
         )
@@ -406,9 +348,7 @@ variable "backup_alert" {
     condition = length(distinct([
       for alert in(
         var.backup_alert == null ? [] : (
-          can(var.backup_alert.name) && can(var.backup_alert.scopes)
-          ? values(tomap({ (var.backup_alert.name) = var.backup_alert }))
-          : can(tolist(var.backup_alert))
+          can(tolist(var.backup_alert))
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
         )
@@ -416,9 +356,7 @@ variable "backup_alert" {
       ])) == length([
       for alert in(
         var.backup_alert == null ? [] : (
-          can(var.backup_alert.name) && can(var.backup_alert.scopes)
-          ? values(tomap({ (var.backup_alert.name) = var.backup_alert }))
-          : can(tolist(var.backup_alert))
+          can(tolist(var.backup_alert))
           ? [for a in tolist(var.backup_alert) : a]
           : [for _, a in tomap(var.backup_alert) : a]
         )

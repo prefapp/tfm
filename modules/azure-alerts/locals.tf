@@ -1,45 +1,35 @@
 locals {
-  # Normalized action group entries: accepts legacy single object, map, or list.
+  # Normalized action group entries: accepts a list (preferred) or a legacy map.
   action_group_entries = (
     var.action_group == null ? [] : (
-      can(var.action_group.name) && can(var.action_group.short_name) && can(var.action_group.resource_group_name)
-      ? [var.action_group]
-      : can(tolist(var.action_group))
+      can(tolist(var.action_group))
       ? [for ag in tolist(var.action_group) : ag]
       : [for _, ag in tomap(var.action_group) : ag]
     )
   )
 
-  # Normalized budget entries: accepts either a legacy single object or a map of objects.
+  # Normalized budget entries: accepts a list (preferred) or a legacy map.
   budget_entries = (
-    var.budget == null ? {} :
-    (
-      can(var.budget.notification) && can(var.budget.time_period) && can(var.budget.time_grain) && can(var.budget.amount)
-      ? { (var.budget.name) = var.budget }
-      : can(tolist(var.budget))
+    var.budget == null ? {} : (
+      can(tolist(var.budget))
       ? { for budget in tolist(var.budget) : budget.name => budget }
       : { for _, budget in tomap(var.budget) : budget.name => budget }
     )
   )
 
-  # Normalized quota alert entries: accepts either a legacy single object or a map of objects.
+  # Normalized quota alert entries: accepts a list (preferred) or a legacy map.
   quota_alert_entries = (
-    var.quota_alert == null ? {} :
-    (
-      can(var.quota_alert.criteria) && can(var.quota_alert.identity) && can(var.quota_alert.scopes) && can(var.quota_alert.name)
-      ? { (var.quota_alert.name) = var.quota_alert }
-      : can(tolist(var.quota_alert))
+    var.quota_alert == null ? {} : (
+      can(tolist(var.quota_alert))
       ? { for quota in tolist(var.quota_alert) : quota.name => quota }
       : { for _, quota in tomap(var.quota_alert) : quota.name => quota }
     )
   )
 
-  # Normalized backup alert entries: accepts legacy single object, map, or list.
+  # Normalized backup alert entries: accepts a list (preferred) or a legacy map.
   backup_alert_entries = (
     var.backup_alert == null ? {} : (
-      can(var.backup_alert.name) && can(var.backup_alert.scopes)
-      ? { (var.backup_alert.name) = var.backup_alert }
-      : can(tolist(var.backup_alert))
+      can(tolist(var.backup_alert))
       ? { for alert in tolist(var.backup_alert) : alert.name => alert }
       : { for _, alert in tomap(var.backup_alert) : alert.name => alert }
     )
