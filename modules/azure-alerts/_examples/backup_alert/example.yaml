@@ -1,0 +1,18 @@
+# Example: Configure a Backup Alert Processing Rule Action Group (YAML representation)
+
+values:
+  common:
+    location: global
+    resource_group_name: example-alerts-rg
+    tags:
+      environment: production
+      project: azure-alerts
+
+  backup_alert:
+    - name: suppress-backup-window
+      resource_group_name: example-alerts-rg
+      scopes:
+        - /subscriptions/00000000-0000-0000-0000-000000000000
+      description: Route/suppress alerts during backup window
+      action_group:
+        - /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-alerts-rg/providers/Microsoft.Insights/actionGroups/backup-action-group
