@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/prefapp/tfm/compare/azure-alerts-v0.1.1...azure-alerts-v0.1.2) (2026-04-28)
+
+
+### Bug Fixes
+
+* azure-alerts quota location from quota alert ([#1219](https://github.com/prefapp/tfm/issues/1219)) ([bbd1037](https://github.com/prefapp/tfm/commit/bbd103711f49470acfbc84ff190592928b13e85b))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/azure-alerts-v0.1.0...azure-alerts-v0.1.1) (2026-04-28)
 
 
