@@ -443,6 +443,23 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   resource_group_name  = coalesce(try(each.value.resource_group_name, null), local.resource_group_name)
   scopes               = each.value.scopes
   description          = try(each.value.description, null)
-  add_action_group_ids = each.value.add_action_group_ids
+  add_action_group_ids = local.backup_action_group_ids[each.key]
   tags                 = local.tags
+
+  lifecycle {
+    precondition {
+      condition     = length(local.backup_action_group_ids[each.key]) > 0
+      error_message = "backup_alert '${each.key}' requires at least one add_action_group_ids entry resolved to a valid Action Group ID (name/object/id supported)."
+    }
+
+    precondition {
+      condition = local.resource_group_name != null || !anytrue([
+        for group in coalesce(try(each.value.add_action_group_ids, null), []) : (
+          can(tostring(group)) ? !startswith(tostring(group), "/") :
+          try(group.resource_group_name, null) == null
+        )
+      ])
+      error_message = "backup_alert '${each.key}' references Action Groups by name or by object without resource_group_name. Set common.resource_group_name (or configure a single action_group entry so its resource group can be inferred), use a full resource ID, or provide resource_group_name in object references."
+    }
+  }
 }
