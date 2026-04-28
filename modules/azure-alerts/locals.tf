@@ -128,11 +128,23 @@ locals {
   backup_action_group_refs = {
     for key, alert in local.backup_alert_entries : key => (
       try(alert.action_group, null) != null
-      ? (can(tolist(alert.action_group)) ? [for _, g in tolist(alert.action_group) : g] : values(tomap({ "_" = alert.action_group })))
+      ? try(
+        [for _, g in tolist(alert.action_group) : g],
+        [for _, g in tomap(alert.action_group) : g],
+        [alert.action_group]
+      )
       : try(alert.action_groups, null) != null
-      ? (can(tolist(alert.action_groups)) ? [for _, g in tolist(alert.action_groups) : g] : values(tomap({ "_" = alert.action_groups })))
+      ? try(
+        [for _, g in tolist(alert.action_groups) : g],
+        [for _, g in tomap(alert.action_groups) : g],
+        [alert.action_groups]
+      )
       : try(alert.add_action_group_ids, null) != null
-      ? (can(tolist(alert.add_action_group_ids)) ? [for _, g in tolist(alert.add_action_group_ids) : g] : values(tomap({ "_" = alert.add_action_group_ids })))
+      ? try(
+        [for _, g in tolist(alert.add_action_group_ids) : g],
+        [for _, g in tomap(alert.add_action_group_ids) : g],
+        [alert.add_action_group_ids]
+      )
       : []
     )
   }
