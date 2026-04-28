@@ -152,6 +152,40 @@ locals {
   # Source groups referenced by backup alerts.
   backup_contact_group_sources = flatten(values(local.backup_action_group_refs))
 
+  # Subscription IDs inferred from backup alert scopes when they are declared at subscription level.
+  backup_action_group_scope_subscription_ids = {
+    for alert_key, alert in local.backup_alert_entries : alert_key => distinct(compact([
+      for scope in coalesce(try(alert.scopes, null), []) : (
+        can(regex("^/subscriptions/[^/]+$", tostring(scope)))
+        ? split("/", tostring(scope))[2]
+        : null
+      )
+    ]))
+  }
+
+  # For backup alerts, build a cross-subscription Action Group ID directly when the alert scopes
+  # identify a single subscription and the reference is given by name/object instead of full ID.
+  backup_action_group_inferred_ids = {
+    for alert_key, alert in local.backup_alert_entries : alert_key => {
+      for group in [for _, ag_ref in local.backup_action_group_refs[alert_key] : (
+        can(regex("^/subscriptions/", try(tostring(ag_ref), "")))
+        ? { id = try(tostring(ag_ref), null), name = null, resource_group_name = null }
+        : can(tostring(ag_ref))
+        ? { id = null, name = try(tostring(ag_ref), null), resource_group_name = null }
+        : { id = try(ag_ref.id, null), name = try(ag_ref.name, null), resource_group_name = try(ag_ref.resource_group_name, null) }
+        )] : "${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}" => format(
+        "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Insights/actionGroups/%s",
+        local.backup_action_group_scope_subscription_ids[alert_key][0],
+        coalesce(try(group.resource_group_name, null), local.resource_group_name),
+        group.name
+      ) if try(group.id, null) == null && coalesce(try(group.resource_group_name, null), local.resource_group_name) != null && try(group.name, null) != null && trimspace(group.name) != "" && length(local.backup_action_group_scope_subscription_ids[alert_key]) == 1
+    }
+  }
+
+  backup_action_group_inferred_ref_keys = distinct(flatten([
+    for _, refs in local.backup_action_group_inferred_ids : keys(refs)
+  ]))
+
   # Normalized external references (ID vs name/object) with resolved resource group fallback.
   external_contact_group_entries = [
     for group in concat(
@@ -171,7 +205,7 @@ locals {
     for entry in local.external_contact_group_entries : "${entry.resource_group_name}/${entry.name}" => {
       name                = entry.name
       resource_group_name = entry.resource_group_name
-    } if !entry.is_id && entry.resource_group_name != null && entry.name != null && trimspace(entry.name) != "" && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}")
+    } if !entry.is_id && entry.resource_group_name != null && entry.name != null && trimspace(entry.name) != "" && !contains(keys(local.managed_action_group_ref_keys), "${entry.resource_group_name}/${entry.name}") && !contains(local.backup_action_group_inferred_ref_keys, "${entry.resource_group_name}/${entry.name}")
   }
 
   # Resolved quota action group IDs per quota alert from explicit IDs, managed groups, or external lookups.
@@ -260,6 +294,7 @@ locals {
           ? null
           : try(
             local.action_group_ids_by_ref["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"],
+            local.backup_action_group_inferred_ids[alert_key]["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"],
             data.azurerm_monitor_action_group.referenced["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"].id
           )
         )

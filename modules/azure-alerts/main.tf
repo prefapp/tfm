@@ -442,11 +442,38 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   name                 = each.value.name
   resource_group_name  = coalesce(try(each.value.resource_group_name, null), local.resource_group_name)
   scopes               = each.value.scopes
+  enabled              = try(each.value.enabled, true)
   description          = try(each.value.description, null)
   add_action_group_ids = local.backup_action_group_ids[each.key]
-  tags                 = local.tags
+
+  dynamic "condition" {
+    for_each = length(coalesce(try(each.value.conditions, null), [])) > 0 ? [each.value.conditions] : []
+    content {
+      dynamic "target_resource_type" {
+        for_each = [
+          for condition_entry in condition.value : condition_entry
+          if lower(try(condition_entry.field, "")) == "targetresourcetype"
+        ]
+        content {
+          operator = target_resource_type.value.operator
+          values   = target_resource_type.value.values
+        }
+      }
+    }
+  }
+
+  tags = local.tags
 
   lifecycle {
+    precondition {
+      condition = alltrue([
+        for condition_entry in coalesce(try(each.value.conditions, null), []) : contains([
+          "targetresourcetype"
+        ], lower(try(condition_entry.field, "")))
+      ])
+      error_message = "backup_alert '${each.key}' only supports conditions.field = 'TargetResourceType' in this module version."
+    }
+
     precondition {
       condition     = length(local.backup_action_group_ids[each.key]) > 0
       error_message = "backup_alert '${each.key}' requires at least one action_group entry resolved to a valid Action Group ID (name/object/id supported)."
