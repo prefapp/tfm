@@ -173,7 +173,7 @@ locals {
         : can(tostring(ag_ref))
         ? { id = null, name = try(tostring(ag_ref), null), resource_group_name = null }
         : { id = try(ag_ref.id, null), name = try(ag_ref.name, null), resource_group_name = try(ag_ref.resource_group_name, null) }
-      )] : "${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}" => format(
+        )] : "${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}" => format(
         "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Insights/actionGroups/%s",
         local.backup_action_group_scope_subscription_ids[alert_key][0],
         coalesce(try(group.resource_group_name, null), local.resource_group_name),
