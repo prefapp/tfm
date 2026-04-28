@@ -4,7 +4,7 @@ resource "azurerm_user_assigned_identity" "quota_alert_reader" {
   count               = local.needs_module_identity && local.resource_group_name != null ? 1 : 0
   name                = coalesce(try(var.identity.name, null), "quota-alert-reader")
   resource_group_name = local.resource_group_name
-  location            = var.common.location
+  location            = var.quota_alert[0].location
 }
 
 # Role Assignment for the Managed Identity to have Reader access on the subscription to read the quota metrics
