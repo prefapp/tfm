@@ -1,6 +1,5 @@
-# VARIABLES SECTION
 variable "policies" {
-  description = "List of objects containing all the variables for the policy definitions."
+  description = "Policy definitions to create; empty list creates no resources."
   type = list(object({
     name                = string
     policy_type         = string
