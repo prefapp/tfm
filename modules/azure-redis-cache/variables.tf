@@ -72,8 +72,6 @@ variable "private_endpoint" {
     custom_network_interface_name = string
     private_service_connection = optional(object({
       is_manual_connection = bool
-    }))
+    }), { is_manual_connection = false })
   })
 }
-
-
