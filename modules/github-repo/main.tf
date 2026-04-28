@@ -87,10 +87,10 @@ resource "github_repository_collaborator" "this" {
 
 # GitHub Repository Labels (from metadata.spec.repo.labels)
 resource "github_issue_label" "this" {
-  for_each = { for label in var.config.labels : label.name => label }
+  for_each = { for label in var.config.labels : trimspace(label.name) => label }
 
   repository  = github_repository.this.name
-  name        = each.value.name
+  name        = trimspace(each.value.name)
   description = each.value.description
   color       = each.value.color
 }
