@@ -16,7 +16,6 @@ variable "location" {
 variable "sku" {
   description = "The SKU of the Public IP Prefix."
   type        = string
-  nullable    = true
   default     = "Standard"
   validation {
     condition     = contains(["Standard"], var.sku)
@@ -27,8 +26,7 @@ variable "sku" {
 variable "sku_tier" {
   description = "The SKU tier of the Public IP Prefix."
   type        = string
-  nullable    = true
-  default = "Regional"
+  default     = "Regional"
   validation {
     condition     = contains(["Regional", "Global"], var.sku_tier)
     error_message = "The supported values for 'sku_tier' are 'Regional' and 'Global'."
@@ -38,7 +36,6 @@ variable "sku_tier" {
 variable "ip_version" {
   description = "The IP version of the Public IP Prefix."
   type        = string
-  nullable    = true
   default     = "IPv4"
   validation {
     condition     = contains(["IPv4", "IPv6"], var.ip_version)
@@ -49,7 +46,6 @@ variable "ip_version" {
 variable "prefix_length" {
   description = "The length of the Public IP Prefix."
   type        = number
-  nullable    = true
   default     = 28
   validation {
     condition     = var.prefix_length >= 0 && var.prefix_length <= 32
