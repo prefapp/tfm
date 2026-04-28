@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Bug Fixes
+
+* Restore `resource_group_name` and `tags` variable blocks after a corrupted `variables.tf` merge; align the `peerings` object type with `vnet-peering.tf` (peerings use the module-level `resource_group_name`, not a per-item field).
+
+### Documentation
+
+* Document the module with `terraform-docs` (`docs/header.md`, `docs/footer.md`, `.terraform-docs.yml`); clarify default tag merge behaviour for `tags_from_rg`; add `_examples/basic`.
+
 ## [2.2.0](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.1.2...azure-vnet-subnet-v2.2.0) (2026-03-17)
 
 
