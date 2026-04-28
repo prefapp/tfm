@@ -79,7 +79,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_assignable_scopes"></a> [assignable\_scopes](#input\_assignable\_scopes) | One or more assignable scopes for this Role Definition. The first one will become de scope at which the Role Definition applies to. | `list(string)` | n/a | yes |
+| <a name="input_assignable_scopes"></a> [assignable\_scopes](#input\_assignable\_scopes) | One or more assignable scopes for this Role Definition. The first one will become the scope at which the Role Definition applies to. | `list(string)` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | The name of the Role Definition | `string` | n/a | yes |
 | <a name="input_permissions"></a> [permissions](#input\_permissions) | A permissions block with possible 'actions', 'data\_actions', 'not\_actions' and/or 'not\_data\_actions'. | <pre>object({<br/>    actions          = optional(list(string), [])<br/>    data_actions     = optional(list(string), [])<br/>    not_actions      = optional(list(string), [])<br/>    not_data_actions = optional(list(string), [])<br/>  })</pre> | n/a | yes |
 
