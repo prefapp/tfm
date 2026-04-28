@@ -4,7 +4,8 @@ resource "azurerm_user_assigned_identity" "quota_alert_reader" {
   count               = local.needs_module_identity && local.resource_group_name != null ? 1 : 0
   name                = coalesce(try(var.identity.name, null), "quota-alert-reader")
   resource_group_name = local.resource_group_name
-  location            = var.common.location
+  location            = var.quota_alert[0].location
+  tags                = local.tags
 }
 
 # Role Assignment for the Managed Identity to have Reader access on the subscription to read the quota metrics
@@ -442,7 +443,23 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   resource_group_name  = coalesce(try(each.value.resource_group_name, null), local.resource_group_name)
   scopes               = each.value.scopes
   description          = try(each.value.description, null)
-  add_action_group_ids = each.value.add_action_group_ids
+  add_action_group_ids = local.backup_action_group_ids[each.key]
+  tags                 = local.tags
 
-  tags = local.tags
+  lifecycle {
+    precondition {
+      condition     = length(local.backup_action_group_ids[each.key]) > 0
+      error_message = "backup_alert '${each.key}' requires at least one action_group entry resolved to a valid Action Group ID (name/object/id supported)."
+    }
+
+    precondition {
+      condition = local.resource_group_name != null || !anytrue([
+        for group in local.backup_action_group_refs[each.key] : (
+          can(tostring(group)) ? !startswith(tostring(group), "/") :
+          try(group.resource_group_name, null) == null
+        )
+      ])
+      error_message = "backup_alert '${each.key}' references Action Groups by name or by object without resource_group_name. Set common.resource_group_name (or configure a single action_group entry so its resource group can be inferred), use a full resource ID, or provide resource_group_name in object references."
+    }
+  }
 }

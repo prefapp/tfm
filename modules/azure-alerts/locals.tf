@@ -122,12 +122,43 @@ locals {
     )
   ])
 
+  # Normalized source groups referenced by backup alerts.
+  # Preferred input is backup_alert[*].action_group, but action_groups/add_action_group_ids
+  # are accepted for backwards compatibility.
+  backup_action_group_refs = {
+    for key, alert in local.backup_alert_entries : key => (
+      try(alert.action_group, null) != null
+      ? try(
+        [for _, g in tolist(alert.action_group) : g],
+        [for _, g in tomap(alert.action_group) : g],
+        [alert.action_group]
+      )
+      : try(alert.action_groups, null) != null
+      ? try(
+        [for _, g in tolist(alert.action_groups) : g],
+        [for _, g in tomap(alert.action_groups) : g],
+        [alert.action_groups]
+      )
+      : try(alert.add_action_group_ids, null) != null
+      ? try(
+        [for _, g in tolist(alert.add_action_group_ids) : g],
+        [for _, g in tomap(alert.add_action_group_ids) : g],
+        [alert.add_action_group_ids]
+      )
+      : []
+    )
+  }
+
+  # Source groups referenced by backup alerts.
+  backup_contact_group_sources = flatten(values(local.backup_action_group_refs))
+
   # Normalized external references (ID vs name/object) with resolved resource group fallback.
   external_contact_group_entries = [
     for group in concat(
       local.budget_contact_group_sources,
       local.quota_contact_group_sources,
-      local.log_contact_group_sources
+      local.log_contact_group_sources,
+      local.backup_contact_group_sources
       ) : {
       is_id               = try(group.id, null) != null || (can(tostring(group)) && startswith(tostring(group), "/"))
       name                = try(group.id, null) != null ? group.id : (can(tostring(group)) ? tostring(group) : try(group.name, null))
@@ -210,5 +241,29 @@ locals {
         : local.action_group_id
       )
     )
+  }
+
+  # Resolved action group IDs per backup alert from explicit IDs, managed groups, or external lookups.
+  backup_action_group_ids = {
+    for alert_key, alert in local.backup_alert_entries : alert_key => compact([
+      for group in [for _, ag_ref in local.backup_action_group_refs[alert_key] : (
+        can(regex("^/subscriptions/", try(tostring(ag_ref), "")))
+        ? { id = try(tostring(ag_ref), null), name = null, resource_group_name = null }
+        : can(tostring(ag_ref))
+        ? { id = null, name = try(tostring(ag_ref), null), resource_group_name = null }
+        : { id = try(ag_ref.id, null), name = try(ag_ref.name, null), resource_group_name = try(ag_ref.resource_group_name, null) }
+        )] : (
+        try(group.id, null) != null
+        ? group.id
+        : (
+          coalesce(try(group.resource_group_name, null), local.resource_group_name) == null || try(group.name, null) == null || trimspace(group.name) == ""
+          ? null
+          : try(
+            local.action_group_ids_by_ref["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"],
+            data.azurerm_monitor_action_group.referenced["${coalesce(try(group.resource_group_name, null), local.resource_group_name)}/${group.name}"].id
+          )
+        )
+      )
+    ])
   }
 }

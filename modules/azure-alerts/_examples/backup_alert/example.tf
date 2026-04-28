@@ -18,7 +18,7 @@ module "azure_alerts" {
       resource_group_name = "example-alerts-rg"
       scopes              = ["/subscriptions/00000000-0000-0000-0000-000000000000"]
       description         = "Route/suppress alerts during backup window"
-      add_action_group_ids = [
+      action_group = [
         "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-alerts-rg/providers/Microsoft.Insights/actionGroups/backup-action-group"
       ]
     }
