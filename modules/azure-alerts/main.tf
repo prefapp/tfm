@@ -5,6 +5,7 @@ resource "azurerm_user_assigned_identity" "quota_alert_reader" {
   name                = coalesce(try(var.identity.name, null), "quota-alert-reader")
   resource_group_name = local.resource_group_name
   location            = var.quota_alert[0].location
+  tags                = local.tags
 }
 
 # Role Assignment for the Managed Identity to have Reader access on the subscription to read the quota metrics
@@ -443,6 +444,5 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   scopes               = each.value.scopes
   description          = try(each.value.description, null)
   add_action_group_ids = each.value.add_action_group_ids
-
-  tags = local.tags
+  tags                 = local.tags
 }
