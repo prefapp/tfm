@@ -122,10 +122,23 @@ locals {
     )
   ])
 
+  # Normalized source groups referenced by backup alerts.
+  # Preferred input is backup_alert[*].action_group, but action_groups/add_action_group_ids
+  # are accepted for backwards compatibility.
+  backup_action_group_refs = {
+    for key, alert in local.backup_alert_entries : key => (
+      try(alert.action_group, null) != null
+      ? (can(tolist(alert.action_group)) ? [for _, g in tolist(alert.action_group) : g] : [alert.action_group])
+      : try(alert.action_groups, null) != null
+      ? (can(tolist(alert.action_groups)) ? [for _, g in tolist(alert.action_groups) : g] : [alert.action_groups])
+      : try(alert.add_action_group_ids, null) != null
+      ? (can(tolist(alert.add_action_group_ids)) ? [for _, g in tolist(alert.add_action_group_ids) : g] : [alert.add_action_group_ids])
+      : []
+    )
+  }
+
   # Source groups referenced by backup alerts.
-  backup_contact_group_sources = flatten([
-    for _, alert in local.backup_alert_entries : coalesce(try(alert.add_action_group_ids, null), [])
-  ])
+  backup_contact_group_sources = flatten(values(local.backup_action_group_refs))
 
   # Normalized external references (ID vs name/object) with resolved resource group fallback.
   external_contact_group_entries = [
@@ -221,7 +234,7 @@ locals {
   # Resolved action group IDs per backup alert from explicit IDs, managed groups, or external lookups.
   backup_action_group_ids = {
     for alert_key, alert in local.backup_alert_entries : alert_key => compact([
-      for group in [for _, ag_ref in coalesce(try(alert.add_action_group_ids, null), []) : (
+      for group in [for _, ag_ref in local.backup_action_group_refs[alert_key] : (
         can(regex("^/subscriptions/", try(tostring(ag_ref), "")))
         ? { id = try(tostring(ag_ref), null), name = null, resource_group_name = null }
         : can(tostring(ag_ref))

@@ -449,12 +449,12 @@ resource "azurerm_monitor_alert_processing_rule_action_group" "backup" {
   lifecycle {
     precondition {
       condition     = length(local.backup_action_group_ids[each.key]) > 0
-      error_message = "backup_alert '${each.key}' requires at least one add_action_group_ids entry resolved to a valid Action Group ID (name/object/id supported)."
+      error_message = "backup_alert '${each.key}' requires at least one action_group entry resolved to a valid Action Group ID (name/object/id supported)."
     }
 
     precondition {
       condition = local.resource_group_name != null || !anytrue([
-        for group in coalesce(try(each.value.add_action_group_ids, null), []) : (
+        for group in local.backup_action_group_refs[each.key] : (
           can(tostring(group)) ? !startswith(tostring(group), "/") :
           try(group.resource_group_name, null) == null
         )
