@@ -1,3 +1,81 @@
+<!-- BEGIN_TF_DOCS -->
+# Azure Storage Account Terraform module (`azure-sa`)
+
+## Overview
+
+This module creates an **Azure Storage Account** in an existing resource group, applies **network rules** (subnets from data sources plus optional extra subnet IDs and private link access), and can provision **blob containers**, **file shares**, **queues**, **tables**, optional **lifecycle management policies**, and **Microsoft Defender for Storage** (advanced threat protection) when enabled.
+
+The module does **not** create the resource group or virtual networks; it looks up the resource group for location/tags and resolves allowed subnets via **`azurerm_subnet`** data sources.
+
+## Key features
+
+- **Storage account**: Tier, replication, kind, TLS, public access, optional managed identity and blob service properties (versioning, retention, restore policy) with validations on common combinations.
+- **Network**: `azurerm_storage_account_network_rules` combining subnets from `allowed_subnets`, `additional_allowed_subnet_ids`, optional IP rules, bypass, and private link access entries.
+- **Data plane resources**: Optional containers, shares, queues, and tables via `for_each` maps.
+- **Outputs**: Storage account `id`, `name`, `primary_blob_endpoint`, and maps of child resource IDs (`container_ids`, `share_ids`, `queue_ids`, `table_ids`).
+- **Lifecycle**: Optional `azurerm_storage_management_policy` when `lifecycle_policy_rules` is set.
+- **Tags**: `tags` map; with `tags_from_rg = true` (default is `false`), resource group tags are merged with `tags`.
+
+## Prerequisites
+
+- Existing **resource group** (`resource_group_name`).
+- For **deny-by-default** networking, configure `allowed_subnets` and/or `additional_allowed_subnet_ids` (and/or IP rules) so the account remains reachable for your workloads.
+- Storage **account name** must be **globally unique**, 3–24 characters, lowercase letters and numbers only.
+
+## Basic usage
+
+Pass `resource_group_name`, `storage_account`, and `network_rules`. Optional inputs default to empty/`null` where applicable; see the **Inputs** table for full types.
+
+### Minimal example
+
+```hcl
+module "storage" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-sa?ref=<version>"
+
+  resource_group_name = "my-resource-group"
+
+  tags_from_rg = false
+  tags = {
+    environment = "dev"
+  }
+
+  allowed_subnets               = []
+  additional_allowed_subnet_ids = []
+
+  storage_account = {
+    name                     = "mystorageacctuniq01"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+  }
+
+  network_rules = {
+    default_action = "Allow"
+  }
+}
+```
+
+Use `default_action = "Deny"` only together with subnet/IP/private link rules that match your connectivity model.
+
+## File structure
+
+```
+.
+├── CHANGELOG.md
+├── locals.tf
+├── main.tf
+├── outputs.tf
+├── variables.tf
+├── versions.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
+├── README.md
+└── .terraform-docs.yml
+```
+
 ## Requirements
 
 | Name | Version |
@@ -40,7 +118,7 @@ No modules.
 | <a name="input_lifecycle_policy_rules"></a> [lifecycle\_policy\_rules](#input\_lifecycle\_policy\_rules) | List of lifecycle management rules for the Azure Storage Account | <pre>list(object({<br/>    name    = string<br/>    enabled = bool<br/>    filters = object({<br/>      blob_types   = list(string)<br/>      prefix_match = optional(list(string))<br/><br/>      match_blob_index_tag = optional(list(object({<br/>        name      = string<br/>        operation = optional(string, "==")<br/>        value     = string<br/>      })), [])<br/>    })<br/>    actions = object({<br/>      base_blob = optional(object({<br/>        tier_to_cool_after_days_since_modification_greater_than        = optional(number)<br/>        tier_to_cool_after_days_since_last_access_time_greater_than    = optional(number)<br/>        tier_to_cool_after_days_since_creation_greater_than            = optional(number)<br/>        auto_tier_to_hot_from_cool_enabled                             = optional(bool, false)<br/>        tier_to_archive_after_days_since_modification_greater_than     = optional(number)<br/>        tier_to_archive_after_days_since_last_access_time_greater_than = optional(number)<br/>        tier_to_archive_after_days_since_creation_greater_than         = optional(number)<br/>        tier_to_archive_after_days_since_last_tier_change_greater_than = optional(number)<br/>        tier_to_cold_after_days_since_modification_greater_than        = optional(number)<br/>        tier_to_cold_after_days_since_last_access_time_greater_than    = optional(number)<br/>        tier_to_cold_after_days_since_creation_greater_than            = optional(number)<br/>        delete_after_days_since_modification_greater_than              = optional(number)<br/>        delete_after_days_since_last_access_time_greater_than          = optional(number)<br/>        delete_after_days_since_creation_greater_than                  = optional(number)<br/>      }), {})<br/>      snapshot = optional(object({<br/>        change_tier_to_archive_after_days_since_creation               = optional(number)<br/>        tier_to_archive_after_days_since_last_tier_change_greater_than = optional(number)<br/>        change_tier_to_cool_after_days_since_creation                  = optional(number)<br/>        tier_to_cold_after_days_since_creation_greater_than            = optional(number)<br/>        delete_after_days_since_creation_greater_than                  = optional(number)<br/>      }), {})<br/>      version = optional(object({<br/>        change_tier_to_archive_after_days_since_creation               = optional(number)<br/>        tier_to_archive_after_days_since_last_tier_change_greater_than = optional(number)<br/>        change_tier_to_cool_after_days_since_creation                  = optional(number)<br/>        tier_to_cold_after_days_since_creation_greater_than            = optional(number)<br/>        delete_after_days_since_creation                               = optional(number)<br/>      }), {})<br/>    })<br/>  }))</pre> | `null` | no |
 | <a name="input_network_rules"></a> [network\_rules](#input\_network\_rules) | Network rules for the storage account | <pre>object({<br/>    default_action = string<br/>    bypass         = optional(string, "AzureServices")<br/>    ip_rules       = optional(list(string))<br/>    private_link_access = optional(list(object({<br/>      endpoint_resource_id = string<br/>      endpoint_tenant_id   = optional(string)<br/>    })))<br/>  })</pre> | n/a | yes |
 | <a name="input_queues"></a> [queues](#input\_queues) | Specifies the storage queues | <pre>list(object({<br/>    name     = string<br/>    metadata = optional(map(string))<br/>  }))</pre> | `null` | no |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name for the resource group | `string` | n/a | yes |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the existing resource group where the storage account is created (also used for the data source and optional tag merge). | `string` | n/a | yes |
 | <a name="input_shares"></a> [shares](#input\_shares) | Specifies the storage shares | <pre>list(object({<br/>    name             = string<br/>    access_tier      = optional(string)<br/>    enabled_protocol = optional(string)<br/>    quota            = number<br/>    metadata         = optional(map(string))<br/>    acl = optional(list(object({<br/>      id = string<br/>      access_policy = optional(object({<br/>        permissions = string<br/>        start       = optional(string)<br/>        expiry      = optional(string)<br/>      }))<br/>    })))<br/>  }))</pre> | `null` | no |
 | <a name="input_storage_account"></a> [storage\_account](#input\_storage\_account) | Configuration for the Azure Storage Account | <pre>object({<br/>    name                             = string<br/>    account_tier                     = string<br/>    account_replication_type         = string<br/>    account_kind                     = optional(string, "StorageV2")<br/>    access_tier                      = optional(string, "Hot")<br/>    cross_tenant_replication_enabled = optional(bool, false)<br/>    edge_zone                        = optional(string)<br/>    allow_nested_items_to_be_public  = optional(bool, true)<br/>    https_traffic_only_enabled       = optional(bool, true)<br/>    min_tls_version                  = optional(string, "TLS1_2")<br/>    public_network_access_enabled    = optional(bool, true)<br/>    threat_protection_enabled        = optional(bool, false)<br/>    tags                             = optional(map(string), {})<br/>    identity = optional(object({<br/>      type         = optional(string, "SystemAssigned")<br/>      identity_ids = optional(list(string), [])<br/>    }))<br/>    blob_properties = optional(object({<br/>      versioning_enabled  = optional(bool)<br/>      change_feed_enabled = optional(bool)<br/>      last_access_time_enabled = optional(bool)<br/>      delete_retention_policy = optional(object({<br/>        days = optional(number)<br/>      }))<br/>      container_delete_retention_policy = optional(object({<br/>        days = optional(number)<br/>      }))<br/>      restore_policy = optional(object({<br/>        days = optional(number)<br/>      }))<br/>    }))<br/>  })</pre> | n/a | yes |
 | <a name="input_tables"></a> [tables](#input\_tables) | Specifies the storage tables | <pre>list(object({<br/>    name = string<br/>    acl = optional(object({<br/>      id = string<br/>      access_policy = optional(object({<br/>        permissions = string<br/>        start       = optional(string)<br/>        expiry      = optional(string)<br/>      }))<br/>    }))<br/>  }))</pre> | `null` | no |
@@ -51,153 +129,35 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | ID of the storage account |
+| <a name="output_container_ids"></a> [container\_ids](#output\_container\_ids) | Map from each container name (for\_each key) to the blob container resource ID. |
+| <a name="output_primary_access_key"></a> [primary\_access\_key](#output\_primary\_access\_key) | Primary access key for the storage account. |
+| <a name="output_primary_blob_endpoint"></a> [primary\_blob\_endpoint](#output\_primary\_blob\_endpoint) | Primary blob service endpoint URL. |
+| <a name="output_primary_connection_string"></a> [primary\_connection\_string](#output\_primary\_connection\_string) | Primary connection string for the storage account. |
+| <a name="output_primary_endpoints"></a> [primary\_endpoints](#output\_primary\_endpoints) | Primary endpoints for the storage account. |
+| <a name="output_queue_ids"></a> [queue\_ids](#output\_queue\_ids) | Map from each queue name to the queue resource ID. |
+| <a name="output_secondary_blob_endpoint"></a> [secondary\_blob\_endpoint](#output\_secondary\_blob\_endpoint) | Secondary blob service endpoint URL. |
+| <a name="output_secondary_endpoints"></a> [secondary\_endpoints](#output\_secondary\_endpoints) | Secondary endpoints for the storage account. |
+| <a name="output_share_ids"></a> [share\_ids](#output\_share\_ids) | Map from each file share name to the file share resource ID. |
+| <a name="output_storage_account_id"></a> [storage\_account\_id](#output\_storage\_account\_id) | Resource ID of the storage account. |
+| <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | Name of the storage account. |
+| <a name="output_table_ids"></a> [table\_ids](#output\_table\_ids) | Map from each table name to the table resource ID. |
 
-## Example
+## Examples
 
-```yaml
-    values:
-      # data values
-      resource_group_name: "rg_test"
-      allowed_subnets:
-        - name: "data"
-          vnet: "test-vnet"
-          resource_group: "rg-test"
-        - name: "video"
-          vnet: "test-vnet1"
-          resource_group: "rg-test1"
-      additional_allowed_subnet_ids:
-        - "/subscriptions/324ca80b-cea7-41ff-ac13-25441f452f33/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
-        - "/subscriptions/c9e99a2d-e0cd-473b-935c-bc2e37ea8511/resourceGroups/rg_test/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet1"
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-sa/_examples):
 
-      # storage account
-      storage_account:
-        name: "mystorageaccount"
-        account_tier: "Standard"
-        account_replication_type: "LRS"
-        account_kind: "StorageV2"
-        access_tier: "Hot"
-        cross_tenant_replication_enabled: false
-        https_traffic_only_enabled: true
-        min_tls_version: "TLS1_2"
-        public_network_access_enabled: true
-        identity:
-          type: "SystemAssigned"
-        blob_properties:
-          versioning_enabled: true
-          change_feed_enabled: true
-          delete_retention_policy:
-            days: 30
-          container_delete_retention_policy:
-            days: 15
-          restore_policy:
-            days: 10
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-sa/_examples/basic) — Minimal storage account with permissive network defaults; set an existing RG and a globally unique storage account name (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-sa/_examples/comprehensive) — Reference YAML for containers, queues, tables, shares, lifecycle rules, and stricter networking (documentation-oriented; see folder README).
 
-      # storage account network rules
-      network_rules:
-        default_action: "Deny"
-        bypass: "AzureServices"
-        private_link_access:
-          - endpoint_resource_id: "/subscriptions/xxxx/resourceGroups/xxxx/providers/Microsoft.Network/privateLinkService/xxxx"
-            endpoint_tenant_id: "66666666-7777-8888-9999-000000000000"
-          - endpoint_resource_id: "/subscriptions/yyyy/resourceGroups/yyyy/providers/Microsoft.Network/privateLinkService/yyyy"
+## Resources
 
-      # storage containers
-      containers:
-        - name: "test"
-          container_access_type: "private"
-        - name: "test2"
-          container_access_type: "private"
+Terraform resource docs use **4.38.1** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`~> 4.38.1`).
 
-      # storage queues
-      queues:
-        - name: "test"
-          metadata:
-            queuename: functionsqueue
-            queuelength: '5'
-            connection: STORAGE_CONNECTIONSTRING_ENV_NAME
+- **Azure Storage**: [https://learn.microsoft.com/azure/storage/](https://learn.microsoft.com/azure/storage/)
+- **azurerm\_storage\_account**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.38.1/docs/resources/storage_account](https://registry.terraform.io/providers/hashicorp/azurerm/4.38.1/docs/resources/storage_account)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.38.1](https://registry.terraform.io/providers/hashicorp/azurerm/4.38.1)
 
-      # storage tables
-      tables:
-        - name: "Table1"
-          acl:
-            id: "policy1"
-            access_policy:
-              permissions: "rwd"
-              start: "2024-09-01T00:00:00Z"
-              expiry: "2024-09-30T23:59:59Z"
+## Support
 
-      # storage shares
-      shares:
-        - name: "share1"
-          access_tier: "Hot"
-          enabled_protocol: "SMB"
-          quota: 100
-          metadata:
-            environment: "production"
-            owner: "teamA"
-        - name: "share2"
-          quota: 200
-          metadata:
-            environment: "staging"
-          acl:
-            - id: "policy2"
-              access_policy:
-                permissions: "r"
-                start: "2024-10-01T00:00:00Z"
-                expiry: "2024-10-31T23:59:59Z"
-        - name: "share3"
-          access_tier: "Cool"
-          quota: 50
-
-      # storage management policy rules
-      lifecycle_policy_rules:
-        - name: "rule1"
-          enabled: true
-          filters:
-            blob_types: 
-              - "blockBlob"
-            prefix_match: 
-              - "container1/prefix1"
-            match_blob_index_tag:
-              - name: "tag1"
-                operation: "=="
-                value: "val1"
-          actions:
-            base_blob:
-              tier_to_cool_after_days_since_modification_greater_than: 10
-              tier_to_archive_after_days_since_modification_greater_than: 50
-              delete_after_days_since_modification_greater_than: 100
-            snapshot:
-              delete_after_days_since_creation_greater_than: 30
-            version:
-              delete_after_days_since_creation: 90
-        - name: "rule2"
-          enabled: false
-          filters:
-            blob_types: 
-              - "blockBlob"
-            prefix_match:
-              - "container2/prefix1"
-              - "container2/prefix2"
-          actions:
-            base_blob:
-              tier_to_cool_after_days_since_modification_greater_than: 11
-              tier_to_archive_after_days_since_modification_greater_than: 51
-              delete_after_days_since_modification_greater_than: 101
-            snapshot:
-              change_tier_to_cool_after_days_since_creation: 23
-              change_tier_to_archive_after_days_since_creation: 90
-              delete_after_days_since_creation_greater_than: 31
-            version:
-              change_tier_to_archive_after_days_since_creation: 9
-              change_tier_to_cool_after_days_since_creation: 90
-              delete_after_days_since_creation: 3
-      # tags
-      tags:
-        cliente: "test"
-        tenant: "test"
-        Producto: "test"
-        application: "test"
-        env: "test"
-```
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+<!-- END_TF_DOCS -->

@@ -130,14 +130,16 @@ In AWS Control Tower or Landing Zone environments, CloudTrail trails and S3 buck
 
 **How to use:**
 
-- Set `cloudtrail_name` to the name of the existing CloudTrail trail.
-- Set `s3_bucket_name` to the name of the existing S3 bucket used by that trail.
+- Set `cloudtrail_arn` to the ARN of the existing CloudTrail trail (optional if the module should create a trail).
+- Set `s3_bucket_arn` to the ARN of the existing S3 bucket used by that trail.
 
 The module will:
 
 - Reference the existing CloudTrail and S3 bucket instead of creating new ones.
 - Not attempt to modify or manage the lifecycle of these resources.
 - Allow disabling S3 bucket policy management via `manage_s3_bucket_policy = false`.
+- Require `s3_bucket_arn` by default when `eventbridge_enabled = true` (enterprise-first behavior).
+- Allow automatic bucket creation only as an explicit fallback via `allow_auto_create_cloudtrail_bucket = true`.
 
 **Important considerations:**
 
@@ -150,8 +152,8 @@ The module will:
 ```hcl
 module "secrets_replication" {
   # ... other variables ...
-  cloudtrail_name         = "centralized-org-trail"
-  s3_bucket_name          = "centralized-logs-bucket"
+  cloudtrail_arn          = "arn:aws:cloudtrail:eu-west-1:111111111111:trail/centralized-org-trail"
+  s3_bucket_arn           = "arn:aws:s3:::centralized-logs-bucket"
   manage_s3_bucket_policy = false
 }
 ```
