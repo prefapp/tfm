@@ -252,7 +252,7 @@ locals {
         : can(tostring(ag_ref))
         ? { id = null, name = try(tostring(ag_ref), null), resource_group_name = null }
         : { id = try(ag_ref.id, null), name = try(ag_ref.name, null), resource_group_name = try(ag_ref.resource_group_name, null) }
-      )] : (
+        )] : (
         try(group.id, null) != null
         ? group.id
         : (
