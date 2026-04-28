@@ -95,7 +95,7 @@ variable "config" {
   }
 
   validation {
-    condition = length(var.config.labels) == length(distinct([for l in var.config.labels : l.name]))
+    condition = length(var.config.labels) == length(distinct([for l in var.config.labels : trimspace(l.name)]))
     error_message = "Label names must be unique."
   }
 
