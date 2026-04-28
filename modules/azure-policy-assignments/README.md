@@ -19,7 +19,7 @@ An empty **`assignments`** list (`[]`, default) creates nothing.
 ## Key features
 
 - **Built-in vs custom**: `policy_type` is `builtin` or `custom` (validated); default `builtin`.
-- **Outputs**: separate lists of assignment IDs per scope type.
+- **Outputs**: per-scope outputs for assignment IDs and detailed assignment objects (`id`, `principal_id`).
 
 ## Prerequisites
 
@@ -103,9 +103,13 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_management_group_policy_assignment_ids"></a> [management\_group\_policy\_assignment\_ids](#output\_management\_group\_policy\_assignment\_ids) | List of all Azure management group policy assignment IDs |
+| <a name="output_management_group_policy_assignments"></a> [management\_group\_policy\_assignments](#output\_management\_group\_policy\_assignments) | List of objects for each Azure management group policy assignment, including id and identity principal\_id. |
 | <a name="output_resource_group_policy_assignment_ids"></a> [resource\_group\_policy\_assignment\_ids](#output\_resource\_group\_policy\_assignment\_ids) | List of all Azure resource group policy assignment IDs |
+| <a name="output_resource_group_policy_assignments"></a> [resource\_group\_policy\_assignments](#output\_resource\_group\_policy\_assignments) | List of objects for each Azure resource group policy assignment, including id and identity principal\_id. |
 | <a name="output_resource_policy_assignment_ids"></a> [resource\_policy\_assignment\_ids](#output\_resource\_policy\_assignment\_ids) | List of all Azure resource policy assignment IDs |
+| <a name="output_resource_policy_assignments"></a> [resource\_policy\_assignments](#output\_resource\_policy\_assignments) | List of objects for each Azure resource policy assignment, including id and identity principal\_id. |
 | <a name="output_subscription_policy_assignment_ids"></a> [subscription\_policy\_assignment\_ids](#output\_subscription\_policy\_assignment\_ids) | List of all Azure subscription policy assignment IDs |
+| <a name="output_subscription_policy_assignments"></a> [subscription\_policy\_assignments](#output\_subscription\_policy\_assignments) | List of objects for each Azure subscription policy assignment, including id and identity principal\_id. |
 
 ## Examples
 

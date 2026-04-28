@@ -18,7 +18,7 @@ An empty **`assignments`** list (`[]`, default) creates nothing.
 ## Key features
 
 - **Built-in vs custom**: `policy_type` is `builtin` or `custom` (validated); default `builtin`.
-- **Outputs**: separate lists of assignment IDs per scope type.
+- **Outputs**: per-scope outputs for assignment IDs and detailed assignment objects (`id`, `principal_id`).
 
 ## Prerequisites
 
