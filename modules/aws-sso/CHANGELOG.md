@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/prefapp/tfm/compare/aws-sso-v0.6.1...aws-sso-v0.7.0) (2026-04-29)
+
+
+### Features
+
+* **aws-s3:** : add versions.tf to aws-sso module ([#1222](https://github.com/prefapp/tfm/issues/1222)) ([8177663](https://github.com/prefapp/tfm/commit/8177663dcbc909ed5ebb83dda63985cca7f4444c))
+
 ## [0.6.1](https://github.com/prefapp/tfm/compare/aws-sso-v0.6.0...aws-sso-v0.6.1) (2025-04-24)
 
 
