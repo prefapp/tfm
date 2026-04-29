@@ -107,7 +107,10 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_application_id"></a> [application\_id](#output\_application\_id) | Map of application names to Entra application (client) IDs. |
+| <a name="output_applications"></a> [applications](#output\_applications) | Map of applications with application\_id and object\_id. |
+| <a name="output_role_assignments"></a> [role\_assignments](#output\_role\_assignments) | Map of role assignments keyed by app-role-scope. |
 | <a name="output_service_principal_id"></a> [service\_principal\_id](#output\_service\_principal\_id) | Map of application names to service principal object IDs (RBAC `principal_id`). |
+| <a name="output_service_principals"></a> [service\_principals](#output\_service\_principals) | Map of service principals with object\_id (principal\_id). |
 
 ## Examples
 
