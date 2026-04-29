@@ -49,3 +49,67 @@ output "management_group_policy_assignments" {
     principal_id = try(assignment.identity[0].principal_id, null)
   }]
 }
+
+output "resource_policy_assignment_ids_map" {
+  description = "Map of Azure resource policy assignment IDs keyed by assignment key."
+  value       = { for k, v in azurerm_resource_policy_assignment.this : k => v.id }
+}
+
+output "resource_policy_assignments_map" {
+  description = "Map of Azure resource policy assignments keyed by assignment key."
+  value = {
+    for k, v in azurerm_resource_policy_assignment.this :
+    k => {
+      id           = v.id
+      principal_id = try(v.identity[0].principal_id, null)
+    }
+  }
+}
+
+output "resource_group_policy_assignment_ids_map" {
+  description = "Map of Azure resource group policy assignment IDs keyed by assignment key."
+  value       = { for k, v in azurerm_resource_group_policy_assignment.this : k => v.id }
+}
+
+output "resource_group_policy_assignments_map" {
+  description = "Map of Azure resource group policy assignments keyed by assignment key."
+  value = {
+    for k, v in azurerm_resource_group_policy_assignment.this :
+    k => {
+      id           = v.id
+      principal_id = try(v.identity[0].principal_id, null)
+    }
+  }
+}
+
+output "subscription_policy_assignment_ids_map" {
+  description = "Map of Azure subscription policy assignment IDs keyed by assignment key."
+  value       = { for k, v in azurerm_subscription_policy_assignment.this : k => v.id }
+}
+
+output "subscription_policy_assignments_map" {
+  description = "Map of Azure subscription policy assignments keyed by assignment key."
+  value = {
+    for k, v in azurerm_subscription_policy_assignment.this :
+    k => {
+      id           = v.id
+      principal_id = try(v.identity[0].principal_id, null)
+    }
+  }
+}
+
+output "management_group_policy_assignment_ids_map" {
+  description = "Map of Azure management group policy assignment IDs keyed by assignment key."
+  value       = { for k, v in azurerm_management_group_policy_assignment.this : k => v.id }
+}
+
+output "management_group_policy_assignments_map" {
+  description = "Map of Azure management group policy assignments keyed by assignment key."
+  value = {
+    for k, v in azurerm_management_group_policy_assignment.this :
+    k => {
+      id           = v.id
+      principal_id = try(v.identity[0].principal_id, null)
+    }
+  }
+}

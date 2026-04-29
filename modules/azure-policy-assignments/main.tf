@@ -5,7 +5,7 @@ data "azurerm_subscription" "current" {}
 data "azurerm_policy_definition" "this" {
   for_each = {
     for k, v in var.assignments : k => v
-    if v.policy_name != null && try(v.policy_definition_id, null) == null
+    if v.policy_name != null && !can(v.policy_definition_id)
   }
   display_name = each.value.policy_name
 }
