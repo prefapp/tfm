@@ -1,17 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.4"
-    }
-
-  }
-}
-
-provider "aws" {
-  region = var.region
-}
-
 resource "aws_iam_openid_connect_provider" "gh_oidc_entity_provider" {
   url = "https://token.actions.githubusercontent.com"
 
