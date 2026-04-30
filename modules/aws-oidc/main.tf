@@ -8,7 +8,16 @@ terraform {
   }
 }
 
+data "aws_iam_openid_connect_provider" "gh_oidc_entity_provider" {
+  count = var.create_oidc_provider ? 0 : 1
+  
+  url = "https://token.actions.githubusercontent.com"
+}
+
 resource "aws_iam_openid_connect_provider" "gh_oidc_entity_provider" {
+
+  count = var.create_oidc_provider ? 1 : 0
+  
   url = "https://token.actions.githubusercontent.com"
 
   client_id_list = [
@@ -48,7 +57,7 @@ resource "aws_iam_role" "gh_oidc_rol" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.gh_oidc_entity_provider.arn
+          Federated = var.create_oidc_provider ? aws_iam_openid_connect_provider.gh_oidc_entity_provider[0].arn : data.aws_iam_openid_connect_provider.gh_oidc_entity_provider[0].arn
         }
         Condition : {
           StringLike = {
