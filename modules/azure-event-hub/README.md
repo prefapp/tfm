@@ -90,7 +90,7 @@ module "event_hub" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.68.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.51.0 |
 
 ## Modules
 
@@ -123,8 +123,22 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_authorization_rule_primary_connection_string"></a> [authorization\_rule\_primary\_connection\_string](#output\_authorization\_rule\_primary\_connection\_string) | Map of authorization rule keys (`<eventhub_key>.<rule_name>`) to primary connection strings. |
+| <a name="output_authorization_rules"></a> [authorization\_rules](#output\_authorization\_rules) | Map of authorization rules with connection strings. |
+| <a name="output_consumer_group_id"></a> [consumer\_group\_id](#output\_consumer\_group\_id) | Map of consumer group keys (`<eventhub_key>.<consumer_group_name>`) to resource IDs. |
+| <a name="output_eventgrid_event_subscription_id"></a> [eventgrid\_event\_subscription\_id](#output\_eventgrid\_event\_subscription\_id) | Map of event hub keys (where an Event Grid subscription is configured) to subscription resource IDs. |
+| <a name="output_eventgrid_system_topic_id"></a> [eventgrid\_system\_topic\_id](#output\_eventgrid\_system\_topic\_id) | Map of system topic keys (from `system_topic`) to resource IDs. |
+| <a name="output_eventgrid_system_topic_principal_id"></a> [eventgrid\_system\_topic\_principal\_id](#output\_eventgrid\_system\_topic\_principal\_id) | Map of system topic keys to the principal ID of the topic system-assigned identity. |
+| <a name="output_eventgrid_to_eventhub_role_assignment_id"></a> [eventgrid\_to\_eventhub\_role\_assignment\_id](#output\_eventgrid\_to\_eventhub\_role\_assignment\_id) | Map of event hub keys to role assignment IDs granting the Event Grid topic identity send access to the hub. |
 | <a name="output_eventhub_id"></a> [eventhub\_id](#output\_eventhub\_id) | Map of event hub keys to their Azure resource IDs. |
+| <a name="output_eventhub_name"></a> [eventhub\_name](#output\_eventhub\_name) | Map of event hub keys to hub names in Azure. |
+| <a name="output_eventhub_namespace_fqdn"></a> [eventhub\_namespace\_fqdn](#output\_eventhub\_namespace\_fqdn) | FQDN for clients (AMQP/Kafka) in the form `<namespace>.servicebus.windows.net`. |
 | <a name="output_eventhub_namespace_id"></a> [eventhub\_namespace\_id](#output\_eventhub\_namespace\_id) | Resource ID of the Event Hubs namespace. |
+| <a name="output_eventhub_namespace_name"></a> [eventhub\_namespace\_name](#output\_eventhub\_namespace\_name) | Name of the Event Hubs namespace. |
+| <a name="output_eventhub_namespace_principal_id"></a> [eventhub\_namespace\_principal\_id](#output\_eventhub\_namespace\_principal\_id) | Principal ID of the namespace managed identity when Azure exposes it (e.g. SystemAssigned). |
+| <a name="output_eventhubs"></a> [eventhubs](#output\_eventhubs) | Map of event hubs with their attributes. |
+| <a name="output_namespace"></a> [namespace](#output\_namespace) | Event Hub namespace details. |
+| <a name="output_system_topics"></a> [system\_topics](#output\_system\_topics) | Map of Event Grid system topics. |
 
 ## Examples
 

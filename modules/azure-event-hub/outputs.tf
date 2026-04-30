@@ -18,6 +18,16 @@ output "eventhub_namespace_principal_id" {
   value       = try(azurerm_eventhub_namespace.this.identity[0].principal_id, null)
 }
 
+output "namespace" {
+  description = "Event Hub namespace details."
+  value = {
+    id           = azurerm_eventhub_namespace.this.id
+    name         = azurerm_eventhub_namespace.this.name
+    fqdn         = "${azurerm_eventhub_namespace.this.name}.servicebus.windows.net"
+    principal_id = try(azurerm_eventhub_namespace.this.identity[0].principal_id, null)
+  }
+}
+
 output "eventhub_id" {
   description = "Map of event hub keys to their Azure resource IDs."
   value       = { for k, v in azurerm_eventhub.this : k => v.id }
@@ -26,6 +36,16 @@ output "eventhub_id" {
 output "eventhub_name" {
   description = "Map of event hub keys to hub names in Azure."
   value       = { for k, v in azurerm_eventhub.this : k => v.name }
+}
+
+output "eventhubs" {
+  description = "Map of event hubs with their attributes."
+  value = {
+    for k, v in azurerm_eventhub.this : k => {
+      id   = v.id
+      name = v.name
+    }
+  }
 }
 
 output "consumer_group_id" {
@@ -39,6 +59,19 @@ output "authorization_rule_primary_connection_string" {
   sensitive   = true
 }
 
+output "authorization_rules" {
+  description = "Map of authorization rules with connection strings."
+  sensitive   = true
+  value = {
+    for k, v in azurerm_eventhub_authorization_rule.this : k => {
+      id                          = v.id
+      name                        = v.name
+      primary_connection_string   = v.primary_connection_string
+      secondary_connection_string = v.secondary_connection_string
+    }
+  }
+}
+
 output "eventgrid_system_topic_id" {
   description = "Map of system topic keys (from `system_topic`) to resource IDs."
   value       = { for k, v in azurerm_eventgrid_system_topic.this : k => v.id }
@@ -47,6 +80,17 @@ output "eventgrid_system_topic_id" {
 output "eventgrid_system_topic_principal_id" {
   description = "Map of system topic keys to the principal ID of the topic system-assigned identity."
   value       = { for k, v in azurerm_eventgrid_system_topic.this : k => try(v.identity[0].principal_id, null) }
+}
+
+output "system_topics" {
+  description = "Map of Event Grid system topics."
+  value = {
+    for k, v in azurerm_eventgrid_system_topic.this : k => {
+      id           = v.id
+      name         = v.name
+      principal_id = try(v.identity[0].principal_id, null)
+    }
+  }
 }
 
 output "eventgrid_event_subscription_id" {
