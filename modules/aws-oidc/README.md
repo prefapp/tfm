@@ -109,7 +109,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_create_oidc_provider"></a> [create\_oidc\_provider](#input\_create\_oidc\_provider) | Create OIDC provider for GitHub Actions | `bool` | n/a | yes |
+| <a name="input_create_oidc_provider"></a> [create\_oidc\_provider](#input\_create\_oidc\_provider) | Create OIDC provider for GitHub Actions | `bool` | `true` | no |
 | <a name="input_subs"></a> [subs](#input\_subs) | List of GitHub OIDC subject claims allowed to assume the role | `list(string)` | n/a | yes |
 
 ## Outputs
