@@ -41,7 +41,7 @@ Use real subscription or management-group scope IDs for `assignable_scopes`.
 |------|---------|
 | `main.tf` | `azurerm_role_definition` |
 | `variables.tf` | Inputs |
-| `outputs.tf` | Role definition ID |
+| `outputs.tf` | Module outputs |
 | `versions.tf` | Terraform and provider constraints |
 | `CHANGELOG.md` | Release history |
 | `docs/header.md` | README header content (used for terraform-docs generation) |
