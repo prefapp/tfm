@@ -1,24 +1,89 @@
-# Azure OIDC
+<!-- BEGIN_TF_DOCS -->
+# Azure OIDC Terraform module (`azure-oidc`)
 
 ## Overview
 
-This module creates an Azure AD application, service principal and role assignment for each application in the data file.
+This module provisions **Microsoft Entra ID (Azure AD)** resources for **OIDC / federated identity** scenarios (for example GitHub Actions → Azure):
 
-> Note: not defining a scope in an application is equivalent to defining the scope of the subscription
+- One **`azuread_application`** and **`azuread_service_principal`** per entry under **`data.applications`** (keyed by `name`).
+- **`azuread_application_federated_identity_credential`** per federated credential (keyed by `app name` + `subject`).
+- **`azurerm_role_assignment`** for each **role × scope** combination per application.
+
+The input variable **`data`** is typically produced with **`yamldecode(file(...))`**. The YAML (or HCL object) **must** expose an **`applications`** list at the top level—this is what the module reads (`var.data.applications`). Older samples that used another root key (e.g. `app_registrations`) are **not** read by this module.
+
+If an application **omits** `scope`, the module uses the **current subscription scope** from **`azurerm_subscription.primary`** for every role (that is, the subscription resource ID used for assigning at subscription scope).
+
+## Key features
+
+- **Multi-app**: `for_each` on application `name` (names must be unique).
+- **Federated credentials**: optional `federated_credentials` list per app (`issuer`, `subject`).
+- **RBAC**: `roles` × `scope` (or default subscription scope).
+
+## Prerequisites
+
+- **`azurerm`** (with **`features {}`**) and **`azuread`** configured in the **root** module that calls this module.
+- Permissions to create app registrations, service principals, federated credentials, and role assignments.
+
+## Basic usage
+
+```hcl
+module "github_oidc" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-oidc?ref=<version>"
+
+  data = yamldecode(file("${path.module}/apps.yaml"))
+}
+```
+
+Where `apps.yaml` begins with:
+
+```yaml
+applications:
+  - name: my-app
+    roles:
+      - Reader
+    federated_credentials:
+      - subject: "repo:org/repo:ref:refs/heads/main"
+        issuer: "https://token.actions.githubusercontent.com"
+```
+
+## File structure
+
+```
+.
+├── CHANGELOG.md
+├── data.tf
+├── oidc.tf
+├── outputs.tf
+├── variables.tf
+├── versions.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
+├── README.md
+└── .terraform-docs.yml
+```
 
 ## Requirements
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 2.15.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >3.0.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | > 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 2.15.0 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >3.0.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | > 3.0.0 |
+
+## Modules
+
+No modules.
 
 ## Resources
 
@@ -31,79 +96,42 @@ This module creates an Azure AD application, service principal and role assignme
 | [azuread_client_config.current](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/client_config) | data source |
 | [azurerm_subscription.primary](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 
-## Usage
+## Inputs
 
-### Set a module
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_data"></a> [data](#input\_data) | YAML data for configuring resources | `any` | n/a | yes |
 
-```terraform
-module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-oidc?ref=<version>"
-  data   = yamldecode(file("<path_to_yaml_file>"
-}
-```
+## Outputs
 
-#### Example
+| Name | Description |
+|------|-------------|
+| <a name="output_application_id"></a> [application\_id](#output\_application\_id) | Map of application names to Entra application (client) IDs. |
+| <a name="output_applications"></a> [applications](#output\_applications) | Map of applications with application\_id and object\_id. |
+| <a name="output_role_assignments"></a> [role\_assignments](#output\_role\_assignments) | Map of role assignments keyed by app-role-scope. |
+| <a name="output_service_principal_id"></a> [service\_principal\_id](#output\_service\_principal\_id) | Map of application names to service principal object IDs (RBAC `principal_id`). |
+| <a name="output_service_principals"></a> [service\_principals](#output\_service\_principals) | Map of service principals with object\_id (principal\_id). |
 
-```terraform
-module "githuib-oidc" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-oidc?ref=v1.2.3"
-  data   = yamldecode(file("github_oidc.yaml")
-```
+## Examples
 
-### Set a data file
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-oidc/_examples):
 
-```yaml
-applications:
-  - name: app
-    roles:
-      - role1
-      - role2
-    scope:
-      - scope1
-      - scope2
-    federated_credentials:
-      - subject: "subject_claim_foo:my_repo_foo"
-        issuer: "issuer_foo"
-      - subject: "subject_claim_bar:my_repo_bar"
-        issuer: "issuer_bar"
-  - name: app2
-    roles:
-      - role1
-    federated_credentials:
-      - subject: "my_repo_foo_foo"
-        issuer: "issuer_foo_foo"
-```
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-oidc/_examples/basic) — Root module loading `applications` from `apps.yaml`; configure **azurerm** and **azuread** before apply (see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-oidc/_examples/comprehensive) — Illustrative `values.reference.yaml` for multiple apps, roles, scopes, and federated credentials (see folder README).
 
-#### Example
+## Resources
 
-```yaml
-app_registrations:
-  - name: service_repositories
-    roles:
-      - AcrPush
-      - AcrPull
-    scope:
-      - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/foo/providers/Microsoft.ContainerRegistry/registries/foo-registries"
-      - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/bar/providers/Microsoft.ContainerRegistry/registries/bar-registries"
-    federated_credentials:
-      - subject: "repository_owner:prefapp"
-        issuer: "https://token.actions.githubusercontent.com"
-  - name: state_repositorie
-    roles:
-      - AcrPush
-    scope:
-      - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/foo/providers/Microsoft.ContainerRegistry/registries/foo-registries"
-    federated_credentials:
-      - subject: "repository_owner:prefapp"
-        issuer: "https://token.actions.githubusercontent.com"
-  - name: infra_repositorie
-    roles:
-      - Contributor
-    federated_credentials:
-      - subject: "my_repo_foo"
-        issuer: "issuer_foo"
-      - subject: "my_repo_bar"
-        issuer: "issuer_bar"
-    # scope:
-    #   - "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" # This is similar to not putting scope
-```
+**azuread** registry docs use **2.15.0**, aligned with `versions.tf` (`~> 2.15.0`). **azurerm** links use **4.16.0** as a representative baseline compatible with the module constraint (`> 3.0.0`).
+
+- **Workload identity federation (Microsoft Entra)**: [https://learn.microsoft.com/entra/workload-id/workload-identity-federation](https://learn.microsoft.com/entra/workload-id/workload-identity-federation)
+- **azuread\_application**: [https://registry.terraform.io/providers/hashicorp/azuread/2.15.0/docs/resources/application](https://registry.terraform.io/providers/hashicorp/azuread/2.15.0/docs/resources/application)
+- **azuread\_service\_principal**: [https://registry.terraform.io/providers/hashicorp/azuread/2.15.0/docs/resources/service_principal](https://registry.terraform.io/providers/hashicorp/azuread/2.15.0/docs/resources/service_principal)
+- **azuread\_application\_federated\_identity\_credential**: [https://registry.terraform.io/providers/hashicorp/azuread/2.15.0/docs/resources/application_federated_identity_credential](https://registry.terraform.io/providers/hashicorp/azuread/2.15.0/docs/resources/application_federated_identity_credential)
+- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_assignment)
+- **Terraform AzureAD provider**: [https://registry.terraform.io/providers/hashicorp/azuread/2.15.0](https://registry.terraform.io/providers/hashicorp/azuread/2.15.0)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+<!-- END_TF_DOCS -->
