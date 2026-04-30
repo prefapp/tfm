@@ -1,0 +1,20 @@
+# Root key must be `applications` (matches var.data.applications in the module).
+applications:
+  - name: service_repositories
+    roles:
+      - AcrPush
+      - AcrPull
+    scope:
+      - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ContainerRegistry/registries/registry1"
+      - "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg2/providers/Microsoft.ContainerRegistry/registries/registry2"
+    federated_credentials:
+      - subject: "repo:my-org/my-repo:ref:refs/heads/main"
+        issuer: "https://token.actions.githubusercontent.com"
+
+  - name: infra_repository
+    roles:
+      - Contributor
+    federated_credentials:
+      - subject: "repo:my-org/infra:environment:production"
+        issuer: "https://token.actions.githubusercontent.com"
+    # Omitting `scope` uses the current subscription scope (subscription resource ID) for each role (module default).

@@ -55,5 +55,5 @@ output "collaborators" {
 
 output "repository_labels" {
   description = "List of labels created on the repository"
-  value       = [for l in var.config.labels : l.name]
+  value       = [for l in var.config.labels : trimspace(l.name)]
 }

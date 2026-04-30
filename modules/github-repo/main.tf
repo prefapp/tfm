@@ -85,7 +85,7 @@ resource "github_repository_collaborator" "this" {
         permission = each.value.permission
 }
 
-# GitHub Repository Labels (from metadata.spec.repo.labels)
+# GitHub Repository Labels (from var.config.labels)
 resource "github_issue_label" "this" {
   for_each = { for label in var.config.labels : trimspace(label.name) => label }
 
