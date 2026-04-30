@@ -79,7 +79,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_assignable_scopes"></a> [assignable\_scopes](#input\_assignable\_scopes) | One or more assignable scopes for this Role Definition. The first one will become de scope at which the Role Definition applies to. | `list(string)` | n/a | yes |
+| <a name="input_assignable_scopes"></a> [assignable\_scopes](#input\_assignable\_scopes) | One or more assignable scopes for this Role Definition. The first one will become the scope at which the Role Definition applies to. | `list(string)` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | The name of the Role Definition | `string` | n/a | yes |
 | <a name="input_permissions"></a> [permissions](#input\_permissions) | A permissions block with possible 'actions', 'data\_actions', 'not\_actions' and/or 'not\_data\_actions'. | <pre>object({<br/>    actions          = optional(list(string), [])<br/>    data_actions     = optional(list(string), [])<br/>    not_actions      = optional(list(string), [])<br/>    not_data_actions = optional(list(string), [])<br/>  })</pre> | n/a | yes |
 
@@ -97,7 +97,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/basic) — Runnable minimal example: one custom role at subscription scope (see folder README for `terraform plan` / `apply` notes).
 - [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/comprehensive) — Documentation-only reference with `values.reference.yaml` for assignable scopes and permissions (see folder README).
 
-## Resources
+## External Resources
 
 Terraform resource docs use **4.16.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`~> 4.16.0`).
 

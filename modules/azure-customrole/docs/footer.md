@@ -5,7 +5,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/basic) — Runnable minimal example: one custom role at subscription scope (see folder README for `terraform plan` / `apply` notes).
 - [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-customrole/_examples/comprehensive) — Documentation-only reference with `values.reference.yaml` for assignable scopes and permissions (see folder README).
 
-## Resources
+## External Resources
 
 Terraform resource docs use **4.16.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`~> 4.16.0`).
 
