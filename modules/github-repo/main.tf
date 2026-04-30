@@ -87,7 +87,7 @@ resource "github_repository_collaborator" "this" {
 
 # GitHub Repository Labels (from var.config.labels)
 resource "github_issue_label" "this" {
-  for_each = { for label in var.config.labels : trimspace(label.name) => label }
+  for_each = { for label in coalesce(var.config.labels, []) : trimspace(label.name) => label }
 
   repository  = github_repository.this.name
   name        = trimspace(each.value.name)
