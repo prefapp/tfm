@@ -1,0 +1,25 @@
+# Example: Reuse an existing Action Group (YAML representation)
+
+values:
+  common:
+    location: eastus
+    resource_group_name: example-alerts-rg
+    tags:
+      environment: production
+      project: azure-alerts
+
+  log_alert:
+    - name: resource-group-write-alert
+      enabled: true
+      scopes:
+        - /subscriptions/00000000-0000-0000-0000-000000000000
+      criteria:
+        category: Administrative
+        resource_groups:
+          - example-alerts-rg
+        statuses:
+          - Succeeded
+      action:
+        action_group:
+          name: existing-action-group
+          resource_group_name: example-alerts-rg

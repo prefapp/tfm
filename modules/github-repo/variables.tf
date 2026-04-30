@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + labels) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -58,6 +58,12 @@ variable "config" {
         path   = optional(string, "/")
       }), null)
     }), null)
+    
+    labels = optional(list(object({
+      name        = string
+      description = optional(string, null)
+      color       = string   # 6-digit hex without # (e.g. "d73a4a")
+    })), [])
 
   })
 
@@ -93,5 +99,21 @@ variable "config" {
   validation {
     condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
     error_message = "pages.buildType must be 'legacy' or 'workflow'."
+    condition = alltrue([
+      for l in coalesce(var.config.labels, []) : length(trimspace(l.name)) > 0
+    ])
+    error_message = "Every label must have a non-empty 'name'."
+  }
+
+  validation {
+    condition = length(coalesce(var.config.labels, [])) == length(distinct([for l in coalesce(var.config.labels, []) : trimspace(l.name)]))
+    error_message = "Label names must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for l in coalesce(var.config.labels, []) : can(regex("^([A-Fa-f0-9]{6})$", l.color))
+    ])
+    error_message = "Label color must be a valid 6-character hex code without '#' (example: d73a4a)."
   }
 }

@@ -101,3 +101,12 @@ resource "github_repository_collaborator" "this" {
         permission = each.value.permission
 }
 
+# GitHub Repository Labels (from var.config.labels)
+resource "github_issue_label" "this" {
+  for_each = { for label in coalesce(var.config.labels, []) : trimspace(label.name) => label }
+
+  repository  = github_repository.this.name
+  name        = trimspace(each.value.name)
+  description = each.value.description
+  color       = each.value.color
+}

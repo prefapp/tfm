@@ -1,8 +1,8 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.nsg.resource_group_name
 }
-# RESOURCES SECTION
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/network_security_group
 resource "azurerm_network_security_group" "this" {
   name                = var.nsg.name
