@@ -22,7 +22,7 @@ Terraform module that creates an **Event Hubs namespace**, one or more **event h
 
 ```hcl
 module "event_hub" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/azure-event-hub?ref=azure-event-hub-v0.1.1"
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-event-hub?ref=<version>"
 
   tags_from_rg = false
   tags         = { example = "basic" }
