@@ -1,6 +1,8 @@
 variable "create_oidc_provider" {
   description = "Create OIDC provider for GitHub Actions"
-  type = bool
+  type        = bool
+  default     = true
+  nullable    = false
 }
 
 variable "subs" {
