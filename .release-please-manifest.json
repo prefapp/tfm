@@ -1,6 +1,6 @@
 {
     "modules/azure-disks-backup": "1.2.3",
-    "modules/aws-sso": "0.6.1",
+    "modules/aws-sso": "0.7.0",
     "modules/aws-backup": "0.2.0",
     "modules/azure-resource-group": "1.5.1",
     "modules/azure-oidc": "1.4.1",
@@ -42,7 +42,7 @@
     "modules/azure-backup-vault": "0.1.10",
     "modules/azure-event-hub": "0.1.1",
     "modules/aws-cloudfront-delivery": "0.2.6",
-    "modules/aws-ecs": "1.1.4",
+    "modules/aws-ecs": "1.2.0",
     "modules/azure-linux-vm": "0.1.2",
     "modules/azure-windows-vm": "0.1.10",
     "modules/aws-amq-rabbit": "0.3.0",
