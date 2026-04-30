@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + labels) as a single complex object"
   type = object({
     repository = object({
       name                = string
