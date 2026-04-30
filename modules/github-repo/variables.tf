@@ -89,19 +89,19 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for l in var.config.labels : length(trimspace(l.name)) > 0
+      for l in coalesce(var.config.labels, []) : length(trimspace(l.name)) > 0
     ])
     error_message = "Every label must have a non-empty 'name'."
   }
 
   validation {
-    condition = length(var.config.labels) == length(distinct([for l in var.config.labels : trimspace(l.name)]))
+    condition = length(coalesce(var.config.labels, [])) == length(distinct([for l in coalesce(var.config.labels, []) : trimspace(l.name)]))
     error_message = "Label names must be unique."
   }
 
   validation {
     condition = alltrue([
-      for l in var.config.labels : can(regex("^([A-Fa-f0-9]{6})$", l.color))
+      for l in coalesce(var.config.labels, []) : can(regex("^([A-Fa-f0-9]{6})$", l.color))
     ])
     error_message = "Label color must be a valid 6-character hex code without '#' (example: d73a4a)."
   }
