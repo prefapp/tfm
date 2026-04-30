@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/prefapp/tfm/compare/aws-oidc-v1.4.1...aws-oidc-v1.4.2) (2026-04-30)
+
+
+### Bug Fixes
+
+* remove aws provider definition and unused region var ([#1237](https://github.com/prefapp/tfm/issues/1237)) ([0cdd0ce](https://github.com/prefapp/tfm/commit/0cdd0cec96c1bc6088695e3771c91809be37678f))
+
 ## [1.4.1](https://github.com/prefapp/tfm/compare/aws-oidc-v1.4.0...aws-oidc-v1.4.1) (2025-04-24)
 
 
