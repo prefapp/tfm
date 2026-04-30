@@ -1,7 +1,8 @@
 # settings.lockfile: true (aligned with other tfm modules): the README "Requirements" section shows provider
-# constraints from versions.tf; the "Providers" section shows the resolved versions from .terraform.lock.hcl
-# at the time `terraform-docs` was run (not an extra minimum requirement).
-# Resource links in the README may still show registry .../latest; replace with pinned versions after generate if desired.
+# constraints from versions.tf; the "Providers" section shows resolved versions from .terraform.lock.hcl
+# only when that lockfile is present at the time `terraform-docs` is run, otherwise it reflects the configured
+# provider constraints (not an extra minimum requirement). Resource links in the README may still show registry
+# .../latest; replace with pinned versions after generate if desired.
 formatter: "markdown"
 
 version: ""
