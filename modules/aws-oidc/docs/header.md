@@ -23,9 +23,15 @@ Access is controlled through the `subs` variable, which defines which GitHub rep
 
 ## Basic Usage
 
+This module does **not** configure the AWS provider internally. Callers must configure `provider "aws"` in the root module.
+
 ### Minimal Example
 
 ```hcl
+provider "aws" {
+  region = "eu-west-1"
+}
+
 module "oidc" {
   source = "git::https://github.com/prefapp/tfm.git//modules/aws-oidc"
   subs = [
@@ -33,6 +39,26 @@ module "oidc" {
     "repo:ORG/repo-b:*",
     "repo:ORG-B/repo-a:ref:refs/heads/dev",
     "repo:ORG-B/repo-z:ref:refs/tags/*"
+  ]
+}
+```
+
+### Using an aliased provider
+
+```hcl
+provider "aws" {
+  alias  = "identity"
+  region = "eu-west-1"
+}
+
+module "oidc" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/aws-oidc"
+  providers = {
+    aws = aws.identity
+  }
+
+  subs = [
+    "repo:ORG/repo-a:*"
   ]
 }
 ```
@@ -73,5 +99,6 @@ The module is organized as follows:
 ├── main.tf
 ├── outputs.tf
 ├── README.md
-└── variables.tf
+├── variables.tf
+└── versions.tf
 ```
