@@ -106,8 +106,8 @@ module "postgresql" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.68.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.8.1 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.35.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
 
@@ -153,9 +153,12 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_administrator_password_key_vault_secret_id"></a> [administrator\_password\_key\_vault\_secret\_id](#output\_administrator\_password\_key\_vault\_secret\_id) | Resource ID of the Key Vault secret for the administrator password. |
+| <a name="output_configurations"></a> [configurations](#output\_configurations) | PostgreSQL server configurations. |
+| <a name="output_firewall_rules"></a> [firewall\_rules](#output\_firewall\_rules) | Firewall rules configured on the server. |
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | FQDN of the server (hostname for client connection strings). |
 | <a name="output_id"></a> [id](#output\_id) | Resource ID of the PostgreSQL Flexible Server. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the PostgreSQL Flexible Server. |
+| <a name="output_server"></a> [server](#output\_server) | PostgreSQL Flexible Server details. |
 
 ## Examples
 
