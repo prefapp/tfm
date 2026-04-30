@@ -109,7 +109,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_region"></a> [region](#input\_region) | Region to deploy resources | `string` | `"eu-west-1"` | no |
 | <a name="input_subs"></a> [subs](#input\_subs) | List of GitHub OIDC subject claims allowed to assume the role | `list(string)` | n/a | yes |
 
 ## Outputs
