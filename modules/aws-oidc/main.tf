@@ -8,10 +8,6 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = var.region
-}
-
 resource "aws_iam_openid_connect_provider" "gh_oidc_entity_provider" {
   url = "https://token.actions.githubusercontent.com"
 
