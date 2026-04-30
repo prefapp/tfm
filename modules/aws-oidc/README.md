@@ -11,13 +11,13 @@ Access is controlled through the `subs` variable, which defines which GitHub rep
 
 ## Key Features
 
-- **AWS IAM OIDC Provider**  
+- **AWS IAM OIDC Provider**
   Creates an IAM OIDC provider using GitHub’s OIDC endpoint and thumbprint.
 
-- **IAM Policy for ECR**  
+- **IAM Policy for ECR**
   Creates an IAM policy with the required permissions to push images to Amazon ECR.
 
-- **IAM Role**  
+- **IAM Role**
   Creates an IAM role that can be assumed via OIDC and is attached to the ECR policy.
 
 ---
@@ -29,7 +29,6 @@ Access is controlled through the `subs` variable, which defines which GitHub rep
 ```hcl
 module "oidc" {
   source = "git::https://github.com/prefapp/tfm.git//modules/aws-oidc"
-  organization = "1111111111111"
   subs = [
     "repo:ORG/repo-a:*",
     "repo:ORG/repo-b:*",
@@ -46,7 +45,6 @@ module "oidc" {
 ```hcl
 module "oidc" {
   source = "git::https://github.com/prefapp/tfm.git//modules/aws-oidc"
-  organization = "1111111111111"
   subs = [
     "repo:ORG-B/repo-z:ref:refs/tags/*"
   ]
@@ -60,7 +58,6 @@ module "oidc" {
 ```hcl
 module "oidc" {
   source = "git::https://github.com/prefapp/tfm.git//modules/aws-oidc"
-  organization = "1111111111111"
   subs = [
     "repo:ORG-B/repo-a:ref:refs/heads/dev"
   ]
