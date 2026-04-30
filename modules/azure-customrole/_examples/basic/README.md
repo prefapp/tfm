@@ -13,7 +13,7 @@ Then:
 ```bash
 az login
 terraform init -backend=false
-terraform plan -backend=false -var="subscription_id=$(az account show --query id -o tsv)"
+terraform plan -var="subscription_id=$(az account show --query id -o tsv)"
 ```
 
 You need permission to create role definitions on that subscription. `apply` creates a real custom role.
