@@ -1,0 +1,33 @@
+# Reference YAML for module `policies` input (illustrative).
+# policy_rule is a JSON string; in HCL prefer jsonencode({ ... }).
+policies:
+  - name: "example-policy"
+    policy_type: "Custom"
+    mode: "All"
+    display_name: "Example Policy"
+    description: "A sample policy to audit location."
+    policy_rule: |
+      {
+        "if": {
+          "field": "location",
+          "equals": "westeurope"
+        },
+        "then": {
+          "effect": "audit"
+        }
+      }
+  - name: "example-policy2"
+    policy_type: "Custom"
+    mode: "All"
+    display_name: "Example Policy 2"
+    description: "A sample policy to audit location."
+    policy_rule: |
+      {
+        "if": {
+          "field": "location",
+          "equals": "westeurope"
+        },
+        "then": {
+          "effect": "audit"
+        }
+      }
