@@ -36,7 +36,7 @@ settings:
   anchor: true
   color: true
   default: true
-  description: false
+  description: true
   escape: true
   hide-empty: false
   html: true
