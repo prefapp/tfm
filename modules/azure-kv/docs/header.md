@@ -1,4 +1,4 @@
-# Azure Key Vault Terraform module (`azure-kv`)
+# **Azure Key Vault Terraform Module** (`azure-kv`)
 
 ## Overview
 
