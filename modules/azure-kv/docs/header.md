@@ -11,7 +11,7 @@ The module does **not** create the resource group, private endpoints, or key/sec
 - **Key Vault**: SKU, soft delete retention, purge protection, disk encryption integration, tenant binding.
 - **Authorization model**: `enable_rbac_authorization` toggles between RBAC and access policies; when RBAC is enabled, `access_policies` must be empty.
 - **Access policies**: Optional list; each entry must set a **non-empty, unique `name`** (the module uses it as a `for_each` key and for Azure AD lookups). Use `type` (`user`, `group`, `service_principal`) plus `name`, or `object_id` with empty `type` for a direct principal.
-- **Outputs**: Resource `id`, `name`, `vault_uri`, `location`, `resource_group_name`, and `tenant_id` for wiring apps, DNS, or role assignments.
+- **Outputs**: Resource `id` for wiring downstream dependencies that need the Key Vault resource identifier.
 
 ## Prerequisites
 
