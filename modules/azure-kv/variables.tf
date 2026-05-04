@@ -48,7 +48,7 @@ variable "tags" {
 variable "access_policies" {
   type = list(object({
     type                    = optional(string)
-    name                    = string
+    name                    = optional(string)
     object_id               = optional(string, "")
     key_permissions         = optional(list(string))
     secret_permissions      = optional(list(string))
