@@ -2,15 +2,16 @@
 
 ## Overview
 
-This module provisions and configures a single GitHub repository with all standard settings (merge strategies, visibility, topics, auto-init, etc.) and sets the default branch using a single strongly-typed `config` object.
+This module provisions and configures a single GitHub repository with all standard settings (merge strategies, visibility, topics, auto-init, etc.), sets the default branch, and manages issue labels using a single strongly-typed `config` object.
 
-It is designed for Prefapp’s Internal Developer Platform and automated repository provisioning pipelines. The module accepts input directly from external programs via JSON (`terraform.tfvars.json` or `jsondecode`).
+It is designed for Prefapp's Internal Developer Platform and automated repository provisioning pipelines. The module accepts input directly from external programs via JSON (`terraform.tfvars.json` or `jsondecode`).
 
 ## Key Features
 
 - **Single complex object**: All repository and default-branch settings live in one `config` variable.
 - **Full GitHub repository settings**: Merge strategies, visibility, topics, auto-init, archive on destroy, etc.
 - **Default branch management**: Set or rename the default branch. Requires `autoInit = true` (so the initial branch exists) or a pre-existing branch in the repository.
+- **Issue label management**: Create and manage repository issue labels with name, description, and hex color.
 - **JSON-native**: Perfect for programmatic generation from external systems.
 - **Full validation**: Enforces required fields and valid values at plan time.
 - **Clean outputs**: Every important value exposed as a separate output.
@@ -59,6 +60,42 @@ module "repository" {
       useDefault       = false
       includeClaimKeys = ["repo", "ref", "job_workflow_ref"]
     }
+  }
+}
+```
+
+### With issue labels
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    labels = [
+      {
+        name        = "bug"
+        description = "Something isn't working"
+        color       = "d73a4a"
+      },
+      {
+        name        = "enhancement"
+        description = "New feature or request"
+        color       = "a2eeef"
+      },
+      {
+        name  = "documentation"
+        color = "0075ca"
+      },
+    ]
   }
 }
 ```
