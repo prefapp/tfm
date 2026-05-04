@@ -1,0 +1,15 @@
+# Reference values (illustrative; not executed unless wired into a root module).
+values:
+  name: "Custom Role"
+  assignable_scopes:
+    - "/subscriptions/00000000-0000-0000-0000-000000000000"
+    - "/subscriptions/11111111-1111-1111-1111-111111111111"
+  permissions:
+    actions:
+      - "Microsoft.Compute/disks/read"
+      - "Microsoft.Compute/disks/write"
+    not_actions:
+      - "Microsoft.Authorization/*/Delete"
+      - "Microsoft.Authorization/*/Write"
+    data_actions: []
+    not_data_actions: []
