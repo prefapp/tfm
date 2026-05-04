@@ -103,12 +103,13 @@ No modules.
 | [aws_iam_openid_connect_provider.gh_oidc_entity_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_openid_connect_provider) | resource |
 | [aws_iam_role.gh_oidc_rol](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.gh_oidc_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_openid_connect_provider.gh_oidc_entity_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_openid_connect_provider) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_region"></a> [region](#input\_region) | Region to deploy resources | `string` | `"eu-west-1"` | no |
+| <a name="input_create_oidc_provider"></a> [create\_oidc\_provider](#input\_create\_oidc\_provider) | Create OIDC provider for GitHub Actions | `bool` | `true` | no |
 | <a name="input_subs"></a> [subs](#input\_subs) | List of GitHub OIDC subject claims allowed to assume the role | `list(string)` | n/a | yes |
 
 ## Outputs
