@@ -1,5 +1,4 @@
-# RESOURCES SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_definition
 resource "azurerm_role_definition" "this" {
   name              = var.name
   scope             = var.assignable_scopes[0]
