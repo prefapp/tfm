@@ -99,6 +99,9 @@ variable "config" {
   validation {
     condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
     error_message = "pages.buildType must be 'legacy' or 'workflow'."
+  }
+
+  validation {
     condition = alltrue([
       for l in coalesce(var.config.labels, []) : length(trimspace(l.name)) > 0
     ])
