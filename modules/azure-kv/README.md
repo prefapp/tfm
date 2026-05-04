@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# Azure Key Vault Terraform module (`azure-kv`)
+# **Azure Key Vault Terraform Module** (`azure-kv`)
 
 ## Overview
 
@@ -12,12 +12,12 @@ The module does **not** create the resource group, private endpoints, or key/sec
 - **Key Vault**: SKU, soft delete retention, purge protection, disk encryption integration, tenant binding.
 - **Authorization model**: `enable_rbac_authorization` toggles between RBAC and access policies; when RBAC is enabled, `access_policies` must be empty.
 - **Access policies**: Optional list; each entry must set a **non-empty, unique `name`** (the module uses it as a `for_each` key and for Azure AD lookups). Use `type` (`user`, `group`, `service_principal`) plus `name`, or `object_id` with empty `type` for a direct principal.
-- **Outputs**: Resource `id`, `name`, `vault_uri`, `location`, `resource_group_name`, and `tenant_id` for wiring apps, DNS, or role assignments.
+- **Outputs**: Resource `id` for wiring downstream dependencies that need the Key Vault resource identifier.
 
 ## Prerequisites
 
 - Existing **resource group** (`resource_group`); the module reads it for location and optional tag inheritance.
-- **Key Vault name** must be **globally unique**, 3–24 characters, alphanumeric.
+- **Key Vault name** must be **globally unique**, 3–24 characters, and use only letters, numbers, and hyphens.
 - **Azure AD provider** is required by the module declaration; configure `provider "azuread"` in the root module even when using RBAC-only (no access policy lookups).
 - For **access policies** with principal lookup, principals must exist and be resolvable (correct UPN, group display name, or service principal display name).
 
@@ -105,7 +105,7 @@ No modules.
 | <a name="input_access_policies"></a> [access\_policies](#input\_access\_policies) | Legacy access policies when `enable_rbac_authorization` is false.<br/><br/>Each object must include a **non-empty, unique `name`**: the module uses `name` as the map key in `for_each` and to index Azure AD data sources, so duplicate or empty values will fail at plan time.<br/><br/>Provide `object_id` (with `type` unset/empty) or set `type` to `user`, `group`, or `service_principal` and use `name` as UPN, group display name, or service principal display name for lookup. | <pre>list(object({<br/>    type                    = optional(string)<br/>    name                    = string<br/>    object_id               = optional(string, "")<br/>    key_permissions         = optional(list(string))<br/>    secret_permissions      = optional(list(string))<br/>    certificate_permissions = optional(list(string))<br/>    storage_permissions     = optional(list(string))<br/>  }))</pre> | `[]` | no |
 | <a name="input_enable_rbac_authorization"></a> [enable\_rbac\_authorization](#input\_enable\_rbac\_authorization) | When true, use Azure RBAC for data plane access; access policies must be empty (see precondition in main.tf). | `bool` | n/a | yes |
 | <a name="input_enabled_for_disk_encryption"></a> [enabled\_for\_disk\_encryption](#input\_enabled\_for\_disk\_encryption) | Whether the vault can be used for Azure Disk Encryption. | `bool` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | Globally unique name of the Key Vault (3–24 alphanumeric characters). | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | Globally unique name of the Key Vault (3–24 characters; letters, numbers, and hyphens). | `string` | n/a | yes |
 | <a name="input_purge_protection_enabled"></a> [purge\_protection\_enabled](#input\_purge\_protection\_enabled) | Whether purge protection is enabled (prevents permanent purge of soft-deleted vaults and objects when true). | `bool` | n/a | yes |
 | <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Name of the existing resource group where the Key Vault will be created. | `string` | n/a | yes |
 | <a name="input_sku_name"></a> [sku\_name](#input\_sku\_name) | SKU for the vault (`standard` or `premium`). | `string` | n/a | yes |
