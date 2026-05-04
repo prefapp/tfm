@@ -16,7 +16,7 @@ The module does **not** create the resource group, private endpoints, or key/sec
 ## Prerequisites
 
 - Existing **resource group** (`resource_group`); the module reads it for location and optional tag inheritance.
-- **Key Vault name** must be **globally unique**, 3–24 characters, alphanumeric.
+- **Key Vault name** must be **globally unique**, 3–24 characters, and use only letters, numbers, and hyphens.
 - **Azure AD provider** is required by the module declaration; configure `provider "azuread"` in the root module even when using RBAC-only (no access policy lookups).
 - For **access policies** with principal lookup, principals must exist and be resolvable (correct UPN, group display name, or service principal display name).
 
