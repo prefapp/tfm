@@ -1,6 +1,6 @@
 variable "name" {
   type        = string
-  description = "Globally unique name of the Key Vault (3–24 alphanumeric characters)."
+  description = "Globally unique name of the Key Vault (3–24 characters; letters, numbers, and hyphens)."
 }
 
 variable "enabled_for_disk_encryption" {
