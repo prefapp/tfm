@@ -24,14 +24,14 @@ provider "azuread" {}
 module "key_vault" {
   source = "../.."
 
-  name                         = "kv-basicex0001"
-  resource_group               = "example-rg"
-  enabled_for_disk_encryption  = false
-  soft_delete_retention_days   = 7
-  purge_protection_enabled     = false
-  sku_name                     = "standard"
-  enable_rbac_authorization    = true
-  access_policies              = []
+  name                        = "kv-basicex0001"
+  resource_group              = "example-rg"
+  enabled_for_disk_encryption = false
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+  sku_name                    = "standard"
+  enable_rbac_authorization   = true
+  access_policies             = []
 
   tags_from_rg = false
   tags = {

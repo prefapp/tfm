@@ -48,13 +48,19 @@ variable "tags" {
 variable "access_policies" {
   type = list(object({
     type                    = optional(string)
-    name                    = optional(string)
+    name                    = string
     object_id               = optional(string, "")
     key_permissions         = optional(list(string))
     secret_permissions      = optional(list(string))
     certificate_permissions = optional(list(string))
     storage_permissions     = optional(list(string))
   }))
-  description = "Legacy access policies when `enable_rbac_authorization` is false. Each entry needs a unique `name`. Provide `object_id` or set `type` to `user` / `group` / `service_principal` with `name` for lookup."
+  description = <<-EOT
+    Legacy access policies when `enable_rbac_authorization` is false.
+
+    Each object must include a **non-empty, unique `name`**: the module uses `name` as the map key in `for_each` and to index Azure AD data sources, so duplicate or empty values will fail at plan time.
+
+    Provide `object_id` (with `type` unset/empty) or set `type` to `user`, `group`, or `service_principal` and use `name` as UPN, group display name, or service principal display name for lookup.
+  EOT
   default     = []
 }
