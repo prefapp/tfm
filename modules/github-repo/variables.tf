@@ -50,6 +50,15 @@ variable "config" {
       permission = string
     })), [])
 
+    pages = optional(object({
+      buildType = optional(string, "legacy")
+      cname     = optional(string, null)
+      source = optional(object({
+        branch = string
+        path   = optional(string, "/")
+      }), null)
+    }), null)
+    
     labels = optional(list(object({
       name        = string
       description = optional(string, null)
@@ -88,6 +97,8 @@ variable "config" {
   }
 
   validation {
+    condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
+    error_message = "pages.buildType must be 'legacy' or 'workflow'."
     condition = alltrue([
       for l in coalesce(var.config.labels, []) : length(trimspace(l.name)) > 0
     ])

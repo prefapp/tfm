@@ -15,6 +15,7 @@ It is designed for Prefapp's Internal Developer Platform and automated repositor
 - **JSON-native**: Perfect for programmatic generation from external systems.
 - **Full validation**: Enforces required fields and valid values at plan time.
 - **Clean outputs**: Every important value exposed as a separate output.
+- **GitHub Pages support**: Enable and configure GitHub Pages (`buildType`, custom `cname`, and `source` branch/path) directly in the top-level `config` object — consistent with `default_branch`, `files`, `teams`, etc.
 
 ## Basic Usage
 

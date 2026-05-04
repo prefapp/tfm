@@ -13,6 +13,22 @@ resource "github_repository" "this" {
   delete_branch_on_merge = var.config.repository.deleteBranchOnMerge
   allow_update_branch  = var.config.repository.allowUpdateBranch
   has_issues           = var.config.repository.hasIssues
+
+  dynamic "pages" {
+    for_each = var.config.pages != null ? [var.config.pages] : []
+    content {
+      build_type = pages.value.buildType
+      cname      = pages.value.cname
+  
+      dynamic "source" {
+        for_each = pages.value.source != null ? [pages.value.source] : []
+        content {
+          branch = source.value.branch
+          path   = coalesce(source.value.path, "/")
+        }
+      }
+    }
+  }
 }
 
 # Set the default branch
