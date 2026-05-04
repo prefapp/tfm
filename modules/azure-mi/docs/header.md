@@ -68,7 +68,7 @@ module "managed_identity_with_rbac" {
 }
 ```
 
-Replace `scope` and role names with values valid in your tenant. See the [comprehensive example](./_examples/comprehensive) for federated credential patterns.
+Replace `scope` and role names with values valid in your tenant. See the [comprehensive example](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/comprehensive) for federated credential patterns.
 
 ## File structure
 
