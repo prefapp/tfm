@@ -20,3 +20,23 @@ output "file_share_protected_item_ids" {
     name => azurerm_backup_protected_file_share.this[idx].id
   }
 }
+
+output "blob_backup_policy_id" {
+  description = "Resource ID of the blob backup policy."
+  value       = var.backup_blob != null ? azurerm_data_protection_backup_policy_blob_storage.this[0].id : null
+}
+
+output "blob_backup_vault_principal_id" {
+  description = "Principal ID of the backup vault managed identity."
+  value       = var.backup_blob != null && var.backup_blob.identity_type != null ? azurerm_data_protection_backup_vault.this[0].identity[0].principal_id : null
+}
+
+output "file_share_backup_policy_id" {
+  description = "Resource ID of the file share backup policy."
+  value       = var.backup_share != null ? azurerm_backup_policy_file_share.this[0].id : null
+}
+
+output "blob_backup_role_assignment_id" {
+  description = "Role assignment ID granting the backup vault access to the storage account."
+  value       = var.backup_blob != null && var.backup_blob.identity_type != null ? azurerm_role_assignment.this[0].id : null
+}
