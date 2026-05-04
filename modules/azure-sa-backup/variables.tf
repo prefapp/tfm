@@ -70,6 +70,10 @@ variable "backup_share" {
     }))
   })
   default = null
+  validation {
+    condition     = var.backup_share == null || length(var.backup_share.source_file_share_name) == 1
+    error_message = "Only one value in source_file_share_name is currently supported."
+  }
 }
 
 ## Backup blobs variables
@@ -113,7 +117,7 @@ variable "backup_blob" {
 }
 
 variable "lifecycle_policy_rule" {
-  description = "Declared for future use; no resources in this module consume this variable yet."
+  description = "DEPRECATED: Currently not used by any resource. Setting this variable has no effect."
   type = list(object({
     name    = string
     enabled = bool

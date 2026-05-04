@@ -5,7 +5,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-sa-backup/_examples/basic) — Azure Files backup via Recovery Services vault (`backup_share`); set RG, storage account ID, vault/policy/share names (see folder README).
 - [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-sa-backup/_examples/comprehensive) — Reference YAML illustrating `backup_share`, `backup_blob`, and tags (documentation-oriented; see folder README).
 
-## Resources
+## External Resources
 
 Terraform resource docs use **4.6.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`~> 4.6.0`).
 
