@@ -8,18 +8,12 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 4.21.0"
     }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "~> 2.53.0"
-    }
   }
 }
 
 provider "azurerm" {
   features {}
 }
-
-provider "azuread" {}
 
 module "key_vault" {
   source = "../.."

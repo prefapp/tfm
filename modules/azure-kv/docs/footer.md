@@ -5,9 +5,9 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/basic) — Key Vault with **RBAC** enabled and no access policies; set an existing resource group and a globally unique vault name (see folder README).
 - [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-kv/_examples/comprehensive) — Reference HCL and YAML for **access policies** (object ID and Azure AD lookups) and tag options (`values.reference.yaml`; see folder README).
 
-## Resources
+## Remote resources
 
-Terraform **azurerm** links below use **4.21.0** as a baseline aligned with the minimum `azurerm` version in `versions.tf` (`>= 4.21.0`). **azuread** links use **2.53.0**, aligned with `versions.tf` (`~> 2.53.0`). Pinned versions in your workspace appear in the **Providers** table after regenerating this README with `terraform-docs .`, as described in [README.md generation](https://github.com/prefapp/tfm/blob/main/CONTRIBUTING.md#5-readmemd-generation).
+Terraform **azurerm** links below use **4.21.0** as a baseline aligned with the minimum `azurerm` version in `versions.tf` (`>= 4.21.0`). **azuread** links use **2.53.0**, aligned with `versions.tf` (`~> 2.53.0`). Provider version constraints for your workspace appear in the **Providers** table above after regenerating this README with `terraform-docs .`, as described in [README.md generation](https://github.com/prefapp/tfm/blob/main/CONTRIBUTING.md#5-readmemd-generation).
 
 - **Azure Key Vault**: [https://learn.microsoft.com/azure/key-vault/](https://learn.microsoft.com/azure/key-vault/)
 - **azurerm_key_vault**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault)
