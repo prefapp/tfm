@@ -2,15 +2,15 @@
 
 ## Overview
 
-This module creates an **Azure user-assigned managed identity** (`azurerm_user_assigned_identity`) in an existing resource group. It can attach **Azure RBAC role assignments** to arbitrary scopes, configure **federated identity credentials** for GitHub Actions, Kubernetes workload identity, or generic OIDC issuers, optionally merge **tags** from the resource group, and grant **Key Vault access policies** for the identity on one or more vaults.
+This module creates an **Azure user-assigned managed identity** (`azurerm_user_assigned_identity`) in an existing resource group. It can attach **Azure RBAC role assignments** to arbitrary scopes, configure **federated identity credentials** for GitHub Actions, Kubernetes workload identity, or generic OIDC issuers, use **tags** from the resource group or from a `tags` map (not both at once), and grant **Key Vault access policies** for the identity on one or more vaults.
 
 The module does **not** create the resource group, federated issuers, or Key Vaults; it wires the identity to resources you already manage.
 
 ## Key Features
 
-- **User-assigned identity**: Name, location, tags; optional tag inheritance from the resource group (`tags_from_rg`).
+- **User-assigned identity**: Name, location, and tags. When `tags_from_rg` is **true**, identity tags are **only** those on the resource group (`var.tags` is ignored). When **false**, tags come from `var.tags`.
 - **RBAC**: `rbac` list flattens to `azurerm_role_assignment` entries (role name + scope per row).
-- **Federated credentials**: `federated_credentials` with `type` `github`, `kubernetes`, or `other` (validated); shared `audience` for all credentials.
+- **Federated credentials**: `federated_credentials` entries share `audience`; each entry has `type` `github`, `kubernetes`, or `other` (validated). The variable marks nested fields optional, but **`main.tf` expects real values per type** or plan/apply can fail: **`github`** — set `organization`, `repository`, and `entity` (subject suffix, e.g. `ref:refs/heads/main`); `issuer` defaults to the GitHub Actions OIDC issuer if unset. **`kubernetes`** — set `issuer`, `namespace`, and `service_account_name`. **`other`** — set `issuer` and `subject`.
 - **Key Vault access policies**: Optional `access_policies` to grant the identity permissions on existing vaults by `key_vault_id`.
 - **Outputs**: Identity **`id`**, **`name`**, **`client_id`**, and **`principal_id`** for use in AKS, role assignments, or application configuration.
 
@@ -68,7 +68,7 @@ module "managed_identity_with_rbac" {
 }
 ```
 
-Replace `scope` and role names with values valid in your tenant. See [_examples/comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/comprehensive) for federated credential patterns.
+Replace `scope` and role names with values valid in your tenant. See the [comprehensive example](./_examples/comprehensive) for federated credential patterns.
 
 ## File structure
 
