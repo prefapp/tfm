@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/prefapp/tfm/compare/aws-oidc-v1.4.2...aws-oidc-v1.5.0) (2026-04-30)
+
+
+### Features
+
+* [`aws-oidc`] Update OIDC provider logic to handle creation conditionally ([#1240](https://github.com/prefapp/tfm/issues/1240)) ([f9baca7](https://github.com/prefapp/tfm/commit/f9baca761d9d2a95a6a86d8c8d06ca4227549e50))
+
 ## [1.4.2](https://github.com/prefapp/tfm/compare/aws-oidc-v1.4.1...aws-oidc-v1.4.2) (2026-04-30)
 
 

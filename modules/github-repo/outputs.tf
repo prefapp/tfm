@@ -52,3 +52,8 @@ output "collaborators" {
   description = "List of collaborators added to the repository"
   value       = [for c in var.config.collaborators : c.username]
 }
+
+output "repository_labels" {
+  description = "List of labels created on the repository"
+  value       = [for l in var.config.labels : trimspace(l.name)]
+}
