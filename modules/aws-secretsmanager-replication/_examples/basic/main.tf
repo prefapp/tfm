@@ -60,6 +60,9 @@ module "secrets_dr_replication" {
   lambda_timeout     = 10
   lambda_memory      = 128
   eventbridge_enabled = true
+  # Fallback mode for isolated/non-enterprise setups only.
+  # In enterprise environments, prefer passing s3_bucket_arn.
+  allow_auto_create_cloudtrail_bucket = true
 
   tags = {
     Project = "SecretsDR"

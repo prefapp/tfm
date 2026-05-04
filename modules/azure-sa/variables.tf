@@ -13,7 +13,7 @@ variable "tags" {
 }
 
 variable "resource_group_name" {
-  description = "The name for the resource group"
+  description = "Name of the existing resource group where the storage account is created (also used for the data source and optional tag merge)."
   type        = string
 }
 

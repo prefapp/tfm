@@ -1,5 +1,5 @@
 module "multiple-kms" {
-  source = "../aws-kms"
+  source = "github.com/prefapp/tfm/modules/aws-kms"
   for_each = {
     for kms in var.kms_to_create : kms.name => {
       name                       = kms.name

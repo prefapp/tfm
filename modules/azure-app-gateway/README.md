@@ -1,15 +1,96 @@
+<!-- BEGIN_TF_DOCS -->
+# Azure Application Gateway Terraform module
+
+## Overview
+
+This module deploys an **Azure Application Gateway (WAF\_v2-capable SKU)** with a **dedicated public IP**, attaches a **Web Application Firewall policy**, and wires **Key Vault–backed TLS certificates**, optional **mutual TLS profiles** (trusted client certificates fetched from **GitHub** via `external` data sources), **rewrite rule sets**, and a structured **`application_gateway.blocks`** model for listeners, backends, probes, redirects, and routing rules.
+
+Use it when you already have a **resource group**, **delegated subnet**, and **user-assigned managed identity** (for Key Vault access and gateway identity) and want Terraform to own the Application Gateway plus WAF policy lifecycle.
+
+## Key features
+
+- **Application Gateway**: `azurerm_application_gateway` with SKU/autoscale, identity, frontend ports/IP, backend pools and HTTP settings, health probes, HTTP listeners, redirect and request routing rules, SSL certificates from Key Vault, gateway-level **SSL policy**, optional **SSL profiles** and **trusted client certificates**.
+- **WAF**: `azurerm_web_application_firewall_policy` linked through `firewall_policy_id`, driven by `web_application_firewall_policy` (managed rule sets, optional custom rules, policy settings).
+- **Public IP**: `azurerm_public_ip` from `public_ip` input.
+- **Networking & identity**: Data sources for **resource group**, **subnet**, and **user-assigned identity** referenced by name and resource group.
+- **Tags**: Optional merge of resource group tags via `tags_from_rg` plus explicit `tags` (see `locals_rg.tf`).
+- **SSL profiles & CA bundles**: When `ssl_profiles` is non-empty, **`data.external`** scripts list and download `.pem`/`.cer` assets from the **GitHub Contents API** (`wget`, `jq`, `bash` required at plan/apply time and outbound HTTPS access). The script calls `/contents/<directory>` **without** a `ref=` query parameter, so it follows the repository **default branch**; `ca_certs_origin.github_branch` in the variable schema is **not currently honored** by that fetch (see also `ssl_profiles` variable description).
+
+## Prerequisites
+
+- **AzureRM** provider configured (this module pins **`azurerm`** in `versions.tf`).
+- **`hashicorp/external`** is declared in `versions.tf` because of the GitHub certificate fetch logic.
+- Subnet delegated/sized appropriately for Application Gateway; managed identity with permissions to referenced Key Vault secrets for TLS.
+- If you load CA bundles from GitHub, place the `.pem`/`.cer` files on the repo **default branch** path you configure; do not rely on `github_branch` until `data.tf` is updated to pass a Git ref to the Contents API.
+
+## Basic usage
+
+Point the module at your resource group, subnet, identity, and pass the large **`application_gateway`**, **`public_ip`**, **`web_application_firewall_policy`**, and optional **`ssl_profiles`** / **`rewrite_rule_sets`** objects. See `_examples/comprehensive/values.reference.yaml` for a full illustrative `values` tree.
+
+> **GitHub CA fetch:** unauthenticated `wget` to `api.github.com` (see footer). For Git-backed CAs, the module currently uses the **default branch** only; `ca_certs_origin.github_branch` does not select another branch unless the implementation is extended.
+
+```hcl
+module "app_gateway" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-app-gateway?ref=<version>"
+
+  resource_group_name = "example-rg"
+  location            = "westeurope"
+  user_assigned_identity = "example-uami"
+  subnet = {
+    name                 = "appgw-subnet"
+    virtual_network_name = "example-vnet"
+  }
+  public_ip = {
+    name                = "example-pip"
+    sku                 = "Standard"
+    allocation_method   = "Static"
+  }
+  web_application_firewall_policy = { /* see variable type and example YAML */ }
+  application_gateway             = { /* see example YAML */ }
+}
+```
+
+## File structure
+
+```
+.
+├── CHANGELOG.md
+├── main.tf
+├── data.tf
+├── public_ip.tf
+├── web_application_firewall_policy.tf
+├── locals_*.tf
+├── variables.tf
+├── outputs.tf
+├── versions.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
+├── README.md
+└── .terraform-docs.yml
+```
+
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | 4.47.0 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | ~> 2.3 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.47.0 |
+| <a name="provider_external"></a> [external](#provider\_external) | 2.3.5 |
+
+## Modules
+
+No modules.
 
 ## Resources
 
@@ -28,14 +109,14 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | The Application Gateway object. | `any` | n/a | yes |
+| <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | Structured Application Gateway configuration (SKU, autoscale, identity, listeners, `blocks_defaults`, `blocks`, SSL certificates, etc.). See `_examples/comprehensive/values.reference.yaml` for a full shape. | `any` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The location/region where the Application Gateway should be created. | `string` | `"westeurope"` | no |
-| <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | The Azure Public IP object. | `any` | n/a | yes |
+| <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, etc.). | `any` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Application Gateway. | `string` | n/a | yes |
 | <a name="input_rewrite_rule_sets"></a> [rewrite\_rule\_sets](#input\_rewrite\_rule\_sets) | List of Rewrite Rule Sets for Application Gateway | <pre>list(object({<br/>    name = string<br/>    rewrite_rules = list(object({<br/>      name          = string<br/>      rule_sequence = number<br/>      conditions = optional(list(object({<br/>        variable    = string<br/>        pattern     = string<br/>        ignore_case = optional(bool, false)<br/>        negate      = optional(bool, false)<br/>      })), [])<br/>      request_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      response_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      url_rewrite = optional(object({<br/>        source_path = optional(string)<br/>        query_string = optional(string)<br/>        components = optional(string)<br/>        reroute = optional(bool)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
-| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | Application Gateway configuration | <pre>object({<br/>    policy_type          = string<br/>    policy_name          = optional(string)<br/>    cipher_suites        = optional(list(string))<br/>    min_protocol_version = optional(string)<br/>  })</pre> | <pre>{<br/>  "policy_name": "AppGwSslPolicy20220101",<br/>  "policy_type": "Predefined"<br/>}</pre> | no |
-| <a name="input_ssl_profiles"></a> [ssl\_profiles](#input\_ssl\_profiles) | List of SSL profiles for Application Gateway. | <pre>list(object({<br/>    name                                     = string<br/>    trusted_client_certificate_names         = optional(list(string))<br/>    verify_client_cert_issuer_dn             = optional(bool, false)<br/>    verify_client_certificate_revocation     = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols                     = optional(list(string))<br/>      min_protocol_version                   = optional(string)<br/>      policy_name                            = optional(string)<br/>      cipher_suites                          = optional(list(string))<br/>    }))<br/>    ca_certs_origin = object({<br/>      github_owner       = string<br/>      github_repository  = string<br/>      github_branch      = string<br/>      github_directory   = string<br/>    })<br/>  }))</pre> | `[]` | no |
-| <a name="input_subnet"></a> [subnet](#input\_subnet) | The subnet object. | `any` | n/a | yes |
+| <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | Gateway-level SSL policy (`policy_type`, optional `policy_name`, `cipher_suites`, `min_protocol_version`). | <pre>object({<br/>    policy_type          = string<br/>    policy_name          = optional(string)<br/>    cipher_suites        = optional(list(string))<br/>    min_protocol_version = optional(string)<br/>  })</pre> | <pre>{<br/>  "policy_name": "AppGwSslPolicy20220101",<br/>  "policy_type": "Predefined"<br/>}</pre> | no |
+| <a name="input_ssl_profiles"></a> [ssl\_profiles](#input\_ssl\_profiles) | List of SSL profiles for Application Gateway. CA files under `ca_certs_origin.github_directory` are listed via the GitHub Contents API in `data.tf`; `ca_certs_origin.github_branch` is accepted for forward compatibility but is not passed to that API today (content is read from the repository default branch). | <pre>list(object({<br/>    name                                     = string<br/>    trusted_client_certificate_names         = optional(list(string))<br/>    verify_client_cert_issuer_dn             = optional(bool, false)<br/>    verify_client_certificate_revocation     = optional(string)<br/>    ssl_policy = optional(object({<br/>      disabled_protocols                     = optional(list(string))<br/>      min_protocol_version                   = optional(string)<br/>      policy_name                            = optional(string)<br/>      cipher_suites                          = optional(list(string))<br/>    }))<br/>    ca_certs_origin = object({<br/>      github_owner       = string<br/>      github_repository  = string<br/>      github_branch      = string<br/>      github_directory   = string<br/>    })<br/>  }))</pre> | `[]` | no |
+| <a name="input_subnet"></a> [subnet](#input\_subnet) | Subnet where the gateway is deployed (`name`, `virtual_network_name` within `resource_group_name`). | `any` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
 | <a name="input_user_assigned_identity"></a> [user\_assigned\_identity](#input\_user\_assigned\_identity) | The name of the User Assigned Identity. | `string` | n/a | yes |
@@ -45,260 +126,24 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | The ID of the Application Gateway. |
+| <a name="output_id"></a> [id](#output\_id) | Resource ID of the Application Gateway. |
 
-## Example
+## Examples
 
-```yaml
-    values:
-      # Data values
-      tags_from_rg: true
-      resource_group_name: ${{ tfworkspace:example-rg:outputs.resource_group_name }}
-      user_assigned_identity: "example-identity"
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-app-gateway/_examples/comprehensive) — Large **`values.reference.yaml`** migrated from the legacy README (Prefapp-style `values:` root); adapt placeholders for your tenant.
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-app-gateway/_examples/basic) — Pointers and prerequisites only (this module is driven by rich input objects rather than a tiny HCL snippet).
 
-      subnet:
-        name: "example-subnet"
-        virtual_network_name: "example-vnet"
+## Operational notes
 
-      # Public IP
-      public_ip:
-        name: "example-public-ip"
-        sku: "Standard"
-        allocation_method: "Static"
-        
-      # SSL Profiles
-      ssl_profiles:
-        - name: "example-ssl-profile"
-          verify_client_cert_issuer_dn: true
-          verify_client_certificate_revocation: "OCSP"
-          ssl_policy:
-            disabled_protocols:
-              - "TLSv1_0"
-              - "TLSv1_1"
-            min_protocol_version: "TLSv1_2"
-            policy_name: "AppGwSslPolicy20170401S"
-            cipher_suites:
-              - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-              - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-          ca_certs_origin:
-            github_owner: "gh-owner"
-            github_repository: "gh-repo"
-            github_branch: "gh-branch"
-            github_directory: "gh-dir"
+- **`external` data sources** run `bash` with `wget` and `jq` against **api.github.com** when `ssl_profiles` pulls CA material. Requests use **no GitHub authentication headers**, so this path is suited to **public** repositories; private repos or heavy use may hit **unauthenticated rate limits** or fail. Ensure the Terraform runtime has those tools and network egress, or keep `ssl_profiles` empty if you do not need that path.
 
-      # Rewrite Rule Sets
-      rewrite_rule_sets:
-        - name: example-rewrite
-          rewrite_rules:
-            - name: example-rule
-              rule_sequence: 300
-              conditions:
-                - variable: http_request_uri
-                  pattern: '.*\.html$'
-                  ignore_case: true
-                  negate: false
-                - variable: http_request_method
-                  pattern: '^POST$'
-                  ignore_case: true
-                  negate: true
-              request_header_configurations:
-                - header_name: X-Rewrite-Rule
-                  header_value: applied
-              response_header_configurations:
-                - header_name: X-Cache-Control
-                  header_value: max-age=3600
-                - header_name: X-Server
-                  header_value: custom-app
-              url_rewrite:
-                source_path: '^/api/v1/(.*)'
-                components: path_only # Only possible values "path_only" or "query_string_only", if using both leave null
-                reroute: false
+## Remote resources
 
-      # WAF
-      web_application_firewall_policy:
-        name: "example-waf-policy"
-        policy_settings:
-          enabled: true
-          mode: "Detection"
-          request_body_check: true
-          file_upload_limit_in_mb: 100
-          max_request_body_size_in_kb: 128
-        custom_rules:
-          - name: "HeaderName"
-            enabled: true
-            priority: 1
-            rule_type: "MatchRule"
-            action: "Allow"
-            match_conditions:
-              - match_values:
-                  - "example.com"
-                operator: "Equal"
-                match_variables:
-                  - variable_name: "RequestHeaders"
-                    selector: "Host"
-        - name: "BlockUserAgentWindows"
-          enabled: true
-          priority: 2
-          rule_type: "MatchRule"
-          action: "Block"
-          match_conditions:
-            - operator: "Contains"
-              negation_condition: false
-              match_values:
-                - "Windows"
-              match_variables:
-                - variable_name: "RequestHeaders"
-                  selector: "UserAgent"
-        managed_rule_set:
-          - type: "OWASP"
-            version: "3.2"
-            rule_group_override:
-              - rule_group_name: "REQUEST-932-APPLICATION-ATTACK-RCE"
-                rule:
-                  - id: "932100"
-                    action: "AnomalyScoring"
-                    enabled: false
-                  - id: "932110"
-                    action: "AnomalyScoring"
-                    enabled: false
-              - rule_group_name: "REQUEST-942-APPLICATION-ATTACK-SQLI"
-                rule:
-                  - id: "942430"
-                    action: "AnomalyScoring"
-                    enabled: false
-          - type: "Microsoft_BotManagerRuleSet"
-            version: "0.1"
-      # AppGW
-      application_gateway:
-        name: "example-appgw"
-        identity:
-          type: "UserAssigned"
-        enable_http2: true
-        sku:
-          name: "WAF_v2"
-          tier: "WAF_v2"
-          capacity: 0
-        gateway_ip_configuration:
-          name: "appGatewayIpConfig"
-        autoscale_configuration:
-          min_capacity: 0
-          max_capacity: 10
-        frontend_ports:
-          - name: "port_80"
-            port: 80
-          - name: "port_443"
-            port: 443
-        frontend_ip_configuration:
-          name: "appGwPublicFrontendIpIPv4"
-          private_ip_address_allocation: "Dynamic"
-        ssl_certificates:
-          - name: "example-cert-1"
-            key_vault_secret_id: "https://example-kv.vault.azure.net/secrets/example-cert-1"
-          - name: "example-cert-2"
-            key_vault_secret_id: "https://example-kv.vault.azure.net/secrets/example-cert-2"
+- **Application Gateway**: [https://learn.microsoft.com/azure/application-gateway/overview](https://learn.microsoft.com/azure/application-gateway/overview)
+- **WAF policy**: [https://learn.microsoft.com/azure/web-application-firewall/ag/application-gateway-waf-overview](https://learn.microsoft.com/azure/web-application-firewall/ag/application-gateway-waf-overview)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
 
-        # Default blocks configuration
-        blocks_defaults:
-          backend_http_settings:
-            cookie_based_affinity: "Disabled"
-            pick_host_name_from_backend_address: false
-            port: 80
-            protocol: "Http"
-            request_timeout: 20
-            trusted_root_certificate_names: []
-          http_listeners:
-            https:
-              frontend_ip_configuration_name: "appGwPublicFrontendIpIPv4"
-              frontend_port_name: "port_443"
-              protocol: "Https"
-              ssl_certificate_name: "example-cert-2"
-              ssl_profile_name: "example-ssl-profile"
-            http-redirection:
-              frontend_ip_configuration_name: "appGwPublicFrontendIpIPv4"
-              frontend_port_name: "port_80"
-              protocol: "Http"
-              require_sni: false
-          probe:
-            host: "10.0.0.1"
-            interval: 10
-            minimum_servers: 0
-            path: "/"
-            pick_host_name_from_backend_http_settings: false
-            protocol: "Http"
-            timeout: 30
-            unhealthy_threshold: 3
-            matches:
-              - status_code: ["200-399", "404"]
-          redirect_configuration:
-            include_path: true
-            include_query_string: true
-            redirect_type: "Permanent"
-          request_routing_rules:
-            http-redirection:
-              rule_type: "Basic"
-              rewrite_rule_set_name: example-rewrite
-            https:
-              rule_type: "Basic"
-              rewrite_rule_set_name: example-rewrite
+## Support
 
-        # Custom blocks configuration
-        blocks:
-          organization1:
-            app1:
-              pro:
-                backend_http_settings:
-                  request_timeout: 90
-                redirect_configuration: {}
-                backend_address_pool:
-                  ip_addresses:
-                   - 10.0.0.2
-                http_listeners:
-                  https:
-                    host_names:
-                      - "example.com"
-                    ssl_certificate_name: "example-cert-1"
-                  http-redirection:
-                    host_names:
-                      - "example.com"
-                probe:
-                  host: "10.0.0.2"
-                request_routing_rules:
-                  http-redirection:
-                    priority: 10
-                    name: "redirect-example"
-                    redirect_configuration_name: "redirect-example"
-                  https:
-                    backend_address_pool_name: "backend_address_pool-example"
-                    backend_http_settings_name: "backend_http_settings-example"
-                    priority: 11
-                    name: "request_routing_rule-example"
-          organization2:
-            app1:
-              pro:
-                backend_http_settings:
-                  request_timeout: 60
-                redirect_configuration: {}
-                backend_address_pool:
-                  ip_addresses:
-                  - 10.0.0.3
-                http_listeners:
-                  https:
-                    host_names:
-                      - "another-example.com"
-                    ssl_certificate_name: "example-cert-1"
-                  http-redirection:
-                    host_names:
-                      - "another-example.com"
-                probe:
-                  host: "10.0.0.3"
-                request_routing_rules:
-                  http-redirection:
-                    priority: 20
-                    name: "redirect-another-example"
-                    redirect_configuration_name: "redirect-another-example"
-                  https:
-                    backend_address_pool_name: "backend_address_pool-another-example"
-                    backend_http_settings_name: "backend_http_settings-another-example"
-                    priority: 21
-                    name: "request_routing_rule-another-example"
-```
+For issues, questions, or contributions related to this module, please visit the repository’s issue tracker: [https://github.com/prefapp/tfm/issues](https://github.com/prefapp/tfm/issues)
+<!-- END_TF_DOCS -->

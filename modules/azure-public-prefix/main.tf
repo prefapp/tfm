@@ -1,10 +1,8 @@
-# DATA SOURCES SECTION
-# https://registry.terraform.io/providers/hashicorp/azurerm/3.91.0/docs/data-sources/resource_group
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
-# RESOURCES SECTION
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip_prefix
 resource "azurerm_public_ip_prefix" "this" {
   name                = var.name

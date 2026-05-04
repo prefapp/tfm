@@ -1,15 +1,19 @@
 output "resource_group_id" {
-  value = azurerm_resource_group.this.id
+  description = "Resource ID of the created resource group."
+  value       = azurerm_resource_group.this.id
 }
 
 output "resource_group_name" {
-  value = azurerm_resource_group.this.name
+  description = "Name of the created resource group."
+  value       = azurerm_resource_group.this.name
 }
 
 output "resource_group_location" {
-  value = azurerm_resource_group.this.location
+  description = "Azure region of the resource group."
+  value       = azurerm_resource_group.this.location
 }
 
 output "resource_group_tags" {
-  value = azurerm_resource_group.this.tags
+  description = "Tags applied to the resource group."
+  value       = azurerm_resource_group.this.tags
 }

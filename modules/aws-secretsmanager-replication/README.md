@@ -18,6 +18,31 @@ The module is designed for secure and automated secret replication, supporting f
 
 ## Secret Replication Logic
 
+## KMS Key Selection
+
+You can optionally specify a custom KMS key for each destination region in the `destinations_json` variable using the `kms_key_arn` field:
+
+```json
+{
+  "DEST_ACCOUNT_ID": {
+    "role_arn": "arn:aws:iam::DEST_ACCOUNT_ID:role/ReplicationRole",
+    "regions": {
+      "eu-west-1": {
+        "kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/abcd-1234-efgh-5678"
+      },
+      "us-east-1": {
+        // If omitted, AWS managed key will be used
+      }
+    }
+  }
+}
+```
+
+- If `kms_key_arn` is set for a region, the replicated secret will be encrypted with that KMS key.
+- If `kms_key_arn` is omitted for a region, the secret will be encrypted using the default AWS managed key for Secrets Manager in that region.
+
+This allows you to mix and match custom and managed keys as needed for your security requirements.
+
 This module deploys a Lambda function that listens for changes in AWS Secrets Manager via EventBridge (if enabled). When a secret is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both secret value and tags (if enabled).
 
 The Lambda determines:
@@ -30,9 +55,9 @@ The **destination secret name is always the same as the source secret name**, si
 
 ### Destination Configuration Format
 
-The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure.
- **Each region now only requires the key `kms_key_arn`.**
- The module no longer uses `source_secret_arn`, `destination_secret_name`, or `destination_secret_arn`.
+The destinations are configured via the `destinations_json` variable, which must be a JSON string with the following structure:
+
+- For each region, you can optionally specify the `kms_key_arn` field. If omitted, the secret will be encrypted using the default AWS managed key for Secrets Manager in that region.
 
 ```json
 {
@@ -44,7 +69,8 @@ The destinations are configured via the `destinations_json` variable, which must
       },
       "eu-west-1": {
         "kms_key_arn": "arn:aws:kms:eu-west-1:DEST_ACCOUNT_ID:key/yyyy"
-      }
+      },
+      "eu-north-1": {}
     }
   }
 }
@@ -104,14 +130,16 @@ In AWS Control Tower or Landing Zone environments, CloudTrail trails and S3 buck
 
 **How to use:**
 
-- Set `cloudtrail_name` to the name of the existing CloudTrail trail.
-- Set `s3_bucket_name` to the name of the existing S3 bucket used by that trail.
+- Set `cloudtrail_arn` to the ARN of the existing CloudTrail trail (optional if the module should create a trail).
+- Set `s3_bucket_arn` to the ARN of the existing S3 bucket used by that trail.
 
 The module will:
 
 - Reference the existing CloudTrail and S3 bucket instead of creating new ones.
 - Not attempt to modify or manage the lifecycle of these resources.
 - Allow disabling S3 bucket policy management via `manage_s3_bucket_policy = false`.
+- Require `s3_bucket_arn` by default when `eventbridge_enabled = true` (enterprise-first behavior).
+- Allow automatic bucket creation only as an explicit fallback via `allow_auto_create_cloudtrail_bucket = true`.
 
 **Important considerations:**
 
@@ -124,8 +152,8 @@ The module will:
 ```hcl
 module "secrets_replication" {
   # ... other variables ...
-  cloudtrail_name         = "centralized-org-trail"
-  s3_bucket_name          = "centralized-logs-bucket"
+  cloudtrail_arn          = "arn:aws:cloudtrail:eu-west-1:111111111111:trail/centralized-org-trail"
+  s3_bucket_arn           = "arn:aws:s3:::centralized-logs-bucket"
   manage_s3_bucket_policy = false
 }
 ```
@@ -206,6 +234,19 @@ The destination account must have an IAM role that the replication Lambda can as
 
 ------
 
+## Secret Replication Across Regions
+
+Starting from version X.X, the module implements the following improvements for cross-region secret replication:
+
+- Replicated secrets are automatically renamed with the region code as a prefix (e.g., `eu-west-3-mysecret`).
+- Replicated secrets include additional tags:
+  - `origin-account`: the source AWS account.
+  - `origin-region`: the source AWS region.
+  - `latest-version`: the identifier of the latest version copied.
+- If tag replication is enabled, original tags are merged, avoiding duplicates.
+
+This allows secrets with the same name from different regions to be copied into a single disaster recovery account without overwriting, and improves traceability.
+
 ## Requirements
 
 | Name | Version |
@@ -249,8 +290,10 @@ The destination account must have an IAM role that the replication Lambda can as
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination secret name will be prefixed with the region (e.g., "us-east-1-mysecret").<br/>If false, the original name is used. Default: false.<br/>This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones. | `bool` | `false` | no |
+| <a name="input_allow_auto_create_cloudtrail_bucket"></a> [allow\_auto\_create\_cloudtrail\_bucket](#input\_allow\_auto\_create\_cloudtrail\_bucket) | Fallback mode. If true, and s3\_bucket\_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket. | `bool` | `false` | no |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | n/a | yes |
-| <a name="input_cloudtrail_arn"></a> [cloudtrail\_arn](#input\_cloudtrail\_arn) | (Optional) ARN of an existing CloudTrail. Required if using an existing trail. Only the CloudTrail ARN is required when using an existing trail (cloudtrail\_name is no longer needed). | `string` | `""` | no |
+| <a name="input_cloudtrail_arn"></a> [cloudtrail\_arn](#input\_cloudtrail\_arn) | (Optional) ARN of an existing CloudTrail. If omitted and eventbridge\_enabled is true, the module creates a dedicated trail. | `string` | `""` | no |
 | <a name="input_destinations_json"></a> [destinations\_json](#input\_destinations\_json) | JSON describing accounts, regions and KMS keys for replication | `string` | n/a | yes |
 | <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the manual replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to replicate tags from the source secret (used by the code, not Terraform) | `bool` | `true` | no |
@@ -263,7 +306,7 @@ The destination account must have an IAM role that the replication Lambda can as
 | <a name="input_manual_replication_enabled"></a> [manual\_replication\_enabled](#input\_manual\_replication\_enabled) | Whether to deploy the manual secrets sync Lambda | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Base name for the Lambda and associated resources | `string` | n/a | yes |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to use for naming resources. | `string` | n/a | yes |
-| <a name="input_s3_bucket_arn"></a> [s3\_bucket\_arn](#input\_s3\_bucket\_arn) | (Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation. | `string` | `""` | no |
+| <a name="input_s3_bucket_arn"></a> [s3\_bucket\_arn](#input\_s3\_bucket\_arn) | ARN of an existing S3 bucket where CloudTrail logs are stored. This is required by default when eventbridge\_enabled is true. Set allow\_auto\_create\_cloudtrail\_bucket=true only as a fallback to let the module create a dedicated bucket automatically. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation. | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to all resources created by this module | `map(string)` | `{}` | no |
 
 ## Outputs

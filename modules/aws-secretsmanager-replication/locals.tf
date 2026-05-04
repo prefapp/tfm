@@ -8,7 +8,7 @@ locals {
 
   kms_key_arns = flatten([
     for dest in local.parsed_destinations : [
-      for region_name, region_cfg in try(dest.regions, {}) : region_cfg.kms_key_arn
+      for region_name, region_cfg in try(dest.regions, {}) : try(region_cfg.kms_key_arn, null)
     ]
   ])
 

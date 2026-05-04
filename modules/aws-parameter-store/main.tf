@@ -60,6 +60,6 @@ resource "aws_ssm_parameter" "secret" {
   type        = lookup(each.value, "type", "SecureString")
   value       = "TODO: Replace with a secret"
   lifecycle {
-    ignore_changes = ["value"]
+    ignore_changes = [value]
   }
 }

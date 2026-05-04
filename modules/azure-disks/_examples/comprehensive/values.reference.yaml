@@ -1,0 +1,17 @@
+# Reference values for Prefapp / Helm-style wiring (illustrative; not applied by this folder).
+values:
+  tags_from_rg: true
+  resource_group_name: "REDACTED-RESOURCE-GROUP"
+  location: "REDACTED-LOCATION"
+  disks:
+    - name: disk-1
+      storage_account_type: StandardSSD_LRS
+    - name: disk-2
+    - name: disk-3
+    - name: disk-4
+      storage_account_type: Premium_LRS
+      disk_size_gb: 128
+  assign_role: false
+  principal_id: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+  tags:
+    workload: "example"

@@ -6,18 +6,18 @@ resource "azuread_application" "gh_oidc_ad_app" {
 }
 
 resource "azuread_service_principal" "gh_oidc_service_principal" {
-  for_each     = azuread_application.gh_oidc_ad_app
+  for_each       = azuread_application.gh_oidc_ad_app
   application_id = each.value.application_id
 }
 
 # https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_federated_identity_credential
 resource "azuread_application_federated_identity_credential" "gh_oidc_identity_credential" {
   for_each = {
-    for item in flatten ([
+    for item in flatten([
       for app in var.data.applications : [
         for cred in lookup(app, "federated_credentials", []) : {
           app_name = app.name
-          cred = cred
+          cred     = cred
         }
       ]
     ]) : format("%s-%s", item.app_name, item.cred.subject) => item
@@ -32,12 +32,12 @@ resource "azuread_application_federated_identity_credential" "gh_oidc_identity_c
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment
 resource "azurerm_role_assignment" "gh_oidc_service_role_assignment" {
-  for_each             = { 
-    for item in flatten ([
+  for_each = {
+    for item in flatten([
       for app in var.data.applications : [
         for role in app.roles : [
           for scope in lookup(app, "scope", [data.azurerm_subscription.primary.id]) : {
-            app_name = app.name
+            app_name  = app.name
             role_name = role
             app_scope = scope
           }

@@ -1,4 +1,4 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/data_protection_backup_vault
+# https://registry.terraform.io/providers/hashicorp/azurerm/4.5.0/docs/resources/data_protection_backup_vault
 resource "azurerm_data_protection_backup_vault" "this" {
   name                       = var.vault_name
   resource_group_name        = var.resource_group_name

@@ -1,8 +1,9 @@
 # AKS section
 module "aks" {
   # https://registry.terraform.io/modules/Azure/aks/azurerm/latest
-  source = "github.com/Azure/terraform-azurerm-aks?ref=9.1.0"
+  source = "github.com/Azure/terraform-azurerm-aks?ref=11.1.0"
 
+  location                                             = var.location
   agents_count                                         = var.aks_agents_count
   agents_labels                                        = var.aks_default_pool_custom_labels
   agents_max_pods                                      = var.aks_agents_max_pods
@@ -30,8 +31,8 @@ module "aks" {
   auto_scaler_profile_skip_nodes_with_system_pods      = var.auto_scaler_profile_skip_nodes_with_system_pods
   key_vault_secrets_provider_enabled                   = var.key_vault_secrets_provider_enabled
   kubernetes_version                                   = var.aks_kubernetes_version
-  load_balancer_profile_enabled                        = var.load_balancer_profile_enabled
-  load_balancer_profile_outbound_ip_address_ids        = [data.azurerm_public_ip.aks_public_ip.id]
+  load_balancer_profile_enabled                        = var.net_profile_outbound_type == "loadBalancer" ? var.load_balancer_profile_enabled : false
+  load_balancer_profile_outbound_ip_address_ids        = var.net_profile_outbound_type == "loadBalancer" && length(data.azurerm_public_ip.aks_public_ip) > 0 ? [data.azurerm_public_ip.aks_public_ip[0].id] : null
   load_balancer_sku                                    = var.load_balancer_sku
   log_analytics_workspace_enabled                      = false
   network_contributor_role_assigned_subnet_ids         = { aks_subnet = data.azurerm_subnet.aks_subnet.id }
@@ -44,7 +45,7 @@ module "aks" {
   os_disk_size_gb                                      = var.aks_os_disk_size_gb
   prefix                                               = var.aks_prefix
   rbac_aad_azure_rbac_enabled                          = true
-  rbac_aad_managed                                     = true
+  rbac_aad_tenant_id                                   = data.azurerm_client_config.current.tenant_id
   resource_group_name                                  = var.resource_group_name
   role_based_access_control_enabled                    = true
   secret_rotation_enabled                              = var.secret_rotation_enabled
@@ -52,6 +53,9 @@ module "aks" {
   sku_tier                                             = var.aks_sku_tier
   tags                                                 = local.tags
   temporary_name_for_rotation                          = var.temporary_name_for_rotation
-  vnet_subnet_id                                       = data.azurerm_subnet.aks_subnet.id
+  vnet_subnet = {
+    id = data.azurerm_subnet.aks_subnet.id
+  }
   workload_identity_enabled                            = var.workload_identity_enabled
+  net_profile_outbound_type                            = var.net_profile_outbound_type
 }

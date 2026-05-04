@@ -1,0 +1,12 @@
+config:
+  repository: org/my-repo
+  files:
+    - branch: main
+      commitMessage: "feat: hello-world-ee87ccfc-5d0a-4ad0-b9ee-4c142f40e00b main"
+      content: |
+        # Hello World!
+
+        From my-org/
+      file: hello.md
+      overwriteOnCreate: true
+      lifecycle: {}     # optional / placeholder

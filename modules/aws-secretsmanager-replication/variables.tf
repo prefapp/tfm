@@ -3,6 +3,7 @@ variable "enable_full_sync" {
   type        = bool
   default     = false
 }
+
 variable "existing_bucket_policy_json" {
   description = "Existing bucket policy JSON to merge with the module-managed bucket policy (for both new and existing buckets). Required when `manage_s3_bucket_policy` is true, `eventbridge_enabled` is true, and `s3_bucket_arn` is set. If you use an existing bucket and want the module to manage its policy, you must provide the current policy JSON to avoid overwriting other statements."
   type        = string
@@ -16,6 +17,7 @@ variable "existing_bucket_policy_json" {
     error_message = "existing_bucket_policy_json must be provided when manage_s3_bucket_policy is true, eventbridge_enabled is true, and s3_bucket_arn is set."
   }
 }
+
 variable "name" {
   description = "Base name for the Lambda and associated resources"
   type        = string
@@ -29,16 +31,23 @@ variable "prefix" {
 variable "destinations_json" {
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
-  validation {
-    condition = alltrue([
-      for account_id, dest in try(jsondecode(var.destinations_json), {}) : alltrue([
-        for region_name, region_cfg in try(dest.regions, {}) :
-        contains(keys(region_cfg), "kms_key_arn")
-      ])
-    ])
-    error_message = "Each region must contain 'kms_key_arn'."
-  }
+  # No validation: kms_key_arn is now optional per region. If omitted, AWS managed key will be used.
 }
+
+
+variable "add_region_prefix_to_name" {
+  description = <<-EOT
+If true, the destination secret name will be prefixed with the region (e.g., "us-east-1-mysecret").
+If false, the original name is used. Default: false.
+This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones.
+EOT
+  type        = bool
+  default     = false
+}
+
+# Nota sobre KMS:
+# Para cifrar el secreto en destino con una clave KMS específica, añade el campo opcional "kms_key_arn" en cada región dentro de destinations_json.
+# Si no se indica, se usará el cifrado gestionado por AWS (AWS managed key).
 
 variable "allowed_assume_roles" {
   description = "List of IAM roles the Lambda can assume for cross-account replication"
@@ -60,7 +69,13 @@ variable "enable_tag_replication" {
 variable "eventbridge_enabled" {
   description = "Whether to create the EventBridge rule that triggers the Lambda"
   type        = bool
-  default     = true
+  default     = false
+}
+
+variable "allow_auto_create_cloudtrail_bucket" {
+  description = "Fallback mode. If true, and s3_bucket_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket."
+  type        = bool
+  default     = false
 }
 
 variable "lambda_timeout" {
@@ -92,17 +107,21 @@ variable "manual_replication_enabled" {
 # ---------------------------------------------------------------------------
 
 variable "s3_bucket_arn" {
-  description = "(Optional) ARN of an existing S3 bucket where the CloudTrail log is stored. If provided, the module will reuse this bucket instead of creating one. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation."
+  description = "ARN of an existing S3 bucket where CloudTrail logs are stored. This is required by default when eventbridge_enabled is true. Set allow_auto_create_cloudtrail_bucket=true only as a fallback to let the module create a dedicated bucket automatically. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation."
   type        = string
   default     = ""
   validation {
     condition     = var.s3_bucket_arn == "" || can(regex("^arn:aws:s3:::[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$", var.s3_bucket_arn))
     error_message = "If provided, s3_bucket_arn must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name) with a lowercase bucket name (3-63 chars, only lowercase letters, numbers, hyphens, and periods)."
   }
+  validation {
+    condition     = !(var.eventbridge_enabled && !var.allow_auto_create_cloudtrail_bucket) || var.s3_bucket_arn != ""
+    error_message = "When eventbridge_enabled is true, s3_bucket_arn is required by default. Set allow_auto_create_cloudtrail_bucket=true only as a fallback to let the module create a dedicated bucket."
+  }
 }
 
 variable "cloudtrail_arn" {
-  description = "(Optional) ARN of an existing CloudTrail. Required if using an existing trail. Only the CloudTrail ARN is required when using an existing trail (cloudtrail_name is no longer needed)."
+  description = "(Optional) ARN of an existing CloudTrail. If omitted and eventbridge_enabled is true, the module creates a dedicated trail."
   type        = string
   default     = ""
 }
