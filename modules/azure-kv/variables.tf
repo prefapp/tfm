@@ -1,39 +1,48 @@
 variable "name" {
-  type = string
+  type        = string
+  description = "Globally unique name of the Key Vault (3–24 alphanumeric characters)."
 }
 
 variable "enabled_for_disk_encryption" {
-  type = bool
+  type        = bool
+  description = "Whether the vault can be used for Azure Disk Encryption."
 }
 
 variable "soft_delete_retention_days" {
-  type = number
+  type        = number
+  description = "Number of days soft-deleted items are retained before permanent deletion."
 }
 
 variable "purge_protection_enabled" {
-  type = bool
+  type        = bool
+  description = "Whether purge protection is enabled (prevents permanent purge of soft-deleted vaults and objects when true)."
 }
 
 variable "sku_name" {
-  type = string
+  type        = string
+  description = "SKU for the vault (`standard` or `premium`)."
 }
 
 variable "resource_group" {
-  type = string
+  type        = string
+  description = "Name of the existing resource group where the Key Vault will be created."
 }
 
 variable "enable_rbac_authorization" {
-  type = bool
+  type        = bool
+  description = "When true, use Azure RBAC for data plane access; access policies must be empty (see precondition in main.tf)."
 }
 
 variable "tags_from_rg" {
-  type    = bool
-  default = false
+  type        = bool
+  description = "When true, merge tags from the resource group with `tags`."
+  default     = false
 }
 
 variable "tags" {
-  type = map(string)
-  default = {}
+  type        = map(string)
+  description = "Tags applied to the Key Vault (merged with resource group tags when `tags_from_rg` is true)."
+  default     = {}
 }
 
 variable "access_policies" {
@@ -46,5 +55,6 @@ variable "access_policies" {
     certificate_permissions = optional(list(string))
     storage_permissions     = optional(list(string))
   }))
-  default = []
+  description = "Legacy access policies when `enable_rbac_authorization` is false. Each entry needs a unique `name`. Provide `object_id` or set `type` to `user` / `group` / `service_principal` with `name` for lookup."
+  default     = []
 }
