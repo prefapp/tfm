@@ -10,14 +10,14 @@ The module does **not** create the resource group, private endpoints, or key/sec
 
 - **Key Vault**: SKU, soft delete retention, purge protection, disk encryption integration, tenant binding.
 - **Authorization model**: `enable_rbac_authorization` toggles between RBAC and access policies; when RBAC is enabled, `access_policies` must be empty.
-- **Access policies**: Optional list; each entry must set a **non-empty, unique `name`** (the module uses it as a `for_each` key and for Azure AD lookups). Use `type` (`user`, `group`, `service_principal`) plus `name`, or `object_id` with empty `type` for a direct principal.
+- **Access policies**: Optional list; object fields remain optional in the type for compatibility. For real policies, use a **non-empty, unique `name`** per row (`main.tf` uses it as a `for_each` key and for Azure AD lookups). Use `type` (`user`, `group`, `service_principal`) plus `name`, or `object_id` with empty `type` for a direct principal.
 - **Outputs**: Exposes the Key Vault **`id`** for downstream resources, role assignments, or references that need the Azure resource identifier.
 
 ## Prerequisites
 
 - Existing **resource group** (`resource_group`); the module reads it for location and optional tag inheritance.
 - **Key Vault name** must be **globally unique**, 3–24 characters, and use only letters, numbers, and hyphens.
-- The module lists **`azuread`** in `required_providers`; your root module must declare **`azuread`** (and usually `provider "azuread" {}`) so Terraform can initialize the tree. **Azure AD data sources** in this module run only for access policies that use `type` `user`, `group`, or `service_principal`; entries that only set `object_id` (with empty `type`) do not perform those lookups.
+- The module depends on **hashicorp/azuread** and **hashicorp/azurerm** (`versions.tf`); Terraform installs the required provider versions. Configure **`provider "azuread"`** with working credentials **only when** access policies use `type` `user`, `group`, or `service_principal` so the lookup data sources can run. For RBAC-only setups or policies that only set `object_id` (empty `type`), those data sources are not instantiated and you do not need Azure AD authentication for this module alone.
 - For **access policies** with principal lookup, principals must exist and be resolvable (correct UPN, group display name, or service principal display name).
 
 ## Basic Usage

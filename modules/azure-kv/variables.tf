@@ -58,9 +58,11 @@ variable "access_policies" {
   description = <<-EOT
     Legacy access policies when `enable_rbac_authorization` is false.
 
-    Each object must include a **non-empty, unique `name`**: the module uses `name` as the map key in `for_each` and to index Azure AD data sources, so duplicate or empty values will fail at plan time.
+    Attributes stay **optional** in the object type for backward compatibility with existing callers. When you pass entries, each one should still set a **non-empty, unique `name`**: `main.tf` uses `name` as the `for_each` key and to index Azure AD data sources, so missing or duplicate names typically surface as errors at plan time.
 
     Provide `object_id` (with `type` unset/empty) or set `type` to `user`, `group`, or `service_principal` and use `name` as UPN, group display name, or service principal display name for lookup.
+
+    If `type` is empty and `object_id` is empty, the module cannot resolve an object ID and that row is skipped for the vault access policy block (no explicit error).
   EOT
   default     = []
 }
