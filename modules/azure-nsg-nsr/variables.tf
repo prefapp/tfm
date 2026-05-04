@@ -1,4 +1,3 @@
-# VARIABLES SECTION
 variable "nsg" {
   description = "Network Security Group configuration"
   type = object({

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.4...aws-ecs-v1.2.0) (2026-04-29)
+
+
+### Features
+
+* add versions.tf to aws-ecs module ([#1226](https://github.com/prefapp/tfm/issues/1226)) ([6253a20](https://github.com/prefapp/tfm/commit/6253a20f56a36736a2b0892cc6a64da75a52118a))
+
 ## [1.1.4](https://github.com/prefapp/tfm/compare/aws-ecs-v1.1.3...aws-ecs-v1.1.4) (2026-01-16)
 
 

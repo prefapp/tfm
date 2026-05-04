@@ -1,66 +1,115 @@
-# Role Assignment Module
+<!-- BEGIN_TF_DOCS -->
+# Azure role assignment Terraform module
 
-This module creates a User Assigned Identity in Azure and assigns it role-based access control (RBAC) policies based on the role definition name or identifier.
+## Overview
+
+This module creates one or more **`azurerm_role_assignment`** resources from a **map** of assignments. Each entry defines a **scope** (subscription, resource group, or resource), a **principal** (`target_id` + optional `type`: `ServicePrincipal`, `User`, or `Group`), and **either** `role_definition_name` **or** `role_definition_id` (not both).
+
+The module does **not** create managed identities, users, or groups — it only binds RBAC at the scopes you provide.
+
+## Key features
+
+- **Declarative map**: `for_each` over `role_assignments` keys.
+- **Flexible role reference**: Built-in role by **name** or custom role by **resource ID**.
+- **Validations**: Ensures **exactly one** of `role_definition_name` and `role_definition_id` per entry, and allowed `type` values.
+- **Output**: `role_assignment_id` maps each assignment key to its Azure RBAC assignment resource ID.
+
+## Prerequisites
+
+- **azurerm** provider configured (authentication, subscription).
+- Valid **scope** paths and **principal object IDs** for your tenant.
+
+## Basic usage
+
+Pass `role_assignments`. Empty map (`{}`) creates no assignments.
+
+### Example
+
+```hcl
+module "azure_role_assignment" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-role-assignment?ref=<version>"
+
+  role_assignments = {
+    rg_reader = {
+      scope                = "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/myResourceGroup"
+      role_definition_name = "Reader"
+      target_id            = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+      type                 = "ServicePrincipal"
+    }
+  }
+}
+```
+
+## File structure
+
+```
+.
+├── CHANGELOG.md
+├── outputs.tf
+├── role_assignment.tf
+├── variables.tf
+├── versions.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
+├── README.md
+└── .terraform-docs.yml
+```
 
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.5 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.3 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.26.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | = 4.26.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.26.0 |
+
+## Modules
+
+No modules.
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [azurerm_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.26.0/docs/resources/role_assignment) | source |
+| [azurerm_role_assignment.role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| role_assignments | A map of role assignments to create. The key is the scope, and the value is a map containing the role definition name and target ID. | `map(object({ scope = string type = string role_definition_name = optional(string) role_definition_id = optional(string) target_id = string }))` | `{}` | no |
-| role_assignments.scope | The scope of the role assignment. | `string` | n/a | yes |
-| role_assignments.type | The type of the role assignment. [`ServicePrincipal`, `Group`, `User`] | `string` | `ServicePrincipal` | no |
-| role_assignments.role_definition_name | The name of the role definition. | `string` | n/a | yes |
-| role_assignments.role_definition_id | The ID of the role definition. | `string` | n/a | yes |
-| role_assignments.target_id | The ID of the target resource. | `string` | n/a | yes |
+| <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments) | Map of role assignments to create. Each map key is an arbitrary assignment name (used only by Terraform); each value must include scope, target\_id, optional principal type, and exactly one of role\_definition\_name or role\_definition\_id. | <pre>map(object({<br/>    scope                  = string<br/>    target_id              = string<br/>    type                   = optional(string, "ServicePrincipal")<br/>    role_definition_name   = optional(string)<br/>    role_definition_id     = optional(string)<br/>  }))</pre> | `{}` | no |
 
-## Example
+## Outputs
 
-### HCL
+| Name | Description |
+|------|-------------|
+| <a name="output_role_assignment_ids"></a> [role\_assignment\_ids](#output\_role\_assignment\_ids) | Map from each key in `var.role_assignments` to the created role assignment resource ID. |
 
-```hcl
-role_assignments = {
-  # Example role assignments
-  foo = {
-    scope                = "/subscriptions/424f653a-bb14-441f-bc4a-6c4f3409cb41/resourceGroups/myResourceGroup"
-    role_definition_name = "Reader"
-    target_id            = "12345678-1234-1234-1234-123456789012"
-  },
-  bar = {
-    scope                = "/subscriptions/424f653a-bb14-441f-bc4a-6c4f3409cb41/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
-    role_definition_id   = "/subscriptions/424f653a-bb14-441f-bc4a-6c4f3409cb41/providers/Microsoft.Authorization/roleDefinitions/12345678-1234-1234-1234-123456789012"
-    target_id            = "87654321-4321-4321-4321-210987654321"
-  }
-}
-```
+## Examples
 
-### Yaml
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-role-assignment/_examples):
 
-```yaml
-role_assignments:
-  foo:
-    scope: "/subscriptions/424f653a-bb14-441f-bc4a-6c4f3409cb41/resourceGroups/myResourceGroup"
-    role_definition_name: "Reader"
-    target_id: "12345678-1234-1234-1234-123456789012"
-  bar:
-    scope: "/subscriptions/424f653a-bb14-441f-bc4a-6c4f3409cb41/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
-    role_definition_id: "/subscriptions/424f653a-bb14-441f-bc4a-6c4f3409cb41/providers/Microsoft.Authorization/roleDefinitions/12345678-1234-1234-1234-123456789012"
-    target_id: "87654321-4321-4321-4321-210987654321"
-```
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-role-assignment/_examples/basic) — Runnable root module with a small `role_assignments` map (scopes, `role_definition_name` / `role_definition_id`; replace IDs before plan — see folder README).
+- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-role-assignment/_examples/comprehensive) — `module.reference.hcl` and `values.reference.yaml` mirroring the historical README samples (documentation-oriented; see folder README).
+
+## Remote Resources
+
+Terraform resource docs use **4.26.0** as a baseline aligned with the `azurerm` constraint in `versions.tf` (`~> 4.26.0`).
+
+- **Azure RBAC**: [https://learn.microsoft.com/azure/role-based-access-control/overview](https://learn.microsoft.com/azure/role-based-access-control/overview)
+- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.26.0/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.26.0/docs/resources/role_assignment)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.26.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.26.0)
+
+## Support
+
+For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+<!-- END_TF_DOCS -->

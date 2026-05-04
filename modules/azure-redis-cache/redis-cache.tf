@@ -1,4 +1,4 @@
-#https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/redis_cache
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/redis_cache
 moved {
   from = azurerm_redis_cache.inss-redis-predev
   to   = azurerm_redis_cache.this
