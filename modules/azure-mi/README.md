@@ -13,7 +13,7 @@ The module does **not** create the resource group, federated issuers, or Key Vau
 - **RBAC**: `rbac` list flattens to `azurerm_role_assignment` entries (role name + scope per row).
 - **Federated credentials**: `federated_credentials` with `type` `github`, `kubernetes`, or `other` (validated); shared `audience` for all credentials.
 - **Key Vault access policies**: Optional `access_policies` to grant the identity permissions on existing vaults by `key_vault_id`.
-- **Outputs**: Identity **`id`**, **`name`**, **`client_id`**, **`principal_id`**, and **`tenant_id`** for use in AKS, role assignments, or application configuration.
+- **Outputs**: Identity **`id`**, **`name`**, **`client_id`**, and **`principal_id`** for use in AKS, role assignments, or application configuration.
 
 ## Prerequisites
 
@@ -140,27 +140,26 @@ No modules.
 | <a name="output_id"></a> [id](#output\_id) | The Azure resource ID of the user-assigned managed identity. |
 | <a name="output_name"></a> [name](#output\_name) | The name of the user-assigned managed identity. |
 | <a name="output_principal_id"></a> [principal\_id](#output\_principal\_id) | The service principal object ID of the user-assigned managed identity (use for RBAC assignments referencing this identity). |
-| <a name="output_tenant_id"></a> [tenant\_id](#output\_tenant\_id) | The Entra ID tenant ID of the user-assigned managed identity. |
 
 ## Examples
 
-For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples):
+For detailed examples, see this directory on the same branch you are viewing:
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/basic) — Minimal user-assigned identity with empty `rbac`, `federated_credentials`, and `access_policies` (see folder README).
-- [comprehensive](https://github.com/prefapp/tfm/tree/main/modules/azure-mi/_examples/comprehensive) — Reference HCL and YAML for RBAC, federated GitHub/Kubernetes/OIDC credentials, and optional Key Vault access policies (`values.reference.yaml`; see folder README).
+- [basic](./\_examples/basic) — Minimal user-assigned identity with empty `rbac`, `federated_credentials`, and `access_policies` (see folder README).
+- [comprehensive](./\_examples/comprehensive) — Reference HCL and YAML for RBAC, federated GitHub/Kubernetes/OIDC credentials, and optional Key Vault access policies (`values.reference.yaml`; see folder README).
 
 ## Remote resources
 
-Terraform **azurerm** links below use **4.16.0**, aligned with `versions.tf` (`~> 4.16.0`). Provider version constraints for your workspace appear in the **Providers** table above after regenerating this README with `terraform-docs .`, as described in [README.md generation](https://github.com/prefapp/tfm/blob/main/CONTRIBUTING.md#5-readmemd-generation).
+Provider constraints for your workspace appear in the **Requirements** and **Providers** tables above. Resource documentation links below use the Terraform Registry **`latest`** path to avoid duplicating a pinned minor version in prose (see `versions.tf` for the module constraint, currently `~> 4.16.0`). Regenerate this README with `terraform-docs .` as described in [CONTRIBUTING.md](../../CONTRIBUTING.md#5-readmemd-generation).
 
 - **Managed identities**: [https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/)
-- **azurerm\_user\_assigned\_identity**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/user_assigned_identity)
-- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/role_assignment)
-- **azurerm\_federated\_identity\_credential**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/federated_identity_credential](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/federated_identity_credential)
-- **azurerm\_key\_vault\_access\_policy**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0/docs/resources/key_vault_access_policy)
-- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0](https://registry.terraform.io/providers/hashicorp/azurerm/4.16.0)
+- **azurerm\_user\_assigned\_identity**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity)
+- **azurerm\_role\_assignment**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment)
+- **azurerm\_federated\_identity\_credential**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/federated_identity_credential)
+- **azurerm\_key\_vault\_access\_policy**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy)
+- **Terraform AzureRM provider**: [https://registry.terraform.io/providers/hashicorp/azurerm/latest](https://registry.terraform.io/providers/hashicorp/azurerm/latest)
 
 ## Support
 
-For issues, questions, or contributions related to this module, please visit the [repository's issue tracker](https://github.com/prefapp/tfm/issues).
+For issues, questions, or contributions related to this module, please visit the [repository issue tracker](../../issues).
 <!-- END_TF_DOCS -->

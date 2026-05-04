@@ -12,7 +12,7 @@ The module does **not** create the resource group, federated issuers, or Key Vau
 - **RBAC**: `rbac` list flattens to `azurerm_role_assignment` entries (role name + scope per row).
 - **Federated credentials**: `federated_credentials` with `type` `github`, `kubernetes`, or `other` (validated); shared `audience` for all credentials.
 - **Key Vault access policies**: Optional `access_policies` to grant the identity permissions on existing vaults by `key_vault_id`.
-- **Outputs**: Identity **`id`**, **`name`**, **`client_id`**, **`principal_id`**, and **`tenant_id`** for use in AKS, role assignments, or application configuration.
+- **Outputs**: Identity **`id`**, **`name`**, **`client_id`**, and **`principal_id`** for use in AKS, role assignments, or application configuration.
 
 ## Prerequisites
 
