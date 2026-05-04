@@ -1,4 +1,4 @@
-# Replace resource_group with an existing RG name and name with a globally unique vault name (3–24 alphanumeric).
+# Replace resource_group with an existing RG name and name with a globally unique vault name (3–24 characters: letters, numbers, hyphens).
 
 terraform {
   required_version = ">= 1.7.0"
@@ -39,6 +39,7 @@ module "key_vault" {
   }
 }
 
-output "vault_uri" {
-  value = module.key_vault.vault_uri
+output "key_vault_id" {
+  description = "Azure resource ID of the Key Vault (only output exposed by this module)."
+  value       = module.key_vault.id
 }
