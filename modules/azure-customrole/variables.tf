@@ -5,7 +5,7 @@ variable "name" {
 
 variable "assignable_scopes" {
   type        = list(string)
-  description = "One or more assignable scopes for this Role Definition. The first one will become de scope at which the Role Definition applies to."
+  description = "One or more assignable scopes for this Role Definition. The first one will become the scope at which the Role Definition applies to."
 }
 
 variable "permissions" {
