@@ -6,8 +6,10 @@ This module configures **Azure Backup** for an existing **storage account**, in 
 
 - **Azure Files**: Recovery Services vault, registration of the storage account as a backup container, a **single file share backup policy**, and **one protected file share**.
 
-  > ⚠️ **Known limitation**: Only a single value is supported in `source_file_share_name`. Providing multiple entries will result in a validation error until multi-share support is implemented.
+  > ⚠️ **Known limitation**: Only a single value is supported in `backup_share.source_file_share_name`. Providing multiple entries will result in a validation error until multi-share support is implemented.
 - **Blobs (Data Protection)**: Backup vault, **blob backup policy**, optional **managed identity**, **role assignment** on the storage account for the vault identity, and a **blob backup instance**.
+
+  > ⚠️ **Known caveat**: Always set `backup_blob.identity_type` (for example, `SystemAssigned`) when enabling blob backup. The role assignment count uses `can(var.backup_blob.identity_type)`, which can evaluate to `true` even when the value is `null`; in that case plan/apply can fail when resolving `identity[0]`.
 
 You can enable **only shares**, **only blobs**, or **both**. The module reads an existing **resource group** (`backup_resource_group_name`) for location and optional tag merge; it does **not** create that resource group or the storage account.
 
@@ -17,6 +19,7 @@ You can enable **only shares**, **only blobs**, or **both**. The module reads an
 - **Conditional resources**: `backup_share` and `backup_blob` are each optional (`null` disables that path).
 - **Outputs**: vault and instance IDs for the blob path; Recovery Services vault ID and a map of protected file share item IDs for the share path (see `outputs.tf`).
 - **Known limitation (file shares)**: Only one value in `backup_share.source_file_share_name` is supported; multiple entries will result in a validation error.
+- **Known caveat (blobs)**: Omitting `backup_blob.identity_type` is unsafe with the current role assignment logic; set it explicitly for blob backup.
 
 ## Prerequisites
 
