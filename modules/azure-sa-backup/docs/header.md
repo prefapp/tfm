@@ -9,6 +9,8 @@ This module configures **Azure Backup** for an existing **storage account**, in 
   > ⚠️ **Known limitation**: Only a single value is supported in `source_file_share_name`. Providing multiple entries will result in a validation error until multi-share support is implemented.
 - **Blobs (Data Protection)**: Backup vault, **blob backup policy**, optional **managed identity**, **role assignment** on the storage account for the vault identity, and a **blob backup instance**.
 
+  > ⚠️ **Known caveat**: Always set `backup_blob.identity_type` (for example, `SystemAssigned`) when enabling blob backup. The role assignment uses `can(backup_blob.identity_type)`, which can still evaluate to `true` when the value is `null`; in that case Terraform may fail when resolving `identity[0]`.
+
 You can enable **only shares**, **only blobs**, or **both**. The module reads an existing **resource group** (`backup_resource_group_name`) for location and optional tag merge; it does **not** create that resource group or the storage account.
 
 ## Key features
@@ -17,6 +19,7 @@ You can enable **only shares**, **only blobs**, or **both**. The module reads an
 - **Conditional resources**: `backup_share` and `backup_blob` are each optional (`null` disables that path).
 - **Outputs**: vault and instance IDs for the blob path; Recovery Services vault ID and a map of protected file share item IDs for the share path (see `outputs.tf`).
 - **Known limitation (file shares)**: Only one value in `backup_share.source_file_share_name` is supported; multiple entries will result in a validation error.
+- **Known caveat (blobs)**: Set `backup_blob.identity_type` explicitly when enabling blob backup to avoid role assignment failures when the vault has no identity.
 
 ## Prerequisites
 
