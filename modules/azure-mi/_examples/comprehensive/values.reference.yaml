@@ -28,6 +28,8 @@ federated_credentials:
     type: "other"
     issuer: "https://example.com"
     subject: "my-subject"
+# `access_policies` only works for Key Vaults using the legacy access-policy permission model.
+# Do not use this block with vaults that have `enable_rbac_authorization = true`, or provider errors will occur.
 access_policies:
   - key_vault_id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-rg/providers/Microsoft.KeyVault/vaults/my-vault"
     key_permissions: ["Get", "List"]
