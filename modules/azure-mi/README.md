@@ -10,7 +10,7 @@ The module does **not** create the resource group, federated issuers, or Key Vau
 ## Key Features
 
 - **User-assigned identity**: Name, location, and tags. When `tags_from_rg` is **true**, identity tags are **only** those on the resource group (`var.tags` is ignored). When **false**, tags come from `var.tags`.
-- **RBAC**: `rbac` list flattens to `azurerm_role_assignment` entries (role name + scope per row).
+- **RBAC**: `rbac` entries flatten to `azurerm_role_assignment` resources, but the current implementation keys them by assignment `name` + individual `role`. Reusing the same `name` with the same `role` on different `scope` values is therefore **not currently supported** and will cause a duplicate-key error; use distinct assignment names in that case.
 - **Federated credentials**: `federated_credentials` entries share `audience`; each entry has `type` `github`, `kubernetes`, or `other` (validated). The variable marks nested fields optional, but **`main.tf` expects real values per type** or plan/apply can fail: **`github`** — set `organization`, `repository`, and `entity` (subject suffix, e.g. `ref:refs/heads/main`); `issuer` defaults to the GitHub Actions OIDC issuer if unset. **`kubernetes`** — set `issuer`, `namespace`, and `service_account_name`. **`other`** — set `issuer` and `subject`.
 - **Key Vault access policies**: Optional `access_policies` to grant the identity permissions on existing vaults by `key_vault_id`.
 - **Outputs**: Identity **`id`**, **`name`**, **`client_id`**, and **`principal_id`** for use in AKS, role assignments, or application configuration.
