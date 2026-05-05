@@ -72,7 +72,7 @@ variable "backup_share" {
   default = null
   validation {
     condition     = var.backup_share == null || length(var.backup_share.source_file_share_name) == 1
-    error_message = "Only one value in source_file_share_name is currently supported."
+    error_message = "When backup_share is set, exactly one value must be provided in backup_share.source_file_share_name."
   }
 }
 
