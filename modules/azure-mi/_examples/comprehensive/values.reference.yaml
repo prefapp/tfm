@@ -1,4 +1,4 @@
-# Reference YAML aligned with module input names (suitable for yamldecode(file(...)) passed to a wrapper that spreads into module arguments).
+# Reference YAML aligned with module input names (use `yamldecode(file(...))` and map each field explicitly to module arguments).
 # Replace subscription IDs, scopes, vault IDs, and GitHub org/repo with real values.
 
 name: "uami-myapp-ref"
