@@ -8,7 +8,7 @@ Before any code or documentation change, read:
 
 - `CONSTITUTION.md`
 - `CONTRIBUTING.md`
-- `RULES.md` when the module is or may be consumed by Firestartr `gh_provisioner`
+- `RULES.md` when the module is or may be a GitHub module compatible with automated provisioning systems such as `ghcas`
 - Existing files in the target module, especially `variables.tf`, `main.tf`, `outputs.tf`, `versions.tf`, `docs/header.md`, `docs/footer.md`, `_examples/`, and `README.md`
 
 ## Repository Purpose
@@ -25,9 +25,9 @@ This repository contains Terraform modules. Firestartr now consumes these module
 - Do not weaken existing validations or remove useful outputs without a migration reason.
 - Do not bypass `terraform fmt`, validation, tests, docs generation, CI, or release requirements.
 
-## gh-provisioner Modules
+## ghcas Modules
 
-For modules consumed by `gh_provisioner`, load and follow `RULES.md`.
+For GitHub modules consumed by automated provisioning systems such as `ghcas`, load and follow `RULES.md`.
 
 The non-negotiable contract is a single top-level `config` input object consumed from `terraform.tfvars.json`. The module must be compatible with one Firestartr CR and one Terraform state.
 
@@ -38,7 +38,7 @@ If a requested module cannot be modeled with that contract, stop and explain why
 When proposing or implementing a module change, include:
 
 - The module path.
-- Whether it is `gh_provisioner` compatible.
+- Whether it is compatible with automated provisioning systems such as `ghcas`.
 - The `config` shape if applicable.
 - Import behavior.
 - Delete behavior and any safety concerns.

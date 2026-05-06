@@ -18,7 +18,7 @@ for (const file of requiredFiles) {
 
 const constitution = read('CONSTITUTION.md');
 assertContains('CONSTITUTION.md', constitution, 'CONTRIBUTING.md');
-assertContains('CONSTITUTION.md', constitution, 'gh-provisioner');
+assertContains('CONSTITUTION.md', constitution, 'automated provisioning systems');
 assertContains('CONSTITUTION.md', constitution, 'variable "config"');
 
 const agents = read('AGENTS.md');
