@@ -98,10 +98,13 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
                         region=region_name,
                         secret_name=dest_name,
                     )
-                    sm_dest.put_secret_value(
-                        SecretId=dest_name,
-                        **{secret_value_key: secret_value}
-                    )
+                    update_args = {
+                        "SecretId": dest_name,
+                        secret_value_key: secret_value,
+                    }
+                    if kms_key_arn is not None:
+                        update_args["KmsKeyId"] = kms_key_arn
+                    sm_dest.update_secret(**update_args)
 
                     if config.enable_tag_replication:
                         dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
@@ -120,10 +123,13 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
                                 Tags=source_tags
                             )
             else:
-                sm_dest.put_secret_value(
-                    SecretId=dest_name,
-                    **{secret_value_key: secret_value}
-                )
+                update_args = {
+                    "SecretId": dest_name,
+                    secret_value_key: secret_value,
+                }
+                if kms_key_arn is not None:
+                    update_args["KmsKeyId"] = kms_key_arn
+                sm_dest.update_secret(**update_args)
 
                 if config.enable_tag_replication:
                     dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
