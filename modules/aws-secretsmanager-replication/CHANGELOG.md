@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.0...aws-secretsmanager-replication-v1.0.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* capture ResourceExistsException and update instead of create ([#1248](https://github.com/prefapp/tfm/issues/1248)) ([db0788f](https://github.com/prefapp/tfm/commit/db0788ffa111b3911665dedcf04e55dd4c76eb07))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.5...aws-secretsmanager-replication-v1.0.0) (2026-04-27)
 
 
