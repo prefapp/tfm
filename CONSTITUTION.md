@@ -13,7 +13,7 @@ When rules conflict, follow this precedence order:
 1. `CONSTITUTION.md`
 2. `AGENTS.md`
 3. `CONTRIBUTING.md`
-4. `RULES.md` for gh-provisioner-compatible modules
+4. `RULES.md` for GitHub modules compatible with GitHub Automated Provisioning Systems (`ghaps`)
 5. Module-local documentation and examples
 
 `CONTRIBUTING.md` must be strictly observed for module structure, documentation, examples, README generation, commit messages, and pull request process.
@@ -35,9 +35,9 @@ Every module must follow the documented structure in `CONTRIBUTING.md`, includin
 
 Modules must define explicit variable types, validations where practical, stable outputs, and provider requirements in `versions.tf` when the module uses providers.
 
-## 4. gh-provisioner Compatibility
+## 4. ghaps Compatibility
 
-Modules intended to be consumed by Firestartr `gh_provisioner` must also follow `RULES.md`.
+GitHub modules intended to be consumed by GitHub Automated Provisioning Systems such as `ghaps` must also follow `RULES.md`.
 
 The key compatibility contract is:
 
@@ -47,7 +47,7 @@ The key compatibility contract is:
 - The module maps to one Firestartr custom resource and one Terraform state.
 - Import and delete behavior must be documented because Firestartr needs predictable lifecycle semantics.
 
-If a module does not satisfy this contract, AI agents must not claim it is compatible with `gh_provisioner`.
+If a module does not satisfy this contract, AI agents must not claim it is compatible with GitHub Automated Provisioning Systems such as `ghaps`.
 
 ## 5. Validation
 
