@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/github-repo-v0.2.0...github-repo-v0.3.0) (2026-05-07)
+
+
+### Features
+
+* add support for pages ([#1196](https://github.com/prefapp/tfm/issues/1196)) ([4efe491](https://github.com/prefapp/tfm/commit/4efe491b40c60823ac644482385dd1917ef12392))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/github-repo-v0.1.0...github-repo-v0.2.0) (2026-04-30)
 
 
