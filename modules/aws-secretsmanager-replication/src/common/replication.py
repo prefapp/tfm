@@ -88,12 +88,48 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
                 if kms_key_arn is not None:
                     create_args["KmsKeyId"] = kms_key_arn
                 # Si no hay KmsKeyId, AWS managed
-                sm_dest.create_secret(**create_args)
+                try:
+                    sm_dest.create_secret(**create_args)
+                except sm_dest.exceptions.ResourceExistsException:
+                    log(
+                        "warning",
+                        "Destination secret already exists during creation, continuing with update",
+                        account_id=account_id,
+                        region=region_name,
+                        secret_name=dest_name,
+                    )
+                    update_args = {
+                        "SecretId": dest_name,
+                        secret_value_key: secret_value,
+                    }
+                    if kms_key_arn is not None:
+                        update_args["KmsKeyId"] = kms_key_arn
+                    sm_dest.update_secret(**update_args)
+
+                    if config.enable_tag_replication:
+                        dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
+                        dest_tags = dest_metadata.get("Tags", [])
+                        source_tag_keys = {t["Key"] for t in source_tags}
+                        dest_tag_keys = {t["Key"] for t in dest_tags}
+                        tags_to_remove = list(dest_tag_keys - source_tag_keys)
+                        if tags_to_remove:
+                            sm_dest.untag_resource(
+                                SecretId=dest_name,
+                                TagKeys=tags_to_remove
+                            )
+                        if source_tags:
+                            sm_dest.tag_resource(
+                                SecretId=dest_name,
+                                Tags=source_tags
+                            )
             else:
-                sm_dest.put_secret_value(
-                    SecretId=dest_name,
-                    **{secret_value_key: secret_value}
-                )
+                update_args = {
+                    "SecretId": dest_name,
+                    secret_value_key: secret_value,
+                }
+                if kms_key_arn is not None:
+                    update_args["KmsKeyId"] = kms_key_arn
+                sm_dest.update_secret(**update_args)
 
                 if config.enable_tag_replication:
                     dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
