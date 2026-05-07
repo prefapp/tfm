@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + labels) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -50,6 +50,15 @@ variable "config" {
       permission = string
     })), [])
 
+    pages = optional(object({
+      buildType = optional(string, "legacy")
+      cname     = optional(string, null)
+      source = optional(object({
+        branch = string
+        path   = optional(string, "/")
+      }), null)
+    }), null)
+    
     labels = optional(list(object({
       name        = string
       description = optional(string, null)
@@ -85,6 +94,11 @@ variable "config" {
       for v in var.config.variables : length(trimspace(v.variableName)) > 0 && length(trimspace(v.value)) > 0
     ])
     error_message = "Every repository variable must have a non-empty variableName and value."
+  }
+
+  validation {
+    condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
+    error_message = "pages.buildType must be 'legacy' or 'workflow'."
   }
 
   validation {
