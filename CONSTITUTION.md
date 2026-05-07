@@ -6,7 +6,49 @@ This document is the supreme rule set for this repository. All contributors and 
 
 This repository contains reusable Terraform modules used directly by Firestartr and other Prefapp systems. Modules must be safe, documented, testable, and compatible with the consumers that call them.
 
-## 2. Rule Hierarchy
+## 2. Governance
+
+- This `CONSTITUTION.md` file must always remain in the repository root
+- Any change to this Constitution requires a Pull Request + review
+
+## 3. Rules Hierarchy and Precedence
+
+All rules within this repository follow a strict hierarchy of precedence. In case of any conflict or ambiguity, the higher-level rule **always prevails**.
+
+### 3.1 Precedence Order (Highest to Lowest)
+
+The following order of precedence **MUST** be respected by all contributors and AI agents:
+
+| Rank | Rule Type                        | Scope          | Precedence                                                                 |
+|------|----------------------------------|----------------|----------------------------------------------------------------------------|
+| 1    | **CONSTITUTION.md**              | Repository-wide | **Supreme law**. Non-negotiable. All other rules derive from and must comply with it. |
+| 2    | **AGENTS.md**                    | AI-specific    | Operational rules for all AI agents. Must extend the Constitution and never contradict it. |
+| 3    | **RULES.md**                     | Specific  | Local rules **MAY** impose stricter requirements, but **MUST NOT** contradict, weaken, or override any higher-level rule. |
+| 4    | **Tool-specific instructions**   | Tool-level     | Instructions for specific tools (OpenCode, GitHub Copilot, etc.). Must fully comply with all higher levels. |
+
+### 3.2 Key Principles
+
+1. **High-level rules have absolute precedence**  
+   Global rules defined in `CONSTITUTION.md` take precedence over all local and tool-specific rules.
+
+2. **Local rules may be stricter, but never weaker**  
+   Package-specific rules may add additional or stricter requirements within their scope. They **SHALL NOT** reduce, relax, or conflict with any rule from a higher level.
+
+3. **Special rules apply in addition to general rules**  
+   When a more specific rule exists and is stricter, it applies **in addition to** (not instead of) the higher-level rules.
+
+4. **AI agents MUST resolve conflicts using this hierarchy**  
+   All AI agents (including OpenCode, GitHub Copilot, and any future tools) **MUST** explicitly follow this precedence order when generating code, making decisions, or proposing changes.
+
+### 3.3 Conflict Resolution
+
+In the event of a conflict between rules:
+- The higher-ranked rule in the table above **MUST** be followed.
+- The conflicting lower-ranked rule **MUST** be disregarded for that specific case.
+- Any ambiguity **MUST** be escalated via Pull Request for official clarification in this Constitution.
+
+
+### 3.4 Rule Hierarchy
 
 When rules conflict, follow this precedence order:
 
@@ -18,7 +60,7 @@ When rules conflict, follow this precedence order:
 
 `CONTRIBUTING.md` must be strictly observed for module structure, documentation, examples, README generation, commit messages, and pull request process.
 
-## 3. Module Standards
+## 4. Module Standards
 
 Every module must have a single clear responsibility. Do not mix unrelated managed resources in one module unless the module is explicitly a composite module that exists to coordinate several child resources under one stable interface.
 
@@ -35,7 +77,7 @@ Every module must follow the documented structure in `CONTRIBUTING.md`, includin
 
 Modules must define explicit variable types, validations where practical, stable outputs, and provider requirements in `versions.tf` when the module uses providers.
 
-## 4. ghaps Compatibility
+## 5. ghaps Compatibility
 
 GitHub modules intended to be consumed by GitHub Automated Provisioning Systems such as `ghaps` must also follow `RULES.md`.
 
@@ -49,7 +91,7 @@ The key compatibility contract is:
 
 If a module does not satisfy this contract, AI agents must not claim it is compatible with GitHub Automated Provisioning Systems such as `ghaps`.
 
-## 5. Validation
+## 6. Validation
 
 Changes must be validated with the commands and checks documented in `CONTRIBUTING.md` and any module-specific documentation.
 
@@ -62,14 +104,25 @@ At minimum, module changes should be checked with:
 
 Do not bypass formatting, validation, tests, CI, release, or documentation requirements.
 
-## 6. Security And Lifecycle Safety
+## 7. Security And Lifecycle Safety
 
 Modules must not expose secrets in outputs unless the output is explicitly marked `sensitive = true` and is genuinely required.
 
 Modules must avoid surprising destructive behavior. If a Terraform provider's delete action resets settings, mutates existing resources, or affects more than the resource represented by the module, the module documentation must call this out and Firestartr integration must account for it.
 
-## 7. Release Compatibility
+## 8. Release Compatibility
 
 This repository is managed by Release Please. Commits must follow Conventional Commits as documented in `CONTRIBUTING.md`.
 
 For modules consumed by Firestartr, release tags must be suitable for direct module references from `gitops-k8s`, usually following the existing pattern `<module-name>-v<version>`.
+
+---
+
+**This Constitution is the supreme law of the project.**
+
+It can be extended in future iterations while preserving these core rules.
+
+All contributors and AI agents are bound by it.
+
+
+See `AGENTS.md` for how AI assistants must handle them.
