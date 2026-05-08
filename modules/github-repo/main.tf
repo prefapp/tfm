@@ -105,7 +105,7 @@ resource "github_repository_pages" "this" {
   cname       = try(var.config.pages.cname, null)
 
   dynamic "source" {
-    for_each = try([var.config.pages.source], [])
+    for_each = var.config.pages != null && var.config.pages.source != null ? [var.config.pages.source] : []
     content {
       branch = source.value.branch
       path   = coalesce(source.value.path, "/")
