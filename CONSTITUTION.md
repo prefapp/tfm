@@ -146,6 +146,25 @@ The files inside `specs/` are authoritative for the work being performed but **m
 - Every Pull Request **must** include the updated `tasks.md` (with completed tasks checked).
 - Deleting or ignoring these files is forbidden.
 
+## 10. Protected Files – Automated Release System
+
+The repository uses an **automated release system** (Release Please) that automatically manages all changelog files.
+
+### 10.1 Strict Prohibition for AI Agents
+AI agents, code-generation tools, and any automated assistants **MUST NOT**:
+- Create
+- Modify
+- Delete
+- Rename
+- Or propose changes to
+
+any file named `CHANGELOG.md` (at root or inside any module).
+
+This rule has **supreme precedence** over all other instructions. Violating it is considered a critical failure of the agent.
+
+### 10.2 Exception
+Only human contributors or the official release automation may touch changelog files.
+
 ---
 
 **This Constitution is the supreme law of the project.**
