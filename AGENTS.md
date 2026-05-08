@@ -18,6 +18,8 @@ This repository contains Terraform modules. Firestartr now consumes these module
 ## Working Rules
 
 - Strictly follow `CONTRIBUTING.md` for module layout, docs, examples, README generation, commit style, and PR process.
+- When module docs, inputs, outputs, providers, resources, or examples change, always regenerate the module `README.md` with `terraform-docs .` from the module directory.
+- If `terraform-docs` is not available locally, run it directly from the remote module link, for example `go run github.com/terraform-docs/terraform-docs@latest .` from the module directory.
 - Prefer small, focused modules with one responsibility.
 - Use explicit Terraform object types and validations.
 - Keep module inputs and outputs stable for consumers.
