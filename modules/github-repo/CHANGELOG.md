@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/prefapp/tfm/compare/github-repo-v0.3.0...github-repo-v0.4.0) (2026-05-08)
+
+
+### Features
+
+* handle pages depreaction machinery ([#1260](https://github.com/prefapp/tfm/issues/1260)) ([3484643](https://github.com/prefapp/tfm/commit/348464300024fe7ad392af2ca40b7b791c563ca9))
+
 ## [0.3.0](https://github.com/prefapp/tfm/compare/github-repo-v0.2.0...github-repo-v0.3.0) (2026-05-07)
 
 
