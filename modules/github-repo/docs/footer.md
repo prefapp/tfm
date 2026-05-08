@@ -15,6 +15,16 @@ module "repository" {
     default_branch = {
       branch = "main"
     }
+
+    # Enable and configure GitHub Pages
+    pages = {
+      buildType = "legacy"    # or "workflow"
+      cname     = null        # or "my.custom.domain"
+      source = {
+        branch = "main"
+        path   = "/docs"      # or other subdir, defaults to "/"
+      }
+    }
   }
 }
 ```
