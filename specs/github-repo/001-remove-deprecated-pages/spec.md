@@ -11,7 +11,7 @@ Continuing to use it will eventually break the module when the provider removes 
 Migrate the `pages` configuration from the embedded `pages { ... }` block inside `github_repository` to the dedicated `github_repository_pages` resource (the new official way).
 
 ### Scope
-- Update `variables.tf` (remove or deprecate the `pages` variable)
+- `variables.tf` MUST be kept backwards compatible (keep existing variables, but mark any new ones as optional if needed)
 - Update `main.tf` (remove `pages` block from `github_repository`, add `github_repository_pages` resource)
 - Update `outputs.tf` (adjust any outputs that exposed pages settings)
 - Maintain backward compatibility where possible (or clearly document the breaking change)
