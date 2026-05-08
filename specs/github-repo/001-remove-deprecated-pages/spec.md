@@ -4,7 +4,7 @@
 **Module:** `modules/github-repo`
 
 ### Problem
-The `pages` block inside the `github_repository` resource has been **deprecated** by the `terraform-provider-github`.  
+The `pages` block inside the `github_repository` resource has been **deprecated** by the `terraform-provider-github`: https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_pages.  
 Continuing to use it will eventually break the module when the provider removes support.
 
 ### Goal
