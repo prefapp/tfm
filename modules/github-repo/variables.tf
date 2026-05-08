@@ -52,7 +52,7 @@ variable "config" {
 
     # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)
     pages = optional(object({
-      # buildType: "legacy" (default) or "workflow". Deprecated in github_repository; now handled via github_repository_pages.
+      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.
       buildType = optional(string, "legacy")
       cname     = optional(string, null)
       source = optional(object({
