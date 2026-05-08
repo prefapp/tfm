@@ -16,7 +16,7 @@ It is designed for Prefapp's Internal Developer Platform and automated repositor
 - **JSON-native**: Perfect for programmatic generation from external systems.
 - **Full validation**: Enforces required fields and valid values at plan time.
 - **Clean outputs**: Every important value exposed as a separate output.
-- **GitHub Pages support**: Enable and configure GitHub Pages (`buildType`, custom `cname`, and `source` branch/path) directly in the top-level `config` object — consistent with `default_branch`, `files`, `teams`, etc.
+- **GitHub Pages support**: Enable and configure GitHub Pages via the new `github_repository_pages` resource (using `config.pages` for backwards compatibility, including `buildType`, custom `cname`, and `source` branch/path).
 
 ## Basic Usage
 
@@ -147,7 +147,7 @@ No modules.
 | <a name="output_committed_files"></a> [committed\_files](#output\_committed\_files) | List of files that were committed |
 | <a name="output_default_branch"></a> [default\_branch](#output\_default\_branch) | Default branch name |
 | <a name="output_oidc_subject_claim_customization_template"></a> [oidc\_subject\_claim\_customization\_template](#output\_oidc\_subject\_claim\_customization\_template) | OIDC subject claim customization template configuration |
-| <a name="output_pages"></a> [pages](#output\_pages) | GitHub Pages configuration (if enabled) |
+| <a name="output_pages"></a> [pages](#output\_pages) | GitHub Pages configuration (if enabled, from github_repository_pages resource) |
 | <a name="output_repository_full_name"></a> [repository\_full\_name](#output\_repository\_full\_name) | Full name (owner/repo) of the repository |
 | <a name="output_repository_html_url"></a> [repository\_html\_url](#output\_repository\_html\_url) | URL to the repository on GitHub |
 | <a name="output_repository_id"></a> [repository\_id](#output\_repository\_id) | ID of the created GitHub repository |
@@ -172,6 +172,16 @@ module "repository" {
 
     default_branch = {
       branch = "main"
+    }
+    
+    # Enable and configure GitHub Pages
+    pages = {
+      buildType = "legacy"    # or "workflow"
+      cname     = null         # or "my.custom.domain"
+      source = {
+        branch = "main"
+        path   = "/docs"      # or other subdir, defaults to "/"
+      }
     }
   }
 }

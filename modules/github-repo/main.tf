@@ -14,21 +14,7 @@ resource "github_repository" "this" {
   allow_update_branch  = var.config.repository.allowUpdateBranch
   has_issues           = var.config.repository.hasIssues
 
-  dynamic "pages" {
-    for_each = var.config.pages != null ? [var.config.pages] : []
-    content {
-      build_type = pages.value.buildType
-      cname      = pages.value.cname
-  
-      dynamic "source" {
-        for_each = pages.value.source != null ? [pages.value.source] : []
-        content {
-          branch = source.value.branch
-          path   = coalesce(source.value.path, "/")
-        }
-      }
-    }
-  }
+
 }
 
 # Set the default branch
@@ -110,3 +96,20 @@ resource "github_issue_label" "this" {
   description = each.value.description
   color       = each.value.color
 }
+
+# GitHub Pages (dedicated resource replacing deprecated block)
+resource "github_repository_pages" "this" {
+  count       = var.config.pages != null ? 1 : 0
+  repository  = github_repository.this.name
+  build_type  = try(var.config.pages.buildType, "legacy")
+  cname       = try(var.config.pages.cname, null)
+
+  dynamic "source" {
+    for_each = try([var.config.pages.source], [])
+    content {
+      branch = source.value.branch
+      path   = coalesce(source.value.path, "/")
+    }
+  }
+}
+
