@@ -50,14 +50,16 @@ variable "config" {
       permission = string
     })), [])
 
-    pages = optional(object({
-      buildType = optional(string, "legacy")
-      cname     = optional(string, null)
-      source = optional(object({
-        branch = string
-        path   = optional(string, "/")
-      }), null)
-    }), null)
+    # pages removed in vNEXT: handled by github_repository_pages resource
+    # If you still need Pages, use 'github_repository_pages' and pass its config separately.
+    # pages = optional(object({
+    #   buildType = optional(string, "legacy")
+    #   cname     = optional(string, null)
+    #   source = optional(object({
+    #     branch = string
+    #     path   = optional(string, "/")
+    #   }), null)
+    # }), null)
     
     labels = optional(list(object({
       name        = string
@@ -96,10 +98,11 @@ variable "config" {
     error_message = "Every repository variable must have a non-empty variableName and value."
   }
 
-  validation {
-    condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
-    error_message = "pages.buildType must be 'legacy' or 'workflow'."
-  }
+  # pages.validation removed: legacy block no longer supported in config
+  # validation {
+  #   condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
+  #   error_message = "pages.buildType must be 'legacy' or 'workflow'."
+  # }
 
   validation {
     condition = alltrue([

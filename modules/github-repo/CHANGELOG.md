@@ -1,5 +1,14 @@
 # Changelog
 
+## [UNRELEASED]
+
+### Breaking
+* Remove deprecated `pages` block from github_repository.this and variables. Pages configuration is now managed with github_repository_pages resource (see #1255 and provider docs).
+
+### Migration
+* If you were passing pages parameters in the config, use github_repository_pages resource with the same branch/path/cname/buildType fields.
+
+
 ## [0.3.0](https://github.com/prefapp/tfm/compare/github-repo-v0.2.0...github-repo-v0.3.0) (2026-05-07)
 
 
