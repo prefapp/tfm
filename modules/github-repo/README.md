@@ -105,14 +105,14 @@ module "repository" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 
 ## Modules
@@ -122,7 +122,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [github_actions_repository_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_oidc_subject_claim_customization_template) | resource |
 | [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
 | [github_branch_default.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
@@ -130,24 +130,25 @@ No modules.
 | [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
 | [github_repository_collaborator.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator) | resource |
 | [github_repository_file.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [github_repository_pages.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_pages) | resource |
 | [github_team_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_repository) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_config"></a> [config](#input\_config) | GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels) as a single complex object | <pre>object({<br/>    repository = object({<br/>      name                = string<br/>      description         = optional(string, "")<br/>      visibility          = optional(string, "private")<br/>      topics              = optional(list(string), [])<br/>      autoInit            = optional(bool, false)<br/>      archiveOnDestroy    = optional(bool, false)<br/>      allowMergeCommit    = optional(bool, true)<br/>      allowSquashMerge    = optional(bool, true)<br/>      allowRebaseMerge    = optional(bool, true)<br/>      allowAutoMerge      = optional(bool, false)<br/>      deleteBranchOnMerge = optional(bool, false)<br/>      allowUpdateBranch   = optional(bool, false)<br/>      hasIssues           = optional(bool, true)<br/>    })<br/><br/>    default_branch = object({<br/>      branch     = string<br/>      rename     = optional(bool, false)<br/>    })<br/><br/>    files = optional(list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>    })), [])<br/><br/>    variables = optional(list(object({<br/>      variableName = string<br/>      value        = string<br/>    })), [])<br/><br/>    oidc_subject_claim_customization_template = optional(object({<br/>      useDefault       = optional(bool, true)<br/>      includeClaimKeys = optional(list(string), [])<br/>    }), null)<br/><br/>    teams = optional(list(object({<br/>      teamId     = number      # Use numeric team ID to remain stable if team slugs change<br/>      permission = string<br/>    })), [])<br/><br/>    collaborators = optional(list(object({<br/>      username   = string<br/>      permission = string<br/>    })), [])<br/><br/>    pages = optional(object({<br/>      buildType = optional(string, "legacy")<br/>      cname     = optional(string, null)<br/>      source = optional(object({<br/>        branch = string<br/>        path   = optional(string, "/")<br/>      }), null)<br/>    }), null)<br/>    <br/>    labels = optional(list(object({<br/>      name        = string<br/>      description = optional(string, null)<br/>      color       = string   # 6-digit hex without # (e.g. "d73a4a")<br/>    })), [])<br/><br/>  })</pre> | n/a | yes |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_config"></a> [config](#input\_config) | GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels) as a single complex object | <pre>object({<br/>    repository = object({<br/>      name                = string<br/>      description         = optional(string, "")<br/>      visibility          = optional(string, "private")<br/>      topics              = optional(list(string), [])<br/>      autoInit            = optional(bool, false)<br/>      archiveOnDestroy    = optional(bool, false)<br/>      allowMergeCommit    = optional(bool, true)<br/>      allowSquashMerge    = optional(bool, true)<br/>      allowRebaseMerge    = optional(bool, true)<br/>      allowAutoMerge      = optional(bool, false)<br/>      deleteBranchOnMerge = optional(bool, false)<br/>      allowUpdateBranch   = optional(bool, false)<br/>      hasIssues           = optional(bool, true)<br/>    })<br/><br/>    default_branch = object({<br/>      branch     = string<br/>      rename     = optional(bool, false)<br/>    })<br/><br/>    files = optional(list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>    })), [])<br/><br/>    variables = optional(list(object({<br/>      variableName = string<br/>      value        = string<br/>    })), [])<br/><br/>    oidc_subject_claim_customization_template = optional(object({<br/>      useDefault       = optional(bool, true)<br/>      includeClaimKeys = optional(list(string), [])<br/>    }), null)<br/><br/>    teams = optional(list(object({<br/>      teamId     = number      # Use numeric team ID to remain stable if team slugs change<br/>      permission = string<br/>    })), [])<br/><br/>    collaborators = optional(list(object({<br/>      username   = string<br/>      permission = string<br/>    })), [])<br/><br/>    # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)<br/>    pages = optional(object({<br/>      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.<br/>      buildType = optional(string, "legacy")<br/>      cname     = optional(string, null)<br/>      source = optional(object({<br/>        branch = string<br/>        path   = optional(string, "/")<br/>      }), null)<br/>    }), null)<br/>    <br/>    labels = optional(list(object({<br/>      name        = string<br/>      description = optional(string, null)<br/>      color       = string   # 6-digit hex without # (e.g. "d73a4a")<br/>    })), [])<br/><br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_added_teams"></a> [added\_teams](#output\_added\_teams) | List of teams (by ID) added to the repository |
 | <a name="output_collaborators"></a> [collaborators](#output\_collaborators) | List of collaborators added to the repository |
 | <a name="output_committed_files"></a> [committed\_files](#output\_committed\_files) | List of files that were committed |
 | <a name="output_default_branch"></a> [default\_branch](#output\_default\_branch) | Default branch name |
 | <a name="output_oidc_subject_claim_customization_template"></a> [oidc\_subject\_claim\_customization\_template](#output\_oidc\_subject\_claim\_customization\_template) | OIDC subject claim customization template configuration |
-| <a name="output_pages"></a> [pages](#output\_pages) | GitHub Pages configuration (if enabled) |
+| <a name="output_pages"></a> [pages](#output\_pages) | GitHub Pages configuration (if enabled, from github\_repository\_pages resource) |
 | <a name="output_repository_full_name"></a> [repository\_full\_name](#output\_repository\_full\_name) | Full name (owner/repo) of the repository |
 | <a name="output_repository_html_url"></a> [repository\_html\_url](#output\_repository\_html\_url) | URL to the repository on GitHub |
 | <a name="output_repository_id"></a> [repository\_id](#output\_repository\_id) | ID of the created GitHub repository |
@@ -172,6 +173,34 @@ module "repository" {
 
     default_branch = {
       branch = "main"
+    }
+  }
+}
+```
+
+### Repository with GitHub Pages
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    pages = {
+      buildType = "legacy"
+      cname     = null
+      source = {
+        branch = "main"
+        path   = "/docs"
+      }
     }
   }
 }
