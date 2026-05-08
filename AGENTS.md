@@ -43,3 +43,23 @@ When proposing or implementing a module change, include:
 - Import behavior.
 - Delete behavior and any safety concerns.
 - Validation performed or intentionally skipped.
+- Path to the `tasks.md` used for this PR and status of each task.
+
+## Spec-Driven Development (Mandatory for All Agents)
+
+Before any module change:
+
+1. Locate or create the correct folder under `specs/<module-name>/`
+2. Read the current `spec.md`, `plan.md`, and `tasks.md`
+3. Work **only** on the tasks listed in the current `tasks.md`
+4. Update `tasks.md` as you complete each task (keep it in the PR)
+
+**Never** propose code changes without a corresponding `tasks.md` entry.
+
+### Specification Location Rules (strict)
+- Use exactly: `specs/<module-name>/NNN-feature-slug/`
+- Module name **must** match the folder inside `modules/` (e.g. `aws-eks`, `azure-vpc`, `github-team`)
+- For changes spanning multiple modules → use `specs/cross-module/`
+- All three files (`spec.md`, `plan.md`, `tasks.md`) **must stay** in the repository after merge.
+
+When creating a new task file, follow the template from specdriven.ai (or the existing pattern already used in this repo).

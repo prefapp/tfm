@@ -116,6 +116,36 @@ This repository is managed by Release Please. Commits must follow Conventional C
 
 For modules consumed by Firestartr, release tags must be suitable for direct module references from `gitops-k8s`, usually following the existing pattern `<module-name>-v<version>`.
 
+## 9. Spec-Driven Development (SDD) Workflow
+
+All changes to modules **MUST** follow the Spec-Driven Development methodology.
+
+### 9.1 Location of Specifications
+- All living specifications live in the top-level `specs/` folder at repository root.
+- For changes to a specific Terraform module, use the structure:
+specs/<module-name>/NNN-short-feature-name/
+├── spec.md
+├── plan.md
+└── tasks.md
+textwhere `<module-name>` exactly matches the folder name inside `modules/` (e.g. `aws-eks`, `azure-aks`, `github-repo`).
+- Cross-module changes go under `specs/cross-module/`.
+
+### 9.2 Required Artifacts per Feature
+Every feature or change **MUST** include (and keep updated):
+- `spec.md` – the full specification
+- `plan.md` – the implementation plan
+- `tasks.md` – atomic, reviewable tasks (one PR = one `tasks.md`)
+
+These files are **first-class, version-controlled artifacts** and **must remain in the repository** after the PR is merged.
+
+### 9.3 Precedence
+The files inside `specs/` are authoritative for the work being performed but **may not contradict** this `CONSTITUTION.md` or `AGENTS.md`.
+
+### 9.4 AI & Contributor Responsibility
+- Before starting any work, read the relevant `spec.md` + `plan.md` + `tasks.md`.
+- Every Pull Request **must** include the updated `tasks.md` (with completed tasks checked).
+- Deleting or ignoring these files is forbidden.
+
 ---
 
 **This Constitution is the supreme law of the project.**
