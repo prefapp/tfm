@@ -29,7 +29,7 @@ resource "github_actions_secret" "this" {
   value_encrypted = each.value
 
   lifecycle {
-    ignore_changes = [value_encrypted]
+    ignore_changes = [key_id, value_encrypted]
   }
 }
 
@@ -60,6 +60,6 @@ resource "github_dependabot_secret" "this" {
   value_encrypted = each.value
 
   lifecycle {
-    ignore_changes = [value_encrypted]
+    ignore_changes = [key_id, value_encrypted]
   }
 }

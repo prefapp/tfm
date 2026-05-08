@@ -5,7 +5,7 @@
 This module manages GitHub repository secrets for **Actions**, **Codespaces**, and **Dependabot** using a single strongly-typed `config` object. It is compatible with GitHub Automated Provisioning Systems such as `ghaps` because all desired state is supplied through one top-level `config` input.
 
 **Important**:  
-The values in the `actions`, `codespaces`, and `dependabot` maps (the per-secret ciphertext strings) **must already be encrypted** using **libsodium** with the target repository's matching public key.  
+The values in the `actions`, `codespaces`, and `dependabot` maps (the per-secret ciphertext strings) **must already be encrypted** using **libsodium** with the target repository's matching secret type public key.  
 **Terraform does not perform any encryption**. It forwards these pre-encrypted ciphertext values to the GitHub API. Actions and Dependabot secrets are sent through the provider's `value_encrypted` argument with the matching public-key ID; Codespaces secrets continue to use the provider's non-deprecated `encrypted_value` argument.
 
 This approach is the most secure for automated pipelines (Prefapp IDP, GitHub Actions, etc.).

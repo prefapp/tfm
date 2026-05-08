@@ -4,7 +4,7 @@ variable "config" {
 
     • repository          = GitHub repo in 'owner/repo' format (required)
     • actions / codespaces / dependabot = map of secret_name => pre-encrypted secret value
-    • values must be pre-encrypted with libsodium using the matching repo public key.
+    • values must be pre-encrypted with libsodium using the matching secret type public key.
   EOT
 
   type = object({
