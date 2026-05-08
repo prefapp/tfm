@@ -5,6 +5,18 @@ data "github_repository" "this" {
   full_name = var.config.repository
 }
 
+data "github_actions_public_key" "this" {
+  count = length(var.config.actions) > 0 ? 1 : 0
+
+  repository = data.github_repository.this.name
+}
+
+data "github_dependabot_public_key" "this" {
+  count = length(var.config.dependabot) > 0 ? 1 : 0
+
+  repository = data.github_repository.this.name
+}
+
 # ─────────────────────────────────────────────────────────────
 # GitHub Actions Secrets
 # ─────────────────────────────────────────────────────────────
@@ -13,10 +25,11 @@ resource "github_actions_secret" "this" {
 
   repository      = data.github_repository.this.name
   secret_name     = each.key
-  encrypted_value = each.value
+  key_id          = one(data.github_actions_public_key.this[*].key_id)
+  value_encrypted = each.value
 
   lifecycle {
-    ignore_changes = [encrypted_value]
+    ignore_changes = [value_encrypted]
   }
 }
 
@@ -43,9 +56,10 @@ resource "github_dependabot_secret" "this" {
 
   repository      = data.github_repository.this.name
   secret_name     = each.key
-  encrypted_value = each.value
+  key_id          = one(data.github_dependabot_public_key.this[*].key_id)
+  value_encrypted = each.value
 
   lifecycle {
-    ignore_changes = [encrypted_value]
+    ignore_changes = [value_encrypted]
   }
 }
