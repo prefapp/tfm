@@ -63,3 +63,11 @@ Before any module change:
 - All three files (`spec.md`, `plan.md`, `tasks.md`) **must stay** in the repository after merge.
 
 When creating a new task file, follow the template from specdriven.ai (or the existing pattern already used in this repo).
+
+## Critical Safety Rules (Highest Priority)
+
+### Changelog Protection (Automated Release System)
+- The repository uses Release Please to manage all `CHANGELOG.md` files automatically.
+- **AI agents are strictly forbidden** from touching, creating, modifying, or proposing any changes to any `CHANGELOG.md` file (root or per-module).
+- If a task seems to require changelog changes, the AI must skip it and note: “Changelog will be updated by Release Please automation”.
+- This rule overrides every other instruction.
