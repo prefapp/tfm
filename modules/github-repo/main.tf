@@ -112,4 +112,3 @@ resource "github_repository_pages" "this" {
     }
   }
 }
-
