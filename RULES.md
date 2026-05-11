@@ -1,6 +1,6 @@
-# gh-provisioner Compatible Module Rules
+# GitHub Modules Compatible With GitHub Automated Provisioning Systems (`ghaps`)
 
-These rules apply to Terraform modules intended to be consumed by Firestartr `gh_provisioner` from `prefapp/gitops-k8s`.
+These rules apply to Terraform GitHub modules intended to be consumed by GitHub Automated Provisioning Systems such as `ghaps`, including Firestartr integrations from `prefapp/gitops-k8s`.
 
 ## 1. Compatibility Contract
 
@@ -25,10 +25,10 @@ The module may define other operational variables only when they are not part of
 
 ## 2. State Ownership
 
-One `gh_provisioner`-compatible module maps to:
+One `ghaps`-compatible module maps to:
 
 - One Firestartr Kubernetes custom resource.
-- One `gh_provisioner` entity.
+- One GitHub Automated Provisioning Systems entity.
 - One Terraform state.
 - One generated `terraform.tfvars.json` document.
 
@@ -52,7 +52,7 @@ Do not accept broad `any` unless the provider schema is genuinely unbounded and 
 
 ## 4. Resource Addresses And Imports
 
-Every compatible module must document Terraform resource addresses that `gh_provisioner` may need for import.
+Every compatible module must document Terraform resource addresses that a GitHub Automated Provisioning Systems integration may need for import.
 
 For each importable resource, document:
 
@@ -89,7 +89,7 @@ Follow `CONTRIBUTING.md` for all modules.
 
 Additionally, compatible modules should include in `docs/header.md` or `docs/footer.md`:
 
-- A note that the module is `gh_provisioner` compatible.
+- A note that the module is compatible with GitHub Automated Provisioning Systems such as `ghaps`.
 - The expected `config` structure.
 - A minimal example using `config`.
 - Import behavior.
@@ -112,7 +112,7 @@ When the repository supports Terraform tests, add tests that cover valid input, 
 
 ## 9. Firestartr Integration Checklist
 
-Before marking a module ready for `gh_provisioner`, confirm:
+Before marking a module ready for GitHub Automated Provisioning Systems such as `ghaps`, confirm:
 
 - `variables.tf` exposes `variable "config"`.
 - `main.tf` consumes `var.config`.
@@ -121,6 +121,6 @@ Before marking a module ready for `gh_provisioner`, confirm:
 - Examples use the `config` object.
 - Docs explain import and delete behavior.
 - The module can be referenced by `gitops-k8s` using a release tag.
-- A matching `gh_provisioner` entity can map a CR spec to this `config` shape without special Terraform logic.
+- A matching GitHub Automated Provisioning Systems entity can map a CR spec to this `config` shape without special Terraform logic.
 
 If any item is missing, document the gap before opening or updating the Firestartr integration PR.

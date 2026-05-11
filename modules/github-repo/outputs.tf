@@ -54,8 +54,8 @@ output "collaborators" {
 }
 
 output "pages" {
-  description = "GitHub Pages configuration (if enabled)"
-  value       = length(github_repository.this.pages) > 0 ? github_repository.this.pages[0] : null
+  description = "GitHub Pages configuration (if enabled, from github_repository_pages resource)"
+  value       = length(github_repository_pages.this) > 0 ? github_repository_pages.this[0] : null
 }
 output "repository_labels" {
   description = "List of labels created on the repository"
