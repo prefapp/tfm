@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/prefapp/tfm/compare/github-repo-v0.4.0...github-repo-v0.4.1) (2026-05-20)
+
+
+### Bug Fixes
+
+* remove topics from the creation of the repo to avoid crashes ([#1178](https://github.com/prefapp/tfm/issues/1178)) ([ff75f09](https://github.com/prefapp/tfm/commit/ff75f09a21746665f67714a352b439ef3473e58d))
+
 ## [0.4.0](https://github.com/prefapp/tfm/compare/github-repo-v0.3.0...github-repo-v0.4.0) (2026-05-08)
 
 
