@@ -39,9 +39,8 @@ module "secrets_dr_replication" {
   allowed_assume_roles = local.allowed_assume_roles
 
   # Specify existing CloudTrail and S3 bucket
-  cloudtrail_arn  = "arn:aws:cloudtrail:eu-west-1:111111111111:trail/existing-trail"
-  cloudtrail_name = "existing-trail"
-  s3_bucket_name  = "existing-cloudtrail-bucket"
+  cloudtrail_arn = "arn:aws:cloudtrail:eu-west-1:111111111111:trail/existing-trail"
+  s3_bucket_arn  = "arn:aws:s3:::existing-cloudtrail-bucket"
 
   manage_s3_bucket_policy = false # If bucket policy is managed externally
 

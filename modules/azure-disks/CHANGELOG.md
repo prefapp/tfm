@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/prefapp/tfm/compare/azure-disks-v1.1.2...azure-disks-v1.2.0) (2026-04-23)
+
+
+### Features
+
+* **azure-disks-docs:** update docs and validation on var.principal_id ([#1181](https://github.com/prefapp/tfm/issues/1181)) ([ec8439e](https://github.com/prefapp/tfm/commit/ec8439efa3a9afc57774276594ebe4dfbe4f5d23))
+
 ## [1.1.2](https://github.com/prefapp/tfm/compare/azure-disks-v1.1.1...azure-disks-v1.1.2) (2025-12-03)
 
 

@@ -88,4 +88,30 @@ resource "github_repository_collaborator" "this" {
 resource "github_repository_topics" "this" {
   repository = github_repository.this.name
   topics     = var.config.repository.topics
+
+# GitHub Repository Labels (from var.config.labels)
+resource "github_issue_label" "this" {
+  for_each = { for label in coalesce(var.config.labels, []) : trimspace(label.name) => label }
+
+  repository  = github_repository.this.name
+  name        = trimspace(each.value.name)
+  description = each.value.description
+  color       = each.value.color
+}
+
+# GitHub Pages (dedicated resource replacing deprecated block)
+resource "github_repository_pages" "this" {
+  count       = var.config.pages != null ? 1 : 0
+  repository  = github_repository.this.name
+  build_type  = try(var.config.pages.buildType, "legacy")
+  cname       = try(var.config.pages.cname, null)
+  depends_on  = [github_branch_default.this]
+
+  dynamic "source" {
+    for_each = var.config.pages != null && var.config.pages.source != null ? [var.config.pages.source] : []
+    content {
+      branch = source.value.branch
+      path   = coalesce(source.value.path, "/")
+    }
+  }
 }

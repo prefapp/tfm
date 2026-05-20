@@ -115,6 +115,12 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the pattern `AWS API Call via CloudTrail`, matching `CreateSecret` and `PutSecretValue` events.
 5. **Lambda Execution:** The rule triggers a Lambda function, which assumes an IAM role to read the secret from the source and write/update it in the destination account.
 
+### Eventual Consistency Note for `CreateSecret`
+
+When the automatic Lambda is triggered by a `CreateSecret` event, AWS Secrets Manager may still be finalizing the first readable secret version. In that short window, `GetSecretValue` can return a `ResourceNotFoundException` indicating that the staging label `AWSCURRENT` is not available yet.
+
+To handle this eventual consistency scenario, the automatic replication flow retries `GetSecretValue` a few times. If `AWSCURRENT` is still unavailable after those retries, the Lambda logs a warning and exits gracefully instead of failing the invocation. A subsequent `PutSecretValue` event or a later manual/full sync run will replicate the secret once the current version is available.
+
 ### Required Resources & Links
 
 - **CloudTrail:** Must be enabled to log management events.
@@ -130,14 +136,16 @@ In AWS Control Tower or Landing Zone environments, CloudTrail trails and S3 buck
 
 **How to use:**
 
-- Set `cloudtrail_name` to the name of the existing CloudTrail trail.
-- Set `s3_bucket_name` to the name of the existing S3 bucket used by that trail.
+- Set `cloudtrail_arn` to the ARN of the existing CloudTrail trail (optional if the module should create a trail).
+- Set `s3_bucket_arn` to the ARN of the existing S3 bucket used by that trail.
 
 The module will:
 
 - Reference the existing CloudTrail and S3 bucket instead of creating new ones.
 - Not attempt to modify or manage the lifecycle of these resources.
 - Allow disabling S3 bucket policy management via `manage_s3_bucket_policy = false`.
+- Require `s3_bucket_arn` by default when `eventbridge_enabled = true` (enterprise-first behavior).
+- Allow automatic bucket creation only as an explicit fallback via `allow_auto_create_cloudtrail_bucket = true`.
 
 **Important considerations:**
 
@@ -150,8 +158,8 @@ The module will:
 ```hcl
 module "secrets_replication" {
   # ... other variables ...
-  cloudtrail_name         = "centralized-org-trail"
-  s3_bucket_name          = "centralized-logs-bucket"
+  cloudtrail_arn          = "arn:aws:cloudtrail:eu-west-1:111111111111:trail/centralized-org-trail"
+  s3_bucket_arn           = "arn:aws:s3:::centralized-logs-bucket"
   manage_s3_bucket_policy = false
 }
 ```

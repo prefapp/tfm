@@ -1,8 +1,59 @@
 from utils import assume_role, log
 import boto3
+import time
 
 
-def replicate_secret(secret_id: str, config, get_sm_client=None):
+def _is_missing_current_version_error(exc) -> bool:
+    """
+    Returns True when Secrets Manager reports that the secret exists but has no
+    AWSCURRENT version available yet.
+    """
+    response = getattr(exc, "response", {}) or {}
+    error = response.get("Error", {})
+    message = error.get("Message", "")
+    return error.get("Code") == "ResourceNotFoundException" and "AWSCURRENT" in message
+
+
+def _get_secret_value_with_retry(source_sm, secret_id: str, *, skip_missing_current: bool):
+    """
+    Reads the current value of a source secret.
+
+    For automatic replication triggered from CloudTrail, CreateSecret events may
+    arrive before the secret has an AWSCURRENT version. In that case retry a few
+    times and optionally skip gracefully.
+    """
+    max_attempts = 3
+    retry_delay_seconds = 2
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            return source_sm.get_secret_value(SecretId=secret_id)
+        except source_sm.exceptions.ResourceNotFoundException as exc:
+            if not _is_missing_current_version_error(exc):
+                raise
+
+            if attempt == max_attempts:
+                if skip_missing_current:
+                    log(
+                        "warning",
+                        "Source secret has no AWSCURRENT version yet, skipping replication",
+                        secret_id=secret_id,
+                        attempts=max_attempts,
+                    )
+                    return None
+                raise
+
+            log(
+                "warning",
+                "Source secret has no AWSCURRENT version yet, retrying",
+                secret_id=secret_id,
+                attempt=attempt,
+                max_attempts=max_attempts,
+            )
+            time.sleep(retry_delay_seconds)
+
+
+def replicate_secret(secret_id: str, config, get_sm_client=None, skip_missing_current=False):
     """
     Replicates a secret to all configured destinations and regions.
     Args:
@@ -18,7 +69,14 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
     if source_sm is None:
         source_sm = boto3.client("secretsmanager", region_name=config.source_region)
 
-    secret_response = source_sm.get_secret_value(SecretId=secret_id)
+    secret_response = _get_secret_value_with_retry(
+        source_sm,
+        secret_id,
+        skip_missing_current=skip_missing_current,
+    )
+    if secret_response is None:
+        return
+
     if "SecretString" in secret_response:
         secret_value = secret_response["SecretString"]
         secret_value_key = "SecretString"
@@ -88,12 +146,48 @@ def replicate_secret(secret_id: str, config, get_sm_client=None):
                 if kms_key_arn is not None:
                     create_args["KmsKeyId"] = kms_key_arn
                 # Si no hay KmsKeyId, AWS managed
-                sm_dest.create_secret(**create_args)
+                try:
+                    sm_dest.create_secret(**create_args)
+                except sm_dest.exceptions.ResourceExistsException:
+                    log(
+                        "warning",
+                        "Destination secret already exists during creation, continuing with update",
+                        account_id=account_id,
+                        region=region_name,
+                        secret_name=dest_name,
+                    )
+                    update_args = {
+                        "SecretId": dest_name,
+                        secret_value_key: secret_value,
+                    }
+                    if kms_key_arn is not None:
+                        update_args["KmsKeyId"] = kms_key_arn
+                    sm_dest.update_secret(**update_args)
+
+                    if config.enable_tag_replication:
+                        dest_metadata = sm_dest.describe_secret(SecretId=dest_name)
+                        dest_tags = dest_metadata.get("Tags", [])
+                        source_tag_keys = {t["Key"] for t in source_tags}
+                        dest_tag_keys = {t["Key"] for t in dest_tags}
+                        tags_to_remove = list(dest_tag_keys - source_tag_keys)
+                        if tags_to_remove:
+                            sm_dest.untag_resource(
+                                SecretId=dest_name,
+                                TagKeys=tags_to_remove
+                            )
+                        if source_tags:
+                            sm_dest.tag_resource(
+                                SecretId=dest_name,
+                                Tags=source_tags
+                            )
             else:
-                sm_dest.put_secret_value(
-                    SecretId=dest_name,
-                    **{secret_value_key: secret_value}
-                )
+                update_args = {
+                    "SecretId": dest_name,
+                    secret_value_key: secret_value,
+                }
+                if kms_key_arn is not None:
+                    update_args["KmsKeyId"] = kms_key_arn
+                sm_dest.update_secret(**update_args)
 
                 if config.enable_tag_replication:
                     dest_metadata = sm_dest.describe_secret(SecretId=dest_name)

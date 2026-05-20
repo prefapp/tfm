@@ -1,0 +1,104 @@
+# Azure Linux Virtual Machine Scale Set (VMSS) Terraform module
+
+## Overview
+
+This module creates a **Linux Virtual Machine Scale Set** in an existing resource group, attaches it to an existing **subnet** (via data sources), applies optional **tags** (with optional merge from a resource group data source), and can run a **CustomScript** extension when `run_script` is set.
+
+The module does **not** create the resource group, virtual network, or subnet. For `tags_from_rg`, the `azurerm_resource_group` data source reads **`coalesce(vmss.resource_group_name, common.resource_group_name)`** — by default (field omitted) tags come from the **same** resource group where the scale set is deployed (`common.resource_group_name`). Set `vmss.resource_group_name` only when you intentionally need tags from another existing resource group.
+
+## Key features
+
+- **Compute**: `azurerm_linux_virtual_machine_scale_set` with marketplace image, admin SSH key, OS disk, optional data disk, rolling upgrade policy, and managed identity.
+- **Networking**: NIC in the resolved subnet; optional LB/AGW/ASG associations; public IP configuration with a **public IP prefix** ID.
+- **Bootstrap**: `cloud_init` is passed as `custom_data` (base64-encoded by Terraform). Optional `run_script` enables the CustomScript extension.
+- **Outputs**: Scale set `name`, `vmss_id`, `unique_id`, managed identity `principal_id` when present, CustomScript extension ID when created, plus helpers for encoded `cloud_init` / `run_script` settings.
+
+## Prerequisites
+
+- Existing **resource group** (`common.resource_group_name`) and **location** (`common.location`).
+- Existing **VNet** and **subnet** matching `vmss.subnet_name`, `vmss.virtual_network_name`, and `vmss.virtual_network_resource_group_name`.
+- **SSH public key** and a valid **`network_interface_public_ip_adress_public_ip_prefix_id`** for your subscription.
+
+## Basic usage
+
+Pass `common`, `vmss`, and optionally `tags` / `tags_from_rg`. The `vmss` object has many fields; see the **Inputs** table for types and required attributes.
+
+### Example
+
+```hcl
+module "vmss" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/azure-vmss?ref=<version>"
+
+  common = {
+    resource_group_name = "my-resource-group"
+    location            = "westeurope"
+  }
+
+  tags_from_rg = false
+  tags = {
+    environment = "dev"
+  }
+
+  vmss = {
+    name = "my-vmss"
+    # resource_group_name optional; omit to use common.resource_group_name for tag lookup
+    sku = "Standard_B2s"
+    instances              = 2
+    admin_username         = "azureuser"
+    admin_ssh_key_username = "azureuser"
+    first_public_key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB..."
+
+    disk_storage_account_type = "Standard_LRS"
+    disk_caching              = "ReadWrite"
+
+    upgrade_mode                                                   = "Rolling"
+    rolling_upgrade_policy_max_batch_instance_percent              = 20
+    rolling_upgrade_policy_max_unhealthy_instance_percent          = 20
+    rolling_upgrade_policy_max_unhealthy_upgraded_instance_percent = 20
+    rolling_upgrade_policy_pause_time_between_batches              = "PT5M"
+    rolling_upgrade_policy_cross_zone_upgrades_enabled             = false
+    rolling_upgrade_policy_maximum_surge_instances_enabled         = false
+    rolling_upgrade_policy_prioritize_unhealthy_instances_enabled  = false
+
+    image_publisher = "Canonical"
+    image_offer     = "0001-com-ubuntu-server-jammy"
+    image_sku       = "22_04-lts"
+    image_version   = "latest"
+
+    subnet_name                         = "my-subnet"
+    virtual_network_name                = "my-vnet"
+    virtual_network_resource_group_name = "my-resource-group"
+
+    network_interface_public_ip_adress_public_ip_prefix_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-rg/providers/Microsoft.Network/publicIPPrefixes/my-prefix"
+
+    identity_type = "SystemAssigned"
+
+    cloud_init = "#cloud-config\n"
+    run_script = null
+  }
+}
+```
+
+Use `run_script` with a shell script body when you need the CustomScript extension; it is optional and may be left unset/`null`. By contrast, `cloud_init` must currently be provided as a non-null string, because the module base64-encodes it for `custom_data` in `main.tf` (and related helper/output wiring), so omitting it or setting it to `null` is not supported by the current implementation.
+
+A **longer reference** (Rolling upgrade, `Standard_DS2_v2`, `file()` for cloud-init and script) lives under [`_examples/comprehensive`](https://github.com/prefapp/tfm/tree/main/modules/azure-vmss/_examples/comprehensive) so the generated README stays short.
+
+## File structure
+
+```
+.
+├── CHANGELOG.md
+├── locals.tf
+├── main.tf
+├── outputs.tf
+├── variables.tf
+├── versions.tf
+├── docs
+│   ├── footer.md
+│   └── header.md
+├── _examples
+│   ├── basic
+│   └── comprehensive
+├── README.md
+└── .terraform-docs.yml
+```

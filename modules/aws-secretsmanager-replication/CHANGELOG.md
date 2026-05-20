@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.0.2](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.1...aws-secretsmanager-replication-v1.0.2) (2026-05-20)
+
+
+### Bug Fixes
+
+* add retries for AWSCURRENT reading ([#1264](https://github.com/prefapp/tfm/issues/1264)) ([3730770](https://github.com/prefapp/tfm/commit/373077013843356c29eb381e5631cdf3866ce14c))
+
+## [1.0.1](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.0...aws-secretsmanager-replication-v1.0.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* capture ResourceExistsException and update instead of create ([#1248](https://github.com/prefapp/tfm/issues/1248)) ([db0788f](https://github.com/prefapp/tfm/commit/db0788ffa111b3911665dedcf04e55dd4c76eb07))
+
+## [1.0.0](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.5...aws-secretsmanager-replication-v1.0.0) (2026-04-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* update variables ([#1206](https://github.com/prefapp/tfm/issues/1206))
+
+### Features
+
+* update variables ([#1206](https://github.com/prefapp/tfm/issues/1206)) ([44b8d32](https://github.com/prefapp/tfm/commit/44b8d3204022803d16658708c1143b9583242c78))
+
 ## [0.1.5](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.4...aws-secretsmanager-replication-v0.1.5) (2026-03-24)
 
 
