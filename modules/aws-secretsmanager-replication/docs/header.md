@@ -115,6 +115,12 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the pattern `AWS API Call via CloudTrail`, matching `CreateSecret` and `PutSecretValue` events.
 5. **Lambda Execution:** The rule triggers a Lambda function, which assumes an IAM role to read the secret from the source and write/update it in the destination account.
 
+### Eventual Consistency Note for `CreateSecret`
+
+When the automatic Lambda is triggered by a `CreateSecret` event, AWS Secrets Manager may still be finalizing the first readable secret version. In that short window, `GetSecretValue` can return a `ResourceNotFoundException` indicating that the staging label `AWSCURRENT` is not available yet.
+
+To handle this eventual consistency scenario, the automatic replication flow retries `GetSecretValue` a few times. If `AWSCURRENT` is still unavailable after those retries, the Lambda logs a warning and exits gracefully instead of failing the invocation. A subsequent `PutSecretValue` event or a later manual/full sync run will replicate the secret once the current version is available.
+
 ### Required Resources & Links
 
 - **CloudTrail:** Must be enabled to log management events.
