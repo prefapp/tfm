@@ -18,8 +18,8 @@ variable "config" {
     })
 
     default_branch = object({
-      branch     = string
-      rename     = optional(bool, false)
+      branch = string
+      rename = optional(bool, false)
     })
 
     files = optional(list(object({
@@ -41,7 +41,7 @@ variable "config" {
     }), null)
 
     teams = optional(list(object({
-      teamId     = number      # Use numeric team ID to remain stable if team slugs change
+      teamId     = number # Use numeric team ID to remain stable if team slugs change
       permission = string
     })), [])
 
@@ -60,11 +60,11 @@ variable "config" {
         path   = optional(string, "/")
       }), null)
     }), null)
-    
+
     labels = optional(list(object({
       name        = string
       description = optional(string, null)
-      color       = string   # 6-digit hex without # (e.g. "d73a4a")
+      color       = string # 6-digit hex without # (e.g. "d73a4a")
     })), [])
 
   })
@@ -111,7 +111,7 @@ variable "config" {
   }
 
   validation {
-    condition = length(coalesce(var.config.labels, [])) == length(distinct([for l in coalesce(var.config.labels, []) : trimspace(l.name)]))
+    condition     = length(coalesce(var.config.labels, [])) == length(distinct([for l in coalesce(var.config.labels, []) : trimspace(l.name)]))
     error_message = "Label names must be unique."
   }
 

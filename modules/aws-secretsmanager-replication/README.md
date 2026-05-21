@@ -115,6 +115,12 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the pattern `AWS API Call via CloudTrail`, matching `CreateSecret` and `PutSecretValue` events.
 5. **Lambda Execution:** The rule triggers a Lambda function, which assumes an IAM role to read the secret from the source and write/update it in the destination account.
 
+### Eventual Consistency Note for `CreateSecret`
+
+When the automatic Lambda is triggered by a `CreateSecret` event, AWS Secrets Manager may still be finalizing the first readable secret version. In that short window, `GetSecretValue` can return a `ResourceNotFoundException` indicating that the staging label `AWSCURRENT` is not available yet.
+
+To handle this eventual consistency scenario, the automatic replication flow retries `GetSecretValue` a few times. If `AWSCURRENT` is still unavailable after those retries, the Lambda logs a warning and exits gracefully instead of failing the invocation. A subsequent `PutSecretValue` event or a later manual/full sync run will replicate the secret once the current version is available.
+
 ### Required Resources & Links
 
 - **CloudTrail:** Must be enabled to log management events.
@@ -259,8 +265,8 @@ This allows secrets with the same name from different regions to be copied into 
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.2 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.42.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.8.1 |
 
 ## Modules
 
@@ -298,7 +304,7 @@ This allows secrets with the same name from different regions to be copied into 
 | <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the manual replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to replicate tags from the source secret (used by the code, not Terraform) | `bool` | `true` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Additional environment variables passed to the Lambda | `map(string)` | `{}` | no |
-| <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `true` | no |
+| <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `false` | no |
 | <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input\_existing\_bucket\_policy\_json) | Existing bucket policy JSON to merge with the module-managed bucket policy (for both new and existing buckets). Required when `manage_s3_bucket_policy` is true, `eventbridge_enabled` is true, and `s3_bucket_arn` is set. If you use an existing bucket and want the module to manage its policy, you must provide the current policy JSON to avoid overwriting other statements. | `string` | `null` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `600` | no |
