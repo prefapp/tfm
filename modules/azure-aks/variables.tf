@@ -315,6 +315,6 @@ variable "upgrade_override" {
       )
     )
 
-    error_message = "effective_until is onlye need when force_upgrade_enabled is set to true."
+    error_message = "effective_until is mandatory when force_upgrade_enabled is set to true."
   }
 }
