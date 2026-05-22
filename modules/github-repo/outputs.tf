@@ -53,6 +53,10 @@ output "collaborators" {
   value       = [for c in var.config.collaborators : c.username]
 }
 
+output "pages" {
+  description = "GitHub Pages configuration (if enabled, from github_repository_pages resource)"
+  value       = length(github_repository_pages.this) > 0 ? github_repository_pages.this[0] : null
+}
 output "repository_labels" {
   description = "List of labels created on the repository"
   value       = [for l in var.config.labels : trimspace(l.name)]

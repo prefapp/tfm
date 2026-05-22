@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + labels) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -18,8 +18,8 @@ variable "config" {
     })
 
     default_branch = object({
-      branch     = string
-      rename     = optional(bool, false)
+      branch = string
+      rename = optional(bool, false)
     })
 
     files = optional(list(object({
@@ -41,7 +41,7 @@ variable "config" {
     }), null)
 
     teams = optional(list(object({
-      teamId     = number      # Use numeric team ID to remain stable if team slugs change
+      teamId     = number # Use numeric team ID to remain stable if team slugs change
       permission = string
     })), [])
 
@@ -50,10 +50,21 @@ variable "config" {
       permission = string
     })), [])
 
+    # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)
+    pages = optional(object({
+      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.
+      buildType = optional(string, "legacy")
+      cname     = optional(string, null)
+      source = optional(object({
+        branch = string
+        path   = optional(string, "/")
+      }), null)
+    }), null)
+
     labels = optional(list(object({
       name        = string
       description = optional(string, null)
-      color       = string   # 6-digit hex without # (e.g. "d73a4a")
+      color       = string # 6-digit hex without # (e.g. "d73a4a")
     })), [])
 
   })
@@ -88,6 +99,11 @@ variable "config" {
   }
 
   validation {
+    condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
+    error_message = "pages.buildType must be 'legacy' or 'workflow'."
+  }
+
+  validation {
     condition = alltrue([
       for l in coalesce(var.config.labels, []) : length(trimspace(l.name)) > 0
     ])
@@ -95,7 +111,7 @@ variable "config" {
   }
 
   validation {
-    condition = length(coalesce(var.config.labels, [])) == length(distinct([for l in coalesce(var.config.labels, []) : trimspace(l.name)]))
+    condition     = length(coalesce(var.config.labels, [])) == length(distinct([for l in coalesce(var.config.labels, []) : trimspace(l.name)]))
     error_message = "Label names must be unique."
   }
 

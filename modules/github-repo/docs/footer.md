@@ -19,6 +19,34 @@ module "repository" {
 }
 ```
 
+### Repository with GitHub Pages
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    pages = {
+      buildType = "legacy"
+      cname     = null
+      source = {
+        branch = "main"
+        path   = "/docs"
+      }
+    }
+  }
+}
+```
+
 ### Full-featured repository with labels
 
 ```hcl

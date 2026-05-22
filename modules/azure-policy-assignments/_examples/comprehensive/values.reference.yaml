@@ -1,0 +1,30 @@
+# Illustrative `assignments` list (not applied by Terraform directly).
+assignments:
+  - name: "example-assignment-resource"
+    policy_type: "custom"
+    policy_name: "Example Policy"
+    resource_id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/myvault"
+    scope: "resource"
+
+  - name: "example-assignment-rg-by-id"
+    policy_type: "builtin"
+    policy_name: "Allowed virtual machine size SKUs"
+    resource_group_id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg"
+    scope: "resource group"
+
+  - name: "example-assignment-rg-by-name"
+    policy_type: "builtin"
+    policy_name: "Allowed virtual machine size SKUs"
+    resource_group_name: "rg"
+    scope: "resource group"
+
+  - name: "example-assignment-subscription"
+    policy_type: "builtin"
+    policy_name: "Allowed locations"
+    scope: "subscription"
+
+  - name: "example-assignment-mg"
+    policy_type: "custom"
+    policy_name: "Example Policy"
+    management_group_name: "example-mg"
+    scope: "management group"

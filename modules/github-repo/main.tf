@@ -1,18 +1,17 @@
 # Create the GitHub Repository
 resource "github_repository" "this" {
-  name                 = var.config.repository.name
-  description          = var.config.repository.description
-  visibility           = var.config.repository.visibility
-  topics               = var.config.repository.topics
-  auto_init            = var.config.repository.autoInit
-  archive_on_destroy   = var.config.repository.archiveOnDestroy
-  allow_merge_commit   = var.config.repository.allowMergeCommit
-  allow_squash_merge   = var.config.repository.allowSquashMerge
-  allow_rebase_merge   = var.config.repository.allowRebaseMerge
-  allow_auto_merge     = var.config.repository.allowAutoMerge
+  name                   = var.config.repository.name
+  description            = var.config.repository.description
+  visibility             = var.config.repository.visibility
+  auto_init              = var.config.repository.autoInit
+  archive_on_destroy     = var.config.repository.archiveOnDestroy
+  allow_merge_commit     = var.config.repository.allowMergeCommit
+  allow_squash_merge     = var.config.repository.allowSquashMerge
+  allow_rebase_merge     = var.config.repository.allowRebaseMerge
+  allow_auto_merge       = var.config.repository.allowAutoMerge
   delete_branch_on_merge = var.config.repository.deleteBranchOnMerge
-  allow_update_branch  = var.config.repository.allowUpdateBranch
-  has_issues           = var.config.repository.hasIssues
+  allow_update_branch    = var.config.repository.allowUpdateBranch
+  has_issues             = var.config.repository.hasIssues
 }
 
 # Set the default branch
@@ -62,27 +61,33 @@ resource "github_actions_repository_oidc_subject_claim_customization_template" "
 
 # Add teams to repository using teamId
 resource "github_team_repository" "this" {
-    for_each = { for t in var.config.teams : t.teamId => t }
+  for_each = { for t in var.config.teams : t.teamId => t }
 
-    repository    = github_repository.this.name
-    team_id       = each.value.teamId
-    permission    = each.value.permission
+  repository = github_repository.this.name
+  team_id    = each.value.teamId
+  permission = each.value.permission
 
-    lifecycle {
-      precondition {
-        condition     = length(distinct([for t in var.config.teams : t.teamId])) == length(var.config.teams)
-        error_message = "Each team in var.config.teams must have a unique teamId."
-      }
+  lifecycle {
+    precondition {
+      condition     = length(distinct([for t in var.config.teams : t.teamId])) == length(var.config.teams)
+      error_message = "Each team in var.config.teams must have a unique teamId."
     }
+  }
 }
 
 # Add outside collaborators
 resource "github_repository_collaborator" "this" {
-    for_each = { for c in var.config.collaborators : "${c.permission}-${c.username}" => c }
+  for_each = { for c in var.config.collaborators : "${c.permission}-${c.username}" => c }
 
-    repository    = github_repository.this.name
-        username   = each.value.username
-        permission = each.value.permission
+  repository = github_repository.this.name
+  username   = each.value.username
+  permission = each.value.permission
+}
+
+# Add topics to the repository
+resource "github_repository_topics" "this" {
+  repository = github_repository.this.name
+  topics     = var.config.repository.topics
 }
 
 # GitHub Repository Labels (from var.config.labels)
@@ -93,4 +98,21 @@ resource "github_issue_label" "this" {
   name        = trimspace(each.value.name)
   description = each.value.description
   color       = each.value.color
+}
+
+# GitHub Pages (dedicated resource replacing deprecated block)
+resource "github_repository_pages" "this" {
+  count      = var.config.pages != null ? 1 : 0
+  repository = github_repository.this.name
+  build_type = try(var.config.pages.buildType, "legacy")
+  cname      = try(var.config.pages.cname, null)
+  depends_on = [github_branch_default.this]
+
+  dynamic "source" {
+    for_each = var.config.pages != null && var.config.pages.source != null ? [var.config.pages.source] : []
+    content {
+      branch = source.value.branch
+      path   = coalesce(source.value.path, "/")
+    }
+  }
 }

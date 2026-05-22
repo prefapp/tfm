@@ -1,6 +1,5 @@
-# VARIABLES SECTION
 variable "assignments" {
-  description = "List of objects containing all the variables for the policy assignments."
+  description = "Policy assignments to create; empty list creates no resources. Use `scope` to pick assignment type (see module README)."
   type = list(object({
     name                  = string
     policy_type           = optional(string, "builtin")

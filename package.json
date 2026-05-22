@@ -4,7 +4,7 @@
   "description": "Terraform modules",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node scripts/validate-ia-machinery.mjs"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/prefapp/tfm#readme",
   "workspaces": [
-     "modules/*"
-   ]
+    "modules/*"
+  ]
 }
