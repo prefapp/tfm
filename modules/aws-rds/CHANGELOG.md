@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/aws-rds-v0.1.4...aws-rds-v0.2.0) (2026-05-22)
+
+
+### Features
+
+* add provider version ([#1235](https://github.com/prefapp/tfm/issues/1235)) ([d3796e3](https://github.com/prefapp/tfm/commit/d3796e3ea50600fde7fa81d3a4967fd05ade5ec3))
+
 ## [0.1.4](https://github.com/prefapp/tfm/compare/aws-rds-v0.1.3...aws-rds-v0.1.4) (2026-03-18)
 
 
