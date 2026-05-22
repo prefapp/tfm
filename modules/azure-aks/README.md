@@ -161,6 +161,9 @@ module "azure_aks" {
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | The name of the virtual network where the subnet is located | `any` | n/a | yes |
 | <a name="input_vnet_resource_group_name"></a> [vnet\_resource\_group\_name](#input\_vnet\_resource\_group\_name) | The name of the resource group in which the virtual network is located | `any` | n/a | yes |
 | <a name="input_workload_identity_enabled"></a> [workload\_identity\_enabled](#input\_workload\_identity\_enabled) | Whether to enable Workload Identity for the AKS cluster | `any` | n/a | yes |
+| <a name="input_upgrade_override"></a> [upgrade_override](#input\_upgrade\_override) | Configuration block used to temporarily override AKS upgrade behavior. | <pre>object({<br/>  force_upgrade_enabled = bool<br/>  effective_until       = optional(string)<br/>})</pre> | `null` | no |
+| <a name="input_upgrade_override_force_upgrade_enabled"></a> [upgrade_override.force_upgrade_enabled](#input\_upgrade\_override_force_upgrade_enabled) | Indicates whether the AKS cluster upgrade should be forced. Possible values are `true` or `false`. | `bool` | n/a | yes |
+| <a name="input_upgrade_override_effective_until"></a> [upgrade_override.effective_until](#input\_upgrade\_override_effective_until) | Specifies the date and time until the `upgrade_override` configuration remains active, using RFC3339 UTC format. The value must be within the next 30 days. | `string` | `null` | no |
 
 ## Outputs
 
@@ -180,6 +183,7 @@ module "azure_aks" {
 | <a name="output_outbound_public_ip_id"></a> [outbound\_public\_ip\_id](#output\_outbound\_public\_ip\_id) | The resource ID of the outbound public IP of the AKS cluster when an existing outbound public IP is configured and the outbound type is `loadBalancer`; otherwise `null`. |
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The subnet ID of the AKS cluster. |
 | <a name="output_vnet"></a> [vnet](#output\_vnet) | The virtual network name of the AKS cluster. |
+
 
 ## Examples
 
@@ -234,6 +238,9 @@ auto_scaler_profile_scale_down_utilization_threshold: "0.7"
 auto_scaler_profile_scan_interval: "10s"
 auto_scaler_profile_skip_nodes_with_local_storage: false
 auto_scaler_profile_skip_nodes_with_system_pods: false
+upgrade_override:
+	force_upgrade_enabled: true
+	efective_until: "2026-06-15T00:00:00Z"
 extra_node_pools :
 	- name: "foo"
 		pool_name: "captpre"
