@@ -56,6 +56,9 @@ module "aks" {
   vnet_subnet = {
     id = data.azurerm_subnet.aks_subnet.id
   }
+  upgrade_override = {
+    force_upgrade_enabled = var.upgrade_override.force_upgrade_enabled
+    effective_until       = var.upgrade_override.effective_until
   workload_identity_enabled                            = var.workload_identity_enabled
   net_profile_outbound_type                            = var.net_profile_outbound_type
 }

@@ -295,3 +295,26 @@ variable "create_role_assignment_public_ip" {
   type        = bool
   default     = false
 }
+
+# AKS version upgrade_override
+variable "upgrade_override" {
+  type = object({
+    force_upgrade_enabled = bool
+    effective_until       = optional(string)
+  })
+
+  default = null
+
+  validation {
+    condition = (
+      var.upgrade_override == null ||
+      var.upgrade_override.force_upgrade_enabled == false ||
+      (
+        var.upgrade_override.effective_until != null &&
+        var.upgrade_override.effective_until != ""
+      )
+    )
+
+    error_message = "effective_until debe definirse cuando force_upgrade_enabled es true."
+  }
+}
