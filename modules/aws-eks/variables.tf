@@ -147,6 +147,11 @@ variable "fargate_profiles" {
   }))
 
   default = []
+
+  validation {
+    condition     = length(var.fargate_profiles) == length(distinct([for profile in var.fargate_profiles : profile.name]))
+    error_message = "Each fargate profile name must be unique. Duplicate names are not allowed."
+  }
 }
 
 variable "node_security_group_additional_rules" {

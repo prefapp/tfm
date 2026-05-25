@@ -125,7 +125,7 @@ The module is organized with the following directory and file structure:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.83 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.33 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.35 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.12 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
@@ -134,14 +134,14 @@ The module is organized with the following directory and file structure:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.83 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.33 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 20.33.1 |
-| <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 20.33.1 |
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 21.15.1 |
+| <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 21.15.1 |
 
 ## Resources
 

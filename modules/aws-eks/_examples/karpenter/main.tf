@@ -50,7 +50,7 @@ module "eks_prefapp" {
   enable_irsa = local.values.enable_irsa
 
   access_entries = local.values.access_entries
-  
+
   enable_karpenter = local.values.enable_karpenter
 
   # IAM Resource Names (optional - for multiple clusters support)
