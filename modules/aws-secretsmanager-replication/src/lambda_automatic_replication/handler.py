@@ -52,4 +52,4 @@ def lambda_handler(event, context):
         return
 
     config = load_config()
-    replicate_secret(secret_id, config)
+    replicate_secret(secret_id, config, skip_missing_current=True)

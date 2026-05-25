@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.4.1](https://github.com/prefapp/tfm/compare/github-repo-v0.4.0...github-repo-v0.4.1) (2026-05-20)
+
+
+### Bug Fixes
+
+* remove topics from the creation of the repo to avoid crashes ([#1178](https://github.com/prefapp/tfm/issues/1178)) ([ff75f09](https://github.com/prefapp/tfm/commit/ff75f09a21746665f67714a352b439ef3473e58d))
+
+## [0.4.0](https://github.com/prefapp/tfm/compare/github-repo-v0.3.0...github-repo-v0.4.0) (2026-05-08)
+
+
+### Features
+
+* handle pages depreaction machinery ([#1260](https://github.com/prefapp/tfm/issues/1260)) ([3484643](https://github.com/prefapp/tfm/commit/348464300024fe7ad392af2ca40b7b791c563ca9))
+
+## [0.3.0](https://github.com/prefapp/tfm/compare/github-repo-v0.2.0...github-repo-v0.3.0) (2026-05-07)
+
+
+### Features
+
+* add support for pages ([#1196](https://github.com/prefapp/tfm/issues/1196)) ([4efe491](https://github.com/prefapp/tfm/commit/4efe491b40c60823ac644482385dd1917ef12392))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/github-repo-v0.1.0...github-repo-v0.2.0) (2026-04-30)
 
 

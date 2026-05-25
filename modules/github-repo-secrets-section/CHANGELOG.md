@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/prefapp/tfm/compare/github-repo-secrets-section-v0.1.0...github-repo-secrets-section-v0.1.1) (2026-05-08)
+
+
+### Bug Fixes
+
+* replace deprecated encrypted_value for actions and dependabot secrets ([#1256](https://github.com/prefapp/tfm/issues/1256)) ([#1261](https://github.com/prefapp/tfm/issues/1261)) ([9f08f84](https://github.com/prefapp/tfm/commit/9f08f84b7157c4eaf7c004d82f414eb5ae2c4487))
+
 ## 0.1.0 (2026-03-31)
 
 
