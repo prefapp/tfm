@@ -181,7 +181,6 @@ module "azure_aks" {
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The subnet ID of the AKS cluster. |
 | <a name="output_vnet"></a> [vnet](#output\_vnet) | The virtual network name of the AKS cluster. |
 
-
 ## Examples
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples):
@@ -235,9 +234,6 @@ auto_scaler_profile_scale_down_utilization_threshold: "0.7"
 auto_scaler_profile_scan_interval: "10s"
 auto_scaler_profile_skip_nodes_with_local_storage: false
 auto_scaler_profile_skip_nodes_with_system_pods: false
-upgrade_override:
-	force_upgrade_enabled: true
-	efective_until: "2026-06-15T00:00:00Z"
 extra_node_pools :
 	- name: "foo"
 		pool_name: "captpre"
