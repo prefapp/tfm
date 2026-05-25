@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.0...azure-aks-v2.0.1) (2026-05-25)
+
+
+### Bug Fixes
+
+* add upgrade_override as configurable block ([7935fe1](https://github.com/prefapp/tfm/commit/7935fe14155acc518971d7cb5d7a7cb023f568fb))
+
 ## [2.0.0](https://github.com/prefapp/tfm/compare/azure-aks-v1.9.3...azure-aks-v2.0.0) (2026-03-17)
 
 
