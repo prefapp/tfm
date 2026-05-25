@@ -60,8 +60,8 @@ module "aks" {
     force_upgrade_enabled = var.upgrade_override.force_upgrade_enabled
     effective_until = (
       try(trim(var.upgrade_override.effective_until), "") != "" ? var.upgrade_override.effective_until : null
-    )} : null
-  }
+    )
+  } : null
   workload_identity_enabled                            = var.workload_identity_enabled
   net_profile_outbound_type                            = var.net_profile_outbound_type
 }
