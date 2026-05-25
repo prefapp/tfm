@@ -76,7 +76,7 @@ module "azure_aks" {
 	public_ip_name          = "example-public-ip"
 	upgrade_override:
         force_upgrade_enabled = false
-        effective_until     = "2026-04-16T01:01:38.833866Z"
+        effective_until     = "2026-09-18T14:30:00Z"
 	tags                    = { environment = "dev" }
 }
 ```
