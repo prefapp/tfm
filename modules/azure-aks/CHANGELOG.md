@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.1...azure-aks-v2.0.2) (2026-05-25)
+
+
+### Bug Fixes
+
+* fix azure-aks documentation module ([#1271](https://github.com/prefapp/tfm/issues/1271)) ([26268a8](https://github.com/prefapp/tfm/commit/26268a830987b93e050f88f840e6be02be16fc0c))
+
 ## [2.0.1](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.0...azure-aks-v2.0.1) (2026-05-25)
 
 
