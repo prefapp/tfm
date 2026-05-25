@@ -74,6 +74,9 @@ module "azure_aks" {
 	key_vault_secrets_provider_enabled = true
 	secret_rotation_enabled = false
 	public_ip_name          = "example-public-ip"
+	upgrade_override:
+        force_upgrade_enabled = false
+        effective_until     = "2026-04-16T01:01:38.833866Z"
 	tags                    = { environment = "dev" }
 }
 ```
