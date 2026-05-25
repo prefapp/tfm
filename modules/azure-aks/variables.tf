@@ -302,19 +302,5 @@ variable "upgrade_override" {
     force_upgrade_enabled = bool
     effective_until       = optional(string)
   })
-
   default = null
-
-  validation {
-    condition = (
-      var.upgrade_override == null ||
-      var.upgrade_override.force_upgrade_enabled == false ||
-      (
-        var.upgrade_override.effective_until != null &&
-        var.upgrade_override.effective_until != ""
-      )
-    )
-
-    error_message = "effective_until is mandatory when force_upgrade_enabled is set to true."
-  }
 }
