@@ -1,6 +1,6 @@
 # Specification: Add support for legacy branch protections in github-repo module
 
-**Issue:** [github-repository Add support for legacy branch protections](https://github.com/prefapp/tfm/issues)
+**Issue:** [github-repository Add support for legacy branch protections](https://github.com/prefapp/tfm/issues/1273)
 **Module:** `modules/github-repo`
 
 ## Problem
