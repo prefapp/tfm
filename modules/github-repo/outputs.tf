@@ -64,5 +64,5 @@ output "repository_labels" {
 
 output "branch_protections" {
   description = "List of branch protection patterns managed on the repository"
-  value       = [for bp in coalesce(var.config.branchProtections, []) : bp.branch]
+  value       = keys(github_branch_protection.this)
 }
