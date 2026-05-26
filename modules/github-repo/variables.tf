@@ -141,8 +141,25 @@ variable "config" {
 
   validation {
     condition = alltrue([
-      for bp in coalesce(var.config.branchProtections, []) : length(trimspace(bp.branch)) > 0
+      for bp in coalesce(var.config.branchProtections, []) :
+      bp.branch == trimspace(bp.branch) && length(trimspace(bp.branch)) > 0
     ])
-    error_message = "Every branch protection must have a non-empty 'branch' pattern."
+    error_message = "Every branch protection must have a non-empty 'branch' pattern with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue([
+      for bp in coalesce(var.config.branchProtections, []) : bp.requiredReviewersCount >= 0
+    ])
+    error_message = "branchProtections.requiredReviewersCount must be >= 0."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branchProtections, []) : [
+        for sc in coalesce(bp.statusChecks, []) : length(trimspace(sc)) > 0
+      ]
+    ]))
+    error_message = "branchProtections.statusChecks entries must be non-empty strings."
   }
 }
