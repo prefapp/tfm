@@ -14,7 +14,7 @@
 - [x] 6. Update `docs/footer.md` – add branch protections footer example
 - [x] 7. Regenerate `README.md` with `terraform-docs`
 - [x] 8. Run `terraform fmt` and `terraform validate`
-- [ ] 9. Update changelog / version bump note (will be handled by Release Please automation)
+- [x] 9. Update changelog / version bump note (will be handled by Release Please automation)
 - [x] 10. Final review and create PR
 
 **Status:** Complete
