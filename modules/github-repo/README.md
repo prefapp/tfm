@@ -13,6 +13,7 @@ It is designed for Prefapp's Internal Developer Platform and automated repositor
 - **Full GitHub repository settings**: Merge strategies, visibility, topics, auto-init, archive on destroy, etc.
 - **Default branch management**: Set or rename the default branch. Requires `autoInit = true` (so the initial branch exists) or a pre-existing branch in the repository.
 - **Issue label management**: Create and manage repository issue labels with name, description, and hex color.
+- **Legacy branch protections**: Manage per-branch protection rules (required reviewers, status checks, signed commits, admin enforcement) via the `branchProtections` field.
 - **JSON-native**: Perfect for programmatic generation from external systems.
 - **Full validation**: Enforces required fields and valid values at plan time.
 - **Clean outputs**: Every important value exposed as a separate output.
@@ -66,6 +67,37 @@ module "repository" {
 }
 ```
 
+### With branch protections
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    branchProtections = [
+      {
+        branch                        = "main"
+        statusChecks                  = ["ci/tests", "ci/lint"]
+        requiredReviewersCount        = 1
+        requiredCodeownersReviewers   = false
+        enforceAdmins                 = false
+        requireSignedCommits          = false
+        requireConversationResolution = true
+      },
+    ]
+  }
+}
+```
+
 ### With issue labels
 
 ```hcl
@@ -105,15 +137,15 @@ module "repository" {
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
+|------|---------|
+| <a name="provider_github"></a> [github](#provider\_github) | 6.12.1 |
 
 ## Modules
 
@@ -122,28 +154,31 @@ No modules.
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [github_actions_repository_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_oidc_subject_claim_customization_template) | resource |
 | [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
 | [github_branch_default.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
+| [github_branch_protection.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection) | resource |
 | [github_issue_label.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label) | resource |
 | [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
 | [github_repository_collaborator.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator) | resource |
 | [github_repository_file.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
 | [github_repository_pages.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_pages) | resource |
+| [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
 | [github_team_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_repository) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_config"></a> [config](#input\_config) | GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels) as a single complex object | <pre>object({<br/>    repository = object({<br/>      name                = string<br/>      description         = optional(string, "")<br/>      visibility          = optional(string, "private")<br/>      topics              = optional(list(string), [])<br/>      autoInit            = optional(bool, false)<br/>      archiveOnDestroy    = optional(bool, false)<br/>      allowMergeCommit    = optional(bool, true)<br/>      allowSquashMerge    = optional(bool, true)<br/>      allowRebaseMerge    = optional(bool, true)<br/>      allowAutoMerge      = optional(bool, false)<br/>      deleteBranchOnMerge = optional(bool, false)<br/>      allowUpdateBranch   = optional(bool, false)<br/>      hasIssues           = optional(bool, true)<br/>    })<br/><br/>    default_branch = object({<br/>      branch     = string<br/>      rename     = optional(bool, false)<br/>    })<br/><br/>    files = optional(list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>    })), [])<br/><br/>    variables = optional(list(object({<br/>      variableName = string<br/>      value        = string<br/>    })), [])<br/><br/>    oidc_subject_claim_customization_template = optional(object({<br/>      useDefault       = optional(bool, true)<br/>      includeClaimKeys = optional(list(string), [])<br/>    }), null)<br/><br/>    teams = optional(list(object({<br/>      teamId     = number      # Use numeric team ID to remain stable if team slugs change<br/>      permission = string<br/>    })), [])<br/><br/>    collaborators = optional(list(object({<br/>      username   = string<br/>      permission = string<br/>    })), [])<br/><br/>    # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)<br/>    pages = optional(object({<br/>      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.<br/>      buildType = optional(string, "legacy")<br/>      cname     = optional(string, null)<br/>      source = optional(object({<br/>        branch = string<br/>        path   = optional(string, "/")<br/>      }), null)<br/>    }), null)<br/>    <br/>    labels = optional(list(object({<br/>      name        = string<br/>      description = optional(string, null)<br/>      color       = string   # 6-digit hex without # (e.g. "d73a4a")<br/>    })), [])<br/><br/>  })</pre> | n/a | yes |
+|------|-------------|------|---------|:--------:|
+| <a name="input_config"></a> [config](#input\_config) | GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels + branchProtections) as a single complex object | <pre>object({<br/>    repository = object({<br/>      name                = string<br/>      description         = optional(string, "")<br/>      visibility          = optional(string, "private")<br/>      topics              = optional(list(string), [])<br/>      autoInit            = optional(bool, false)<br/>      archiveOnDestroy    = optional(bool, false)<br/>      allowMergeCommit    = optional(bool, true)<br/>      allowSquashMerge    = optional(bool, true)<br/>      allowRebaseMerge    = optional(bool, true)<br/>      allowAutoMerge      = optional(bool, false)<br/>      deleteBranchOnMerge = optional(bool, false)<br/>      allowUpdateBranch   = optional(bool, false)<br/>      hasIssues           = optional(bool, true)<br/>    })<br/><br/>    default_branch = object({<br/>      branch = string<br/>      rename = optional(bool, false)<br/>    })<br/><br/>    files = optional(list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>    })), [])<br/><br/>    variables = optional(list(object({<br/>      variableName = string<br/>      value        = string<br/>    })), [])<br/><br/>    oidc_subject_claim_customization_template = optional(object({<br/>      useDefault       = optional(bool, true)<br/>      includeClaimKeys = optional(list(string), [])<br/>    }), null)<br/><br/>    teams = optional(list(object({<br/>      teamId     = number # Use numeric team ID to remain stable if team slugs change<br/>      permission = string<br/>    })), [])<br/><br/>    collaborators = optional(list(object({<br/>      username   = string<br/>      permission = string<br/>    })), [])<br/><br/>    # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)<br/>    pages = optional(object({<br/>      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.<br/>      buildType = optional(string, "legacy")<br/>      cname     = optional(string, null)<br/>      source = optional(object({<br/>        branch = string<br/>        path   = optional(string, "/")<br/>      }), null)<br/>    }), null)<br/><br/>    labels = optional(list(object({<br/>      name        = string<br/>      description = optional(string, null)<br/>      color       = string # 6-digit hex without # (e.g. "d73a4a")<br/>    })), [])<br/><br/>    branchProtections = optional(list(object({<br/>      branch                        = string<br/>      statusChecks                  = optional(list(string), [])<br/>      requiredReviewersCount        = optional(number, 0)<br/>      requiredCodeownersReviewers   = optional(bool, false)<br/>      enforceAdmins                 = optional(bool, false)<br/>      requireSignedCommits          = optional(bool, false)<br/>      requireConversationResolution = optional(bool, false)<br/>    })), [])<br/><br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_added_teams"></a> [added\_teams](#output\_added\_teams) | List of teams (by ID) added to the repository |
+| <a name="output_branch_protections"></a> [branch\_protections](#output\_branch\_protections) | List of branch protection patterns managed on the repository |
 | <a name="output_collaborators"></a> [collaborators](#output\_collaborators) | List of collaborators added to the repository |
 | <a name="output_committed_files"></a> [committed\_files](#output\_committed\_files) | List of files that were committed |
 | <a name="output_default_branch"></a> [default\_branch](#output\_default\_branch) | Default branch name |
@@ -202,6 +237,42 @@ module "repository" {
         path   = "/docs"
       }
     }
+  }
+}
+```
+
+### Repository with branch protections
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    branchProtections = [
+      {
+        branch                        = "main"
+        statusChecks                  = ["ci/tests"]
+        requiredReviewersCount        = 2
+        requiredCodeownersReviewers   = true
+        enforceAdmins                 = true
+        requireSignedCommits          = true
+        requireConversationResolution = true
+      },
+      {
+        branch                 = "release/*"
+        requiredReviewersCount = 1
+        enforceAdmins          = false
+      },
+    ]
   }
 }
 ```

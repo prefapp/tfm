@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels + branchProtections) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -67,6 +67,16 @@ variable "config" {
       color       = string # 6-digit hex without # (e.g. "d73a4a")
     })), [])
 
+    branchProtections = optional(list(object({
+      branch                        = string
+      statusChecks                  = optional(list(string), [])
+      requiredReviewersCount        = optional(number, 0)
+      requiredCodeownersReviewers   = optional(bool, false)
+      enforceAdmins                 = optional(bool, false)
+      requireSignedCommits          = optional(bool, false)
+      requireConversationResolution = optional(bool, false)
+    })), [])
+
   })
 
   validation {
@@ -120,5 +130,19 @@ variable "config" {
       for l in coalesce(var.config.labels, []) : can(regex("^([A-Fa-f0-9]{6})$", l.color))
     ])
     error_message = "Label color must be a valid 6-character hex code without '#' (example: d73a4a)."
+  }
+
+  validation {
+    condition = length(coalesce(var.config.branchProtections, [])) == length(distinct([
+      for bp in coalesce(var.config.branchProtections, []) : bp.branch
+    ]))
+    error_message = "Branch protection patterns must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for bp in coalesce(var.config.branchProtections, []) : length(trimspace(bp.branch)) > 0
+    ])
+    error_message = "Every branch protection must have a non-empty 'branch' pattern."
   }
 }
