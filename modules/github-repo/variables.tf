@@ -134,7 +134,7 @@ variable "config" {
 
   validation {
     condition = length(coalesce(var.config.branchProtections, [])) == length(distinct([
-      for bp in coalesce(var.config.branchProtections, []) : bp.branch
+      for bp in coalesce(var.config.branchProtections, []) : trimspace(bp.branch)
     ]))
     error_message = "Branch protection patterns must be unique."
   }
