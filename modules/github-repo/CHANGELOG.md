@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/prefapp/tfm/compare/github-repo-v0.5.0...github-repo-v0.5.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* branch_protections naming ([#1278](https://github.com/prefapp/tfm/issues/1278)) ([7e84f4f](https://github.com/prefapp/tfm/commit/7e84f4fb8a0755c3b2282981e10295c63719e0f8))
+
 ## [0.5.0](https://github.com/prefapp/tfm/compare/github-repo-v0.4.1...github-repo-v0.5.0) (2026-05-26)
 
 
