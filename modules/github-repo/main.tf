@@ -119,7 +119,7 @@ resource "github_repository_pages" "this" {
 
 # Legacy Branch Protections
 resource "github_branch_protection" "this" {
-  for_each = { for bp in coalesce(var.config.branchProtections, []) : trimspace(bp.branch) => bp }
+  for_each = { for bp in coalesce(var.config.branch_protections, []) : trimspace(bp.branch) => bp }
 
   repository_id                   = github_repository.this.node_id
   pattern                         = each.key

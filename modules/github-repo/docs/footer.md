@@ -63,7 +63,7 @@ module "repository" {
       branch = "main"
     }
 
-    branchProtections = [
+    branch_protections = [
       {
         branch                        = "main"
         statusChecks                  = ["ci/tests"]
