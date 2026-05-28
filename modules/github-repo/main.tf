@@ -1,3 +1,8 @@
+# Retrieve the currently authenticated user (typically a GitHub App)
+data "github_user" "current" {
+  username = ""
+}
+
 # Create the GitHub Repository
 resource "github_repository" "this" {
   name                   = var.config.repository.name
@@ -141,6 +146,11 @@ resource "github_branch_protection" "this" {
       require_code_owner_reviews      = each.value.requiredCodeownersReviewers
     }
   }
+
+  pull_request_bypassers = distinct(concat(
+    [data.github_user.current.node_id],
+    coalesce(each.value.pullRequestBypassers, [])
+  ))
 
   depends_on = [github_branch_default.this]
 }
