@@ -39,8 +39,8 @@ For more details, see the [Terraform AKS module documentation](https://registry.
 > The following values are not configurable:
 > - `log_analytics_workspace_enabled`: `false`
 > - `rbac_aad_azure_rbac_enabled`: `true`
+> - `rbac_aad_managed`: `true`
 > - `role_based_access_control_enabled`: `true`
-> - With the upstream AKS module version `11.1.0`, Azure AD / RBAC integration is configured via the `rbac_aad_tenant_id` input. This wrapper module configures `rbac_aad_managed = true` along with Azure RBAC by default.
 
 It is designed to be flexible, production-ready, and easy to integrate into existing infrastructures.
 
@@ -73,6 +73,9 @@ module "azure_aks" {
 	key_vault_secrets_provider_enabled = true
 	secret_rotation_enabled = false
 	public_ip_name          = "example-public-ip"
+	upgrade_override:
+        force_upgrade_enabled = false
+        effective_until     = "2026-09-18T14:30:00Z"
 	tags                    = { environment = "dev" }
 }
 ```
@@ -158,6 +161,7 @@ module "azure_aks" {
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use resource group tags as base for module tags | `bool` | `false` | no |
 | <a name="input_temporary_name_for_rotation"></a> [temporary\_name\_for\_rotation](#input\_temporary\_name\_for\_rotation) | Specifies the name of the temporary node pool used to cycle the default node pool for VM resizing | `string` | `"temppool"` | no |
+| <a name="input_upgrade_override"></a> [upgrade\_override](#input\_upgrade\_override) | AKS version upgrade\_override | <pre>object({<br/>    force_upgrade_enabled = bool<br/>    effective_until       = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | The name of the virtual network where the subnet is located | `any` | n/a | yes |
 | <a name="input_vnet_resource_group_name"></a> [vnet\_resource\_group\_name](#input\_vnet\_resource\_group\_name) | The name of the resource group in which the virtual network is located | `any` | n/a | yes |
 | <a name="input_workload_identity_enabled"></a> [workload\_identity\_enabled](#input\_workload\_identity\_enabled) | Whether to enable Workload Identity for the AKS cluster | `any` | n/a | yes |
@@ -176,8 +180,8 @@ module "azure_aks" {
 | <a name="output_network_profile"></a> [network\_profile](#output\_network\_profile) | The network profile of the AKS cluster. See README for structure. |
 | <a name="output_node_resource_group"></a> [node\_resource\_group](#output\_node\_resource\_group) | The node resource group of the AKS cluster. |
 | <a name="output_oidc_issuer_url"></a> [oidc\_issuer\_url](#output\_oidc\_issuer\_url) | The OIDC issuer URL of the AKS cluster. |
-| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | The outbound public IP address of the AKS cluster when an existing outbound public IP is configured and the outbound type is `loadBalancer`; otherwise `null`. |
-| <a name="output_outbound_public_ip_id"></a> [outbound\_public\_ip\_id](#output\_outbound\_public\_ip\_id) | The resource ID of the outbound public IP of the AKS cluster when an existing outbound public IP is configured and the outbound type is `loadBalancer`; otherwise `null`. |
+| <a name="output_outbound_ip_address"></a> [outbound\_ip\_address](#output\_outbound\_ip\_address) | The outbound IP address of the AKS cluster. |
+| <a name="output_outbound_public_ip_id"></a> [outbound\_public\_ip\_id](#output\_outbound\_public\_ip\_id) | The outbound public IP resource ID of the AKS cluster. |
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The subnet ID of the AKS cluster. |
 | <a name="output_vnet"></a> [vnet](#output\_vnet) | The virtual network name of the AKS cluster. |
 
@@ -234,6 +238,9 @@ auto_scaler_profile_scale_down_utilization_threshold: "0.7"
 auto_scaler_profile_scan_interval: "10s"
 auto_scaler_profile_skip_nodes_with_local_storage: false
 auto_scaler_profile_skip_nodes_with_system_pods: false
+upgrade_override:
+	force_upgrade_enabled: true
+	effective_until: "2026-09-18T14:30:00Z"
 extra_node_pools :
 	- name: "foo"
 		pool_name: "captpre"

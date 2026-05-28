@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.1](https://github.com/prefapp/tfm/compare/github-repo-v0.5.0...github-repo-v0.5.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* branch_protections naming ([#1278](https://github.com/prefapp/tfm/issues/1278)) ([7e84f4f](https://github.com/prefapp/tfm/commit/7e84f4fb8a0755c3b2282981e10295c63719e0f8))
+
+## [0.5.0](https://github.com/prefapp/tfm/compare/github-repo-v0.4.1...github-repo-v0.5.0) (2026-05-26)
+
+
+### Features
+
+* **github-repo:** add branchProtections support for legacy branch protection rules ([#1274](https://github.com/prefapp/tfm/issues/1274)) ([c4362ed](https://github.com/prefapp/tfm/commit/c4362ed7bf598c2d5b92ad28880166af914d3e2c))
+
 ## [0.4.1](https://github.com/prefapp/tfm/compare/github-repo-v0.4.0...github-repo-v0.4.1) (2026-05-20)
 
 

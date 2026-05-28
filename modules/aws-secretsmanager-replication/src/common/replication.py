@@ -148,7 +148,15 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, skip_missing_cu
                 # Si no hay KmsKeyId, AWS managed
                 try:
                     sm_dest.create_secret(**create_args)
-                except sm_dest.exceptions.ResourceExistsException:
+                except Exception as e:
+                    # Check if it's a "secret already exists" error
+                    # AWS may return either ResourceExistsException or InvalidParameterException
+                    error_code = getattr(e, 'response', {}).get('Error', {}).get('Code', '') if hasattr(e, 'response') else ''
+                    error_message = str(e)
+
+                    if not ('ResourceExistsException' in error_code or 'InvalidParameterException' in error_code or 'already exists' in error_message):
+                        raise
+
                     log(
                         "warning",
                         "Destination secret already exists during creation, continuing with update",

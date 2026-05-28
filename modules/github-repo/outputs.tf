@@ -61,3 +61,8 @@ output "repository_labels" {
   description = "List of labels created on the repository"
   value       = [for l in var.config.labels : trimspace(l.name)]
 }
+
+output "branch_protections" {
+  description = "List of branch protection patterns managed on the repository"
+  value       = keys(github_branch_protection.this)
+}

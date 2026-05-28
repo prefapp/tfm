@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.2...aws-secretsmanager-replication-v1.0.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* capture InvalidParameterException on secret creation ([#1276](https://github.com/prefapp/tfm/issues/1276)) ([6d84eec](https://github.com/prefapp/tfm/commit/6d84eec1c118225c1bc2eb4afe2e069335463187))
+
 ## [1.0.2](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.1...aws-secretsmanager-replication-v1.0.2) (2026-05-20)
 
 
