@@ -75,6 +75,7 @@ variable "config" {
       enforceAdmins                 = optional(bool, false)
       requireSignedCommits          = optional(bool, false)
       requireConversationResolution = optional(bool, false)
+      pullRequestBypassers          = optional(list(string), [])
     })), [])
 
   })
