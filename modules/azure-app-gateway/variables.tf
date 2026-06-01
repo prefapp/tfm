@@ -134,7 +134,7 @@ variable "web_application_firewall_policy" {
       selector_match_operator = string
       excluded_rule_set       = optional(list(object({
         type      = string
-        version   = optional(string)
+        version   = string
         rule_group = optional(list(object({
           rule_group_name = string
           excluded_rules  = optional(list(string))
