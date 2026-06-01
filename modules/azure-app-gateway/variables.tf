@@ -128,6 +128,19 @@ variable "web_application_firewall_policy" {
         }))
       }))
     })), [])
+    exclusions = optional(list(object({
+      match_variable          = string
+      selector                = string
+      selector_match_operator = string
+      excluded_rule_set       = optional(list(object({
+        type      = string
+        version   = string
+        rule_group = optional(list(object({
+          rule_group_name = string
+          excluded_rules  = optional(list(string))
+        })), [])
+      })), [])
+    })), [])
     managed_rule_set = list(object({
       type                = optional(string)
       version             = string
