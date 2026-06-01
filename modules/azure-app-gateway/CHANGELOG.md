@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.8.1...azure-app-gateway-v0.9.0) (2026-06-01)
+
+
+### Features
+
+* Add WAF exclision blocks on Azure AppGateway module ([#1284](https://github.com/prefapp/tfm/issues/1284)) ([1a64794](https://github.com/prefapp/tfm/commit/1a647944a09f72cd126d3cdf3cc5427cbc58cb41))
+
 ## [0.8.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.8.0...azure-app-gateway-v0.8.1) (2025-12-03)
 
 
