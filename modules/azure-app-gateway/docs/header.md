@@ -51,7 +51,7 @@ module "app_gateway" {
 
 ## WAF exclusions example
 
-Use this shape inside `web_application_firewall_policy` when you need to preserve or define managed rule exclusions:
+Add this config inside the `web_application_firewall_policy` definition when you need to preserve or define managed rule exclusions:
 
 ```yaml
 web_application_firewall_policy:
