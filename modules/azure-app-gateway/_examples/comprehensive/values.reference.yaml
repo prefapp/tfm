@@ -101,6 +101,18 @@ values:
             match_variables:
               - variable_name: "RequestHeaders"
                 selector: "UserAgent"
+    exclusions:
+      - match_variable: "RequestHeaderNames"
+        selector: "x-company-token"
+        selector_match_operator: "Equals"
+        excluded_rule_set:
+          - type: "OWASP"
+            version: "3.2"
+            rule_group:
+              - rule_group_name: "REQUEST-942-APPLICATION-ATTACK-SQLI"
+                excluded_rules:
+                  - "942100"
+                  - "942110"
     managed_rule_set:
       - type: "OWASP"
         version: "3.2"
