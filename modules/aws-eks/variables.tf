@@ -147,6 +147,11 @@ variable "fargate_profiles" {
   }))
 
   default = []
+
+  validation {
+    condition     = length(var.fargate_profiles) == length(distinct([for profile in var.fargate_profiles : profile.name]))
+    error_message = "Each fargate profile name must be unique. Duplicate names are not allowed."
+  }
 }
 
 variable "node_security_group_additional_rules" {
@@ -242,4 +247,10 @@ variable "enabled_log_types" {
   description = "A list of the desired control plane logs to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
   type        = list(string)
   default     = ["audit", "api", "authenticator"]
+}
+
+variable "create_auto_mode_iam_resources" {
+  description = "Determines whether to create/attach IAM resources for EKS Auto Mode. Useful for when using only custom node pools and not built-in EKS Auto Mode node pools."
+  type        = bool
+  default     = true
 }
