@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.4.0...aws-eks-v1.5.0) (2026-06-05)
+
+
+### Features
+
+* **aws-eks:** update aws provider to version 6 ([#1269](https://github.com/prefapp/tfm/issues/1269)) ([0e73e7c](https://github.com/prefapp/tfm/commit/0e73e7cf039e829865f92c7f9acf9e8d54d963d5))
+
 ## [1.4.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.1...aws-eks-v1.4.0) (2025-12-16)
 
 
