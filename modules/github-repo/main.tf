@@ -142,5 +142,8 @@ resource "github_branch_protection" "this" {
     }
   }
 
-  depends_on = [github_branch_default.this]
+  depends_on = [
+    github_branch_default.this,
+    github_repository_file.this,
+  ]
 }
