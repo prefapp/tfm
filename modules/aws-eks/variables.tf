@@ -248,3 +248,9 @@ variable "enabled_log_types" {
   type        = list(string)
   default     = ["audit", "api", "authenticator"]
 }
+
+variable "create_auto_mode_iam_resources" {
+  description = "Determines whether to create/attach IAM resources for EKS Auto Mode. Useful for when using only custom node pools and not built-in EKS Auto Mode node pools."
+  type        = bool
+  default     = true
+}

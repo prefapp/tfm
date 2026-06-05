@@ -42,4 +42,5 @@ module "eks" {
   create_cloudwatch_log_group            = var.create_cloudwatch_log_group
   cloudwatch_log_group_class             = var.cloudwatch_log_group_class
   enabled_log_types                      = var.create_cloudwatch_log_group ? var.enabled_log_types : []
+  create_auto_mode_iam_resources         = var.create_auto_mode_iam_resources
 }
