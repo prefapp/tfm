@@ -3,7 +3,7 @@ module "karpenter" {
 
 
   source       = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version      = "21.15.1"
+  version      = "21.23.0"
   cluster_name = var.cluster_name
 
   iam_role_name   = format("%s-karpenter-role", var.cluster_name) # Used to generate the instance profile
