@@ -192,7 +192,7 @@ variable "create_kms_key" {
 variable "cluster_encryption_config" {
   description = "Cluster encryption config"
   type        = any
-  default     = {}
+  default     = null
 }
 
 variable "cluster_security_group_id" {

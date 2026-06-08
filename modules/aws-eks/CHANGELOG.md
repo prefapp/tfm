@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.0...aws-eks-v1.5.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* **aws-eks:** modify default value for cluster-encryption-config ([#1288](https://github.com/prefapp/tfm/issues/1288)) ([f2071ad](https://github.com/prefapp/tfm/commit/f2071adcfce564464d1553cc6b1f2b7817dd8d21))
+
 ## [1.5.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.4.0...aws-eks-v1.5.0) (2026-06-05)
 
 
