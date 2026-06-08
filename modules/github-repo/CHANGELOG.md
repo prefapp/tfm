@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/prefapp/tfm/compare/github-repo-v0.5.1...github-repo-v0.5.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* **github-repo:** serialize branch protection after repository file commits ([#1287](https://github.com/prefapp/tfm/issues/1287)) ([6aad55f](https://github.com/prefapp/tfm/commit/6aad55fab47d25e41027c53756a7eba255216968))
+
 ## [0.5.1](https://github.com/prefapp/tfm/compare/github-repo-v0.5.0...github-repo-v0.5.1) (2026-05-27)
 
 
