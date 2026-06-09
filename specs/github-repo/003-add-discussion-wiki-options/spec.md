@@ -33,9 +33,9 @@ Both fields default to `false` for safety — users must explicitly opt-in to en
 
 ## Scope
 
-- Add `hasDiscussions` and `hasWiki` to `variables.tf` inside the `config.repository` object as optional booleans (default `true`)
+- Add `hasDiscussions` and `hasWiki` to `variables.tf` inside the `config.repository` object as optional booleans (default `false`)
 - Add `has_discussions` and `has_wiki` attributes to `github_repository` in `main.tf`
-- Update `docs/header.md` and `docs/footer.md` with usage examples
+- Update `docs/header.md` with a mention of the new options
 - Regenerate `README.md` with `terraform-docs .`
 
 ## Out of Scope
