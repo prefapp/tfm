@@ -16,7 +16,7 @@ variable "config" {
       allowUpdateBranch   = optional(bool, false)
       hasIssues           = optional(bool, true)
       hasDiscussions      = optional(bool, false)
-      hasWiki             = optional(bool, false)
+      hasWiki             = optional(bool, true)
     })
 
     default_branch = object({
