@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.3...aws-secretsmanager-replication-v1.0.4) (2026-06-09)
+
+
+### Bug Fixes
+
+* **aws-secretsmanager-replication:** fix origin region name prefix ([#1293](https://github.com/prefapp/tfm/issues/1293)) ([a40eb4b](https://github.com/prefapp/tfm/commit/a40eb4bf93171a3a092d30c2292d259df12c51cc))
+
 ## [1.0.3](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.2...aws-secretsmanager-replication-v1.0.3) (2026-05-27)
 
 
