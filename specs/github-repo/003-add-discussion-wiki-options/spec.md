@@ -27,9 +27,9 @@ repository:
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `hasDiscussions` | `bool` | `false` | Enable GitHub Discussions on the repository (provider default: `false`) |
-| `hasWiki` | `bool` | `true` | Enable GitHub Wiki on the repository (provider default: `true`) |
+| `hasWiki` | `bool` | `false` | Enable GitHub Wiki on the repository |
 
-`hasDiscussions` defaults to `false` to match the Terraform GitHub provider default. `hasWiki` defaults to `true` to match GitHub's default when creating a repository. Both follow the same optional-boolean pattern as `hasIssues`.
+Both fields default to `false` for safety — users must explicitly opt-in to enable discussions or wiki on the repository.
 
 ## Scope
 
