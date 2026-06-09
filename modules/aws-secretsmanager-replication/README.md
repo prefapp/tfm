@@ -51,7 +51,7 @@ The Lambda determines:
 - from the `secret_id` parameter (manual mode),
 - or from `list_secrets()` (full sync mode).
 
-The **destination secret name is always the same as the source secret name**, simplifying configuration and IAM permissions.
+By default, the **destination secret name is the same as the source secret name**. If `add_region_prefix_to_name = true`, the destination secret name is prefixed with the **source region** (for example, `eu-west-1-mysecret`) to preserve origin traceability.
 
 ### Destination Configuration Format
 
@@ -244,7 +244,7 @@ The destination account must have an IAM role that the replication Lambda can as
 
 Starting from version X.X, the module implements the following improvements for cross-region secret replication:
 
-- Replicated secrets are automatically renamed with the region code as a prefix (e.g., `eu-west-3-mysecret`).
+- When enabled via `add_region_prefix_to_name`, replicated secrets are renamed with the **source region** code as a prefix (e.g., `eu-west-3-mysecret`).
 - Replicated secrets include additional tags:
   - `origin-account`: the source AWS account.
   - `origin-region`: the source AWS region.
@@ -296,7 +296,7 @@ This allows secrets with the same name from different regions to be copied into 
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination secret name will be prefixed with the region (e.g., "us-east-1-mysecret").<br/>If false, the original name is used. Default: false.<br/>This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones. | `bool` | `false` | no |
+| <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination secret name will be prefixed with the source region (e.g., "us-east-1-mysecret").<br/>If false, the original name is used. Default: false.<br/>This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones. | `bool` | `false` | no |
 | <a name="input_allow_auto_create_cloudtrail_bucket"></a> [allow\_auto\_create\_cloudtrail\_bucket](#input\_allow\_auto\_create\_cloudtrail\_bucket) | Fallback mode. If true, and s3\_bucket\_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket. | `bool` | `false` | no |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | n/a | yes |
 | <a name="input_cloudtrail_arn"></a> [cloudtrail\_arn](#input\_cloudtrail\_arn) | (Optional) ARN of an existing CloudTrail. If omitted and eventbridge\_enabled is true, the module creates a dedicated trail. | `string` | `""` | no |
