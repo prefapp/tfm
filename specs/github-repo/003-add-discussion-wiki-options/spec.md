@@ -46,7 +46,7 @@ Both fields default to `false` for safety — users must explicitly opt-in to en
 
 ## Acceptance Criteria
 
-- `hasDiscussions` and `hasWiki` are optional booleans in `config.repository` (default `true`)
+- `hasDiscussions` and `hasWiki` are optional booleans in `config.repository` (default `false`)
 - `github_repository.this` resource sets `has_discussions` and `has_wiki` from the config
 - Module passes `terraform fmt` and `terraform validate`
 - Documentation is updated and README regenerated
