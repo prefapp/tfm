@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/prefapp/tfm/compare/github-repo-v0.5.2...github-repo-v0.6.0) (2026-06-09)
+
+
+### Features
+
+* **github-repo:** add hasWiki repository options ([#1296](https://github.com/prefapp/tfm/issues/1296)) ([3e30112](https://github.com/prefapp/tfm/commit/3e301124db9d5dc6d270adafbca5b97ec08590a1))
+
 ## [0.5.2](https://github.com/prefapp/tfm/compare/github-repo-v0.5.1...github-repo-v0.5.2) (2026-06-08)
 
 
