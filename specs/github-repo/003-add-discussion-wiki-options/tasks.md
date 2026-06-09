@@ -12,6 +12,6 @@
 - [x] 4. Update `docs/header.md` – add mention of new options in key features
 - [x] 5. Regenerate `README.md` with `terraform-docs .`
 - [x] 6. Run `terraform fmt` and `terraform validate`
-- [ ] 7. Final review and create PR
+- [x] 7. Final review and create PR
 
-**Status:** In Progress
+**Status:** Complete
