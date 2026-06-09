@@ -37,7 +37,7 @@ variable "destinations_json" {
 
 variable "add_region_prefix_to_name" {
   description = <<-EOT
-If true, the destination secret name will be prefixed with the region (e.g., "us-east-1-mysecret").
+If true, the destination secret name will be prefixed with the source region (e.g., "us-east-1-mysecret").
 If false, the original name is used. Default: false.
 This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones.
 EOT
