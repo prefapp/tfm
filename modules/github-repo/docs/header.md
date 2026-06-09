@@ -9,7 +9,7 @@ It is designed for Prefapp's Internal Developer Platform and automated repositor
 ## Key Features
 
 - **Single complex object**: All repository and default-branch settings live in one `config` variable.
-- **Full GitHub repository settings**: Merge strategies, visibility, topics, auto-init, archive on destroy, etc.
+- **Full GitHub repository settings**: Merge strategies, visibility, topics, auto-init, archive on destroy, discussions, wiki, etc.
 - **Default branch management**: Set or rename the default branch. Requires `autoInit = true` (so the initial branch exists) or a pre-existing branch in the repository.
 - **Issue label management**: Create and manage repository issue labels with name, description, and hex color.
 - **Legacy branch protections**: Manage per-branch protection rules (required reviewers, status checks, signed commits, admin enforcement) via the `branch_protections` field.
