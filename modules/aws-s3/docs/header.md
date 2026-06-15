@@ -29,7 +29,7 @@ It is flexible, production-ready, and easy to integrate into existing infrastruc
 
 ```hcl
 module "s3" {
-  source = "github.com/prefapp/tfm/modules/aws-s3"
+  source = "git::https://github.com/prefapp/tfm.git//modules/aws-s3?ref=aws-s3-v0.1.1"
   bucket = "my-bucket"
 }
 ```
@@ -38,12 +38,12 @@ module "s3" {
 
 ```hcl
 module "s3" {
-  source               = "github.com/prefapp/tfm/modules/aws-s3"
+  source = "git::https://github.com/prefapp/tfm.git//modules/aws-s3?ref=aws-s3-v0.1.1"
   bucket               = "my-bucket-origin"
   region               = "eu-west-1"
   s3_bucket_versioning = "Enabled"
   s3_replication_destination = {
-    account       = "1122334455"
+    account       = "112233445566"
     bucket_arn    = "arn:aws:s3:::my-bucket-destination"
     storage_class = "STANDARD"
   }
@@ -54,14 +54,14 @@ module "s3" {
 
 ```hcl
 module "s3" {
-  source = "github.com/prefapp/tfm/modules/aws-s3"
+  source = "git::https://github.com/prefapp/tfm.git//modules/aws-s3?ref=aws-s3-v0.1.1"
 
   bucket               = "my-bucket-origin"
   region               = "eu-west-1"
   s3_bucket_versioning = "Enabled"
   s3_replication_source = {
-    account  = "5544332211"
-    role_arn = "arn:aws:iam::5544332211:role/my-bucket-origin-replication"
+    account  = "665544332211"
+    role_arn = "arn:aws:iam::665544332211:role/my-bucket-origin-replication"
   }
 }
 ```
