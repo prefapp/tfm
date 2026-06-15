@@ -25,7 +25,7 @@ module "s3" {
     role_arn = "arn:aws:iam::1122334455:role/o-a-d-replication"
   }
   s3_replication_destination = {
-    account       = "1122334455"
+    account       = "112233445566"
     bucket_arn    = "arn:aws:s3:::o-a-d"
     storage_class = "STANDARD"
   }
