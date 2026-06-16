@@ -8,14 +8,14 @@
 
 ## Tasks
 
-- [ ] 1. Update `variables.tf` — add optional `hasDiscussions` field to `config.repository` (default `true`)
-- [ ] 2. Update `main.tf` — add `has_discussions` attribute to `github_repository.this`
-- [ ] 3. Update `docs/header.md` — mention Discussions in key features list
-- [ ] 4. Regenerate `README.md` with `terraform-docs .`
-- [ ] 5. Run `terraform fmt` and `terraform validate`
+- [x] 1. Update `variables.tf` — add optional `hasDiscussions` field to `config.repository` (default `true`)
+- [x] 2. Update `main.tf` — add `has_discussions` attribute to `github_repository.this`
+- [x] 3. Update `docs/header.md` — mention Discussions in key features list
+- [x] 4. Regenerate `README.md` with `terraform-docs .`
+- [x] 5. Run `terraform fmt` and `terraform validate`
 - [ ] 6. Final review and create PR
 
-**Status:** Pending
+**Status:** Implementation complete — pending PR creation
 
 ---
 

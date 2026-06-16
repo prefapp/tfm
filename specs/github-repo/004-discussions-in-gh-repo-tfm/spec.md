@@ -43,7 +43,7 @@ repository:
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `hasDiscussions` | `bool` | `true` | Enable GitHub Discussions on the repository (matches GitHub API default) |
+| `hasDiscussions` | `bool` | `false` | Enable GitHub Discussions on the repository |
 
 ## Scope
 
