@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/prefapp/tfm/compare/github-repo-v0.6.0...github-repo-v0.7.0) (2026-06-16)
+
+
+### Features
+
+* add support for github discussions ([#1302](https://github.com/prefapp/tfm/issues/1302)) ([0358b73](https://github.com/prefapp/tfm/commit/0358b73f120f2c83941f73168ddc85843a418cfe))
+
 ## [0.6.0](https://github.com/prefapp/tfm/compare/github-repo-v0.5.2...github-repo-v0.6.0) (2026-06-09)
 
 
