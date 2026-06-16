@@ -13,6 +13,7 @@ resource "github_repository" "this" {
   allow_update_branch    = var.config.repository.allowUpdateBranch
   has_issues             = var.config.repository.hasIssues
   has_wiki               = var.config.repository.hasWiki
+  has_discussions        = var.config.repository.hasDiscussions
 }
 
 # Set the default branch
