@@ -15,7 +15,7 @@
 - [x] 5. Run `terraform fmt` and `terraform validate`
 - [ ] 6. Final review and create PR
 
-**Status:** Implementation complete — pending PR creation
+**Status:** PR created — pending final review
 
 ---
 
