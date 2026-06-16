@@ -23,6 +23,27 @@ It is flexible, production-ready, and easy to integrate into existing infrastruc
 - **IAM role** for replication
 - **Support for existing buckets**
 
+## ⚠️ Important: Replication Setup Order
+
+When setting up S3 replication between buckets, follow this order to avoid failures:
+
+1. **Create the destination bucket first** (without any replication source configuration)
+   - Deploy the destination bucket without `s3_replication_source` parameter
+   
+2. **Apply replication source configuration** 
+   - Deploy the source bucket with `s3_replication_destination` configured
+   - This generates the IAM role and policies needed for replication
+   
+3. **Configure destination to accept replication**
+   - Update the destination bucket Terraform with the `s3_replication_source` parameter
+   - Use the role ARN generated from step 2
+   - Apply the full Terraform configuration
+
+This two-stage approach ensures that:
+- IAM roles and policies are properly propagated across accounts
+- The destination bucket exists before the source tries to replicate to it
+- Cross-account permissions are correctly established before replication starts
+
 ## Basic Usage
 
 ### Minimal Example (S3 bucket)
