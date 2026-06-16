@@ -39,7 +39,7 @@ When setting up S3 replication between buckets, follow this order to avoid failu
    - Use the role ARN generated from step 2
    - Apply the full Terraform configuration
 
-This two-stage approach ensures that:
+This three-stage approach ensures that:
 - IAM roles and policies are properly propagated across accounts
 - The destination bucket exists before the source tries to replicate to it
 - Cross-account permissions are correctly established before replication starts
