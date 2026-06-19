@@ -1,7 +1,7 @@
 # lambda_manual_replication/handler.py
 from replication import replicate_parameter
 from config import load_config
-from utils import log
+from utils import log, assume_role
 import boto3
 import json
 
@@ -61,6 +61,16 @@ def lambda_handler(event, context):
         paginator = source_ssm.get_paginator("describe_parameters")
         page_iterator = paginator.paginate()
 
+        # Cache destination clients per (role_arn, region) to avoid repeated
+        # STS AssumeRole calls for every replicated parameter.
+        cached_ssm_clients = {}
+
+        def get_cached_ssm_client(role_arn, region_name):
+            cache_key = (role_arn, region_name)
+            if cache_key not in cached_ssm_clients:
+                cached_ssm_clients[cache_key] = assume_role(role_arn, region_name)
+            return cached_ssm_clients[cache_key]
+
         replicated_count = 0
         error_count = 0
 
@@ -69,7 +79,12 @@ def lambda_handler(event, context):
                 try:
                     param_name = param_meta["Name"]
                     log("info", "Replicating parameter in full sync", parameter_name=param_name)
-                    replicate_parameter(param_name, config, skip_missing=True)
+                    replicate_parameter(
+                        param_name,
+                        config,
+                        get_ssm_client=get_cached_ssm_client,
+                        skip_missing=True,
+                    )
                     replicated_count += 1
                 except Exception as e:
                     log("error", "Failed to replicate parameter in full sync", parameter_name=param_name, error=str(e))
