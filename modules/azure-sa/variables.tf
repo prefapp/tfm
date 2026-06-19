@@ -69,6 +69,11 @@ variable "storage_account" {
         days = optional(number)
       }))
     }))
+    share_properties = optional(object({
+      retention_policy = optional(object({
+        days = optional(number)
+      }))
+    }))
   })
 
   # Validation block for `account_kind`
@@ -133,6 +138,20 @@ variable "storage_account" {
       )
     )
     error_message = "restore_policy.days must be between 1 and 365, and less than delete_retention_policy.days. Additionally, delete_retention_policy must be set, and versioning_enabled and change_feed_enabled must be true."
+  }
+
+  # Validation block for `share_properties.retention_policy`
+  validation {
+    condition = (
+      var.storage_account.share_properties == null ? true : (
+        var.storage_account.share_properties.retention_policy == null ? true : (
+          var.storage_account.share_properties.retention_policy.days != null &&
+          var.storage_account.share_properties.retention_policy.days >= 1 &&
+          var.storage_account.share_properties.retention_policy.days <= 365
+        )
+      )
+    )
+    error_message = "share_properties.retention_policy.days must be between 1 and 365."
   }
 }
 
