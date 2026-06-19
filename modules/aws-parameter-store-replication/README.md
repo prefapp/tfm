@@ -1,5 +1,3 @@
-# AWS Systems Manager Parameter Store Replication Module
-
 <!-- BEGIN_TF_DOCS -->
 # **AWS Systems Manager Parameter Store Replication Terraform Module**
 
