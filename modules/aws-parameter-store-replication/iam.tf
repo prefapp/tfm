@@ -91,13 +91,6 @@ resource "aws_iam_role_policy" "lambda_ssm_read" {
           "ssm:ListTagsForResource"
         ]
         Resource = "arn:aws:ssm:*:${data.aws_caller_identity.current.account_id}:parameter/*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ssm:DescribeParameters"
-        ]
-        Resource = "*"
       }
     ]
   })
