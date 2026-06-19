@@ -96,7 +96,7 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
             else:
                 dest_param_name = parameter_name
 
-            # KMS key: usar la de la región si está, si no None (AWS managed)
+            # KMS key: use region-specific key when provided, otherwise None (AWS managed key)
             kms_key_id = getattr(region_cfg, "kms_key_arn", None)
             if not kms_key_id or not isinstance(kms_key_id, str) or not kms_key_id.strip():
                 kms_key_id = None
