@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.2...azure-sa-v0.3.3) (2026-06-19)
+
+
+### Bug Fixes
+
+* enable share properties ([#1305](https://github.com/prefapp/tfm/issues/1305)) ([6f7044a](https://github.com/prefapp/tfm/commit/6f7044ae0a1a6e624480c689b52b935e7035cf45))
+
 ## [0.3.2](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.1...azure-sa-v0.3.2) (2025-11-26)
 
 
