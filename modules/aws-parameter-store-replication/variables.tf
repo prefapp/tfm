@@ -17,6 +17,11 @@ variable "prefix" {
 variable "destinations_json" {
   description = "JSON describing accounts, regions and KMS keys for replication"
   type        = string
+
+  validation {
+    condition     = can(jsondecode(var.destinations_json))
+    error_message = "destinations_json must be valid JSON. Received: ${var.destinations_json}"
+  }
 }
 
 variable "add_region_prefix_to_name" {

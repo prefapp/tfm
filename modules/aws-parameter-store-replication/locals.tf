@@ -1,6 +1,6 @@
 locals {
-  # Parse destinations JSON
-  destinations = try(jsondecode(var.destinations_json), {})
+  # Parse destinations JSON (validation in variables.tf ensures it's valid)
+  destinations = jsondecode(var.destinations_json)
 
   # Lambda naming
   lambda_automatic_function_name = "${var.prefix}-${var.name}-automatic"
