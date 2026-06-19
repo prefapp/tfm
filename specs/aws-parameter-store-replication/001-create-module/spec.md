@@ -28,13 +28,15 @@ Provide a production-ready Terraform module that:
 - CloudTrail logging (optional)
 - Module documentation via `docs/header.md` and examples
 - Generate README.md using `terraform-docs`
-- Module is compatible with GitHub Automated Provisioning Systems (ghaps) constraints
+- Current module interface remains non-ghaps (`name`, `prefix`, `destinations_json`, etc. as top-level inputs)
 
 ## Out of Scope
 
 - Any `CHANGELOG.md` modification (handled by Release Please).
 - Parameter Store advanced features beyond String/StringList/SecureString types.
 - Bidirectional sync or failback orchestration.
+- Refactoring to ghaps contract (`variable "config"` as the single top-level input from `terraform.tfvars.json`).
+- ghaps-specific import/delete behavior documentation, which is only applicable after the `config`-pattern refactor.
 
 ## Acceptance Criteria
 
@@ -45,3 +47,4 @@ Provide a production-ready Terraform module that:
 - README.md is generated via `terraform-docs`
 - `terraform fmt` and `terraform validate` pass for the module
 - Module follows repository conventions (CONTRIBUTING.md, CONSTITUTION.md)
+- Module is explicitly documented as non-ghaps in its current interface; no ghaps-compatibility claim is made without `config`-pattern refactor.
