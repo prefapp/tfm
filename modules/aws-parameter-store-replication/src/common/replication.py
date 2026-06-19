@@ -130,8 +130,13 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 "Value": param_value,
                 "Type": param_type,
                 "Overwrite": True,
-                "Tags": [{"Key": k, "Value": v} for k, v in combined_tags.items()]
             }
+
+            # put_parameter does not support setting Tags reliably when updating
+            # existing parameters with Overwrite=true. Include tags only on create,
+            # and sync tags separately for updates.
+            if not param_exists:
+                put_args["Tags"] = [{"Key": k, "Value": v} for k, v in combined_tags.items()]
 
             # Add KMS key if specified and parameter type is SecureString
             if param_type == "SecureString" and kms_key_id is not None:
@@ -144,6 +149,15 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                     log("info", "Creating parameter in destination", account_id=account_id, region=region_name)
 
                 ssm_dest.put_parameter(**put_args)
+
+                # Keep tags in sync for updates using the dedicated tagging API.
+                if param_exists and combined_tags:
+                    ssm_dest.add_tags_to_resource(
+                        ResourceType="Parameter",
+                        ResourceId=dest_param_name,
+                        Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
+                    )
+
                 log("info", "Successfully replicated parameter", account_id=account_id, region=region_name)
 
             except Exception as e:
