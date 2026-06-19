@@ -6,7 +6,7 @@ from typing import Dict
 
 @dataclass
 class RegionConfig:
-    kms_key_arn: str
+    kms_key_arn: str | None
 
 
 @dataclass
