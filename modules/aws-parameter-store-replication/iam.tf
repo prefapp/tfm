@@ -191,8 +191,8 @@ resource "aws_iam_role_policy" "lambda_kms" {
         ]
         Resource = "*"
         Condition = {
-          StringEquals = {
-            "kms:ViaService" = [for region_config in local.all_account_regions : "ssm.${region_config.region}.amazonaws.com"]
+          StringLike = {
+            "kms:ViaService" = "ssm.*.amazonaws.com"
           }
         }
       }
@@ -217,8 +217,8 @@ resource "aws_iam_role_policy" "lambda_manual_kms" {
         ]
         Resource = "*"
         Condition = {
-          StringEquals = {
-            "kms:ViaService" = [for region_config in local.all_account_regions : "ssm.${region_config.region}.amazonaws.com"]
+          StringLike = {
+            "kms:ViaService" = "ssm.*.amazonaws.com"
           }
         }
       }
