@@ -36,6 +36,19 @@ def lambda_handler(event, context):
     else:
         enable_full_sync = bool(event_enable_full_sync)
 
+    # Guardrail: refuse to run full sync if not enabled in config, even if event requests it
+    if enable_full_sync and not config.enable_full_sync:
+        log(
+            "error",
+            "Full sync requested but ENABLE_FULL_SYNC is not enabled. Refusing to run.",
+        )
+        return {
+            "statusCode": 403,
+            "body": json.dumps({
+                "message": "Full sync is not enabled for this Lambda. Set enable_full_sync = true in Terraform to allow this operation."
+            })
+        }
+
     if enable_full_sync:
         # Full account sync: list all parameters and replicate each one
         log("info", "Starting full sync of all parameters")
