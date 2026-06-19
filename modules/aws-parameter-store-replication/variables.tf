@@ -20,7 +20,7 @@ variable "destinations_json" {
 
   validation {
     condition     = can(jsondecode(var.destinations_json))
-    error_message = "destinations_json must be valid JSON. Received: ${var.destinations_json}"
+    error_message = "destinations_json must be valid JSON."
   }
 }
 
