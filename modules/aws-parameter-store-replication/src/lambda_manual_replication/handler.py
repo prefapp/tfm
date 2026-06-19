@@ -41,6 +41,9 @@ def lambda_handler(event, context):
         log("info", "Starting full sync of all parameters")
 
         source_ssm = boto3.client("ssm", region_name=config.source_region)
+        # Reuse the same source client for per-parameter replication to avoid
+        # creating a new boto3 SSM client on every iteration.
+        config.source_ssm = source_ssm
 
         paginator = source_ssm.get_paginator("describe_parameters")
         page_iterator = paginator.paginate()
