@@ -1,0 +1,80 @@
+variable "enable_full_sync" {
+  description = "If true, the manual replication Lambda is granted ssm:DescribeParameters on all resources to support full-account sync. Set to false for strict least-privilege."
+  type        = bool
+  default     = false
+}
+
+variable "name" {
+  description = "Base name for the Lambda and associated resources"
+  type        = string
+}
+
+variable "prefix" {
+  description = "Prefix to use for naming resources."
+  type        = string
+}
+
+variable "destinations_json" {
+  description = "JSON describing accounts, regions and KMS keys for replication"
+  type        = string
+}
+
+variable "add_region_prefix_to_name" {
+  description = <<-EOT
+If true, the destination parameter name will be prefixed with the region (e.g., "us-east-1-myparameter").
+If false, the original name is used. Default: false.
+This helps avoid collisions if you replicate parameters with the same name from multiple regions.
+EOT
+  type        = bool
+  default     = false
+}
+
+variable "allowed_assume_roles" {
+  description = "List of IAM roles the Lambda can assume for cross-account replication"
+  type        = list(string)
+  default     = []
+}
+
+variable "environment_variables" {
+  description = "Additional environment variables passed to the Lambda"
+  type        = map(string)
+  default     = {}
+}
+
+variable "enable_tag_replication" {
+  description = "Whether to replicate tags from the source parameter (used by the code, not Terraform)"
+  type        = bool
+  default     = true
+}
+
+variable "eventbridge_enabled" {
+  description = "Whether to create the EventBridge rule that triggers the Lambda"
+  type        = bool
+  default     = false
+}
+
+
+
+variable "lambda_timeout" {
+  description = "Lambda timeout in seconds"
+  type        = number
+  default     = 600
+}
+
+variable "lambda_memory" {
+  description = "Lambda memory in MB"
+  type        = number
+  default     = 128
+}
+
+variable "tags" {
+  description = "Tags applied to all resources created by this module"
+  type        = map(string)
+  default     = {}
+}
+
+variable "manual_replication_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to deploy the manual parameter sync Lambda"
+}
