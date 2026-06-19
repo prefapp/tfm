@@ -54,7 +54,7 @@ You can specify as many destination accounts and regions as needed. Each region 
 
 ### KMS Key Selection
 
-You can optionally specify a custom KMS key for each destination region in the `destinations_json` variable using the `kms_key_arn` field. If the value is ommited, the AWS managed key will be used.
+You can optionally specify a custom KMS key for each destination region in the `destinations_json` variable using the `kms_key_arn` field. If the value is omitted, the AWS managed key will be used.
 
 ```json
 {
@@ -174,7 +174,7 @@ module "parameter_replication_eventbridge" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.50 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.51.0 |
 
 ## Modules
 

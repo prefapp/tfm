@@ -53,7 +53,7 @@ You can specify as many destination accounts and regions as needed. Each region 
 
 ### KMS Key Selection
 
-You can optionally specify a custom KMS key for each destination region in the `destinations_json` variable using the `kms_key_arn` field. If the value is ommited, the AWS managed key will be used.
+You can optionally specify a custom KMS key for each destination region in the `destinations_json` variable using the `kms_key_arn` field. If the value is omitted, the AWS managed key will be used.
 
 ```json
 {
