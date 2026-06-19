@@ -150,13 +150,36 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
 
                 ssm_dest.put_parameter(**put_args)
 
-                # Keep tags in sync for updates using the dedicated tagging API.
-                if param_exists and combined_tags:
-                    ssm_dest.add_tags_to_resource(
-                        ResourceType="Parameter",
-                        ResourceId=dest_param_name,
-                        Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
-                    )
+                # Sync tags for updates: remove stale tags, then add/update desired tags
+                if param_exists:
+                    try:
+                        # Get current destination tags
+                        dest_tags_response = ssm_dest.list_tags_for_resource(
+                            ResourceType="Parameter",
+                            ResourceId=dest_param_name
+                        )
+                        dest_tags = {tag["Key"]: tag["Value"] for tag in dest_tags_response.get("TagList", [])}
+
+                        # Remove stale tags (present on destination but not in combined_tags)
+                        stale_tags = set(dest_tags.keys()) - set(combined_tags.keys())
+                        if stale_tags:
+                            log("info", "Removing stale tags from parameter", account_id=account_id, region=region_name, stale_tags=list(stale_tags))
+                            ssm_dest.remove_tags_from_resource(
+                                ResourceType="Parameter",
+                                ResourceId=dest_param_name,
+                                TagKeys=list(stale_tags),
+                            )
+
+                        # Add/update desired tags
+                        if combined_tags:
+                            ssm_dest.add_tags_to_resource(
+                                ResourceType="Parameter",
+                                ResourceId=dest_param_name,
+                                Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
+                            )
+                    except Exception as e:
+                        log("warning", "Failed to sync tags for parameter", account_id=account_id, region=region_name, error=str(e))
+                        # Continue replication even if tag sync fails
 
                 log("info", "Successfully replicated parameter", account_id=account_id, region=region_name)
 
