@@ -33,48 +33,6 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 # IAM Policies
 ###############################################################################
 
-# CloudWatch Logs policy for Lambda
-resource "aws_iam_role_policy" "lambda_logs" {
-  name = "${local.lambda_role_name}-logs"
-  role = aws_iam_role.lambda_automatic_replication.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Resource = "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.lambda_automatic_function_name}*"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy" "lambda_manual_logs" {
-  count = var.manual_replication_enabled ? 1 : 0
-  name  = "${local.lambda_manual_role_name}-logs"
-  role  = aws_iam_role.lambda_manual_replication[0].id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Resource = "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.lambda_manual_function_name}*"
-      }
-    ]
-  })
-}
-
 # Policy for reading parameters from current account
 resource "aws_iam_role_policy" "lambda_ssm_read" {
   name = "${local.lambda_role_name}-ssm-read"
