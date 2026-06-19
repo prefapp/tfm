@@ -150,7 +150,9 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
 
                 ssm_dest.put_parameter(**put_args)
 
-                # Sync tags for updates: remove stale tags, then add/update desired tags
+                # Sync tags for updates:
+                # - Always add/update desired tags (replication metadata + optional source tags)
+                # - Only remove stale destination tags when full tag replication is enabled
                 if param_exists:
                     try:
                         # Get current destination tags
@@ -160,15 +162,17 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                         )
                         dest_tags = {tag["Key"]: tag["Value"] for tag in dest_tags_response.get("TagList", [])}
 
-                        # Remove stale tags (present on destination but not in combined_tags)
-                        stale_tags = set(dest_tags.keys()) - set(combined_tags.keys())
-                        if stale_tags:
-                            log("info", "Removing stale tags from parameter", account_id=account_id, region=region_name, stale_tags=list(stale_tags))
-                            ssm_dest.remove_tags_from_resource(
-                                ResourceType="Parameter",
-                                ResourceId=dest_param_name,
-                                TagKeys=list(stale_tags),
-                            )
+                        # Prune stale tags only when source tag replication is enabled.
+                        # If disabled, keep user-managed destination tags intact.
+                        if config.enable_tag_replication:
+                            stale_tags = set(dest_tags.keys()) - set(combined_tags.keys())
+                            if stale_tags:
+                                log("info", "Removing stale tags from parameter", account_id=account_id, region=region_name, stale_tags=list(stale_tags))
+                                ssm_dest.remove_tags_from_resource(
+                                    ResourceType="Parameter",
+                                    ResourceId=dest_param_name,
+                                    TagKeys=list(stale_tags),
+                                )
 
                         # Add/update desired tags
                         if combined_tags:
