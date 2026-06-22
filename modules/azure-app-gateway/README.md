@@ -10,7 +10,7 @@ Use it when you already have a **resource group**, **delegated subnet**, and **u
 ## Key features
 
 - **Application Gateway**: `azurerm_application_gateway` with SKU/autoscale, identity, frontend ports/IP, backend pools and HTTP settings, health probes, HTTP listeners, redirect and request routing rules, SSL certificates from Key Vault, gateway-level **SSL policy**, optional **SSL profiles** and **trusted client certificates**.
-- **WAF**: `azurerm_web_application_firewall_policy` linked through `firewall_policy_id`, driven by `web_application_firewall_policy` (managed rule sets, optional custom rules, policy settings).
+- **WAF**: `azurerm_web_application_firewall_policy` linked through `firewall_policy_id`, driven by `web_application_firewall_policy` (managed rule sets, optional custom rules, policy settings, and `exclusions`). See provider reference for exclusions: <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/web_application_firewall_policy#exclusion-1>.
 - **Public IP**: `azurerm_public_ip` from `public_ip` input.
 - **Networking & identity**: Data sources for **resource group**, **subnet**, and **user-assigned identity** referenced by name and resource group.
 - **Tags**: Optional merge of resource group tags via `tags_from_rg` plus explicit `tags` (see `locals_rg.tf`).
@@ -49,6 +49,25 @@ module "app_gateway" {
   application_gateway             = { /* see example YAML */ }
 }
 ```
+
+## WAF exclusions example
+
+Add this config to the `web_application_firewall_policy` block when you need to define managed rule exclusions:
+
+```yaml
+web_application_firewall_policy:
+  name: "example-waf-policy"
+  exclusions:
+    - match_variable: "RequestCookieNames"
+      selector: "ph_phc_"
+      selector_match_operator: "StartsWith"
+    - match_variable: "RequestCookieNames"
+      selector: "mp_"
+      selector_match_operator: "StartsWith"
+```
+
+For advanced exclusion targeting (`excluded_rule_set` and `rule_group`), see the provider docs:
+<https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/web_application_firewall_policy#exclusion-1>
 
 ## File structure
 

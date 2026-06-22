@@ -91,6 +91,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, skip_missing_cu
 
 
     add_region_prefix = getattr(config, "add_region_prefix_to_name", False)
+    source_region = str(config.source_region)
 
     for account_id, dest in config.destinations.items():
         log("info", "Processing destination account", account_id=account_id)
@@ -98,9 +99,9 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, skip_missing_cu
         for region_name, region_cfg in dest.regions.items():
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
-            # Destination secret name: region-prefixed or original, max 512 chars
+            # Destination secret name: source-region-prefixed or original, max 512 chars
             if add_region_prefix:
-                raw_dest_name = f"{region_name}-{secret_metadata['Name']}"
+                raw_dest_name = f"{source_region}-{secret_metadata['Name']}"
             else:
                 raw_dest_name = secret_metadata['Name']
             dest_name = raw_dest_name[:512]
@@ -114,7 +115,7 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, skip_missing_cu
             # Build replication tags
             replication_tags = [
                 {"Key": "origin-account", "Value": str(config.source_account)},
-                {"Key": "origin-region", "Value": str(region_name)},
+                {"Key": "origin-region", "Value": source_region},
                 {"Key": "latest-version", "Value": str(secret_response.get("VersionId", ""))}
             ]
             # Merge original tags if enabled, avoiding duplicates
@@ -148,7 +149,15 @@ def replicate_secret(secret_id: str, config, get_sm_client=None, skip_missing_cu
                 # Si no hay KmsKeyId, AWS managed
                 try:
                     sm_dest.create_secret(**create_args)
-                except sm_dest.exceptions.ResourceExistsException:
+                except Exception as e:
+                    # Check if it's a "secret already exists" error
+                    # AWS may return either ResourceExistsException or InvalidParameterException
+                    error_code = getattr(e, 'response', {}).get('Error', {}).get('Code', '') if hasattr(e, 'response') else ''
+                    error_message = str(e)
+
+                    if not ('ResourceExistsException' in error_code or 'InvalidParameterException' in error_code or 'already exists' in error_message):
+                        raise
+
                     log(
                         "warning",
                         "Destination secret already exists during creation, continuing with update",

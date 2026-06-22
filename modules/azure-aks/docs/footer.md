@@ -53,6 +53,9 @@ auto_scaler_profile_scale_down_utilization_threshold: "0.7"
 auto_scaler_profile_scan_interval: "10s"
 auto_scaler_profile_skip_nodes_with_local_storage: false
 auto_scaler_profile_skip_nodes_with_system_pods: false
+upgrade_override:
+	force_upgrade_enabled: true
+	effective_until: "2026-09-18T14:30:00Z"
 extra_node_pools :
 	- name: "foo"
 		pool_name: "captpre"

@@ -47,6 +47,42 @@ module "repository" {
 }
 ```
 
+### Repository with branch protections
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    branch_protections = [
+      {
+        branch                        = "main"
+        statusChecks                  = ["ci/tests"]
+        requiredReviewersCount        = 2
+        requiredCodeownersReviewers   = true
+        enforceAdmins                 = true
+        requireSignedCommits          = true
+        requireConversationResolution = true
+      },
+      {
+        branch                 = "release/*"
+        requiredReviewersCount = 1
+        enforceAdmins          = false
+      },
+    ]
+  }
+}
+```
+
 ### Full-featured repository with labels
 
 ```hcl

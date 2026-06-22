@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels) as a single complex object"
+  description = "GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels + branch_protections) as a single complex object"
   type = object({
     repository = object({
       name                = string
@@ -15,6 +15,8 @@ variable "config" {
       deleteBranchOnMerge = optional(bool, false)
       allowUpdateBranch   = optional(bool, false)
       hasIssues           = optional(bool, true)
+      hasWiki             = optional(bool, true)
+      hasDiscussions      = optional(bool, false)
     })
 
     default_branch = object({
@@ -65,6 +67,16 @@ variable "config" {
       name        = string
       description = optional(string, null)
       color       = string # 6-digit hex without # (e.g. "d73a4a")
+    })), [])
+
+    branch_protections = optional(list(object({
+      branch                        = string
+      statusChecks                  = optional(list(string), [])
+      requiredReviewersCount        = optional(number, 0)
+      requiredCodeownersReviewers   = optional(bool, false)
+      enforceAdmins                 = optional(bool, false)
+      requireSignedCommits          = optional(bool, false)
+      requireConversationResolution = optional(bool, false)
     })), [])
 
   })
@@ -120,5 +132,36 @@ variable "config" {
       for l in coalesce(var.config.labels, []) : can(regex("^([A-Fa-f0-9]{6})$", l.color))
     ])
     error_message = "Label color must be a valid 6-character hex code without '#' (example: d73a4a)."
+  }
+
+  validation {
+    condition = length(coalesce(var.config.branch_protections, [])) == length(distinct([
+      for bp in coalesce(var.config.branch_protections, []) : trimspace(bp.branch)
+    ]))
+    error_message = "Branch protection patterns must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for bp in coalesce(var.config.branch_protections, []) :
+      bp.branch == trimspace(bp.branch) && length(trimspace(bp.branch)) > 0
+    ])
+    error_message = "Every branch protection must have a non-empty 'branch' pattern with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue([
+      for bp in coalesce(var.config.branch_protections, []) : bp.requiredReviewersCount >= 0
+    ])
+    error_message = "branch_protections.requiredReviewersCount must be >= 0."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for sc in coalesce(bp.statusChecks, []) : length(trimspace(sc)) > 0
+      ]
+    ]))
+    error_message = "branch_protections.statusChecks entries must be non-empty strings."
   }
 }

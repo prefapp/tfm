@@ -12,6 +12,8 @@ resource "github_repository" "this" {
   delete_branch_on_merge = var.config.repository.deleteBranchOnMerge
   allow_update_branch    = var.config.repository.allowUpdateBranch
   has_issues             = var.config.repository.hasIssues
+  has_wiki               = var.config.repository.hasWiki
+  has_discussions        = var.config.repository.hasDiscussions
 }
 
 # Set the default branch
@@ -115,4 +117,35 @@ resource "github_repository_pages" "this" {
       path   = coalesce(source.value.path, "/")
     }
   }
+}
+
+# Legacy Branch Protections
+resource "github_branch_protection" "this" {
+  for_each = { for bp in coalesce(var.config.branch_protections, []) : trimspace(bp.branch) => bp }
+
+  repository_id                   = github_repository.this.node_id
+  pattern                         = each.key
+  enforce_admins                  = each.value.enforceAdmins
+  require_signed_commits          = each.value.requireSignedCommits
+  require_conversation_resolution = each.value.requireConversationResolution
+
+  dynamic "required_status_checks" {
+    for_each = length(coalesce(each.value.statusChecks, [])) > 0 ? [each.value.statusChecks] : []
+    content {
+      contexts = required_status_checks.value
+    }
+  }
+
+  dynamic "required_pull_request_reviews" {
+    for_each = (each.value.requiredReviewersCount > 0 || each.value.requiredCodeownersReviewers) ? [1] : []
+    content {
+      required_approving_review_count = each.value.requiredReviewersCount
+      require_code_owner_reviews      = each.value.requiredCodeownersReviewers
+    }
+  }
+
+  depends_on = [
+    github_branch_default.this,
+    github_repository_file.this,
+  ]
 }
