@@ -12,7 +12,6 @@ locals {
   lambda_automatic_function_name      = length(local.lambda_automatic_function_name_base) <= 64 ? local.lambda_automatic_function_name_base : "${substr(local.lambda_automatic_function_name_base, 0, 55)}-${local.lambda_automatic_function_name_hash}"
   lambda_manual_function_name         = length(local.lambda_manual_function_name_base) <= 64 ? local.lambda_manual_function_name_base : "${substr(local.lambda_manual_function_name_base, 0, 55)}-${local.lambda_manual_function_name_hash}"
   lambda_name                    = local.lambda_automatic_function_name
-  lambda_manual_name             = local.lambda_manual_function_name
   lambda_role_name_base          = "${local.naming_base}-replication-role"
   lambda_manual_role_name_base   = "${local.naming_base}-replication-manual-role"
   lambda_role_name_hash          = substr(md5(local.lambda_role_name_base), 0, 8)
