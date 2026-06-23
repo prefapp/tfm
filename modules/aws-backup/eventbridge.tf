@@ -5,7 +5,7 @@ resource "aws_cloudwatch_event_rule" "rds_backup_job_completed" {
   count       = local.has_cross_account_copy ? 1 : 0
   name        = "backup-job-completed"
   description = "Capture AWS backup point state change"
-
+  region      = var.lambda_region
   event_pattern = jsonencode({
     "source" : ["aws.backup"],
     "detail-type" : ["Recovery Point State Change"],
@@ -19,14 +19,16 @@ resource "aws_cloudwatch_event_rule" "rds_backup_job_completed" {
 }
 
 resource "aws_cloudwatch_event_target" "invoke_lambda" {
-  count = local.has_cross_account_copy ? 1 : 0
-  rule  = aws_cloudwatch_event_rule.rds_backup_job_completed[0].name
-  arn   = module.lambda_automatic_replication[0].lambda_function_arn
+  count  = local.has_cross_account_copy ? 1 : 0
+  region = var.lambda_region
+  rule   = aws_cloudwatch_event_rule.rds_backup_job_completed[0].name
+  arn    = module.lambda_automatic_replication[0].lambda_function_arn
   # Optional: configure retry policy or input transformer if needed
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
   count         = local.has_cross_account_copy ? 1 : 0
+  region        = var.lambda_region
   statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_automatic_replication[0].lambda_function_name
