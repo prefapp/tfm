@@ -4,23 +4,23 @@ import time
 
 
 def _build_destination_parameter_name(parameter_name: str, source_region: str, add_region_prefix: bool) -> str:
-        """
-        Builds a destination parameter name that is valid for both simple names and paths.
+    """
+    Builds a destination parameter name that is valid for both simple names and paths.
 
-        - If add_region_prefix is False: keep original name.
-        - If True and name is a path (/...): prepend region as first path segment
-            (e.g. /secrets/app -> /eu-west-1/secrets/app).
-        - If True and name is not a path: prepend region with '-' separator
-            (e.g. app-secret -> eu-west-1-app-secret).
-        """
-        if not add_region_prefix:
-                return parameter_name
+    - If add_region_prefix is False: keep original name.
+    - If True and name is a path (/...): prepend region as first path segment
+        (e.g. /secrets/app -> /eu-west-1/secrets/app).
+    - If True and name is not a path: prepend region with '-' separator
+        (e.g. app-secret -> eu-west-1-app-secret).
+    """
+    if not add_region_prefix:
+        return parameter_name
 
-        if parameter_name.startswith("/"):
-                normalized_path = parameter_name.lstrip("/")
-                return f"/{source_region}/{normalized_path}"
+    if parameter_name.startswith("/"):
+        normalized_path = parameter_name.lstrip("/")
+        return f"/{source_region}/{normalized_path}"
 
-        return f"{source_region}-{parameter_name}"
+    return f"{source_region}-{parameter_name}"
 
 
 def _get_parameter_value_with_retry(source_ssm, parameter_name: str, *, skip_missing: bool):
