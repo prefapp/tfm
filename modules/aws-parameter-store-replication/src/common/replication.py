@@ -3,6 +3,26 @@ import boto3
 import time
 
 
+def _build_destination_parameter_name(parameter_name: str, source_region: str, add_region_prefix: bool) -> str:
+        """
+        Builds a destination parameter name that is valid for both simple names and paths.
+
+        - If add_region_prefix is False: keep original name.
+        - If True and name is a path (/...): prepend region as first path segment
+            (e.g. /secrets/app -> /eu-west-1/secrets/app).
+        - If True and name is not a path: prepend region with '-' separator
+            (e.g. app-secret -> eu-west-1-app-secret).
+        """
+        if not add_region_prefix:
+                return parameter_name
+
+        if parameter_name.startswith("/"):
+                normalized_path = parameter_name.lstrip("/")
+                return f"/{source_region}/{normalized_path}"
+
+        return f"{source_region}-{parameter_name}"
+
+
 def _get_parameter_value_with_retry(source_ssm, parameter_name: str, *, skip_missing: bool):
     """
     Reads the current value of a source parameter.
@@ -91,10 +111,11 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
             log("info", "Replicating to region", account_id=account_id, region=region_name)
 
             # Destination parameter name: source-region-prefixed or original
-            if add_region_prefix:
-                dest_param_name = f"{source_region}-{parameter_name}"
-            else:
-                dest_param_name = parameter_name
+            dest_param_name = _build_destination_parameter_name(
+                parameter_name,
+                source_region,
+                add_region_prefix,
+            )
 
             # KMS key: use region-specific key when provided, otherwise None (AWS managed key)
             kms_key_id = getattr(region_cfg, "kms_key_arn", None)
@@ -129,16 +150,20 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 "Name": dest_param_name,
                 "Value": param_value,
                 "Type": param_type,
-                "Overwrite": True,
             }
 
-            # put_parameter does not support setting Tags reliably when updating
-            # existing parameters with Overwrite=true. Include tags only on create,
-            # and sync tags separately for updates.
+            # AWS does not allow Tags and Overwrite=True together.
+            # On create: include Tags, omit Overwrite (defaults to False).
+            # On update: set Overwrite=True, sync tags separately via AddTagsToResource.
             if not param_exists:
                 put_args["Tags"] = [{"Key": k, "Value": v} for k, v in combined_tags.items()]
+            else:
+                put_args["Overwrite"] = True
 
-            # Add KMS key if specified and parameter type is SecureString
+            # Add KMS key for SecureString parameters when a CMK is configured.
+            # KeyId is valid in both create and update (Overwrite=True) calls.
+            # On create it is combined with Tags, which AWS allows.
+            # On update it ensures the CMK is not silently ignored when re-encrypting.
             if param_type == "SecureString" and kms_key_id is not None:
                 put_args["KeyId"] = kms_key_id
 
