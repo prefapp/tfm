@@ -6,6 +6,8 @@ This Terraform module provisions and manages a Lambda function for cross-account
 
 The module is designed for secure and automated parameter replication, supporting flexible configuration of destination accounts and regions. It is suitable for organizations that need to synchronize configuration parameters across multiple AWS environments for Disaster Recovery or multi-region scenarios.
 
+> **Note:** This module is currently **not** compatible with GitHub Automated Provisioning Systems such as `ghaps` because it does not use the single top-level `config` input pattern.
+
 ## Key Features
 
 - **Parameter Replication**: Automatically replicates parameters to one or more destination AWS accounts and/or regions.
