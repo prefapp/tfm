@@ -19,8 +19,6 @@ locals {
   lambda_manual_role_name_hash   = substr(md5(local.lambda_manual_role_name_base), 0, 8)
   lambda_role_name               = length(local.lambda_role_name_base) <= 64 ? local.lambda_role_name_base : "${substr(local.lambda_role_name_base, 0, 55)}-${local.lambda_role_name_hash}"
   lambda_manual_role_name        = length(local.lambda_manual_role_name_base) <= 64 ? local.lambda_manual_role_name_base : "${substr(local.lambda_manual_role_name_base, 0, 55)}-${local.lambda_manual_role_name_hash}"
-  lambda_policy_name             = "${var.prefix}-${var.name}-replication-policy"
-  lambda_manual_policy_name      = "${var.prefix}-${var.name}-replication-manual-policy"
   eventbridge_rule_name_base     = "${local.naming_base}-parameter-changes"
   eventbridge_rule_name_hash     = substr(md5(local.eventbridge_rule_name_base), 0, 8)
   eventbridge_rule_name          = length(local.eventbridge_rule_name_base) <= 64 ? local.eventbridge_rule_name_base : "${substr(local.eventbridge_rule_name_base, 0, 55)}-${local.eventbridge_rule_name_hash}"
