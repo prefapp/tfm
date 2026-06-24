@@ -15,7 +15,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 ## Import Behavior
 
-Existing secrets can be adopted into Terraform state, but GitHub does not return secret values during import. Keep non-empty ciphertext placeholders in `config`; the module ignores future secret value diffs by design.
+Existing secrets can be adopted into Terraform state, but GitHub does not return secret values during import. Keep non-empty ciphertext placeholders in `config`. Without a matching `*_sha256` entry the trigger input stays `null` (stable), so the imported secret drifts from the placeholder but is never replaced.
 
 Import addresses and IDs:
 
