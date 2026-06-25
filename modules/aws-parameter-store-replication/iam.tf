@@ -43,11 +43,13 @@ resource "aws_iam_role_policy" "lambda_ssm_read" {
     Statement = [
       {
         Effect = "Allow"
-        Action = [
-          "ssm:GetParameter",
-          "ssm:GetParameters",
-          "ssm:ListTagsForResource"
-        ]
+        Action = concat(
+          [
+            "ssm:GetParameter",
+            "ssm:GetParameters"
+          ],
+          var.enable_tag_replication ? ["ssm:ListTagsForResource"] : []
+        )
         Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/*"
       }
     ]
@@ -65,11 +67,13 @@ resource "aws_iam_role_policy" "lambda_manual_ssm_read" {
       [
         {
           Effect = "Allow"
-          Action = [
-            "ssm:GetParameter",
-            "ssm:GetParameters",
-            "ssm:ListTagsForResource"
-          ]
+          Action = concat(
+            [
+              "ssm:GetParameter",
+              "ssm:GetParameters"
+            ],
+            var.enable_tag_replication ? ["ssm:ListTagsForResource"] : []
+          )
           Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/*"
         }
       ],
