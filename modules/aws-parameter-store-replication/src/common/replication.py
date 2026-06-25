@@ -90,16 +90,17 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
     param_type = param_metadata["Type"]  # String, StringList, or SecureString
     param_version = param_metadata.get("Version", 1)
 
-    # Get tags for the parameter
-    try:
-        tags_response = source_ssm.list_tags_for_resource(
-            ResourceType="Parameter",
-            ResourceId=parameter_name
-        )
-        source_tags = {tag["Key"]: tag["Value"] for tag in tags_response.get("TagList", [])}
-    except Exception as e:
-        log("warning", "Failed to get tags for parameter", parameter_name=parameter_name, error=str(e))
-        source_tags = {}
+    # Fetch source tags only when source-tag replication is enabled.
+    source_tags = {}
+    if config.enable_tag_replication:
+        try:
+            tags_response = source_ssm.list_tags_for_resource(
+                ResourceType="Parameter",
+                ResourceId=parameter_name
+            )
+            source_tags = {tag["Key"]: tag["Value"] for tag in tags_response.get("TagList", [])}
+        except Exception as e:
+            log("warning", "Failed to get tags for parameter", parameter_name=parameter_name, error=str(e))
 
     add_region_prefix = getattr(config, "add_region_prefix_to_name", False)
     source_region = str(config.source_region)
