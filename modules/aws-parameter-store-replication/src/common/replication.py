@@ -181,16 +181,17 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 # - Only remove stale destination tags when full tag replication is enabled
                 if param_exists:
                     try:
-                        # Get current destination tags
-                        dest_tags_response = ssm_dest.list_tags_for_resource(
-                            ResourceType="Parameter",
-                            ResourceId=dest_param_name
-                        )
-                        dest_tags = {tag["Key"]: tag["Value"] for tag in dest_tags_response.get("TagList", [])}
-
-                        # Prune stale tags only when source tag replication is enabled.
-                        # If disabled, keep user-managed destination tags intact.
+                        # Only fetch destination tags if we need them for stale-tag pruning.
+                        # When tag replication is disabled, skip this API call and only update metadata tags.
                         if config.enable_tag_replication:
+                            # Get current destination tags for pruning stale ones
+                            dest_tags_response = ssm_dest.list_tags_for_resource(
+                                ResourceType="Parameter",
+                                ResourceId=dest_param_name
+                            )
+                            dest_tags = {tag["Key"]: tag["Value"] for tag in dest_tags_response.get("TagList", [])}
+
+                            # Prune stale tags (only when source tag replication is enabled)
                             stale_tags = set(dest_tags.keys()) - set(combined_tags.keys())
                             if stale_tags:
                                 log("info", "Removing stale tags from parameter", account_id=account_id, region=region_name, stale_tags=list(stale_tags))
