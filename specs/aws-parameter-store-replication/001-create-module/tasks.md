@@ -41,3 +41,4 @@
 - [x] 23. Change tag merge order so replication metadata tags (`origin-account`, `origin-region`, `latest-version`) override source tags when keys collide.
 - [x] 24. Tighten `lambda_manual_kms` least-privilege policy by removing unused `kms:Encrypt` and `kms:GenerateDataKey` actions (manual Lambda only decrypts source parameters).
 - [x] 25. Tighten `lambda_kms` (automatic Lambda) least-privilege policy by removing unused `kms:Encrypt` and `kms:GenerateDataKey` actions.
+- [x] 26. Require `destinations_json` to contain at least one destination account entry to prevent empty `sts:AssumeRole` resource lists in generated IAM policies.

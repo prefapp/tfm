@@ -29,6 +29,11 @@ variable "destinations_json" {
   }
 
   validation {
+    condition     = can(tomap(jsondecode(var.destinations_json))) && length(tomap(jsondecode(var.destinations_json))) > 0
+    error_message = "destinations_json must contain at least one destination account entry."
+  }
+
+  validation {
     condition = can([
       for account_id, destination in jsondecode(var.destinations_json) : {
         account_id = tostring(account_id)
