@@ -50,3 +50,4 @@
 - [x] 32. Change `local.common_tags.Name` to use module instance base name (`local.naming_base`) instead of the automatic Lambda name, so shared tags remain accurate across manual/EventBridge/IAM resources.
 - [x] 33. Scope KMS `kms:ViaService` condition from wildcard (`ssm.*.amazonaws.com`) to deployment region (`ssm.${data.aws_region.current.name}.amazonaws.com`) in both automatic and manual Lambda KMS policies.
 - [x] 34. Use `StringEquals` (instead of `StringLike`) for exact `kms:ViaService = ssm.${data.aws_region.current.name}.amazonaws.com` matching in both Lambda KMS policies.
+- [x] 35. Remove unused `local.lambda_name` after verifying it has no references in the module.
