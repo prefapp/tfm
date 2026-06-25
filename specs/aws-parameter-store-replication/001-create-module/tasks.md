@@ -32,3 +32,4 @@
 - [x] 14. Add fail-fast `destinations_json` validation for required destination shape (`role_arn`, `regions`) and non-empty `role_arn`.
 - [x] 15. Declare `source_ssm` explicitly in the `Config` dataclass (default `None`) to avoid dynamic attribute injection from handlers.
 - [x] 16. Skip source `list_tags_for_resource` calls when `enable_tag_replication = false` to reduce unnecessary API usage during automatic/full-sync replication.
+- [x] 17. Harden `load_config()` region parsing to treat non-dict region values (null, string, etc.) as `{}` to prevent AttributeError on invalid inputs.

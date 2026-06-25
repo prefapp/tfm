@@ -39,12 +39,15 @@ def load_config() -> Config:
     destinations = {}
 
     for account_id, entry in parsed.items():
-        regions = {
-            region_name: RegionConfig(
+        regions = {}
+        for region_name, region_cfg in entry["regions"].items():
+            # Treat non-dict region configs as empty to avoid AttributeError.
+            # Invalid types (null, string, etc.) are defaulted to {}, so kms_key_arn will be None.
+            if not isinstance(region_cfg, dict):
+                region_cfg = {}
+            regions[region_name] = RegionConfig(
                 kms_key_arn=region_cfg.get("kms_key_arn")
             )
-            for region_name, region_cfg in entry["regions"].items()
-        }
 
         destinations[account_id] = Destination(
             role_arn=entry["role_arn"],
