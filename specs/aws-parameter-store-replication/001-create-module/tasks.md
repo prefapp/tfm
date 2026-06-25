@@ -47,3 +47,4 @@
 - [x] 29. Correct `enable_tag_replication` variable description to reflect Terraform-side effects (Lambda env configuration and conditional IAM permissions), then regenerate `README.md`.
 - [x] 30. Handle destination `AccessDeniedException` on `get_parameter` existence probe by proceeding in overwrite mode, so write-scoped destination roles do not break replication.
 - [x] 31. Refine destination existence-probe error handling to catch `ClientError` and branch by `Error.Code` (`ParameterNotFound` / `AccessDeniedException`) while re-raising unexpected errors.
+- [x] 32. Change `local.common_tags.Name` to use module instance base name (`local.naming_base`) instead of the automatic Lambda name, so shared tags remain accurate across manual/EventBridge/IAM resources.

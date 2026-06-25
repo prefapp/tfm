@@ -27,7 +27,7 @@ locals {
     var.tags,
     {
       Module = "aws-parameter-store-replication"
-      Name   = local.lambda_name
+      Name   = local.naming_base
     }
   )
 }
