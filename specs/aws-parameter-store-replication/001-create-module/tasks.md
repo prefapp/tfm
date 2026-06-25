@@ -38,3 +38,4 @@
 - [x] 20. Enforce that `destinations_json` decodes to a top-level JSON object/map (not array/list) to match `load_config()` expectations.
 - [x] 21. Clarify `add_region_prefix_to_name` variable description to document both simple-name and path-style region-prefix formats, then regenerate `README.md`.
 - [x] 22. Update IAM ARN example to use `parameter<destination_parameter_name>` so slash-prefixed destination names do not imply an extra `/` in policy examples, then regenerate `README.md`.
+- [x] 23. Change tag merge order so replication metadata tags (`origin-account`, `origin-region`, `latest-version`) override source tags when keys collide.

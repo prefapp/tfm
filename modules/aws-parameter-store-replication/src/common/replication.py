@@ -130,9 +130,9 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 "latest-version": str(param_version)
             }
 
-            # Merge original tags if enabled, original tags take precedence
+            # Merge source tags if enabled, replication metadata takes precedence
             if config.enable_tag_replication and source_tags:
-                combined_tags = {**replication_tags, **source_tags}
+                combined_tags = {**source_tags, **replication_tags}
             else:
                 combined_tags = replication_tags
 
