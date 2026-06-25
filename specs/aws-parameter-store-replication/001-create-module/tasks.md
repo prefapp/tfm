@@ -48,3 +48,5 @@
 - [x] 30. Handle destination `AccessDeniedException` on `get_parameter` existence probe by proceeding in overwrite mode, so write-scoped destination roles do not break replication.
 - [x] 31. Refine destination existence-probe error handling to catch `ClientError` and branch by `Error.Code` (`ParameterNotFound` / `AccessDeniedException`) while re-raising unexpected errors.
 - [x] 32. Change `local.common_tags.Name` to use module instance base name (`local.naming_base`) instead of the automatic Lambda name, so shared tags remain accurate across manual/EventBridge/IAM resources.
+- [x] 33. Scope KMS `kms:ViaService` condition from wildcard (`ssm.*.amazonaws.com`) to deployment region (`ssm.${data.aws_region.current.name}.amazonaws.com`) in both automatic and manual Lambda KMS policies.
+- [x] 34. Use `StringEquals` (instead of `StringLike`) for exact `kms:ViaService = ssm.${data.aws_region.current.name}.amazonaws.com` matching in both Lambda KMS policies.
