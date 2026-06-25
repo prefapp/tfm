@@ -88,7 +88,7 @@ By default, tags from the source parameter are also replicated to the destinatio
 The IAM policy in the destination account must allow:
 
 ```
-arn:aws:ssm:<region>:<account>:parameter/<destination_parameter_name>
+arn:aws:ssm:<region>:<account>:parameter<destination_parameter_name>
 ```
 
 Where `<destination_parameter_name>` is determined by the module's naming logic:
