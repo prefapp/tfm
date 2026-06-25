@@ -34,3 +34,4 @@
 - [x] 16. Skip source `list_tags_for_resource` calls when `enable_tag_replication = false` to reduce unnecessary API usage during automatic/full-sync replication.
 - [x] 17. Harden `load_config()` region parsing to treat non-dict region values (null, string, etc.) as `{}` to prevent AttributeError on invalid inputs.
 - [x] 18. Skip destination `list_tags_for_resource` calls on parameter update when `enable_tag_replication = false` (no stale-tag pruning needed).
+- [x] 19. Clarify permissions documentation to reference destination role and destination parameter name format (including region-prefix transformation) so users correctly scope IAM policies.

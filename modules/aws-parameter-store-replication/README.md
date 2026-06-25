@@ -84,15 +84,19 @@ By default, tags from the source parameter are also replicated to the destinatio
 ## Important Note: Permissions
 
 **Important:**
- The Lambda IAM permissions for writing parameters in destination accounts are based on the **source parameter name**, which is reused as the destination parameter name.
+ The **destination replication role** (assumed by the Lambda in each destination account) must allow managing the destination parameter name produced by this module.
 
-The IAM policy must allow:
+The IAM policy in the destination account must allow:
 
 ```
-arn:aws:ssm:<region>:<account>:parameter/<parameter_name>
+arn:aws:ssm:<region>:<account>:parameter/<destination_parameter_name>
 ```
 
-This allows the Lambda to manage the parameter across all its versions.
+Where `<destination_parameter_name>` is determined by the module's naming logic:
+- If `add_region_prefix_to_name = false` (default): matches the source parameter name.
+- If `add_region_prefix_to_name = true`: region-prefixed, e.g., `/eu-west-1/my/parameter` (path-style) or `eu-west-1-myparameter` (simple name).
+
+This allows the replication role to manage the destination parameter across all its versions.
 
 ## Basic Usage
 
@@ -176,7 +180,7 @@ module "parameter_replication_eventbridge" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.50 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.52.0 |
 
 ## Modules
 
