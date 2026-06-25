@@ -43,3 +43,4 @@
 - [x] 25. Tighten `lambda_kms` (automatic Lambda) least-privilege policy by removing unused `kms:Encrypt` and `kms:GenerateDataKey` actions.
 - [x] 26. Require `destinations_json` to contain at least one destination account entry to prevent empty `sts:AssumeRole` resource lists in generated IAM policies.
 - [x] 27. Make `ssm:ListTagsForResource` permission conditional on `enable_tag_replication` in both automatic and manual Lambda source-read IAM policies.
+- [x] 28. Clarify destination IAM policy docs to show both SSM parameter ARN formats (simple-name and path-style) so users scope destination permissions correctly.

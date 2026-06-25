@@ -86,7 +86,15 @@ By default, tags from the source parameter are also replicated to the destinatio
 **Important:**
  The **destination replication role** (assumed by the Lambda in each destination account) must allow managing the destination parameter name produced by this module.
 
-The IAM policy in the destination account must allow:
+The IAM policy in the destination account must allow the appropriate ARN format:
+
+- For simple destination names (for example, `myparameter`):
+
+```
+arn:aws:ssm:<region>:<account>:parameter/<destination_parameter_name>
+```
+
+- For path-style destination names (for example, `/eu-west-1/my/parameter`):
 
 ```
 arn:aws:ssm:<region>:<account>:parameter<destination_parameter_name>
