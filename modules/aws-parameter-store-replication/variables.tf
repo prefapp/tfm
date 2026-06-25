@@ -24,6 +24,11 @@ variable "destinations_json" {
   }
 
   validation {
+    condition     = can(tomap(jsondecode(var.destinations_json)))
+    error_message = "destinations_json must decode to a JSON object/map keyed by destination account ID (arrays/lists are not allowed)."
+  }
+
+  validation {
     condition = can([
       for account_id, destination in jsondecode(var.destinations_json) : {
         account_id = tostring(account_id)
