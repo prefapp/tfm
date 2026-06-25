@@ -45,3 +45,5 @@
 - [x] 27. Make `ssm:ListTagsForResource` permission conditional on `enable_tag_replication` in both automatic and manual Lambda source-read IAM policies.
 - [x] 28. Clarify destination IAM policy docs to show both SSM parameter ARN formats (simple-name and path-style) so users scope destination permissions correctly.
 - [x] 29. Correct `enable_tag_replication` variable description to reflect Terraform-side effects (Lambda env configuration and conditional IAM permissions), then regenerate `README.md`.
+- [x] 30. Handle destination `AccessDeniedException` on `get_parameter` existence probe by proceeding in overwrite mode, so write-scoped destination roles do not break replication.
+- [x] 31. Refine destination existence-probe error handling to catch `ClientError` and branch by `Error.Code` (`ParameterNotFound` / `AccessDeniedException`) while re-raising unexpected errors.

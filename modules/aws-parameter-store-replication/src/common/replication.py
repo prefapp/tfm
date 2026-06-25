@@ -1,6 +1,7 @@
 from utils import assume_role, log
 import boto3
 import time
+from botocore.exceptions import ClientError
 
 
 def _build_destination_parameter_name(parameter_name: str, source_region: str, add_region_prefix: bool) -> str:
@@ -144,8 +145,23 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
             try:
                 ssm_dest.get_parameter(Name=dest_param_name)
                 param_exists = True
-            except ssm_dest.exceptions.ParameterNotFound:
-                param_exists = False
+            except ClientError as e:
+                # Some destination roles are intentionally scoped for write/tag APIs only.
+                # If read is denied, proceed in overwrite mode (valid for both create and update).
+                code = ((e.response or {}).get("Error") or {}).get("Code")
+                if code == "ParameterNotFound":
+                    param_exists = False
+                elif code == "AccessDeniedException":
+                    log(
+                        "warning",
+                        "Access denied on destination existence probe; proceeding with overwrite mode",
+                        account_id=account_id,
+                        region=region_name,
+                        parameter_name=dest_param_name,
+                    )
+                    param_exists = True
+                else:
+                    raise
 
             put_args = {
                 "Name": dest_param_name,
