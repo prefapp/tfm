@@ -50,7 +50,9 @@ variable "destinations_json" {
 
 variable "add_region_prefix_to_name" {
   description = <<-EOT
-If true, the destination parameter name will be prefixed with the region (e.g., "us-east-1-myparameter").
+If true, the destination parameter name is region-prefixed.
+For simple names: "myparameter" -> "us-east-1-myparameter".
+For path-style names: "/my/parameter" -> "/us-east-1/my/parameter".
 If false, the original name is used. Default: false.
 This helps avoid collisions if you replicate parameters with the same name from multiple regions.
 EOT

@@ -36,3 +36,4 @@
 - [x] 18. Skip destination `list_tags_for_resource` calls on parameter update when `enable_tag_replication = false` (no stale-tag pruning needed).
 - [x] 19. Clarify permissions documentation to reference destination role and destination parameter name format (including region-prefix transformation) so users correctly scope IAM policies.
 - [x] 20. Enforce that `destinations_json` decodes to a top-level JSON object/map (not array/list) to match `load_config()` expectations.
+- [x] 21. Clarify `add_region_prefix_to_name` variable description to document both simple-name and path-style region-prefix formats, then regenerate `README.md`.

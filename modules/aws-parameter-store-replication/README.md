@@ -214,7 +214,7 @@ module "parameter_replication_eventbridge" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination parameter name will be prefixed with the region (e.g., "us-east-1-myparameter").<br/>If false, the original name is used. Default: false.<br/>This helps avoid collisions if you replicate parameters with the same name from multiple regions. | `bool` | `false` | no |
+| <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination parameter name is region-prefixed.<br/>For simple names: "myparameter" -> "us-east-1-myparameter".<br/>For path-style names: "/my/parameter" -> "/us-east-1/my/parameter".<br/>If false, the original name is used. Default: false.<br/>This helps avoid collisions if you replicate parameters with the same name from multiple regions. | `bool` | `false` | no |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | `[]` | no |
 | <a name="input_destinations_json"></a> [destinations\_json](#input\_destinations\_json) | JSON describing accounts, regions and KMS keys for replication | `string` | n/a | yes |
 | <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the manual replication Lambda is granted ssm:DescribeParameters on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
