@@ -78,7 +78,7 @@ variable "environment_variables" {
 }
 
 variable "enable_tag_replication" {
-  description = "Whether to replicate tags from the source parameter (used by the code, not Terraform)"
+  description = "Whether to replicate tags from the source parameter. Terraform uses this to configure Lambda behavior (environment variables) and to conditionally grant source tag-read permissions (`ssm:ListTagsForResource`)."
   type        = bool
   default     = true
 }
