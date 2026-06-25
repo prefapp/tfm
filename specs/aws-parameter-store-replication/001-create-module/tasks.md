@@ -29,3 +29,4 @@
 - [x] 11. Correct `add_region_prefix_to_name` destination naming examples in `docs/header.md` to match implementation behavior for path-style and simple names.
 - [x] 12. Regenerate `README.md` via `terraform-docs .` after header documentation change.
 - [x] 13. Refine the destination-name wording to a single sentence with both path-style and simple-name examples, and regenerate `README.md`.
+- [x] 14. Add fail-fast `destinations_json` validation for required destination shape (`role_arn`, `regions`) and non-empty `role_arn`.

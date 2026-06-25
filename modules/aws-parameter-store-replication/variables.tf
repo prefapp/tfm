@@ -22,6 +22,25 @@ variable "destinations_json" {
     condition     = can(jsondecode(var.destinations_json))
     error_message = "destinations_json must be valid JSON."
   }
+
+  validation {
+    condition = can([
+      for account_id, destination in jsondecode(var.destinations_json) : {
+        account_id = tostring(account_id)
+        role_arn   = tostring(destination.role_arn)
+        regions    = tomap(destination.regions)
+      }
+    ])
+    error_message = "destinations_json must be a map of account IDs to objects with required keys `role_arn` (string) and `regions` (map/object)."
+  }
+
+  validation {
+    condition = can(alltrue([
+      for _, destination in jsondecode(var.destinations_json) :
+      length(trimspace(tostring(destination.role_arn))) > 0
+    ]))
+    error_message = "Each destination in destinations_json must define a non-empty `role_arn`."
+  }
 }
 
 variable "add_region_prefix_to_name" {
