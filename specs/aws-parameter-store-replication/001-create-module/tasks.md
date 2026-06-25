@@ -23,3 +23,8 @@
 - `terraform fmt -check` executed in `modules/aws-parameter-store-replication` with no output (format check passed).
 - `terraform init -backend=false -input=false` executed successfully to install required child modules/providers for validation.
 - `terraform validate` completed successfully (`Success! The configuration is valid`) with upstream warnings from downloaded lambda module outputs about deprecated provider attribute `name`.
+
+## Follow-up Task (2026-06-25)
+
+- [x] 11. Correct `add_region_prefix_to_name` destination naming examples in `docs/header.md` to match implementation behavior for path-style and simple names.
+- [x] 12. Regenerate `README.md` via `terraform-docs .` after header documentation change.

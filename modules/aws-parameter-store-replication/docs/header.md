@@ -28,7 +28,10 @@ The Lambda determines:
 - from the `parameter_name` parameter (manual mode),
 - or from `describe_parameters()` (full sync mode).
 
-The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `eu-west-1-/my/parameter`).
+The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is derived from the source region:
+
+- For path-style names (e.g. `/my/parameter`): `/eu-west-1/my/parameter`
+- For simple names (e.g. `myparameter`): `eu-west-1-myparameter`
 
 ### Destination Configuration Format
 
