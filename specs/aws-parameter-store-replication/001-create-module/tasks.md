@@ -39,3 +39,4 @@
 - [x] 21. Clarify `add_region_prefix_to_name` variable description to document both simple-name and path-style region-prefix formats, then regenerate `README.md`.
 - [x] 22. Update IAM ARN example to use `parameter<destination_parameter_name>` so slash-prefixed destination names do not imply an extra `/` in policy examples, then regenerate `README.md`.
 - [x] 23. Change tag merge order so replication metadata tags (`origin-account`, `origin-region`, `latest-version`) override source tags when keys collide.
+- [x] 24. Tighten `lambda_manual_kms` least-privilege policy by removing unused `kms:Encrypt` and `kms:GenerateDataKey` actions (manual Lambda only decrypts source parameters).
