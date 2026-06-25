@@ -30,3 +30,4 @@
 - [x] 12. Regenerate `README.md` via `terraform-docs .` after header documentation change.
 - [x] 13. Refine the destination-name wording to a single sentence with both path-style and simple-name examples, and regenerate `README.md`.
 - [x] 14. Add fail-fast `destinations_json` validation for required destination shape (`role_arn`, `regions`) and non-empty `role_arn`.
+- [x] 15. Declare `source_ssm` explicitly in the `Config` dataclass (default `None`) to avoid dynamic attribute injection from handlers.

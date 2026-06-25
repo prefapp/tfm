@@ -1,7 +1,7 @@
 import json
 import os
 from dataclasses import dataclass
-from typing import Dict
+from typing import Any, Dict
 
 
 @dataclass
@@ -23,6 +23,7 @@ class Config:
     enable_full_sync: bool
     source_account: str
     add_region_prefix_to_name: bool
+    source_ssm: Any | None = None
 
 
 def load_config() -> Config:
