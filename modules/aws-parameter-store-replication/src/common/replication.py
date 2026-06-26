@@ -200,6 +200,7 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 # - Remove stale destination tags only when source-tag replication is enabled
                 #   and source tags were fetched successfully
                 if param_exists:
+                    # Pruning path (best effort): do not block desired-tag application.
                     try:
                         # Only fetch destination tags if we need them for stale-tag pruning.
                         # When tag replication is disabled, skip this API call and only update metadata tags.
@@ -228,8 +229,11 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                                 region=region_name,
                                 parameter_name=parameter_name,
                             )
+                    except Exception as e:
+                        log("warning", "Failed to prune stale tags for parameter", account_id=account_id, region=region_name, error=str(e))
 
-                        # Add/update desired tags
+                    # Desired-tag application path (best effort, independent from pruning).
+                    try:
                         if combined_tags:
                             ssm_dest.add_tags_to_resource(
                                 ResourceType="Parameter",
@@ -237,7 +241,7 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                                 Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
                             )
                     except Exception as e:
-                        log("warning", "Failed to sync tags for parameter", account_id=account_id, region=region_name, error=str(e))
+                        log("warning", "Failed to apply desired tags for parameter", account_id=account_id, region=region_name, error=str(e))
                         # Continue replication even if tag sync fails
 
                 log("info", "Successfully replicated parameter", account_id=account_id, region=region_name)
