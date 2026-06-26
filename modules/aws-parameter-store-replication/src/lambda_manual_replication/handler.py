@@ -87,7 +87,8 @@ def lambda_handler(event, context):
                     )
                     replicated_count += 1
                 except Exception as e:
-                    log("error", "Failed to replicate parameter in full sync", parameter_name=param_name, error=str(e))
+                    failed_param_name = param_meta.get("Name", "<missing-name>") if isinstance(param_meta, dict) else "<invalid-parameter-metadata>"
+                    log("error", "Failed to replicate parameter in full sync", parameter_name=failed_param_name, error=str(e))
                     error_count += 1
 
         log("info", "Full sync completed", replicated_count=replicated_count, error_count=error_count)
