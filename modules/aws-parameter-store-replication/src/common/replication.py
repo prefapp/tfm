@@ -227,7 +227,8 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                                 "Skipping stale-tag pruning because source tags could not be fetched",
                                 account_id=account_id,
                                 region=region_name,
-                                parameter_name=parameter_name,
+                                destination_parameter_name=dest_param_name,
+                                source_parameter_name=parameter_name,
                             )
                     except Exception as e:
                         log("warning", "Failed to prune stale tags for parameter", account_id=account_id, region=region_name, error=str(e))
