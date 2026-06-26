@@ -47,9 +47,9 @@ variable "destinations_json" {
   validation {
     condition = can(alltrue([
       for _, destination in jsondecode(var.destinations_json) :
-      length(trimspace(tostring(destination.role_arn))) > 0
+      can(regex("^arn:[^:]+:iam::[0-9]{12}:role/.+", tostring(destination.role_arn)))
     ]))
-    error_message = "Each destination in destinations_json must define a non-empty `role_arn`."
+    error_message = "Each destination in destinations_json must define a valid IAM role ARN in `role_arn` (for example, arn:aws:iam::123456789012:role/MyRole)."
   }
 }
 
