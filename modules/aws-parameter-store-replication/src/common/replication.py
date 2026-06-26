@@ -93,6 +93,7 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
 
     # Fetch source tags only when source-tag replication is enabled.
     source_tags = {}
+    source_tags_fetched = not config.enable_tag_replication
     if config.enable_tag_replication:
         try:
             tags_response = source_ssm.list_tags_for_resource(
@@ -100,7 +101,9 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 ResourceId=parameter_name
             )
             source_tags = {tag["Key"]: tag["Value"] for tag in tags_response.get("TagList", [])}
+            source_tags_fetched = True
         except Exception as e:
+            source_tags_fetched = False
             log("warning", "Failed to get tags for parameter", parameter_name=parameter_name, error=str(e))
 
     add_region_prefix = getattr(config, "add_region_prefix_to_name", False)
@@ -194,12 +197,13 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
 
                 # Sync tags for updates:
                 # - Always add/update desired tags (replication metadata + optional source tags)
-                # - Only remove stale destination tags when full tag replication is enabled
+                # - Remove stale destination tags only when source-tag replication is enabled
+                #   and source tags were fetched successfully
                 if param_exists:
                     try:
                         # Only fetch destination tags if we need them for stale-tag pruning.
                         # When tag replication is disabled, skip this API call and only update metadata tags.
-                        if config.enable_tag_replication:
+                        if config.enable_tag_replication and source_tags_fetched:
                             # Get current destination tags for pruning stale ones
                             dest_tags_response = ssm_dest.list_tags_for_resource(
                                 ResourceType="Parameter",
@@ -216,6 +220,14 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                                     ResourceId=dest_param_name,
                                     TagKeys=list(stale_tags),
                                 )
+                        elif config.enable_tag_replication and not source_tags_fetched:
+                            log(
+                                "warning",
+                                "Skipping stale-tag pruning because source tags could not be fetched",
+                                account_id=account_id,
+                                region=region_name,
+                                parameter_name=parameter_name,
+                            )
 
                         # Add/update desired tags
                         if combined_tags:
