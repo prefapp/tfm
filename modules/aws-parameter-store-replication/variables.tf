@@ -66,7 +66,7 @@ EOT
 }
 
 variable "allowed_assume_roles" {
-  description = "List of IAM roles the Lambda can assume for cross-account replication"
+  description = "Additional IAM role ARNs the Lambda is allowed to assume (destination role_arn values from destinations_json are always included)."
   type        = list(string)
   default     = []
 }
