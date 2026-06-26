@@ -20,9 +20,6 @@ module "parameter_replication" {
     }
   })
 
-  # Allow Lambda to assume the destination role
-  allowed_assume_roles = [local.destination_role_arn]
-
   # Optional: Enable EventBridge to automatically trigger replication on parameter changes
   # eventbridge_enabled = true
 
