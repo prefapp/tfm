@@ -126,6 +126,6 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps({
-                "message": "Either 'parameter_name' or 'enable_full_sync' must be provided"
+                "message": "Either 'parameter_name' must be provided, or 'enable_full_sync' must be true."
             })
         }
