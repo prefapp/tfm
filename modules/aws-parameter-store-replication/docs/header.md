@@ -126,10 +126,6 @@ module "parameter_replication" {
     }
   })
 
-  allowed_assume_roles = [
-    "arn:aws:iam::123456789012:role/ParameterReplicationRole"
-  ]
-
   tags = {
     Environment = "production"
     Team        = "platform"
@@ -164,11 +160,6 @@ module "parameter_replication_eventbridge" {
       }
     }
   })
-
-  allowed_assume_roles = [
-    "arn:aws:iam::111111111111:role/ParameterReplicationRole",
-    "arn:aws:iam::222222222222:role/ParameterReplicationRole"
-  ]
 
   tags = {
     Service = "configuration-sync"
