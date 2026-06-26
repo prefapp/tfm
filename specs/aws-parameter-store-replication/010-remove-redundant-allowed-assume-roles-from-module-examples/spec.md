@@ -20,10 +20,10 @@ Update module examples to avoid redundant `allowed_assume_roles` entries that du
 
 - IAM behavior changes
 - Module interface changes
-- README regeneration (not required for `_examples` file edits)
 - Any `CHANGELOG.md` updates
 
 ## Acceptance Criteria
 
 - Example module blocks do not set `allowed_assume_roles` to duplicate destination role ARNs.
 - Examples remain valid and focused on required/meaningful inputs.
+- Module `README.md` is regenerated with `terraform-docs .` after example changes, following repository workflow.

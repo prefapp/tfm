@@ -7,5 +7,6 @@
 
 1. Remove redundant `allowed_assume_roles` lines from `_examples/basic/main.tf`
 2. Remove redundant `allowed_assume_roles` lines from `_examples/existing_resources/main.tf`
-3. Validate updated example files for diagnostics
-4. Mark tasks complete
+3. Regenerate module `README.md` via `terraform-docs .`
+4. Validate updated example files for diagnostics
+5. Mark tasks complete
