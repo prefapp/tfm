@@ -78,7 +78,7 @@ This allows you to mix and match custom and managed keys as needed for your secu
 
 ### Tag Replication
 
-By default, tags from the source parameter are also replicated to the destination. You can control this behavior using the `enable_tag_replication` variable in Terraform. If set to `false`, tags will not be copied.
+By default, the Lambda always applies replication metadata tags (`origin-account`, `origin-region`, `latest-version`) to the destination parameter. When `enable_tag_replication = true`, it also copies source parameter tags and prunes tags that no longer exist on the source; when `enable_tag_replication = false`, only the metadata tags are applied.
 
 ## Important Note: Permissions
 
