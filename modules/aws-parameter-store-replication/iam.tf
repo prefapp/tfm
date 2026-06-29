@@ -106,6 +106,26 @@ resource "aws_iam_role_policy" "lambda_kms" {
   })
 }
 
+resource "aws_iam_role_policy" "lambda_async_failure_dlq_send" {
+  count = var.eventbridge_enabled && var.async_failure_visibility_enabled ? 1 : 0
+
+  name = "${local.lambda_role_name}-async-failure-dlq-send"
+  role = aws_iam_role.lambda_replication.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage"
+        ]
+        Resource = aws_sqs_queue.lambda_async_failure_dlq[0].arn
+      }
+    ]
+  })
+}
+
 ###############################################################################
 # Attach AWSLambdaBasicExecutionRole for CloudWatch Logs
 ###############################################################################
