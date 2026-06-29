@@ -1,5 +1,5 @@
 variable "enable_full_sync" {
-  description = "If true, the manual replication Lambda is granted ssm:DescribeParameters on all resources to support full-account sync. Set to false for strict least-privilege."
+  description = "If true, the replication Lambda is granted ssm:DescribeParameters on all resources to support full-account sync. Set to false for strict least-privilege."
   type        = bool
   default     = false
 }
