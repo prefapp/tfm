@@ -145,19 +145,25 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
             else:
                 ssm_dest = assume_role(dest.role_arn, region_name)
 
+            destination_read_denied = False
             try:
-                ssm_dest.get_parameter(Name=dest_param_name)
-                param_exists = True
+                # Use GetParameters so existence probing is aligned with the action
+                # AWS effectively requires for update-time tag APIs.
+                probe_response = ssm_dest.get_parameters(
+                    Names=[dest_param_name],
+                    WithDecryption=False,
+                )
+                invalid_names = set(probe_response.get("InvalidParameters", []))
+                param_exists = dest_param_name not in invalid_names
             except ClientError as e:
-                # Some destination roles are intentionally scoped for write/tag APIs only.
+                # Some destination roles are intentionally scoped for write-only APIs.
                 # If read is denied, proceed in overwrite mode (valid for both create and update).
                 code = ((e.response or {}).get("Error") or {}).get("Code")
-                if code == "ParameterNotFound":
-                    param_exists = False
-                elif code == "AccessDeniedException":
+                if code == "AccessDeniedException":
+                    destination_read_denied = True
                     log(
                         "warning",
-                        "Access denied on destination existence probe; proceeding with overwrite mode",
+                        "Access denied on destination existence probe (GetParameters); proceeding with overwrite mode",
                         account_id=account_id,
                         region=region_name,
                         parameter_name=dest_param_name,
@@ -200,50 +206,59 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 # - Remove stale destination tags only when source-tag replication is enabled
                 #   and source tags were fetched successfully
                 if param_exists:
+                    if destination_read_denied:
+                        log(
+                            "warning",
+                            "Skipping destination tag sync because destination parameter read is denied",
+                            account_id=account_id,
+                            region=region_name,
+                            destination_parameter_name=dest_param_name,
+                        )
+                    else:
                     # Pruning path (best effort): do not block desired-tag application.
-                    try:
-                        # Only fetch destination tags if we need them for stale-tag pruning.
-                        # When tag replication is disabled, skip this API call and only update metadata tags.
-                        if config.enable_tag_replication and source_tags_fetched:
-                            # Get current destination tags for pruning stale ones
-                            dest_tags_response = ssm_dest.list_tags_for_resource(
-                                ResourceType="Parameter",
-                                ResourceId=dest_param_name
-                            )
-                            dest_tags = {tag["Key"]: tag["Value"] for tag in dest_tags_response.get("TagList", [])}
+                        try:
+                            # Only fetch destination tags if we need them for stale-tag pruning.
+                            # When tag replication is disabled, skip this API call and only update metadata tags.
+                            if config.enable_tag_replication and source_tags_fetched:
+                                # Get current destination tags for pruning stale ones
+                                dest_tags_response = ssm_dest.list_tags_for_resource(
+                                    ResourceType="Parameter",
+                                    ResourceId=dest_param_name
+                                )
+                                dest_tags = {tag["Key"]: tag["Value"] for tag in dest_tags_response.get("TagList", [])}
 
-                            # Prune stale tags (only when source tag replication is enabled)
-                            stale_tags = set(dest_tags.keys()) - set(combined_tags.keys())
-                            if stale_tags:
-                                log("info", "Removing stale tags from parameter", account_id=account_id, region=region_name, stale_tags=list(stale_tags))
-                                ssm_dest.remove_tags_from_resource(
+                                # Prune stale tags (only when source tag replication is enabled)
+                                stale_tags = set(dest_tags.keys()) - set(combined_tags.keys())
+                                if stale_tags:
+                                    log("info", "Removing stale tags from parameter", account_id=account_id, region=region_name, stale_tags=list(stale_tags))
+                                    ssm_dest.remove_tags_from_resource(
+                                        ResourceType="Parameter",
+                                        ResourceId=dest_param_name,
+                                        TagKeys=list(stale_tags),
+                                    )
+                            elif config.enable_tag_replication and not source_tags_fetched:
+                                log(
+                                    "warning",
+                                    "Skipping stale-tag pruning because source tags could not be fetched",
+                                    account_id=account_id,
+                                    region=region_name,
+                                    destination_parameter_name=dest_param_name,
+                                    source_parameter_name=parameter_name,
+                                )
+                        except Exception as e:
+                            log("warning", "Failed to prune stale tags for parameter", account_id=account_id, region=region_name, error=str(e))
+
+                        # Desired-tag application path (best effort, independent from pruning).
+                        try:
+                            if combined_tags:
+                                ssm_dest.add_tags_to_resource(
                                     ResourceType="Parameter",
                                     ResourceId=dest_param_name,
-                                    TagKeys=list(stale_tags),
+                                    Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
                                 )
-                        elif config.enable_tag_replication and not source_tags_fetched:
-                            log(
-                                "warning",
-                                "Skipping stale-tag pruning because source tags could not be fetched",
-                                account_id=account_id,
-                                region=region_name,
-                                destination_parameter_name=dest_param_name,
-                                source_parameter_name=parameter_name,
-                            )
-                    except Exception as e:
-                        log("warning", "Failed to prune stale tags for parameter", account_id=account_id, region=region_name, error=str(e))
-
-                    # Desired-tag application path (best effort, independent from pruning).
-                    try:
-                        if combined_tags:
-                            ssm_dest.add_tags_to_resource(
-                                ResourceType="Parameter",
-                                ResourceId=dest_param_name,
-                                Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
-                            )
-                    except Exception as e:
-                        log("warning", "Failed to apply desired tags for parameter", account_id=account_id, region=region_name, error=str(e))
-                        # Continue replication even if tag sync fails
+                        except Exception as e:
+                            log("warning", "Failed to apply desired tags for parameter", account_id=account_id, region=region_name, error=str(e))
+                            # Continue replication even if tag sync fails
 
                 log("info", "Successfully replicated parameter", account_id=account_id, region=region_name)
 

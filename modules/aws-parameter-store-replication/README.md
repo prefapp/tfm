@@ -106,6 +106,15 @@ Where `<destination_parameter_name>` is determined by the module's naming logic:
 
 This allows the replication role to manage the destination parameter across all its versions.
 
+For successful replication without access-denied warnings, the destination role should allow these SSM actions on the destination parameter ARN(s):
+
+- `ssm:PutParameter` (required for value replication)
+- `ssm:GetParameters` (required for destination existence probe and update-time tag operations)
+- `ssm:AddTagsToResource` (required to apply desired tags on updates)
+- `ssm:ListTagsForResource` and `ssm:RemoveTagsFromResource` (required to prune stale tags when `enable_tag_replication = true`)
+
+If `enable_tag_replication = false`, only `ssm:PutParameter` is required for replication logic (metadata tags on create are attached through `PutParameter` create path).
+
 ## Basic Usage
 
 ### Simple Cross-Region Replication
