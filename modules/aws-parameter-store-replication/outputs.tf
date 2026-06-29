@@ -33,3 +33,23 @@ output "eventbridge_rule_arn" {
   description = "ARN of the EventBridge rule (if created)"
   value       = try(aws_cloudwatch_event_rule.parameter_store_api_calls[0].arn, null)
 }
+
+output "lambda_async_failure_dlq_arn" {
+  description = "ARN of the async failure DLQ for replication Lambda (if created)"
+  value       = try(aws_sqs_queue.lambda_async_failure_dlq[0].arn, null)
+}
+
+output "lambda_async_failure_dlq_url" {
+  description = "URL of the async failure DLQ for replication Lambda (if created)"
+  value       = try(aws_sqs_queue.lambda_async_failure_dlq[0].id, null)
+}
+
+output "lambda_async_errors_alarm_arn" {
+  description = "ARN of the async errors CloudWatch alarm (if created)"
+  value       = try(aws_cloudwatch_metric_alarm.lambda_async_errors[0].arn, null)
+}
+
+output "lambda_async_failure_dlq_alarm_arn" {
+  description = "ARN of the async failure DLQ visibility CloudWatch alarm (if created)"
+  value       = try(aws_cloudwatch_metric_alarm.lambda_async_failure_dlq_visible[0].arn, null)
+}

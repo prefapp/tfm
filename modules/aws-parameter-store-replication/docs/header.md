@@ -58,6 +58,22 @@ This is a deliberate disaster-recovery design choice to avoid accidental destruc
 
 Operational consequence: destination accounts may accumulate parameters that were deleted in the source account. If you need destination cleanup, handle deletions through a separate controlled process.
 
+### Async Failure Visibility (EventBridge)
+
+EventBridge invokes Lambda asynchronously. Without explicit failure handling, events can be dropped after retries.
+
+This module can provide built-in visibility for async failures when `eventbridge_enabled = true`:
+
+- Lambda async invoke config (`aws_lambda_function_event_invoke_config`)
+- On-failure destination to SQS DLQ
+- CloudWatch alarms for Lambda async errors and DLQ visible messages
+
+Relevant inputs:
+
+- `async_failure_visibility_enabled` (default `true`)
+- `lambda_async_maximum_retry_attempts` (default `2`, valid `0..2`)
+- `replication_failure_alarm_actions` (list of ARNs, e.g. SNS topics)
+
 The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `/eu-west-1/my/parameter` for path names, or `eu-west-1-myparameter` for simple names).
 
 ### Destination Configuration Format

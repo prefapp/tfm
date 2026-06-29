@@ -17,6 +17,18 @@ locals {
   eventbridge_rule_name_hash = substr(md5(local.eventbridge_rule_name_base), 0, 8)
   eventbridge_rule_name      = length(local.eventbridge_rule_name_base) <= 64 ? local.eventbridge_rule_name_base : "${substr(local.eventbridge_rule_name_base, 0, 55)}-${local.eventbridge_rule_name_hash}"
 
+  lambda_async_failure_dlq_name_base = "${local.naming_base}-replication-failure-dlq"
+  lambda_async_failure_dlq_name_hash = substr(md5(local.lambda_async_failure_dlq_name_base), 0, 8)
+  lambda_async_failure_dlq_name      = length(local.lambda_async_failure_dlq_name_base) <= 80 ? local.lambda_async_failure_dlq_name_base : "${substr(local.lambda_async_failure_dlq_name_base, 0, 71)}-${local.lambda_async_failure_dlq_name_hash}"
+
+  lambda_async_errors_alarm_name_base = "${local.naming_base}-replication-async-errors"
+  lambda_async_errors_alarm_name_hash = substr(md5(local.lambda_async_errors_alarm_name_base), 0, 8)
+  lambda_async_errors_alarm_name      = length(local.lambda_async_errors_alarm_name_base) <= 255 ? local.lambda_async_errors_alarm_name_base : "${substr(local.lambda_async_errors_alarm_name_base, 0, 246)}-${local.lambda_async_errors_alarm_name_hash}"
+
+  lambda_async_dlq_alarm_name_base = "${local.naming_base}-replication-async-dlq-visible"
+  lambda_async_dlq_alarm_name_hash = substr(md5(local.lambda_async_dlq_alarm_name_base), 0, 8)
+  lambda_async_dlq_alarm_name      = length(local.lambda_async_dlq_alarm_name_base) <= 255 ? local.lambda_async_dlq_alarm_name_base : "${substr(local.lambda_async_dlq_alarm_name_base, 0, 246)}-${local.lambda_async_dlq_alarm_name_hash}"
+
   # Tags for all resources
   common_tags = merge(
     var.tags,

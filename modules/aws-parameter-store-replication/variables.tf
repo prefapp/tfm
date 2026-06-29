@@ -89,6 +89,29 @@ variable "eventbridge_enabled" {
   default     = false
 }
 
+variable "async_failure_visibility_enabled" {
+  description = "Whether to create async failure visibility resources (Lambda async failure destination DLQ and CloudWatch alarms) when EventBridge is enabled."
+  type        = bool
+  default     = true
+}
+
+variable "lambda_async_maximum_retry_attempts" {
+  description = "Maximum retry attempts for asynchronous Lambda invocations (valid range: 0..2)."
+  type        = number
+  default     = 2
+
+  validation {
+    condition     = var.lambda_async_maximum_retry_attempts >= 0 && var.lambda_async_maximum_retry_attempts <= 2
+    error_message = "lambda_async_maximum_retry_attempts must be between 0 and 2."
+  }
+}
+
+variable "replication_failure_alarm_actions" {
+  description = "List of ARNs (for example SNS topics) to notify when replication failure alarms trigger."
+  type        = list(string)
+  default     = []
+}
+
 
 
 variable "lambda_timeout" {

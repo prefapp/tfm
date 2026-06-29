@@ -59,6 +59,22 @@ This is a deliberate disaster-recovery design choice to avoid accidental destruc
 
 Operational consequence: destination accounts may accumulate parameters that were deleted in the source account. If you need destination cleanup, handle deletions through a separate controlled process.
 
+### Async Failure Visibility (EventBridge)
+
+EventBridge invokes Lambda asynchronously. Without explicit failure handling, events can be dropped after retries.
+
+This module can provide built-in visibility for async failures when `eventbridge_enabled = true`:
+
+- Lambda async invoke config (`aws_lambda_function_event_invoke_config`)
+- On-failure destination to SQS DLQ
+- CloudWatch alarms for Lambda async errors and DLQ visible messages
+
+Relevant inputs:
+
+- `async_failure_visibility_enabled` (default `true`)
+- `lambda_async_maximum_retry_attempts` (default `2`, valid `0..2`)
+- `replication_failure_alarm_actions` (list of ARNs, e.g. SNS topics)
+
 The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `/eu-west-1/my/parameter` for path names, or `eu-west-1-myparameter` for simple names).
 
 ### Destination Configuration Format
@@ -218,7 +234,7 @@ module "parameter_replication_eventbridge" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.50 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.52.0 |
 
 ## Modules
 
@@ -232,14 +248,20 @@ module "parameter_replication_eventbridge" {
 |------|------|
 | [aws_cloudwatch_event_rule.parameter_store_api_calls](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.invoke_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
+| [aws_cloudwatch_metric_alarm.lambda_async_errors](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.lambda_async_failure_dlq_visible](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_iam_role.lambda_replication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.lambda_kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.lambda_ssm_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.lambda_ssm_write_destinations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_lambda_function_event_invoke_config.replication_async](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function_event_invoke_config) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [aws_sqs_queue.lambda_async_failure_dlq](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue) | resource |
+| [aws_sqs_queue_policy.lambda_async_failure_dlq](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue_policy) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.lambda_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.lambda_async_failure_dlq_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
@@ -249,16 +271,19 @@ module "parameter_replication_eventbridge" {
 | <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination parameter name is region-prefixed.<br/>For simple names: "myparameter" -> "us-east-1-myparameter".<br/>For path-style names: "/my/parameter" -> "/us-east-1/my/parameter".<br/>If false, the original name is used. Default: false.<br/>This helps avoid collisions if you replicate parameters with the same name from multiple regions. | `bool` | `false` | no |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | Additional IAM role ARNs the Lambda is allowed to assume (destination role\_arn values from destinations\_json are always included). | `list(string)` | `[]` | no |
 | <a name="input_assume_role_duration_seconds"></a> [assume\_role\_duration\_seconds](#input\_assume\_role\_duration\_seconds) | Duration (in seconds) for STS AssumeRole sessions used to access destination accounts. Must be between 900 and 43200 seconds, and cannot exceed the destination role MaxSessionDuration. | `number` | `3600` | no |
+| <a name="input_async_failure_visibility_enabled"></a> [async\_failure\_visibility\_enabled](#input\_async\_failure\_visibility\_enabled) | Whether to create async failure visibility resources (Lambda async failure destination DLQ and CloudWatch alarms) when EventBridge is enabled. | `bool` | `true` | no |
 | <a name="input_destinations_json"></a> [destinations\_json](#input\_destinations\_json) | JSON describing accounts, regions and KMS keys for replication | `string` | n/a | yes |
-| <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the manual replication Lambda is granted ssm:DescribeParameters on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
+| <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the replication Lambda is granted ssm:DescribeParameters on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to copy/prune *source* tags from the source parameter. Replication metadata tags (origin-account, origin-region, latest-version) are always applied. Terraform also uses this to conditionally grant source tag-read permissions (`ssm:ListTagsForResource`). | `bool` | `true` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Additional environment variables passed to the Lambda | `map(string)` | `{}` | no |
 | <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `false` | no |
+| <a name="input_lambda_async_maximum_retry_attempts"></a> [lambda\_async\_maximum\_retry\_attempts](#input\_lambda\_async\_maximum\_retry\_attempts) | Maximum retry attempts for asynchronous Lambda invocations (valid range: 0..2). | `number` | `2` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `600` | no |
 | <a name="input_manual_replication_enabled"></a> [manual\_replication\_enabled](#input\_manual\_replication\_enabled) | DEPRECATED: Kept for backward compatibility. Manual replication is now always available through the unified Lambda. This variable no longer has any effect. | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Base name for the Lambda and associated resources | `string` | n/a | yes |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to use for naming resources. | `string` | n/a | yes |
+| <a name="input_replication_failure_alarm_actions"></a> [replication\_failure\_alarm\_actions](#input\_replication\_failure\_alarm\_actions) | List of ARNs (for example SNS topics) to notify when replication failure alarms trigger. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to all resources created by this module | `map(string)` | `{}` | no |
 
 ## Outputs
@@ -266,6 +291,10 @@ module "parameter_replication_eventbridge" {
 | Name | Description |
 |------|-------------|
 | <a name="output_eventbridge_rule_arn"></a> [eventbridge\_rule\_arn](#output\_eventbridge\_rule\_arn) | ARN of the EventBridge rule (if created) |
+| <a name="output_lambda_async_errors_alarm_arn"></a> [lambda\_async\_errors\_alarm\_arn](#output\_lambda\_async\_errors\_alarm\_arn) | ARN of the async errors CloudWatch alarm (if created) |
+| <a name="output_lambda_async_failure_dlq_alarm_arn"></a> [lambda\_async\_failure\_dlq\_alarm\_arn](#output\_lambda\_async\_failure\_dlq\_alarm\_arn) | ARN of the async failure DLQ visibility CloudWatch alarm (if created) |
+| <a name="output_lambda_async_failure_dlq_arn"></a> [lambda\_async\_failure\_dlq\_arn](#output\_lambda\_async\_failure\_dlq\_arn) | ARN of the async failure DLQ for replication Lambda (if created) |
+| <a name="output_lambda_async_failure_dlq_url"></a> [lambda\_async\_failure\_dlq\_url](#output\_lambda\_async\_failure\_dlq\_url) | URL of the async failure DLQ for replication Lambda (if created) |
 | <a name="output_lambda_automatic_replication_arn"></a> [lambda\_automatic\_replication\_arn](#output\_lambda\_automatic\_replication\_arn) | DEPRECATED: Use lambda\_replication\_arn. ARN of the replication Lambda function |
 | <a name="output_lambda_automatic_replication_role_arn"></a> [lambda\_automatic\_replication\_role\_arn](#output\_lambda\_automatic\_replication\_role\_arn) | DEPRECATED: Use lambda\_replication\_role\_arn. IAM role ARN for the replication Lambda |
 | <a name="output_lambda_manual_replication_arn"></a> [lambda\_manual\_replication\_arn](#output\_lambda\_manual\_replication\_arn) | DEPRECATED: Use lambda\_replication\_arn. ARN of the replication Lambda function |
