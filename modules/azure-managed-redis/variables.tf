@@ -56,7 +56,7 @@ variable "managed_redis" {
 
     # Managed identity configuration. Enables SystemAssigned, UserAssigned, or both.
     identity = optional(object({
-      type         = string           # SystemAssigned | UserAssigned | SystemAssigned, UserAssigned
+      type         = string           # SystemAssigned | UserAssigned
       identity_ids = optional(list(string)) # Required when type includes UserAssigned
     }))
 
