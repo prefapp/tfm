@@ -33,6 +33,17 @@ The Lambda determines the source parameter based on the invocation mode:
 - **Manual**: from the `parameter_name` field in the event payload.
 - **Full sync**: enumerates all parameters via `describe_parameters()` and replicates each.
 
+### Delete Event Behavior (Intentional)
+
+For safety, this module intentionally replicates **Create/Update** events only. Delete events are not replicated by default:
+
+- EventBridge rule filters operations to `Create` and `Update`.
+- The Lambda handler ignores non-Create/Update Parameter Store change events.
+
+This is a deliberate disaster-recovery design choice to avoid accidental destructive propagation across accounts/regions.
+
+Operational consequence: destination accounts may accumulate parameters that were deleted in the source account. If you need destination cleanup, handle deletions through a separate controlled process.
+
 The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `/eu-west-1/my/parameter` for path names, or `eu-west-1-myparameter` for simple names).
 
 ### Destination Configuration Format
@@ -192,7 +203,7 @@ module "parameter_replication_eventbridge" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.52.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.50 |
 
 ## Modules
 
