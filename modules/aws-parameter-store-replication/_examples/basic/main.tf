@@ -30,12 +30,7 @@ module "parameter_replication" {
   }
 }
 
-output "automatic_replication_lambda_arn" {
-  description = "ARN of the automatic parameter replication Lambda function"
-  value       = module.parameter_replication.lambda_automatic_replication_arn
-}
-
-output "manual_replication_lambda_arn" {
-  description = "ARN of the manual parameter replication Lambda function"
-  value       = module.parameter_replication.lambda_manual_replication_arn
+output "replication_lambda_arn" {
+  description = "ARN of the unified parameter replication Lambda function"
+  value       = module.parameter_replication.lambda_replication_arn
 }
