@@ -215,7 +215,7 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                             destination_parameter_name=dest_param_name,
                         )
                     else:
-                    # Pruning path (best effort): do not block desired-tag application.
+                        # Pruning path (best effort): do not block desired-tag application.
                         try:
                             # Only fetch destination tags if we need them for stale-tag pruning.
                             # When tag replication is disabled, skip this API call and only update metadata tags.
