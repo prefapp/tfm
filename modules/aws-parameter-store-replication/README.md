@@ -33,6 +33,18 @@ The Lambda determines the source parameter based on the invocation mode:
 - **Manual**: from the `parameter_name` field in the event payload.
 - **Full sync**: enumerates all parameters via `describe_parameters()` and replicates each.
 
+### Full Sync Scale and Timeout Considerations
+
+Full sync currently runs sequentially inside a single Lambda invocation. The module default is `lambda_timeout = 600` seconds, and AWS Lambda has a hard maximum of `900` seconds.
+
+For large parameter inventories (especially with multiple destination regions/accounts), full sync can time out mid-run. This module does not currently implement built-in continuation/resume semantics (for example, self-invocation with pagination state).
+
+For DR bootstrap at larger scale, prefer one of these approaches:
+
+- Increase timeout (up to 900s) and run in controlled batches/scopes.
+- Re-run full sync iteratively until convergence.
+- Use an external orchestrator (for example, Step Functions) for chunking/continuation and retry control.
+
 ### Delete Event Behavior (Intentional)
 
 For safety, this module intentionally replicates **Create/Update** events only. Delete events are not replicated by default:
