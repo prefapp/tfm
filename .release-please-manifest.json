@@ -64,5 +64,5 @@
     "modules/github-org-ruleset": "0.1.1",
     "modules/github-org-rulesets": "0.1.1",
     "modules/azure-alerts": "0.1.2",
-    "modules/azure-managed-redis": "0.1.0"
+    "modules/azure-managed-redis": "1.0.0"
 }
