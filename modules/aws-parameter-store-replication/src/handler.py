@@ -55,8 +55,14 @@ def lambda_handler(event, context):
     # Mode 2 & 3: Manual invocation (can be single param or full sync)
     parameter_name = event.get("parameter_name")
 
-    # Check for full sync request
-    event_enable_full_sync = event.get("enable_full_sync") or event.get("initial_run")
+    # Check for full sync request.
+    # Use explicit key presence checks so explicit false is not treated as "missing".
+    if "enable_full_sync" in event:
+        event_enable_full_sync = event.get("enable_full_sync")
+    elif "initial_run" in event:
+        event_enable_full_sync = event.get("initial_run")
+    else:
+        event_enable_full_sync = None
     if event_enable_full_sync is None:
         enable_full_sync = config.enable_full_sync
     elif isinstance(event_enable_full_sync, bool):
