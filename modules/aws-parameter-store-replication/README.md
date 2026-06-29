@@ -75,6 +75,8 @@ Relevant inputs:
 - `lambda_async_maximum_retry_attempts` (default `2`, valid `0..2`)
 - `replication_failure_alarm_actions` (list of ARNs, e.g. SNS topics)
 
+Scope note: the `lambda_async_errors` alarm is intended for async EventBridge failure visibility. Manual/full-sync invocation paths may catch exceptions and return structured responses, which can avoid incrementing the Lambda `Errors` metric in the same way as unhandled async failures.
+
 The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `/eu-west-1/my/parameter` for path names, or `eu-west-1-myparameter` for simple names).
 
 ### Destination Configuration Format
@@ -251,6 +253,7 @@ module "parameter_replication_eventbridge" {
 | [aws_cloudwatch_metric_alarm.lambda_async_errors](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.lambda_async_failure_dlq_visible](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_iam_role.lambda_replication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy.lambda_async_failure_dlq_send](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.lambda_kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.lambda_ssm_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.lambda_ssm_write_destinations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |

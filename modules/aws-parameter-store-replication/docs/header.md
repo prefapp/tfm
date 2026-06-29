@@ -74,6 +74,8 @@ Relevant inputs:
 - `lambda_async_maximum_retry_attempts` (default `2`, valid `0..2`)
 - `replication_failure_alarm_actions` (list of ARNs, e.g. SNS topics)
 
+Scope note: the `lambda_async_errors` alarm is intended for async EventBridge failure visibility. Manual/full-sync invocation paths may catch exceptions and return structured responses, which can avoid incrementing the Lambda `Errors` metric in the same way as unhandled async failures.
+
 The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `/eu-west-1/my/parameter` for path names, or `eu-west-1-myparameter` for simple names).
 
 ### Destination Configuration Format
