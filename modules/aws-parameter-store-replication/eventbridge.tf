@@ -17,14 +17,14 @@ resource "aws_cloudwatch_event_rule" "parameter_store_api_calls" {
 resource "aws_cloudwatch_event_target" "invoke_lambda" {
   count = var.eventbridge_enabled ? 1 : 0
   rule  = aws_cloudwatch_event_rule.parameter_store_api_calls[0].name
-  arn   = module.lambda_automatic_replication.lambda_function_arn
+  arn   = module.lambda_replication.lambda_function_arn
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
   count         = var.eventbridge_enabled ? 1 : 0
   statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
-  function_name = module.lambda_automatic_replication.lambda_function_name
+  function_name = module.lambda_replication.lambda_function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.parameter_store_api_calls[0].arn
 }

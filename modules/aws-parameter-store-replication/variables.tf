@@ -112,5 +112,5 @@ variable "tags" {
 variable "manual_replication_enabled" {
   type        = bool
   default     = true
-  description = "Whether to deploy the manual parameter sync Lambda"
+  description = "DEPRECATED: Kept for backward compatibility. Manual replication is now always available through the unified Lambda. This variable no longer has any effect."
 }

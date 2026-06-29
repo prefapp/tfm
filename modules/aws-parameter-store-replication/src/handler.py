@@ -1,4 +1,6 @@
-# lambda_manual_replication/handler.py
+# handler.py - Unified parameter replication Lambda
+# Handles both EventBridge-driven and manual invocation modes
+
 from replication import replicate_parameter
 from config import load_config
 from utils import log, assume_role
@@ -6,27 +8,55 @@ import boto3
 import json
 
 
+def _extract_parameter_from_eventbridge(event):
+    """
+    Extracts parameter name from native SSM Parameter Store Change event.
+    Returns (parameter_name, is_eventbridge) or (None, False) if not an EB event.
+    """
+    detail = event.get("detail", {})
+    detail_type = event.get("detail-type", "")
+
+    if detail_type != "Parameter Store Change":
+        return None, False
+
+    operation = detail.get("operation")
+    if operation not in ("Create", "Update"):
+        return None, False
+
+    parameter_name = detail.get("name")
+    return parameter_name, bool(parameter_name)
+
+
 def lambda_handler(event, context):
     """
-    AWS Lambda entry point for manual parameter replication.
-    Can be triggered via:
-    - API invocation with parameter_name in payload
-    - Full sync if ENABLE_FULL_SYNC=true
+    Unified Lambda entry point for parameter replication.
+
+    Modes:
+    1. EventBridge automatic: triggered by SSM Parameter Store Change events
+    2. Manual single parameter: invoke with {"parameter_name": "my-param"}
+    3. Full sync: invoke with {"initial_run": true} or {"enable_full_sync": true}
 
     Args:
-        event (dict): Lambda event data. Expected format:
-            {
-                "parameter_name": "my-parameter"  # Optional, for manual replication
-            }
-        context: Lambda context object.
+        event (dict): Lambda event data
+        context: Lambda context object
+
     Returns:
-        dict: Result of the replication.
+        dict or None
     """
     config = load_config()
 
+    # Mode 1: EventBridge automatic replication
+    param_name_eb, is_eventbridge = _extract_parameter_from_eventbridge(event)
+    if is_eventbridge:
+        log("info", "EventBridge automatic replication triggered", parameter_name=param_name_eb)
+        replicate_parameter(param_name_eb, config, skip_missing=True)
+        return None
+
+    # Mode 2 & 3: Manual invocation (can be single param or full sync)
     parameter_name = event.get("parameter_name")
 
-    event_enable_full_sync = event.get("enable_full_sync", None)
+    # Check for full sync request
+    event_enable_full_sync = event.get("enable_full_sync") or event.get("initial_run")
     if event_enable_full_sync is None:
         enable_full_sync = config.enable_full_sync
     elif isinstance(event_enable_full_sync, bool):
@@ -36,7 +66,7 @@ def lambda_handler(event, context):
     else:
         enable_full_sync = bool(event_enable_full_sync)
 
-    # Guardrail: refuse to run full sync if not enabled in config, even if event requests it
+    # Guardrail: refuse to run full sync if not enabled in config
     if enable_full_sync and not config.enable_full_sync:
         log(
             "error",
@@ -49,20 +79,17 @@ def lambda_handler(event, context):
             })
         }
 
+    # Mode 2a: Full account sync
     if enable_full_sync:
-        # Full account sync: list all parameters and replicate each one
         log("info", "Starting full sync of all parameters")
 
         source_ssm = boto3.client("ssm", region_name=config.source_region)
-        # Reuse the same source client for per-parameter replication to avoid
-        # creating a new boto3 SSM client on every iteration.
         config.source_ssm = source_ssm
 
         paginator = source_ssm.get_paginator("describe_parameters")
         page_iterator = paginator.paginate()
 
-        # Cache destination clients per (role_arn, region) to avoid repeated
-        # STS AssumeRole calls for every replicated parameter.
+        # Cache destination clients per (role_arn, region)
         cached_ssm_clients = {}
 
         def get_cached_ssm_client(role_arn, region_name):
@@ -101,8 +128,8 @@ def lambda_handler(event, context):
             })
         }
 
+    # Mode 2b: Manual single parameter replication
     elif parameter_name:
-        # Manual replication of a specific parameter
         log("info", "Starting manual replication", parameter_name=parameter_name)
         try:
             replicate_parameter(parameter_name, config, skip_missing=False)
@@ -122,11 +149,12 @@ def lambda_handler(event, context):
                 })
             }
 
+    # No valid invocation mode
     else:
-        log("warning", "No parameter_name provided and full sync disabled")
+        log("warning", "No valid invocation mode (no EventBridge event, no parameter_name, and no full sync enabled)")
         return {
             "statusCode": 400,
             "body": json.dumps({
-                "message": "Either 'parameter_name' must be provided, or 'enable_full_sync' must be true."
+                "message": "Invalid invocation: must be triggered by EventBridge, or provide 'parameter_name', or enable 'enable_full_sync'."
             })
         }

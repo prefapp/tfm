@@ -20,13 +20,17 @@ The module is designed for secure and automated parameter replication, supportin
 
 ## Parameter Replication Logic
 
-This module deploys a Lambda function that listens for changes in AWS Systems Manager Parameter Store via EventBridge (if enabled). When a parameter is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both parameter value and tags (if enabled).
+This module deploys a single Lambda function that handles multiple invocation modes:
 
-The Lambda determines:
+1. **EventBridge Automatic Mode** (if `eventbridge_enabled = true`): Automatically triggers on SSM Parameter Store Create/Update events.
+2. **Manual Single Parameter Mode**: Direct Lambda invocation with `{"parameter_name": "my-parameter"}` in the payload.
+3. **Full Account Sync Mode** (if `enable_full_sync = true`): Direct Lambda invocation with `{"initial_run": true}` or `{"enable_full_sync": true}` to replicate all parameters in the source account.
 
-- the **source parameter** from the EventBridge event (automatic mode),
-- from the `parameter_name` parameter (manual mode),
-- or from `describe_parameters()` (full sync mode).
+The Lambda determines the source parameter based on the invocation mode:
+
+- **Automatic**: extracts from the EventBridge event detail (`name` field).
+- **Manual**: from the `parameter_name` field in the event payload.
+- **Full sync**: enumerates all parameters via `describe_parameters()` and replicates each.
 
 The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `/eu-west-1/my/parameter` for path names, or `eu-west-1-myparameter` for simple names).
 

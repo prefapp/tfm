@@ -21,13 +21,17 @@ The module is designed for secure and automated parameter replication, supportin
 
 ## Parameter Replication Logic
 
-This module deploys a Lambda function that listens for changes in AWS Systems Manager Parameter Store via EventBridge (if enabled). When a parameter is modified, the Lambda replicates it to the configured destinations, assuming roles as needed. The replication supports both parameter value and tags (if enabled).
+This module deploys a single Lambda function that handles multiple invocation modes:
 
-The Lambda determines:
+1. **EventBridge Automatic Mode** (if `eventbridge_enabled = true`): Automatically triggers on SSM Parameter Store Create/Update events.
+2. **Manual Single Parameter Mode**: Direct Lambda invocation with `{"parameter_name": "my-parameter"}` in the payload.
+3. **Full Account Sync Mode** (if `enable_full_sync = true`): Direct Lambda invocation with `{"initial_run": true}` or `{"enable_full_sync": true}` to replicate all parameters in the source account.
 
-- the **source parameter** from the EventBridge event (automatic mode),
-- from the `parameter_name` parameter (manual mode),
-- or from `describe_parameters()` (full sync mode).
+The Lambda determines the source parameter based on the invocation mode:
+
+- **Automatic**: extracts from the EventBridge event detail (`name` field).
+- **Manual**: from the `parameter_name` field in the event payload.
+- **Full sync**: enumerates all parameters via `describe_parameters()` and replicates each.
 
 The **destination parameter name matches the source parameter name by default**. If `add_region_prefix_to_name = true`, the destination name is prefixed with the source region (for example, `/eu-west-1/my/parameter` for path names, or `eu-west-1-myparameter` for simple names).
 
@@ -194,8 +198,7 @@ module "parameter_replication_eventbridge" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda_automatic_replication"></a> [lambda\_automatic\_replication](#module\_lambda\_automatic\_replication) | terraform-aws-modules/lambda/aws | ~> 7.0 |
-| <a name="module_lambda_manual_replication"></a> [lambda\_manual\_replication](#module\_lambda\_manual\_replication) | terraform-aws-modules/lambda/aws | ~> 7.0 |
+| <a name="module_lambda_replication"></a> [lambda\_replication](#module\_lambda\_replication) | terraform-aws-modules/lambda/aws | ~> 7.0 |
 
 ## Resources
 
@@ -203,16 +206,11 @@ module "parameter_replication_eventbridge" {
 |------|------|
 | [aws_cloudwatch_event_rule.parameter_store_api_calls](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.invoke_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
-| [aws_iam_role.lambda_automatic_replication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.lambda_manual_replication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.lambda_replication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.lambda_kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
-| [aws_iam_role_policy.lambda_manual_kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
-| [aws_iam_role_policy.lambda_manual_ssm_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
-| [aws_iam_role_policy.lambda_manual_ssm_write_destinations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.lambda_ssm_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.lambda_ssm_write_destinations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
-| [aws_iam_role_policy_attachment.lambda_automatic_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.lambda_manual_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.lambda_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -231,7 +229,7 @@ module "parameter_replication_eventbridge" {
 | <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `false` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `600` | no |
-| <a name="input_manual_replication_enabled"></a> [manual\_replication\_enabled](#input\_manual\_replication\_enabled) | Whether to deploy the manual parameter sync Lambda | `bool` | `true` | no |
+| <a name="input_manual_replication_enabled"></a> [manual\_replication\_enabled](#input\_manual\_replication\_enabled) | DEPRECATED: Kept for backward compatibility. Manual replication is now always available through the unified Lambda. This variable no longer has any effect. | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Base name for the Lambda and associated resources | `string` | n/a | yes |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to use for naming resources. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to all resources created by this module | `map(string)` | `{}` | no |
@@ -241,10 +239,12 @@ module "parameter_replication_eventbridge" {
 | Name | Description |
 |------|-------------|
 | <a name="output_eventbridge_rule_arn"></a> [eventbridge\_rule\_arn](#output\_eventbridge\_rule\_arn) | ARN of the EventBridge rule (if created) |
-| <a name="output_lambda_automatic_replication_arn"></a> [lambda\_automatic\_replication\_arn](#output\_lambda\_automatic\_replication\_arn) | ARN of the Lambda function |
-| <a name="output_lambda_automatic_replication_role_arn"></a> [lambda\_automatic\_replication\_role\_arn](#output\_lambda\_automatic\_replication\_role\_arn) | IAM role ARN associated with the Lambda |
-| <a name="output_lambda_manual_replication_arn"></a> [lambda\_manual\_replication\_arn](#output\_lambda\_manual\_replication\_arn) | ARN of the manual replication Lambda function (if created) |
-| <a name="output_lambda_manual_replication_role_arn"></a> [lambda\_manual\_replication\_role\_arn](#output\_lambda\_manual\_replication\_role\_arn) | IAM role ARN for the manual replication Lambda (if created) |
+| <a name="output_lambda_automatic_replication_arn"></a> [lambda\_automatic\_replication\_arn](#output\_lambda\_automatic\_replication\_arn) | DEPRECATED: Use lambda\_replication\_arn. ARN of the replication Lambda function |
+| <a name="output_lambda_automatic_replication_role_arn"></a> [lambda\_automatic\_replication\_role\_arn](#output\_lambda\_automatic\_replication\_role\_arn) | DEPRECATED: Use lambda\_replication\_role\_arn. IAM role ARN for the replication Lambda |
+| <a name="output_lambda_manual_replication_arn"></a> [lambda\_manual\_replication\_arn](#output\_lambda\_manual\_replication\_arn) | DEPRECATED: Use lambda\_replication\_arn. ARN of the replication Lambda function |
+| <a name="output_lambda_manual_replication_role_arn"></a> [lambda\_manual\_replication\_role\_arn](#output\_lambda\_manual\_replication\_role\_arn) | DEPRECATED: Use lambda\_replication\_role\_arn. IAM role ARN for the replication Lambda |
+| <a name="output_lambda_replication_arn"></a> [lambda\_replication\_arn](#output\_lambda\_replication\_arn) | ARN of the unified replication Lambda function |
+| <a name="output_lambda_replication_role_arn"></a> [lambda\_replication\_role\_arn](#output\_lambda\_replication\_role\_arn) | IAM role ARN for the replication Lambda |
 
 ## Examples
 
