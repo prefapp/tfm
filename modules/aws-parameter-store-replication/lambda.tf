@@ -26,6 +26,7 @@ module "lambda_replication" {
       DESTINATIONS_JSON         = var.destinations_json
       ENABLE_TAG_REPLICATION    = tostring(var.enable_tag_replication)
       ENABLE_FULL_SYNC          = tostring(var.enable_full_sync)
+      ASSUME_ROLE_DURATION_SECONDS = tostring(var.assume_role_duration_seconds)
       ADD_REGION_PREFIX_TO_NAME = tostring(var.add_region_prefix_to_name)
     }
   )

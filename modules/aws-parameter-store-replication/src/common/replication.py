@@ -143,7 +143,11 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
             if get_ssm_client is not None:
                 ssm_dest = get_ssm_client(dest.role_arn, region_name)
             else:
-                ssm_dest = assume_role(dest.role_arn, region_name)
+                ssm_dest = assume_role(
+                    dest.role_arn,
+                    region_name,
+                    duration_seconds=getattr(config, "assume_role_duration_seconds", None),
+                )
 
             destination_read_denied = False
             try:

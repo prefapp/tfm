@@ -3,7 +3,7 @@
 
 from replication import replicate_parameter
 from config import load_config
-from utils import log, assume_role
+from utils import log, assume_role, is_expired_token_error
 import boto3
 import json
 
@@ -101,7 +101,11 @@ def lambda_handler(event, context):
         def get_cached_ssm_client(role_arn, region_name):
             cache_key = (role_arn, region_name)
             if cache_key not in cached_ssm_clients:
-                cached_ssm_clients[cache_key] = assume_role(role_arn, region_name)
+                cached_ssm_clients[cache_key] = assume_role(
+                    role_arn,
+                    region_name,
+                    duration_seconds=config.assume_role_duration_seconds,
+                )
             return cached_ssm_clients[cache_key]
 
         replicated_count = 0
@@ -121,6 +125,32 @@ def lambda_handler(event, context):
                     replicated_count += 1
                 except Exception as e:
                     failed_param_name = param_meta.get("Name", "<missing-name>") if isinstance(param_meta, dict) else "<invalid-parameter-metadata>"
+
+                    if is_expired_token_error(e):
+                        log(
+                            "warning",
+                            "Expired destination credentials detected during full sync; refreshing cached clients and retrying once",
+                            parameter_name=failed_param_name,
+                            error=str(e),
+                        )
+                        cached_ssm_clients.clear()
+                        try:
+                            replicate_parameter(
+                                failed_param_name,
+                                config,
+                                get_ssm_client=get_cached_ssm_client,
+                                skip_missing=True,
+                            )
+                            replicated_count += 1
+                            continue
+                        except Exception as retry_exc:
+                            log(
+                                "error",
+                                "Retry after credential refresh failed in full sync",
+                                parameter_name=failed_param_name,
+                                error=str(retry_exc),
+                            )
+
                     log("error", "Failed to replicate parameter in full sync", parameter_name=failed_param_name, error=str(e))
                     error_count += 1
 

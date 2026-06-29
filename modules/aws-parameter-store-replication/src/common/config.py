@@ -21,6 +21,7 @@ class Config:
     source_region: str
     enable_tag_replication: bool
     enable_full_sync: bool
+    assume_role_duration_seconds: int
     source_account: str
     add_region_prefix_to_name: bool
     source_ssm: Any | None = None
@@ -57,6 +58,12 @@ def load_config() -> Config:
     source_region = os.environ.get("AWS_REGION", "eu-west-1")
     enable_tag_replication = os.environ.get("ENABLE_TAG_REPLICATION", "true").lower() == "true"
     enable_full_sync = os.environ.get("ENABLE_FULL_SYNC", "false").lower() == "true"
+    try:
+        assume_role_duration_seconds = int(os.environ.get("ASSUME_ROLE_DURATION_SECONDS", "3600"))
+    except (TypeError, ValueError):
+        assume_role_duration_seconds = 3600
+    if assume_role_duration_seconds < 900 or assume_role_duration_seconds > 43200:
+        assume_role_duration_seconds = 3600
 
     add_region_prefix_to_name = os.environ.get("ADD_REGION_PREFIX_TO_NAME", "false").lower() == "true"
 
@@ -72,6 +79,7 @@ def load_config() -> Config:
         source_region=source_region,
         enable_tag_replication=enable_tag_replication,
         enable_full_sync=enable_full_sync,
+        assume_role_duration_seconds=assume_role_duration_seconds,
         source_account=source_account,
         add_region_prefix_to_name=add_region_prefix_to_name,
     )

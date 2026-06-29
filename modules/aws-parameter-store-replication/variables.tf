@@ -103,6 +103,17 @@ variable "lambda_memory" {
   default     = 128
 }
 
+variable "assume_role_duration_seconds" {
+  description = "Duration (in seconds) for STS AssumeRole sessions used to access destination accounts. Must be between 900 and 43200 seconds, and cannot exceed the destination role MaxSessionDuration."
+  type        = number
+  default     = 3600
+
+  validation {
+    condition     = var.assume_role_duration_seconds >= 900 && var.assume_role_duration_seconds <= 43200
+    error_message = "assume_role_duration_seconds must be between 900 and 43200 seconds."
+  }
+}
+
 variable "tags" {
   description = "Tags applied to all resources created by this module"
   type        = map(string)

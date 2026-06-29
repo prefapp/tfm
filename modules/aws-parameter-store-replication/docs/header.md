@@ -44,6 +44,9 @@ For DR bootstrap at larger scale, prefer one of these approaches:
 - Re-run full sync iteratively until convergence.
 - Use an external orchestrator (for example, Step Functions) for chunking/continuation and retry control.
 
+You can also configure STS assumed-role session duration with `assume_role_duration_seconds` (default `3600`, valid range `900..43200`).
+Note that the effective value cannot exceed the destination role `MaxSessionDuration`; if you set a higher value than the role allows, AWS STS `AssumeRole` will fail.
+
 ### Delete Event Behavior (Intentional)
 
 For safety, this module intentionally replicates **Create/Update** events only. Delete events are not replicated by default:

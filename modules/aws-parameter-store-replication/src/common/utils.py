@@ -44,7 +44,12 @@ def log(level: str, message: str, exc_info=None, **kwargs):
         logger.debug(message)
 
 
-def assume_role(role_arn: str, region: str, session_name: str = "parameter-replication-session"):
+def assume_role(
+    role_arn: str,
+    region: str,
+    session_name: str = "parameter-replication-session",
+    duration_seconds: int | None = None,
+):
     """
     Assume a cross-account IAM role and return an SSM client using the temporary credentials.
     Args:
@@ -56,10 +61,14 @@ def assume_role(role_arn: str, region: str, session_name: str = "parameter-repli
     """
     sts = boto3.client("sts")
 
-    response = sts.assume_role(
-        RoleArn=role_arn,
-        RoleSessionName=session_name,
-    )
+    assume_role_kwargs = {
+        "RoleArn": role_arn,
+        "RoleSessionName": session_name,
+    }
+    if duration_seconds is not None:
+        assume_role_kwargs["DurationSeconds"] = int(duration_seconds)
+
+    response = sts.assume_role(**assume_role_kwargs)
 
     creds = response["Credentials"]
 
@@ -71,3 +80,27 @@ def assume_role(role_arn: str, region: str, session_name: str = "parameter-repli
     )
 
     return session.client("ssm")
+
+
+def is_expired_token_error(exc: Exception) -> bool:
+    """
+    Returns True when an exception is related to expired temporary AWS credentials.
+    """
+    try:
+        response = getattr(exc, "response", None) or {}
+        error = response.get("Error", {}) if isinstance(response, dict) else {}
+        code = str(error.get("Code", ""))
+        message = str(error.get("Message", ""))
+
+        known_codes = {
+            "ExpiredToken",
+            "ExpiredTokenException",
+            "RequestExpired",
+        }
+        if code in known_codes:
+            return True
+
+        combined = f"{code} {message}".lower()
+        return "expiredtoken" in combined or "request has expired" in combined
+    except Exception:
+        return False
