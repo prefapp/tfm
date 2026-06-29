@@ -12,8 +12,7 @@ module "lambda_replication" {
   runtime       = "python3.12"
 
   source_path = [
-    "${path.module}/src",
-    "${path.module}/src/common"
+    "${path.module}/src"
   ]
 
   timeout     = var.lambda_timeout

@@ -1,9 +1,9 @@
 # handler.py - Unified parameter replication Lambda
 # Handles both EventBridge-driven and manual invocation modes
 
-from replication import replicate_parameter
-from config import load_config
-from utils import log, assume_role, is_expired_token_error
+from common.replication import replicate_parameter
+from common.config import load_config
+from common.utils import log, assume_role, is_expired_token_error
 import boto3
 import json
 
