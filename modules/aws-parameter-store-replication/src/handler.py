@@ -125,7 +125,7 @@ def lambda_handler(event, context):
             return {
                 "statusCode": 400,
                 "body": json.dumps({
-                    "message": "Invalid invocation: 'parameter_name' must be a non-empty string when provided."
+                    "message": "Invalid invocation: 'parameter_name' must be a non-empty string without whitespace and no longer than 2048 characters when provided."
                 })
             }
 
