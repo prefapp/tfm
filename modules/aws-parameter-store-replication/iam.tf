@@ -58,9 +58,9 @@ resource "aws_iam_role_policy" "lambda_ssm_read" {
   })
 }
 
-# Policy for writing parameters to destination accounts
-resource "aws_iam_role_policy" "lambda_ssm_write_destinations" {
-  name = "${local.lambda_role_name}-ssm-write-destinations"
+# Policy for assuming destination roles
+resource "aws_iam_role_policy" "lambda_sts_assume_destinations" {
+  name = "${local.lambda_role_name}-sts-assume-destinations"
   role = aws_iam_role.lambda_replication.id
 
   policy = jsonencode({
