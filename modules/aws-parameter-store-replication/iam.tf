@@ -37,8 +37,7 @@ resource "aws_iam_role_policy" "lambda_ssm_read" {
           Effect = "Allow"
           Action = concat(
             [
-              "ssm:GetParameter",
-              "ssm:GetParameters"
+              "ssm:GetParameter"
             ],
             var.enable_tag_replication ? ["ssm:ListTagsForResource"] : []
           )
