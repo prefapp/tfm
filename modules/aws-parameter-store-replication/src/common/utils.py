@@ -1,0 +1,106 @@
+import boto3
+import logging
+import os
+import json
+
+# Configure root logger level once, honoring LOG_LEVEL env var if set
+_log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.getLogger().setLevel(getattr(logging, _log_level, logging.INFO))
+
+
+def log(level: str, message: str, exc_info=None, **kwargs):
+    """
+    Structured logging helper for consistent log output.
+    Args:
+        level (str): Log level (info, warning, error, debug).
+        message (str): Log message.
+        exc_info (bool|None): Whether to include exception info (only for error logs).
+        **kwargs: Additional context for the log.
+    Returns:
+        None
+    """
+
+    logger = logging.getLogger()
+
+    # Normalize log level to lower case and accept standard levels
+    level_normalized = level.lower()
+    if level_normalized not in ["info", "warning", "error", "debug"]:
+        level_normalized = "debug"
+
+    # Serialize kwargs as JSON and append to message for CloudWatch visibility
+    if kwargs:
+        try:
+            message = f"{message} | context: {json.dumps(kwargs, default=str, sort_keys=True)}"
+        except Exception:
+            message = f"{message} | context: {kwargs}"
+
+    if level_normalized == "info":
+        logger.info(message)
+    elif level_normalized == "warning":
+        logger.warning(message)
+    elif level_normalized == "error":
+        logger.error(message, exc_info=exc_info if exc_info is not None else False)
+    else:
+        logger.debug(message)
+
+
+def assume_role(
+    role_arn: str,
+    region: str,
+    session_name: str = "parameter-replication-session",
+    duration_seconds: int | None = None,
+):
+    """
+    Assume a cross-account IAM role and return an SSM client using the temporary credentials.
+    Args:
+        role_arn (str): ARN of the role to assume.
+        region (str): AWS region for the client.
+        session_name (str): Session name for the assumed role.
+    Returns:
+        boto3.client: Boto3 SSM client with assumed credentials.
+    """
+    sts = boto3.client("sts")
+
+    assume_role_kwargs = {
+        "RoleArn": role_arn,
+        "RoleSessionName": session_name,
+    }
+    if duration_seconds is not None:
+        assume_role_kwargs["DurationSeconds"] = int(duration_seconds)
+
+    response = sts.assume_role(**assume_role_kwargs)
+
+    creds = response["Credentials"]
+
+    session = boto3.Session(
+        aws_access_key_id=creds["AccessKeyId"],
+        aws_secret_access_key=creds["SecretAccessKey"],
+        aws_session_token=creds["SessionToken"],
+        region_name=region,
+    )
+
+    return session.client("ssm")
+
+
+def is_expired_token_error(exc: Exception) -> bool:
+    """
+    Returns True when an exception is related to expired temporary AWS credentials.
+    """
+    try:
+        response = getattr(exc, "response", None) or {}
+        error = response.get("Error", {}) if isinstance(response, dict) else {}
+        code = str(error.get("Code", ""))
+        message = str(error.get("Message", ""))
+
+        known_codes = {
+            "ExpiredToken",
+            "ExpiredTokenException",
+            "RequestExpired",
+        }
+        if code in known_codes:
+            return True
+
+        combined = f"{code} {message}".lower()
+        return "expiredtoken" in combined or "request has expired" in combined
+    except Exception:
+        return False
