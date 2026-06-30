@@ -74,11 +74,12 @@ def load_config() -> Config:
     if _SOURCE_ACCOUNT_CACHE is None:
         try:
             import boto3
-            _SOURCE_ACCOUNT_CACHE = boto3.client("sts").get_caller_identity()["Account"]
+            source_account = boto3.client("sts").get_caller_identity()["Account"]
+            _SOURCE_ACCOUNT_CACHE = source_account
         except Exception:
-            _SOURCE_ACCOUNT_CACHE = ""
-
-    source_account = _SOURCE_ACCOUNT_CACHE
+            source_account = ""
+    else:
+        source_account = _SOURCE_ACCOUNT_CACHE
 
     return Config(
         destinations=destinations,
