@@ -43,6 +43,19 @@ def lambda_handler(event, context):
     Returns:
         dict or None
     """
+    if not isinstance(event, dict):
+        log(
+            "warning",
+            "Invalid event payload type",
+            provided_type=type(event).__name__,
+        )
+        return {
+            "statusCode": 400,
+            "body": json.dumps({
+                "message": "Invalid invocation: event payload must be a JSON object."
+            })
+        }
+
     config = load_config()
 
     # Mode 1: EventBridge automatic replication
