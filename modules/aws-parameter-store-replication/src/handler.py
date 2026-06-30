@@ -70,7 +70,17 @@ def lambda_handler(event, context):
     elif isinstance(event_enable_full_sync, str):
         enable_full_sync = event_enable_full_sync.strip().lower() in ("1", "true", "yes", "on")
     else:
-        enable_full_sync = bool(event_enable_full_sync)
+        log(
+            "warning",
+            "Invalid full sync flag type in invocation payload",
+            provided_type=type(event_enable_full_sync).__name__,
+        )
+        return {
+            "statusCode": 400,
+            "body": json.dumps({
+                "message": "Invalid invocation: 'enable_full_sync'/'initial_run' must be a boolean or string value."
+            })
+        }
 
     # Guardrail: refuse to run full sync if not enabled in config
     if enable_full_sync and not config.enable_full_sync:
