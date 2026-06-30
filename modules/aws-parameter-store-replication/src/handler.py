@@ -148,7 +148,7 @@ def lambda_handler(event, context):
     if not is_valid_full_sync_flag:
         log(
             "warning",
-            "Invalid full sync flag type in invocation payload",
+            "Invalid full sync flag type or value in invocation payload",
             provided_type=type(event_enable_full_sync).__name__,
             provided_value=str(event_enable_full_sync),
         )
