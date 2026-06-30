@@ -253,17 +253,17 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                         except Exception as e:
                             log("warning", "Failed to prune stale tags for parameter", account_id=account_id, region=region_name, error=str(e))
 
-                        # Desired-tag application path (best effort, independent from pruning).
-                        try:
-                            if combined_tags:
-                                ssm_dest.add_tags_to_resource(
-                                    ResourceType="Parameter",
-                                    ResourceId=dest_param_name,
-                                    Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
-                                )
-                        except Exception as e:
-                            log("warning", "Failed to apply desired tags for parameter", account_id=account_id, region=region_name, error=str(e))
-                            # Continue replication even if tag sync fails
+                    # Desired-tag application path (best effort, independent from pruning).
+                    try:
+                        if combined_tags:
+                            ssm_dest.add_tags_to_resource(
+                                ResourceType="Parameter",
+                                ResourceId=dest_param_name,
+                                Tags=[{"Key": k, "Value": v} for k, v in combined_tags.items()],
+                            )
+                    except Exception as e:
+                        log("warning", "Failed to apply desired tags for parameter", account_id=account_id, region=region_name, error=str(e))
+                        # Continue replication even if tag sync fails
 
                 log("info", "Successfully replicated parameter", account_id=account_id, region=region_name)
 
