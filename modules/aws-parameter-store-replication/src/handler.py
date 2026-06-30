@@ -8,12 +8,58 @@ import boto3
 import json
 
 
+_TRUTHY_FLAG_VALUES = {"1", "true", "yes", "on"}
+_FALSY_FLAG_VALUES = {"0", "false", "no", "off"}
+
+
+def _normalize_parameter_name(value):
+    """Returns a strict, trimmed parameter name string, otherwise None."""
+    if not isinstance(value, str):
+        return None
+
+    normalized = value.strip()
+    if not normalized:
+        return None
+
+    # Reject names with whitespace characters to fail early with a clear 400.
+    if any(ch.isspace() for ch in normalized):
+        return None
+
+    # SSM parameter names are limited to 2048 chars.
+    if len(normalized) > 2048:
+        return None
+
+    return normalized
+
+
+def _parse_full_sync_flag(value):
+    """Parses full-sync flag values. Returns (bool_value, is_valid)."""
+    if isinstance(value, bool):
+        return value, True
+
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in _TRUTHY_FLAG_VALUES:
+            return True, True
+        if normalized in _FALSY_FLAG_VALUES:
+            return False, True
+        return False, False
+
+    return False, False
+
+
 def _extract_parameter_from_eventbridge(event):
     """
     Extracts parameter name from native SSM Parameter Store Change event.
     Returns (parameter_name, is_eventbridge) or (None, False) if not an EB event.
     """
+    if not isinstance(event, dict):
+        return None, False
+
     detail = event.get("detail", {})
+    if not isinstance(detail, dict):
+        return None, False
+
     detail_type = event.get("detail-type", "")
 
     if detail_type != "Parameter Store Change":
@@ -23,8 +69,8 @@ def _extract_parameter_from_eventbridge(event):
     if operation not in ("Create", "Update"):
         return None, False
 
-    parameter_name = detail.get("name")
-    return parameter_name, bool(parameter_name)
+    parameter_name = _normalize_parameter_name(detail.get("name"))
+    return parameter_name, parameter_name is not None
 
 
 def lambda_handler(event, context):
@@ -69,25 +115,12 @@ def lambda_handler(event, context):
     parameter_name = None
     if "parameter_name" in event:
         raw_parameter_name = event.get("parameter_name")
-        if not isinstance(raw_parameter_name, str):
+        parameter_name = _normalize_parameter_name(raw_parameter_name)
+        if parameter_name is None:
             log(
                 "warning",
-                "Invalid parameter_name type in invocation payload",
+                "Invalid parameter_name in invocation payload",
                 provided_type=type(raw_parameter_name).__name__,
-            )
-            return {
-                "statusCode": 400,
-                "body": json.dumps({
-                    "message": "Invalid invocation: 'parameter_name' must be a non-empty string when provided."
-                })
-            }
-
-        parameter_name = raw_parameter_name.strip()
-        if not parameter_name:
-            log(
-                "warning",
-                "Invalid parameter_name value in invocation payload",
-                reason="empty-or-whitespace",
             )
             return {
                 "statusCode": 400,
@@ -106,20 +139,18 @@ def lambda_handler(event, context):
     else:
         event_enable_full_sync = False
 
-    if isinstance(event_enable_full_sync, bool):
-        enable_full_sync = event_enable_full_sync
-    elif isinstance(event_enable_full_sync, str):
-        enable_full_sync = event_enable_full_sync.strip().lower() in ("1", "true", "yes", "on")
-    else:
+    enable_full_sync, is_valid_full_sync_flag = _parse_full_sync_flag(event_enable_full_sync)
+    if not is_valid_full_sync_flag:
         log(
             "warning",
             "Invalid full sync flag type in invocation payload",
             provided_type=type(event_enable_full_sync).__name__,
+            provided_value=str(event_enable_full_sync),
         )
         return {
             "statusCode": 400,
             "body": json.dumps({
-                "message": "Invalid invocation: 'enable_full_sync'/'initial_run' must be a boolean or string value."
+                "message": "Invalid invocation: 'enable_full_sync'/'initial_run' must be a boolean or one of: true/false, yes/no, on/off, 1/0."
             })
         }
 
