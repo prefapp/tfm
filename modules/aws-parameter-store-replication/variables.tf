@@ -132,8 +132,8 @@ variable "assume_role_duration_seconds" {
   default     = 3600
 
   validation {
-    condition     = var.assume_role_duration_seconds >= 900 && var.assume_role_duration_seconds <= 43200
-    error_message = "assume_role_duration_seconds must be between 900 and 43200 seconds."
+    condition     = var.assume_role_duration_seconds >= 900 && var.assume_role_duration_seconds <= 43200 && floor(var.assume_role_duration_seconds) == var.assume_role_duration_seconds
+    error_message = "assume_role_duration_seconds must be an integer between 900 and 43200 seconds."
   }
 }
 
