@@ -102,8 +102,6 @@ def lambda_handler(event, context):
             })
         }
 
-    config = load_config()
-
     # Mode 1: EventBridge automatic replication
     param_name_eb, is_eventbridge = _extract_parameter_from_eventbridge(event)
     if is_eventbridge:
@@ -111,9 +109,12 @@ def lambda_handler(event, context):
             log("info", "Ignoring non-replicable EventBridge Parameter Store Change event")
             return None
 
+        config = load_config()
         log("info", "EventBridge automatic replication triggered", parameter_name=param_name_eb)
         replicate_parameter(param_name_eb, config, skip_missing=True)
         return None
+
+    config = load_config()
 
     # Mode 2 & 3: Manual invocation (can be single param or full sync)
     parameter_name = None
