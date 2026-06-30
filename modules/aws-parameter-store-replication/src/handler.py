@@ -66,7 +66,35 @@ def lambda_handler(event, context):
         return None
 
     # Mode 2 & 3: Manual invocation (can be single param or full sync)
-    parameter_name = event.get("parameter_name")
+    parameter_name = None
+    if "parameter_name" in event:
+        raw_parameter_name = event.get("parameter_name")
+        if not isinstance(raw_parameter_name, str):
+            log(
+                "warning",
+                "Invalid parameter_name type in invocation payload",
+                provided_type=type(raw_parameter_name).__name__,
+            )
+            return {
+                "statusCode": 400,
+                "body": json.dumps({
+                    "message": "Invalid invocation: 'parameter_name' must be a non-empty string when provided."
+                })
+            }
+
+        parameter_name = raw_parameter_name.strip()
+        if not parameter_name:
+            log(
+                "warning",
+                "Invalid parameter_name value in invocation payload",
+                reason="empty-or-whitespace",
+            )
+            return {
+                "statusCode": 400,
+                "body": json.dumps({
+                    "message": "Invalid invocation: 'parameter_name' must be a non-empty string when provided."
+                })
+            }
 
     # Check for full sync request.
     # Use explicit key presence checks so explicit false is not treated as "missing".
