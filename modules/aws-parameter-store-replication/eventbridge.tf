@@ -32,8 +32,9 @@ resource "aws_lambda_permission" "allow_eventbridge" {
 resource "aws_sqs_queue" "lambda_async_failure_dlq" {
   count = var.eventbridge_enabled && var.async_failure_visibility_enabled ? 1 : 0
 
-  name = local.lambda_async_failure_dlq_name
-  tags = local.common_tags
+  name                    = local.lambda_async_failure_dlq_name
+  sqs_managed_sse_enabled = true
+  tags                    = local.common_tags
 }
 
 data "aws_iam_policy_document" "lambda_async_failure_dlq_policy" {
