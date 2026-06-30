@@ -161,7 +161,7 @@ For successful replication without access-denied warnings, the destination role 
 - `ssm:AddTagsToResource` (required to apply desired tags on updates)
 - `ssm:ListTagsForResource` and `ssm:RemoveTagsFromResource` (required to prune stale tags when `enable_tag_replication = true`)
 
-If `enable_tag_replication = false`, only `ssm:PutParameter` is required for replication logic (metadata tags on create are attached through `PutParameter` create path).
+If `enable_tag_replication = false`, the destination role can omit `ssm:ListTagsForResource` and `ssm:RemoveTagsFromResource`, but replication still requires `ssm:PutParameter`, `ssm:GetParameters` (existence probe), and `ssm:AddTagsToResource` (apply replication metadata tags on updates).
 
 ## Basic Usage
 
