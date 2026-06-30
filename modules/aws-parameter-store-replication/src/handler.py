@@ -277,8 +277,7 @@ def lambda_handler(event, context):
             return {
                 "statusCode": 500,
                 "body": json.dumps({
-                    "message": f"Failed to replicate parameter: {parameter_name}",
-                    "error": str(e)
+                    "message": f"Failed to replicate parameter: {parameter_name}. Check Lambda logs for details."
                 })
             }
 
