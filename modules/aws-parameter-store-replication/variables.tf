@@ -45,7 +45,7 @@ variable "destinations_json" {
   }
 
   validation {
-    condition = alltrue([
+    condition = can(tomap(jsondecode(var.destinations_json))) && alltrue([
       for _, destination in jsondecode(var.destinations_json) :
       can(regex("^arn:[^:]+:iam::[0-9]{12}:role/.+", tostring(destination.role_arn)))
     ])
