@@ -161,7 +161,8 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 param_exists = dest_param_name not in invalid_names
             except ClientError as e:
                 # Some destination roles are intentionally scoped for write-only APIs.
-                # If read is denied, proceed in overwrite mode (valid for both create and update).
+                # If read is denied, proceed in overwrite mode (valid for both create and update)
+                # and keep desired-tag application as best effort after PutParameter.
                 code = ((e.response or {}).get("Error") or {}).get("Code")
                 if code == "AccessDeniedException":
                     destination_read_denied = True
@@ -213,7 +214,7 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                     if destination_read_denied:
                         log(
                             "warning",
-                            "Skipping destination tag sync because destination parameter read is denied",
+                            "Skipping stale-tag pruning because destination parameter read is denied; applying desired tags best-effort",
                             account_id=account_id,
                             region=region_name,
                             destination_parameter_name=dest_param_name,
