@@ -278,6 +278,20 @@ def lambda_handler(event, context):
                 })
             }
         except Exception as e:
+            error_code = (((getattr(e, "response", None) or {}).get("Error") or {}).get("Code"))
+            if error_code == "ParameterNotFound":
+                log(
+                    "warning",
+                    "Source parameter not found for manual replication",
+                    parameter_name=parameter_name,
+                )
+                return {
+                    "statusCode": 404,
+                    "body": json.dumps({
+                        "message": f"Source parameter not found: {parameter_name}"
+                    })
+                }
+
             log("error", "Failed to replicate parameter", parameter_name=parameter_name, error=str(e), exc_info=True)
             return {
                 "statusCode": 500,
