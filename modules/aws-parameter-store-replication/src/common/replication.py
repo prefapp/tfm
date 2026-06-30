@@ -32,7 +32,7 @@ def _get_parameter_value_with_retry(source_ssm, parameter_name: str, *, skip_mis
     arrive before the parameter is fully available. In that case retry a few times
     and optionally skip gracefully.
     """
-    max_attempts = 3
+    max_attempts = 3 if skip_missing else 1
     retry_delay_seconds = 2
 
     for attempt in range(1, max_attempts + 1):
