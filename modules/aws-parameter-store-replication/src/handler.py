@@ -56,21 +56,21 @@ def _extract_parameter_from_eventbridge(event):
     if not isinstance(event, dict):
         return None, False
 
-    detail = event.get("detail", {})
-    if not isinstance(detail, dict):
-        return None, False
-
     detail_type = event.get("detail-type", "")
 
     if detail_type != "Parameter Store Change":
         return None, False
 
+    detail = event.get("detail", {})
+    if not isinstance(detail, dict):
+        return None, True
+
     operation = detail.get("operation")
     if operation not in ("Create", "Update"):
-        return None, False
+        return None, True
 
     parameter_name = _normalize_parameter_name(detail.get("name"))
-    return parameter_name, parameter_name is not None
+    return parameter_name, True
 
 
 def lambda_handler(event, context):
@@ -107,6 +107,10 @@ def lambda_handler(event, context):
     # Mode 1: EventBridge automatic replication
     param_name_eb, is_eventbridge = _extract_parameter_from_eventbridge(event)
     if is_eventbridge:
+        if param_name_eb is None:
+            log("info", "Ignoring non-replicable EventBridge Parameter Store Change event")
+            return None
+
         log("info", "EventBridge automatic replication triggered", parameter_name=param_name_eb)
         replicate_parameter(param_name_eb, config, skip_missing=True)
         return None
