@@ -18,9 +18,9 @@ Adjust the variables in `terraform.tfvars` (or set environment variables) to mat
 
 ## What it creates
 
-- Lambda function for automatic parameter replication
+- Unified Lambda function for parameter replication (EventBridge + manual invocation)
 - IAM roles and policies for cross-account access
-- EventBridge rule to trigger automatic replication on parameter changes (optional)
+- EventBridge rule to trigger replication on parameter changes (optional)
 
 ## Notes
 
