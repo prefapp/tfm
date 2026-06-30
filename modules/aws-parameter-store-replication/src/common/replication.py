@@ -19,9 +19,16 @@ def _build_destination_parameter_name(parameter_name: str, source_region: str, a
 
     if parameter_name.startswith("/"):
         normalized_path = parameter_name.lstrip("/")
-        return f"/{source_region}/{normalized_path}"
+        dest_name = f"/{source_region}/{normalized_path}"
+    else:
+        dest_name = f"{source_region}-{parameter_name}"
 
-    return f"{source_region}-{parameter_name}"
+    # SSM parameter names are limited to 2048 chars.
+    if len(dest_name) > 2048:
+        raise ValueError(
+            "Destination parameter name exceeds 2048 characters after applying region prefix."
+        )
+    return dest_name
 
 
 def _get_parameter_value_with_retry(source_ssm, parameter_name: str, *, skip_missing: bool):
