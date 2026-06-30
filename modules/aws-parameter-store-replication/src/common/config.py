@@ -3,6 +3,8 @@ import os
 from dataclasses import dataclass
 from typing import Any, Dict
 
+_SOURCE_ACCOUNT_CACHE: str | None = None
+
 
 @dataclass
 class RegionConfig:
@@ -67,12 +69,16 @@ def load_config() -> Config:
 
     add_region_prefix_to_name = os.environ.get("ADD_REGION_PREFIX_TO_NAME", "false").lower() == "true"
 
-    # Get source account ID automatically
-    try:
-        import boto3
-        source_account = boto3.client("sts").get_caller_identity()["Account"]
-    except Exception:
-        source_account = ""
+    # Get source account ID automatically and cache it for warm invocations.
+    global _SOURCE_ACCOUNT_CACHE
+    if _SOURCE_ACCOUNT_CACHE is None:
+        try:
+            import boto3
+            _SOURCE_ACCOUNT_CACHE = boto3.client("sts").get_caller_identity()["Account"]
+        except Exception:
+            _SOURCE_ACCOUNT_CACHE = ""
+
+    source_account = _SOURCE_ACCOUNT_CACHE
 
     return Config(
         destinations=destinations,
