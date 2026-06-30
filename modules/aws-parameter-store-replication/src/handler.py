@@ -134,9 +134,17 @@ def lambda_handler(event, context):
                     )
                     replicated_count += 1
                 except Exception as e:
-                    failed_param_name = param_meta.get("Name", "<missing-name>") if isinstance(param_meta, dict) else "<invalid-parameter-metadata>"
+                    retry_param_name = param_meta.get("Name") if isinstance(param_meta, dict) else None
+                    if isinstance(retry_param_name, str):
+                        retry_param_name = retry_param_name.strip()
+                    if not retry_param_name:
+                        retry_param_name = None
 
-                    if is_expired_token_error(e):
+                    failed_param_name = retry_param_name or (
+                        "<missing-name>" if isinstance(param_meta, dict) else "<invalid-parameter-metadata>"
+                    )
+
+                    if is_expired_token_error(e) and retry_param_name is not None:
                         log(
                             "warning",
                             "Expired destination credentials detected during full sync; refreshing cached clients and retrying once",
@@ -160,6 +168,13 @@ def lambda_handler(event, context):
                                 parameter_name=failed_param_name,
                                 error=str(retry_exc),
                             )
+                    elif is_expired_token_error(e):
+                        log(
+                            "warning",
+                            "Expired destination credentials detected during full sync, but retry is skipped because parameter name context is missing or invalid",
+                            parameter_name=failed_param_name,
+                            error=str(e),
+                        )
 
                     log("error", "Failed to replicate parameter in full sync", parameter_name=failed_param_name, error=str(e))
                     error_count += 1
