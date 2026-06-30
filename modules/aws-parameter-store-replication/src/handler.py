@@ -57,15 +57,15 @@ def lambda_handler(event, context):
 
     # Check for full sync request.
     # Use explicit key presence checks so explicit false is not treated as "missing".
+    # Full sync must be explicitly requested in the event; config.enable_full_sync is only a guardrail.
     if "enable_full_sync" in event:
         event_enable_full_sync = event.get("enable_full_sync")
     elif "initial_run" in event:
         event_enable_full_sync = event.get("initial_run")
     else:
-        event_enable_full_sync = None
-    if event_enable_full_sync is None:
-        enable_full_sync = config.enable_full_sync
-    elif isinstance(event_enable_full_sync, bool):
+        event_enable_full_sync = False
+
+    if isinstance(event_enable_full_sync, bool):
         enable_full_sync = event_enable_full_sync
     elif isinstance(event_enable_full_sync, str):
         enable_full_sync = event_enable_full_sync.strip().lower() in ("1", "true", "yes", "on")
@@ -187,10 +187,10 @@ def lambda_handler(event, context):
 
     # No valid invocation mode
     else:
-        log("warning", "No valid invocation mode (no EventBridge event, no parameter_name, and no full sync enabled)")
+        log("warning", "No valid invocation mode (no EventBridge event, no parameter_name, and no explicit full sync request)")
         return {
             "statusCode": 400,
             "body": json.dumps({
-                "message": "Invalid invocation: must be triggered by EventBridge, or provide 'parameter_name', or enable 'enable_full_sync'."
+                "message": "Invalid invocation: must be triggered by EventBridge, provide 'parameter_name', or explicitly request full sync with 'enable_full_sync': true or 'initial_run': true."
             })
         }
