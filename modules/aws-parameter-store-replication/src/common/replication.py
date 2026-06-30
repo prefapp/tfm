@@ -206,7 +206,14 @@ def replicate_parameter(parameter_name: str, config, get_ssm_client=None, skip_m
                 put_args["KeyId"] = kms_key_id
 
             try:
-                if param_exists:
+                if destination_read_denied:
+                    log(
+                        "info",
+                        "Overwriting destination parameter with unknown prior existence (read denied)",
+                        account_id=account_id,
+                        region=region_name,
+                    )
+                elif param_exists:
                     log("info", "Updating parameter in destination", account_id=account_id, region=region_name)
                 else:
                     log("info", "Creating parameter in destination", account_id=account_id, region=region_name)
