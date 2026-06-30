@@ -101,8 +101,8 @@ variable "lambda_async_maximum_retry_attempts" {
   default     = 2
 
   validation {
-    condition     = var.lambda_async_maximum_retry_attempts >= 0 && var.lambda_async_maximum_retry_attempts <= 2
-    error_message = "lambda_async_maximum_retry_attempts must be between 0 and 2."
+    condition     = var.lambda_async_maximum_retry_attempts >= 0 && var.lambda_async_maximum_retry_attempts <= 2 && floor(var.lambda_async_maximum_retry_attempts) == var.lambda_async_maximum_retry_attempts
+    error_message = "lambda_async_maximum_retry_attempts must be an integer between 0 and 2."
   }
 }
 
