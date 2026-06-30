@@ -17,7 +17,7 @@ Adjust the destination account ID, role ARN, and KMS key ARNs to match your envi
 
 ## What it creates
 
-- Lambda function for automatic parameter replication
+- Unified Lambda function for parameter replication (EventBridge + manual invocation)
 - IAM roles and policies for cross-account access
 - EventBridge rule to trigger replication on parameter Create and Update events
 
