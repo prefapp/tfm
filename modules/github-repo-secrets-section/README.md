@@ -89,7 +89,7 @@ module "repo_secrets" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_github"></a> [github](#provider\_github) | 6.12.1 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
