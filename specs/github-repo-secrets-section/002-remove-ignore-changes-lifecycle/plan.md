@@ -12,8 +12,8 @@
    - `terraform_data.codespaces_trigger`
    - `terraform_data.dependabot_trigger`
 5. Update each secret resource lifecycle:
-   - If sha256 map exists for the group: add `replace_triggered_by` pointing to the trigger resource, keep `ignore_changes`.
-   - If sha256 map is absent/empty: remove `ignore_changes` entirely (fallback).
+   - Add `replace_triggered_by` pointing to the trigger resource.
+   - Keep `ignore_changes` to suppress non-deterministic ciphertext drift.
 6. Update `docs/header.md` and `_examples/` to describe the new sha256 input pattern and the fallback behavior.
 7. Regenerate README.md with `terraform-docs .`.
 8. Run `terraform fmt`, `terraform init`, `terraform validate`.
