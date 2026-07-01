@@ -19,8 +19,8 @@ data "github_dependabot_public_key" "this" {
 
 # ─────────────────────────────────────────────────────────────
 # Secret update triggers (deterministic SHA-256 of plaintext)
-# When sha256 is provided, a change triggers replacement.
-# When absent, the input defaults to each.key (stable → no trigger).
+# When a *_sha256 value is provided for a secret, changes trigger replacement.
+# When absent, the input is null (stable -> no trigger).
 # ─────────────────────────────────────────────────────────────
 resource "terraform_data" "actions_trigger" {
   for_each = var.config.actions
