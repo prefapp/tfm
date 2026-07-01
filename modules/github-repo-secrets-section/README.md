@@ -32,7 +32,7 @@ Expected `terraform.tfvars.json` shape:
       "MY_API_KEY": "<libsodium-encrypted-actions-value>"
     },
     "actions_sha256": {
-      "MY_API_KEY": "abc123...64hexchars..."
+      "MY_API_KEY": "<64-char-lowercase-hex-sha256>"
     },
     "codespaces": {},
     "dependabot": {}
