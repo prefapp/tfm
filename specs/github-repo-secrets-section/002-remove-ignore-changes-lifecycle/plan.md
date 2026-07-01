@@ -20,8 +20,8 @@
 
 ### Technical notes
 
-- `terraform_data` resources require `for_each` over the sha256 map (same keys as the secret map). The trigger input is the SHA256 hex string.
-- `replace_triggered_by` references `terraform_data.<trigger>[each.key]`. When the SHA256 changes, Terraform replaces the secret resource.
-- Since the trigger has the same keys as the secret resource, the `for_each` loops align perfectly.
-- For the fallback path (no sha256 provided), the behavior matches the original issue — `ignore_changes` is simply removed, accepting a diff on every plan but enabling updates.
+- `terraform_data` resources use `for_each` over the secret maps and set `input = try(var.config.<group>_sha256[each.key], null)`.
+- `replace_triggered_by` references `terraform_data.<trigger>[each.key]`; when the SHA256 changes, Terraform replaces the secret resource.
+- When SHA256 is absent, `input` is `null` (stable) and no replacement is triggered.
+- `ignore_changes` remains in place to avoid perpetual diffs from non-deterministic ciphertext.
 - No state manipulation is required; existing resources will see an updated lifecycle in the next plan.
