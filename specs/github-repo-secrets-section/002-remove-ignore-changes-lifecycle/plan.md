@@ -7,7 +7,7 @@
 1. Review current `modules/github-repo-secrets-section/main.tf` lifecycle blocks and `variables.tf`.
 2. Add `actions_sha256`, `codespaces_sha256`, `dependabot_sha256` optional `map(string)` inputs to `var.config` object type.
 3. Add validations: SHA256 maps must match their corresponding secret map keys; values must match `^[a-f0-9]{64}$`.
-4. Add `terraform_data.secret_trigger` resources for each secret group (conditional on sha256 map being non-empty):
+4. Add `terraform_data` trigger resources for each secret group (for_each over the corresponding secret map; `input = try(<group>_sha256[each.key], null)`):
    - `terraform_data.actions_trigger`
    - `terraform_data.codespaces_trigger`
    - `terraform_data.dependabot_trigger`
