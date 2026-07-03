@@ -154,6 +154,31 @@ Where `<destination_parameter_name>` is determined by the module's naming logic:
 
 This allows the replication role to manage the destination parameter across all its versions.
 
+### Destination Role Trust Policy
+
+The destination replication role is assumed by this module's Lambda via `sts:AssumeRole`. Its **trust policy must allow the source Lambda execution role as principal**, otherwise every replication fails with `AccessDenied` on the `AssumeRole` operation before any parameter is written.
+
+Use the specific source role ARN as the principal (exposed by the module's `lambda_replication_role_arn` output):
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::<SOURCE_ACCOUNT_ID>:role/<PREFIX>-<NAME>-replication-role"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+Note that the effective session duration is capped by the destination role's `MaxSessionDuration`; see the `assume_role_duration_seconds` note above.
+
+### Destination Role SSM Permissions
+
 For successful replication without access-denied warnings, the destination role should allow these SSM actions on the destination parameter ARN(s):
 
 - `ssm:PutParameter` (required for value replication)
@@ -162,6 +187,16 @@ For successful replication without access-denied warnings, the destination role 
 - `ssm:ListTagsForResource` and `ssm:RemoveTagsFromResource` (required to prune stale tags when `enable_tag_replication = true`)
 
 If `enable_tag_replication = false`, the destination role can omit `ssm:ListTagsForResource` and `ssm:RemoveTagsFromResource`, but replication still requires `ssm:PutParameter`, `ssm:GetParameters` (existence probe), and `ssm:AddTagsToResource` (apply replication metadata tags on updates).
+
+### Destination Role KMS Permissions
+
+KMS permissions on the destination role are only required when a region's `kms_key_arn` points to a **customer-managed key** (CMK) used for `SecureString` parameters. In that case the destination role needs these actions scoped to the destination key ARN:
+
+- `kms:Encrypt`
+- `kms:GenerateDataKey`
+- `kms:DescribeKey`
+
+If `kms_key_arn` is omitted (AWS-managed `alias/aws/ssm` key), no extra KMS grant is needed. The destination role does not need `kms:Decrypt`, because the existence probe reads without decryption.
 
 ## Basic Usage
 
