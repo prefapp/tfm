@@ -50,6 +50,20 @@ module "app_gateway" {
 }
 ```
 
+## Public IP DNS label
+
+Set `domain_name_label` inside `public_ip` to attach an Azure-managed DNS label to the public IP. The resulting FQDN follows the pattern `<domain_name_label>.<location>.cloudapp.azure.com`. Omit the key (or set it to `null`) to skip DNS label assignment.
+
+```yaml
+public_ip:
+  name: "example-pip"
+  sku: "Standard"
+  allocation_method: "Static"
+  domain_name_label: "my-appgw"   # → my-appgw.westeurope.cloudapp.azure.com
+```
+
+> **Note:** `domain_name_label` must be unique within the Azure region. Changing it forces recreation of the public IP resource.
+
 ## WAF exclusions example
 
 Add this config to the `web_application_firewall_policy` block when you need to define managed rule exclusions:
@@ -130,7 +144,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_application_gateway"></a> [application\_gateway](#input\_application\_gateway) | Structured Application Gateway configuration (SKU, autoscale, identity, listeners, `blocks_defaults`, `blocks`, SSL certificates, etc.). See `_examples/comprehensive/values.reference.yaml` for a full shape. | `any` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The location/region where the Application Gateway should be created. | `string` | `"westeurope"` | no |
-| <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, etc.). | `any` | n/a | yes |
+| <a name="input_public_ip"></a> [public\_ip](#input\_public\_ip) | Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, optional `domain_name_label`, etc.). | `any` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the Application Gateway. | `string` | n/a | yes |
 | <a name="input_rewrite_rule_sets"></a> [rewrite\_rule\_sets](#input\_rewrite\_rule\_sets) | List of Rewrite Rule Sets for Application Gateway | <pre>list(object({<br/>    name = string<br/>    rewrite_rules = list(object({<br/>      name          = string<br/>      rule_sequence = number<br/>      conditions = optional(list(object({<br/>        variable    = string<br/>        pattern     = string<br/>        ignore_case = optional(bool, false)<br/>        negate      = optional(bool, false)<br/>      })), [])<br/>      request_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      response_header_configurations = optional(list(object({<br/>        header_name  = string<br/>        header_value = string<br/>      })), [])<br/>      url_rewrite = optional(object({<br/>        source_path = optional(string)<br/>        query_string = optional(string)<br/>        components = optional(string)<br/>        reroute = optional(bool)<br/>      }))<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | Gateway-level SSL policy (`policy_type`, optional `policy_name`, `cipher_suites`, `min_protocol_version`). | <pre>object({<br/>    policy_type          = string<br/>    policy_name          = optional(string)<br/>    cipher_suites        = optional(list(string))<br/>    min_protocol_version = optional(string)<br/>  })</pre> | <pre>{<br/>  "policy_name": "AppGwSslPolicy20220101",<br/>  "policy_type": "Predefined"<br/>}</pre> | no |
