@@ -41,7 +41,7 @@ resource "aws_iam_role_policy" "lambda_ssm_read" {
             ],
             var.enable_tag_replication ? ["ssm:ListTagsForResource", "ssm:GetParameters"] : []
           )
-          Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/*"
+          Resource = "arn:aws:ssm:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:parameter/*"
         }
       ],
       var.enable_full_sync ? [
@@ -97,7 +97,7 @@ resource "aws_iam_role_policy" "lambda_kms" {
         Resource = "*"
         Condition = {
           StringEquals = {
-            "kms:ViaService" = "ssm.${data.aws_region.current.name}.amazonaws.com"
+            "kms:ViaService" = "ssm.${data.aws_region.current.region}.amazonaws.com"
           }
         }
       }
