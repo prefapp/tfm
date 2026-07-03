@@ -49,6 +49,20 @@ module "app_gateway" {
 }
 ```
 
+## Public IP DNS label
+
+Set `domain_name_label` inside `public_ip` to attach an Azure-managed DNS label to the public IP. The resulting FQDN follows the pattern `<domain_name_label>.<location>.cloudapp.azure.com`. Omit the key (or set it to `null`) to skip DNS label assignment.
+
+```yaml
+public_ip:
+  name: "example-pip"
+  sku: "Standard"
+  allocation_method: "Static"
+  domain_name_label: "my-appgw"   # → my-appgw.westeurope.cloudapp.azure.com
+```
+
+> **Note:** `domain_name_label` must be unique within the Azure region. Changing it forces recreation of the public IP resource.
+
 ## WAF exclusions example
 
 Add this config inside the `web_application_firewall_policy` definition when you need to preserve or define managed rule exclusions:

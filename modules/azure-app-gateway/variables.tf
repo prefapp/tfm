@@ -27,7 +27,7 @@ variable "application_gateway" {
 }
 
 variable "public_ip" {
-  description = "Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, etc.)."
+  description = "Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, optional `domain_name_label`, etc.)."
   type        = any
 }
 
