@@ -39,7 +39,7 @@ resource "aws_iam_role_policy" "lambda_ssm_read" {
             [
               "ssm:GetParameter"
             ],
-            var.enable_tag_replication ? ["ssm:ListTagsForResource"] : []
+            var.enable_tag_replication ? ["ssm:ListTagsForResource", "ssm:GetParameters"] : []
           )
           Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/*"
         }
