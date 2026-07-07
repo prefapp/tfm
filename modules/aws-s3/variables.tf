@@ -207,3 +207,9 @@ variable "s3_replication_source" {
   })
   default = null
 }
+
+variable "create_bucket_policy" {
+  description = "Whether to create a bucket policy to enforce HTTPS only and replication permissions. If false, the module will not create a bucket policy and will not enforce HTTPS or replication permissions."
+  type        = bool
+  default     = true
+}

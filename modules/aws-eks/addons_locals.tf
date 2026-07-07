@@ -6,8 +6,10 @@ locals {
    */
   base_addons = {
     vpc-cni = {
-      enabled           = true
-      resolve_conflicts = "OVERWRITE"
+      enabled                     = true
+      resolve_conflicts_on_create = "OVERWRITE"
+      resolve_conflicts_on_update = "OVERWRITE"
+      most_recent                 = "false"
       configuration_values = {
         env = {
           ENABLE_PREFIX_DELEGATION = "true"
@@ -18,17 +20,23 @@ locals {
       },
     },
     kube-proxy = {
-      enabled           = true
-      resolve_conflicts = "OVERWRITE"
+      enabled                     = true
+      resolve_conflicts_on_create = "OVERWRITE"
+      resolve_conflicts_on_update = "OVERWRITE"
+      most_recent                 = "false"
     },
     coredns = {
-      enabled           = true
-      resolve_conflicts = "OVERWRITE"
+      enabled                     = true
+      resolve_conflicts_on_create = "OVERWRITE"
+      resolve_conflicts_on_update = "OVERWRITE"
+      most_recent                 = "false"
     },
     aws-ebs-csi-driver = {
-      enabled                  = true
-      resolve_conflicts        = "OVERWRITE"
-      service_account_role_arn = local.ebs_arn_role
+      enabled                     = true
+      resolve_conflicts_on_create = "OVERWRITE"
+      resolve_conflicts_on_update = "OVERWRITE"
+      most_recent                 = "false"
+      service_account_role_arn    = local.ebs_arn_role
     }
   }
 

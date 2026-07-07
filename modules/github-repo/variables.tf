@@ -15,6 +15,8 @@ variable "config" {
       deleteBranchOnMerge = optional(bool, false)
       allowUpdateBranch   = optional(bool, false)
       hasIssues           = optional(bool, true)
+      hasWiki             = optional(bool, true)
+      hasDiscussions      = optional(bool, false)
     })
 
     default_branch = object({

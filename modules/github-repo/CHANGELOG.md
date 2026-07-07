@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.7.0](https://github.com/prefapp/tfm/compare/github-repo-v0.6.0...github-repo-v0.7.0) (2026-06-16)
+
+
+### Features
+
+* add support for github discussions ([#1302](https://github.com/prefapp/tfm/issues/1302)) ([0358b73](https://github.com/prefapp/tfm/commit/0358b73f120f2c83941f73168ddc85843a418cfe))
+
+## [0.6.0](https://github.com/prefapp/tfm/compare/github-repo-v0.5.2...github-repo-v0.6.0) (2026-06-09)
+
+
+### Features
+
+* **github-repo:** add hasWiki repository options ([#1296](https://github.com/prefapp/tfm/issues/1296)) ([3e30112](https://github.com/prefapp/tfm/commit/3e301124db9d5dc6d270adafbca5b97ec08590a1))
+
+## [0.5.2](https://github.com/prefapp/tfm/compare/github-repo-v0.5.1...github-repo-v0.5.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* **github-repo:** serialize branch protection after repository file commits ([#1287](https://github.com/prefapp/tfm/issues/1287)) ([6aad55f](https://github.com/prefapp/tfm/commit/6aad55fab47d25e41027c53756a7eba255216968))
+
 ## [0.5.1](https://github.com/prefapp/tfm/compare/github-repo-v0.5.0...github-repo-v0.5.1) (2026-05-27)
 
 

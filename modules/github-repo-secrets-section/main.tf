@@ -18,6 +18,26 @@ data "github_dependabot_public_key" "this" {
 }
 
 # ─────────────────────────────────────────────────────────────
+# Secret update triggers (deterministic SHA-256 of plaintext)
+# When a *_sha256 value is provided for a secret, changes trigger replacement.
+# When absent, the input is null (stable -> no trigger).
+# ─────────────────────────────────────────────────────────────
+resource "terraform_data" "actions_trigger" {
+  for_each = var.config.actions
+  input    = try(var.config.actions_sha256[each.key], null)
+}
+
+resource "terraform_data" "codespaces_trigger" {
+  for_each = var.config.codespaces
+  input    = try(var.config.codespaces_sha256[each.key], null)
+}
+
+resource "terraform_data" "dependabot_trigger" {
+  for_each = var.config.dependabot
+  input    = try(var.config.dependabot_sha256[each.key], null)
+}
+
+# ─────────────────────────────────────────────────────────────
 # GitHub Actions Secrets
 # ─────────────────────────────────────────────────────────────
 resource "github_actions_secret" "this" {
@@ -29,7 +49,8 @@ resource "github_actions_secret" "this" {
   value_encrypted = each.value
 
   lifecycle {
-    ignore_changes = [key_id, value_encrypted]
+    replace_triggered_by = [terraform_data.actions_trigger[each.key]]
+    ignore_changes       = [key_id, value_encrypted]
   }
 }
 
@@ -44,7 +65,8 @@ resource "github_codespaces_secret" "this" {
   encrypted_value = each.value
 
   lifecycle {
-    ignore_changes = [encrypted_value]
+    replace_triggered_by = [terraform_data.codespaces_trigger[each.key]]
+    ignore_changes       = [encrypted_value]
   }
 }
 
@@ -60,6 +82,7 @@ resource "github_dependabot_secret" "this" {
   value_encrypted = each.value
 
   lifecycle {
-    ignore_changes = [key_id, value_encrypted]
+    replace_triggered_by = [terraform_data.dependabot_trigger[each.key]]
+    ignore_changes       = [key_id, value_encrypted]
   }
 }

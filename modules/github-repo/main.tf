@@ -17,6 +17,8 @@ resource "github_repository" "this" {
   delete_branch_on_merge = var.config.repository.deleteBranchOnMerge
   allow_update_branch    = var.config.repository.allowUpdateBranch
   has_issues             = var.config.repository.hasIssues
+  has_wiki               = var.config.repository.hasWiki
+  has_discussions        = var.config.repository.hasDiscussions
 }
 
 # Set the default branch
@@ -152,5 +154,8 @@ resource "github_branch_protection" "this" {
     coalesce(each.value.pullRequestBypassers, [])
   ))
 
-  depends_on = [github_branch_default.this]
+  depends_on = [
+    github_branch_default.this,
+    github_repository_file.this,
+  ]
 }

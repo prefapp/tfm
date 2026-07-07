@@ -27,7 +27,7 @@ variable "application_gateway" {
 }
 
 variable "public_ip" {
-  description = "Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, etc.)."
+  description = "Public IP for the Application Gateway frontend (`name`, `sku`, `allocation_method`, optional `domain_name_label`, etc.)."
   type        = any
 }
 
@@ -127,6 +127,19 @@ variable "web_application_firewall_policy" {
           selector      = optional(string)
         }))
       }))
+    })), [])
+    exclusions = optional(list(object({
+      match_variable          = string
+      selector                = string
+      selector_match_operator = string
+      excluded_rule_set       = optional(list(object({
+        type      = string
+        version   = string
+        rule_group = optional(list(object({
+          rule_group_name = string
+          excluded_rules  = optional(list(string))
+        })), [])
+      })), [])
     })), [])
     managed_rule_set = list(object({
       type                = optional(string)

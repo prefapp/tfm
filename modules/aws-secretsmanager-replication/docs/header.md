@@ -50,7 +50,7 @@ The Lambda determines:
 - from the `secret_id` parameter (manual mode),
 - or from `list_secrets()` (full sync mode).
 
-The **destination secret name is always the same as the source secret name**, simplifying configuration and IAM permissions.
+By default, the **destination secret name is the same as the source secret name**. If `add_region_prefix_to_name = true`, the destination secret name is prefixed with the **source region** (for example, `eu-west-1-mysecret`) to preserve origin traceability.
 
 ### Destination Configuration Format
 
@@ -244,7 +244,7 @@ The destination account must have an IAM role that the replication Lambda can as
 
 Starting from version X.X, the module implements the following improvements for cross-region secret replication:
 
-- Replicated secrets are automatically renamed with the region code as a prefix (e.g., `eu-west-3-mysecret`).
+- When enabled via `add_region_prefix_to_name`, replicated secrets are renamed with the **source region** code as a prefix (e.g., `eu-west-3-mysecret`).
 - Replicated secrets include additional tags:
   - `origin-account`: the source AWS account.
   - `origin-region`: the source AWS region.
