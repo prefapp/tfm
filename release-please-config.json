@@ -10,6 +10,9 @@
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
         },
+        "modules/aws-parameter-store-replication": {
+            "package-name": "aws-parameter-store-replication"
+        },
         "modules/aws-sso": {
             "package-name": "aws-sso"
         },
