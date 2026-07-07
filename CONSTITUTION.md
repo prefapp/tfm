@@ -125,13 +125,14 @@ Design knowledge is kept lightweight and high-signal. There is **no** per-change
 - Contributors and AI agents **SHOULD** keep `CONTEXT.md` current when a domain term is introduced or sharpened. It is a glossary only — no implementation details, no process.
 
 ### 9.2 Architecture Decision Records
-- Decisions worth remembering live in `docs/adr/` as short Markdown files.
+- Decisions worth remembering live as short Markdown files, placed at the narrowest scope that fully contains the decision: repo-wide decisions in the root `docs/adr/`, module-scoped decisions in that module's `modules/<module>/docs/adr/`.
+- Every ADR is catalogued in the root `ADR-INDEX.md`; add a new ADR's entry there in the same change.
 - Record an ADR **only** when all three hold: the decision is hard to reverse, it is surprising without context, and it results from a real trade-off. Routine changes (field additions, forced provider deprecations) need no ADR.
 - ADRs are version-controlled and **must remain** in the repository once written.
 
 ### 9.3 Responsibility
 - Before changing an area, read the relevant ADRs and respect them; if a change contradicts an ADR, update or supersede that ADR in the same PR.
-- `CONTEXT.md` and `docs/adr/` **may not contradict** this `CONSTITUTION.md` or `AGENTS.md`.
+- `CONTEXT.md` and all ADRs (root and per-module `docs/adr/`) **may not contradict** this `CONSTITUTION.md` or `AGENTS.md`.
 
 ## 10. Protected Files – Automated Release System
 
