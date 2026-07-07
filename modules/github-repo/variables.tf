@@ -173,4 +173,34 @@ variable "config" {
     ]))
     error_message = "branch_protections.statusChecks entries must be non-empty strings."
   }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.bypassPullRequestAllowances.apps, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.bypassPullRequestAllowances.apps entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.bypassPullRequestAllowances.teams, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.bypassPullRequestAllowances.teams entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.bypassPullRequestAllowances.users, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.bypassPullRequestAllowances.users entries must be non-empty with no leading/trailing whitespace."
+  }
 }
