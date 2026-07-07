@@ -198,6 +198,9 @@
         },
         "modules/azure-alerts": {
             "package-name": "azure-alerts"
+        },
+        "modules/azure-managed-redis": {
+            "package-name": "azure-managed-redis"
         }
     }
 }

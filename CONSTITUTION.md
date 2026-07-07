@@ -116,35 +116,22 @@ This repository is managed by Release Please. Commits must follow Conventional C
 
 For modules consumed by Firestartr, release tags must be suitable for direct module references from `gitops-k8s`, usually following the existing pattern `<module-name>-v<version>`.
 
-## 9. Spec-Driven Development (SDD) Workflow
+## 9. Design Memory (CONTEXT + ADR)
 
-All changes to modules **MUST** follow the Spec-Driven Development methodology.
+Design knowledge is kept lightweight and high-signal. There is **no** per-change spec/plan/tasks process; git history and module `README.md`s already record what shipped.
 
-### 9.1 Location of Specifications
-- All living specifications live in the top-level `specs/` folder at repository root.
-- For changes to a specific Terraform module, use the structure:
-specs/<module-name>/NNN-short-feature-name/
-├── spec.md
-├── plan.md
-└── tasks.md
-textwhere `<module-name>` exactly matches the folder name inside `modules/` (e.g. `aws-eks`, `azure-aks`, `github-repo`).
-- Cross-module changes go under `specs/cross-module/`.
+### 9.1 Glossary
+- A single root `CONTEXT.md` holds the project's cross-cutting vocabulary (e.g. Firestartr, ghaps, the `config` object, CR, module contract, state boundary).
+- Contributors and AI agents **SHOULD** keep `CONTEXT.md` current when a domain term is introduced or sharpened. It is a glossary only — no implementation details, no process.
 
-### 9.2 Required Artifacts per Feature
-Every feature or change **MUST** include (and keep updated):
-- `spec.md` – the full specification
-- `plan.md` – the implementation plan
-- `tasks.md` – atomic, reviewable tasks (one PR = one `tasks.md`)
+### 9.2 Architecture Decision Records
+- Decisions worth remembering live in `docs/adr/` as short Markdown files.
+- Record an ADR **only** when all three hold: the decision is hard to reverse, it is surprising without context, and it results from a real trade-off. Routine changes (field additions, forced provider deprecations) need no ADR.
+- ADRs are version-controlled and **must remain** in the repository once written.
 
-These files are **first-class, version-controlled artifacts** and **must remain in the repository** after the PR is merged.
-
-### 9.3 Precedence
-The files inside `specs/` are authoritative for the work being performed but **may not contradict** this `CONSTITUTION.md` or `AGENTS.md`.
-
-### 9.4 AI & Contributor Responsibility
-- Before starting any work, read the relevant `spec.md` + `plan.md` + `tasks.md`.
-- Every Pull Request **must** include the updated `tasks.md` (with completed tasks checked).
-- Deleting or ignoring these files is forbidden.
+### 9.3 Responsibility
+- Before changing an area, read the relevant ADRs and respect them; if a change contradicts an ADR, update or supersede that ADR in the same PR.
+- `CONTEXT.md` and `docs/adr/` **may not contradict** this `CONSTITUTION.md` or `AGENTS.md`.
 
 ## 10. Protected Files – Automated Release System
 
