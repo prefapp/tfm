@@ -1,6 +1,23 @@
-# Retrieve the currently authenticated user (typically a GitHub App)
-data "github_user" "current" {
-  username = ""
+# Resolve bypass pull-request allowance actors
+locals {
+  _bypasser_users = toset(flatten([
+    for bp in coalesce(var.config.branch_protections, []) :
+    try(coalesce(bp.bypassPullRequestAllowances.users, []), [])
+  ]))
+  _bypasser_teams = toset(flatten([
+    for bp in coalesce(var.config.branch_protections, []) :
+    try(coalesce(bp.bypassPullRequestAllowances.teams, []), [])
+  ]))
+}
+
+data "github_user" "bypasser" {
+  for_each = local._bypasser_users
+  username = each.value
+}
+
+data "github_team" "bypasser" {
+  for_each = local._bypasser_teams
+  slug     = each.value
 }
 
 # Create the GitHub Repository
@@ -150,8 +167,9 @@ resource "github_branch_protection" "this" {
   }
 
   pull_request_bypassers = distinct(concat(
-    [data.github_user.current.node_id],
-    coalesce(each.value.pullRequestBypassers, [])
+    try(each.value.bypassPullRequestAllowances.apps, []),
+    [for slug in try(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+    [for login in try(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
   ))
 
   depends_on = [

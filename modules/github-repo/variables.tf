@@ -77,7 +77,15 @@ variable "config" {
       enforceAdmins                 = optional(bool, false)
       requireSignedCommits          = optional(bool, false)
       requireConversationResolution = optional(bool, false)
-      pullRequestBypassers          = optional(list(string), [])
+      bypassPullRequestAllowances = optional(object({
+        # apps  — GitHub App node IDs (pre-resolved by caller; the GitHub
+        #         provider has no data.github_app data source)
+        apps = optional(list(string), [])
+        # teams — team slugs, resolved by data.github_team
+        teams = optional(list(string), [])
+        # users — user logins, resolved by data.github_user
+        users = optional(list(string), [])
+      }), null)
     })), [])
 
   })
