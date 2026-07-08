@@ -46,26 +46,17 @@ When proposing or implementing a module change, include:
 - Import behavior.
 - Delete behavior and any safety concerns.
 - Validation performed or intentionally skipped.
-- Path to the `tasks.md` used for this PR and status of each task.
 
-## Spec-Driven Development (Mandatory for All Agents)
+## Design Memory (CONTEXT + ADR)
 
-Before any module change:
+There is no per-change spec/plan/tasks process. Instead:
 
-1. Locate or create the correct folder under `specs/<module-name>/`
-2. Read the current `spec.md`, `plan.md`, and `tasks.md`
-3. Work **only** on the tasks listed in the current `tasks.md`
-4. Update `tasks.md` as you complete each task (keep it in the PR)
+1. Keep the root `CONTEXT.md` glossary current when you introduce or sharpen a domain term.
+2. Before changing an area, read the relevant ADRs — the module's `modules/<module>/docs/adr/` plus any repo-wide ones in the root `docs/adr/` — and respect them. The root `ADR-INDEX.md` catalogues them all.
+3. Record a new ADR **only** when the decision is hard to reverse, surprising without context, and the result of a real trade-off. Routine field additions and forced provider deprecations need no ADR. Place it in the module's `docs/adr/` (or root `docs/adr/` if repo-wide) and add its entry to `ADR-INDEX.md`.
+4. If a change contradicts an existing ADR, update or supersede that ADR in the same PR, and keep its `ADR-INDEX.md` entry in sync.
 
-**Never** propose code changes without a corresponding `tasks.md` entry.
-
-### Specification Location Rules (strict)
-- Use exactly: `specs/<module-name>/NNN-feature-slug/`
-- Module name **must** match the folder inside `modules/` (e.g. `aws-eks`, `azure-vpc`, `github-team`)
-- For changes spanning multiple modules → use `specs/cross-module/`
-- All three files (`spec.md`, `plan.md`, `tasks.md`) **must stay** in the repository after merge.
-
-When creating a new task file, follow the template from specdriven.ai (or the existing pattern already used in this repo).
+See `CONSTITUTION.md` §9 for the governing rule.
 
 ## Critical Safety Rules (Highest Priority)
 
