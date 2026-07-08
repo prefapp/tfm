@@ -167,9 +167,9 @@ resource "github_branch_protection" "this" {
   }
 
   pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distinct(concat(
-    each.value.bypassPullRequestAllowances.apps,
-    [for slug in each.value.bypassPullRequestAllowances.teams : data.github_team.bypasser[slug].node_id],
-    [for login in each.value.bypassPullRequestAllowances.users : data.github_user.bypasser[login].node_id],
+    coalesce(each.value.bypassPullRequestAllowances.apps, []),
+    [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+    [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
   )) : null
 
   depends_on = [
