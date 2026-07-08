@@ -1,3 +1,9 @@
+variable "installed_managed_files" {
+  description = "Accumulated list of user-managed file addresses (\"<file>/<branch>\") that have been provisioned at least once. Passed in by gh_provisioner from the entity's output secrets on every reconciliation. Defaults to [] on first apply."
+  type        = list(string)
+  default     = []
+}
+
 variable "config" {
   description = "GitHub files configuration — userManaged files are provisioned once and survive destroy"
   type = object({
@@ -19,7 +25,7 @@ variable "config" {
   }
 
   validation {
-    condition = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", var.config.repository))
+    condition     = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", var.config.repository))
     error_message = "config.repository must be in 'owner/repo' format."
   }
 
