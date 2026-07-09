@@ -11,10 +11,6 @@ module "lambda_replication" {
   handler       = "handler.lambda_handler"
   runtime       = "python3.12"
 
-  source_path = [
-    "${path.module}/src"
-  ]
-
   timeout     = var.lambda_timeout
   memory_size = var.lambda_memory
   tags        = local.common_tags
@@ -31,5 +27,13 @@ module "lambda_replication" {
   )
 
   create_role = false
+  create_package = false
+  local_existing_package = data.archive_file.lambda.output_path
   lambda_role = aws_iam_role.lambda_replication.arn
+}
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_dir  = "${path.module}/src"
+  output_path = "${path.module}/dist/lambda.zip"
 }
