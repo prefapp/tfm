@@ -33,3 +33,16 @@ module "lambda_replication" {
   create_role = false
   lambda_role = aws_iam_role.lambda_replication.arn
 }
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_dir  = "${path.module}/src"
+  output_path = "${path.module}/dist/lambda.zip"
+}
+
+module "lambda" {
+  source = "terraform-aws-modules/lambda/aws"
+
+  create_package         = false
+  local_existing_package = data.archive_file.lambda.output_path
+}
