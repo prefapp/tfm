@@ -52,9 +52,9 @@ When proposing or implementing a module change, include:
 There is no per-change spec/plan/tasks process. Instead:
 
 1. Keep the root `CONTEXT.md` glossary current when you introduce or sharpen a domain term.
-2. Before changing an area, read the relevant files in `docs/adr/` and respect them.
-3. Record a new ADR **only** when the decision is hard to reverse, surprising without context, and the result of a real trade-off. Routine field additions and forced provider deprecations need no ADR.
-4. If a change contradicts an existing ADR, update or supersede that ADR in the same PR.
+2. Before changing an area, read the relevant ADRs — the module's `modules/<module>/docs/adr/` plus any repo-wide ones in the root `docs/adr/` — and respect them. The root `ADR-INDEX.md` catalogues them all.
+3. Record a new ADR **only** when the decision is hard to reverse, surprising without context, and the result of a real trade-off. Routine field additions and forced provider deprecations need no ADR. Place it in the module's `docs/adr/` (or root `docs/adr/` if repo-wide) and add its entry to `ADR-INDEX.md`.
+4. If a change contradicts an existing ADR, update or supersede that ADR in the same PR, and keep its `ADR-INDEX.md` entry in sync.
 
 See `CONSTITUTION.md` §9 for the governing rule.
 
