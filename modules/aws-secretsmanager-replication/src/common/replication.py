@@ -1,4 +1,4 @@
-from utils import assume_role, log
+from common.utils import assume_role, log
 import boto3
 import time
 

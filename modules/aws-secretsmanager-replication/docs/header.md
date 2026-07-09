@@ -50,6 +50,17 @@ The Lambda determines:
 - from the `secret_id` parameter (manual mode),
 - or from `list_secrets()` (full sync mode).
 
+### Unified Lambda and Invocation Modes
+
+As of **v2.0.0**, this module deploys a **single** replication Lambda that handles all three modes, distinguished by the shape of the invocation event (the previous separate `automatic` and `manual` Lambdas were merged):
+
+- **Automatic (EventBridge):** triggered by Secrets Manager API calls delivered via CloudTrail. No manual payload.
+- **Manual single secret:** invoke with `{"secret_id": "<name-or-arn>"}`.
+- **Full sync:** invoke with `{"initial_run": true}` (alias `{"enable_full_sync": true}`). This runs only when the module was deployed with `enable_full_sync = true`; otherwise the Lambda refuses the request. Full sync replicates every secret in the source account.
+
+Manual and full-sync invocations return a JSON body with an HTTP-style `statusCode` (200 success, 400 invalid payload, 403 full sync not enabled, 404 source secret not found, 500 replication error).
+
+
 By default, the **destination secret name is the same as the source secret name**. If `add_region_prefix_to_name = true`, the destination secret name is prefixed with the **source region** (for example, `eu-west-1-mysecret`) to preserve origin traceability.
 
 ### Destination Configuration Format

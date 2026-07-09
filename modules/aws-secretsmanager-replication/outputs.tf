@@ -1,21 +1,11 @@
-output "lambda_automatic_replication_arn" {
-  description = "ARN of the Lambda function"
-  value       = module.lambda_automatic_replication.lambda_function_arn
+output "lambda_replication_arn" {
+  description = "ARN of the unified replication Lambda function"
+  value       = module.lambda_replication.lambda_function_arn
 }
 
-output "lambda_automatic_replication_role_arn" {
-  description = "IAM role ARN associated with the Lambda"
-  value       = module.lambda_automatic_replication.lambda_role_arn
-}
-
-output "lambda_manual_replication_arn" {
-  description = "ARN of the manual replication Lambda function (if created)"
-  value       = try(module.lambda_manual_replication[0].lambda_function_arn, null)
-}
-
-output "lambda_manual_replication_role_arn" {
-  description = "IAM role ARN for the manual replication Lambda (if created)"
-  value       = try(module.lambda_manual_replication[0].lambda_role_arn, null)
+output "lambda_replication_role_arn" {
+  description = "IAM role ARN associated with the replication Lambda"
+  value       = module.lambda_replication.lambda_role_arn
 }
 
 output "eventbridge_rule_arn" {

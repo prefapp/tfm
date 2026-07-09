@@ -24,16 +24,6 @@ locals {
   s3_bucket_logs_arn = local.using_existing_s3_bucket ? "${var.s3_bucket_arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : (length(aws_s3_bucket.cloudtrail) > 0 ? "${aws_s3_bucket.cloudtrail[0].arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*" : null)
 
 
-  # Pass DESTINATIONS_JSON and enable_tag_replication as environment variables to the Lambda
-  # Note: Terraform-provided values override any conflicting keys in var.environment_variables
-  environment = merge(
-    var.environment_variables,
-    {
-      DESTINATIONS_JSON      = var.destinations_json
-      ENABLE_TAG_REPLICATION = tostring(var.enable_tag_replication)
-    }
-  )
-
   parsed_destinations = try(jsondecode(var.destinations_json), {})
 
 }
