@@ -13,6 +13,11 @@ output "eventbridge_rule_arn" {
   value       = try(aws_cloudwatch_event_rule.secretsmanager_api_calls[0].arn, null)
 }
 
+output "eventbridge_rule_name" {
+  description = "Name of the EventBridge rule (if created)"
+  value       = try(aws_cloudwatch_event_rule.secretsmanager_api_calls[0].name, null)
+}
+
 output "cloudtrail_arn" {
   value       = local.cloudtrail_arn
   description = "ARN of the CloudTrail used (existing or created)."

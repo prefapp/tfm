@@ -72,6 +72,12 @@ variable "eventbridge_enabled" {
   default     = false
 }
 
+variable "eventbridge_extra_event_names" {
+  description = "Additional Secrets Manager API event names to include in the EventBridge rule (e.g. [\"UpdateSecret\"]). PutSecretValue and CreateSecret are always included."
+  type        = list(string)
+  default     = []
+}
+
 variable "allow_auto_create_cloudtrail_bucket" {
   description = "Fallback mode. If true, and s3_bucket_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket."
   type        = bool

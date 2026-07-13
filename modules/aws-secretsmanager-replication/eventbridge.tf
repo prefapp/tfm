@@ -1,13 +1,16 @@
 # EventBridge rule that matches CloudTrail API calls for Secrets Manager (including rotations)
+# CloudTrail API call events arrive with source "aws.cloudtrail", not "aws.secretsmanager".
+# detail.eventSource narrows the match to Secrets Manager API calls only.
 resource "aws_cloudwatch_event_rule" "secretsmanager_api_calls" {
   count       = var.eventbridge_enabled ? 1 : 0
   name        = "${var.prefix}-secretsmanager-cloudtrail-rule"
   description = "Trigger Lambda on Secrets Manager API calls via CloudTrail (Create/Put)"
   event_pattern = jsonencode({
-    "source" : ["aws.secretsmanager"],
+    "source" : ["aws.cloudtrail", "aws.secretsmanager"],
     "detail-type" : ["AWS API Call via CloudTrail"],
     "detail" : {
-      "eventName" : ["PutSecretValue", "CreateSecret"]
+      "eventSource" : ["secretsmanager.amazonaws.com"],
+      "eventName" : concat(["PutSecretValue", "CreateSecret"], var.eventbridge_extra_event_names)
     }
   })
 }
