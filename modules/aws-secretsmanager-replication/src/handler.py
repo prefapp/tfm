@@ -55,7 +55,7 @@ def _extract_secret_id_from_detail(detail):
     """
     rp = detail.get("requestParameters", {}) or {}
 
-    # 1. Normal case: PutSecretValue, UpdateSecret, RotateSecret
+    # 1. Normal case: events that provide a secretId/SecretId request parameter (e.g., PutSecretValue)
     sid = rp.get("secretId") or rp.get("SecretId")
     if sid:
         return sid
