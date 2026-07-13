@@ -235,7 +235,7 @@ def lambda_handler(event, context):
                     }),
                 }
 
-            log("error", "Failed to replicate secret", secret_id=secret_id, error=str(e), exc_info=e)
+            log("error", "Failed to replicate secret", secret_id=secret_id, error=str(e), exc_info=True)
             return {
                 "statusCode": 500,
                 "body": json.dumps({
