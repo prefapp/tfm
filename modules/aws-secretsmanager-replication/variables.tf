@@ -1,5 +1,5 @@
 variable "enable_full_sync" {
-  description = "If true, the manual replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege."
+  description = "If true, the unified replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege."
   type        = bool
   default     = false
 }
@@ -131,5 +131,4 @@ variable "manage_s3_bucket_policy" {
   type        = bool
   default     = true
 }
-
 

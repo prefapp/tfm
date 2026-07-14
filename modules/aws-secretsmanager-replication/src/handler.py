@@ -101,9 +101,15 @@ def _extract_secret_from_eventbridge(event):
     if event.get("detail-type") != "AWS API Call via CloudTrail":
         return None, False
 
+    if event.get("source") != "aws.secretsmanager":
+        return None, False
+
     detail = event.get("detail", {})
     if not isinstance(detail, dict):
-        return None, True
+        return None, False
+
+    if detail.get("eventSource") != "secretsmanager.amazonaws.com":
+        return None, False
 
     return _extract_secret_id_from_detail(detail), True
 
