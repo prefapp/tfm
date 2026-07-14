@@ -159,18 +159,17 @@ resource "github_branch_protection" "this" {
   }
 
   dynamic "required_pull_request_reviews" {
-    for_each = (each.value.requiredReviewersCount > 0 || each.value.requiredCodeownersReviewers) ? [1] : []
+    for_each = (each.value.requiredReviewersCount > 0 || each.value.requiredCodeownersReviewers || each.value.bypassPullRequestAllowances != null) ? [1] : []
     content {
       required_approving_review_count = each.value.requiredReviewersCount
       require_code_owner_reviews      = each.value.requiredCodeownersReviewers
+      pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distinct(concat(
+        coalesce(each.value.bypassPullRequestAllowances.apps, []),
+        [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+        [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
+      )) : []
     }
   }
-
-  pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distinct(concat(
-    coalesce(each.value.bypassPullRequestAllowances.apps, []),
-    [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
-    [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
-  )) : null
 
   depends_on = [
     github_branch_default.this,

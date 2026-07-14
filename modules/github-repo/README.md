@@ -119,7 +119,10 @@ module "repository" {
         branch                        = "main"
         requiredReviewersCount        = 1
         bypassPullRequestAllowances = {
-          apps  = ["MDIyOkxhc3NpY0FwcDEyMzQ1Njc4OQ=="]
+          # apps are GitHub App node IDs
+          # 1. gh api "/orgs/<org>/installations" --jq '.installations[].app_slug'  # find slug
+          # 2. gh api /apps/<slug> --jq '.node_id'                                                # get node ID
+          apps  = ["<node_id>"]
           teams = ["my-team-slug"]
           users = ["some-user"]
         }
