@@ -91,7 +91,7 @@ module "lambda_replication" {
 data "archive_file" "lambda" {
   type        = "zip"
   source_dir  = "${path.module}/src"
-  output_path = "${path.module}/dist/lambda.zip"
+  output_path = "${path.module}/lambda.zip"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
