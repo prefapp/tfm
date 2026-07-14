@@ -225,7 +225,16 @@ def lambda_handler(event, context):
     # Mode 3: Full account sync
     if enable_full_sync:
         log("info", "Starting full sync of all secrets")
-        failed_secrets = replicate_all(config)
+        try:
+            failed_secrets = replicate_all(config)
+        except Exception as e:
+            log("error", "Full sync aborted due to unexpected error", error=str(e), exc_info=True)
+            return {
+                "statusCode": 500,
+                "body": json.dumps({
+                    "message": "Full sync aborted due to an unexpected error. Check Lambda logs for details."
+                }),
+            }
         if failed_secrets:
             log(
                 "error",
