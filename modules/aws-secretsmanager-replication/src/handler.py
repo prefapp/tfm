@@ -34,6 +34,13 @@ def _parse_full_sync_flag(value):
     if isinstance(value, bool):
         return value, True
 
+    if isinstance(value, int):
+        if value == 1:
+            return True, True
+        if value == 0:
+            return False, True
+        return False, False
+
     if isinstance(value, str):
         normalized = value.strip().lower()
         if normalized in _TRUTHY_FLAG_VALUES:
