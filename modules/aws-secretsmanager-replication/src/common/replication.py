@@ -226,7 +226,7 @@ def replicate_all(config):
     Args:
         config: Configuration object with destinations and options.
     Returns:
-        None
+        list[str]: ARNs of secrets that failed to replicate. Empty list means full success.
     """
     log("info", "Starting full sync (replicate all secrets)")
     source_sm = boto3.client("secretsmanager", region_name=config.source_region)
@@ -247,6 +247,7 @@ def replicate_all(config):
 
     config_with_client = ConfigWithClient(config, source_sm)
 
+    failed_secrets = []
     for page in paginator.paginate():
         for secret in page.get("SecretList", []):
             secret_id = secret["ARN"]
@@ -254,5 +255,7 @@ def replicate_all(config):
                 replicate_secret(secret_id, config_with_client, get_sm_client=get_sm_client)
             except Exception as e:
                 log("error", f"Failed to replicate secret {secret_id}: {e}", exc_info=e)
+                failed_secrets.append(secret_id)
 
-    log("info", "Full sync completed")
+    log("info", "Full sync completed", failed_count=len(failed_secrets))
+    return failed_secrets

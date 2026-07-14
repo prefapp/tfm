@@ -210,7 +210,19 @@ def lambda_handler(event, context):
     # Mode 3: Full account sync
     if enable_full_sync:
         log("info", "Starting full sync of all secrets")
-        replicate_all(config)
+        failed_secrets = replicate_all(config)
+        if failed_secrets:
+            log(
+                "error",
+                "Full sync completed with failures",
+                failed_count=len(failed_secrets),
+            )
+            return {
+                "statusCode": 500,
+                "body": json.dumps({
+                    "message": f"Full sync completed with {len(failed_secrets)} failure(s). Check Lambda logs for details."
+                }),
+            }
         return {
             "statusCode": 200,
             "body": json.dumps({"message": "Full sync completed"}),
