@@ -12,8 +12,6 @@ from common.utils import log
 _TRUTHY_FLAG_VALUES = {"1", "true", "yes", "on"}
 _FALSY_FLAG_VALUES = {"0", "false", "no", "off"}
 
-_EVENTBRIDGE_EVENT_NAMES = ("CreateSecret", "PutSecretValue")
-
 
 def _normalize_secret_id(value):
     """Returns a strict, trimmed secret id string, otherwise None."""
@@ -84,6 +82,11 @@ def _extract_secret_from_eventbridge(event):
     Returns (secret_id, is_eventbridge). is_eventbridge is True when the event
     looks like a CloudTrail-delivered Secrets Manager API call, regardless of
     whether a replicable secret id could be extracted.
+
+    Event name filtering is intentionally delegated to the EventBridge rule
+    (via eventbridge_extra_event_names). Any CloudTrail event that reaches
+    this Lambda was already approved by the rule; restricting by event name
+    here would silently drop events added through that variable.
     """
     if not isinstance(event, dict):
         return None, False
@@ -93,9 +96,6 @@ def _extract_secret_from_eventbridge(event):
 
     detail = event.get("detail", {})
     if not isinstance(detail, dict):
-        return None, True
-
-    if detail.get("eventName") not in _EVENTBRIDGE_EVENT_NAMES:
         return None, True
 
     return _extract_secret_id_from_detail(detail), True
