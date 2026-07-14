@@ -149,9 +149,9 @@ def lambda_handler(event, context):
         replicate_secret(secret_id_eb, config, skip_missing_current=True)
         return None
 
-    config = load_config()
-
     # Mode 2 & 3: Manual invocation (single secret or full sync)
+    # All input validation runs before load_config() to avoid the extra
+    # JSON parsing and STS call on invocations that will return 400.
     secret_id = None
     if "secret_id" in event:
         raw_secret_id = event.get("secret_id")
@@ -193,6 +193,21 @@ def lambda_handler(event, context):
                 "message": "Invalid invocation: 'enable_full_sync'/'initial_run' must be a boolean or one of: true/false, yes/no, on/off, 1/0."
             }),
         }
+
+    # Reject unknown/empty invocations before paying the load_config() cost.
+    if not secret_id and not enable_full_sync:
+        log(
+            "warning",
+            "No valid invocation mode (no EventBridge event, no secret_id, and no explicit full sync request)",
+        )
+        return {
+            "statusCode": 400,
+            "body": json.dumps({
+                "message": "Invalid invocation: must be triggered by EventBridge, provide 'secret_id', or explicitly request full sync with 'enable_full_sync': true or 'initial_run': true."
+            }),
+        }
+
+    config = load_config()
 
     # Guardrail: refuse to run full sync if not enabled in config
     if enable_full_sync and not config.enable_full_sync:
@@ -261,15 +276,3 @@ def lambda_handler(event, context):
                     "message": f"Failed to replicate secret: {secret_id}. Check Lambda logs for details."
                 }),
             }
-
-    # No valid invocation mode
-    log(
-        "warning",
-        "No valid invocation mode (no EventBridge event, no secret_id, and no explicit full sync request)",
-    )
-    return {
-        "statusCode": 400,
-        "body": json.dumps({
-            "message": "Invalid invocation: must be triggered by EventBridge, provide 'secret_id', or explicitly request full sync with 'enable_full_sync': true or 'initial_run': true."
-        }),
-    }
