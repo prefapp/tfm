@@ -6,7 +6,7 @@ resource "aws_cloudwatch_event_rule" "secretsmanager_api_calls" {
   name        = "${var.prefix}-secretsmanager-cloudtrail-rule"
   description = "Trigger Lambda on Secrets Manager API calls via CloudTrail"
   event_pattern = jsonencode({
-    "source" : ["aws.cloudtrail", "aws.secretsmanager"],
+    "source" : ["aws.cloudtrail"],
     "detail-type" : ["AWS API Call via CloudTrail"],
     "detail" : {
       "eventSource" : ["secretsmanager.amazonaws.com"],
