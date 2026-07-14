@@ -194,6 +194,19 @@ def lambda_handler(event, context):
             }),
         }
 
+    if secret_id and enable_full_sync:
+        log(
+            "warning",
+            "Conflicting invocation modes in payload",
+            secret_id=secret_id,
+        )
+        return {
+            "statusCode": 400,
+            "body": json.dumps({
+                "message": "Invalid invocation: provide either 'secret_id' for single-secret replication or request full sync, not both."
+            }),
+        }
+
     # Reject unknown/empty invocations before paying the load_config() cost.
     if not secret_id and not enable_full_sync:
         log(
