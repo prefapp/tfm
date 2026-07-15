@@ -57,8 +57,8 @@ module "secrets_dr_replication" {
 
   # environment_variables can be used to pass additional custom variables if needed
 
-  lambda_timeout     = 10
-  lambda_memory      = 128
+  lambda_timeout      = 10
+  lambda_memory       = 128
   eventbridge_enabled = true
   # Fallback mode for isolated/non-enterprise setups only.
   # In enterprise environments, prefer passing s3_bucket_arn.
@@ -71,7 +71,7 @@ module "secrets_dr_replication" {
 }
 
 output "lambda_arn" {
-  value = module.secrets_dr_replication.lambda_automatic_replication_arn
+  value = module.secrets_dr_replication.lambda_replication_arn
 }
 
 output "eventbridge_rule_arn" {

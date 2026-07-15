@@ -1,5 +1,5 @@
 variable "enable_full_sync" {
-  description = "If true, the manual replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege."
+  description = "If true, the replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege."
   type        = bool
   default     = false
 }
@@ -72,6 +72,12 @@ variable "eventbridge_enabled" {
   default     = false
 }
 
+variable "eventbridge_extra_event_names" {
+  description = "Additional Secrets Manager API event names to include in the EventBridge rule (e.g. [\"UpdateSecret\"]). PutSecretValue and CreateSecret are always included."
+  type        = list(string)
+  default     = []
+}
+
 variable "allow_auto_create_cloudtrail_bucket" {
   description = "Fallback mode. If true, and s3_bucket_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket."
   type        = bool
@@ -94,12 +100,6 @@ variable "tags" {
   description = "Tags applied to all resources created by this module"
   type        = map(string)
   default     = {}
-}
-
-variable "manual_replication_enabled" {
-  type        = bool
-  default     = true
-  description = "Whether to deploy the manual secrets sync Lambda"
 }
 
 # ---------------------------------------------------------------------------
@@ -131,5 +131,4 @@ variable "manage_s3_bucket_policy" {
   type        = bool
   default     = true
 }
-
 

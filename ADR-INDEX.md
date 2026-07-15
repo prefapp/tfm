@@ -31,6 +31,7 @@ _None yet._
 | ADR | Decision |
 |-----|----------|
 | [origin-region-is-source-region](./modules/aws-secretsmanager-replication/docs/adr/origin-region-is-source-region.md) | The region name prefix and `origin-region` tag encode the **source** region, not the destination, for DR traceability. |
+| [single-lambda-for-all-replication-modes](./modules/aws-secretsmanager-replication/docs/adr/single-lambda-for-all-replication-modes.md) | A single Lambda handles EventBridge, manual, and full-sync modes by event shape; the separate automatic/manual Lambdas were removed (breaking, v2.0.0). |
 
 ### github-repo-secrets-section
 
