@@ -132,3 +132,14 @@ variable "manage_s3_bucket_policy" {
   default     = true
 }
 
+variable "source_kms_key_arns" {
+  description = <<-EOT
+    List of KMS key ARNs used to encrypt secrets in the source account.
+    Required when any source secret is encrypted with a customer-managed KMS key (CMK).
+    The Lambda execution role will be granted kms:Decrypt and kms:DescribeKey on each key.
+    Leave empty (default) when all source secrets use the AWS managed key for Secrets Manager.
+  EOT
+  type        = list(string)
+  default     = []
+}
+

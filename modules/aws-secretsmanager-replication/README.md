@@ -266,7 +266,7 @@ This allows secrets with the same name from different regions to be copied into 
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_archive"></a> [archive](#requirement\_archive) | ~> 2.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.2 |
@@ -275,7 +275,7 @@ This allows secrets with the same name from different regions to be copied into 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_archive"></a> [archive](#provider\_archive) | ~> 2.0 |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.2 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
@@ -283,13 +283,13 @@ This allows secrets with the same name from different regions to be copied into 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_lambda_replication"></a> [lambda\_replication](#module\_lambda\_replication) | terraform-aws-modules/lambda/aws | ~> 7.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudtrail.secrets_management_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail) | resource |
 | [aws_cloudwatch_event_rule.secretsmanager_api_calls](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.invoke_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
@@ -306,7 +306,7 @@ This allows secrets with the same name from different regions to be copied into 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination secret name will be prefixed with the source region (e.g., "us-east-1-mysecret").<br/>If false, the original name is used. Default: false.<br/>This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones. | `bool` | `false` | no |
 | <a name="input_allow_auto_create_cloudtrail_bucket"></a> [allow\_auto\_create\_cloudtrail\_bucket](#input\_allow\_auto\_create\_cloudtrail\_bucket) | Fallback mode. If true, and s3\_bucket\_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket. | `bool` | `false` | no |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | n/a | yes |
@@ -324,12 +324,13 @@ This allows secrets with the same name from different regions to be copied into 
 | <a name="input_name"></a> [name](#input\_name) | Base name for the Lambda and associated resources | `string` | n/a | yes |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to use for naming resources. | `string` | n/a | yes |
 | <a name="input_s3_bucket_arn"></a> [s3\_bucket\_arn](#input\_s3\_bucket\_arn) | ARN of an existing S3 bucket where CloudTrail logs are stored. This is required by default when eventbridge\_enabled is true. Set allow\_auto\_create\_cloudtrail\_bucket=true only as a fallback to let the module create a dedicated bucket automatically. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation. | `string` | `""` | no |
+| <a name="input_source_kms_key_arns"></a> [source\_kms\_key\_arns](#input\_source\_kms\_key\_arns) | List of KMS key ARNs used to encrypt secrets in the source account.<br/>Required when any source secret is encrypted with a customer-managed KMS key (CMK).<br/>The Lambda execution role will be granted kms:Decrypt and kms:DescribeKey on each key.<br/>Leave empty (default) when all source secrets use the AWS managed key for Secrets Manager. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to all resources created by this module | `map(string)` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cloudtrail_arn"></a> [cloudtrail\_arn](#output\_cloudtrail\_arn) | ARN of the CloudTrail used (existing or created). |
 | <a name="output_eventbridge_rule_arn"></a> [eventbridge\_rule\_arn](#output\_eventbridge\_rule\_arn) | ARN of the EventBridge rule (if created) |
 | <a name="output_eventbridge_rule_name"></a> [eventbridge\_rule\_name](#output\_eventbridge\_rule\_name) | Name of the EventBridge rule (if created) |
