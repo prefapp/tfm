@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.4...aws-secretsmanager-replication-v2.0.0) (2026-07-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **aws-secretsmanager-replication:** removes the `manual_replication_enabled` variable and the `lambda_automatic_replication_arn`, `lambda_automatic_replication_role_arn`, `lambda_manual_replication_arn`, and `lambda_manual_replication_role_arn` outputs. Use the new `lambda_replication_arn` / `lambda_replication_role_arn` outputs instead. Manual replication is always available on the unified Lambda.
+
+### Features
+
+* **aws-secretsmanager-replication:** unify replication Lambdas and compress package ([#1325](https://github.com/prefapp/tfm/issues/1325)) ([35f8f11](https://github.com/prefapp/tfm/commit/35f8f11b788fb6abb3efb8ca43b4b242dfd727e2))
+
 ## [1.0.4](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.3...aws-secretsmanager-replication-v1.0.4) (2026-06-09)
 
 
