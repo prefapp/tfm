@@ -43,7 +43,9 @@ module "lambda_automatic_replication" {
   handler       = "handler.lambda_handler"
   runtime       = "python3.14"
   region        = "eu-west-1"
-  source_path   = ["${path.module}/src/common"]
+
+  create_package         = false
+  local_existing_package = data.archive_file.lambda.output_path
 
   timeout     = var.lambda_timeout
   memory_size = var.lambda_memory
@@ -103,6 +105,12 @@ module "lambda_automatic_replication" {
   })
 }
 
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_dir  = "${path.module}/src/common"
+  output_path = "${path.module}/lambda.zip"
+}
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   count      = local.has_cross_account_copy ? 1 : 0

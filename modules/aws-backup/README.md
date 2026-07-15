@@ -163,26 +163,28 @@ The module is organized with the following directory and file structure:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
+| <a name="requirement_archive"></a> [archive](#requirement\_archive) | ~> 2.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.3 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.34.0 |
+| ---- | ------- |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | ~> 2.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.3 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_lambda_automatic_replication"></a> [lambda\_automatic\_replication](#module\_lambda\_automatic\_replication) | terraform-aws-modules/lambda/aws | 8.7 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_backup_global_settings.global](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_global_settings) | resource |
 | [aws_backup_plan.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_plan) | resource |
 | [aws_backup_selection.resource_selection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_selection) | resource |
@@ -195,6 +197,7 @@ The module is organized with the following directory and file structure:
 | [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [archive_file.lambda](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.source_copy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -204,7 +207,7 @@ The module is organized with the following directory and file structure:
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | `[]` | no |
 | <a name="input_aws_backup_vault"></a> [aws\_backup\_vault](#input\_aws\_backup\_vault) | List of objects defining the backup vault configuration, including backup plans and replication rules. | <pre>list(object({<br/>    vault_name        = string<br/>    vault_region      = optional(string)<br/>    vault_tags        = optional(map(string))<br/>    vault_kms_key_arn = optional(string)<br/><br/>    plan = optional(list(object({<br/>      name                         = string<br/>      rule_name                    = string<br/>      schedule                     = string<br/>      schedule_expression_timezone = optional(string)<br/>      start_window                 = optional(number)<br/>      completion_window            = optional(number)<br/>      # Structure for dynamic conditions in aws_backup_selection<br/>      # Example usage:<br/>      # backup_selection_conditions = {<br/>      #   string_equals = [<br/>      #     { key = "aws:ResourceTag/Component", value = "rds" }<br/>      #   ]<br/>      #   string_like = [<br/>      #     { key = "aws:ResourceTag/Application", value = "app*" }<br/>      #   ]<br/>      #   string_not_equals = [<br/>      #     { key = "aws:ResourceTag/Backup", value = "false" }<br/>      #   ]<br/>      #   string_not_like = [<br/>      #     { key = "aws:ResourceTag/Environment", value = "test*" }<br/>      #   ]<br/>      # }<br/>      backup_selection_conditions = optional(object({<br/>        string_equals     = optional(list(object({ key = string, value = string })))<br/>        string_like       = optional(list(object({ key = string, value = string })))<br/>        string_not_equals = optional(list(object({ key = string, value = string })))<br/>        string_not_like   = optional(list(object({ key = string, value = string })))<br/>      }))<br/>      backup_selection_arn_resources = optional(list(string))<br/>      lifecycle = optional(object({<br/>        cold_storage_after = optional(number)<br/>        delete_after       = number<br/>      }))<br/>      advanced_backup_setting = optional(list(object({<br/>        backup_options = map(string)<br/>        resource_type  = string<br/>      })))<br/>      scan_action = optional(list(object({<br/>        malware_scanner  = string<br/>        scan_action_type = string<br/>      })))<br/>      recovery_point_tags = optional(map(string))<br/>      tags                = optional(map(string))<br/>      copy_action = optional(list(object({<br/>        destination_vault_arn = string<br/>        delete_after          = optional(number)<br/>      })))<br/>      })<br/>    ))<br/>    })<br/>  )</pre> | `[]` | no |
 | <a name="input_aws_kms_key_vault_arn"></a> [aws\_kms\_key\_vault\_arn](#input\_aws\_kms\_key\_vault\_arn) | ARN of the KMS key used to encrypt the backup vault. If not provided, the default AWS Backup vault encryption will be used. | `string` | `null` | no |
