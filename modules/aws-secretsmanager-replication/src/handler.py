@@ -1,4 +1,4 @@
-# handler.py - Unified Secrets Manager replication Lambda
+# handler.py - Secrets Manager replication Lambda
 # Handles EventBridge-driven (CloudTrail) replication, manual single-secret
 # invocation, and full-account sync, distinguished by event shape.
 
@@ -116,7 +116,7 @@ def _extract_secret_from_eventbridge(event):
 
 def lambda_handler(event, context):
     """
-    Unified Lambda entry point for secret replication.
+    Lambda entry point for secret replication.
 
     Modes:
     1. EventBridge automatic: triggered by Secrets Manager CloudTrail events

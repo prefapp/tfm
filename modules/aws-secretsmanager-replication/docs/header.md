@@ -50,7 +50,7 @@ The Lambda determines:
 - from the `secret_id` parameter (manual mode),
 - or from `list_secrets()` (full sync mode).
 
-### Unified Lambda and Invocation Modes
+### Lambda and Invocation Modes
 
 As of **v2.0.0**, this module deploys a **single** replication Lambda that handles all three modes, distinguished by the shape of the invocation event (the previous separate `automatic` and `manual` Lambdas were merged):
 

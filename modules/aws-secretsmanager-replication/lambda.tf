@@ -1,5 +1,5 @@
 ###############################################################################
-# Unified Lambda for secret replication
+# Lambda for secret replication
 # Handles EventBridge-driven (CloudTrail), manual single-secret, and full-sync
 # invocation modes in a single function, distinguished by event shape.
 ###############################################################################

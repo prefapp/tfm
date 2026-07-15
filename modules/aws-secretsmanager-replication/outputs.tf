@@ -1,5 +1,5 @@
 output "lambda_replication_arn" {
-  description = "ARN of the unified replication Lambda function"
+  description = "ARN of the replication Lambda function"
   value       = module.lambda_replication.lambda_function_arn
 }
 

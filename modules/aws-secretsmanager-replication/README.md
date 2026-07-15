@@ -51,7 +51,7 @@ The Lambda determines:
 - from the `secret_id` parameter (manual mode),
 - or from `list_secrets()` (full sync mode).
 
-### Unified Lambda and Invocation Modes
+### Lambda and Invocation Modes
 
 As of **v2.0.0**, this module deploys a **single** replication Lambda that handles all three modes, distinguished by the shape of the invocation event (the previous separate `automatic` and `manual` Lambdas were merged):
 
@@ -312,7 +312,7 @@ This allows secrets with the same name from different regions to be copied into 
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | n/a | yes |
 | <a name="input_cloudtrail_arn"></a> [cloudtrail\_arn](#input\_cloudtrail\_arn) | (Optional) ARN of an existing CloudTrail. If omitted and eventbridge\_enabled is true, the module creates a dedicated trail. | `string` | `""` | no |
 | <a name="input_destinations_json"></a> [destinations\_json](#input\_destinations\_json) | JSON describing accounts, regions and KMS keys for replication | `string` | n/a | yes |
-| <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the unified replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
+| <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to replicate tags from the source secret (used by the code, not Terraform) | `bool` | `true` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Additional environment variables passed to the Lambda | `map(string)` | `{}` | no |
 | <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `false` | no |
@@ -333,7 +333,7 @@ This allows secrets with the same name from different regions to be copied into 
 | <a name="output_cloudtrail_arn"></a> [cloudtrail\_arn](#output\_cloudtrail\_arn) | ARN of the CloudTrail used (existing or created). |
 | <a name="output_eventbridge_rule_arn"></a> [eventbridge\_rule\_arn](#output\_eventbridge\_rule\_arn) | ARN of the EventBridge rule (if created) |
 | <a name="output_eventbridge_rule_name"></a> [eventbridge\_rule\_name](#output\_eventbridge\_rule\_name) | Name of the EventBridge rule (if created) |
-| <a name="output_lambda_replication_arn"></a> [lambda\_replication\_arn](#output\_lambda\_replication\_arn) | ARN of the unified replication Lambda function |
+| <a name="output_lambda_replication_arn"></a> [lambda\_replication\_arn](#output\_lambda\_replication\_arn) | ARN of the replication Lambda function |
 | <a name="output_lambda_replication_role_arn"></a> [lambda\_replication\_role\_arn](#output\_lambda\_replication\_role\_arn) | IAM role ARN associated with the replication Lambda |
 | <a name="output_s3_bucket_id"></a> [s3\_bucket\_id](#output\_s3\_bucket\_id) | S3 bucket name used for CloudTrail logs (created or derived from the provided s3\_bucket\_arn). |
 | <a name="output_using_existing_cloudtrail"></a> [using\_existing\_cloudtrail](#output\_using\_existing\_cloudtrail) | True if an existing CloudTrail was provided. |
