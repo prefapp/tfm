@@ -8,6 +8,10 @@ locals {
     for bp in coalesce(var.config.branch_protections, []) :
     try(coalesce(bp.bypassPullRequestAllowances.teams, []), [])
   ]))
+  _bypasser_apps = toset(flatten([
+    for bp in coalesce(var.config.branch_protections, []) :
+    try(coalesce(bp.bypassPullRequestAllowances.apps, []), [])
+  ]))
 }
 
 data "github_user" "bypasser" {
@@ -17,6 +21,11 @@ data "github_user" "bypasser" {
 
 data "github_team" "bypasser" {
   for_each = local._bypasser_teams
+  slug     = each.value
+}
+
+data "github_app" "bypasser" {
+  for_each = local._bypasser_apps
   slug     = each.value
 }
 
@@ -164,7 +173,7 @@ resource "github_branch_protection" "this" {
       required_approving_review_count = each.value.requiredReviewersCount
       require_code_owner_reviews      = each.value.requiredCodeownersReviewers
       pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distinct(concat(
-        coalesce(each.value.bypassPullRequestAllowances.apps, []),
+        [for slug in coalesce(each.value.bypassPullRequestAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
         [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
         [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
       )) : []

@@ -78,8 +78,7 @@ variable "config" {
       requireSignedCommits          = optional(bool, false)
       requireConversationResolution = optional(bool, false)
       bypassPullRequestAllowances = optional(object({
-        # apps  — GitHub App node IDs (pre-resolved by caller; the GitHub
-        #         provider has no data.github_app data source)
+        # apps  — GitHub App slugs, resolved by data.github_app
         apps = optional(list(string), [])
         # teams — team slugs, resolved by data.github_team
         teams = optional(list(string), [])
