@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v2.0.0...aws-secretsmanager-replication-v2.0.1) (2026-07-15)
+
+
+### Bug Fixes
+
+* **aws-secretsmanager-replication:** grant kms:Decrypt and kms:DescribeKey for CMK-encrypted source secrets ([#1327](https://github.com/prefapp/tfm/issues/1327)) ([dad9997](https://github.com/prefapp/tfm/commit/dad9997405129e7d074a1d344d0b8cc76708cb51))
+
 ## [2.0.0](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.4...aws-secretsmanager-replication-v2.0.0) (2026-07-15)
 
 
