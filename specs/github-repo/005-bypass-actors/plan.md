@@ -22,22 +22,24 @@ bypassPullRequestAllowances = optional(object({
 Add validations for non-empty entries with no leading/trailing whitespace.
 
 ### 3. Update `main.tf`
-Add locals to flatten bypass users/teams across all branch protections:
+Add locals to flatten bypass users/teams/apps across all branch protections:
 
-```hcl
-locals {
-  _bypasser_users = toset(flatten([
-    for bp in coalesce(var.config.branch_protections, []) :
-    try(coalesce(bp.bypassPullRequestAllowances.users, []), [])
-  ]))
-  _bypasser_teams = toset(flatten([
-    for bp in coalesce(var.config.branch_protections, []) :
-    try(coalesce(bp.bypassPullRequestAllowances.teams, []), [])
-  ]))
-}
-```
+    locals {
+      _bypasser_users = toset(flatten([
+        for bp in coalesce(var.config.branch_protections, []) :
+        try(coalesce(bp.bypassPullRequestAllowances.users, []), [])
+      ]))
+      _bypasser_teams = toset(flatten([
+        for bp in coalesce(var.config.branch_protections, []) :
+        try(coalesce(bp.bypassPullRequestAllowances.teams, []), [])
+      ]))
+      _bypasser_apps = toset(flatten([
+        for bp in coalesce(var.config.branch_protections, []) :
+        try(coalesce(bp.bypassPullRequestAllowances.apps, []), [])
+      ]))
+    }
 
-Add `data.github_user.bypasser` and `data.github_team.bypasser` for_each lookups.
+Add `data.github_user.bypasser`, `data.github_team.bypasser`, and `data.github_app.bypasser` for_each lookups.
 
 Wire `pull_request_bypassers` on `github_branch_protection`:
 
