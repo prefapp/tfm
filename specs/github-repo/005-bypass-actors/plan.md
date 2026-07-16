@@ -43,7 +43,7 @@ Wire `pull_request_bypassers` on `github_branch_protection`:
 
 ```hcl
 pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distinct(concat(
-  coalesce(each.value.bypassPullRequestAllowances.apps, []),
+  [for slug in coalesce(each.value.bypassPullRequestAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
   [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
   [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
 )) : null
