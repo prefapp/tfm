@@ -118,7 +118,7 @@ module "repository" {
         branch                        = "main"
         requiredReviewersCount        = 1
         bypassPullRequestAllowances = {
-          # apps are GitHub App node IDs
+          # apps are GitHub App slugs (resolved via data.github_app)
           # 1. gh api "/orgs/<org>/installations" --jq '.installations[].app_slug'  # find slug
           # 2. gh api /apps/<slug> --jq '.node_id'                                  # get node ID
           apps  = ["<node_id>"]
