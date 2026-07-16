@@ -49,7 +49,7 @@ branchProtections:
 ## Acceptance Criteria
 
 - `bypassPullRequestAllowances` is optional (defaults to `null` — not set) per branch protection
-- Apps pass node IDs directly; teams and users are resolved via data sources
+- Apps are specified by slug and resolved via `data.github_app`; teams and users are resolved via `data.github_team`/`data.github_user`
 - `pull_request_bypassers` is only set when `bypassPullRequestAllowances` is provided (avoids clearing existing actors)
 - Input validations reject empty/whitespace-only entries
 - Module passes `terraform validate` and `terraform fmt`
