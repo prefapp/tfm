@@ -28,7 +28,7 @@ branchProtections:
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `bypassPullRequestAllowances.apps` | `list(string)` | `[]` | GitHub App node IDs (pre-resolved, no `data.github_app` source exists) |
+| `bypassPullRequestAllowances.apps` | `list(string)` | `[]` | GitHub App slugs, resolved via `data.github_app` |
 | `bypassPullRequestAllowances.teams` | `list(string)` | `[]` | Team slugs, resolved via `data.github_team` |
 | `bypassPullRequestAllowances.users` | `list(string)` | `[]` | User logins, resolved via `data.github_user` |
 
