@@ -42,7 +42,7 @@ branchProtections:
 
 ## Out of Scope
 
-- Support for `data.github_app` (provider has no such data source; apps must pass pre-resolved node IDs)
+- Support for passing GitHub App node IDs directly (apps are specified by slug and resolved via `data.github_app`)
 - Rulesets support (separate module)
 - Changing the `github_branch_protection` resource to use `push_restrictions` or other bypass modes
 
