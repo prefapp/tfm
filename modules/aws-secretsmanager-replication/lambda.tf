@@ -82,6 +82,15 @@ module "lambda_replication" {
           Effect   = "Allow"
           Action   = ["sts:AssumeRole"]
           Resource = var.allowed_assume_roles
+        } : null,
+        length(var.source_kms_key_arns) > 0 ? {
+          Sid    = "DecryptSourceSecrets"
+          Effect = "Allow"
+          Action = [
+            "kms:Decrypt",
+            "kms:DescribeKey"
+          ]
+          Resource = var.source_kms_key_arns
         } : null
       ] : s if s != null
     ]
