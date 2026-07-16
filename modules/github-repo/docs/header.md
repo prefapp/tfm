@@ -119,9 +119,9 @@ module "repository" {
         requiredReviewersCount        = 1
         bypassPullRequestAllowances = {
           # apps are GitHub App slugs (resolved via data.github_app)
-          # 1. gh api "/orgs/<org>/installations" --jq '.installations[].app_slug'  # find slug
-          # 2. gh api /apps/<slug> --jq '.node_id'                                  # get node ID
-          apps  = ["<node_id>"]
+          # Example: gh api "/orgs/<org>/installations" --jq '.installations[].app_slug'
+          # (module resolves slug to node_id via data.github_app)
+          apps  = ["<app-slug>"]
           teams = ["my-team-slug"]
           users = ["some-user"]
         }
