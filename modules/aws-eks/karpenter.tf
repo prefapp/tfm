@@ -7,6 +7,7 @@ module "karpenter" {
   cluster_name = var.cluster_name
 
   iam_role_name   = format("%s-karpenter-role", var.cluster_name) # Used to generate the instance profile
+  service_account = var.karpenter_service_account_name
   create_iam_role = true
 
   iam_role_use_name_prefix      = false
