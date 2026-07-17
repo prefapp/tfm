@@ -9,9 +9,10 @@ data "external" "script_executor" {
 
   # Pass only the variables relevant to the PLAN phase to the script
   query = {
-    instance_name = var.instance_name
-    sleep_duration = var.sleep_on_plan
-    enable_crash   = var.crash_on_plan
+    instance_name        = var.instance_name
+    sleep_duration       = var.sleep_on_plan
+    enable_crash         = var.crash_on_plan
+    tries_before_plan_ok = var.tries_before_plan_ok
   }
 }
 

@@ -14,7 +14,7 @@ It leverages the external data source (for plan-time checks) and null_resource w
 
 ## Module Usage
 
-The module uses five primary variables to control its diagnostic behavior.
+The module uses six primary variables to control its diagnostic behavior.
 
 Example
 
@@ -33,8 +33,11 @@ module "diagnostic_test" {
   sleep_on_apply   = 10          # Delays 'terraform apply' by 10 seconds
   crash_on_apply   = false       # Set to true to force 'terraform apply' failure
 
-  # RETRY CONTROLS
-  tries_before_apply_ok = 3      # Fail 3 times, succeed on 4th apply
+  # RETRY CONTROLS (APPLY)
+  tries_before_apply_ok = 3      # Fail 3 applies, succeed on 4th
+
+  # RETRY CONTROLS (PLAN)
+  tries_before_plan_ok = 2       # Fail 2 plans, succeed on 3rd
 }
 ```
 
@@ -51,6 +54,7 @@ module "diagnostic_test" {
 | `sleep_on_apply` | Duration in seconds to delay the `terraform apply` execution. | `number` | `0` | Apply | 
 | `crash_on_apply` | If set to true, forces `terraform apply` to fail immediately. | `bool` | `false` | Apply | 
 | `tries_before_apply_ok` | Number of apply attempts that should fail before succeeding. 0 = always crash. | `number` | `0` | Apply |
+| `tries_before_plan_ok` | Number of plan attempts that should fail before succeeding. 0 = always crash. | `number` | `0` | Plan |
 
 
 ## Outputs
@@ -77,6 +81,17 @@ terraform plan -var="crash_on_plan=true"
 
 
 Expected Result: The terraform plan command will exit with a non-zero exit code (failure) as the data "external" source executes the Node.js script, which calls process.exit(1).
+
+### 1b. Test Transient Plan Failures
+
+To test how your pipeline handles transient plan failures that self-resolve:
+
+```
+# Fail 2 times, succeed on the 3rd plan
+terraform plan -var="crash_on_plan=true" -var="tries_before_plan_ok=2"
+```
+
+Expected Result: The first two plans fail with a non-zero exit code. The counter file `/tmp/tfm-dummy-plan-counter-<instance_name>` is created and incremented each attempt. On the third plan, the counter exceeds the threshold, the script exits 0, and the counter file is cleaned up. On a subsequent plan, the cycle starts over. Also applies to the plan phase within `terraform apply`.
 
 ### 2. Test Apply Failure
 

@@ -44,3 +44,15 @@ variable "tries_before_apply_ok" {
   }
 }
 
+# 6. Tries before plan succeeds (handled by data.external / script.js counter)
+variable "tries_before_plan_ok" {
+  description = "Number of plan attempts that should fail before succeeding. Set to 0 (default) to crash every time when crash_on_plan is true."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.tries_before_plan_ok >= 0
+    error_message = "tries_before_plan_ok must be >= 0."
+  }
+}
+
