@@ -134,7 +134,7 @@ The module is organized with the following directory and file structure:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.90.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.33 |
 
 ## Modules
 
@@ -205,6 +205,8 @@ The module is organized with the following directory and file structure:
 | <a name="input_external_dns_role_name"></a> [external\_dns\_role\_name](#input\_external\_dns\_role\_name) | IAM role name for external-dns. Leave null to auto-generate using the cluster name. For backward compatibility, set to 'external-dns-Kubernetes'. | `string` | `null` | no |
 | <a name="input_externaldns_tags"></a> [externaldns\_tags](#input\_externaldns\_tags) | Tags to apply to the ExternalDNS IAM resources | `map(any)` | `{}` | no |
 | <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_karpenter_namespace_name"></a> [karpenter\_namespace\_name](#input\_karpenter\_namespace\_name) | Set the name of K8s namespace where is deployed the karpenter controller | `string` | `"karpenter"` | no |
+| <a name="input_karpenter_service_account_name"></a> [karpenter\_service\_account\_name](#input\_karpenter\_service\_account\_name) | Set the name of K8s service account karpenter controller | `string` | `"karpenter-sa"` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | `{}` | no |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | `any` | n/a | yes |
 | <a name="input_parameter_store_role_name"></a> [parameter\_store\_role\_name](#input\_parameter\_store\_role\_name) | IAM role name for Parameter Store. Leave null to auto-generate per cluster (format: iam\_role\_parameter\_store\_all-<cluster\_name>). For backward compatibility, use: iam\_role\_parameter\_store\_all. | `string` | `null` | no |

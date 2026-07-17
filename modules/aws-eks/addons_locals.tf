@@ -37,6 +37,12 @@ locals {
       resolve_conflicts_on_update = "OVERWRITE"
       most_recent                 = "false"
       service_account_role_arn    = local.ebs_arn_role
+    },
+    eks-pod-identity-agent = {
+      enabled                     = true
+      resolve_conflicts_on_create = "OVERWRITE"
+      resolve_conflicts_on_update = "OVERWRITE"
+      most_recent                 = "false"
     }
   }
 
