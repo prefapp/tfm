@@ -231,6 +231,12 @@ variable "enable_karpenter" {
   default     = false
 }
 
+variable "karpenter_service_account_name" {
+  description = "Set the name of K8s service account karpenter controller"
+  type        = string
+  default     = "karpenter-sa"
+}
+
 variable "create_cloudwatch_log_group" {
   description = "Create CloudWatch log group for the EKS cluster"
   type        = bool
