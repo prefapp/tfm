@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.1...aws-eks-v1.5.2) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** support set name of service account karpenter controller ([#1335](https://github.com/prefapp/tfm/issues/1335)) ([78f499d](https://github.com/prefapp/tfm/commit/78f499d43d5497816470fa71cc799b1173913e9f))
+
 ## [1.5.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.0...aws-eks-v1.5.1) (2026-06-08)
 
 
