@@ -52,7 +52,30 @@ resource "null_resource" "conditional_crash" {
   }
 
   provisioner "local-exec" {
-    command = "sh ${path.module}/apply-crash-counter.sh ${var.instance_name} ${var.tries_before_apply_ok}"
+    interpreter = ["sh", "-c"]
+
+    command = <<-EOT
+      COUNTER_FILE="/tmp/tfm-dummy-counter-${var.instance_name}"
+      TRIES="${var.tries_before_apply_ok}"
+      if [ "$TRIES" -eq 0 ]; then
+        echo "--- APPLY-TIME CRASH (infinite, tries_before_apply_ok=0) ---"
+        exit 1
+      fi
+      if [ -f "$COUNTER_FILE" ]; then
+        COUNT=`cat "$COUNTER_FILE"`
+      else
+        COUNT=0
+      fi
+      COUNT=`expr "$COUNT" + 1`
+      echo "$COUNT" > "$COUNTER_FILE"
+      if [ "$COUNT" -le "$TRIES" ]; then
+        echo "--- APPLY-TIME CRASH (attempt $COUNT/$TRIES) ---"
+        exit 1
+      fi
+      echo "--- APPLY-TIME SUCCESS after $COUNT attempts ---"
+      rm -f "$COUNTER_FILE"
+    EOT
+
     when    = create
   }
 }
