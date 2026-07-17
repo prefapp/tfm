@@ -45,7 +45,7 @@ module "backup" {
     }
   ]
   copy_action_default_values = {
-    destination_account_id = "098765432109" # Destination (DR) account ID for cross-account copy
+    destination_account_id = "123456789012" # Destination (DR) account ID for cross-account copy
     destination_region     = "us-east-1"
     delete_after           = 8
   }
