@@ -10,6 +10,8 @@ module "karpenter" {
   service_account = var.karpenter_service_account_name
   create_iam_role = true
 
+  namespace = var.karpenter_namespace_name
+
   iam_role_use_name_prefix      = false
   iam_policy_use_name_prefix    = true
   node_iam_role_use_name_prefix = false
