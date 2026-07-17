@@ -237,6 +237,12 @@ variable "karpenter_service_account_name" {
   default     = "karpenter-sa"
 }
 
+variable "karpenter_namespace_name" {
+  description = "Set the name of K8s namespace where is deployed the karpenter controller"
+  type        = string
+  default     = "karpenter"
+}
+
 variable "create_cloudwatch_log_group" {
   description = "Create CloudWatch log group for the EKS cluster"
   type        = bool
