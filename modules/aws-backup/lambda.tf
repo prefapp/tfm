@@ -18,8 +18,8 @@ locals {
           }] :
           [{
             account_id        = var.copy_action_default_values.destination_account_id
-            vault_arn         = "arn:aws:backup:${coalesce(var.copy_action_default_values.destination_region, "eu-west-1")}:${coalesce(var.copy_action_default_values.destination_account_id, "000000000000")}:backup-vault:${vault.vault_name}"
-            region            = try(var.copy_action_default_values.destination_region, "eu-west-1")
+            vault_arn         = "arn:aws:backup:${coalesce(var.copy_action_default_values.destination_region, var.region)}:${coalesce(var.copy_action_default_values.destination_account_id, "000000000000")}:backup-vault:${vault.vault_name}"
+            region            = try(var.copy_action_default_values.destination_region, var.region)
             delete_after_days = var.copy_action_default_values.delete_after
           }]
         )
@@ -27,7 +27,7 @@ locals {
     ]) :
     coalesce(entry.account_id, var.copy_action_default_values.destination_account_id, "00000000000000") => {
       vault_arn         = entry.vault_arn
-      regions           = { (coalesce(entry.region, "eu-west-1")) = {} }
+      regions           = { (coalesce(entry.region, var.region)) = {} }
       delete_after_days = entry.delete_after_days
       iam_role_arn      = aws_iam_role.this[0].arn
     }
@@ -42,7 +42,7 @@ module "lambda_automatic_replication" {
   function_name = "backups-automatic-replication"
   handler       = "handler.lambda_handler"
   runtime       = "python3.14"
-  region        = "eu-west-1"
+  region        = var.region
 
   create_package         = false
   local_existing_package = data.archive_file.lambda.output_path

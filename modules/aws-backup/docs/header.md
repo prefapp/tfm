@@ -19,6 +19,7 @@ This module provides a comprehensive configuration for AWS Backup, including vau
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "my-vault"
   }]
@@ -31,6 +32,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -61,6 +63,7 @@ In the main account:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region                       = "eu-west-1"
   enable_cross_account_backup  = true
 }
 ```
@@ -72,6 +75,7 @@ For the accounts in your organization:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -89,6 +93,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"

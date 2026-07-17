@@ -16,6 +16,9 @@ provider "aws" {
 
 module "backup-cross-region" {
   source = "./../.."
+
+  region = "eu-west-1"
+
   aws_backup_vault = [{
     vault_name   = "only-rds-backup"
     vault_region = "us-east-1"
@@ -24,6 +27,8 @@ module "backup-cross-region" {
 }
 module "backup" {
   source = "./../.."
+
+  region = "eu-west-1"
 
   aws_backup_vault = [{
     vault_name = "only-rds-backup"

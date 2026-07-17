@@ -20,6 +20,7 @@ This module provides a comprehensive configuration for AWS Backup, including vau
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "my-vault"
   }]
@@ -31,6 +32,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -61,6 +63,7 @@ In the main account:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region                       = "eu-west-1"
   enable_cross_account_backup  = true
 }
 ```
@@ -72,6 +75,7 @@ For the accounts in your organization:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -89,6 +93,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -163,7 +168,7 @@ The module is organized with the following directory and file structure:
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_archive"></a> [archive](#requirement\_archive) | ~> 2.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.3 |
@@ -171,20 +176,20 @@ The module is organized with the following directory and file structure:
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_archive"></a> [archive](#provider\_archive) | ~> 2.0 |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.3 |
 
 ## Modules
 
 | Name | Source | Version |
-| ---- | ------ | ------- |
+|------|--------|---------|
 | <a name="module_lambda_automatic_replication"></a> [lambda\_automatic\_replication](#module\_lambda\_automatic\_replication) | terraform-aws-modules/lambda/aws | 8.7 |
 
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [aws_backup_global_settings.global](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_global_settings) | resource |
 | [aws_backup_plan.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_plan) | resource |
 | [aws_backup_selection.resource_selection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_selection) | resource |
@@ -207,7 +212,7 @@ The module is organized with the following directory and file structure:
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | `[]` | no |
 | <a name="input_aws_backup_vault"></a> [aws\_backup\_vault](#input\_aws\_backup\_vault) | List of objects defining the backup vault configuration, including backup plans and replication rules. | <pre>list(object({<br/>    vault_name        = string<br/>    vault_region      = optional(string)<br/>    vault_tags        = optional(map(string))<br/>    vault_kms_key_arn = optional(string)<br/><br/>    plan = optional(list(object({<br/>      name                         = string<br/>      rule_name                    = string<br/>      schedule                     = string<br/>      schedule_expression_timezone = optional(string)<br/>      start_window                 = optional(number)<br/>      completion_window            = optional(number)<br/>      # Structure for dynamic conditions in aws_backup_selection<br/>      # Example usage:<br/>      # backup_selection_conditions = {<br/>      #   string_equals = [<br/>      #     { key = "aws:ResourceTag/Component", value = "rds" }<br/>      #   ]<br/>      #   string_like = [<br/>      #     { key = "aws:ResourceTag/Application", value = "app*" }<br/>      #   ]<br/>      #   string_not_equals = [<br/>      #     { key = "aws:ResourceTag/Backup", value = "false" }<br/>      #   ]<br/>      #   string_not_like = [<br/>      #     { key = "aws:ResourceTag/Environment", value = "test*" }<br/>      #   ]<br/>      # }<br/>      backup_selection_conditions = optional(object({<br/>        string_equals     = optional(list(object({ key = string, value = string })))<br/>        string_like       = optional(list(object({ key = string, value = string })))<br/>        string_not_equals = optional(list(object({ key = string, value = string })))<br/>        string_not_like   = optional(list(object({ key = string, value = string })))<br/>      }))<br/>      backup_selection_arn_resources = optional(list(string))<br/>      lifecycle = optional(object({<br/>        cold_storage_after = optional(number)<br/>        delete_after       = number<br/>      }))<br/>      advanced_backup_setting = optional(list(object({<br/>        backup_options = map(string)<br/>        resource_type  = string<br/>      })))<br/>      scan_action = optional(list(object({<br/>        malware_scanner  = string<br/>        scan_action_type = string<br/>      })))<br/>      recovery_point_tags = optional(map(string))<br/>      tags                = optional(map(string))<br/>      copy_action = optional(list(object({<br/>        destination_vault_arn = string<br/>        delete_after          = optional(number)<br/>      })))<br/>      })<br/>    ))<br/>    })<br/>  )</pre> | `[]` | no |
 | <a name="input_aws_kms_key_vault_arn"></a> [aws\_kms\_key\_vault\_arn](#input\_aws\_kms\_key\_vault\_arn) | ARN of the KMS key used to encrypt the backup vault. If not provided, the default AWS Backup vault encryption will be used. | `string` | `null` | no |
@@ -215,6 +220,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_enable_cross_account_backup"></a> [enable\_cross\_account\_backup](#input\_enable\_cross\_account\_backup) | Enable cross-account backup in AWS Backup global settings. If set to true, the module will manage the global settings resource to enable cross-account backup. If set to false, you can configure it separately if needed. | `bool` | `false` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `600` | no |
+| <a name="input_region"></a> [region](#input\_region) | AWS region where the Lambda function for cross-account replication will be created. | `string` | `"eu-west-1"` | no |
 | <a name="input_source_account_id"></a> [source\_account\_id](#input\_source\_account\_id) | Account id that copies backups into this vault | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Default tags to apply to all resources. | `map(string)` | `{}` | no |
 
