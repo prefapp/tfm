@@ -1,3 +1,8 @@
+locals {
+  # Sanitize instance_name to prevent path traversal and shell injection in counter file paths
+  safe_instance_name = replace(var.instance_name, "/[^a-zA-Z0-9_-]/", "")
+}
+
 # The 'external' data source executes the script for plan-time calculations and side-effects.
 # This runs during both 'plan' and 'apply'.
 data "external" "script_executor" {
@@ -10,6 +15,7 @@ data "external" "script_executor" {
   # Pass only the variables relevant to the PLAN phase to the script
   query = {
     instance_name        = var.instance_name
+    safe_instance_name   = local.safe_instance_name
     sleep_duration       = var.sleep_on_plan
     enable_crash         = var.crash_on_plan
     tries_before_plan_ok = var.tries_before_plan_ok
@@ -55,10 +61,10 @@ resource "null_resource" "conditional_crash" {
     interpreter = ["sh", "-c"]
 
     command = <<-EOT
-      COUNTER_FILE="/tmp/tfm-dummy-counter-${var.instance_name}"
+      COUNTER_FILE="/tmp/tfm-dummy-counter-${local.safe_instance_name}"
       TRIES="${var.tries_before_apply_ok}"
-      if [ "$TRIES" -eq 0 ]; then
-        echo "--- APPLY-TIME CRASH (infinite, tries_before_apply_ok=0) ---"
+      if [ "$TRIES" -le 0 ]; then
+        echo "--- APPLY-TIME CRASH (infinite, tries_before_apply_ok=$TRIES) ---"
         exit 1
       fi
       if [ -f "$COUNTER_FILE" ]; then
