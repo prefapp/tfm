@@ -14,7 +14,7 @@ It leverages the external data source (for plan-time checks) and null_resource w
 
 ## Module Usage
 
-The module requires four primary boolean and numeric variables to control its diagnostic behavior.
+The module uses five primary variables to control its diagnostic behavior.
 
 Example
 
@@ -32,10 +32,9 @@ module "diagnostic_test" {
   # APPLY TIME CONTROLS
   sleep_on_apply   = 10          # Delays 'terraform apply' by 10 seconds
   crash_on_apply   = false       # Set to true to force 'terraform apply' failure
-}
 
-output "plan_status" {
-  value = module.diagnostic_test.plan_message
+  # RETRY CONTROLS
+  tries_before_apply_ok = 3      # Fail 3 times, succeed on 4th apply
 }
 ```
 
@@ -45,12 +44,13 @@ output "plan_status" {
 ## Inputs
 
 | Name | Description | Type | Default | Control Phase | 
-|---|---|---|---|---|
+|---|---|---|---|---|---|
 | `instance_name` | A unique identifier for the diagnostic run. | `string` | `"default-test"` | Both | 
 | `sleep_on_plan` | Duration in seconds to delay the `terraform plan` execution. | `number` | `0` | Plan | 
 | `crash_on_plan` | If set to true, forces `terraform plan` to fail immediately. | `bool` | `false` | Plan | 
 | `sleep_on_apply` | Duration in seconds to delay the `terraform apply` execution. | `number` | `0` | Apply | 
-| `crash_on_apply` | If set to true, forces `terraform apply` to fail immediately. | `bool` | `false` | Apply |
+| `crash_on_apply` | If set to true, forces `terraform apply` to fail immediately. | `bool` | `false` | Apply | 
+| `tries_before_apply_ok` | Number of apply attempts that should fail before succeeding. 0 = always crash. | `number` | `0` | Apply |
 
 
 ## Outputs
@@ -97,6 +97,17 @@ To test pipeline timeouts during execution:
 # Set a 30 second delay during the apply phase
 terraform apply -auto-approve -var="sleep_on_apply=30"
 ```
+
+### 4. Test Transient Apply Failures
+
+To test how your pipeline handles transient failures that self-resolve:
+
+```
+# Fail 2 times, succeed on the 3rd apply
+terraform apply -auto-approve -var="crash_on_apply=true" -var="tries_before_apply_ok=2"
+```
+
+Expected Result: The first two applies fail with a non-zero exit code. The counter file `/tmp/tfm-dummy-counter-<instance_name>` is created and incremented each attempt. On the third apply, the counter exceeds the threshold, the provisioner exits 0, and the counter file is cleaned up. On a subsequent apply, the cycle starts over.
 
 
 

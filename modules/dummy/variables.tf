@@ -32,3 +32,15 @@ variable "crash_on_plan" {
   default     = false
 }
 
+# 5. Tries before apply succeeds (handled by null_resource/local-exec counter)
+variable "tries_before_apply_ok" {
+  description = "Number of apply attempts that should fail before succeeding. Set to 0 (default) to crash every time when crash_on_apply is true."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.tries_before_apply_ok >= 0
+    error_message = "tries_before_apply_ok must be >= 0."
+  }
+}
+

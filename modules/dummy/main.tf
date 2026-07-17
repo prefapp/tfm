@@ -51,11 +51,30 @@ resource "null_resource" "conditional_crash" {
   }
 
   provisioner "local-exec" {
-    # Executes the command using a standard sh interpreter
-    interpreter = ["sh", "-c"] 
-    
-    # Echo message and then use 'exit 1' to deliberately cause failure
-    command = "echo '--- APPLY-TIME CRASH --- INTENTIONAL FAILURE' && exit 1"
+    interpreter = ["sh", "-c"]
+
+    command = <<-EOT
+      COUNTER_FILE="/tmp/tfm-dummy-counter-${var.instance_name}"
+      TRIES="${var.tries_before_apply_ok}"
+      if [ "$${TRIES}" -eq 0 ]; then
+        echo "--- APPLY-TIME CRASH (infinite, tries_before_apply_ok=0) ---"
+        exit 1
+      fi
+      if [ -f "$${COUNTER_FILE}" ]; then
+        COUNT=$$(cat "$${COUNTER_FILE}")
+      else
+        COUNT=0
+      fi
+      COUNT=$$((COUNT + 1))
+      echo "$${COUNT}" > "$${COUNTER_FILE}"
+      if [ "$${COUNT}" -le "$${TRIES}" ]; then
+        echo "--- APPLY-TIME CRASH (attempt $${COUNT}/$${TRIES}) ---"
+        exit 1
+      fi
+      echo "--- APPLY-TIME SUCCESS after $${COUNT} attempts ---"
+      rm -f "$${COUNTER_FILE}"
+    EOT
+
     when    = create
   }
 }
