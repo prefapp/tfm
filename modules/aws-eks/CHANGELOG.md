@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.2...aws-eks-v1.5.3) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** set the default name os karpenter namespace ([#1337](https://github.com/prefapp/tfm/issues/1337)) ([913a11c](https://github.com/prefapp/tfm/commit/913a11c032a0d906f3f598ba6edbb3fd354c6915))
+
 ## [1.5.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.1...aws-eks-v1.5.2) (2026-07-17)
 
 
