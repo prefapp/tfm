@@ -55,7 +55,7 @@ module "backup" {
 }
 ```
 
-### With alias, replication to other regions, and access from other AWS accounts
+### With replication to other regions and cross-account access
 
 **Note:** Cross-account backup only works with AWS Organizations. You must enable `cross_account_backup` in the organization's main account.
 
@@ -85,6 +85,7 @@ module "backup" {
     # }
     }
   ]
+  source_account_id = "123456789012" # Source account ID that will copy backups into this vault
 }
 ```
 
@@ -137,9 +138,11 @@ The module is organized with the following directory and file structure:
 │   │   └── main.tf
 │   ├── minimal
 │   │   └── main.tf
-│   ├── vault_with_plan_and_selection
-│   │   └── main.tf
-│   └── vault_with_plan_selection_with_replication
+│   ├── receiver_account
+│   │   └── main.tf
+│   ├── vault_with_plan_and_selection
+│   │   └── main.tf
+│   └── vault_with_plan_selection_with_replication
 │       └── main.tf
 ├── iam-policy-roles.tf
 ├── lambda.tf

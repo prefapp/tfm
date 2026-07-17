@@ -55,7 +55,7 @@ module "backup" {
 }
 ```
 
-### With replication to other regions, and cross-account access
+### With replication to other regions and cross-account access
 
 **Note:** Cross-account backup only works with AWS Organizations. You must enable `cross_account_backup` in the organization's main account.
 
@@ -134,16 +134,16 @@ The module is organized with the following directory and file structure:
 │   └── header.md
 ├── eventbridge.tf
 ├── _examples
-│   ├── enable_cross_account
-│   │   └── main.tf
-│   ├── minimal
-│   │   └── main.tf
+│   ├── enable_cross_account
+│   │   └── main.tf
+│   ├── minimal
+│   │   └── main.tf
 │   ├── receiver_account
 │   │   └── main.tf
 │   ├── vault_with_plan_and_selection
 │   │   └── main.tf
 │   └── vault_with_plan_selection_with_replication
-│       └── main.tf
+│       └── main.tf
 ├── iam-policy-roles.tf
 ├── lambda.tf
 ├── local.tf
@@ -237,7 +237,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Minimal](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/minimal) – Minimal vault creation
 - [Vault with plan and selection](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault\_with\_plan\_and\_selection) – Backup vault creation with configuration of plans and backup selections
-- [Vault with plan, selection, and cross-account replication](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault\_with\_plan\_selection\_with\_replication) – Source account: backup plan with replication to another account
+- [Source account with replication](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault\_with\_plan\_selection\_with\_replication) – Backup plan with cross-account replication
 - [Receiver account (cross-account destination)](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/receiver\_account) – Destination account that receives cross-account backup copies
 
 ## Remote Resources
