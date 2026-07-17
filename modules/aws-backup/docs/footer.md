@@ -4,7 +4,8 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Minimal](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/minimal) – Minimal vault creation
 - [Vault with plan and selection](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault_with_plan_and_selection) – Backup vault creation with configuration of plans and backup selections
-- [Vault with plan, selection, and replication](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault_with_plan_selection_with_replication) – KMS key creation with alias, cross-region replication, and additional account access
+- [Source account with replication](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault_with_plan_selection_with_replication) – Backup plan with cross-account replication
+- [Receiver account (cross-account destination)](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/receiver_account) – Destination account that receives cross-account backup copies
 
 ## Remote Resources
 - Terraform: https://www.terraform.io/
