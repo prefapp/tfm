@@ -67,8 +67,8 @@ No modules.
 | <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | A unique identifier for this module instance. | `string` | n/a | yes |
 | <a name="input_sleep_on_apply"></a> [sleep\_on\_apply](#input\_sleep\_on\_apply) | Number of seconds to sleep during the 'apply' phase. | `number` | `0` | no |
 | <a name="input_sleep_on_plan"></a> [sleep\_on\_plan](#input\_sleep\_on\_plan) | Number of seconds to sleep during the 'plan' phase. | `number` | `0` | no |
-| <a name="input_tries_before_apply_ok"></a> [tries\_before\_apply\_ok](#input\_tries\_before\_apply\_ok) | Number of apply attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash\_on\_apply is true. | `number` | `0` | no |
-| <a name="input_tries_before_plan_ok"></a> [tries\_before\_plan\_ok](#input\_tries\_before\_plan\_ok) | Number of plan attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash\_on\_plan is true. | `number` | `0` | no |
+| <a name="input_tries_before_apply_ok"></a> [tries\_before\_apply\_ok](#input\_tries\_before\_apply\_ok) | Number of apply attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash\_on\_apply is true. Setting this to a value greater than 0 requires crash\_on\_apply to be true. | `number` | `0` | no |
+| <a name="input_tries_before_plan_ok"></a> [tries\_before\_plan\_ok](#input\_tries\_before\_plan\_ok) | Number of plan attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash\_on\_plan is true. Setting this to a value greater than 0 requires crash\_on\_plan to be true. | `number` | `0` | no |
 
 ## Outputs
 
