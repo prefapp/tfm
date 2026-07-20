@@ -1,3 +1,8 @@
+locals {
+  # Sanitize instance_name to prevent path traversal and shell injection in counter file paths
+  safe_instance_name = replace(var.instance_name, "/[^a-zA-Z0-9_-]/", "")
+}
+
 # The 'external' data source executes the script for plan-time calculations and side-effects.
 # This runs during both 'plan' and 'apply'.
 data "external" "script_executor" {
@@ -9,9 +14,11 @@ data "external" "script_executor" {
 
   # Pass only the variables relevant to the PLAN phase to the script
   query = {
-    instance_name = var.instance_name
-    sleep_duration = var.sleep_on_plan
-    enable_crash   = var.crash_on_plan
+    instance_name        = var.instance_name
+    safe_instance_name   = local.safe_instance_name
+    sleep_duration       = var.sleep_on_plan
+    enable_crash         = var.crash_on_plan
+    tries_before_plan_ok = var.tries_before_plan_ok
   }
 }
 
@@ -51,11 +58,30 @@ resource "null_resource" "conditional_crash" {
   }
 
   provisioner "local-exec" {
-    # Executes the command using a standard sh interpreter
-    interpreter = ["sh", "-c"] 
-    
-    # Echo message and then use 'exit 1' to deliberately cause failure
-    command = "echo '--- APPLY-TIME CRASH --- INTENTIONAL FAILURE' && exit 1"
+    interpreter = ["sh", "-c"]
+
+    command = <<-EOT
+      COUNTER_FILE="/tmp/tfm-dummy-counter-${local.safe_instance_name}"
+      TRIES="${var.tries_before_apply_ok}"
+      if [ "$TRIES" -le 0 ]; then
+        echo "--- APPLY-TIME CRASH (infinite, tries_before_apply_ok=$TRIES) ---"
+        exit 1
+      fi
+      if [ -f "$COUNTER_FILE" ]; then
+        COUNT=`cat "$COUNTER_FILE"`
+      else
+        COUNT=0
+      fi
+      COUNT=`expr "$COUNT" + 1`
+      echo "$COUNT" > "$COUNTER_FILE"
+      if [ "$COUNT" -le "$TRIES" ]; then
+        echo "--- APPLY-TIME CRASH (attempt $COUNT/$TRIES) ---"
+        exit 1
+      fi
+      echo "--- APPLY-TIME SUCCESS after $COUNT attempts ---"
+      rm -f "$COUNTER_FILE"
+    EOT
+
     when    = create
   }
 }
