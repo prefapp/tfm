@@ -14,6 +14,7 @@ module "karpenter" {
 
   iam_role_use_name_prefix      = false
   iam_policy_use_name_prefix    = true
+  enable_inline_policy          = var.karpenter_controller_enable_inline_policy
   node_iam_role_use_name_prefix = false
 
   # Since the node group role will already have an access entry
