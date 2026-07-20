@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.5](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.4...aws-eks-v1.5.5) (2026-07-20)
+
+
+### Bug Fixes
+
+* **aws-eks:** add support of inline policy of karpenter controller ([#1342](https://github.com/prefapp/tfm/issues/1342)) ([040461c](https://github.com/prefapp/tfm/commit/040461cdc453437234251b90754f89194d2246db))
+
 ## [1.5.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.3...aws-eks-v1.5.4) (2026-07-17)
 
 
