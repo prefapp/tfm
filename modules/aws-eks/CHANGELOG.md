@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.5.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.3...aws-eks-v1.5.4) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** add by default the addon eks-pod-indentity-agent ([#1339](https://github.com/prefapp/tfm/issues/1339)) ([06e9ab8](https://github.com/prefapp/tfm/commit/06e9ab8232ecb60b9fa17d2a12bfd5207db85545))
+
+## [1.5.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.2...aws-eks-v1.5.3) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** set the default name os karpenter namespace ([#1337](https://github.com/prefapp/tfm/issues/1337)) ([913a11c](https://github.com/prefapp/tfm/commit/913a11c032a0d906f3f598ba6edbb3fd354c6915))
+
+## [1.5.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.1...aws-eks-v1.5.2) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** support set name of service account karpenter controller ([#1335](https://github.com/prefapp/tfm/issues/1335)) ([78f499d](https://github.com/prefapp/tfm/commit/78f499d43d5497816470fa71cc799b1173913e9f))
+
 ## [1.5.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.0...aws-eks-v1.5.1) (2026-06-08)
 
 

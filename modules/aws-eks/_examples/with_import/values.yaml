@@ -44,6 +44,10 @@ cluster_addons:
     addon_version: "v1.25.11-eksbuild.2"
     resolve_conflicts: "OVERWRITE"
 
+  eks-pod-identity-agent:
+    # addon_version: "v1.3.10-eksbuild.3"
+    resolve_conflicts_on_create: "OVERWRITE"
+
 # Eks additional security groups
 node_security_group_additional_rules:
   ingress_self_all:
