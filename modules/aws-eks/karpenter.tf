@@ -7,10 +7,14 @@ module "karpenter" {
   cluster_name = var.cluster_name
 
   iam_role_name   = format("%s-karpenter-role", var.cluster_name) # Used to generate the instance profile
+  service_account = var.karpenter_service_account_name
   create_iam_role = true
+
+  namespace = var.karpenter_namespace_name
 
   iam_role_use_name_prefix      = false
   iam_policy_use_name_prefix    = true
+  enable_inline_policy          = var.karpenter_controller_enable_inline_policy
   node_iam_role_use_name_prefix = false
 
   # Since the node group role will already have an access entry

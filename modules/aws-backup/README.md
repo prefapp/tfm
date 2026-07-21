@@ -122,6 +122,107 @@ module "backup" {
 }
 ```
 
+## Cross-Region and Cross-Account Backup
+
+This setup uses three AWS accounts working together:
+
+1. **Management account** – enables the AWS Backup cross-account setting globally via `enable_cross_account_backup = true`. This is required for AWS Organizations.
+2. **Source account** – contains the workloads to back up. Creates a backup vault, a backup plan with tag-based resource selection, and configures a copy action to replicate recovery points to the destination account/region.
+3. **Destination account (DR)** – receives the backup copies. Creates a vault with `source_account_id` pointing to the source account so the Lambda can re-encrypt copies with the local KMS key.
+
+Because copies cross account boundaries, the KMS keys must allow the remote account. Use the `aws-kms-multiple` module (see its examples) to create a multi-region KMS key per account and grant access to the peer account.
+
+### KMS setup (source account)
+
+```hcl
+module "kms_source" {
+  source = "github.com/prefapp/tfm/modules/aws-kms-multiple"
+  kms_to_create = [
+    { name = "backup" }
+  ]
+  aws_region          = "eu-south-2"
+  aws_regions_replica = ["eu-west-1"]
+  aws_accounts_access = ["222222222222"] # DR account ID
+}
+```
+
+### KMS setup (destination account)
+
+```hcl
+module "kms_destination" {
+  source = "github.com/prefapp/tfm/modules/aws-kms-multiple"
+  kms_to_create = [
+    { name = "backup" }
+  ]
+  aws_region          = "eu-west-1"
+  aws_accounts_access = ["111111111111"] # Source account ID
+}
+```
+
+### Management account – enable cross-account backup
+
+```hcl
+module "backup_management" {
+  source = "github.com/prefapp/tfm/modules/aws-backup"
+  enable_cross_account_backup = true
+}
+```
+
+### Source account – vault, plan, and cross-account copy
+
+```hcl
+module "backup_source" {
+  source = "github.com/prefapp/tfm/modules/aws-backup"
+  aws_kms_key_vault_arn = "arn:aws:kms:eu-south-2:111111111111:key/mrk-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  aws_backup_vault = [{
+    vault_name        = "common"
+    vault_kms_key_arn = "arn:aws:kms:eu-south-2:111111111111:key/mrk-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    plan = [{
+      name      = "only-rds-daily-backup"
+      rule_name = "rds-daily-backup"
+      schedule  = "cron(0 0 * * ? *)"
+      backup_selection_conditions = {
+        string_equals = [
+          { key = "aws:ResourceTag/aws_backup", value = "true" }
+        ]
+      }
+    }]
+  }]
+  copy_action_default_values = {
+    destination_account_id = "222222222222"
+    destination_region     = "eu-west-1"
+    delete_after           = 8
+  }
+}
+```
+
+### Destination account – receives copies
+
+```hcl
+module "backup_destination" {
+  source = "github.com/prefapp/tfm/modules/aws-backup"
+  aws_kms_key_vault_arn = "arn:aws:kms:eu-west-1:222222222222:key/mrk-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  aws_backup_vault = [{
+    vault_name        = "common"
+    vault_kms_key_arn = "arn:aws:kms:eu-west-1:222222222222:key/mrk-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }]
+  source_account_id = "111111111111"
+}
+```
+
+## Common Errors
+
+### "Cannot create a linked role for RDS backups"
+
+When AWS Backup tries to back up an RDS instance, it needs the `AWSServiceRoleForRDSBackup` linked service role. This role is only provisioned by AWS automatically when the first RDS instance is created in the account — you cannot create it manually.
+
+**If you see this error in the destination (DR) account**, it means no RDS instance has ever been created there. To fix it, deploy (even temporarily) an RDS instance or whichever service you are backing up in the destination account. AWS will generate the required linked role automatically.
+
+```bash
+# Verify the role exists
+aws iam get-role --role-name AWSServiceRoleForRDSBackup
+```
+
 ## File Structure
 
 The module is organized with the following directory and file structure:
@@ -171,7 +272,7 @@ The module is organized with the following directory and file structure:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_archive"></a> [archive](#requirement\_archive) | ~> 2.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.3 |
@@ -179,20 +280,19 @@ The module is organized with the following directory and file structure:
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_archive"></a> [archive](#provider\_archive) | ~> 2.0 |
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.3 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_lambda_automatic_replication"></a> [lambda\_automatic\_replication](#module\_lambda\_automatic\_replication) | terraform-aws-modules/lambda/aws | 8.7 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_backup_global_settings.global](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_global_settings) | resource |
 | [aws_backup_plan.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_plan) | resource |
 | [aws_backup_selection.resource_selection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_selection) | resource |
@@ -215,7 +315,7 @@ The module is organized with the following directory and file structure:
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | `[]` | no |
 | <a name="input_aws_backup_vault"></a> [aws\_backup\_vault](#input\_aws\_backup\_vault) | List of objects defining the backup vault configuration, including backup plans and replication rules. | <pre>list(object({<br/>    vault_name        = string<br/>    vault_region      = optional(string)<br/>    vault_tags        = optional(map(string))<br/>    vault_kms_key_arn = optional(string)<br/><br/>    plan = optional(list(object({<br/>      name                         = string<br/>      rule_name                    = string<br/>      schedule                     = string<br/>      schedule_expression_timezone = optional(string)<br/>      start_window                 = optional(number)<br/>      completion_window            = optional(number)<br/>      # Structure for dynamic conditions in aws_backup_selection<br/>      # Example usage:<br/>      # backup_selection_conditions = {<br/>      #   string_equals = [<br/>      #     { key = "aws:ResourceTag/Component", value = "rds" }<br/>      #   ]<br/>      #   string_like = [<br/>      #     { key = "aws:ResourceTag/Application", value = "app*" }<br/>      #   ]<br/>      #   string_not_equals = [<br/>      #     { key = "aws:ResourceTag/Backup", value = "false" }<br/>      #   ]<br/>      #   string_not_like = [<br/>      #     { key = "aws:ResourceTag/Environment", value = "test*" }<br/>      #   ]<br/>      # }<br/>      backup_selection_conditions = optional(object({<br/>        string_equals     = optional(list(object({ key = string, value = string })))<br/>        string_like       = optional(list(object({ key = string, value = string })))<br/>        string_not_equals = optional(list(object({ key = string, value = string })))<br/>        string_not_like   = optional(list(object({ key = string, value = string })))<br/>      }))<br/>      backup_selection_arn_resources = optional(list(string))<br/>      lifecycle = optional(object({<br/>        cold_storage_after = optional(number)<br/>        delete_after       = number<br/>      }))<br/>      advanced_backup_setting = optional(list(object({<br/>        backup_options = map(string)<br/>        resource_type  = string<br/>      })))<br/>      scan_action = optional(list(object({<br/>        malware_scanner  = string<br/>        scan_action_type = string<br/>      })))<br/>      recovery_point_tags = optional(map(string))<br/>      tags                = optional(map(string))<br/>      copy_action = optional(list(object({<br/>        destination_vault_arn = string<br/>        delete_after          = optional(number)<br/>      })))<br/>      })<br/>    ))<br/>    })<br/>  )</pre> | `[]` | no |
 | <a name="input_aws_kms_key_vault_arn"></a> [aws\_kms\_key\_vault\_arn](#input\_aws\_kms\_key\_vault\_arn) | ARN of the KMS key used to encrypt the backup vault. If not provided, the default AWS Backup vault encryption will be used. | `string` | `null` | no |
@@ -237,8 +337,8 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Minimal](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/minimal) – Minimal vault creation
 - [Vault with plan and selection](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault\_with\_plan\_and\_selection) – Backup vault creation with configuration of plans and backup selections
-- [Source account with replication](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault\_with\_plan\_selection\_with\_replication) – Backup plan with cross-account replication
-- [Receiver account (cross-account destination)](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/receiver\_account) – Destination account that receives cross-account backup copies
+- [Vault with plan, selection, and replication](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/vault\_with\_plan\_selection\_with\_replication) – KMS key creation with alias, cross-region replication, and additional account access
+- [Cross-region and cross-account backup](https://github.com/prefapp/tfm/tree/main/modules/aws-backup/_examples/cross-region-and-account) – Full multi-account backup strategy: management, source, and destination accounts
 
 ## Remote Resources
 - Terraform: https://www.terraform.io/

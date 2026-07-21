@@ -231,6 +231,24 @@ variable "enable_karpenter" {
   default     = false
 }
 
+variable "karpenter_service_account_name" {
+  description = "Set the name of K8s service account karpenter controller"
+  type        = string
+  default     = "karpenter-sa"
+}
+
+variable "karpenter_namespace_name" {
+  description = "Set the name of K8s namespace where is deployed the karpenter controller"
+  type        = string
+  default     = "karpenter"
+}
+
+variable "karpenter_controller_enable_inline_policy" {
+  description = "Determines whether the controller policy is created as a standard IAM policy or inline IAM policy. This can be enabled when the error `LimitExceeded: Cannot exceed quota for PolicySize: 6144` is received since standard IAM policies have a limit of 6,144 characters versus an inline role policy's limit of 10,240 ([Reference](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-quotas.html))"
+  type        = bool
+  default     = false
+}
+
 variable "create_cloudwatch_log_group" {
   description = "Create CloudWatch log group for the EKS cluster"
   type        = bool
