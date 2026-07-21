@@ -20,6 +20,7 @@ This module provides a comprehensive configuration for AWS Backup, including vau
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "my-vault"
   }]
@@ -31,6 +32,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -53,7 +55,7 @@ module "backup" {
 }
 ```
 
-### With alias, replication to other regions, and access from other AWS accounts
+### With replication to other regions and cross-account access
 
 **Note:** Cross-account backup only works with AWS Organizations. You must enable `cross_account_backup` in the organization's main account.
 
@@ -61,6 +63,7 @@ In the main account:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region                       = "eu-west-1"
   enable_cross_account_backup  = true
 }
 ```
@@ -72,6 +75,7 @@ For the accounts in your organization:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -81,6 +85,7 @@ module "backup" {
     # }
     }
   ]
+  source_account_id = "123456789012" # Source account ID that will copy backups into this vault
 }
 ```
 
@@ -89,6 +94,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -233,9 +239,11 @@ The module is organized with the following directory and file structure:
 │   │   └── main.tf
 │   ├── minimal
 │   │   └── main.tf
-│   ├── vault_with_plan_and_selection
-│   │   └── main.tf
-│   └── vault_with_plan_selection_with_replication
+│   ├── receiver_account
+│   │   └── main.tf
+│   ├── vault_with_plan_and_selection
+│   │   └── main.tf
+│   └── vault_with_plan_selection_with_replication
 │       └── main.tf
 ├── iam-policy-roles.tf
 ├── lambda.tf
@@ -266,6 +274,7 @@ The module is organized with the following directory and file structure:
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
+| <a name="requirement_archive"></a> [archive](#requirement\_archive) | ~> 2.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.3 |
 
 ## Providers
@@ -296,6 +305,7 @@ The module is organized with the following directory and file structure:
 | [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [archive_file.lambda](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.source_copy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -313,6 +323,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_enable_cross_account_backup"></a> [enable\_cross\_account\_backup](#input\_enable\_cross\_account\_backup) | Enable cross-account backup in AWS Backup global settings. If set to true, the module will manage the global settings resource to enable cross-account backup. If set to false, you can configure it separately if needed. | `bool` | `false` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `600` | no |
+| <a name="input_region"></a> [region](#input\_region) | AWS region where the Lambda function for cross-account replication will be created. | `string` | `"eu-west-1"` | no |
 | <a name="input_source_account_id"></a> [source\_account\_id](#input\_source\_account\_id) | Account id that copies backups into this vault | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Default tags to apply to all resources. | `map(string)` | `{}` | no |
 

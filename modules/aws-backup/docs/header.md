@@ -19,6 +19,7 @@ This module provides a comprehensive configuration for AWS Backup, including vau
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "my-vault"
   }]
@@ -31,6 +32,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -53,7 +55,7 @@ module "backup" {
 }
 ```
 
-### With alias, replication to other regions, and access from other AWS accounts
+### With replication to other regions and cross-account access
 
 **Note:** Cross-account backup only works with AWS Organizations. You must enable `cross_account_backup` in the organization's main account.
 
@@ -61,6 +63,7 @@ In the main account:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region                       = "eu-west-1"
   enable_cross_account_backup  = true
 }
 ```
@@ -72,6 +75,7 @@ For the accounts in your organization:
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -81,6 +85,7 @@ module "backup" {
     # }
     }
   ]
+  source_account_id = "123456789012" # Source account ID that will copy backups into this vault
 }
 ```
 
@@ -89,6 +94,7 @@ module "backup" {
 ```hcl
 module "backup" {
   source = "github.com/prefapp/tfm/modules/aws-backup"
+  region = "eu-west-1"
   aws_backup_vault = [{
     vault_name = "only-rds-component-tags-backup"
     # vault_region = "eu-west-1"
@@ -233,9 +239,11 @@ The module is organized with the following directory and file structure:
 │   │   └── main.tf
 │   ├── minimal
 │   │   └── main.tf
-│   ├── vault_with_plan_and_selection
-│   │   └── main.tf
-│   └── vault_with_plan_selection_with_replication
+│   ├── receiver_account
+│   │   └── main.tf
+│   ├── vault_with_plan_and_selection
+│   │   └── main.tf
+│   └── vault_with_plan_selection_with_replication
 │       └── main.tf
 ├── iam-policy-roles.tf
 ├── lambda.tf
