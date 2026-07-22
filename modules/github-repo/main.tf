@@ -180,6 +180,17 @@ resource "github_branch_protection" "this" {
     }
   }
 
+  dynamic "restrict_pushes" {
+    for_each = each.value.bypassPullRequestAllowances != null ? [1] : []
+    content {
+      push_allowances = distinct(concat(
+        [for slug in coalesce(each.value.bypassPullRequestAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
+        [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+        [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
+      ))
+    }
+  }
+
   depends_on = [
     github_branch_default.this,
     github_repository_file.this,

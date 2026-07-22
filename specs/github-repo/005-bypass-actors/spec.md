@@ -37,6 +37,7 @@ branchProtections:
 - Add `bypassPullRequestAllowances` to the `branch_protections` object in `variables.tf`
 - Create locals, data sources, and `pull_request_bypassers` wiring in `main.tf`
 - Add input validations for non-empty entries
+- Wire the same resolved actors into `restrict_pushes.push_allowances` on the branch protection (same `bypassPullRequestAllowances` config drives both)
 - Update `docs/header.md` with example
 - Regenerate `README.md`
 
@@ -44,13 +45,14 @@ branchProtections:
 
 - Support for passing GitHub App node IDs directly (apps are specified by slug and resolved via `data.github_app`)
 - Rulesets support (separate module)
-- Changing the `github_branch_protection` resource to use `push_restrictions` or other bypass modes
+- Separate config field for `push_allowances` (it reuses `bypassPullRequestAllowances`)
 
 ## Acceptance Criteria
 
 - `bypassPullRequestAllowances` is optional (defaults to `null` — not set) per branch protection
 - Apps are specified by slug and resolved via `data.github_app`; teams and users are resolved via `data.github_team`/`data.github_user`
-- `pull_request_bypassers` is only set when `bypassPullRequestAllowances` is provided (avoids clearing existing actors)
+- `pull_request_bypassers` and `restrict_pushes.push_allowances` are both set from the same `bypassPullRequestAllowances` config when it is provided
+- Neither field is set when `bypassPullRequestAllowances` is `null` (avoids clearing existing actors)
 - Input validations reject empty/whitespace-only entries
 - Module passes `terraform validate` and `terraform fmt`
 - Documentation is updated and README regenerated

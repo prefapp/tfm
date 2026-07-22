@@ -11,7 +11,9 @@
 - [x] 3. Update `main.tf` — add locals, data sources, and `pull_request_bypassers` wiring
 - [x] 4. Update `docs/header.md` — add bypass actors usage example
 - [x] 5. Regenerate `README.md` with `terraform-docs`
-- [ ] 6. Run `terraform fmt` and `terraform validate` (requires local terraform binary — skipped)
-- [ ] 7. Final review and create PR
+- [x] 6. Add `restrict_pushes.push_allowances` block reusing the same resolved actors
+- [ ] 7. Update spec/plan/tasks to document the push allowances behavior
+- [ ] 8. Run `terraform fmt` (requires local terraform binary — skipped)
+- [ ] 9. Final review and create PR
 
 **Status:** In Progress (code changes complete, pending final review)

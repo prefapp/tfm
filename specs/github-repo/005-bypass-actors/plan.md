@@ -51,6 +51,21 @@ pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distin
 )) : null
 ```
 
+Wire `restrict_pushes.push_allowances` on `github_branch_protection` — reuses the same resolved IDs:
+
+```hcl
+dynamic "restrict_pushes" {
+  for_each = each.value.bypassPullRequestAllowances != null ? [1] : []
+  content {
+    push_allowances = distinct(concat(
+      [for slug in coalesce(each.value.bypassPullRequestAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
+      [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+      [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
+    ))
+  }
+}
+```
+
 ### 4. Update `docs/header.md`
 Add a "With branch protections + bypass actors" usage example.
 

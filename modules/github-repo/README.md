@@ -126,6 +126,8 @@ module "repository" {
           teams = ["my-team-slug"]
           users = ["some-user"]
         }
+        # Note: actors listed in bypassPullRequestAllowances are also added
+        # to restrict_pushes.push_allowances automatically
       },
     ]
   }
