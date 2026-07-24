@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/aws-kms-multiple-v0.2.0...aws-kms-multiple-v0.3.0) (2026-07-17)
+
+
+### Features
+
+* **aws-kms-multiple:** added outputs for references ([#1333](https://github.com/prefapp/tfm/issues/1333)) ([e1f3657](https://github.com/prefapp/tfm/commit/e1f3657cb7defa8760de564236880b1b3b872f7c))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/aws-kms-multiple-v0.1.1...aws-kms-multiple-v0.2.0) (2026-04-13)
 
 

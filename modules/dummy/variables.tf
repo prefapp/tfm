@@ -32,3 +32,37 @@ variable "crash_on_plan" {
   default     = false
 }
 
+# 5. Tries before apply succeeds (handled by null_resource/local-exec counter)
+variable "tries_before_apply_ok" {
+  description = "Number of apply attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash_on_apply is true. Setting this to a value greater than 0 requires crash_on_apply to be true."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.tries_before_apply_ok == floor(var.tries_before_apply_ok)
+    error_message = "tries_before_apply_ok must be an integer."
+  }
+
+  validation {
+    condition     = var.tries_before_apply_ok <= 0 || var.crash_on_apply == true
+    error_message = "Setting tries_before_apply_ok > 0 requires crash_on_apply to be true."
+  }
+}
+
+# 6. Tries before plan succeeds (handled by data.external / script.js counter)
+variable "tries_before_plan_ok" {
+  description = "Number of plan attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash_on_plan is true. Setting this to a value greater than 0 requires crash_on_plan to be true."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.tries_before_plan_ok == floor(var.tries_before_plan_ok)
+    error_message = "tries_before_plan_ok must be an integer."
+  }
+
+  validation {
+    condition     = var.tries_before_plan_ok <= 0 || var.crash_on_plan == true
+    error_message = "Setting tries_before_plan_ok > 0 requires crash_on_plan to be true."
+  }
+}
+

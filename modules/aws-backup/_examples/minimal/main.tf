@@ -17,6 +17,8 @@ provider "aws" {
 module "backup" {
   source = "./../.."
 
+  region = "eu-west-1"
+
   aws_backup_vault = [{
     vault_name = "my-vault"
     # vault_region = "eu-west-1"

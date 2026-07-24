@@ -60,9 +60,29 @@ let message = `Execution successful for instance: ${instance_name}`;
 // Feature 1: Crash logic
 // Check for both boolean true and string "true" for robust input handling
 if (enable_crash === true || enable_crash === "true") {
-    did_crash = "true";
-    message = `Plan failure requested for instance: ${instance_name}`;
-    crash(); // This line exits the process if reached
+    const tries = Number(input.tries_before_plan_ok || 0);
+    const safeName = input.safe_instance_name || instance_name;
+    const counterFile = `/tmp/tfm-dummy-plan-counter-${safeName}`;
+    let count = 0;
+
+    if (tries > 0) {
+        try {
+            const raw = require('fs').readFileSync(counterFile, 'utf8');
+            count = parseInt(raw, 10) || 0;
+        } catch (e) { /* file does not exist yet */ }
+        count += 1;
+        require('fs').writeFileSync(counterFile, String(count), 'utf8');
+    }
+
+    if (tries <= 0 || count <= tries) {
+        did_crash = "true";
+        const label = tries <= 0 ? "infinite" : `${count}/${tries}`;
+        message = `Plan failure (attempt ${label}) for instance: ${instance_name}`;
+        crash(); // This line exits the process if reached
+    }
+
+    // Success after N tries — clean up counter
+    try { require('fs').unlinkSync(counterFile); } catch (e) { /* ignore */ }
 }
 
 // Feature 2: Sleep logic (only if not crashing)
