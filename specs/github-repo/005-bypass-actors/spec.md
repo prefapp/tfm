@@ -8,6 +8,8 @@
 
 The `github-repo` module's branch protections do not allow specifying bypass actors (users, teams, or GitHub Apps) that can bypass pull request requirements or push restrictions independently. The Firestartr provisioner needs the `fs-admin` GitHub App to bypass PR requirements while other tools (e.g. Dependabot) may need only push bypass.
 
+> **Note on scope:** Issue #1280's motivation included automatically adding the current user as a bypass actor. This spec limits scope to explicit configuration fields only. Consumers must provide the desired actors explicitly in `bypassPullRequestAllowances` or `pushAllowances`.
+
 ## Goal
 
 Add two independent fields inside each `branch_protections` entry:
@@ -57,6 +59,7 @@ branchProtections:
 
 - Support for passing GitHub App node IDs directly (apps are specified by slug and resolved via `data.github_app`)
 - Rulesets support (separate module)
+- Automatic resolution of the current calling user as a bypass actor (actors must be provided explicitly)
 
 ## Acceptance Criteria
 
