@@ -98,6 +98,43 @@ module "repository" {
 }
 ```
 
+### With branch protections + bypass actors
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    branch_protections = [
+      {
+        branch                        = "main"
+        requiredReviewersCount        = 1
+        # Actors that can bypass pull request requirements
+        # (apps are GitHub App slugs, resolved via data.github_app)
+        bypassPullRequestAllowances = {
+          apps  = ["<app-slug>"]
+          teams = ["my-team-slug"]
+          users = ["some-user"]
+        }
+        # Actors that can bypass push restrictions (set independently)
+        pushAllowances = {
+          teams = ["ci-bot-team"]
+        }
+      },
+    ]
+  }
+}
+```
+
 ### With issue labels
 
 ```hcl
@@ -166,12 +203,15 @@ No modules.
 | [github_repository_pages.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_pages) | resource |
 | [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
 | [github_team_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/team_repository) | resource |
+| [github_app.bypasser](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/app) | data source |
+| [github_team.bypasser](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/team) | data source |
+| [github_user.bypasser](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/user) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_config"></a> [config](#input\_config) | GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels + branch\_protections) as a single complex object | <pre>object({<br/>    repository = object({<br/>      name                = string<br/>      description         = optional(string, "")<br/>      visibility          = optional(string, "private")<br/>      topics              = optional(list(string), [])<br/>      autoInit            = optional(bool, false)<br/>      archiveOnDestroy    = optional(bool, false)<br/>      allowMergeCommit    = optional(bool, true)<br/>      allowSquashMerge    = optional(bool, true)<br/>      allowRebaseMerge    = optional(bool, true)<br/>      allowAutoMerge      = optional(bool, false)<br/>      deleteBranchOnMerge = optional(bool, false)<br/>      allowUpdateBranch   = optional(bool, false)<br/>      hasIssues           = optional(bool, true)<br/>      hasWiki             = optional(bool, true)<br/>      hasDiscussions      = optional(bool, false)<br/>    })<br/><br/>    default_branch = object({<br/>      branch = string<br/>      rename = optional(bool, false)<br/>    })<br/><br/>    files = optional(list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>    })), [])<br/><br/>    variables = optional(list(object({<br/>      variableName = string<br/>      value        = string<br/>    })), [])<br/><br/>    oidc_subject_claim_customization_template = optional(object({<br/>      useDefault       = optional(bool, true)<br/>      includeClaimKeys = optional(list(string), [])<br/>    }), null)<br/><br/>    teams = optional(list(object({<br/>      teamId     = number # Use numeric team ID to remain stable if team slugs change<br/>      permission = string<br/>    })), [])<br/><br/>    collaborators = optional(list(object({<br/>      username   = string<br/>      permission = string<br/>    })), [])<br/><br/>    # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)<br/>    pages = optional(object({<br/>      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.<br/>      buildType = optional(string, "legacy")<br/>      cname     = optional(string, null)<br/>      source = optional(object({<br/>        branch = string<br/>        path   = optional(string, "/")<br/>      }), null)<br/>    }), null)<br/><br/>    labels = optional(list(object({<br/>      name        = string<br/>      description = optional(string, null)<br/>      color       = string # 6-digit hex without # (e.g. "d73a4a")<br/>    })), [])<br/><br/>    branch_protections = optional(list(object({<br/>      branch                        = string<br/>      statusChecks                  = optional(list(string), [])<br/>      requiredReviewersCount        = optional(number, 0)<br/>      requiredCodeownersReviewers   = optional(bool, false)<br/>      enforceAdmins                 = optional(bool, false)<br/>      requireSignedCommits          = optional(bool, false)<br/>      requireConversationResolution = optional(bool, false)<br/>    })), [])<br/><br/>  })</pre> | n/a | yes |
+| <a name="input_config"></a> [config](#input\_config) | GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels + branch\_protections) as a single complex object | <pre>object({<br/>    repository = object({<br/>      name                = string<br/>      description         = optional(string, "")<br/>      visibility          = optional(string, "private")<br/>      topics              = optional(list(string), [])<br/>      autoInit            = optional(bool, false)<br/>      archiveOnDestroy    = optional(bool, false)<br/>      allowMergeCommit    = optional(bool, true)<br/>      allowSquashMerge    = optional(bool, true)<br/>      allowRebaseMerge    = optional(bool, true)<br/>      allowAutoMerge      = optional(bool, false)<br/>      deleteBranchOnMerge = optional(bool, false)<br/>      allowUpdateBranch   = optional(bool, false)<br/>      hasIssues           = optional(bool, true)<br/>      hasWiki             = optional(bool, true)<br/>      hasDiscussions      = optional(bool, false)<br/>    })<br/><br/>    default_branch = object({<br/>      branch = string<br/>      rename = optional(bool, false)<br/>    })<br/><br/>    files = optional(list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>    })), [])<br/><br/>    variables = optional(list(object({<br/>      variableName = string<br/>      value        = string<br/>    })), [])<br/><br/>    oidc_subject_claim_customization_template = optional(object({<br/>      useDefault       = optional(bool, true)<br/>      includeClaimKeys = optional(list(string), [])<br/>    }), null)<br/><br/>    teams = optional(list(object({<br/>      teamId     = number # Use numeric team ID to remain stable if team slugs change<br/>      permission = string<br/>    })), [])<br/><br/>    collaborators = optional(list(object({<br/>      username   = string<br/>      permission = string<br/>    })), [])<br/><br/>    # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)<br/>    pages = optional(object({<br/>      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.<br/>      buildType = optional(string, "legacy")<br/>      cname     = optional(string, null)<br/>      source = optional(object({<br/>        branch = string<br/>        path   = optional(string, "/")<br/>      }), null)<br/>    }), null)<br/><br/>    labels = optional(list(object({<br/>      name        = string<br/>      description = optional(string, null)<br/>      color       = string # 6-digit hex without # (e.g. "d73a4a")<br/>    })), [])<br/><br/>    branch_protections = optional(list(object({<br/>      branch                        = string<br/>      statusChecks                  = optional(list(string), [])<br/>      requiredReviewersCount        = optional(number, 0)<br/>      requiredCodeownersReviewers   = optional(bool, false)<br/>      enforceAdmins                 = optional(bool, false)<br/>      requireSignedCommits          = optional(bool, false)<br/>      requireConversationResolution = optional(bool, false)<br/>      bypassPullRequestAllowances = optional(object({<br/>        # apps  — GitHub App slugs, resolved by data.github_app<br/>        apps = optional(list(string), [])<br/>        # teams — team slugs, resolved by data.github_team<br/>        teams = optional(list(string), [])<br/>        # users — user logins, resolved by data.github_user<br/>        users = optional(list(string), [])<br/>      }), null)<br/>      pushAllowances = optional(object({<br/>        # apps  — GitHub App slugs, resolved by data.github_app<br/>        apps = optional(list(string), [])<br/>        # teams — team slugs, resolved by data.github_team<br/>        teams = optional(list(string), [])<br/>        # users — user logins, resolved by data.github_user<br/>        users = optional(list(string), [])<br/>      }), null)<br/>    })), [])<br/><br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
@@ -194,176 +234,17 @@ No modules.
 
 ## Examples
 
-### Minimal repository
+For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-repo/_examples):
 
-```hcl
-module "repository" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+- [bypass-actors](https://github.com/prefapp/tfm/tree/main/modules/github-repo/_examples/bypass-actors) - Branch protections with independent bypass PR and push allowances
 
-  config = {
-    repository = {
-      name     = "my-repo"
-      autoInit = true
-    }
+## Resources
 
-    default_branch = {
-      branch = "main"
-    }
-  }
-}
-```
-
-### Repository with GitHub Pages
-
-```hcl
-module "repository" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
-
-  config = {
-    repository = {
-      name     = "my-repo"
-      autoInit = true
-    }
-
-    default_branch = {
-      branch = "main"
-    }
-
-    pages = {
-      buildType = "legacy"
-      cname     = null
-      source = {
-        branch = "main"
-        path   = "/docs"
-      }
-    }
-  }
-}
-```
-
-### Repository with branch protections
-
-```hcl
-module "repository" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
-
-  config = {
-    repository = {
-      name     = "my-repo"
-      autoInit = true
-    }
-
-    default_branch = {
-      branch = "main"
-    }
-
-    branch_protections = [
-      {
-        branch                        = "main"
-        statusChecks                  = ["ci/tests"]
-        requiredReviewersCount        = 2
-        requiredCodeownersReviewers   = true
-        enforceAdmins                 = true
-        requireSignedCommits          = true
-        requireConversationResolution = true
-      },
-      {
-        branch                 = "release/*"
-        requiredReviewersCount = 1
-        enforceAdmins          = false
-      },
-    ]
-  }
-}
-```
-
-### Full-featured repository with labels
-
-```hcl
-module "repository" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
-
-  config = {
-    repository = {
-      name                = "my-repo"
-      description         = "A fully configured repository"
-      visibility          = "private"
-      topics              = ["terraform", "iac"]
-      autoInit            = true
-      allowMergeCommit    = false
-      allowSquashMerge    = true
-      deleteBranchOnMerge = true
-      hasIssues           = true
-    }
-
-    default_branch = {
-      branch = "main"
-    }
-
-    labels = [
-      {
-        name        = "bug"
-        description = "Something isn't working"
-        color       = "d73a4a"
-      },
-      {
-        name        = "enhancement"
-        description = "New feature or request"
-        color       = "a2eeef"
-      },
-      {
-        name        = "documentation"
-        description = "Improvements or additions to documentation"
-        color       = "0075ca"
-      },
-      {
-        name        = "good first issue"
-        description = "Good for newcomers"
-        color       = "7057ff"
-      },
-    ]
-
-    teams = [
-      { teamId = 123456, permission = "push" },
-      { teamId = 789012, permission = "maintain" },
-    ]
-
-    collaborators = [
-      { username = "octocat", permission = "push" },
-    ]
-  }
-}
-```
-
-### Via `terraform.tfvars.json` with labels
-
-```json
-{
-  "config": {
-    "repository": {
-      "name": "my-repo",
-      "description": "Managed by Terraform",
-      "visibility": "private",
-      "autoInit": true
-    },
-    "default_branch": {
-      "branch": "main"
-    },
-    "labels": [
-      {
-        "name": "bug",
-        "description": "Something isn't working",
-        "color": "d73a4a"
-      },
-      {
-        "name": "enhancement",
-        "description": "New feature or request",
-        "color": "a2eeef"
-      }
-    ]
-  }
-}
-```
+- **github\_repository**: [Terraform GitHub Provider - Repository](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository)
+- **github\_branch\_protection**: [Terraform GitHub Provider - Branch Protection](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection)
+- **github\_app data source**: [Terraform GitHub Provider - App](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/app)
+- **github\_team data source**: [Terraform GitHub Provider - Team](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/team)
+- **github\_user data source**: [Terraform GitHub Provider - User](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/user)
 
 ## Support
 
