@@ -85,6 +85,14 @@ variable "config" {
         # users — user logins, resolved by data.github_user
         users = optional(list(string), [])
       }), null)
+      pushAllowances = optional(object({
+        # apps  — GitHub App slugs, resolved by data.github_app
+        apps = optional(list(string), [])
+        # teams — team slugs, resolved by data.github_team
+        teams = optional(list(string), [])
+        # users — user logins, resolved by data.github_user
+        users = optional(list(string), [])
+      }), null)
     })), [])
 
   })
@@ -202,4 +210,35 @@ variable "config" {
     ]))
     error_message = "branch_protections.bypassPullRequestAllowances.users entries must be non-empty with no leading/trailing whitespace."
   }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.pushAllowances.apps, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.pushAllowances.apps entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.pushAllowances.teams, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.pushAllowances.teams entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.pushAllowances.users, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.pushAllowances.users entries must be non-empty with no leading/trailing whitespace."
+  }
+
 }

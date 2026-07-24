@@ -6,11 +6,14 @@
 
 ## Problem
 
-The `github-repo` module's branch protections do not allow specifying bypass actors (users, teams, or GitHub Apps) that can bypass pull request requirements. The Firestartr provisioner needs the `fs-admin` GitHub App to be able to bypass branch protections on managed repositories.
+The `github-repo` module's branch protections do not allow specifying bypass actors (users, teams, or GitHub Apps) that can bypass pull request requirements or push restrictions independently. The Firestartr provisioner needs the `fs-admin` GitHub App to bypass PR requirements while other tools (e.g. Dependabot) may need only push bypass.
 
 ## Goal
 
-Add a `bypassPullRequestAllowances` field inside each `branch_protections` entry to allow specifying apps, teams, and users that can bypass pull request requirements.
+Add two independent fields inside each `branch_protections` entry:
+
+- `bypassPullRequestAllowances` — actors that bypass pull request requirements
+- `pushAllowances` — actors that bypass push restrictions
 
 ## Input Shape
 
@@ -19,9 +22,13 @@ branchProtections:
   - branch: main
     requiredReviewersCount: 1
     bypassPullRequestAllowances:
-      apps:   ["<github_app_node_id>"]
+      apps:   ["fs-admin"]
       teams:  ["my-team-slug"]
       users:  ["some-user"]
+    pushAllowances:
+      apps:   ["dependabot"]
+      teams:  []
+      users:  []
 ```
 
 ## Fields
@@ -31,29 +38,35 @@ branchProtections:
 | `bypassPullRequestAllowances.apps` | `list(string)` | `[]` | GitHub App slugs, resolved via `data.github_app` |
 | `bypassPullRequestAllowances.teams` | `list(string)` | `[]` | Team slugs, resolved via `data.github_team` |
 | `bypassPullRequestAllowances.users` | `list(string)` | `[]` | User logins, resolved via `data.github_user` |
+| `pushAllowances.apps` | `list(string)` | `[]` | GitHub App slugs, resolved via `data.github_app` |
+| `pushAllowances.teams` | `list(string)` | `[]` | Team slugs, resolved via `data.github_team` |
+| `pushAllowances.users` | `list(string)` | `[]` | User logins, resolved via `data.github_user` |
 
 ## Scope
 
-- Add `bypassPullRequestAllowances` to the `branch_protections` object in `variables.tf`
-- Create locals, data sources, and `pull_request_bypassers` wiring in `main.tf`
-- Add input validations for non-empty entries
-- Wire the same resolved actors into `restrict_pushes.push_allowances` on the branch protection (same `bypassPullRequestAllowances` config drives both)
-- Update `docs/header.md` with example
+- Add `bypassPullRequestAllowances` and `pushAllowances` to the `branch_protections` object in `variables.tf`
+- Create locals, data sources, and per-field wiring in `main.tf`
+- Add input validations for non-empty entries on both fields
+- `bypassPullRequestAllowances` drives `required_pull_request_reviews.pull_request_bypassers`
+- `pushAllowances` drives `restrict_pushes.push_allowances`
+- Update `docs/header.md` with example showing both fields
+- Add `_examples/bypass-actors/main.tf`
 - Regenerate `README.md`
 
 ## Out of Scope
 
 - Support for passing GitHub App node IDs directly (apps are specified by slug and resolved via `data.github_app`)
 - Rulesets support (separate module)
-- Separate config field for `push_allowances` (it reuses `bypassPullRequestAllowances`)
 
 ## Acceptance Criteria
 
-- `bypassPullRequestAllowances` is optional (defaults to `null` — not set) per branch protection
-- Apps are specified by slug and resolved via `data.github_app`; teams and users are resolved via `data.github_team`/`data.github_user`
-- `pull_request_bypassers` and `restrict_pushes.push_allowances` are both set from the same `bypassPullRequestAllowances` config when it is provided
-- Neither field is set when `bypassPullRequestAllowances` is `null` (avoids clearing existing actors)
+- Both `bypassPullRequestAllowances` and `pushAllowances` are optional (default to `null` — not set) per branch protection
+- Apps are specified by slug and resolved via `data.github_app`; teams and users via `data.github_team`/`data.github_user`
+- `pull_request_bypassers` is set from `bypassPullRequestAllowances` when provided
+- `restrict_pushes.push_allowances` is set from `pushAllowances` when provided
+- Neither field is set when its corresponding config is `null`
+- `required_approving_review_count` defaults to at least 1 when `bypassPullRequestAllowances` is set but `requiredReviewersCount` is 0
 - Input validations reject empty/whitespace-only entries
 - Module passes `terraform validate` and `terraform fmt`
 - Documentation is updated and README regenerated
-- `tasks.md` is complete and included in the PR
+- `_examples/bypass-actors/` is created with a working example

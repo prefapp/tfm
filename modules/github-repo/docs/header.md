@@ -117,16 +117,17 @@ module "repository" {
       {
         branch                        = "main"
         requiredReviewersCount        = 1
+        # Actors that can bypass pull request requirements
+        # (apps are GitHub App slugs, resolved via data.github_app)
         bypassPullRequestAllowances = {
-          # apps are GitHub App slugs (resolved via data.github_app)
-          # Example: gh api "/orgs/<org>/installations" --jq '.installations[].app_slug'
-          # (module resolves slug to node_id via data.github_app)
           apps  = ["<app-slug>"]
           teams = ["my-team-slug"]
           users = ["some-user"]
         }
-        # Note: actors listed in bypassPullRequestAllowances are also added
-        # to restrict_pushes.push_allowances automatically
+        # Actors that can bypass push restrictions (set independently)
+        pushAllowances = {
+          teams = ["ci-bot-team"]
+        }
       },
     ]
   }

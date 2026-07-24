@@ -1,16 +1,22 @@
-# Resolve bypass pull-request allowance actors
+# Resolve actor slugs to node_ids (from both bypassPullRequestAllowances and pushAllowances)
 locals {
   _bypasser_users = toset(flatten([
-    for bp in coalesce(var.config.branch_protections, []) :
-    try(coalesce(bp.bypassPullRequestAllowances.users, []), [])
+    for bp in coalesce(var.config.branch_protections, []) : concat(
+      try(coalesce(bp.bypassPullRequestAllowances.users, []), []),
+      try(coalesce(bp.pushAllowances.users, []), []),
+    )
   ]))
   _bypasser_teams = toset(flatten([
-    for bp in coalesce(var.config.branch_protections, []) :
-    try(coalesce(bp.bypassPullRequestAllowances.teams, []), [])
+    for bp in coalesce(var.config.branch_protections, []) : concat(
+      try(coalesce(bp.bypassPullRequestAllowances.teams, []), []),
+      try(coalesce(bp.pushAllowances.teams, []), []),
+    )
   ]))
   _bypasser_apps = toset(flatten([
-    for bp in coalesce(var.config.branch_protections, []) :
-    try(coalesce(bp.bypassPullRequestAllowances.apps, []), [])
+    for bp in coalesce(var.config.branch_protections, []) : concat(
+      try(coalesce(bp.bypassPullRequestAllowances.apps, []), []),
+      try(coalesce(bp.pushAllowances.apps, []), []),
+    )
   ]))
 }
 
@@ -170,7 +176,7 @@ resource "github_branch_protection" "this" {
   dynamic "required_pull_request_reviews" {
     for_each = (each.value.requiredReviewersCount > 0 || each.value.requiredCodeownersReviewers || each.value.bypassPullRequestAllowances != null) ? [1] : []
     content {
-      required_approving_review_count = each.value.requiredReviewersCount
+      required_approving_review_count = each.value.bypassPullRequestAllowances != null ? max(each.value.requiredReviewersCount, 1) : each.value.requiredReviewersCount
       require_code_owner_reviews      = each.value.requiredCodeownersReviewers
       pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distinct(concat(
         [for slug in coalesce(each.value.bypassPullRequestAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
@@ -181,12 +187,12 @@ resource "github_branch_protection" "this" {
   }
 
   dynamic "restrict_pushes" {
-    for_each = each.value.bypassPullRequestAllowances != null ? [1] : []
+    for_each = each.value.pushAllowances != null ? [1] : []
     content {
       push_allowances = distinct(concat(
-        [for slug in coalesce(each.value.bypassPullRequestAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
-        [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
-        [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
+        [for slug in coalesce(each.value.pushAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
+        [for slug in coalesce(each.value.pushAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+        [for login in coalesce(each.value.pushAllowances.users, []) : data.github_user.bypasser[login].node_id],
       ))
     }
   }
