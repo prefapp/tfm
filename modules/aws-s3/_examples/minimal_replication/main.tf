@@ -22,7 +22,7 @@ module "s3" {
   s3_bucket_versioning = "Enabled"
 
   s3_replication_destination = {
-    account       = "1112222333"
+    account       = "112233445566"
     bucket_arn    = "arn:aws:s3:::my-destination"
     storage_class = "STANDARD"
   }
