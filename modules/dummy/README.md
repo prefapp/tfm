@@ -4,7 +4,7 @@
 
 This module is designed for DevOps testing and CI/CD pipeline validation. It provides features to simulate network latency (sleep) and catastrophic failures (crash) at the `terraform plan`, `terraform apply`, and `terraform destroy` stages.
 
-It leverages the `external` data source (for plan-time checks) and `null_resource` with `local-exec` provisioners (for apply-time actions).
+It leverages the `external` data source (for plan-time checks) and `null_resource` with `local-exec` provisioners (for apply-time and destroy-time actions).
 
 ## Prerequisites
 
@@ -59,7 +59,9 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [null_resource.conditional_crash](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.conditional_crash_destroy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.conditional_sleep](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.conditional_sleep_destroy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.diagnostic_base_logic](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [external_external.script_executor](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 
@@ -128,20 +130,40 @@ Expected Result: The first two applies fail. The counter file `/tmp/tfm-dummy-co
 
 ### 5. Test Destroy Failure
 
+Destroy-time provisioners only run on resources that already exist in state. The two-step workflow is:
+
+**Step 1 — Create the destroy-trigger resources (no-op create, succeeds immediately):**
+```bash
+terraform apply -auto-approve -var="crash_on_destroy=true"
+```
+
+**Step 2 — Trigger the destroy failure:**
 ```bash
 terraform destroy -auto-approve -var="crash_on_destroy=true"
 ```
 
-Expected Result: `terraform destroy` fails when `null_resource.conditional_crash`'s destroy-time `local-exec` provisioner runs `exit 1`. The resource remains in state.
+Expected Result: `terraform destroy` fails when `null_resource.conditional_crash_destroy`'s destroy-time `local-exec` provisioner runs `exit 1`. The resource remains in state.
 
 ### 6. Test Destroy Timeout / Latency
 
+**Step 1 — Create the destroy-trigger resource:**
+```bash
+terraform apply -auto-approve -var="sleep_on_destroy=30"
+```
+
+**Step 2 — Trigger the destroy delay:**
 ```bash
 terraform destroy -auto-approve -var="sleep_on_destroy=30"
 ```
 
 ### 7. Test Transient Destroy Failures
 
+**Step 1 — Create the destroy-trigger resource:**
+```bash
+terraform apply -auto-approve -var="crash_on_destroy=true" -var="tries_before_destroy_ok=2"
+```
+
+**Step 2 — Trigger the transient failures (repeat until success):**
 ```bash
 terraform destroy -auto-approve -var="crash_on_destroy=true" -var="tries_before_destroy_ok=2"
 ```

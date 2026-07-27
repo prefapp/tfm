@@ -2,7 +2,7 @@
 
 This module is designed for DevOps testing and CI/CD pipeline validation. It provides features to simulate network latency (sleep) and catastrophic failures (crash) at the `terraform plan`, `terraform apply`, and `terraform destroy` stages.
 
-It leverages the `external` data source (for plan-time checks) and `null_resource` with `local-exec` provisioners (for apply-time actions).
+It leverages the `external` data source (for plan-time checks) and `null_resource` with `local-exec` provisioners (for apply-time and destroy-time actions).
 
 ## Prerequisites
 

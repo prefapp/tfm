@@ -29,9 +29,9 @@ resource "null_resource" "diagnostic_base_logic" {
   }
 }
 
-# 2. Conditional Sleep: This resource is only created if 'sleep_on_apply' > 0 or 'sleep_on_destroy' > 0.
+# 2. Conditional Sleep: This resource is only created if 'sleep_on_apply' > 0.
 resource "null_resource" "conditional_sleep" {
-  count = var.sleep_on_apply > 0 || var.sleep_on_destroy > 0 ? 1 : 0
+  count = var.sleep_on_apply > 0 ? 1 : 0
 
   # Force re-creation on every apply to ensure the provisioner runs
   triggers = {
@@ -46,18 +46,11 @@ resource "null_resource" "conditional_sleep" {
     command = "echo '--- APPLY-TIME DELAY --- Sleeping for ${var.sleep_on_apply} seconds...' && sleep ${var.sleep_on_apply}"
     when    = create
   }
-
-  provisioner "local-exec" {
-    when        = destroy
-    interpreter = ["sh", "-c"]
-
-    command = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}"
-  }
 }
 
-# 3. Conditional Crash: This resource is only created if 'crash_on_apply' or 'crash_on_destroy' is true.
+# 3. Conditional Crash: This resource is only created if 'crash_on_apply' is true.
 resource "null_resource" "conditional_crash" {
-  count = var.crash_on_apply || var.crash_on_destroy ? 1 : 0
+  count = var.crash_on_apply ? 1 : 0
   
   # Force re-creation on every apply to ensure the provisioner runs
   triggers = {
@@ -91,12 +84,41 @@ resource "null_resource" "conditional_crash" {
 
     when    = create
   }
+}
+
+# 4. Conditional Destroy Sleep: This resource is only created if 'sleep_on_destroy' > 0.
+resource "null_resource" "conditional_sleep_destroy" {
+  count = var.sleep_on_destroy > 0 ? 1 : 0
+
+  triggers = {
+    run_always = timestamp()
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+
+    command = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}"
+  }
+}
+
+# 5. Conditional Destroy Crash: This resource is only created if 'crash_on_destroy' is true.
+resource "null_resource" "conditional_crash_destroy" {
+  count = var.crash_on_destroy ? 1 : 0
+
+  triggers = {
+    run_always = timestamp()
+  }
 
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
 
     command = <<-EOT
+      if [ "${var.crash_on_destroy}" != "true" ]; then
+        echo "--- DESTROY-TIME SKIP (crash_on_destroy turned off) ---"
+        exit 0
+      fi
       COUNTER_FILE="/tmp/tfm-dummy-destroy-counter-${local.safe_instance_name}"
       TRIES="${var.tries_before_destroy_ok}"
       if [ "$TRIES" -le 0 ]; then
