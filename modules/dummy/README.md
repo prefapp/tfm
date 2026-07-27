@@ -2,7 +2,7 @@
 <!-- BEGIN_TF_DOCS -->
 # Terraform Diagnostic Executor Module
 
-This module is designed for DevOps testing and CI/CD pipeline validation. It provides features to simulate network latency (sleep) and catastrophic failures (crash) at both the `terraform plan` and `terraform apply` stages.
+This module is designed for DevOps testing and CI/CD pipeline validation. It provides features to simulate network latency (sleep) and catastrophic failures (crash) at the `terraform plan`, `terraform apply`, and `terraform destroy` stages.
 
 It leverages the `external` data source (for plan-time checks) and `null_resource` with `local-exec` provisioners (for apply-time actions).
 
@@ -28,9 +28,14 @@ module "diagnostic_test" {
   sleep_on_apply   = 10
   crash_on_apply   = false
 
+  # Destroy-time controls
+  sleep_on_destroy   = 5
+  crash_on_destroy   = false
+
   # Retry controls (set to N > 0 to fail N times before succeeding)
-  tries_before_plan_ok  = 2
-  tries_before_apply_ok = 3
+  tries_before_plan_ok    = 2
+  tries_before_apply_ok   = 3
+  tries_before_destroy_ok = 2
 }
 ```
 
@@ -63,11 +68,14 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_crash_on_apply"></a> [crash\_on\_apply](#input\_crash\_on\_apply) | Set to true to force a non-zero exit code during the 'apply' phase. | `bool` | `false` | no |
+| <a name="input_crash_on_destroy"></a> [crash\_on\_destroy](#input\_crash\_on\_destroy) | Set to true to force a non-zero exit code during the 'destroy' phase. | `bool` | `false` | no |
 | <a name="input_crash_on_plan"></a> [crash\_on\_plan](#input\_crash\_on\_plan) | Set to true to force a non-zero exit code during the 'plan' phase. | `bool` | `false` | no |
 | <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | A unique identifier for this module instance. | `string` | n/a | yes |
 | <a name="input_sleep_on_apply"></a> [sleep\_on\_apply](#input\_sleep\_on\_apply) | Number of seconds to sleep during the 'apply' phase. | `number` | `0` | no |
+| <a name="input_sleep_on_destroy"></a> [sleep\_on\_destroy](#input\_sleep\_on\_destroy) | Number of seconds to sleep during the 'destroy' phase. | `number` | `0` | no |
 | <a name="input_sleep_on_plan"></a> [sleep\_on\_plan](#input\_sleep\_on\_plan) | Number of seconds to sleep during the 'plan' phase. | `number` | `0` | no |
 | <a name="input_tries_before_apply_ok"></a> [tries\_before\_apply\_ok](#input\_tries\_before\_apply\_ok) | Number of apply attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash\_on\_apply is true. Setting this to a value greater than 0 requires crash\_on\_apply to be true. | `number` | `0` | no |
+| <a name="input_tries_before_destroy_ok"></a> [tries\_before\_destroy\_ok](#input\_tries\_before\_destroy\_ok) | Number of destroy attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash\_on\_destroy is true. Setting this to a value greater than 0 requires crash\_on\_destroy to be true. | `number` | `0` | no |
 | <a name="input_tries_before_plan_ok"></a> [tries\_before\_plan\_ok](#input\_tries\_before\_plan\_ok) | Number of plan attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash\_on\_plan is true. Setting this to a value greater than 0 requires crash\_on\_plan to be true. | `number` | `0` | no |
 
 ## Outputs
@@ -117,4 +125,26 @@ terraform apply -auto-approve -var="crash_on_apply=true" -var="tries_before_appl
 ```
 
 Expected Result: The first two applies fail. The counter file `/tmp/tfm-dummy-counter-<instance_name>` is created and incremented each attempt. On the third apply the counter exceeds the threshold, the provisioner exits 0, and the counter file is cleaned up.
+
+### 5. Test Destroy Failure
+
+```bash
+terraform destroy -auto-approve -var="crash_on_destroy=true"
+```
+
+Expected Result: `terraform destroy` fails when `null_resource.conditional_crash`'s destroy-time `local-exec` provisioner runs `exit 1`. The resource remains in state.
+
+### 6. Test Destroy Timeout / Latency
+
+```bash
+terraform destroy -auto-approve -var="sleep_on_destroy=30"
+```
+
+### 7. Test Transient Destroy Failures
+
+```bash
+terraform destroy -auto-approve -var="crash_on_destroy=true" -var="tries_before_destroy_ok=2"
+```
+
+Expected Result: The first two destroys fail. The counter file `/tmp/tfm-dummy-destroy-counter-<instance_name>` is created and incremented each attempt. On the third destroy the counter exceeds the threshold, the provisioner exits 0, the counter file is cleaned up, and the resource is destroyed.
 <!-- END_TF_DOCS -->

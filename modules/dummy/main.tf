@@ -29,9 +29,9 @@ resource "null_resource" "diagnostic_base_logic" {
   }
 }
 
-# 2. Conditional Sleep: This resource is only created if 'sleep_on_apply' > 0.
+# 2. Conditional Sleep: This resource is only created if 'sleep_on_apply' > 0 or 'sleep_on_destroy' > 0.
 resource "null_resource" "conditional_sleep" {
-  count = var.sleep_on_apply > 0 ? 1 : 0
+  count = var.sleep_on_apply > 0 || var.sleep_on_destroy > 0 ? 1 : 0
 
   # Force re-creation on every apply to ensure the provisioner runs
   triggers = {
@@ -42,15 +42,22 @@ resource "null_resource" "conditional_sleep" {
     # Executes the command using a standard sh interpreter
     interpreter = ["sh", "-c"] 
     
-    # Echo message and then sleep. We use count[0] to access the instance.
+    # Echo message and then sleep.
     command = "echo '--- APPLY-TIME DELAY --- Sleeping for ${var.sleep_on_apply} seconds...' && sleep ${var.sleep_on_apply}"
     when    = create
   }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+
+    command = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}"
+  }
 }
 
-# 3. Conditional Crash: This resource is only created if 'crash_on_apply' is true.
+# 3. Conditional Crash: This resource is only created if 'crash_on_apply' or 'crash_on_destroy' is true.
 resource "null_resource" "conditional_crash" {
-  count = var.crash_on_apply ? 1 : 0
+  count = var.crash_on_apply || var.crash_on_destroy ? 1 : 0
   
   # Force re-creation on every apply to ensure the provisioner runs
   triggers = {
@@ -83,6 +90,33 @@ resource "null_resource" "conditional_crash" {
     EOT
 
     when    = create
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+
+    command = <<-EOT
+      COUNTER_FILE="/tmp/tfm-dummy-destroy-counter-${local.safe_instance_name}"
+      TRIES="${var.tries_before_destroy_ok}"
+      if [ "$TRIES" -le 0 ]; then
+        echo "--- DESTROY-TIME CRASH (infinite, tries_before_destroy_ok=$TRIES) ---"
+        exit 1
+      fi
+      if [ -f "$COUNTER_FILE" ]; then
+        COUNT=`cat "$COUNTER_FILE"`
+      else
+        COUNT=0
+      fi
+      COUNT=`expr "$COUNT" + 1`
+      echo "$COUNT" > "$COUNTER_FILE"
+      if [ "$COUNT" -le "$TRIES" ]; then
+        echo "--- DESTROY-TIME CRASH (attempt $COUNT/$TRIES) ---"
+        exit 1
+      fi
+      echo "--- DESTROY-TIME SUCCESS after $COUNT attempts ---"
+      rm -f "$COUNTER_FILE"
+    EOT
   }
 }
 

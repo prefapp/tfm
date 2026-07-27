@@ -37,3 +37,25 @@ terraform apply -auto-approve -var="crash_on_apply=true" -var="tries_before_appl
 ```
 
 Expected Result: The first two applies fail. The counter file `/tmp/tfm-dummy-counter-<instance_name>` is created and incremented each attempt. On the third apply the counter exceeds the threshold, the provisioner exits 0, and the counter file is cleaned up.
+
+### 5. Test Destroy Failure
+
+```bash
+terraform destroy -auto-approve -var="crash_on_destroy=true"
+```
+
+Expected Result: `terraform destroy` fails when `null_resource.conditional_crash`'s destroy-time `local-exec` provisioner runs `exit 1`. The resource remains in state.
+
+### 6. Test Destroy Timeout / Latency
+
+```bash
+terraform destroy -auto-approve -var="sleep_on_destroy=30"
+```
+
+### 7. Test Transient Destroy Failures
+
+```bash
+terraform destroy -auto-approve -var="crash_on_destroy=true" -var="tries_before_destroy_ok=2"
+```
+
+Expected Result: The first two destroys fail. The counter file `/tmp/tfm-dummy-destroy-counter-<instance_name>` is created and incremented each attempt. On the third destroy the counter exceeds the threshold, the provisioner exits 0, the counter file is cleaned up, and the resource is destroyed.
