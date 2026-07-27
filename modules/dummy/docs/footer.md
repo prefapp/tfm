@@ -1,5 +1,7 @@
 ## Diagnostic Scenarios
 
+Counter file paths use `<safe_instance_name>` — derived from the `instance_name` variable by removing all characters except `[a-zA-Z0-9_-]`.
+
 ### 1. Test Plan Failure
 
 ```bash
