@@ -71,6 +71,11 @@ variable "sleep_on_destroy" {
   description = "Number of seconds to sleep during the 'destroy' phase."
   type        = number
   default     = 0
+
+  validation {
+    condition     = var.sleep_on_destroy >= 0
+    error_message = "sleep_on_destroy must be greater than or equal to 0."
+  }
 }
 
 # 8. Crash during 'terraform destroy' (handled by null_resource)

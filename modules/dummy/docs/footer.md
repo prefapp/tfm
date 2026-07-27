@@ -78,4 +78,4 @@ terraform apply -auto-approve -var="crash_on_destroy=true" -var="tries_before_de
 terraform destroy -auto-approve -var="crash_on_destroy=true" -var="tries_before_destroy_ok=2"
 ```
 
-Expected Result: The first two destroys fail. The counter file `/tmp/tfm-dummy-destroy-counter-<instance_name>` is created and incremented each attempt. On the third destroy the counter exceeds the threshold, the provisioner exits 0, the counter file is cleaned up, and the resource is destroyed.
+Expected Result: The first two destroys fail. The counter file `/tmp/tfm-dummy-destroy-counter-<safe_instance_name>` is created and incremented each attempt. On the third destroy the counter exceeds the threshold, the provisioner exits 0, the counter file is cleaned up, and the resource is destroyed.
