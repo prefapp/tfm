@@ -1,6 +1,6 @@
 locals {
   # Sanitize instance_name to prevent path traversal and shell injection in counter file paths
-  safe_instance_name = replace(var.instance_name, "/[^a-zA-Z0-9_-]/", "")
+  safe_instance_name = regexreplace(var.instance_name, "[^a-zA-Z0-9_-]", "")
 }
 
 # The 'external' data source executes the script for plan-time calculations and side-effects.
@@ -90,10 +90,6 @@ resource "null_resource" "conditional_crash" {
 resource "null_resource" "conditional_sleep_destroy" {
   count = var.sleep_on_destroy > 0 ? 1 : 0
 
-  triggers = {
-    run_always = timestamp()
-  }
-
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
@@ -105,10 +101,6 @@ resource "null_resource" "conditional_sleep_destroy" {
 # 5. Conditional Destroy Crash: This resource is only created if 'crash_on_destroy' is true.
 resource "null_resource" "conditional_crash_destroy" {
   count = var.crash_on_destroy ? 1 : 0
-
-  triggers = {
-    run_always = timestamp()
-  }
 
   provisioner "local-exec" {
     when        = destroy
