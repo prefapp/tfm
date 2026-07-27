@@ -1,6 +1,7 @@
 locals {
   # Sanitize instance_name to prevent path traversal and shell injection in counter file paths
-  safe_instance_name = coalesce(regexreplace(var.instance_name, "[^a-zA-Z0-9_-]", ""), "unnamed")
+  _safe_raw = regexreplace(var.instance_name, "[^a-zA-Z0-9_-]", "")
+  safe_instance_name = local._safe_raw != "" ? local._safe_raw : "unnamed"
 }
 
 # The 'external' data source executes the script for plan-time calculations and side-effects.
