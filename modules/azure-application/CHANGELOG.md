@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] (unreleased)
+
+### Bug Fixes
+
+* Make `data.azuread_service_principal.msgraph` conditional on `length(var.msgraph_roles) > 0` to avoid a 403 Forbidden error when the caller has no Azure AD directory read permissions and `msgraph_roles` is empty.
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/azure-application-v0.1.2...azure-application-v1.0.0) (2025-05-21)
 
 
