@@ -14,7 +14,7 @@ Expected Result: `terraform plan` exits with a non-zero exit code as the `data.e
 terraform plan -var="crash_on_plan=true" -var="tries_before_plan_ok=2"
 ```
 
-Expected Result: The first two plans fail. The counter file `/tmp/tfm-dummy-plan-counter-<instance_name>` is created and incremented each attempt. On the third plan the counter exceeds the threshold, the script exits 0, and the counter file is cleaned up. Also applies to the plan phase within `terraform apply`.
+Expected Result: The first two plans fail. The counter file `/tmp/tfm-dummy-plan-counter-<safe_instance_name>` is created and incremented each attempt. On the third plan the counter exceeds the threshold, the script exits 0, and the counter file is cleaned up. Also applies to the plan phase within `terraform apply`.
 
 ### 2. Test Apply Failure
 
@@ -36,7 +36,7 @@ terraform apply -auto-approve -var="sleep_on_apply=30"
 terraform apply -auto-approve -var="crash_on_apply=true" -var="tries_before_apply_ok=2"
 ```
 
-Expected Result: The first two applies fail. The counter file `/tmp/tfm-dummy-counter-<instance_name>` is created and incremented each attempt. On the third apply the counter exceeds the threshold, the provisioner exits 0, and the counter file is cleaned up.
+Expected Result: The first two applies fail. The counter file `/tmp/tfm-dummy-counter-<safe_instance_name>` is created and incremented each attempt. On the third apply the counter exceeds the threshold, the provisioner exits 0, and the counter file is cleaned up.
 
 ### 5. Test Destroy Failure
 

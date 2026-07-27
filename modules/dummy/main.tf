@@ -130,6 +130,7 @@ resource "null_resource" "conditional_crash_destroy" {
       fi
       echo "--- DESTROY-TIME SUCCESS after $COUNT attempts ---"
       rm -f "$COUNTER_FILE"
+      exit 0
     EOT
   }
 }
