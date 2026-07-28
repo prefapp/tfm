@@ -81,3 +81,25 @@ terraform destroy -auto-approve -var="crash_on_destroy=true" -var="tries_before_
 ```
 
 Expected Result: The first two destroys fail. The counter file `/tmp/tfm-dummy-destroy-counter-<safe_instance_name>` is created and incremented each attempt. On the third destroy the counter exceeds the threshold, the provisioner exits 0, the counter file is cleaned up, and the resource is destroyed.
+
+### Destroy-Time Toggle Limitation
+
+Destroy-time provisioners in Terraform can only reference `self.triggers` — values are **frozen at resource creation time**. If you create a resource with `crash_on_destroy = true` then change it to `false` before destroying:
+
+- The guard in `self.triggers["crash_on_destroy"]` still sees `"true"` and the crash runs.
+- The skip guard **only works** when the resource was *created* with `crash_on_destroy = false`.
+
+**To toggle safely:**
+
+1. Apply the new config first: `terraform apply -var="crash_on_destroy=false"`
+   (This recreates the resource with `self.triggers` set to `"false"`)
+2. Then destroy: `terraform destroy -var="crash_on_destroy=false"`
+
+**If you skipped step 1** — the resource was created with `crash=true`, and you want to destroy without re-applying:
+
+```
+terraform state rm 'module.<NAME>.null_resource.conditional_crash_destroy[0]'
+terraform destroy
+```
+
+(Or use `tries_before_destroy_ok = N` to burn through N crashes and let it succeed.)

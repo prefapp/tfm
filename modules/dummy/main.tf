@@ -108,6 +108,7 @@ resource "null_resource" "conditional_crash_destroy" {
   count = var.crash_on_destroy ? 1 : 0
 
   triggers = {
+    crash_on_destroy        = tostring(var.crash_on_destroy)
     safe_instance_name      = local.safe_instance_name
     tries_before_destroy_ok = tostring(var.tries_before_destroy_ok)
   }
@@ -117,6 +118,10 @@ resource "null_resource" "conditional_crash_destroy" {
     interpreter = ["sh", "-c"]
 
     command = <<-EOT
+      if [ "${self.triggers["crash_on_destroy"]}" != "true" ]; then
+        echo "--- DESTROY-TIME SKIP (crash_on_destroy turned off) ---"
+        exit 0
+      fi
       COUNTER_FILE="/tmp/tfm-dummy-destroy-counter-${self.triggers["safe_instance_name"]}"
       TRIES="${self.triggers["tries_before_destroy_ok"]}"
       if [ "$TRIES" -le 0 ]; then

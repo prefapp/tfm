@@ -39,6 +39,12 @@ _None yet._
 |-----|----------|
 | [deterministic-secret-update-trigger](./modules/github-repo-secrets-section/docs/adr/deterministic-secret-update-trigger.md) | Secret updates fire on a caller-supplied SHA256 of the plaintext via `replace_triggered_by`, avoiding spurious diffs from non-deterministic ciphertext. |
 
+### dummy
+
+| ADR | Decision |
+|-----|----------|
+| [destroy-time-self-triggers-approach](./modules/dummy/docs/adr/destroy-time-self-triggers-approach.md) | Pass destroy-time values via `self.triggers` and document toggle limitation rather than using a sentinel-file pattern. |
+
 ## Adding a new ADR
 
 1. Confirm it passes the three-part test above. If not, don't write one.
