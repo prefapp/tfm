@@ -91,11 +91,15 @@ resource "null_resource" "conditional_crash" {
 resource "null_resource" "conditional_sleep_destroy" {
   count = var.sleep_on_destroy > 0 ? 1 : 0
 
+  triggers = {
+    sleep_on_destroy = tostring(var.sleep_on_destroy)
+  }
+
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
 
-    command = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${var.sleep_on_destroy} seconds...' && sleep ${var.sleep_on_destroy}"
+    command = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${self.triggers["sleep_on_destroy"]} seconds...' && sleep ${self.triggers["sleep_on_destroy"]}"
   }
 }
 
@@ -103,17 +107,18 @@ resource "null_resource" "conditional_sleep_destroy" {
 resource "null_resource" "conditional_crash_destroy" {
   count = var.crash_on_destroy ? 1 : 0
 
+  triggers = {
+    safe_instance_name      = local.safe_instance_name
+    tries_before_destroy_ok = tostring(var.tries_before_destroy_ok)
+  }
+
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
 
     command = <<-EOT
-      if [ "${var.crash_on_destroy}" != "true" ]; then
-        echo "--- DESTROY-TIME SKIP (crash_on_destroy turned off) ---"
-        exit 0
-      fi
-      COUNTER_FILE="/tmp/tfm-dummy-destroy-counter-${local.safe_instance_name}"
-      TRIES="${var.tries_before_destroy_ok}"
+      COUNTER_FILE="/tmp/tfm-dummy-destroy-counter-${self.triggers["safe_instance_name"]}"
+      TRIES="${self.triggers["tries_before_destroy_ok"]}"
       if [ "$TRIES" -le 0 ]; then
         echo "--- DESTROY-TIME CRASH (infinite, tries_before_destroy_ok=$TRIES) ---"
         exit 1
