@@ -1,6 +1,6 @@
 locals {
   # Sanitize instance_name to prevent path traversal and shell injection in counter file paths
-  _safe_raw = regexreplace(var.instance_name, "[^a-zA-Z0-9_-]", "")
+  _safe_raw = join("", regexall("[a-zA-Z0-9_-]", var.instance_name))
   safe_instance_name = local._safe_raw != "" ? local._safe_raw : "unnamed"
 }
 
