@@ -1,6 +1,6 @@
 ## Diagnostic Scenarios
 
-Counter file paths use `<safe_instance_name>` — derived from the `instance_name` variable by removing all characters except `[a-zA-Z0-9_-]`.
+Counter file paths use `<safe_instance_name>` — derived from the `instance_name` variable by removing all characters except `[a-zA-Z0-9_-]`. If no allowed characters remain, the fallback is `unnamed-<md5(instance_name)>` to avoid collisions across module instances.
 
 ### 1. Test Plan Failure
 
@@ -84,22 +84,22 @@ Expected Result: The first two destroys fail. The counter file `/tmp/tfm-dummy-d
 
 ### Destroy-Time Toggle Limitation
 
-Destroy-time provisioners in Terraform can only reference `self.triggers` — values are **frozen at resource creation time**. If you create a resource with `crash_on_destroy = true` then change it to `false` before destroying:
+Destroy-time provisioners in Terraform can only reference `self.triggers` — values are **frozen at resource creation time**. If you create a resource with `crash_on_destroy = true` then change it to `false` before destroying, the guard in `self.triggers["crash_on_destroy"]` still sees `"true"` and the crash runs. The skip guard **only works** when the resource was *created* with `crash_on_destroy = false`.
 
-- The guard in `self.triggers["crash_on_destroy"]` still sees `"true"` and the crash runs.
-- The skip guard **only works** when the resource was *created* with `crash_on_destroy = false`.
+Since changing triggers on a `null_resource` causes Terraform to **destroy the old resource first** (default `create_before_destroy = false`), a plain `terraform apply -var="crash_on_destroy=false"` will also trigger the crash — the old resource runs its destroy provisioner with the frozen `crash_on_destroy = "true"` before the new resource is created.
 
-**To toggle safely:**
+**To toggle safely, use one of these approaches:**
 
-1. Apply the new config first: `terraform apply -var="crash_on_destroy=false"`
-   (This recreates the resource with `self.triggers` set to `"false"`)
-2. Then destroy: `terraform destroy -var="crash_on_destroy=false"`
-
-**If you skipped step 1** — the resource was created with `crash=true`, and you want to destroy without re-applying:
-
+**Approach A — Burn through with a retry counter (in-place, no state manipulation):**
+```bash
+terraform apply -auto-approve \
+  -var="crash_on_destroy=false" \
+  -var="tries_before_destroy_ok=3"
 ```
+This apply triggers the destroy of the old resource, which crashes N times (here 3) then succeeds, allowing the new resource (with `crash_on_destroy = false`) to be created. Subsequent destroys exit cleanly.
+
+**Approach B — Remove from state (quick escape at the cost of an orphan):**
+```bash
 terraform state rm 'module.<NAME>.null_resource.conditional_crash_destroy[0]'
 terraform destroy
 ```
-
-(Or use `tries_before_destroy_ok = N` to burn through N crashes and let it succeed.)

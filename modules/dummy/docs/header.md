@@ -33,6 +33,5 @@ module "diagnostic_test" {
   # Retry controls (set to N > 0 to fail N times before succeeding)
   tries_before_plan_ok    = 2
   tries_before_apply_ok   = 3
-  tries_before_destroy_ok = 2
 }
 ```
