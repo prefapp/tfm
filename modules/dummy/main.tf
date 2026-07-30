@@ -1,6 +1,7 @@
 locals {
   # Sanitize instance_name to prevent path traversal and shell injection in counter file paths
-  safe_instance_name = replace(var.instance_name, "/[^a-zA-Z0-9_-]/", "")
+  _safe_raw = join("", regexall("[a-zA-Z0-9_-]", var.instance_name))
+  safe_instance_name = local._safe_raw != "" ? local._safe_raw : "unnamed-${md5(var.instance_name)}"
 }
 
 # The 'external' data source executes the script for plan-time calculations and side-effects.
@@ -42,7 +43,7 @@ resource "null_resource" "conditional_sleep" {
     # Executes the command using a standard sh interpreter
     interpreter = ["sh", "-c"] 
     
-    # Echo message and then sleep. We use count[0] to access the instance.
+    # Echo message and then sleep.
     command = "echo '--- APPLY-TIME DELAY --- Sleeping for ${var.sleep_on_apply} seconds...' && sleep ${var.sleep_on_apply}"
     when    = create
   }
@@ -83,6 +84,65 @@ resource "null_resource" "conditional_crash" {
     EOT
 
     when    = create
+  }
+}
+
+# 4. Conditional Destroy Sleep: This resource is only created if 'sleep_on_destroy' > 0.
+resource "null_resource" "conditional_sleep_destroy" {
+  count = var.sleep_on_destroy > 0 ? 1 : 0
+
+  triggers = {
+    sleep_on_destroy = tostring(var.sleep_on_destroy)
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+
+    command = "echo '--- DESTROY-TIME DELAY --- Sleeping for ${self.triggers["sleep_on_destroy"]} seconds...' && sleep ${self.triggers["sleep_on_destroy"]}"
+  }
+}
+
+# 5. Conditional Destroy Crash: This resource is only created if 'crash_on_destroy' is true.
+resource "null_resource" "conditional_crash_destroy" {
+  count = var.crash_on_destroy ? 1 : 0
+
+  triggers = {
+    crash_on_destroy        = tostring(var.crash_on_destroy)
+    safe_instance_name      = local.safe_instance_name
+    tries_before_destroy_ok = tostring(var.tries_before_destroy_ok)
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+
+    command = <<-EOT
+      if [ "${self.triggers["crash_on_destroy"]}" != "true" ]; then
+        echo "--- DESTROY-TIME SKIP (crash_on_destroy turned off) ---"
+        exit 0
+      fi
+      COUNTER_FILE="/tmp/tfm-dummy-destroy-counter-${self.triggers["safe_instance_name"]}"
+      TRIES="${self.triggers["tries_before_destroy_ok"]}"
+      if [ "$TRIES" -le 0 ]; then
+        echo "--- DESTROY-TIME CRASH (infinite, tries_before_destroy_ok=$TRIES) ---"
+        exit 1
+      fi
+      if [ -f "$COUNTER_FILE" ]; then
+        COUNT=`cat "$COUNTER_FILE"`
+      else
+        COUNT=0
+      fi
+      COUNT=`expr "$COUNT" + 1`
+      echo "$COUNT" > "$COUNTER_FILE"
+      if [ "$COUNT" -le "$TRIES" ]; then
+        echo "--- DESTROY-TIME CRASH (attempt $COUNT/$TRIES) ---"
+        exit 1
+      fi
+      echo "--- DESTROY-TIME SUCCESS after $COUNT attempts ---"
+      rm -f "$COUNTER_FILE"
+      exit 0
+    EOT
   }
 }
 

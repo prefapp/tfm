@@ -66,3 +66,39 @@ variable "tries_before_plan_ok" {
   }
 }
 
+# 7. Sleep during 'terraform destroy' (handled by null_resource)
+variable "sleep_on_destroy" {
+  description = "Number of seconds to sleep during the 'destroy' phase."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.sleep_on_destroy >= 0
+    error_message = "sleep_on_destroy must be greater than or equal to 0."
+  }
+}
+
+# 8. Crash during 'terraform destroy' (handled by null_resource)
+variable "crash_on_destroy" {
+  description = "Set to true to force a non-zero exit code during the 'destroy' phase."
+  type        = bool
+  default     = false
+}
+
+# 9. Tries before destroy succeeds (handled by null_resource / local-exec counter)
+variable "tries_before_destroy_ok" {
+  description = "Number of destroy attempts that should fail before succeeding. Set to 0 or lower (default) to crash every time when crash_on_destroy is true. Setting this to a value greater than 0 requires crash_on_destroy to be true."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.tries_before_destroy_ok == floor(var.tries_before_destroy_ok)
+    error_message = "tries_before_destroy_ok must be an integer."
+  }
+
+  validation {
+    condition     = var.tries_before_destroy_ok <= 0 || var.crash_on_destroy == true
+    error_message = "Setting tries_before_destroy_ok > 0 requires crash_on_destroy to be true."
+  }
+}
+
