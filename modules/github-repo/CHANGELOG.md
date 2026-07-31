@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/prefapp/tfm/compare/github-repo-v0.7.0...github-repo-v0.8.0) (2026-07-31)
+
+
+### Features
+
+* **github-repo:** add support for pull_request_bypassers and push_allowances ([#1281](https://github.com/prefapp/tfm/issues/1281)) ([c1f9dc9](https://github.com/prefapp/tfm/commit/c1f9dc9580e7b279c5623de70b1eeb1ba345c223))
+
 ## [0.7.0](https://github.com/prefapp/tfm/compare/github-repo-v0.6.0...github-repo-v0.7.0) (2026-06-16)
 
 
