@@ -97,6 +97,43 @@ module "repository" {
 }
 ```
 
+### With branch protections + bypass actors
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    branch_protections = [
+      {
+        branch                        = "main"
+        requiredReviewersCount        = 1
+        # Actors that can bypass pull request requirements
+        # (apps are GitHub App slugs, resolved via data.github_app)
+        bypassPullRequestAllowances = {
+          apps  = ["<app-slug>"]
+          teams = ["my-team-slug"]
+          users = ["some-user"]
+        }
+        # Actors that can bypass push restrictions (set independently)
+        pushAllowances = {
+          teams = ["ci-bot-team"]
+        }
+      },
+    ]
+  }
+}
+```
+
 ### With issue labels
 
 ```hcl
