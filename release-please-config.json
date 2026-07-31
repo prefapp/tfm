@@ -196,6 +196,9 @@
         "modules/github-org-rulesets": {
             "package-name": "github-org-rulesets"
         },
+        "modules/github-org-settings": {
+            "package-name": "github-org-settings"
+        },
         "modules/azure-alerts": {
             "package-name": "azure-alerts"
         },
