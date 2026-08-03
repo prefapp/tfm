@@ -77,6 +77,22 @@ variable "config" {
       enforceAdmins                 = optional(bool, false)
       requireSignedCommits          = optional(bool, false)
       requireConversationResolution = optional(bool, false)
+      bypassPullRequestAllowances = optional(object({
+        # apps  — GitHub App slugs, resolved by data.github_app
+        apps = optional(list(string), [])
+        # teams — team slugs, resolved by data.github_team
+        teams = optional(list(string), [])
+        # users — user logins, resolved by data.github_user
+        users = optional(list(string), [])
+      }), null)
+      pushAllowances = optional(object({
+        # apps  — GitHub App slugs, resolved by data.github_app
+        apps = optional(list(string), [])
+        # teams — team slugs, resolved by data.github_team
+        teams = optional(list(string), [])
+        # users — user logins, resolved by data.github_user
+        users = optional(list(string), [])
+      }), null)
     })), [])
 
   })
@@ -163,5 +179,89 @@ variable "config" {
       ]
     ]))
     error_message = "branch_protections.statusChecks entries must be non-empty strings."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.bypassPullRequestAllowances.apps, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.bypassPullRequestAllowances.apps entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.bypassPullRequestAllowances.teams, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.bypassPullRequestAllowances.teams entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.bypassPullRequestAllowances.users, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.bypassPullRequestAllowances.users entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.pushAllowances.apps, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.pushAllowances.apps entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.pushAllowances.teams, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.pushAllowances.teams entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for bp in coalesce(var.config.branch_protections, []) : [
+        for entry in coalesce(try(bp.pushAllowances.users, []), []) :
+        length(trimspace(entry)) > 0 && trimspace(entry) == entry
+      ]
+    ]))
+    error_message = "branch_protections.pushAllowances.users entries must be non-empty with no leading/trailing whitespace."
+  }
+
+  validation {
+    condition = alltrue([
+      for bp in coalesce(var.config.branch_protections, []) :
+      bp.pushAllowances == null ? true : (
+        length(coalesce(try(bp.pushAllowances.apps, []), [])) +
+        length(coalesce(try(bp.pushAllowances.teams, []), [])) +
+        length(coalesce(try(bp.pushAllowances.users, []), []))
+      ) > 0
+    ])
+    error_message = "branch_protections.pushAllowances must include at least one app, team, or user when set."
+  }
+
+  validation {
+    condition = alltrue([
+      for bp in coalesce(var.config.branch_protections, []) :
+      bp.bypassPullRequestAllowances == null ? true : (
+        length(coalesce(try(bp.bypassPullRequestAllowances.apps, []), [])) +
+        length(coalesce(try(bp.bypassPullRequestAllowances.teams, []), [])) +
+        length(coalesce(try(bp.bypassPullRequestAllowances.users, []), []))
+      ) > 0
+    ])
+    error_message = "branch_protections.bypassPullRequestAllowances must include at least one app, team, or user when set."
   }
 }

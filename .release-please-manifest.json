@@ -47,7 +47,7 @@
     "modules/azure-linux-vm": "0.1.2",
     "modules/azure-windows-vm": "0.1.10",
     "modules/aws-amq-rabbit": "0.3.0",
-    "modules/dummy": "0.2.0",
+    "modules/dummy": "0.3.0",
     "modules/aws-waf": "0.2.0",
     "modules/aws-secretsmanager-replication": "2.0.1",
     "modules/azure-private-dns": "1.0.0",
@@ -60,10 +60,11 @@
     "modules/github-membership": "0.2.0",
     "modules/github-repo-secrets-section": "0.1.2",
     "modules/github-files-set": "0.1.2",
-    "modules/github-repo": "0.7.0",
+    "modules/github-repo": "0.8.0",
     "modules/github-org-webhook": "0.2.0",
     "modules/github-org-ruleset": "0.1.1",
     "modules/github-org-rulesets": "0.1.1",
     "modules/azure-alerts": "0.1.2",
-    "modules/azure-managed-redis": "1.0.0"
+    "modules/azure-managed-redis": "1.0.0",
+    "modules/github-org-settings": "0.1.0"
 }
