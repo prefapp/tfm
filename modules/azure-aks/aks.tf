@@ -1,62 +1,53 @@
 # AKS section
 module "aks" {
-  # https://registry.terraform.io/modules/Azure/aks/azurerm/latest
-  source = "github.com/Azure/terraform-azurerm-aks?ref=11.1.0"
+  # https://registry.terraform.io/modules/Azure/avm-res-containerservice-managedcluster/azurerm/latest
+  source = "github.com/Azure/terraform-azurerm-avm-res-containerservice-managedcluster?ref=v0.7.1"
 
   location                                             = var.location
-  agents_count                                         = var.aks_agents_count
-  agents_labels                                        = var.aks_default_pool_custom_labels
-  agents_max_pods                                      = var.aks_agents_max_pods
-  agents_pool_drain_timeout_in_minutes                 = var.aks_agents_pool_drain_timeout_in_minutes
-  agents_pool_max_surge                                = var.aks_agents_pool_max_surge
-  agents_pool_name                                     = var.aks_agents_pool_name
-  agents_size                                          = var.aks_agents_size
+  default_agent_pool                                   = local.default_agent_pool
   api_server_authorized_ip_ranges                      = var.api_server_authorized_ip_ranges
-  attached_acr_id_map                                  = var.acr_map
-  auto_scaler_profile_enabled                          = var.auto_scaler_profile_enabled
-  auto_scaler_profile_expander                         = var.auto_scaler_profile_expander
-  auto_scaler_profile_max_graceful_termination_sec     = var.auto_scaler_profile_max_graceful_termination_sec
-  auto_scaler_profile_max_node_provisioning_time       = var.auto_scaler_profile_max_node_provisioning_time
-  auto_scaler_profile_max_unready_nodes                = var.auto_scaler_profile_max_unready_nodes
-  auto_scaler_profile_max_unready_percentage           = var.auto_scaler_profile_max_unready_percentage
-  auto_scaler_profile_new_pod_scale_up_delay           = var.auto_scaler_profile_new_pod_scale_up_delay
-  auto_scaler_profile_scale_down_delay_after_add       = var.auto_scaler_profile_scale_down_delay_after_add
-  auto_scaler_profile_scale_down_delay_after_delete    = var.auto_scaler_profile_scale_down_delay_after_delete
-  auto_scaler_profile_scale_down_delay_after_failure   = var.auto_scaler_profile_scale_down_delay_after_failure
-  auto_scaler_profile_scale_down_unneeded              = var.auto_scaler_profile_scale_down_unneeded
-  auto_scaler_profile_scale_down_unready               = var.auto_scaler_profile_scale_down_unready
-  auto_scaler_profile_scale_down_utilization_threshold = var.auto_scaler_profile_scale_down_utilization_threshold
-  auto_scaler_profile_scan_interval                    = var.auto_scaler_profile_scan_interval
-  auto_scaler_profile_skip_nodes_with_local_storage    = var.auto_scaler_profile_skip_nodes_with_local_storage
-  auto_scaler_profile_skip_nodes_with_system_pods      = var.auto_scaler_profile_skip_nodes_with_system_pods
+  auto_scaler_profile                                  = local.auto_scaler_profile
   key_vault_secrets_provider_enabled                   = var.key_vault_secrets_provider_enabled
   kubernetes_version                                   = var.aks_kubernetes_version
-  load_balancer_profile_enabled                        = var.net_profile_outbound_type == "loadBalancer" ? var.load_balancer_profile_enabled : false
-  load_balancer_profile_outbound_ip_address_ids        = var.net_profile_outbound_type == "loadBalancer" && length(data.azurerm_public_ip.aks_public_ip) > 0 ? [data.azurerm_public_ip.aks_public_ip[0].id] : null
-  load_balancer_sku                                    = var.load_balancer_sku
-  log_analytics_workspace_enabled                      = false
   network_contributor_role_assigned_subnet_ids         = { aks_subnet = data.azurerm_subnet.aks_subnet.id }
-  network_plugin                                       = var.aks_network_plugin
-  network_policy                                       = var.aks_network_policy
   node_os_channel_upgrade                              = var.node_os_channel_upgrade
-  node_pools                                           = local.extra_pools
+  agent_pools                                          = local.agent_pools
   oidc_issuer_enabled                                  = var.oidc_issuer_enabled
   orchestrator_version                                 = var.aks_orchestrator_version
-  os_disk_size_gb                                      = var.aks_os_disk_size_gb
-  prefix                                               = var.aks_prefix
-  rbac_aad_azure_rbac_enabled                          = true
-  rbac_aad_tenant_id                                   = data.azurerm_client_config.current.tenant_id
-  resource_group_name                                  = var.resource_group_name
-  role_based_access_control_enabled                    = true
-  secret_rotation_enabled                              = var.secret_rotation_enabled
-  secret_rotation_interval                             = var.secret_rotation_interval
+  name                                                 = var.aks_prefix
+
+  aad_profile = {
+    managed           = true
+    enable_azure_rbac = true
+    tenant_id         = data.azurerm_client_config.current.tenant_id
+  }
+
+  network_profile = {
+    network_plugin   = var.aks_network_plugin
+    network_policy   = var.aks_network_policy
+
+    load_balancer_sku = var.load_balancer_sku
+
+    outbound_type = var.net_profile_outbound_type
+
+    load_balancer_profile = (
+      var.net_profile_outbound_type == "loadBalancer" &&
+      var.load_balancer_profile_enabled
+    ) ? {
+      outbound_ip_address_ids = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
+        data.azurerm_public_ip.aks_public_ip[0].id
+      ] : null
+    } : null
+  }
+
+  key_vault_secrets_provider = {
+    secret_rotation_enabled  = var.secret_rotation_enabled
+    secret_rotation_interval = var.secret_rotation_interval
+  }
+
+  parent_id                                            = data.azurerm_resource_group.this.id
   sku_tier                                             = var.aks_sku_tier
   tags                                                 = local.tags
-  temporary_name_for_rotation                          = var.temporary_name_for_rotation
-  vnet_subnet = {
-    id = data.azurerm_subnet.aks_subnet.id
-  }
   upgrade_override                                     = var.upgrade_override
   workload_identity_enabled                            = var.workload_identity_enabled
-  net_profile_outbound_type                            = var.net_profile_outbound_type
 }
