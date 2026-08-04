@@ -122,13 +122,18 @@ variable "load_balancer_sku" {
   default     = "standard"
 }
 
-variable "node_os_channel_upgrade" {
-  description = "The automatic node channel upgrade setting for the AKS cluster"
-  default     = "None"
+variable "auto_upgrade_profile" {
+  description  = "Auto upgrade profile for a managed cluster"
+  type = object({
+    node_os_upgrade_channel = optional(string, "NodeImage")
+    upgrade_channel         = optional(string, "none")
+  })
+  default     = null
 }
 
 variable "oidc_issuer_enabled" {
   description = "Whether to enable OIDC Issuer for the AKS cluster"
+  type        = bool
 }
 
 variable "secret_rotation_enabled" {
@@ -294,13 +299,4 @@ variable "create_role_assignment_public_ip" {
   description = "Boolean value to create a role assignment for the public IP"
   type        = bool
   default     = false
-}
-
-# AKS version upgrade_override
-variable "upgrade_override" {
-  type = object({
-    force_upgrade_enabled = bool
-    effective_until       = optional(string)
-  })
-  default = null
 }

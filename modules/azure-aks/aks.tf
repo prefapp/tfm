@@ -4,16 +4,43 @@ module "aks" {
   source = "github.com/Azure/terraform-azurerm-avm-res-containerservice-managedcluster?ref=v0.7.1"
 
   location                                             = var.location
+
   default_agent_pool                                   = local.default_agent_pool
-  api_server_authorized_ip_ranges                      = var.api_server_authorized_ip_ranges
+
+  api_server_access_profile = var.api_server_authorized_ip_ranges == null ? null : {
+  authorized_ip_ranges = var.api_server_authorized_ip_ranges
+  }
+
   auto_scaler_profile                                  = local.auto_scaler_profile
-  key_vault_secrets_provider_enabled                   = var.key_vault_secrets_provider_enabled
+
+  addon_profile_key_vault_secrets_provider = var.key_vault_secrets_provider_enabled ? {
+    enabled = true
+
+    config = {
+      enable_secret_rotation = var.secret_rotation_enabled
+      rotation_poll_interval = var.secret_rotation_interval
+    }
+  } : null
+
   kubernetes_version                                   = var.aks_kubernetes_version
-  network_contributor_role_assigned_subnet_ids         = { aks_subnet = data.azurerm_subnet.aks_subnet.id }
-  node_os_channel_upgrade                              = var.node_os_channel_upgrade
+
+  auto_upgrade_profile = {
+    node_os_upgrade_channel = var.auto_upgrade_profile.node_os_channel_upgrade
+    upgrade_channel         = var.auto_upgrade_profile.upgrade_channel
+  }
+
   agent_pools                                          = local.agent_pools
-  oidc_issuer_enabled                                  = var.oidc_issuer_enabled
-  orchestrator_version                                 = var.aks_orchestrator_version
+
+  oidc_issuer_profile = {
+    enabled = var.oidc_issuer_enabled
+  }
+
+  security_profile = {
+    workload_identity = {
+      enabled = var.workload_identity_enabled
+    }
+  }
+
   name                                                 = var.aks_prefix
 
   aad_profile = {
@@ -46,8 +73,10 @@ module "aks" {
   }
 
   parent_id                                            = data.azurerm_resource_group.this.id
-  sku_tier                                             = var.aks_sku_tier
+
+  sku = {
+    tier = var.aks_sku_tier
+  }
+
   tags                                                 = local.tags
-  upgrade_override                                     = var.upgrade_override
-  workload_identity_enabled                            = var.workload_identity_enabled
 }

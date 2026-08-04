@@ -6,6 +6,12 @@ resource "azurerm_role_assignment" "role_assignment_network_contributor_over_pub
   principal_id         = module.aks.cluster_identity.principal_id
 }
 
+resource "azurerm_role_assignment" "role_assignment_network_contributor_over_subnet_aks" {
+  scope                = data.azurerm_subnet.aks_subnet.id
+  role_definition_name = "Network Contributor"
+  principal_id         = module.aks.cluster_identity.principal_id
+}
+
 resource "azurerm_role_assignment" "acr_pull" {
   for_each = var.acr_map
 
