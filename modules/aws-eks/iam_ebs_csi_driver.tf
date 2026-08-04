@@ -25,8 +25,8 @@ locals {
 
   ebs_arn_role = "arn:aws:iam::${local.account_id}:role/${local.ebs_iam_role_name}"
 
-  ebs_addon         = lookup(local.cluster_addons, "aws-ebs-csi-driver", false)
-  ebs_addon_enabled = local.eco_dr_enabled || local.ebs_addon == false ? false : lookup(local.cluster_addons.aws-ebs-csi-driver, "enabled", false)
+  ebs_addon         = try(local.cluster_addons.aws-ebs-csi-driver, null)
+  ebs_addon_enabled = !local.eco_dr_enabled && local.ebs_addon != null ? lookup(local.ebs_addon, "enabled", false) : false
 }
 
 
