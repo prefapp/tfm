@@ -234,13 +234,13 @@ variable "enable_karpenter" {
 variable "karpenter_service_account_name" {
   description = "Set the name of K8s service account karpenter controller"
   type        = string
-  default     = "karpenter-sa"
+  default     = "karpenter"
 }
 
 variable "karpenter_namespace_name" {
   description = "Set the name of K8s namespace where is deployed the karpenter controller"
   type        = string
-  default     = "karpenter"
+  default     = "kube-system"
 }
 
 variable "karpenter_controller_enable_inline_policy" {

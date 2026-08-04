@@ -8,6 +8,11 @@ locals {
   eco_dr_enabled = contains(["true", "1", "on", "yes"], lower(tostring(var.ECO_DR)))
 }
 
+moved {
+  from = module.eks
+  to   = module.eks[0]
+}
+
 
 /*
   This module is used to create the EKS cluster.
