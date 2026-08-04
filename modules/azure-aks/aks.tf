@@ -67,10 +67,6 @@ module "aks" {
     } : null
   }
 
-  key_vault_secrets_provider = {
-    secret_rotation_enabled  = var.secret_rotation_enabled
-    secret_rotation_interval = var.secret_rotation_interval
-  }
 
   parent_id                                            = data.azurerm_resource_group.this.id
 
