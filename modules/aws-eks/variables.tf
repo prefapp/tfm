@@ -272,3 +272,14 @@ variable "create_auto_mode_iam_resources" {
   type        = bool
   default     = true
 }
+
+variable "ECO_DR" {
+  description = "When set to true/1/ON, disables creation of EKS resources for cold standby DR workspaces. Defaults to false so normal workspaces create all configured resources."
+  type        = any
+  default     = false
+
+  validation {
+    condition     = contains(["true", "false", "1", "0", "on", "off", "yes", "no"], lower(tostring(var.ECO_DR)))
+    error_message = "ECO_DR must be one of: true, false, 1, 0, ON, OFF, yes, no."
+  }
+}

@@ -13,7 +13,7 @@
 */
 resource "aws_iam_role" "iam_role_oidc" {
 
-  count = var.create_alb_ingress_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_alb_ingress_iam ? 1 : 0
 
   name = coalesce(var.alb_ingress_role_name, format("k8s-%s-%s-oidc-role-%s", var.tags["project"], var.tags["env"], var.cluster_name))
 
@@ -23,12 +23,12 @@ resource "aws_iam_role" "iam_role_oidc" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${module.eks.oidc_provider_arn}"
+          "Federated" : "${module.eks[0].oidc_provider_arn}"
         },
         "Action" : ["sts:AssumeRoleWithWebIdentity", "sts:AssumeRole"],
         "Condition" : {
           "StringEquals" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:alb-ingress-controller"
+            "${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:alb-ingress-controller"
           }
         }
       }
@@ -50,7 +50,7 @@ resource "aws_iam_role" "iam_role_oidc" {
 # Policy for ALBIngressControllerIAMPolicy
 resource "aws_iam_policy" "iam_policy_alb" {
 
-  count = var.create_alb_ingress_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_alb_ingress_iam ? 1 : 0
 
   name = format("k8s-%s-%s-alb-policy-%s", var.tags["project"], var.tags["env"], var.cluster_name)
 
@@ -317,7 +317,7 @@ resource "aws_iam_policy" "iam_policy_alb" {
 # Attach ALBIngressControllerIAMPolicy in ALBIngressController role
 resource "aws_iam_role_policy_attachment" "iam_role_scm_attachment" {
 
-  count = var.create_alb_ingress_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_alb_ingress_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_oidc[count.index].name
 

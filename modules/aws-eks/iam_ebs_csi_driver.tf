@@ -23,10 +23,10 @@ locals {
 
   ebs_iam_role_name = "AmazonEKS_EBS_CSI_DriverRole-${var.cluster_name}"
 
-  ebs_arn_role = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.ebs_iam_role_name}"
+  ebs_arn_role = "arn:aws:iam::${local.account_id}:role/${local.ebs_iam_role_name}"
 
   ebs_addon         = lookup(local.cluster_addons, "aws-ebs-csi-driver", false)
-  ebs_addon_enabled = local.ebs_addon == false ? false : lookup(local.cluster_addons.aws-ebs-csi-driver, "enabled", false)
+  ebs_addon_enabled = local.eco_dr_enabled || local.ebs_addon == false ? false : lookup(local.cluster_addons.aws-ebs-csi-driver, "enabled", false)
 }
 
 
@@ -47,7 +47,7 @@ resource "aws_iam_role" "ebs_driver_policy" {
 
         "Principal" : {
 
-          "Federated" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}"
+          "Federated" : "arn:aws:iam::${local.account_id}:oidc-provider/${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}"
 
         },
 
@@ -57,9 +57,9 @@ resource "aws_iam_role" "ebs_driver_policy" {
 
           "StringLike" : {
 
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:aud" : "sts.amazonaws.com",
+            "${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}:aud" : "sts.amazonaws.com",
 
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+            "${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:ebs-csi-controller-sa"
           }
         }
       }

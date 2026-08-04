@@ -1,5 +1,5 @@
 resource "aws_iam_policy" "iam_policy_extra_karpenter" {
-  count       = var.enable_karpenter ? 1 : 0
+  count       = !local.eco_dr_enabled && var.enable_karpenter ? 1 : 0
   name_prefix = format("%s-karpenter-extra", var.cluster_name)
 
   policy = jsonencode({

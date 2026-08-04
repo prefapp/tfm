@@ -1,5 +1,5 @@
 module "karpenter" {
-  count = var.enable_karpenter == true ? 1 : 0
+  count = !local.eco_dr_enabled && var.enable_karpenter == true ? 1 : 0
 
 
   source       = "terraform-aws-modules/eks/aws//modules/karpenter"

@@ -17,6 +17,7 @@ Below is a description of the main features and components of the module:
 ## Key Features
 
 - **EKS Cluster Provisioning**: Automatically provisions an Amazon EKS cluster for scalable and managed Kubernetes workloads.
+- **Cold Standby DR Guard**: Supports `ECO_DR` to render the module without creating EKS resources, so DR workspaces can exist without activating the control plane until recovery time.
 - **Karpenter Integration (Optional)**: Generates required data and IAM roles for seamless integration with Karpenter, an open-source Kubernetes autoscaler.
 - **IAM Roles Creation for Addons**:
   - **EBS (Elastic Block Store)**: Enables dynamic provisioning and management of EBS volumes via the EBS CSI driver.

@@ -14,12 +14,12 @@
 
 output "account_id" {
   description = "AWS Account ID where the EKS cluster is deployed"
-  value       = data.aws_caller_identity.current.account_id
+  value       = local.account_id
 }
 
 output "eks" {
   description = "EKS module details"
-  value       = module.eks
+  value       = try(module.eks[0], null)
 }
 
 output "summary" {
@@ -36,7 +36,7 @@ output "summary" {
      - Cluster Name: ${var.cluster_name}
      - Cluster Version: ${var.cluster_version}
      - Cluster Region: ${var.region}
-     - IAM Cluster Role: ${split("/", var.cluster_iam_role_arn != null ? var.cluster_iam_role_arn : module.eks.cluster_iam_role_arn)[1]}
+     - IAM Cluster Role: ${local.eco_dr_enabled ? "disabled by ECO_DR" : split("/", var.cluster_iam_role_arn != null ? var.cluster_iam_role_arn : module.eks[0].cluster_iam_role_arn)[1]}
      - Cluster Tags:
      ${join("\n", [
   for tag_key, tag_value in var.tags :
@@ -54,7 +54,7 @@ output "summary" {
            - Desired capacity: ${node_group_value.desired_size}
            - Min size: ${node_group_value.min_size}
            - Max size: ${node_group_value.max_size}
-           - Launch template version: ${lookup(node_group_value, "launch_template_version", module.eks.eks_managed_node_groups[node_group_key].launch_template_latest_version)}
+            - Launch template version: ${local.eco_dr_enabled ? "disabled by ECO_DR" : lookup(node_group_value, "launch_template_version", module.eks[0].eks_managed_node_groups[node_group_key].launch_template_latest_version)}
            - Labels:
          ${join("\n", [for k, v in node_group_value.labels : "\t- ${k}: ${v}"])}
        EOT
@@ -64,7 +64,7 @@ output "summary" {
      Add-ons
      ----------------------------------------------------------------------------
      ${join("\n", [
-  for addon_key, addon_value in module.eks.cluster_addons :
+  for addon_key, addon_value in try(module.eks[0].cluster_addons, {}) :
   format(
     " - %s\n \t- Addon Version: %s\n\t- ServiceAccount IAM Role: %s\n\t- Advanced configuration:\t%s",
     addon_key,
@@ -81,12 +81,12 @@ output "summary" {
      Network Details:
      ----------------------------------------------------------------------------
      - Account ID: ${local.account_id}
-     - VPC ID: ${data.aws_vpc.selected.id}
+     - VPC ID: ${try(data.aws_vpc.selected[0].id, "disabled by ECO_DR")}
      - VPC Subnets:
      ${join("\n", [
   for subnet_key, subnet_value in zipmap(
-    range(length(coalesce(data.aws_subnets.filtered.ids, var.subnet_ids))),
-    coalesce(data.aws_subnets.filtered.ids, var.subnet_ids)
+    range(length(coalesce(try(data.aws_subnets.filtered[0].ids, null), var.subnet_ids, []))),
+    coalesce(try(data.aws_subnets.filtered[0].ids, null), var.subnet_ids, [])
   ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
 ])}

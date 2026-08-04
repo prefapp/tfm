@@ -17,7 +17,7 @@
 
 resource "aws_iam_policy" "iam_policy_EFS_CSI_DriverRole" {
 
-  count = var.create_efs_driver_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_efs_driver_iam ? 1 : 0
 
   name = "iam_policy_EFS_CSI_DriverRole"
 
@@ -121,7 +121,7 @@ resource "aws_iam_policy" "iam_policy_EFS_CSI_DriverRole" {
 
 resource "aws_iam_role" "iam_role_EKS_EFS_CSI_DriverRole" {
 
-  count = var.create_efs_driver_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_efs_driver_iam ? 1 : 0
 
   name = "iam_role_EKS_EFS_CSI_DriverRole"
 
@@ -137,7 +137,7 @@ resource "aws_iam_role" "iam_role_EKS_EFS_CSI_DriverRole" {
 
         "Principal" : {
 
-          "Federated" : "${module.eks.oidc_provider_arn}"
+          "Federated" : "${module.eks[0].oidc_provider_arn}"
 
         },
 
@@ -147,7 +147,7 @@ resource "aws_iam_role" "iam_role_EKS_EFS_CSI_DriverRole" {
 
           "StringLike" : {
 
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*:*"
+            "${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*:*"
 
           }
 
@@ -166,7 +166,7 @@ resource "aws_iam_role" "iam_role_EKS_EFS_CSI_DriverRole" {
 
 resource "aws_iam_role_policy_attachment" "iam_role_EKS_EFS_CSI_DriverRole_attachment" {
 
-  count = var.create_efs_driver_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_efs_driver_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_EKS_EFS_CSI_DriverRole[count.index].name
 

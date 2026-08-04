@@ -18,6 +18,7 @@ Below is a description of the main features and components of the module:
 ## Key Features
 
 - **EKS Cluster Provisioning**: Automatically provisions an Amazon EKS cluster for scalable and managed Kubernetes workloads.
+- **Cold Standby DR Guard**: Supports `ECO_DR` to render the module without creating EKS resources, so DR workspaces can exist without activating the control plane until recovery time.
 - **Karpenter Integration (Optional)**: Generates required data and IAM roles for seamless integration with Karpenter, an open-source Kubernetes autoscaler.
 - **IAM Roles Creation for Addons**:
   - **EBS (Elastic Block Store)**: Enables dynamic provisioning and management of EBS volumes via the EBS CSI driver.
@@ -123,7 +124,7 @@ The module is organized with the following directory and file structure:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.33 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.35 |
@@ -133,20 +134,20 @@ The module is organized with the following directory and file structure:
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.33 |
+| ---- | ------- |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.57.1 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 21.23.0 |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | terraform-aws-modules/eks/aws//modules/karpenter | 21.23.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_iam_policy.external_dns_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_EFS_CSI_DriverRole](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
@@ -174,7 +175,8 @@ The module is organized with the following directory and file structure:
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_ECO_DR"></a> [ECO\_DR](#input\_ECO\_DR) | When set to true/1/ON, disables creation of EKS resources for cold standby DR workspaces. Defaults to false so normal workspaces create all configured resources. | `any` | `false` | no |
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
 | <a name="input_alb_ingress_role_name"></a> [alb\_ingress\_role\_name](#input\_alb\_ingress\_role\_name) | IAM role name for ALB Ingress. Leave null to auto-generate per cluster (format: k8s-<project>-<env>-oidc-role-<cluster\_name>). For backward compatibility, use: k8s-<tags.project>-<tags.env>-oidc-role. | `string` | `null` | no |
 | <a name="input_cloudwatch_log_group_class"></a> [cloudwatch\_log\_group\_class](#input\_cloudwatch\_log\_group\_class) | The class of the CloudWatch log group to create, e.g., 'STANDARD' or 'INFREQUENT\_ACCESS'. | `string` | `null` | no |
@@ -221,7 +223,7 @@ The module is organized with the following directory and file structure:
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | AWS Account ID where the EKS cluster is deployed |
 | <a name="output_debug"></a> [debug](#output\_debug) | Debug information for mixed addons |
 | <a name="output_eks"></a> [eks](#output\_eks) | EKS module details |
