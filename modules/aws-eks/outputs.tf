@@ -97,11 +97,11 @@ output "summary" {
 
          | Service             | Created |
          |---------------------|---------|
-         | ALB Ingress IAM     | ${var.create_alb_ingress_iam}    |
-         | CloudWatch IAM      | ${var.create_cloudwatch_iam}    |
-         | EFS Driver IAM      | ${var.create_efs_driver_iam}   |
-         | External DNS IAM    | ${var.create_external_dns_iam}    |
-         | Parameter Store IAM | ${var.create_parameter_store_iam}    |
+         | ALB Ingress IAM     | ${!local.eco_dr_enabled && var.create_alb_ingress_iam}    |
+         | CloudWatch IAM      | ${!local.eco_dr_enabled && var.create_cloudwatch_iam}    |
+         | EFS Driver IAM      | ${!local.eco_dr_enabled && var.create_efs_driver_iam}   |
+         | External DNS IAM    | ${!local.eco_dr_enabled && var.create_external_dns_iam}    |
+         | Parameter Store IAM | ${!local.eco_dr_enabled && var.create_parameter_store_iam}    |
 
      ############################################################################
 
@@ -110,5 +110,5 @@ output "summary" {
 
 output "debug" {
   description = "Debug information for mixed addons"
-  value       = local.mixed_addons
+  value       = local.eco_dr_enabled ? {} : local.mixed_addons
 }

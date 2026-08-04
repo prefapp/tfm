@@ -93,7 +93,7 @@ locals {
    * - Final list of addons that will be deployed.
    * - Filters out any addons that are explicitly disabled.
    */
-  cluster_addons = {
+  cluster_addons = local.eco_dr_enabled ? {} : {
     for key, value in local.processed_addons : key => value
     if lookup(value, "enabled", true) == true
   }
