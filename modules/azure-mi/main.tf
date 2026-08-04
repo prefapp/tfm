@@ -51,12 +51,12 @@ resource "azurerm_federated_identity_credential" "that" {
 
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy
 resource "azurerm_key_vault_access_policy" "access_policy" {
-  for_each           = { for policy in var.access_policies : policy.key_vault_id => policy }
-  key_vault_id       = each.value.key_vault_id
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = azurerm_user_assigned_identity.this.principal_id
-  key_permissions    = each.value.key_permissions
-  secret_permissions = each.value.secret_permissions
+  for_each                = { for policy in var.access_policies : policy.key_vault_id => policy }
+  key_vault_id            = each.value.key_vault_id
+  tenant_id               = data.azurerm_client_config.current.tenant_id
+  object_id               = azurerm_user_assigned_identity.this.principal_id
+  key_permissions         = each.value.key_permissions
+  secret_permissions      = each.value.secret_permissions
   certificate_permissions = each.value.certificate_permissions
-  storage_permissions = each.value.storage_permissions
+  storage_permissions     = each.value.storage_permissions
 }
