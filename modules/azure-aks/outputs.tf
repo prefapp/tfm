@@ -42,8 +42,13 @@ output "kubelet_identity_object_id" {
 # The network profile of the AKS cluster. See README for structure.
 output "network_profile" {
   value = {
-    load_balancer_effective_outbound_ips = module.aks.network_profile_load_balancer_profile_effective_outbound_ips
-    nat_gateway_effective_outbound_ips   = module.aks.network_profile_nat_gateway_profile_effective_outbound_ips
+    outbound_type = var.net_profile_outbound_type
+
+    load_balancer_effective_outbound_ips =
+      module.aks.network_profile_load_balancer_profile_effective_outbound_ips
+
+    nat_gateway_effective_outbound_ips =
+      module.aks.network_profile_nat_gateway_profile_effective_outbound_ips
   }
 }
 
