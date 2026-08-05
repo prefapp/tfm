@@ -25,7 +25,7 @@ module "aks" {
   kubernetes_version                                   = var.aks_kubernetes_version
 
   auto_upgrade_profile = {
-    node_os_upgrade_channel = var.auto_upgrade_profile.node_os_channel_upgrade
+    node_os_upgrade_channel = var.auto_upgrade_profile.node_os_upgrade_channel
     upgrade_channel         = var.auto_upgrade_profile.upgrade_channel
   }
 
