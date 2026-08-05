@@ -18,9 +18,9 @@ output "cluster_fqdn" {
 
 # The cluster identity of the AKS cluster. See README for structure.
 output "cluster_identity" {
-  value {
+  value = {
     principal_id = module.aks.identity_principal_id
-    tenant_id    = module.aks.identity_tenat_id
+    tenant_id    = module.aks.identity_tenant_id
   }
 }
 
@@ -44,6 +44,7 @@ output "network_profile" {
   value = {
     load_balancer_effective_outbound_ips = module.aks.network_profile_load_balancer_profile_effective_outbound_ips
     nat_gateway_effective_outbound_ips   = module.aks.network_profile_nat_gateway_profile_effective_outbound_ips
+  }
 }
 
 # The node resource group of the AKS cluster.
