@@ -274,7 +274,7 @@ variable "create_auto_mode_iam_resources" {
 }
 
 variable "ECO_DR" {
-  description = "When set to true/1/ON, disables creation of EKS resources for cold standby DR workspaces. Defaults to false so normal workspaces create all configured resources."
+  description = "When set to true, 1, ON, or yes, disables creation of EKS resources for cold standby DR workspaces. false, 0, OFF, and no keep normal resource creation enabled. Values are case-insensitive."
   type        = any
   default     = false
 
