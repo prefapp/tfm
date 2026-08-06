@@ -18,7 +18,7 @@ Below is a description of the main features and components of the module:
 ## Key Features
 
 - **EKS Cluster Provisioning**: Automatically provisions an Amazon EKS cluster for scalable and managed Kubernetes workloads.
-- **Cold Standby DR Guard**: Supports `ECO_DR` to render the module without creating EKS resources, so DR workspaces can exist without activating the control plane until recovery time.
+- **Cold Standby DR Guard**: Supports the `ECO_DR` input, supplied as `TF_VAR_ECO_DR` from GitHub environment variables, to render the module without creating EKS resources, so DR workspaces can exist without activating the control plane until recovery time.
 - **Karpenter Integration (Optional)**: Generates required data and IAM roles for seamless integration with Karpenter, an open-source Kubernetes autoscaler.
 - **IAM Roles Creation for Addons**:
   - **EBS (Elastic Block Store)**: Enables dynamic provisioning and management of EBS volumes via the EBS CSI driver.
@@ -176,7 +176,7 @@ The module is organized with the following directory and file structure:
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_ECO_DR"></a> [ECO\_DR](#input\_ECO\_DR) | When set to true, 1, ON, or yes, disables creation of EKS resources for cold standby DR workspaces. false, 0, OFF, and no keep normal resource creation enabled. Values are case-insensitive. | `any` | `false` | no |
+| <a name="input_ECO_DR"></a> [ECO\_DR](#input\_ECO\_DR) | Set via TF\_VAR\_ECO\_DR for GitHub environment-driven Terraform runs. When set to true, 1, ON, or yes, disables creation of EKS resources for cold standby DR workspaces. false, 0, OFF, and no keep normal resource creation enabled. Values are case-insensitive. | `any` | `false` | no |
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Access entries to apply to the EKS cluster | `any` | `{}` | no |
 | <a name="input_alb_ingress_role_name"></a> [alb\_ingress\_role\_name](#input\_alb\_ingress\_role\_name) | IAM role name for ALB Ingress. Leave null to auto-generate per cluster (format: k8s-<project>-<env>-oidc-role-<cluster\_name>). For backward compatibility, use: k8s-<tags.project>-<tags.env>-oidc-role. | `string` | `null` | no |
 | <a name="input_cloudwatch_log_group_class"></a> [cloudwatch\_log\_group\_class](#input\_cloudwatch\_log\_group\_class) | The class of the CloudWatch log group to create, e.g., 'STANDARD' or 'INFREQUENT\_ACCESS'. | `string` | `null` | no |
