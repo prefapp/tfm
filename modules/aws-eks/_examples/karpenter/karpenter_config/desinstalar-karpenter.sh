@@ -39,7 +39,7 @@ sleep 20
 # Paso 3: Desinstalar Karpenter con Helm
 echo ""
 echo "📦 Paso 3/3: Desinstalando Karpenter (Helm)..."
-helm uninstall karpenter -n kube-system --ignore-not-found=true || true
+helm uninstall karpenter -n karpenter --ignore-not-found=true || true
 echo "   ✅ Karpenter desinstalado"
 
 echo ""
@@ -54,4 +54,4 @@ echo "EC2NodeClass restantes:"
 kubectl get ec2nodeclass 2>/dev/null || echo "   Ninguno"
 echo ""
 echo "Pods de Karpenter:"
-kubectl get pods -n kube-system -l app.kubernetes.io/name=karpenter 2>/dev/null || echo "   No hay pods de Karpenter en kube-system"
+kubectl get pods -n karpenter 2>/dev/null || echo "   Namespace karpenter no existe o está vacío"

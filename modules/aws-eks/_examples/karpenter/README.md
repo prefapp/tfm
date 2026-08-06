@@ -49,7 +49,7 @@ Apply each component separately (useful if you want to review/edit manifests fir
 ```bash
 helm upgrade --install karpenter \
   oci://public.ecr.aws/karpenter/karpenter \
-  --namespace kube-system \
+  --namespace karpenter --create-namespace \
   -f values.yaml
 ```
 - Adjust in `values.yaml`:
@@ -91,7 +91,7 @@ kubectl get nodepool -n kube-system
 kubectl get ec2nodeclass
 kubectl get pods -n default -o wide
 kubectl get nodes --show-labels
-kubectl logs -n kube-system -l app.kubernetes.io/name=karpenter --tail=50
+kubectl logs -n karpenter -l app.kubernetes.io/name=karpenter --tail=50
 ```
 
 6) Manual uninstall (no scripts)
@@ -101,7 +101,7 @@ kubectl delete -f nodepool-on-demand-dev.yaml
 kubectl delete -f nodepool-spot-dev.yaml   # if applied
 kubectl delete -f nodepool-on-demand-default.yaml
 kubectl delete -f ec2nodeclass-on-demand-default.yaml
-helm uninstall karpenter -n kube-system
+helm uninstall karpenter -n karpenter
 ```
 
 ---
