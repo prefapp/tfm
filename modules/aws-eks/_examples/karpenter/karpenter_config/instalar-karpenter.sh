@@ -32,7 +32,7 @@ fi
 echo ""
 echo "📦 Instalando Karpenter con Helm..."
 aws eks update-kubeconfig --region eu-west-1 --name kubernetes-my-org-dev
-helm upgrade --install --namespace karpenter --create-namespace \
+helm upgrade --install --namespace kube-system \
   karpenter oci://public.ecr.aws/karpenter/karpenter \
   --version 1.6.3 \
   --set "serviceAccount.annotations.eks\.amazonaws\.com/role-arn=${KARPENTER_IAM_ROLE_ARN}" \
@@ -45,9 +45,8 @@ echo ""
 echo "✅ Karpenter instalado/actualizado correctamente"
 echo ""
 echo "📊 Verificando estado..."
-kubectl get pods -n karpenter
+kubectl get pods -n kube-system
 echo ""
 echo "📋 Verifica los logs para confirmar que no hay errores:"
 sleep 15
-echo "   kubectl logs -n karpenter -l app.kubernetes.io/name=karpenter --tail=50"
-
+echo "   kubectl logs -n kube-system -l app.kubernetes.io/name=karpenter --tail=50"

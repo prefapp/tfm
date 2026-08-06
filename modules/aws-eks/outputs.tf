@@ -13,7 +13,7 @@
 */
 
 output "account_id" {
-  description = "AWS Account ID where the EKS cluster is deployed"
+  description = "AWS Account ID where the EKS cluster is deployed. Null when ECO_DR is enabled."
   value       = local.account_id_output
 }
 
