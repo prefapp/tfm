@@ -14,7 +14,7 @@
 
 output "account_id" {
   description = "AWS Account ID where the EKS cluster is deployed"
-  value       = local.account_id
+  value       = local.account_id_output
 }
 
 output "eks" {
@@ -80,7 +80,7 @@ output "summary" {
      ----------------------------------------------------------------------------
      Network Details:
      ----------------------------------------------------------------------------
-     - Account ID: ${local.account_id}
+     - Account ID: ${local.account_id_output}
      - VPC ID: ${try(data.aws_vpc.selected[0].id, "disabled by ECO_DR")}
      - VPC Subnets:
      ${join("\n", [

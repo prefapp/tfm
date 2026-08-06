@@ -4,8 +4,9 @@
  * It is used in the "Deploying an EKS Cluster" chapter.
  */
 locals {
-  account_id     = try(data.aws_caller_identity.current[0].account_id, "")
-  eco_dr_enabled = contains(["true", "1", "on", "yes"], lower(tostring(var.ECO_DR)))
+  account_id        = try(data.aws_caller_identity.current[0].account_id, "")
+  account_id_output = local.eco_dr_enabled ? "disabled by ECO_DR" : local.account_id
+  eco_dr_enabled    = contains(["true", "1", "on", "yes"], lower(tostring(var.ECO_DR)))
 }
 
 moved {
