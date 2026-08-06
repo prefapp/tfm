@@ -14,7 +14,7 @@
 
 output "account_id" {
   description = "AWS Account ID where the EKS cluster is deployed"
-  value       = local.account_id
+  value       = local.account_id_output
 }
 
 output "eks" {
