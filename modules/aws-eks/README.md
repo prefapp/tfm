@@ -135,7 +135,7 @@ The module is organized with the following directory and file structure:
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.57.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.33 |
 
 ## Modules
 
@@ -225,8 +225,8 @@ The module is organized with the following directory and file structure:
 | Name | Description |
 | ---- | ----------- |
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | AWS Account ID where the EKS cluster is deployed. Null when ECO\_DR is enabled. |
-| <a name="output_debug"></a> [debug](#output\_debug) | Debug information for mixed addons |
-| <a name="output_eks"></a> [eks](#output\_eks) | EKS module details |
+| <a name="output_debug"></a> [debug](#output\_debug) | Debug information for mixed addons. Empty when ECO\_DR is enabled. |
+| <a name="output_eks"></a> [eks](#output\_eks) | EKS module details. Null when ECO\_DR is enabled. |
 | <a name="output_summary"></a> [summary](#output\_summary) | Summary of the EKS cluster configuration |
 
 ## Examples

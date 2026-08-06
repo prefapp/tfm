@@ -18,7 +18,7 @@ output "account_id" {
 }
 
 output "eks" {
-  description = "EKS module details"
+  description = "EKS module details. Null when ECO_DR is enabled."
   value       = try(module.eks[0], null)
 }
 
@@ -109,7 +109,7 @@ output "summary" {
 }
 
 output "debug" {
-  description = "Debug information for mixed addons"
+  description = "Debug information for mixed addons. Empty when ECO_DR is enabled."
   value = {
     for key, value in local.mixed_addons : key => value
     if !local.eco_dr_enabled
