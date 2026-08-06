@@ -14,7 +14,7 @@
 
 output "account_id" {
   description = "AWS Account ID where the EKS cluster is deployed"
-  value       = local.account_id_output
+  value       = local.account_id
 }
 
 output "eks" {
@@ -80,13 +80,13 @@ output "summary" {
      ----------------------------------------------------------------------------
      Network Details:
      ----------------------------------------------------------------------------
-     - Account ID: ${local.account_id_output}
+     - Account ID: ${local.account_id_summary}
      - VPC ID: ${try(data.aws_vpc.selected[0].id, "disabled by ECO_DR")}
      - VPC Subnets:
      ${join("\n", [
   for subnet_key, subnet_value in zipmap(
-    range(length(coalesce(try(data.aws_subnets.filtered[0].ids, null), var.subnet_ids, []))),
-    coalesce(try(data.aws_subnets.filtered[0].ids, null), var.subnet_ids, [])
+    range(length(coalescelist(try(data.aws_subnets.filtered[0].ids, []), var.subnet_ids, []))),
+    coalescelist(try(data.aws_subnets.filtered[0].ids, []), var.subnet_ids, [])
   ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
 ])}
