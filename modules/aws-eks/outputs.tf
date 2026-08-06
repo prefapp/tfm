@@ -54,7 +54,7 @@ output "summary" {
            - Desired capacity: ${node_group_value.desired_size}
            - Min size: ${node_group_value.min_size}
            - Max size: ${node_group_value.max_size}
-            - Launch template version: ${local.eco_dr_enabled ? "disabled by ECO_DR" : lookup(node_group_value, "launch_template_version", module.eks[0].eks_managed_node_groups[node_group_key].launch_template_latest_version)}
+           - Launch template version: ${local.eco_dr_enabled ? "disabled by ECO_DR" : coalesce(lookup(node_group_value, "launch_template_version", null), try(module.eks[0].eks_managed_node_groups[node_group_key].launch_template_latest_version, "unknown"))}
            - Labels:
          ${join("\n", [for k, v in node_group_value.labels : "\t- ${k}: ${v}"])}
        EOT

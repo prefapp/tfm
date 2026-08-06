@@ -4,7 +4,7 @@ serviceAccount:
   create: true
   # -- The name of the ServiceAccount to use.
   # If not set and create is true, a name is generated using the fullname template.
-  name: "karpenter-sa"
+  name: "karpenter"
   # -- Additional annotations for the ServiceAccount.
   annotations:
     # eks.amazonaws.com/role-arn: arn:aws:iam::816069157330:role/kubernetes-my-org-dev-karpenter-role
@@ -47,4 +47,3 @@ settings:
     # Setting driftEnabled to true enables the drift deprovisioner to watch for drift between currently deployed nodes
     # and the desired state of nodes set in provisioners and node templates
     driftEnabled: false
-
