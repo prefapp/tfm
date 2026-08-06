@@ -274,7 +274,7 @@ variable "create_auto_mode_iam_resources" {
 }
 
 variable "ECO_DR" {
-  description = "Set via TF_VAR_ECO_DR for GitHub environment-driven Terraform runs. When set to true, 1, ON, or yes, disables creation of EKS resources for cold standby DR workspaces. false, 0, OFF, and no keep normal resource creation enabled. Values are case-insensitive."
+  description = "Set via TF_VAR_ECO_DR when this module is the root module, or pass the value through from the root module when used as a child. When set to true, 1, ON, or yes, disables creation of EKS resources for cold standby DR workspaces. false, 0, OFF, and no keep normal resource creation enabled. Values are case-insensitive."
   type        = any
   default     = false
 

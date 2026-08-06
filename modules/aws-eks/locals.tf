@@ -62,5 +62,9 @@ locals {
   # Final Subnet Selection (Dynamic Logic)
   #######################################
   # Decide which subnet IDs to use (filtered or manually provided)
-  selected_subnet_ids = local.eco_dr_enabled ? [] : var.subnet_tags != null && length(data.aws_subnets.filtered[0].ids) > 0 ? data.aws_subnets.filtered[0].ids : var.subnet_ids
+  selected_subnet_ids = local.eco_dr_enabled ? [] : (
+    var.subnet_tags != null && length(data.aws_subnets.filtered[0].ids) > 0
+    ? data.aws_subnets.filtered[0].ids
+    : var.subnet_ids
+  )
 }
