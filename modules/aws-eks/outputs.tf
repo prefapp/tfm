@@ -110,5 +110,8 @@ output "summary" {
 
 output "debug" {
   description = "Debug information for mixed addons"
-  value       = local.eco_dr_enabled ? {} : local.mixed_addons
+  value = {
+    for key, value in local.mixed_addons : key => value
+    if !local.eco_dr_enabled
+  }
 }
