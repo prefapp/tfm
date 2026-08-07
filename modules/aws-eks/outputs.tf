@@ -89,7 +89,7 @@ output "summary" {
     local.selected_subnet_ids
   ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
-])})
+])}
 
      ----------------------------------------------------------------------------
      IAM Roles:
