@@ -174,14 +174,14 @@ module "repository" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
 
 ## Modules
@@ -191,7 +191,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [github_actions_repository_oidc_subject_claim_customization_template.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_oidc_subject_claim_customization_template) | resource |
 | [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
 | [github_branch_default.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_default) | resource |
@@ -210,13 +210,13 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_config"></a> [config](#input\_config) | GitHub repository configuration (repository + default branch + files + variables + OIDC + teams + collaborators + pages + labels + branch\_protections) as a single complex object | <pre>object({<br/>    repository = object({<br/>      name                = string<br/>      description         = optional(string, "")<br/>      visibility          = optional(string, "private")<br/>      topics              = optional(list(string), [])<br/>      autoInit            = optional(bool, false)<br/>      archiveOnDestroy    = optional(bool, false)<br/>      allowMergeCommit    = optional(bool, true)<br/>      allowSquashMerge    = optional(bool, true)<br/>      allowRebaseMerge    = optional(bool, true)<br/>      allowAutoMerge      = optional(bool, false)<br/>      deleteBranchOnMerge = optional(bool, false)<br/>      allowUpdateBranch   = optional(bool, false)<br/>      hasIssues           = optional(bool, true)<br/>      hasWiki             = optional(bool, true)<br/>      hasDiscussions      = optional(bool, false)<br/>    })<br/><br/>    default_branch = object({<br/>      branch = string<br/>      rename = optional(bool, false)<br/>    })<br/><br/>    files = optional(list(object({<br/>      branch            = string<br/>      commitMessage     = string<br/>      content           = string<br/>      file              = string<br/>      overwriteOnCreate = optional(bool, true)<br/>    })), [])<br/><br/>    variables = optional(list(object({<br/>      variableName = string<br/>      value        = string<br/>    })), [])<br/><br/>    oidc_subject_claim_customization_template = optional(object({<br/>      useDefault       = optional(bool, true)<br/>      includeClaimKeys = optional(list(string), [])<br/>    }), null)<br/><br/>    teams = optional(list(object({<br/>      teamId     = number # Use numeric team ID to remain stable if team slugs change<br/>      permission = string<br/>    })), [])<br/><br/>    collaborators = optional(list(object({<br/>      username   = string<br/>      permission = string<br/>    })), [])<br/><br/>    # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)<br/>    pages = optional(object({<br/>      # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.<br/>      buildType = optional(string, "legacy")<br/>      cname     = optional(string, null)<br/>      source = optional(object({<br/>        branch = string<br/>        path   = optional(string, "/")<br/>      }), null)<br/>    }), null)<br/><br/>    labels = optional(list(object({<br/>      name        = string<br/>      description = optional(string, null)<br/>      color       = string # 6-digit hex without # (e.g. "d73a4a")<br/>    })), [])<br/><br/>    branch_protections = optional(list(object({<br/>      branch                        = string<br/>      statusChecks                  = optional(list(string), [])<br/>      requiredReviewersCount        = optional(number, 0)<br/>      requiredCodeownersReviewers   = optional(bool, false)<br/>      enforceAdmins                 = optional(bool, false)<br/>      requireSignedCommits          = optional(bool, false)<br/>      requireConversationResolution = optional(bool, false)<br/>      bypassPullRequestAllowances = optional(object({<br/>        # apps  — GitHub App slugs, resolved by data.github_app<br/>        apps = optional(list(string), [])<br/>        # teams — team slugs, resolved by data.github_team<br/>        teams = optional(list(string), [])<br/>        # users — user logins, resolved by data.github_user<br/>        users = optional(list(string), [])<br/>      }), null)<br/>      pushAllowances = optional(object({<br/>        # apps  — GitHub App slugs, resolved by data.github_app<br/>        apps = optional(list(string), [])<br/>        # teams — team slugs, resolved by data.github_team<br/>        teams = optional(list(string), [])<br/>        # users — user logins, resolved by data.github_user<br/>        users = optional(list(string), [])<br/>      }), null)<br/>    })), [])<br/><br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_added_teams"></a> [added\_teams](#output\_added\_teams) | List of teams (by ID) added to the repository |
 | <a name="output_branch_protections"></a> [branch\_protections](#output\_branch\_protections) | List of branch protection patterns managed on the repository |
 | <a name="output_collaborators"></a> [collaborators](#output\_collaborators) | List of collaborators added to the repository |
