@@ -55,4 +55,3 @@ kubectl get ec2nodeclass 2>/dev/null || echo "   Ninguno"
 echo ""
 echo "Pods de Karpenter:"
 kubectl get pods -n karpenter 2>/dev/null || echo "   Namespace karpenter no existe o está vacío"
-

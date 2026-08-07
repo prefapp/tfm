@@ -19,7 +19,7 @@
 # IAM Policy for Parameter Store
 resource "aws_iam_policy" "iam_policy_parameter_store" {
 
-  count = var.create_parameter_store_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_parameter_store_iam ? 1 : 0
 
   name = format("iam_policy_parameter_store-%s", var.cluster_name)
 
@@ -39,7 +39,7 @@ resource "aws_iam_policy" "iam_policy_parameter_store" {
 # IAM Role for Parameter Store
 resource "aws_iam_role" "iam_role_parameter_store_all" {
 
-  count = var.create_parameter_store_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_parameter_store_iam ? 1 : 0
 
   name = coalesce(var.parameter_store_role_name, format("iam_role_parameter_store_all-%s", var.cluster_name))
 
@@ -51,12 +51,12 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${module.eks.oidc_provider_arn}"
+          "Federated" : "${module.eks[0].oidc_provider_arn}"
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*"
+            "${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}:sub" : "system:serviceaccount:*"
           }
         }
       }
@@ -71,7 +71,7 @@ resource "aws_iam_role" "iam_role_parameter_store_all" {
 
 resource "aws_iam_role_policy_attachment" "iam_role_parameter_store_all_attachment" {
 
-  count = var.create_parameter_store_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_parameter_store_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_parameter_store_all[count.index].name
 

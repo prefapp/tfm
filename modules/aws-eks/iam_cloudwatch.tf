@@ -18,7 +18,7 @@
 
 resource "aws_iam_policy" "policy_additional_cloudwatch" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_cloudwatch_iam ? 1 : 0
 
   name = "policy_additional_cloudwatch"
 
@@ -41,7 +41,7 @@ resource "aws_iam_policy" "policy_additional_cloudwatch" {
 
 resource "aws_iam_role" "iam_role_fluentd" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_cloudwatch_iam ? 1 : 0
 
   name = "eks-pro-fluentd-role"
 
@@ -51,12 +51,12 @@ resource "aws_iam_role" "iam_role_fluentd" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${module.eks.oidc_provider_arn}"
+          "Federated" : "${module.eks[0].oidc_provider_arn}"
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringEquals" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:fluentd-sa"
+            "${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:fluentd-sa"
           }
         }
       }
@@ -69,7 +69,7 @@ resource "aws_iam_role" "iam_role_fluentd" {
 
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServerPolicy" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_cloudwatch_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_fluentd[count.index].name
 
@@ -82,7 +82,7 @@ resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAgentServe
 
 resource "aws_iam_role_policy_attachment" "iam_role_fluentd_CloudWatchAdditionalPolicy" {
 
-  count = var.create_cloudwatch_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_cloudwatch_iam ? 1 : 0
 
   role = aws_iam_role.iam_role_fluentd[count.index].name
 

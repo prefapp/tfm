@@ -4,7 +4,15 @@
  * It is used in the "Deploying an EKS Cluster" chapter.
  */
 locals {
-  account_id = data.aws_caller_identity.current.account_id
+  account_id         = local.eco_dr_enabled ? "" : data.aws_caller_identity.current[0].account_id
+  account_id_output  = local.eco_dr_enabled ? null : local.account_id
+  account_id_summary = local.eco_dr_enabled ? "disabled by ECO_DR" : local.account_id
+  eco_dr_enabled     = contains(["true", "1", "on", "yes"], lower(var.ECO_DR == null ? "false" : tostring(var.ECO_DR)))
+}
+
+moved {
+  from = module.eks
+  to   = module.eks[0]
 }
 
 
@@ -15,6 +23,8 @@ locals {
 
 # EKS Cluster Configuration
 module "eks" {
+  count = local.eco_dr_enabled ? 0 : 1
+
   version                                = "21.23.0"
   source                                 = "terraform-aws-modules/eks/aws"
   name                                   = var.cluster_name
@@ -22,7 +32,7 @@ module "eks" {
   endpoint_private_access                = var.cluster_endpoint_private_access
   endpoint_public_access                 = var.cluster_endpoint_public_access
   cloudwatch_log_group_retention_in_days = var.cloudwatch_log_group_retention_in_days
-  vpc_id                                 = data.aws_vpc.selected.id
+  vpc_id                                 = data.aws_vpc.selected[0].id
   subnet_ids                             = local.selected_subnet_ids
   create_security_group                  = var.create_cluster_security_group
   security_group_id                      = var.cluster_security_group_id

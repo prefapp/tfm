@@ -50,4 +50,3 @@ echo ""
 echo "📋 Verifica los logs para confirmar que no hay errores:"
 sleep 15
 echo "   kubectl logs -n karpenter -l app.kubernetes.io/name=karpenter --tail=50"
-

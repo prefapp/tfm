@@ -13,13 +13,13 @@
 */
 
 output "account_id" {
-  description = "AWS Account ID where the EKS cluster is deployed"
-  value       = data.aws_caller_identity.current.account_id
+  description = "AWS Account ID where the EKS cluster is deployed. Null when ECO_DR is enabled."
+  value       = local.account_id_output
 }
 
 output "eks" {
-  description = "EKS module details"
-  value       = module.eks
+  description = "EKS module details. Null when ECO_DR is enabled."
+  value       = try(module.eks[0], null)
 }
 
 output "summary" {
@@ -36,7 +36,7 @@ output "summary" {
      - Cluster Name: ${var.cluster_name}
      - Cluster Version: ${var.cluster_version}
      - Cluster Region: ${var.region}
-     - IAM Cluster Role: ${split("/", var.cluster_iam_role_arn != null ? var.cluster_iam_role_arn : module.eks.cluster_iam_role_arn)[1]}
+     - IAM Cluster Role: ${local.eco_dr_enabled ? "disabled by ECO_DR" : split("/", var.cluster_iam_role_arn != null ? var.cluster_iam_role_arn : module.eks[0].cluster_iam_role_arn)[1]}
      - Cluster Tags:
      ${join("\n", [
   for tag_key, tag_value in var.tags :
@@ -54,7 +54,7 @@ output "summary" {
            - Desired capacity: ${node_group_value.desired_size}
            - Min size: ${node_group_value.min_size}
            - Max size: ${node_group_value.max_size}
-           - Launch template version: ${lookup(node_group_value, "launch_template_version", module.eks.eks_managed_node_groups[node_group_key].launch_template_latest_version)}
+           - Launch template version: ${local.eco_dr_enabled ? "disabled by ECO_DR" : coalesce(try(tostring(lookup(node_group_value, "launch_template_version", null)), null), try(tostring(module.eks[0].eks_managed_node_groups[node_group_key].launch_template_latest_version), "unknown"))}
            - Labels:
          ${join("\n", [for k, v in node_group_value.labels : "\t- ${k}: ${v}"])}
        EOT
@@ -64,7 +64,7 @@ output "summary" {
      Add-ons
      ----------------------------------------------------------------------------
      ${join("\n", [
-  for addon_key, addon_value in module.eks.cluster_addons :
+  for addon_key, addon_value in try(module.eks[0].cluster_addons, {}) :
   format(
     " - %s\n \t- Addon Version: %s\n\t- ServiceAccount IAM Role: %s\n\t- Advanced configuration:\t%s",
     addon_key,
@@ -80,13 +80,13 @@ output "summary" {
      ----------------------------------------------------------------------------
      Network Details:
      ----------------------------------------------------------------------------
-     - Account ID: ${local.account_id}
-     - VPC ID: ${data.aws_vpc.selected.id}
-     - VPC Subnets:
-     ${join("\n", [
+      - Account ID: ${local.account_id_summary}
+      - VPC ID: ${local.eco_dr_enabled ? "disabled by ECO_DR" : data.aws_vpc.selected[0].id}
+      - VPC Subnets:
+      ${length(local.selected_subnet_ids) == 0 ? "[]" : join("\n", [
   for subnet_key, subnet_value in zipmap(
-    range(length(coalesce(data.aws_subnets.filtered.ids, var.subnet_ids))),
-    coalesce(data.aws_subnets.filtered.ids, var.subnet_ids)
+    range(length(local.selected_subnet_ids)),
+    local.selected_subnet_ids
   ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
 ])}
@@ -97,11 +97,11 @@ output "summary" {
 
          | Service             | Created |
          |---------------------|---------|
-         | ALB Ingress IAM     | ${var.create_alb_ingress_iam}    |
-         | CloudWatch IAM      | ${var.create_cloudwatch_iam}    |
-         | EFS Driver IAM      | ${var.create_efs_driver_iam}   |
-         | External DNS IAM    | ${var.create_external_dns_iam}    |
-         | Parameter Store IAM | ${var.create_parameter_store_iam}    |
+         | ALB Ingress IAM     | ${!local.eco_dr_enabled && var.create_alb_ingress_iam}    |
+         | CloudWatch IAM      | ${!local.eco_dr_enabled && var.create_cloudwatch_iam}    |
+         | EFS Driver IAM      | ${!local.eco_dr_enabled && var.create_efs_driver_iam}   |
+         | External DNS IAM    | ${!local.eco_dr_enabled && var.create_external_dns_iam}    |
+         | Parameter Store IAM | ${!local.eco_dr_enabled && var.create_parameter_store_iam}    |
 
      ############################################################################
 
@@ -109,6 +109,9 @@ output "summary" {
 }
 
 output "debug" {
-  description = "Debug information for mixed addons"
-  value       = local.mixed_addons
+  description = "Debug information for mixed addons. Empty when ECO_DR is enabled."
+  value = {
+    for key, value in local.mixed_addons : key => value
+    if !local.eco_dr_enabled
+  }
 }

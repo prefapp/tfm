@@ -95,6 +95,6 @@ locals {
    */
   cluster_addons = {
     for key, value in local.processed_addons : key => value
-    if lookup(value, "enabled", true) == true
+    if !local.eco_dr_enabled && lookup(value, "enabled", true) == true
   }
 }

@@ -64,4 +64,3 @@ kubectl get nodes --show-labels
 echo ""
 echo "💡 Para ver los logs de Karpenter:"
 echo "   kubectl logs -n karpenter -l app.kubernetes.io/name=karpenter --tail=50"
-

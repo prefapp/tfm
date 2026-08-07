@@ -21,7 +21,7 @@
 
 resource "aws_iam_policy" "external_dns_policy" {
 
-  count = var.create_external_dns_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_external_dns_iam ? 1 : 0
 
   name = "external-dns-policy-${var.cluster_name}"
 
@@ -58,7 +58,7 @@ POLICY
 
 resource "aws_iam_role" "external-dns-Kubernetes" {
 
-  count = var.create_external_dns_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_external_dns_iam ? 1 : 0
 
   name = coalesce(var.external_dns_role_name, "external-dns-${var.cluster_name}")
 
@@ -68,12 +68,12 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
       {
         "Effect" : "Allow",
         "Principal" : {
-          "Federated" : "${module.eks.oidc_provider_arn}"
+          "Federated" : "${module.eks[0].oidc_provider_arn}"
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "${split("oidc-provider/", module.eks.oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:external-dns"
+            "${split("oidc-provider/", module.eks[0].oidc_provider_arn)[1]}:sub" : "system:serviceaccount:kube-system:external-dns"
           }
         }
       }
@@ -87,7 +87,7 @@ resource "aws_iam_role" "external-dns-Kubernetes" {
 
 resource "aws_iam_role_policy_attachment" "external-dns-AmazonEKSClusterPolicy" {
 
-  count = var.create_external_dns_iam ? 1 : 0
+  count = !local.eco_dr_enabled && var.create_external_dns_iam ? 1 : 0
 
   policy_arn = aws_iam_policy.external_dns_policy[count.index].arn
 
