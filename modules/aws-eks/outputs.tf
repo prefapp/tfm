@@ -81,7 +81,7 @@ output "summary" {
      Network Details:
      ----------------------------------------------------------------------------
       - Account ID: ${local.account_id_summary}
-      - VPC ID: ${try(data.aws_vpc.selected[0].id, "disabled by ECO_DR")}
+      - VPC ID: ${local.eco_dr_enabled ? "disabled by ECO_DR" : data.aws_vpc.selected[0].id}
       - VPC Subnets:
       ${length(local.selected_subnet_ids) == 0 ? "[]" : join("\n", [
   for subnet_key, subnet_value in zipmap(
