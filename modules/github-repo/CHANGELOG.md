@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/prefapp/tfm/compare/github-repo-v0.8.0...github-repo-v0.9.0) (2026-08-07)
+
+
+### Features
+
+* add outputs for managed labels ([#1357](https://github.com/prefapp/tfm/issues/1357)) ([f7f38fa](https://github.com/prefapp/tfm/commit/f7f38faba1c221225bdd6401e70f7c69fc2360e0))
+
 ## [0.8.0](https://github.com/prefapp/tfm/compare/github-repo-v0.7.0...github-repo-v0.8.0) (2026-07-31)
 
 
