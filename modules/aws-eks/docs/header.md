@@ -17,7 +17,7 @@ Below is a description of the main features and components of the module:
 ## Key Features
 
 - **EKS Cluster Provisioning**: Automatically provisions an Amazon EKS cluster for scalable and managed Kubernetes workloads.
-- **Cold Standby DR Guard**: Supports the `ECO_DR` input. Set it with `TF_VAR_ECO_DR` when this module is the root module, or pass it through from the root module when using this module as a child, to render DR workspaces without creating EKS resources until recovery time.
+- **Cold Standby DR Guard**: Supports the `ECO_DR` input. Set it with `TF_VAR_ECO_DR` when this module is the root module, or pass it through from the root module when using this module as a child, to render DR workspaces without creating EKS resources until recovery time. **Warning:** enabling it in a state with existing EKS resources can cause Terraform to plan their destruction, including the EKS cluster, related IAM resources, and other managed resources.
 - **Karpenter Integration (Optional)**: Generates required data and IAM roles for seamless integration with Karpenter, an open-source Kubernetes autoscaler.
 - **IAM Roles Creation for Addons**:
   - **EBS (Elastic Block Store)**: Enables dynamic provisioning and management of EBS volumes via the EBS CSI driver.

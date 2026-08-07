@@ -80,16 +80,16 @@ output "summary" {
      ----------------------------------------------------------------------------
      Network Details:
      ----------------------------------------------------------------------------
-     - Account ID: ${local.account_id_summary}
-     - VPC ID: ${try(data.aws_vpc.selected[0].id, "disabled by ECO_DR")}
-     - VPC Subnets:
-     ${join("\n", [
+      - Account ID: ${local.account_id_summary}
+      - VPC ID: ${try(data.aws_vpc.selected[0].id, "disabled by ECO_DR")}
+      - VPC Subnets:
+      ${length(local.selected_subnet_ids) == 0 ? "[]" : join("\n", [
   for subnet_key, subnet_value in zipmap(
-    range(length(try(coalescelist(try(data.aws_subnets.filtered[0].ids, []), var.subnet_ids, []), []))),
-    try(coalescelist(try(data.aws_subnets.filtered[0].ids, []), var.subnet_ids, []), [])
+    range(length(local.selected_subnet_ids)),
+    local.selected_subnet_ids
   ) :
   format("\t %s: %s", subnet_key + 1, subnet_value)
-])}
+])})
 
      ----------------------------------------------------------------------------
      IAM Roles:
