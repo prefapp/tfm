@@ -204,6 +204,9 @@
         },
         "modules/azure-managed-redis": {
             "package-name": "azure-managed-redis"
+        },
+        "modules/github-org-variables-section": {
+            "package-name": "github-org-variables-section"
         }
     }
 }
