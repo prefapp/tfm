@@ -52,7 +52,7 @@ locals {
   object_ids = [for id in local.entity_ids : id if id != null]
 
   # Check if access policies are defined when RBAC is enabled
-  has_access_policies = length(var.access_policies) > 0 && var.enable_rbac_authorization
+  has_access_policies = length(var.access_policies) > 0 && var.rbac_authorization_enabled
 }
 
 
@@ -65,7 +65,7 @@ resource "azurerm_key_vault" "this" {
   enabled_for_disk_encryption = var.enabled_for_disk_encryption
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = var.soft_delete_retention_days
-  enable_rbac_authorization   = var.enable_rbac_authorization
+  rbac_authorization_enabled   = var.rbac_authorization_enabled
   purge_protection_enabled    = var.purge_protection_enabled
   sku_name                    = var.sku_name
   tags                        = var.tags_from_rg ? merge(data.azurerm_resource_group.this.tags, var.tags) : var.tags
@@ -77,7 +77,7 @@ resource "azurerm_key_vault" "this" {
   }
 
   dynamic "access_policy" {
-    for_each = var.enable_rbac_authorization ? [] : [for entity in var.access_policies : entity if lookup(local.entity_ids, entity.name, null) != null]
+    for_each = var.rbac_authorization_enabled ? [] : [for entity in var.access_policies : entity if lookup(local.entity_ids, entity.name, null) != null]
     content {
       tenant_id               = data.azurerm_client_config.current.tenant_id
       object_id               = lookup(local.entity_ids, access_policy.value.name, null)
