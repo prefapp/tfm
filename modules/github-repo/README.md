@@ -222,6 +222,7 @@ No modules.
 | <a name="output_collaborators"></a> [collaborators](#output\_collaborators) | List of collaborators added to the repository |
 | <a name="output_committed_files"></a> [committed\_files](#output\_committed\_files) | List of files that were committed |
 | <a name="output_default_branch"></a> [default\_branch](#output\_default\_branch) | Default branch name |
+| <a name="output_managed_labels"></a> [managed\_labels](#output\_managed\_labels) | Labels managed by this module in the current run |
 | <a name="output_oidc_subject_claim_customization_template"></a> [oidc\_subject\_claim\_customization\_template](#output\_oidc\_subject\_claim\_customization\_template) | OIDC subject claim customization template configuration |
 | <a name="output_pages"></a> [pages](#output\_pages) | GitHub Pages configuration (if enabled, from github\_repository\_pages resource) |
 | <a name="output_repository_full_name"></a> [repository\_full\_name](#output\_repository\_full\_name) | Full name (owner/repo) of the repository |
@@ -238,7 +239,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [bypass-actors](https://github.com/prefapp/tfm/tree/main/modules/github-repo/_examples/bypass-actors) - Branch protections with independent bypass PR and push allowances
 
-## Resources
+## Provider documentation links
 
 - **github\_repository**: [Terraform GitHub Provider - Repository](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository)
 - **github\_branch\_protection**: [Terraform GitHub Provider - Branch Protection](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection)
