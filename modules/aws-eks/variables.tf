@@ -279,7 +279,7 @@ variable "ECO_DR" {
   default     = false
 
   validation {
-    condition     = contains(["true", "false", "1", "0", "on", "off", "yes", "no"], lower(tostring(var.ECO_DR)))
+    condition     = contains(["true", "false", "1", "0", "on", "off", "yes", "no"], lower(tostring(coalesce(var.ECO_DR, false))))
     error_message = "ECO_DR must be one of: true, false, 1, 0, ON, OFF, yes, no."
   }
 }
