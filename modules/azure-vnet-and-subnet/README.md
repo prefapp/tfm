@@ -199,13 +199,13 @@ The module is organized as follows:
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >=4.21.1 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.21.1, < 5.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=4.21.1 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.21.1, < 5.0.0 |
 
 ## Modules
 
@@ -237,12 +237,15 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_private_dns_zone_id"></a> [private\_dns\_zone\_id](#output\_private\_dns\_zone\_id) | Map from private DNS zone name (for\_each key) to private DNS zone resource ID. |
-| <a name="output_private_dns_zone_virtual_network_link_id"></a> [private\_dns\_zone\_virtual\_network\_link\_id](#output\_private\_dns\_zone\_virtual\_network\_link\_id) | Map from VNet link for\_each keys (zone name when linking this VNet, or `<zone_name>-<link_name>` for other VNets) to private DNS zone virtual network link resource ID. |
+| <a name="output_private_dns_zone_ids"></a> [private\_dns\_zone\_ids](#output\_private\_dns\_zone\_ids) | Map from private DNS zone name (for\_each key) to private DNS zone resource ID. |
+| <a name="output_private_dns_zone_virtual_network_link_ids"></a> [private\_dns\_zone\_virtual\_network\_link\_ids](#output\_private\_dns\_zone\_virtual\_network\_link\_ids) | Map from VNet link for\_each keys (zone name when linking this VNet, or `<zone_name>-<link_name>` for other VNets) to private DNS zone virtual network link resource ID. |
+| <a name="output_private_dns_zones"></a> [private\_dns\_zones](#output\_private\_dns\_zones) | Private DNS zones keyed by name. |
 | <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | Map from subnet composite keys (`<vnet_name>.<subnet_name>`) to subnet resource IDs. |
+| <a name="output_vnet_guid"></a> [vnet\_guid](#output\_vnet\_guid) | GUID of the virtual network. |
 | <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | Resource ID of the virtual network. |
 | <a name="output_vnet_name"></a> [vnet\_name](#output\_vnet\_name) | Name of the virtual network. |
 | <a name="output_vnet_peering_ids"></a> [vnet\_peering\_ids](#output\_vnet\_peering\_ids) | Map from peering name to virtual network peering resource ID. |
+| <a name="output_vnet_subnets"></a> [vnet\_subnets](#output\_vnet\_subnets) | Full subnet objects keyed by <vnet\_name>.<subnet\_name>. |
 
 ## Examples
 
