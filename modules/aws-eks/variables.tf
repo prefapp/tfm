@@ -275,8 +275,8 @@ variable "create_auto_mode_iam_resources" {
 
 variable "ECO_DR" {
   description = "Set via TF_VAR_ECO_DR when this module is the root module, or pass the value through from the root module when used as a child. When set to true, 1, ON, or yes, disables creation of EKS resources for cold standby DR workspaces. Enabling it in a state with existing EKS resources can cause Terraform to plan their destruction, including the EKS cluster, related IAM resources, and other managed resources. false, 0, OFF, and no keep normal resource creation enabled. Values are case-insensitive."
-  type        = any
-  default     = false
+  type        = string
+  default     = "false"
 
   validation {
     condition     = can(var.ECO_DR == null ? "false" : tostring(var.ECO_DR)) && contains(["true", "false", "1", "0", "on", "off", "yes", "no"], lower(var.ECO_DR == null ? "false" : tostring(var.ECO_DR)))
