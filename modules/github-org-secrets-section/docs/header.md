@@ -4,6 +4,8 @@
 
 This module manages GitHub **organization-level** secrets for **Actions**, **Codespaces**, and **Dependabot** using a single strongly-typed `config` object. It is compatible with GitHub Automated Provisioning Systems such as `ghaps` because all desired state is supplied through one top-level `config` input.
 
+The module applies to the GitHub organization configured in the GitHub provider; `config.org` is validated and returned as an output and should match the provider organization.
+
 **Important**:
 The `value` field in each secret entry **must already be encrypted** using **libsodium** with the target organization's matching secret type public key.
 **Terraform does not perform any encryption**. It forwards these pre-encrypted ciphertext values to the GitHub API. Actions and Dependabot secrets are sent through the provider's `value_encrypted` argument with the matching public-key ID; Codespaces secrets use the provider's `encrypted_value` argument.
