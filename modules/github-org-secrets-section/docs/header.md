@@ -10,6 +10,8 @@ The module applies to the GitHub organization configured in the GitHub provider;
 The `value` field in each secret entry **must already be encrypted** using **libsodium** with the target organization's matching secret type public key.
 **Terraform does not perform any encryption**. It forwards these pre-encrypted ciphertext values to the GitHub API. Actions and Dependabot secrets are sent through the provider's `value_encrypted` argument with the matching public-key ID; Codespaces secrets use the provider's `encrypted_value` argument.
 
+**Provider limitation**: The GitHub Terraform provider's `github_codespaces_organization_secret` resource does not support a `key_id` argument. The module fetches the codespaces organization public key for consistency (all three secret types retrieve their public key), but the `key_id` is not passed to the codespaces resource. This is a provider-side limitation; the `key_id` argument is only available on `github_actions_organization_secret` and `github_dependabot_organization_secret`.
+
 This approach is the most secure for automated pipelines (Prefapp IDP, GitHub Actions, etc.).
 
 ## Key Features

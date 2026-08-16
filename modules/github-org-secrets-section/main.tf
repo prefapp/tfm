@@ -5,6 +5,10 @@ data "github_actions_organization_public_key" "this" {
   count = length(var.config.actions) > 0 ? 1 : 0
 }
 
+data "github_codespaces_organization_public_key" "this" {
+  count = length(var.config.codespaces) > 0 ? 1 : 0
+}
+
 data "github_dependabot_organization_public_key" "this" {
   count = length(var.config.dependabot) > 0 ? 1 : 0
 }
