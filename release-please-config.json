@@ -199,6 +199,9 @@
         "modules/github-org-settings": {
             "package-name": "github-org-settings"
         },
+        "modules/github-org-secrets-section": {
+            "package-name": "github-org-secrets-section"
+        },
         "modules/azure-alerts": {
             "package-name": "azure-alerts"
         },
