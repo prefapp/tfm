@@ -10,6 +10,13 @@
 
 * Document the module with `terraform-docs` (`docs/header.md`, `docs/footer.md`, `.terraform-docs.yml`); clarify default tag merge behaviour for `tags_from_rg`; add `_examples/basic`.
 
+## [2.3.0](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.2.1...azure-vnet-subnet-v2.3.0) (2026-08-18)
+
+
+### Features
+
+* support links to existing private dns zones ([349748f](https://github.com/prefapp/tfm/commit/349748f7c2514c7ebe0844723fa3662228885a6c))
+
 ## [2.2.1](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.2.0...azure-vnet-subnet-v2.2.1) (2026-08-11)
 
 
