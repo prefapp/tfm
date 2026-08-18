@@ -1,8 +1,10 @@
 locals {
   selected_repo_full_names = toset(flatten([
-    for var_name, var_config in var.config.variables :
-    var_config.selectedRepositoryIds
-    if var_config.visibility == "selected"
+    for _, var_config in var.config.variables : (
+      var_config.visibility == "selected"
+      ? (var_config.selectedRepositoryIds != null ? var_config.selectedRepositoryIds : [])
+      : []
+    )
   ]))
 }
 

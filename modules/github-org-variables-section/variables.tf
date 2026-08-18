@@ -42,5 +42,20 @@ variable "config" {
     error_message = "All variable values must be non-empty strings."
   }
 
+  validation {
+    condition = alltrue([
+      for name, v in var.config.variables :
+      v.visibility != "selected" || (
+        v.selectedRepositoryIds != null &&
+        length(v.selectedRepositoryIds) > 0 &&
+        alltrue([
+          for repo in v.selectedRepositoryIds :
+          can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", trimspace(repo)))
+        ])
+      )
+    ])
+    error_message = "When visibility is 'selected', selectedRepositoryIds must be a non-empty list of repositories in 'owner/repo' format."
+  }
+
   nullable = false
 }
