@@ -67,5 +67,5 @@
     "modules/azure-alerts": "0.1.2",
     "modules/azure-managed-redis": "1.0.0",
     "modules/github-org-settings": "0.1.0",
-    "modules/github-org-variables-section": "0.0.0"
+    "modules/github-org-variables-section": "0.1.0"
 }
