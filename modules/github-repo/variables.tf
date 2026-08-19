@@ -136,9 +136,9 @@ variable "config" {
   validation {
     condition = var.config.pages == null ? true : (
       try(var.config.pages.https_enforced, false) != true ||
-      try(var.config.pages.cname, null) != null
+      try(length(trimspace(var.config.pages.cname)), 0) > 0
     )
-    error_message = "pages.https_enforced requires pages.cname to be set."
+    error_message = "pages.https_enforced requires pages.cname to be a non-empty string."
   }
 
   validation {
