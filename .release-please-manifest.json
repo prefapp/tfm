@@ -64,7 +64,7 @@
     "modules/github-org-webhook": "0.2.0",
     "modules/github-org-ruleset": "0.1.1",
     "modules/github-org-rulesets": "0.1.1",
-    "modules/azure-alerts": "0.1.2",
+    "modules/azure-alerts": "0.1.3",
     "modules/azure-managed-redis": "1.0.0",
     "modules/github-org-settings": "0.1.0",
     "modules/github-org-variables-section": "0.1.0"
