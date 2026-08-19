@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/prefapp/tfm/compare/azure-policy-assignments-v0.2.1...azure-policy-assignments-v0.2.2) (2026-08-19)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1368](https://github.com/prefapp/tfm/issues/1368)) ([2b30f9b](https://github.com/prefapp/tfm/commit/2b30f9bed63b94aedf8f3af9736bf72bfd83073f))
+
 ## [0.2.1](https://github.com/prefapp/tfm/compare/azure-policy-assignments-v0.2.0...azure-policy-assignments-v0.2.1) (2025-04-24)
 
 
