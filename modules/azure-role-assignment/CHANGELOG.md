@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/prefapp/tfm/compare/azure-role-assignment-v0.2.0...azure-role-assignment-v0.2.1) (2026-08-20)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1387](https://github.com/prefapp/tfm/issues/1387)) ([cd611c6](https://github.com/prefapp/tfm/commit/cd611c6ab179f1d01e44a555871b997c7f8bd94d))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/azure-role-assignment-v0.1.2...azure-role-assignment-v0.2.0) (2025-04-25)
 
 
