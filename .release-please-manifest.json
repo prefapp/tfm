@@ -13,7 +13,7 @@
     "modules/cloudamqp-vpc": "1.1.1",
     "modules/aws-oidc": "1.5.0",
     "modules/azure-vnet-and-subnet": "2.3.0",
-    "modules/azure-sa-backup": "0.3.2",
+    "modules/azure-sa-backup": "0.3.3",
     "modules/azuread-group": "1.2.0",
     "modules/azure-app-gateway": "0.10.0",
     "modules/azure-sa": "0.3.3",
