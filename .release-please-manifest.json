@@ -1,5 +1,5 @@
 {
-    "modules/azure-disks-backup": "1.2.3",
+    "modules/azure-disks-backup": "1.2.4",
     "modules/aws-sso": "0.7.0",
     "modules/aws-backup": "0.3.0",
     "modules/azure-resource-group": "1.5.1",
