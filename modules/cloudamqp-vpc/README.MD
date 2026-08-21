@@ -16,12 +16,14 @@
 | Name | Type |
 |------|------|
 | <a name="resource_cloudamqp_vpc"></a> [cloudamqp_vpc.this](https://registry.terraform.io/providers/cloudamqp/cloudamqp/latest/docs/resources/vpc) | resource |
+| <a name="resource_cloudamqp_vpc_connect"></a> [cloudamqp_vpc_connect.this](https://registry.terraform.io/providers/cloudamqp/cloudamqp/latest/docs/resources/vpc_connect) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cloudamqp_vpc"></a> [cloudamqp_vpc](#input\_cloudamqp\_vpc) | CloudAMQP VPC configurations. | <pre>object({<br>  name   = string<br>  region = string<br>  subnet = string<br>  tags   = optional(list(string))<br>})</pre> | n/a | yes |
+| <a name="input_cloudamqp_vpc_connect"></a> [cloudamqp_vpc_connect](#input\_cloudamqp\_vpc\_connect) | Optional CloudAMQP VPC Connect configurations. | <pre>object({<br>  instance_id            = number<br>  region                 = string<br>  approved_subscriptions = optional(list(string), [])<br>  sleep                  = optional(number)<br>  timeout                = optional(number)<br>})</pre> | `null` | no |
 
 ## Outputs
 
@@ -29,6 +31,8 @@
 |------|-------------|
 | <a name="output_vpc_id"></a> [vpc_id](#output\_vpc\_id) | ID of the created VPC. |
 | <a name="output_vpc_name"></a> [vpc_name](#output\_vpc\_name) | Name of the created VPC. |
+| <a name="output_id"></a> [id](#output\_id) | The identifier for the VPC Connect resource. Will be the same as `instance_id`. |
+| <a name="output_status"></a> [status](#output\_status) | Private Service Connect status [enable, pending, disable]. |
 
 ## Example 1: tfvars
 
@@ -38,6 +42,11 @@ cloudamqp_vpc = {
   region = "azure-arm::eastus"
   subnet = "
   tags   = ["example", "dev"]
+}
+cloudamqp_vpc_connect = {
+  instance_id            = 123456
+  region                 = "azure-arm::eastus"
+  approved_subscriptions = ["xxxxxx-xxxx-xxxx-xxxxxxx", "xxxxxx-xxxx-xxxx-xxxxxxx"]
 }
 ```
 
@@ -63,6 +72,12 @@ providers:
         tags:
           - "example"
           - "dev"
+      cloudamqp_vpc_connect:
+        instance_id: 123456
+        region: "azure-arm::eastus"
+        approved_subscriptions:
+          - "xxxxxx-xxxx-xxxx-xxxxxxx"
+          - "xxxxxx-xxxx-xxxx-xxxxxxx"
     context:
       providers:
         - name: cloudamqp-example
