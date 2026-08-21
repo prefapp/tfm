@@ -22,7 +22,7 @@ variable "resource_group" {
   type = string
 }
 
-variable "enable_rbac_authorization" {
+variable "rbac_authorization_enabled" {
   type = bool
 }
 

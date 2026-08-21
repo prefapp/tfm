@@ -38,8 +38,8 @@ No modules.
 | <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | The name of the resource group in which the Key Vault is created | `string` | n/a | yes |
 | <a name="input_sku_name"></a> [sku\_name](#input\_sku\_name) | The SKU name of the Key Vault (e.g., standard or premium) | `string` | n/a | yes |
 | <a name="input_soft_delete_retention_days"></a> [soft\_delete\_retention\_days](#input\_soft\_delete\_retention\_days) | The number of days that soft-deleted items are retained in the Key Vault | `number` | n/a | yes |
-| <a name="input_enable_rbac_authorization"></a> [enable_rbac_authorization](#input\_enable\_rbac\_authorization) | Set RBAC authorization for the Key Vault. Disable access policies authorization | `bool` | n/a | yes |
-| <a name="input_accesss_policies"></a> [access_policies](#input\_access\_policies) | Block for access policies definition. Will fail if `enable_rbac_authorization: true` | `list(object)` | n/a | optional |
+| <a name="input_rbac_authorization_enabled"></a> [rbac_authorization_enabled](#input\_enable\_rbac\_authorization) | Set RBAC authorization for the Key Vault. Disable access policies authorization | `bool` | n/a | yes |
+| <a name="input_accesss_policies"></a> [access_policies](#input\_access\_policies) | Block for access policies definition. Will fail if `rbac_authorization_enabled: true` | `list(object)` | n/a | optional |
 | <a name="input_accesss_policies.name"></a> [access_policies.name](#input\_access\_policies.name) | Name for the access policy. Display name in groups and SPN, user principal name in users and custom for `object_id` | `string` | n/a | optional |
 | <a name="input_accesss_policies.name.type"></a> [access_policies.name.type](#input\_access\_policies.name.type) | Entity type \[ group \| service_principal \| user \]. If we provide the `object_id` type value must be `""` | `string` | n/a | optional |
 | <a name="input_accesss_policies.name.object_id"></a> [access_policies.name.object_id](#input\_access\_policies.name.object_id) | Object ID of the entity. If we provide an entity type value must be `""` | `string` | n/a | optional |
@@ -70,7 +70,7 @@ No modules.
       soft_delete_retention_days: 7
       purge_protection_enabled: true
       sku_name: "standard"
-      enable_rbac_authorization: false # If RBAC is set to true access policies will fail if there are any defined.
+      rbac_authorization_enabled: false # If RBAC is set to true access policies will fail if there are any defined.
       access_policies:
       - name: "Name for the Object ID"
         type: "" # Leave empty value if you provide directly the object ID
