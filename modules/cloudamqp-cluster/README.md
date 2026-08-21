@@ -38,10 +38,11 @@ This terraform module creates a Cloudamqp cluster (with your instance/s) and cre
 | <a name="input_no_default_alarms"></a> [no\_default\_alarms](#input\_no\_default\_alarms) | Disable the default alarms created for the CloudAMQP instance | `bool` | `false` | no |
 | <a name="vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC to associate with the CloudAMQP instance | `string` | n/a | yes |
 | <a name="input_keep_associated_vpc"></a> [keep\_associated\_vpc](#input\_keep\_associated\_vpc) | Preserve the associated VPC when the CloudAMQP instance is deleted | `bool` | `false` | no |
-| <a name="input_cloudamqp_vpc_connect.instance_id"></a> [cloudamqp\_vpc\_connect.instance\_id](#input\_cloudamqp\_vpc\_connect.instance\_id) | ID of the CloudAMQP instance to connect to the VPC | `number` | n/a | yes |
+| <a name="input_cloudamqp_vpc_connect"></a> [cloudamqp\_vpc\_connect](#input\_cloudamqp\_vpc\_connect) | Optional VPC Connect/PrivateLink configuration. Omit to use an existing VPC association or VNet peering only | `object` | `null` | no |
+| <a name="input_cloudamqp_vpc_connect.instance_id"></a> [cloudamqp\_vpc\_connect.instance\_id](#input\_cloudamqp\_vpc\_connect.instance\_id) | Deprecated and ignored. The CloudAMQP instance ID is inferred from this module's instance | `number` | `null` | no |
 | <a name="input_cloudamqp_vpc_connect.approved_subscriptions"></a> [cloudamqp\_vpc\_connect.approved\_subscriptions](#input\_cloudamqp\_vpc\_connect.approved\_subscriptions) | List of approved subscriptions for the VPC connection | `list(string)` | `[]` | no |
-| <a name="input_cloudamqp_vpc_connect.sleep"></a> [cloudamqp\_vpc\_connect.sleep](#input\_cloudamqp\_vpc\_connect.sleep) | Sleep time before checking the VPC connection status | `number` | `30` | no |
-| <a name="input_cloudamqp_vpc_connect.timeout"></a> [cloudamqp\_vpc\_connect.timeout](#input\_cloudamqp\_vpc\_connect.timeout) | Timeout for the VPC connection operation | `number` | `60` | no |
+| <a name="input_cloudamqp_vpc_connect.sleep"></a> [cloudamqp\_vpc\_connect.sleep](#input\_cloudamqp\_vpc\_connect.sleep) | Sleep time before checking the VPC connection status | `number` | provider default | no |
+| <a name="input_cloudamqp_vpc_connect.timeout"></a> [cloudamqp\_vpc\_connect.timeout](#input\_cloudamqp\_vpc\_connect.timeout) | Timeout for the VPC connection operation | `number` | provider default | no |
 | <a name="input_enable_firewall"></a> [enable\_firewall](#input\_enable\_firewall) | Enable firewall configuration | `bool` | `false` | no |
 | <a name="input_firewall_rules"></a> [firewall\_rules](#input\_firewall\_rules) | *Depends on* `enable_firewall=true`. Firewall rules for the instance | `map(object({ description = string, ip = string, ports = list(string), services = list(string) }))` | `{}` | no |
 | <a name="input_recipients"></a> [recipients](#input\_recipients) | Map of notification recipients | `map(object({ value = string, name = string, type = string }))` | `{}` | no |
@@ -83,8 +84,6 @@ cloudamqp_instance = {
   tags        = ["production", "messaging"]
   }
 cloudamqp_vpc_connect = {
-  instance_id            = 123456
-  region                 = "azure-arm::eastus"
   approved_subscriptions = ["xxxxxx-xxxx-xxxx-xxxxxxx", "xxxxxx-xxxx-xxxx-xxxxxxx"]
 }
 enable_firewall  = true
@@ -168,9 +167,7 @@ providers:
           - "production"
           - "messaging"
       cloudamqp_vpc_connect:
-        instance_id: 123456
-        region: "azure-arm::eastus"
-        approved_subcriptions:
+        approved_subscriptions:
           - "xxxxxx-xxxx-xxxx-xxxxxxx"
           - "xxxxxx-xxxx-xxxx-xxxxxxx"
       enable_firewall: true
