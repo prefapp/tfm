@@ -22,3 +22,9 @@ resource "azuread_group_member" "this" {
   group_object_id  = azuread_group.this.id
   member_object_id = each.value
 }
+
+
+import {
+  to = azuread_group_member.this["435d9f63-11a7-402a-aa30-743a31181bbc"]
+  id = "2f435ad9-cffa-4d07-9d6c-9bedc8b37ba4/435d9f63-11a7-402a-aa30-743a31181bbc"
+}
