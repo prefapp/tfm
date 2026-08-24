@@ -26,5 +26,6 @@ resource "azuread_group_member" "this" {
 
 import {
   to = azuread_group_member.this["435d9f63-11a7-402a-aa30-743a31181bbc"]
-  id = "2f435ad9-cffa-4d07-9d6c-9bedc8b37ba4/435d9f63-11a7-402a-aa30-743a31181bbc"
+
+  id = "2f435ad9-cffa-4d07-9d6c-9bedc8b37ba4/member/435d9f63-11a7-402a-aa30-743a31181bbc"
 }
