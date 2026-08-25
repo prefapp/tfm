@@ -139,3 +139,8 @@ resource "azurerm_role_assignment" "extra_role_assignments" {
   role_definition_name = each.value.role_definition_name
   principal_id         = azuread_service_principal.this.object_id
 }
+
+import {
+  to = azuread_application_redirect_uris.this["0"]
+  id = "/applications/aadf0b48-9366-4785-a344-8910c64610f4/redirectUris/Web"
+}
