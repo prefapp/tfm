@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 4.64.0, < 5.0.0"
-    }
-  }
-}
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/resources/private_dns_zone
 resource "azurerm_private_dns_zone" "this" {
   name                = var.dns_zone_name
@@ -25,6 +16,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "link" {
   registration_enabled  = var.registration_enabled
   tags                  = local.tags
 }
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/4.64.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "resource_group" {
   name = var.resource_group_name
