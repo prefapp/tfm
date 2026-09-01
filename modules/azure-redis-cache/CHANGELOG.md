@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/azure-redis-cache-v0.2.3...azure-redis-cache-v0.3.0) (2026-09-01)
+
+
+### Features
+
+* add dns_private_zone_resource_group override ([#1420](https://github.com/prefapp/tfm/issues/1420)) ([b04363f](https://github.com/prefapp/tfm/commit/b04363f37aa92379a1295d86c63f1f045e56f641))
+
 ## [0.2.3](https://github.com/prefapp/tfm/compare/azure-redis-cache-v0.2.2...azure-redis-cache-v0.2.3) (2026-08-19)
 
 
