@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/prefapp/tfm/compare/azure-managed-redis-v1.0.1...azure-managed-redis-v1.1.0) (2026-09-01)
+
+
+### Features
+
+* add dns_private_zone_resource_group override ([#1421](https://github.com/prefapp/tfm/issues/1421)) ([2dbf08d](https://github.com/prefapp/tfm/commit/2dbf08d249cccd15103c82985fda4be412e49b58))
+
 ## [1.0.1](https://github.com/prefapp/tfm/compare/azure-managed-redis-v1.0.0...azure-managed-redis-v1.0.1) (2026-08-19)
 
 
