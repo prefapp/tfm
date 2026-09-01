@@ -29,6 +29,12 @@ variable "dns_private_zone_name" {
   type = string
 }
 
+variable "dns_private_zone_resource_group" {
+  type        = string
+  default     = null
+  description = "Override resource group for Private DNS Zone lookup. When null, falls back to vnet.resource_group_name."
+}
+
 variable "redis" {
   type = object({
     name                          = string
