@@ -147,6 +147,11 @@ variable "fargate_profiles" {
   }))
 
   default = []
+
+  validation {
+    condition     = length(var.fargate_profiles) == length(distinct([for profile in var.fargate_profiles : profile.name]))
+    error_message = "Each fargate profile name must be unique. Duplicate names are not allowed."
+  }
 }
 
 variable "node_security_group_additional_rules" {
@@ -187,7 +192,7 @@ variable "create_kms_key" {
 variable "cluster_encryption_config" {
   description = "Cluster encryption config"
   type        = any
-  default     = {}
+  default     = null
 }
 
 variable "cluster_security_group_id" {
@@ -226,6 +231,24 @@ variable "enable_karpenter" {
   default     = false
 }
 
+variable "karpenter_service_account_name" {
+  description = "Set the name of K8s service account karpenter controller"
+  type        = string
+  default     = "karpenter-sa"
+}
+
+variable "karpenter_namespace_name" {
+  description = "Set the name of K8s namespace where is deployed the karpenter controller"
+  type        = string
+  default     = "karpenter"
+}
+
+variable "karpenter_controller_enable_inline_policy" {
+  description = "Determines whether the controller policy is created as a standard IAM policy or inline IAM policy. This can be enabled when the error `LimitExceeded: Cannot exceed quota for PolicySize: 6144` is received since standard IAM policies have a limit of 6,144 characters versus an inline role policy's limit of 10,240 ([Reference](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-quotas.html))"
+  type        = bool
+  default     = false
+}
+
 variable "create_cloudwatch_log_group" {
   description = "Create CloudWatch log group for the EKS cluster"
   type        = bool
@@ -242,4 +265,10 @@ variable "enabled_log_types" {
   description = "A list of the desired control plane logs to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)"
   type        = list(string)
   default     = ["audit", "api", "authenticator"]
+}
+
+variable "create_auto_mode_iam_resources" {
+  description = "Determines whether to create/attach IAM resources for EKS Auto Mode. Useful for when using only custom node pools and not built-in EKS Auto Mode node pools."
+  type        = bool
+  default     = true
 }

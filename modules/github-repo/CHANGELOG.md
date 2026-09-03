@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.9.0](https://github.com/prefapp/tfm/compare/github-repo-v0.8.0...github-repo-v0.9.0) (2026-08-07)
+
+
+### Features
+
+* add outputs for managed labels ([#1357](https://github.com/prefapp/tfm/issues/1357)) ([f7f38fa](https://github.com/prefapp/tfm/commit/f7f38faba1c221225bdd6401e70f7c69fc2360e0))
+
+## [0.8.0](https://github.com/prefapp/tfm/compare/github-repo-v0.7.0...github-repo-v0.8.0) (2026-07-31)
+
+
+### Features
+
+* **github-repo:** add support for pull_request_bypassers and push_allowances ([#1281](https://github.com/prefapp/tfm/issues/1281)) ([c1f9dc9](https://github.com/prefapp/tfm/commit/c1f9dc9580e7b279c5623de70b1eeb1ba345c223))
+
+## [0.7.0](https://github.com/prefapp/tfm/compare/github-repo-v0.6.0...github-repo-v0.7.0) (2026-06-16)
+
+
+### Features
+
+* add support for github discussions ([#1302](https://github.com/prefapp/tfm/issues/1302)) ([0358b73](https://github.com/prefapp/tfm/commit/0358b73f120f2c83941f73168ddc85843a418cfe))
+
+## [0.6.0](https://github.com/prefapp/tfm/compare/github-repo-v0.5.2...github-repo-v0.6.0) (2026-06-09)
+
+
+### Features
+
+* **github-repo:** add hasWiki repository options ([#1296](https://github.com/prefapp/tfm/issues/1296)) ([3e30112](https://github.com/prefapp/tfm/commit/3e301124db9d5dc6d270adafbca5b97ec08590a1))
+
+## [0.5.2](https://github.com/prefapp/tfm/compare/github-repo-v0.5.1...github-repo-v0.5.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* **github-repo:** serialize branch protection after repository file commits ([#1287](https://github.com/prefapp/tfm/issues/1287)) ([6aad55f](https://github.com/prefapp/tfm/commit/6aad55fab47d25e41027c53756a7eba255216968))
+
+## [0.5.1](https://github.com/prefapp/tfm/compare/github-repo-v0.5.0...github-repo-v0.5.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* branch_protections naming ([#1278](https://github.com/prefapp/tfm/issues/1278)) ([7e84f4f](https://github.com/prefapp/tfm/commit/7e84f4fb8a0755c3b2282981e10295c63719e0f8))
+
+## [0.5.0](https://github.com/prefapp/tfm/compare/github-repo-v0.4.1...github-repo-v0.5.0) (2026-05-26)
+
+
+### Features
+
+* **github-repo:** add branchProtections support for legacy branch protection rules ([#1274](https://github.com/prefapp/tfm/issues/1274)) ([c4362ed](https://github.com/prefapp/tfm/commit/c4362ed7bf598c2d5b92ad28880166af914d3e2c))
+
+## [0.4.1](https://github.com/prefapp/tfm/compare/github-repo-v0.4.0...github-repo-v0.4.1) (2026-05-20)
+
+
+### Bug Fixes
+
+* remove topics from the creation of the repo to avoid crashes ([#1178](https://github.com/prefapp/tfm/issues/1178)) ([ff75f09](https://github.com/prefapp/tfm/commit/ff75f09a21746665f67714a352b439ef3473e58d))
+
+## [0.4.0](https://github.com/prefapp/tfm/compare/github-repo-v0.3.0...github-repo-v0.4.0) (2026-05-08)
+
+
+### Features
+
+* handle pages depreaction machinery ([#1260](https://github.com/prefapp/tfm/issues/1260)) ([3484643](https://github.com/prefapp/tfm/commit/348464300024fe7ad392af2ca40b7b791c563ca9))
+
+## [0.3.0](https://github.com/prefapp/tfm/compare/github-repo-v0.2.0...github-repo-v0.3.0) (2026-05-07)
+
+
+### Features
+
+* add support for pages ([#1196](https://github.com/prefapp/tfm/issues/1196)) ([4efe491](https://github.com/prefapp/tfm/commit/4efe491b40c60823ac644482385dd1917ef12392))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/github-repo-v0.1.0...github-repo-v0.2.0) (2026-04-30)
 
 

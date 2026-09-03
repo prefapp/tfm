@@ -10,6 +10,9 @@
         "modules/aws-parameter-store": {
             "package-name": "aws-parameter-store"
         },
+        "modules/aws-parameter-store-replication": {
+            "package-name": "aws-parameter-store-replication"
+        },
         "modules/aws-sso": {
             "package-name": "aws-sso"
         },
@@ -193,8 +196,17 @@
         "modules/github-org-rulesets": {
             "package-name": "github-org-rulesets"
         },
+        "modules/github-org-settings": {
+            "package-name": "github-org-settings"
+        },
         "modules/azure-alerts": {
             "package-name": "azure-alerts"
+        },
+        "modules/azure-managed-redis": {
+            "package-name": "azure-managed-redis"
+        },
+        "modules/github-org-variables-section": {
+            "package-name": "github-org-variables-section"
         }
     }
 }

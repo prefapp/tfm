@@ -17,5 +17,6 @@ provider "aws" {
 module "backup" {
   source = "./../.."
 
+  region                       = "eu-west-1"
   enable_cross_account_backup  = true
 }

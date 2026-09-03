@@ -1,3 +1,9 @@
+variable "region" {
+  description = "AWS region where the Lambda function for cross-account replication will be created."
+  type        = string
+  default     = "eu-west-1"
+}
+
 variable "aws_kms_key_vault_arn" {
   description = "ARN of the KMS key used to encrypt the backup vault. If not provided, the default AWS Backup vault encryption will be used."
   type        = string

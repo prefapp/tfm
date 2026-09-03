@@ -48,6 +48,31 @@ resource "azurerm_web_application_firewall_policy" "default_waf_policy" {
   }
 
   managed_rules {
+    dynamic "exclusion" {
+      for_each = coalesce(var.web_application_firewall_policy.exclusions, [])
+      content {
+        match_variable          = exclusion.value.match_variable
+        selector                = exclusion.value.selector
+        selector_match_operator = exclusion.value.selector_match_operator
+
+        dynamic "excluded_rule_set" {
+          for_each = coalesce(exclusion.value.excluded_rule_set, [])
+          content {
+            type    = excluded_rule_set.value.type
+            version = excluded_rule_set.value.version
+
+            dynamic "rule_group" {
+              for_each = coalesce(excluded_rule_set.value.rule_group, [])
+              content {
+                rule_group_name = rule_group.value.rule_group_name
+                excluded_rules  = rule_group.value.excluded_rules
+              }
+            }
+          }
+        }
+      }
+    }
+
     dynamic "managed_rule_set" {
       for_each = var.web_application_firewall_policy.managed_rule_set
       content {

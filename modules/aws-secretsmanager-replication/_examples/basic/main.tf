@@ -55,10 +55,14 @@ module "secrets_dr_replication" {
   destinations_json    = local.destinations_json
   allowed_assume_roles = local.allowed_assume_roles
 
+  # Required when source secrets are encrypted with a customer-managed KMS key (CMK).
+  # Leave unset or empty if source secrets use the AWS managed key for Secrets Manager.
+  # source_kms_key_arns = ["arn:aws:kms:eu-south-2:123456789012:key/01bee41a-bd9e-40bd-af24-c57007adb406"]
+
   # environment_variables can be used to pass additional custom variables if needed
 
-  lambda_timeout     = 10
-  lambda_memory      = 128
+  lambda_timeout      = 10
+  lambda_memory       = 128
   eventbridge_enabled = true
   # Fallback mode for isolated/non-enterprise setups only.
   # In enterprise environments, prefer passing s3_bucket_arn.
@@ -71,7 +75,7 @@ module "secrets_dr_replication" {
 }
 
 output "lambda_arn" {
-  value = module.secrets_dr_replication.lambda_automatic_replication_arn
+  value = module.secrets_dr_replication.lambda_replication_arn
 }
 
 output "eventbridge_rule_arn" {

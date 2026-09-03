@@ -1,0 +1,28 @@
+{
+  "config": {
+    "billingEmail": "platform@firestartr.dev",
+    "company": "Firestartr",
+    "blog": "https://firestartr.dev",
+    "email": "johndoe@example.com",
+    "location": "Remote",
+    "name": "Example Organization",
+    "description": "Managed by Firestartr",
+    "hasOrganizationProjects": true,
+    "hasRepositoryProjects": true,
+    "defaultRepositoryPermission": "read",
+    "membersCanCreateRepositories": true,
+    "membersCanCreatePublicRepositories": false,
+    "membersCanCreatePrivateRepositories": true,
+    "membersCanCreatePages": true,
+    "membersCanCreatePublicPages": true,
+    "membersCanCreatePrivatePages": true,
+    "membersCanForkPrivateRepositories": false,
+    "webCommitSignoffRequired": false,
+    "advancedSecurityEnabledForNewRepositories": false,
+    "dependabotAlertsEnabledForNewRepositories": true,
+    "dependabotSecurityUpdatesEnabledForNewRepositories": true,
+    "dependencyGraphEnabledForNewRepositories": true,
+    "secretScanningEnabledForNewRepositories": true,
+    "secretScanningPushProtectionEnabledForNewRepositories": true
+  }
+}

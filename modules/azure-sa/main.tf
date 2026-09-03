@@ -57,6 +57,17 @@ resource "azurerm_storage_account" "this" {
       }
     }
   }
+  dynamic "share_properties" {
+    for_each = var.storage_account.share_properties != null ? [var.storage_account.share_properties] : []
+    content {
+      dynamic "retention_policy" {
+        for_each = share_properties.value.retention_policy != null ? [share_properties.value.retention_policy] : []
+        content {
+          days = lookup(retention_policy.value, "days", null)
+        }
+      }
+    }
+  }
   dynamic "identity" {
     for_each = var.storage_account.identity != null ? [var.storage_account.identity] : []
     content {

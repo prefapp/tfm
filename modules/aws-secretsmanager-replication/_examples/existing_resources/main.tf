@@ -25,14 +25,14 @@ locals {
     }
   }
 
-  destinations_json = jsonencode(local.destinations)
+  destinations_json    = jsonencode(local.destinations)
   allowed_assume_roles = [for v in local.destinations : v.role_arn]
 }
 
 module "secrets_dr_replication" {
   source = "../../"
 
-  name = "secrets-dr-replication"
+  name   = "secrets-dr-replication"
   prefix = "secretsmanager-replication"
 
   destinations_json    = local.destinations_json
@@ -51,7 +51,7 @@ module "secrets_dr_replication" {
 }
 
 output "lambda_arn" {
-  value = module.secrets_dr_replication.lambda_automatic_replication_arn
+  value = module.secrets_dr_replication.lambda_replication_arn
 }
 
 output "eventbridge_rule_arn" {

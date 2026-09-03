@@ -44,6 +44,10 @@ cluster_addons:
     addon_version: "v1.25.11-eksbuild.2"
     resolve_conflicts: "OVERWRITE"
 
+  eks-pod-identity-agent:
+    # addon_version: "v1.3.10-eksbuild.3"
+    resolve_conflicts_on_create: "OVERWRITE"
+
 # Eks additional security groups
 node_security_group_additional_rules:
   ingress_self_all:
@@ -142,7 +146,7 @@ access_entries:
         policy_arn: "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
         access_scope:
           type: "cluster"
-  
+
   # Read-only access to a group of users
   readOnlyAccess:
     principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/ReadOnlyRole"
@@ -151,7 +155,7 @@ access_entries:
         policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
         access_scope:
           type: "cluster"
-  
+
   # Allow access to a group of IAM users with limited permissions to a namespace
   limitedNamespaceAccess:
     principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/NamespaceLimitedRole"
@@ -161,7 +165,7 @@ access_entries:
         access_scope:
           type: "namespace"
           namespace: "my-namespace"
-  
+
   # Allow write access to a group of users in a namespace
   writeNamespaceAccess:
     principal_arn: "arn:aws:iam::XXXXXXXXXXXX:role/NamespaceWriteRole"
@@ -180,7 +184,7 @@ access_entries:
         policy_arn: "arn:aws:iam::aws:policy/AmazonEKSReadOnlyAccess"
         access_scope:
           type: "cluster"
-  
+
   # Allow a specific user to access a namespace with limited permissions
   userNamespaceAccess:
     principal_arn: "arn:aws:iam::XXXXXXXXXXXX:user/john_doe"

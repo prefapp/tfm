@@ -22,6 +22,7 @@ class Config:
     enable_tag_replication: bool
     source_account: str
     add_region_prefix_to_name: bool
+    enable_full_sync: bool
 
 
 def load_config() -> Config:
@@ -54,6 +55,8 @@ def load_config() -> Config:
 
     add_region_prefix_to_name = os.environ.get("ADD_REGION_PREFIX_TO_NAME", "false").lower() == "true"
 
+    enable_full_sync = os.environ.get("ENABLE_FULL_SYNC", "false").lower() == "true"
+
     # Get source account ID automatically
     try:
         import boto3
@@ -67,4 +70,5 @@ def load_config() -> Config:
         enable_tag_replication=enable_tag_replication,
         source_account=source_account,
         add_region_prefix_to_name=add_region_prefix_to_name,
+        enable_full_sync=enable_full_sync,
     )

@@ -1,5 +1,51 @@
 # Changelog
 
+## [2.0.1](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v2.0.0...aws-secretsmanager-replication-v2.0.1) (2026-07-15)
+
+
+### Bug Fixes
+
+* **aws-secretsmanager-replication:** grant kms:Decrypt and kms:DescribeKey for CMK-encrypted source secrets ([#1327](https://github.com/prefapp/tfm/issues/1327)) ([dad9997](https://github.com/prefapp/tfm/commit/dad9997405129e7d074a1d344d0b8cc76708cb51))
+
+## [2.0.0](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.4...aws-secretsmanager-replication-v2.0.0) (2026-07-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **aws-secretsmanager-replication:** removes the `manual_replication_enabled` variable and the `lambda_automatic_replication_arn`, `lambda_automatic_replication_role_arn`, `lambda_manual_replication_arn`, and `lambda_manual_replication_role_arn` outputs. Use the new `lambda_replication_arn` / `lambda_replication_role_arn` outputs instead. Manual replication is always available on the unified Lambda.
+
+### Features
+
+* **aws-secretsmanager-replication:** unify replication Lambdas and compress package ([#1325](https://github.com/prefapp/tfm/issues/1325)) ([35f8f11](https://github.com/prefapp/tfm/commit/35f8f11b788fb6abb3efb8ca43b4b242dfd727e2))
+
+## [1.0.4](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.3...aws-secretsmanager-replication-v1.0.4) (2026-06-09)
+
+
+### Bug Fixes
+
+* **aws-secretsmanager-replication:** fix origin region name prefix ([#1293](https://github.com/prefapp/tfm/issues/1293)) ([a40eb4b](https://github.com/prefapp/tfm/commit/a40eb4bf93171a3a092d30c2292d259df12c51cc))
+
+## [1.0.3](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.2...aws-secretsmanager-replication-v1.0.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* capture InvalidParameterException on secret creation ([#1276](https://github.com/prefapp/tfm/issues/1276)) ([6d84eec](https://github.com/prefapp/tfm/commit/6d84eec1c118225c1bc2eb4afe2e069335463187))
+
+## [1.0.2](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.1...aws-secretsmanager-replication-v1.0.2) (2026-05-20)
+
+
+### Bug Fixes
+
+* add retries for AWSCURRENT reading ([#1264](https://github.com/prefapp/tfm/issues/1264)) ([3730770](https://github.com/prefapp/tfm/commit/373077013843356c29eb381e5631cdf3866ce14c))
+
+## [1.0.1](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v1.0.0...aws-secretsmanager-replication-v1.0.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* capture ResourceExistsException and update instead of create ([#1248](https://github.com/prefapp/tfm/issues/1248)) ([db0788f](https://github.com/prefapp/tfm/commit/db0788ffa111b3911665dedcf04e55dd4c76eb07))
+
 ## [1.0.0](https://github.com/prefapp/tfm/compare/aws-secretsmanager-replication-v0.1.5...aws-secretsmanager-replication-v1.0.0) (2026-04-27)
 
 

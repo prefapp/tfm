@@ -20,13 +20,13 @@ The module includes **`moved`** blocks for state migration from older resource a
 3. Setting **`redis.subnet_id`** on the cache is incompatible with using this module’s **private endpoint** pattern for the same workflow; see [Azure Redis VNet documentation](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-how-to-premium-vnet).
 4. Creating a Redis instance often takes **on the order of ~25 minutes**.
 5. **`private_endpoint.private_service_connection`** may be omitted; it defaults to **`{ is_manual_connection = false }`**. Set the block explicitly when you need a manual connection.
-6. **`dns_private_zone_name`** is resolved with **`resource_group_name = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)`** (the **VNet’s resource group**), not a separate DNS resource group. Layouts with the private DNS zone in another RG are **not supported** by the current module unless that zone happens to live in the same RG as the resolved VNet.
+6. **`dns_private_zone_name`** is resolved with **`resource_group_name = coalesce(var.dns_private_zone_resource_group, var.vnet.resource_group_name, local.vnet_resource_group_from_data)`**. By default the VNet’s resource group is used, but you can set **`dns_private_zone_resource_group`** to point to a different RG (e.g. when the private DNS zone is consolidated in a central subscription).
 
 ## Prerequisites
 
 - Existing **resource group** for Redis and the private endpoint.
 - **Virtual network** and **subnet** suitable for the private endpoint.
-- **Private DNS zone** for Redis private link (commonly `privatelink.redis.cache.windows.net`) **in the same resource group the module uses for the VNet** (`vnet.resource_group_name` or the RG inferred from tag-based VNet lookup)—not a separate “shared DNS” RG unless it is that same RG.
+- **Private DNS zone** for Redis private link (commonly `privatelink.redis.cache.windows.net`). By default it must be in the same resource group as the VNet, or set `dns_private_zone_resource_group` to point to a different RG.
 - **azurerm** provider configured.
 
 ## Basic usage
