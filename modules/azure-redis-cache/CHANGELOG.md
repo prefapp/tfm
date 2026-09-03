@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/azure-redis-cache-v0.2.3...azure-redis-cache-v0.3.0) (2026-09-01)
+
+
+### Features
+
+* add dns_private_zone_resource_group override ([#1420](https://github.com/prefapp/tfm/issues/1420)) ([b04363f](https://github.com/prefapp/tfm/commit/b04363f37aa92379a1295d86c63f1f045e56f641))
+
+## [0.2.3](https://github.com/prefapp/tfm/compare/azure-redis-cache-v0.2.2...azure-redis-cache-v0.2.3) (2026-08-19)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1368](https://github.com/prefapp/tfm/issues/1368)) ([2b30f9b](https://github.com/prefapp/tfm/commit/2b30f9bed63b94aedf8f3af9736bf72bfd83073f))
+
 ## [0.2.2](https://github.com/prefapp/tfm/compare/azure-redis-cache-v0.2.1...azure-redis-cache-v0.2.2) (2025-05-05)
 
 

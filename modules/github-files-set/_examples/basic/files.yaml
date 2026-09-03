@@ -1,12 +1,32 @@
+# Example: basic file set with a user-managed file
+#
+# installed_managed_files is populated by gh_provisioner from the entity's
+# output secrets on each reconciliation. It is empty on the very first apply.
+# After apply, read the installed_managed_files output and pass it back as
+# input on the next apply so already-provisioned files are skipped.
+
+installed_managed_files: []   # populated by gh_provisioner after first apply
+
 config:
   repository: org/my-repo
   files:
+    # Terraform-managed: content enforced on every plan
     - branch: main
-      commitMessage: "feat: hello-world-ee87ccfc-5d0a-4ad0-b9ee-4c142f40e00b main"
+      commitMessage: "feat: add hello world"
       content: |
         # Hello World!
 
         From my-org/
       file: hello.md
       overwriteOnCreate: true
-      lifecycle: {}     # optional / placeholder
+
+    # User-managed: seeded once, then left under user control
+    - branch: main
+      commitMessage: "chore: seed README with defaults"
+      content: |
+        # my-repo
+
+        Add your project description here.
+      file: README.md
+      overwriteOnCreate: true
+      userManaged: true

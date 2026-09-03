@@ -6,6 +6,7 @@ data "azurerm_client_config" "current" {}
 data "azuread_application_published_app_ids" "well_known" {}
 
 data "azuread_service_principal" "msgraph" {
+  count     = length(var.msgraph_roles) > 0 ? 1 : 0
   client_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
 }
 
@@ -113,8 +114,8 @@ resource "azuread_app_role_assignment" "msgraph_roles" {
   for_each            = { for idx, role in var.msgraph_roles : idx => role if role.delegated }
   depends_on          = [azuread_service_principal.this]
   principal_object_id = azuread_service_principal.this.object_id
-  resource_object_id  = data.azuread_service_principal.msgraph.object_id
-  app_role_id         = lookup(data.azuread_service_principal.msgraph.app_role_ids, each.value.id, null)
+  resource_object_id  = data.azuread_service_principal.msgraph[0].object_id
+  app_role_id         = lookup(data.azuread_service_principal.msgraph[0].app_role_ids, each.value.id, null)
 }
 
 ## Federated Identity Credential

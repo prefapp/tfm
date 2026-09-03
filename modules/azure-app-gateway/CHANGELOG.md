@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.10.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.10.0...azure-app-gateway-v0.10.1) (2026-08-20)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1387](https://github.com/prefapp/tfm/issues/1387)) ([cd611c6](https://github.com/prefapp/tfm/commit/cd611c6ab179f1d01e44a555871b997c7f8bd94d))
+
+## [0.10.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.9.0...azure-app-gateway-v0.10.0) (2026-07-03)
+
+
+### Features
+
+* Add domain_name_label on azure-application-gateway module ([#1311](https://github.com/prefapp/tfm/issues/1311)) ([a0a2c62](https://github.com/prefapp/tfm/commit/a0a2c62457d13438682f3ff04d4588fa7070473d))
+
+## [0.9.0](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.8.1...azure-app-gateway-v0.9.0) (2026-06-01)
+
+
+### Features
+
+* Add WAF exclision blocks on Azure AppGateway module ([#1284](https://github.com/prefapp/tfm/issues/1284)) ([1a64794](https://github.com/prefapp/tfm/commit/1a647944a09f72cd126d3cdf3cc5427cbc58cb41))
+
 ## [0.8.1](https://github.com/prefapp/tfm/compare/azure-app-gateway-v0.8.0...azure-app-gateway-v0.8.1) (2025-12-03)
 
 

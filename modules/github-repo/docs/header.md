@@ -9,12 +9,14 @@ It is designed for Prefapp's Internal Developer Platform and automated repositor
 ## Key Features
 
 - **Single complex object**: All repository and default-branch settings live in one `config` variable.
-- **Full GitHub repository settings**: Merge strategies, visibility, topics, auto-init, archive on destroy, etc.
+- **Full GitHub repository settings**: Merge strategies, visibility, topics, auto-init, archive on destroy, wiki, discussions, etc.
 - **Default branch management**: Set or rename the default branch. Requires `autoInit = true` (so the initial branch exists) or a pre-existing branch in the repository.
 - **Issue label management**: Create and manage repository issue labels with name, description, and hex color.
+- **Legacy branch protections**: Manage per-branch protection rules (required reviewers, status checks, signed commits, admin enforcement) via the `branch_protections` field.
 - **JSON-native**: Perfect for programmatic generation from external systems.
 - **Full validation**: Enforces required fields and valid values at plan time.
 - **Clean outputs**: Every important value exposed as a separate output.
+- **GitHub Pages support**: Enable and configure GitHub Pages (`buildType`, custom `cname`, and `source` branch/path) directly in the top-level `config` object — consistent with `default_branch`, `files`, `teams`, etc.
 
 ## Basic Usage
 
@@ -60,6 +62,74 @@ module "repository" {
       useDefault       = false
       includeClaimKeys = ["repo", "ref", "job_workflow_ref"]
     }
+  }
+}
+```
+
+### With branch protections
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    branch_protections = [
+      {
+        branch                        = "main"
+        statusChecks                  = ["ci/tests", "ci/lint"]
+        requiredReviewersCount        = 1
+        requiredCodeownersReviewers   = false
+        enforceAdmins                 = false
+        requireSignedCommits          = false
+        requireConversationResolution = true
+      },
+    ]
+  }
+}
+```
+
+### With branch protections + bypass actors
+
+```hcl
+module "repository" {
+  source = "git::https://github.com/prefapp/tfm.git//modules/github-repo"
+
+  config = {
+    repository = {
+      name     = "my-repo"
+      autoInit = true
+    }
+
+    default_branch = {
+      branch = "main"
+    }
+
+    branch_protections = [
+      {
+        branch                        = "main"
+        requiredReviewersCount        = 1
+        # Actors that can bypass pull request requirements
+        # (apps are GitHub App slugs, resolved via data.github_app)
+        bypassPullRequestAllowances = {
+          apps  = ["<app-slug>"]
+          teams = ["my-team-slug"]
+          users = ["some-user"]
+        }
+        # Actors that can bypass push restrictions (set independently)
+        pushAllowances = {
+          teams = ["ci-bot-team"]
+        }
+      },
+    ]
   }
 }
 ```

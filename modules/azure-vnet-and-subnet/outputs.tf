@@ -18,9 +18,9 @@ output "vnet_subnets" {
   value = {
     for k, s in azurerm_subnet.subnet :
     k => {
-      id                = s.id
-      name              = s.name
-      address_prefixes  = s.address_prefixes
+      id               = s.id
+      name             = s.name
+      address_prefixes = s.address_prefixes
     }
   }
 }
@@ -49,6 +49,11 @@ output "private_dns_zones" {
 output "private_dns_zone_virtual_network_link_ids" {
   description = "Map from VNet link for_each keys (zone name when linking this VNet, or `<zone_name>-<link_name>` for other VNets) to private DNS zone virtual network link resource ID."
   value       = { for k, link in azurerm_private_dns_zone_virtual_network_link.this : k => link.id }
+}
+
+output "existing_private_dns_zone_virtual_network_link_ids" {
+  description = "Map from existing private DNS zone link keys to private DNS zone virtual network link resource IDs."
+  value       = { for k, link in azurerm_private_dns_zone_virtual_network_link.existing : k => link.id }
 }
 
 output "vnet_peering_ids" {

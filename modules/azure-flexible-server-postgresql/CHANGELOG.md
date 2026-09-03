@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.3](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v3.1.2...azure-flexible-server-postgresql-v3.1.3) (2026-08-19)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1368](https://github.com/prefapp/tfm/issues/1368)) ([2b30f9b](https://github.com/prefapp/tfm/commit/2b30f9bed63b94aedf8f3af9736bf72bfd83073f))
+
 ## [3.1.2](https://github.com/prefapp/tfm/compare/azure-flexible-server-postgresql-v3.1.1...azure-flexible-server-postgresql-v3.1.2) (2025-07-02)
 
 

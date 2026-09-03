@@ -18,8 +18,8 @@ locals {
           }] :
           [{
             account_id        = var.copy_action_default_values.destination_account_id
-            vault_arn         = "arn:aws:backup:${coalesce(var.copy_action_default_values.destination_region, "eu-west-1")}:${coalesce(var.copy_action_default_values.destination_account_id, "000000000000")}:backup-vault:${vault.vault_name}"
-            region            = try(var.copy_action_default_values.destination_region, "eu-west-1")
+            vault_arn         = "arn:aws:backup:${coalesce(var.copy_action_default_values.destination_region, var.region)}:${coalesce(var.copy_action_default_values.destination_account_id, "000000000000")}:backup-vault:${vault.vault_name}"
+            region            = try(var.copy_action_default_values.destination_region, var.region)
             delete_after_days = var.copy_action_default_values.delete_after
           }]
         )
@@ -27,7 +27,7 @@ locals {
     ]) :
     coalesce(entry.account_id, var.copy_action_default_values.destination_account_id, "00000000000000") => {
       vault_arn         = entry.vault_arn
-      regions           = { (coalesce(entry.region, "eu-west-1")) = {} }
+      regions           = { (coalesce(entry.region, var.region)) = {} }
       delete_after_days = entry.delete_after_days
       iam_role_arn      = aws_iam_role.this[0].arn
     }
@@ -42,8 +42,10 @@ module "lambda_automatic_replication" {
   function_name = "backups-automatic-replication"
   handler       = "handler.lambda_handler"
   runtime       = "python3.14"
-  region        = "eu-west-1"
-  source_path   = ["${path.module}/src/common"]
+  region        = var.region
+
+  create_package         = false
+  local_existing_package = data.archive_file.lambda.output_path
 
   timeout     = var.lambda_timeout
   memory_size = var.lambda_memory
@@ -103,6 +105,12 @@ module "lambda_automatic_replication" {
   })
 }
 
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_dir  = "${path.module}/src/common"
+  output_path = "${path.module}/lambda.zip"
+}
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   count      = local.has_cross_account_copy ? 1 : 0

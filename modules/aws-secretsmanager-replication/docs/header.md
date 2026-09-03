@@ -50,7 +50,18 @@ The Lambda determines:
 - from the `secret_id` parameter (manual mode),
 - or from `list_secrets()` (full sync mode).
 
-The **destination secret name is always the same as the source secret name**, simplifying configuration and IAM permissions.
+### Lambda and Invocation Modes
+
+As of **v2.0.0**, this module deploys a **single** replication Lambda that handles all three modes, distinguished by the shape of the invocation event (the previous separate `automatic` and `manual` Lambdas were merged):
+
+- **Automatic (EventBridge):** triggered by Secrets Manager API calls delivered via CloudTrail. No manual payload.
+- **Manual single secret:** invoke with `{"secret_id": "<name-or-arn>"}`.
+- **Full sync:** invoke with `{"initial_run": true}` (alias `{"enable_full_sync": true}`). This runs only when the module was deployed with `enable_full_sync = true`; otherwise the Lambda refuses the request. Full sync replicates every secret in the source account.
+
+Manual and full-sync invocations return a JSON body with an HTTP-style `statusCode` (200 success, 400 invalid payload, 403 full sync not enabled, 404 source secret not found, 500 replication error).
+
+
+By default, the **destination secret name is the same as the source secret name**. If `add_region_prefix_to_name = true`, the destination secret name is prefixed with the **source region** (for example, `eu-west-1-mysecret`) to preserve origin traceability.
 
 ### Destination Configuration Format
 
@@ -114,6 +125,12 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 3. **S3 Storage:** The Trail must be configured to deliver log files to a designated **S3 Bucket**.
 4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the pattern `AWS API Call via CloudTrail`, matching `CreateSecret` and `PutSecretValue` events.
 5. **Lambda Execution:** The rule triggers a Lambda function, which assumes an IAM role to read the secret from the source and write/update it in the destination account.
+
+### Eventual Consistency Note for `CreateSecret`
+
+When the automatic Lambda is triggered by a `CreateSecret` event, AWS Secrets Manager may still be finalizing the first readable secret version. In that short window, `GetSecretValue` can return a `ResourceNotFoundException` indicating that the staging label `AWSCURRENT` is not available yet.
+
+To handle this eventual consistency scenario, the automatic replication flow retries `GetSecretValue` a few times. If `AWSCURRENT` is still unavailable after those retries, the Lambda logs a warning and exits gracefully instead of failing the invocation. A subsequent `PutSecretValue` event or a later manual/full sync run will replicate the secret once the current version is available.
 
 ### Required Resources & Links
 
@@ -238,7 +255,7 @@ The destination account must have an IAM role that the replication Lambda can as
 
 Starting from version X.X, the module implements the following improvements for cross-region secret replication:
 
-- Replicated secrets are automatically renamed with the region code as a prefix (e.g., `eu-west-3-mysecret`).
+- When enabled via `add_region_prefix_to_name`, replicated secrets are renamed with the **source region** code as a prefix (e.g., `eu-west-3-mysecret`).
 - Replicated secrets include additional tags:
   - `origin-account`: the source AWS account.
   - `origin-region`: the source AWS region.

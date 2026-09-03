@@ -5,5 +5,6 @@ resource "azurerm_public_ip" "public_ip" {
   resource_group_name = var.resource_group_name
   sku                 = var.public_ip.sku
   allocation_method   = var.public_ip.allocation_method
+  domain_name_label   = try(var.public_ip.domain_name_label, null)
   tags                = local.tags
 }

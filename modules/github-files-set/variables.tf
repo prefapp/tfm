@@ -1,3 +1,9 @@
+variable "installed_managed_files" {
+  description = "Accumulated list of user-managed file addresses (\"<file>/<branch>\") that have been provisioned at least once. Passed in by gh_provisioner from the entity's output secrets on every reconciliation. Defaults to [] on first apply."
+  type        = list(string)
+  default     = []
+}
+
 variable "config" {
   description = "GitHub files configuration — userManaged files are provisioned once and survive destroy"
   type = object({
@@ -13,13 +19,16 @@ variable "config" {
     repository = string
   })
 
-  validation {
-    condition     = length(var.config.files) > 0
-    error_message = "At least one file must be defined in config.files"
-  }
+  # NOTE: config.files is intentionally allowed to be empty.
+  # Under the provision-once design, callers (e.g. gh_provisioner) exclude
+  # already-provisioned userManaged files from config.files and track them in
+  # installed_managed_files instead. A feature whose files are all userManaged
+  # therefore reaches a legitimate steady state where config.files == [] while
+  # installed_managed_files is non-empty. Enforcing length > 0 here would break
+  # every subsequent apply/destroy for those features.
 
   validation {
-    condition = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", var.config.repository))
+    condition     = can(regex("^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+$", var.config.repository))
     error_message = "config.repository must be in 'owner/repo' format."
   }
 

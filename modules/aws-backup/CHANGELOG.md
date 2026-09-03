@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/aws-backup-v0.2.0...aws-backup-v0.3.0) (2026-07-21)
+
+
+### Features
+
+* **aws-backup:** remove python3 for compress zip lambda ([#1328](https://github.com/prefapp/tfm/issues/1328)) ([695b72c](https://github.com/prefapp/tfm/commit/695b72c9848bfc2ed00899e529a7af2beb63fdbc))
+
 ## [0.2.0](https://github.com/prefapp/tfm/compare/aws-backup-v0.1.3...aws-backup-v0.2.0) (2026-03-27)
 
 

@@ -14,16 +14,39 @@ Each module must contain the following structure:
 modules/<module-name>/
 ├── .terraform-docs.yml       # terraform-docs configuration
 ├── README.md                 # Auto-generated documentation
+├── CONTEXT.md                # This module's glossary (its bounded context)
 ├── main.tf                   # Main module resources
 ├── variables.tf              # Input variables
 ├── outputs.tf                # Output values
 ├── docs/
 │   ├── header.md             # Module overview and usage
-│   └── footer.md             # Examples and resources
+│   ├── footer.md             # Examples and resources
+│   └── adr/                  # Optional: module-scoped ADRs + their README.md index
 └── _examples/                # Usage examples
     └── <example-name>/       # At least one example
         └── main.tf
 ```
+
+`docs/adr/` is created lazily, only when the module's first Architecture Decision
+Record is written. It holds `NNNN-slug.md` files numbered per directory from `0001`,
+plus a `README.md` index listing them. Neither `CONTEXT.md` nor `docs/adr/` affects
+`terraform-docs`, which reads only `docs/header.md` and `docs/footer.md`.
+
+### Design Memory
+
+This repository is **multi-context**: one context per module. Vocabulary and decisions
+are tracked outside the generated module README:
+
+- [`CONTEXT-MAP.md`](CONTEXT-MAP.md) — every context and how they relate.
+- [`CONTEXT.md`](CONTEXT.md) — shared kernel glossary, inherited by every context.
+- `modules/<module>/CONTEXT.md` — that module's own glossary.
+- `docs/adr/` (root) and `modules/<module>/docs/adr/` — Architecture Decision Records,
+  each directory carrying its own `README.md` index.
+
+Rules live in [`CONSTITUTION.md`](CONSTITUTION.md) §9. Adding a module requires
+creating its `CONTEXT.md` and adding its line to `CONTEXT-MAP.md` in the same pull
+request. This repository is public — design-memory documents must not link to private
+repositories or disclose internal-only details (§9.4).
 
 ### 1. terraform-docs Configuration
 

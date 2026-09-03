@@ -1,18 +1,56 @@
+# Resolve actor slugs to node_ids (from both bypassPullRequestAllowances and pushAllowances)
+locals {
+  _bypasser_users = toset(flatten([
+    for bp in coalesce(var.config.branch_protections, []) : concat(
+      try(coalesce(bp.bypassPullRequestAllowances.users, []), []),
+      try(coalesce(bp.pushAllowances.users, []), []),
+    )
+  ]))
+  _bypasser_teams = toset(flatten([
+    for bp in coalesce(var.config.branch_protections, []) : concat(
+      try(coalesce(bp.bypassPullRequestAllowances.teams, []), []),
+      try(coalesce(bp.pushAllowances.teams, []), []),
+    )
+  ]))
+  _bypasser_apps = toset(flatten([
+    for bp in coalesce(var.config.branch_protections, []) : concat(
+      try(coalesce(bp.bypassPullRequestAllowances.apps, []), []),
+      try(coalesce(bp.pushAllowances.apps, []), []),
+    )
+  ]))
+}
+
+data "github_user" "bypasser" {
+  for_each = local._bypasser_users
+  username = each.value
+}
+
+data "github_team" "bypasser" {
+  for_each = local._bypasser_teams
+  slug     = each.value
+}
+
+data "github_app" "bypasser" {
+  for_each = local._bypasser_apps
+  slug     = each.value
+}
+
 # Create the GitHub Repository
 resource "github_repository" "this" {
-  name                 = var.config.repository.name
-  description          = var.config.repository.description
-  visibility           = var.config.repository.visibility
-  topics               = var.config.repository.topics
-  auto_init            = var.config.repository.autoInit
-  archive_on_destroy   = var.config.repository.archiveOnDestroy
-  allow_merge_commit   = var.config.repository.allowMergeCommit
-  allow_squash_merge   = var.config.repository.allowSquashMerge
-  allow_rebase_merge   = var.config.repository.allowRebaseMerge
-  allow_auto_merge     = var.config.repository.allowAutoMerge
+  name                   = var.config.repository.name
+  description            = var.config.repository.description
+  visibility             = var.config.repository.visibility
+  auto_init              = var.config.repository.autoInit
+  archive_on_destroy     = var.config.repository.archiveOnDestroy
+  allow_merge_commit     = var.config.repository.allowMergeCommit
+  allow_squash_merge     = var.config.repository.allowSquashMerge
+  allow_rebase_merge     = var.config.repository.allowRebaseMerge
+  allow_auto_merge       = var.config.repository.allowAutoMerge
   delete_branch_on_merge = var.config.repository.deleteBranchOnMerge
-  allow_update_branch  = var.config.repository.allowUpdateBranch
-  has_issues           = var.config.repository.hasIssues
+  allow_update_branch    = var.config.repository.allowUpdateBranch
+  has_issues             = var.config.repository.hasIssues
+  has_wiki               = var.config.repository.hasWiki
+  has_discussions        = var.config.repository.hasDiscussions
 }
 
 # Set the default branch
@@ -62,27 +100,33 @@ resource "github_actions_repository_oidc_subject_claim_customization_template" "
 
 # Add teams to repository using teamId
 resource "github_team_repository" "this" {
-    for_each = { for t in var.config.teams : t.teamId => t }
+  for_each = { for t in var.config.teams : t.teamId => t }
 
-    repository    = github_repository.this.name
-    team_id       = each.value.teamId
-    permission    = each.value.permission
+  repository = github_repository.this.name
+  team_id    = each.value.teamId
+  permission = each.value.permission
 
-    lifecycle {
-      precondition {
-        condition     = length(distinct([for t in var.config.teams : t.teamId])) == length(var.config.teams)
-        error_message = "Each team in var.config.teams must have a unique teamId."
-      }
+  lifecycle {
+    precondition {
+      condition     = length(distinct([for t in var.config.teams : t.teamId])) == length(var.config.teams)
+      error_message = "Each team in var.config.teams must have a unique teamId."
     }
+  }
 }
 
 # Add outside collaborators
 resource "github_repository_collaborator" "this" {
-    for_each = { for c in var.config.collaborators : "${c.permission}-${c.username}" => c }
+  for_each = { for c in var.config.collaborators : "${c.permission}-${c.username}" => c }
 
-    repository    = github_repository.this.name
-        username   = each.value.username
-        permission = each.value.permission
+  repository = github_repository.this.name
+  username   = each.value.username
+  permission = each.value.permission
+}
+
+# Add topics to the repository
+resource "github_repository_topics" "this" {
+  repository = github_repository.this.name
+  topics     = var.config.repository.topics
 }
 
 # GitHub Repository Labels (from var.config.labels)
@@ -93,4 +137,68 @@ resource "github_issue_label" "this" {
   name        = trimspace(each.value.name)
   description = each.value.description
   color       = each.value.color
+}
+
+# GitHub Pages (dedicated resource replacing deprecated block)
+resource "github_repository_pages" "this" {
+  count      = var.config.pages != null ? 1 : 0
+  repository = github_repository.this.name
+  build_type = try(var.config.pages.buildType, "legacy")
+  cname      = try(var.config.pages.cname, null)
+  depends_on = [github_branch_default.this]
+
+  dynamic "source" {
+    for_each = var.config.pages != null && var.config.pages.source != null ? [var.config.pages.source] : []
+    content {
+      branch = source.value.branch
+      path   = coalesce(source.value.path, "/")
+    }
+  }
+}
+
+# Legacy Branch Protections
+resource "github_branch_protection" "this" {
+  for_each = { for bp in coalesce(var.config.branch_protections, []) : trimspace(bp.branch) => bp }
+
+  repository_id                   = github_repository.this.node_id
+  pattern                         = each.key
+  enforce_admins                  = each.value.enforceAdmins
+  require_signed_commits          = each.value.requireSignedCommits
+  require_conversation_resolution = each.value.requireConversationResolution
+
+  dynamic "required_status_checks" {
+    for_each = length(coalesce(each.value.statusChecks, [])) > 0 ? [each.value.statusChecks] : []
+    content {
+      contexts = required_status_checks.value
+    }
+  }
+
+  dynamic "required_pull_request_reviews" {
+    for_each = (each.value.requiredReviewersCount > 0 || each.value.requiredCodeownersReviewers || each.value.bypassPullRequestAllowances != null) ? [1] : []
+    content {
+      required_approving_review_count = each.value.bypassPullRequestAllowances != null ? max(each.value.requiredReviewersCount, 1) : each.value.requiredReviewersCount
+      require_code_owner_reviews      = each.value.requiredCodeownersReviewers
+      pull_request_bypassers = each.value.bypassPullRequestAllowances != null ? distinct(concat(
+        [for slug in coalesce(each.value.bypassPullRequestAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
+        [for slug in coalesce(each.value.bypassPullRequestAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+        [for login in coalesce(each.value.bypassPullRequestAllowances.users, []) : data.github_user.bypasser[login].node_id],
+      )) : null
+    }
+  }
+
+  dynamic "restrict_pushes" {
+    for_each = each.value.pushAllowances != null ? [1] : []
+    content {
+      push_allowances = distinct(concat(
+        [for slug in coalesce(each.value.pushAllowances.apps, []) : data.github_app.bypasser[slug].node_id],
+        [for slug in coalesce(each.value.pushAllowances.teams, []) : data.github_team.bypasser[slug].node_id],
+        [for login in coalesce(each.value.pushAllowances.users, []) : data.github_user.bypasser[login].node_id],
+      ))
+    }
+  }
+
+  depends_on = [
+    github_branch_default.this,
+    github_repository_file.this,
+  ]
 }

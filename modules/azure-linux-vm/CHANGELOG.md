@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/prefapp/tfm/compare/azure-linux-vm-v0.1.2...azure-linux-vm-v0.1.3) (2026-08-20)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1387](https://github.com/prefapp/tfm/issues/1387)) ([cd611c6](https://github.com/prefapp/tfm/commit/cd611c6ab179f1d01e44a555871b997c7f8bd94d))
+
 ## [0.1.2](https://github.com/prefapp/tfm/compare/azure-linux-vm-v0.1.1...azure-linux-vm-v0.1.2) (2026-01-13)
 
 

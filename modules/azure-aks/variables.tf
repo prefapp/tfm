@@ -295,3 +295,12 @@ variable "create_role_assignment_public_ip" {
   type        = bool
   default     = false
 }
+
+# AKS version upgrade_override
+variable "upgrade_override" {
+  type = object({
+    force_upgrade_enabled = bool
+    effective_until       = optional(string)
+  })
+  default = null
+}

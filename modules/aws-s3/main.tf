@@ -20,7 +20,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 ## Bucket Policy to enforce HTTPS only
 resource "aws_s3_bucket_policy" "this" {
-
+  count  = var.create_bucket_policy ? 1 : 0
   region = var.region
   bucket = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
   policy = var.s3_replication_source != null ? data.aws_iam_policy_document.source_replication_s3_policy_with_https_policy[0].json : data.aws_iam_policy_document.only_https.json

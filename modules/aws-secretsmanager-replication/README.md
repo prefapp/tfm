@@ -51,7 +51,17 @@ The Lambda determines:
 - from the `secret_id` parameter (manual mode),
 - or from `list_secrets()` (full sync mode).
 
-The **destination secret name is always the same as the source secret name**, simplifying configuration and IAM permissions.
+### Lambda and Invocation Modes
+
+As of **v2.0.0**, this module deploys a **single** replication Lambda that handles all three modes, distinguished by the shape of the invocation event (the previous separate `automatic` and `manual` Lambdas were merged):
+
+- **Automatic (EventBridge):** triggered by Secrets Manager API calls delivered via CloudTrail. No manual payload.
+- **Manual single secret:** invoke with `{"secret_id": "<name-or-arn>"}`.
+- **Full sync:** invoke with `{"initial_run": true}` (alias `{"enable_full_sync": true}`). This runs only when the module was deployed with `enable_full_sync = true`; otherwise the Lambda refuses the request. Full sync replicates every secret in the source account.
+
+Manual and full-sync invocations return a JSON body with an HTTP-style `statusCode` (200 success, 400 invalid payload, 403 full sync not enabled, 404 source secret not found, 500 replication error).
+
+By default, the **destination secret name is the same as the source secret name**. If `add_region_prefix_to_name = true`, the destination secret name is prefixed with the **source region** (for example, `eu-west-1-mysecret`) to preserve origin traceability.
 
 ### Destination Configuration Format
 
@@ -114,6 +124,12 @@ To replicate AWS Secrets Manager secrets between two accounts upon a change or r
 3. **S3 Storage:** The Trail must be configured to deliver log files to a designated **S3 Bucket**.
 4. **EventBridge Trigger:** An Amazon EventBridge rule filters for the pattern `AWS API Call via CloudTrail`, matching `CreateSecret` and `PutSecretValue` events.
 5. **Lambda Execution:** The rule triggers a Lambda function, which assumes an IAM role to read the secret from the source and write/update it in the destination account.
+
+### Eventual Consistency Note for `CreateSecret`
+
+When the automatic Lambda is triggered by a `CreateSecret` event, AWS Secrets Manager may still be finalizing the first readable secret version. In that short window, `GetSecretValue` can return a `ResourceNotFoundException` indicating that the staging label `AWSCURRENT` is not available yet.
+
+To handle this eventual consistency scenario, the automatic replication flow retries `GetSecretValue` a few times. If `AWSCURRENT` is still unavailable after those retries, the Lambda logs a warning and exits gracefully instead of failing the invocation. A subsequent `PutSecretValue` event or a later manual/full sync run will replicate the secret once the current version is available.
 
 ### Required Resources & Links
 
@@ -238,7 +254,7 @@ The destination account must have an IAM role that the replication Lambda can as
 
 Starting from version X.X, the module implements the following improvements for cross-region secret replication:
 
-- Replicated secrets are automatically renamed with the region code as a prefix (e.g., `eu-west-3-mysecret`).
+- When enabled via `add_region_prefix_to_name`, replicated secrets are renamed with the **source region** code as a prefix (e.g., `eu-west-3-mysecret`).
 - Replicated secrets include additional tags:
   - `origin-account`: the source AWS account.
   - `origin-region`: the source AWS region.
@@ -250,75 +266,76 @@ This allows secrets with the same name from different regions to be copied into 
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5 |
+| <a name="requirement_archive"></a> [archive](#requirement\_archive) | ~> 2.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.2 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | ~> 2.0 |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.2 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
-| <a name="module_lambda_automatic_replication"></a> [lambda\_automatic\_replication](#module\_lambda\_automatic\_replication) | terraform-aws-modules/lambda/aws | ~> 7.0 |
-| <a name="module_lambda_manual_replication"></a> [lambda\_manual\_replication](#module\_lambda\_manual\_replication) | terraform-aws-modules/lambda/aws | ~> 7.0 |
+| ---- | ------ | ------- |
+| <a name="module_lambda_replication"></a> [lambda\_replication](#module\_lambda\_replication) | terraform-aws-modules/lambda/aws | ~> 7.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudtrail.secrets_management_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail) | resource |
 | [aws_cloudwatch_event_rule.secretsmanager_api_calls](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.invoke_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.lambda_manual_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_s3_bucket.cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_policy.cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_s3_bucket_public_access_block.cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_server_side_encryption_configuration.cloudtrail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration) | resource |
 | [random_integer.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) | resource |
+| [archive_file.lambda](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination secret name will be prefixed with the region (e.g., "us-east-1-mysecret").<br/>If false, the original name is used. Default: false.<br/>This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones. | `bool` | `false` | no |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_add_region_prefix_to_name"></a> [add\_region\_prefix\_to\_name](#input\_add\_region\_prefix\_to\_name) | If true, the destination secret name will be prefixed with the source region (e.g., "us-east-1-mysecret").<br/>If false, the original name is used. Default: false.<br/>This helps avoid colisiones si replicas secretos con el mismo nombre desde varias regiones. | `bool` | `false` | no |
 | <a name="input_allow_auto_create_cloudtrail_bucket"></a> [allow\_auto\_create\_cloudtrail\_bucket](#input\_allow\_auto\_create\_cloudtrail\_bucket) | Fallback mode. If true, and s3\_bucket\_arn is empty, the module may create a dedicated S3 bucket for CloudTrail logs. Default is false to enforce enterprise-style reuse of an existing centralized bucket. | `bool` | `false` | no |
 | <a name="input_allowed_assume_roles"></a> [allowed\_assume\_roles](#input\_allowed\_assume\_roles) | List of IAM roles the Lambda can assume for cross-account replication | `list(string)` | n/a | yes |
 | <a name="input_cloudtrail_arn"></a> [cloudtrail\_arn](#input\_cloudtrail\_arn) | (Optional) ARN of an existing CloudTrail. If omitted and eventbridge\_enabled is true, the module creates a dedicated trail. | `string` | `""` | no |
 | <a name="input_destinations_json"></a> [destinations\_json](#input\_destinations\_json) | JSON describing accounts, regions and KMS keys for replication | `string` | n/a | yes |
-| <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the manual replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
+| <a name="input_enable_full_sync"></a> [enable\_full\_sync](#input\_enable\_full\_sync) | If true, the replication Lambda is granted secretsmanager:ListSecrets on all resources to support full-account sync. Set to false for strict least-privilege. | `bool` | `false` | no |
 | <a name="input_enable_tag_replication"></a> [enable\_tag\_replication](#input\_enable\_tag\_replication) | Whether to replicate tags from the source secret (used by the code, not Terraform) | `bool` | `true` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Additional environment variables passed to the Lambda | `map(string)` | `{}` | no |
-| <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `true` | no |
+| <a name="input_eventbridge_enabled"></a> [eventbridge\_enabled](#input\_eventbridge\_enabled) | Whether to create the EventBridge rule that triggers the Lambda | `bool` | `false` | no |
+| <a name="input_eventbridge_extra_event_names"></a> [eventbridge\_extra\_event\_names](#input\_eventbridge\_extra\_event\_names) | Additional Secrets Manager API event names to include in the EventBridge rule (e.g. ["UpdateSecret"]). PutSecretValue and CreateSecret are always included. | `list(string)` | `[]` | no |
 | <a name="input_existing_bucket_policy_json"></a> [existing\_bucket\_policy\_json](#input\_existing\_bucket\_policy\_json) | Existing bucket policy JSON to merge with the module-managed bucket policy (for both new and existing buckets). Required when `manage_s3_bucket_policy` is true, `eventbridge_enabled` is true, and `s3_bucket_arn` is set. If you use an existing bucket and want the module to manage its policy, you must provide the current policy JSON to avoid overwriting other statements. | `string` | `null` | no |
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Lambda memory in MB | `number` | `128` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | Lambda timeout in seconds | `number` | `600` | no |
 | <a name="input_manage_s3_bucket_policy"></a> [manage\_s3\_bucket\_policy](#input\_manage\_s3\_bucket\_policy) | If true, the module will apply the minimal S3 bucket policy required for CloudTrail to the chosen bucket. Set to false if the Landing Zone manages bucket policies. | `bool` | `true` | no |
-| <a name="input_manual_replication_enabled"></a> [manual\_replication\_enabled](#input\_manual\_replication\_enabled) | Whether to deploy the manual secrets sync Lambda | `bool` | `true` | no |
 | <a name="input_name"></a> [name](#input\_name) | Base name for the Lambda and associated resources | `string` | n/a | yes |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Prefix to use for naming resources. | `string` | n/a | yes |
 | <a name="input_s3_bucket_arn"></a> [s3\_bucket\_arn](#input\_s3\_bucket\_arn) | ARN of an existing S3 bucket where CloudTrail logs are stored. This is required by default when eventbridge\_enabled is true. Set allow\_auto\_create\_cloudtrail\_bucket=true only as a fallback to let the module create a dedicated bucket automatically. Must be a valid S3 bucket ARN (arn:aws:s3:::bucket-name). Note: The validation regex checks basic format only and does not catch all AWS S3 bucket naming rules (e.g., consecutive periods, IP address format). For full requirements, see AWS documentation. | `string` | `""` | no |
+| <a name="input_source_kms_key_arns"></a> [source\_kms\_key\_arns](#input\_source\_kms\_key\_arns) | List of KMS key ARNs used to encrypt secrets in the source account.<br/>Required when any source secret is encrypted with a customer-managed KMS key (CMK).<br/>The Lambda execution role will be granted kms:Decrypt and kms:DescribeKey on each key.<br/>Leave empty (default) when all source secrets use the AWS managed key for Secrets Manager. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to all resources created by this module | `map(string)` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cloudtrail_arn"></a> [cloudtrail\_arn](#output\_cloudtrail\_arn) | ARN of the CloudTrail used (existing or created). |
 | <a name="output_eventbridge_rule_arn"></a> [eventbridge\_rule\_arn](#output\_eventbridge\_rule\_arn) | ARN of the EventBridge rule (if created) |
-| <a name="output_lambda_automatic_replication_arn"></a> [lambda\_automatic\_replication\_arn](#output\_lambda\_automatic\_replication\_arn) | ARN of the Lambda function |
-| <a name="output_lambda_automatic_replication_role_arn"></a> [lambda\_automatic\_replication\_role\_arn](#output\_lambda\_automatic\_replication\_role\_arn) | IAM role ARN associated with the Lambda |
-| <a name="output_lambda_manual_replication_arn"></a> [lambda\_manual\_replication\_arn](#output\_lambda\_manual\_replication\_arn) | ARN of the manual replication Lambda function (if created) |
-| <a name="output_lambda_manual_replication_role_arn"></a> [lambda\_manual\_replication\_role\_arn](#output\_lambda\_manual\_replication\_role\_arn) | IAM role ARN for the manual replication Lambda (if created) |
+| <a name="output_eventbridge_rule_name"></a> [eventbridge\_rule\_name](#output\_eventbridge\_rule\_name) | Name of the EventBridge rule (if created) |
+| <a name="output_lambda_replication_arn"></a> [lambda\_replication\_arn](#output\_lambda\_replication\_arn) | ARN of the replication Lambda function |
+| <a name="output_lambda_replication_role_arn"></a> [lambda\_replication\_role\_arn](#output\_lambda\_replication\_role\_arn) | IAM role ARN associated with the replication Lambda |
 | <a name="output_s3_bucket_id"></a> [s3\_bucket\_id](#output\_s3\_bucket\_id) | S3 bucket name used for CloudTrail logs (created or derived from the provided s3\_bucket\_arn). |
 | <a name="output_using_existing_cloudtrail"></a> [using\_existing\_cloudtrail](#output\_using\_existing\_cloudtrail) | True if an existing CloudTrail was provided. |
 | <a name="output_using_existing_s3_bucket"></a> [using\_existing\_s3\_bucket](#output\_using\_existing\_s3\_bucket) | True if an existing S3 bucket ARN was provided. |

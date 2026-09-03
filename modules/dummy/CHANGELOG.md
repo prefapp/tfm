@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/prefapp/tfm/compare/dummy-v0.2.0...dummy-v0.3.0) (2026-07-29)
+
+
+### Features
+
+* **`dummy`:** Add crash, sleep and tries_until_ok functionality to destroy operations ([#1349](https://github.com/prefapp/tfm/issues/1349)) ([c4d79c4](https://github.com/prefapp/tfm/commit/c4d79c4e8fd86908bc4b6170860190a467a7db42))
+
+## [0.2.0](https://github.com/prefapp/tfm/compare/dummy-v0.1.0...dummy-v0.2.0) (2026-07-20)
+
+
+### Features
+
+* **`dummy`:** Implement new parameters ([#1332](https://github.com/prefapp/tfm/issues/1332)) ([fae2926](https://github.com/prefapp/tfm/commit/fae2926d6ef2b0fca4579387c8fb3bd123d5a8e5))
+
 ## 0.1.0 (2026-01-15)
 
 

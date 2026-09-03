@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.5.5](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.4...aws-eks-v1.5.5) (2026-07-20)
+
+
+### Bug Fixes
+
+* **aws-eks:** add support of inline policy of karpenter controller ([#1342](https://github.com/prefapp/tfm/issues/1342)) ([040461c](https://github.com/prefapp/tfm/commit/040461cdc453437234251b90754f89194d2246db))
+
+## [1.5.4](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.3...aws-eks-v1.5.4) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** add by default the addon eks-pod-indentity-agent ([#1339](https://github.com/prefapp/tfm/issues/1339)) ([06e9ab8](https://github.com/prefapp/tfm/commit/06e9ab8232ecb60b9fa17d2a12bfd5207db85545))
+
+## [1.5.3](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.2...aws-eks-v1.5.3) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** set the default name os karpenter namespace ([#1337](https://github.com/prefapp/tfm/issues/1337)) ([913a11c](https://github.com/prefapp/tfm/commit/913a11c032a0d906f3f598ba6edbb3fd354c6915))
+
+## [1.5.2](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.1...aws-eks-v1.5.2) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aws-eks:** support set name of service account karpenter controller ([#1335](https://github.com/prefapp/tfm/issues/1335)) ([78f499d](https://github.com/prefapp/tfm/commit/78f499d43d5497816470fa71cc799b1173913e9f))
+
+## [1.5.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.0...aws-eks-v1.5.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* **aws-eks:** modify default value for cluster-encryption-config ([#1288](https://github.com/prefapp/tfm/issues/1288)) ([f2071ad](https://github.com/prefapp/tfm/commit/f2071adcfce564464d1553cc6b1f2b7817dd8d21))
+
+## [1.5.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.4.0...aws-eks-v1.5.0) (2026-06-05)
+
+
+### Features
+
+* **aws-eks:** update aws provider to version 6 ([#1269](https://github.com/prefapp/tfm/issues/1269)) ([0e73e7c](https://github.com/prefapp/tfm/commit/0e73e7cf039e829865f92c7f9acf9e8d54d963d5))
+
 ## [1.4.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.3.1...aws-eks-v1.4.0) (2025-12-16)
 
 
