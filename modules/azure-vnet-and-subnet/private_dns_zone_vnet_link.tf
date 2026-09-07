@@ -34,4 +34,6 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
   virtual_network_id    = each.value.virtual_network_id
   registration_enabled  = each.value.registration_enabled
   tags                  = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
+
+  depends_on = [azurerm_private_dns_zone.this]
 }
