@@ -10,6 +10,13 @@
 
 * Document the module with `terraform-docs` (`docs/header.md`, `docs/footer.md`, `.terraform-docs.yml`); clarify default tag merge behaviour for `tags_from_rg`; add `_examples/basic`.
 
+## [2.3.1](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.3.0...azure-vnet-subnet-v2.3.1) (2026-09-07)
+
+
+### Bug Fixes
+
+* add depends_on for DNS zone link creation ([#1426](https://github.com/prefapp/tfm/issues/1426)) ([bf0afbe](https://github.com/prefapp/tfm/commit/bf0afbe3310fa172491ba7e84995345dd8a351c0))
+
 ## [2.3.0](https://github.com/prefapp/tfm/compare/azure-vnet-subnet-v2.2.1...azure-vnet-subnet-v2.3.0) (2026-08-18)
 
 
