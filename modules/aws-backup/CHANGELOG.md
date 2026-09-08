@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/prefapp/tfm/compare/aws-backup-v0.3.0...aws-backup-v0.3.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **shared-services:** allow wilcard roles of EKS in pro and staging ([a97aaee](https://github.com/prefapp/tfm/commit/a97aaeed4c0b90134085332093fca95560bf3b17))
+
 ## [0.3.0](https://github.com/prefapp/tfm/compare/aws-backup-v0.2.0...aws-backup-v0.3.0) (2026-07-21)
 
 
