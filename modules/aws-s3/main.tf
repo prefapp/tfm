@@ -106,8 +106,8 @@ data "aws_iam_policy_document" "source_replication_s3_policy_with_https_policy" 
 
 ## Bucket Versioning
 resource "aws_s3_bucket_versioning" "this" {
-  count  = var.create_bucket ? 1 : 0
-  bucket = aws_s3_bucket.this[0].id
+  count  = (var.create_bucket || var.s3_replication_destination != null || var.s3_replication_source != null) ? 1 : 0
+  bucket = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
   region = var.region
   versioning_configuration {
     status = var.s3_bucket_versioning
