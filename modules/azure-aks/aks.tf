@@ -1,7 +1,7 @@
 # AKS section
 module "aks" {
   # https://registry.terraform.io/modules/Azure/avm-res-containerservice-managedcluster/azurerm/latest
-  source = "github.com/Azure/terraform-azurerm-avm-res-containerservice-managedcluster?ref=v0.8.2"
+  source = "github.com/Azure/terraform-azurerm-avm-res-containerservice-managedcluster?ref=v0.8.3"
 
   location                                             = var.location
 
