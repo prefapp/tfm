@@ -51,6 +51,10 @@ resource "github_repository" "this" {
   has_issues             = var.config.repository.hasIssues
   has_wiki               = var.config.repository.hasWiki
   has_discussions        = var.config.repository.hasDiscussions
+
+  lifecycle {
+    ignore_changes = [pages]
+  }
 }
 
 # Set the default branch
@@ -141,11 +145,13 @@ resource "github_issue_label" "this" {
 
 # GitHub Pages (dedicated resource replacing deprecated block)
 resource "github_repository_pages" "this" {
-  count      = var.config.pages != null ? 1 : 0
-  repository = github_repository.this.name
-  build_type = try(var.config.pages.buildType, "legacy")
-  cname      = try(var.config.pages.cname, null)
-  depends_on = [github_branch_default.this]
+  count          = var.config.pages != null ? 1 : 0
+  repository     = github_repository.this.name
+  build_type     = try(var.config.pages.buildType, "legacy")
+  cname          = try(var.config.pages.cname, null)
+  public         = try(var.config.pages.public, null)
+  https_enforced = try(var.config.pages.https_enforced, null)
+  depends_on     = [github_branch_default.this]
 
   dynamic "source" {
     for_each = var.config.pages != null && var.config.pages.source != null ? [var.config.pages.source] : []
