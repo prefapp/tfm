@@ -1,0 +1,22 @@
+{
+  "config": {
+    "variables": {
+      "DEPLOY_ENV": {
+        "value": "production",
+        "visibility": "all"
+      },
+      "TEAM_CHANNEL": {
+        "value": "eng-alerts",
+        "visibility": "private"
+      },
+      "COMPONENT_OVERRIDE": {
+        "value": "custom",
+        "visibility": "selected",
+        "selectedRepositoryIds": [
+          "my-org/frontend",
+          "my-org/backend"
+        ]
+      }
+    }
+  }
+}

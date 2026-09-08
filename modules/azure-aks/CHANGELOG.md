@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.4](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.3...azure-aks-v2.0.4) (2026-08-20)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1387](https://github.com/prefapp/tfm/issues/1387)) ([cd611c6](https://github.com/prefapp/tfm/commit/cd611c6ab179f1d01e44a555871b997c7f8bd94d))
+
+## [2.0.3](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.2...azure-aks-v2.0.3) (2026-08-19)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1368](https://github.com/prefapp/tfm/issues/1368)) ([2b30f9b](https://github.com/prefapp/tfm/commit/2b30f9bed63b94aedf8f3af9736bf72bfd83073f))
+
 ## [2.0.2](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.1...azure-aks-v2.0.2) (2026-05-25)
 
 

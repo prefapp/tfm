@@ -121,18 +121,28 @@ For modules consumed by Firestartr, release tags must be suitable for direct mod
 Design knowledge is kept lightweight and high-signal. There is **no** per-change spec/plan/tasks process; git history and module `README.md`s already record what shipped.
 
 ### 9.1 Glossary
-- A single root `CONTEXT.md` holds the project's cross-cutting vocabulary (e.g. Firestartr, ghaps, the `config` object, CR, module contract, state boundary).
-- Contributors and AI agents **SHOULD** keep `CONTEXT.md` current when a domain term is introduced or sharpened. It is a glossary only — no implementation details, no process.
+- The repository is **multi-context**: one context per module.
+- The root `CONTEXT.md` is the **shared kernel** — cross-cutting vocabulary that every context inherits (e.g. Firestartr, ghaps, the `config` object, CR, module contract, state boundary).
+- Each module has its own glossary at `modules/<module>/CONTEXT.md`, co-located with the code it describes.
+- The root `CONTEXT-MAP.md` **MUST** list every context and how the contexts relate.
+- A term belongs in the shared kernel when it means the same thing everywhere, and in a module glossary when its meaning is specific to that module. Terms **MUST NOT** be duplicated between the two.
+- Contributors and AI agents **SHOULD** keep these glossaries current when a domain term is introduced or sharpened. They are glossaries only — no implementation details, no process.
+- When a module is added or removed, its `CONTEXT.md` and its line in `CONTEXT-MAP.md` **MUST** be created or removed in the same change.
 
 ### 9.2 Architecture Decision Records
 - Decisions worth remembering live as short Markdown files, placed at the narrowest scope that fully contains the decision: repo-wide decisions in the root `docs/adr/`, module-scoped decisions in that module's `modules/<module>/docs/adr/`.
-- Every ADR is catalogued in the root `ADR-INDEX.md`; add a new ADR's entry there in the same change.
+- ADR files **MUST** be named `NNNN-slug.md`, numbered sequentially **per directory** starting at `0001`.
+- Each `docs/adr/` directory carries its own `README.md` index listing the ADRs it contains. Adding an ADR **MUST** add its line to that index in the same change. There is **no** repository-wide ADR index.
 - Record an ADR **only** when all three hold: the decision is hard to reverse, it is surprising without context, and it results from a real trade-off. Routine changes (field additions, forced provider deprecations) need no ADR.
+- Create a module's `docs/adr/` directory lazily, only when its first ADR is written.
 - ADRs are version-controlled and **must remain** in the repository once written.
 
 ### 9.3 Responsibility
 - Before changing an area, read the relevant ADRs and respect them; if a change contradicts an ADR, update or supersede that ADR in the same PR.
-- `CONTEXT.md` and all ADRs (root and per-module `docs/adr/`) **may not contradict** this `CONSTITUTION.md` or `AGENTS.md`.
+- `CONTEXT-MAP.md`, all `CONTEXT.md` glossaries, and all ADRs (root and per-module `docs/adr/`) **may not contradict** this `CONSTITUTION.md` or `AGENTS.md`.
+
+### 9.4 Public Repository
+- This repository is **public**. Design-memory documents **MUST NOT** link to private or internal repositories, dashboards or tickets, and **MUST NOT** disclose internal-only details. Conventions borrowed from elsewhere are stated here in full rather than linked.
 
 ## 10. Protected Files – Automated Release System
 

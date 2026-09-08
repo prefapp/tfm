@@ -37,6 +37,12 @@ variable "dns_private_zone_name" {
   description = "Name of the Private DNS Zone for the private endpoint (e.g. privatelink.redisenterprise.cache.azure.net). Required when var.private_endpoint is set."
 }
 
+variable "dns_private_zone_resource_group" {
+  type        = string
+  default     = null
+  description = "Override resource group for Private DNS Zone lookup. When null, falls back to vnet.resource_group_name."
+}
+
 variable "managed_redis" {
   description = "Configuration for the Azure Managed Redis instance."
   type = object({

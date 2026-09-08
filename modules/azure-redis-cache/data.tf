@@ -38,5 +38,5 @@ data "azurerm_subnet" "subnet" {
 data "azurerm_private_dns_zone" "dns_private_zone" {
   count               = var.dns_private_zone_name != null && var.dns_private_zone_name != "" ? 1 : 0
   name                = var.dns_private_zone_name
-  resource_group_name = coalesce(var.vnet.resource_group_name, local.vnet_resource_group_from_data)
+  resource_group_name = coalesce(var.dns_private_zone_resource_group, var.vnet.resource_group_name, local.vnet_resource_group_from_data)
 }
