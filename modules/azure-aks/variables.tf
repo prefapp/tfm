@@ -106,6 +106,10 @@ variable "aks_sku_tier" {
   description = "The SKU Tier that should be used for this Kubernetes Cluster. Possible values are Free, Standard and Premium"
 }
 
+variable "aks_sku_name" {
+  description = "The SKU name that should be used for this Kubernetes Cluster. Possible values are Autmatic and Base "
+
+
 variable "key_vault_secrets_provider_enabled" {
   description = "Boolean value to activate the csi-secrets-store-driver"
 }

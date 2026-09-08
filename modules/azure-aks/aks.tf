@@ -72,6 +72,7 @@ module "aks" {
 
   sku = {
     tier = var.aks_sku_tier
+    name = var.aks_sku_name
   }
 
   tags                                                 = local.tags
