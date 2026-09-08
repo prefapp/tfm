@@ -8,11 +8,17 @@ resource "aws_cloudwatch_event_rule" "rds_backup_job_completed" {
 
   event_pattern = jsonencode({
     "source" : ["aws.backup"],
-    "detail-type" : ["Recovery Point State Change"],
+    "detail-type" : ["Copy Job State Change"],
     "detail" : {
       #   "resourceType" : ["RDS"],
       "backupVaultName" : [for vault in var.aws_backup_vault : vault.vault_name if vault.vault_name != null],
-      "status" : ["COMPLETED"],
+      "state" : ["COMPLETED"],
+      "destinationBackupVaultArn": [for vault in var.aws_backup_vault : vault.vault_arn if vault.vault_arn != null],
+      "createdBy": {
+        "backupPlanRuleId" : [
+          for rule in var.aws_backup_vault : rule.backup_plan_rule_id if rule.backup_plan_rule_id != null
+        ]
+      }
     }
   })
 
