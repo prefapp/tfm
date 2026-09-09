@@ -29,15 +29,15 @@ output "cluster_issuer" {
   value = module.aks.oidc_issuer_profile_issuer_url
 }
 
-# The kubelet identity client ID of the AKS cluster.
-output "kubelet_identity_client_id" {
-  value = module.aks.kubelet_identity.clientId
-}
+# # The kubelet identity client ID of the AKS cluster.
+# output "kubelet_identity_client_id" {
+#   value = module.aks.kubelet_identity.clientId
+# }
 
-# The kubelet identity object ID of the AKS cluster.
-output "kubelet_identity_object_id" {
-  value = module.aks.kubelet_identity.objectId
-}
+# # The kubelet identity object ID of the AKS cluster.
+# output "kubelet_identity_object_id" {
+#   value = module.aks.kubelet_identity.objectId
+# }
 
 # The network profile of the AKS cluster. See README for structure.
 output "network_profile" {
