@@ -52,6 +52,14 @@ def replicate_cross_account_backup(backup_id, backup_vault_origin, config):
         for region_name, region_cfg in dest.regions.items():
             log("info", "Replicating to region", account_id=account_id, region=region_name)
             for recovery_point_arn in backup_id:
+                log(
+                    "info",
+                    "Starting copy_recovery_point...",
+                    account_id=account_id,
+                    region=region_name,
+                    recovery_point_arn=recovery_point_arn,
+                    destination_vault_arn=dest.vault_arn,
+                )
                 result = copy_recovery_point(
                     source_vault_name=backup_vault_origin,  # Assuming source vault name is the same as source region, adjust if needed
                     destination_vault_arn=dest.vault_arn,
@@ -61,7 +69,7 @@ def replicate_cross_account_backup(backup_id, backup_vault_origin, config):
                 )
                 log(
                     "info",
-                    "copy_recovery_point result",
+                    "copy_recovery_point finished result",
                     account_id=account_id,
                     region=region_name,
                     recovery_point_arn=recovery_point_arn,
