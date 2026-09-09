@@ -26,7 +26,7 @@ def lambda_handler(event, context):
         None
     """
     log("info", "Starting lambda...")
-    log("debug", "Triggered event object", event=event)
+    log("info", "Triggered event object", event=event)
 
     detail = event.get("detail", {})
 
