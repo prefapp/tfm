@@ -25,12 +25,8 @@ def lambda_handler(event, context):
     Returns:
         None
     """
-    debug = os.environ.get("DEBUG", "false").lower() == "true"
-
-    if debug:
-        log("debug", "Starting lambda debug mode...", event=event)
-    else:
-        log("info", "Starting lambda...")
+    log("info", "Starting lambda...")
+    log("debug", "Triggered event object", event=event)
 
     detail = event.get("detail", {})
 
