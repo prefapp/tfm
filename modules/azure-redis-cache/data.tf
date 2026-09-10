@@ -5,8 +5,8 @@ locals {
   # Per-endpoint vnet resolution: explicit name/resource_group_name wins, otherwise resolved from tags.
   vnet_resolved = {
     for k, v in var.private_endpoints : k => {
-      name                = try(coalesce(data.azurerm_resources.vnet_from_name[k].resources[0].name, data.azurerm_resources.vnet_from_tags[k].resources[0].name, v.vnet.name), null)
-      resource_group_name = try(coalesce(data.azurerm_resources.vnet_from_name[k].resources[0].resource_group_name, data.azurerm_resources.vnet_from_tags[k].resources[0].resource_group_name, v.vnet.resource_group_name), null)
+      name                = coalesce(try(data.azurerm_resources.vnet_from_name[k].resources[0].name, null), try(data.azurerm_resources.vnet_from_tags[k].resources[0].name, null), v.vnet.name)
+      resource_group_name = coalesce(try(data.azurerm_resources.vnet_from_name[k].resources[0].resource_group_name, null), try(data.azurerm_resources.vnet_from_tags[k].resources[0].resource_group_name, null), v.vnet.resource_group_name)
     }
   }
 
