@@ -9,25 +9,26 @@ The module includes **`moved`** blocks for state migration from older resource a
 
 ## Key features
 
-- **Networking**: Private endpoint to Redis (`redisCache` subresource) with DNS zone group.
-- **VNet resolution**: `vnet.name` + `vnet.resource_group_name` and/or `vnet.tags` via `azurerm_resources`.
+- **Networking**: Zero, one or several private endpoints to Redis (`redisCache` subresource), each with its own DNS zone group, keyed by an arbitrary map key (`private_endpoints`).
+- **VNet resolution**: per endpoint, by `vnet.name` + `vnet.resource_group_name` and/or `vnet.tags` via `azurerm_resources`.
+- **Cross-subscription DNS zones**: per endpoint, either pass an already-resolved `private_dns_zone_id` (e.g. a Private DNS Zone in another subscription, obtained in claims via a `ref`), or let the module resolve it in the current subscription via `dns_private_zone_name`.
 - **Tags**: Optional merge from the Redis resource group when `tags_from_rg = true`.
 - **Premium options**: Optional `patch_schedule`; when `redis.family = "P"` (Premium), **`redis_configuration` must be set** in the current implementation (the resource block always dereferences `redis.redis_configuration.*`).
 
 ## Notes
 
 1. When **`redis.family` is `"P"`** (Premium), the module always opens a **`redis_configuration`** block on `azurerm_redis_cache` and reads **`redis.redis_configuration.*`**; supply a suitable **`redis_configuration`** object for Premium or plan/apply may fail.
-2. You can locate the VNet by **`name` + `resource_group_name`** or by **`tags`** (see `data.tf`).
+2. Each entry in **`private_endpoints`** resolves its own VNet, by **`name` + `resource_group_name`** or by **`tags`** (see `data.tf`).
 3. Setting **`redis.subnet_id`** on the cache is incompatible with using this module’s **private endpoint** pattern for the same workflow; see [Azure Redis VNet documentation](https://learn.microsoft.com/azure/azure-cache-for-redis/cache-how-to-premium-vnet).
 4. Creating a Redis instance often takes **on the order of ~25 minutes**.
-5. **`private_endpoint.private_service_connection`** may be omitted; it defaults to **`{ is_manual_connection = false }`**. Set the block explicitly when you need a manual connection.
-6. **`dns_private_zone_name`** is resolved with **`resource_group_name = coalesce(var.dns_private_zone_resource_group, var.vnet.resource_group_name, local.vnet_resource_group_from_data)`**. By default the VNet’s resource group is used, but you can set **`dns_private_zone_resource_group`** to point to a different RG (e.g. when the private DNS zone is consolidated in a central subscription).
+5. **`private_endpoints.<key>.private_service_connection`** may be omitted; it defaults to **`{ is_manual_connection = false }`**. Set the block explicitly when you need a manual connection.
+6. Each endpoint must set exactly one of **`private_dns_zone_id`** or **`dns_private_zone_name`**. When **`dns_private_zone_name`** is used, it is resolved with **`resource_group_name = coalesce(private_endpoints.<key>.dns_private_zone_resource_group, private_endpoints.<key>.vnet.resource_group_name, <resolved vnet resource group>)`**. When **`private_dns_zone_id`** is used instead, it is passed through as-is, allowing the zone to live in a different subscription (e.g. a value fetched in claims through a `ref`).
 
 ## Prerequisites
 
-- Existing **resource group** for Redis and the private endpoint.
-- **Virtual network** and **subnet** suitable for the private endpoint.
-- **Private DNS zone** for Redis private link (commonly `privatelink.redis.cache.windows.net`). By default it must be in the same resource group as the VNet, or set `dns_private_zone_resource_group` to point to a different RG.
+- Existing **resource group** for Redis and any private endpoints.
+- **Virtual network** and **subnet** suitable for each private endpoint.
+- A **Private DNS zone** id for each endpoint (commonly `privatelink.redis.cache.windows.net`), either resolved in-subscription via `dns_private_zone_name` (same resource group as the VNet by default, or `dns_private_zone_resource_group`), or supplied directly via `private_dns_zone_id` when it lives in another subscription.
 - **azurerm** provider configured.
 
 ## Basic usage
@@ -37,13 +38,6 @@ module "redis" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-redis-cache?ref=<version>"
 
   resource_group = "example-rg"
-  subnet_name    = "example-subnet"
-  dns_private_zone_name = "privatelink.redis.cache.windows.net"
-
-  vnet = {
-    name                = "example-vnet"
-    resource_group_name = "example-network-rg"
-  }
 
   redis = {
     name     = "redis-example"
@@ -53,11 +47,24 @@ module "redis" {
     sku_name = "Standard"
   }
 
-  private_endpoint = {
-    name                          = "pe-redis"
-    custom_network_interface_name = "pe-redis-nic"
-    private_service_connection = {
-      is_manual_connection = false
+  private_endpoints = {
+    default = {
+      name                          = "pe-redis"
+      custom_network_interface_name = "pe-redis-nic"
+      private_service_connection = {
+        is_manual_connection = false
+      }
+
+      subnet_name = "example-subnet"
+      vnet = {
+        name                = "example-vnet"
+        resource_group_name = "example-network-rg"
+      }
+
+      # Either resolve the zone in this subscription...
+      dns_private_zone_name = "privatelink.redis.cache.windows.net"
+      # ...or pass an already-resolved id from another subscription instead:
+      # private_dns_zone_id = "/subscriptions/<other-sub>/resourceGroups/.../providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net"
     }
   }
 }
@@ -95,7 +102,7 @@ module "redis" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.23.0, < 5.0.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.81.0 |
 
 ## Modules
 
@@ -109,7 +116,6 @@ No modules.
 | [azurerm_redis_cache.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/redis_cache) | resource |
 | [azurerm_private_dns_zone.dns_private_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | data source |
 | [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
-| [azurerm_resources.vnet_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
 | [azurerm_resources.vnet_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
 | [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
@@ -117,15 +123,11 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | n/a | `string` | n/a | yes |
-| <a name="input_dns_private_zone_resource_group"></a> [dns\_private\_zone\_resource\_group](#input\_dns\_private\_zone\_resource\_group) | Override resource group for Private DNS Zone lookup. When null, falls back to vnet.resource\_group\_name. | `string` | `null` | no |
-| <a name="input_private_endpoint"></a> [private\_endpoint](#input\_private\_endpoint) | n/a | <pre>object({<br/>    name                          = string<br/>    dns_zone_group_name           = optional(string, "default")<br/>    custom_network_interface_name = string<br/>    private_service_connection = optional(object({<br/>      is_manual_connection = bool<br/>    }), { is_manual_connection = false })<br/>  })</pre> | n/a | yes |
+| <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints) | Map of private endpoints to create for the Redis cache, keyed by an arbitrary name. Empty map (default) skips private endpoint creation. | <pre>map(object({<br/>    name                          = string<br/>    dns_zone_group_name           = optional(string, "default")<br/>    custom_network_interface_name = string<br/>    private_service_connection = optional(object({<br/>      is_manual_connection = bool<br/>    }), { is_manual_connection = false })<br/><br/>    # Subnet where the private endpoint NIC will be placed.<br/>    subnet_name = string<br/>    vnet = optional(object({<br/>      name                = optional(string)<br/>      resource_group_name = optional(string)<br/>      tags                = optional(map(string))<br/>    }), {})<br/><br/>    # Pass an already-resolved Private DNS Zone ID (e.g. from another subscription, via a claims ref).<br/>    # When omitted, the zone is looked up in this subscription by dns_private_zone_name.<br/>    private_dns_zone_id             = optional(string)<br/>    dns_private_zone_name           = optional(string)<br/>    dns_private_zone_resource_group = optional(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_redis"></a> [redis](#input\_redis) | n/a | <pre>object({<br/>    name                          = string<br/>    location                      = string<br/>    capacity                      = number<br/>    family                        = string<br/>    sku_name                      = string<br/>    non_ssl_port_enabled          = optional(bool)<br/>    minimum_tls_version           = optional(string)<br/>    redis_version                 = optional(number)<br/>    public_network_access_enabled = optional(bool)<br/>    zones                         = optional(list(string))<br/>    subnet_id                     = optional(string)<br/>    patch_schedule = optional(object({<br/>      day_of_week    = optional(string)<br/>      start_hour_utc = optional(number)<br/>    }))<br/>    redis_configuration = optional(object({<br/>      aof_backup_enabled                      = optional(bool)<br/>      aof_storage_connection_string_0         = optional(string)<br/>      aof_storage_connection_string_1         = optional(string)<br/>      authentication_enabled                  = optional(bool)<br/>      active_directory_authentication_enabled = optional(bool)<br/>      maxmemory_reserved                      = optional(number)<br/>      maxmemory_delta                         = optional(number)<br/>      maxmemory_policy                        = optional(string)<br/>      maxfragmentationmemory_reserved         = optional(number)<br/>      rdb_backup_enabled                      = optional(bool)<br/>      rdb_backup_frequency                    = optional(number)<br/>      rdb_backup_max_snapshot_count           = optional(number)<br/>      rdb_storage_connection_string           = optional(string)<br/>      storage_account_subscription_id         = optional(string)<br/>    }))<br/>  })</pre> | n/a | yes |
 | <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | n/a | `string` | n/a | yes |
-| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | n/a | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | n/a | `bool` | `false` | no |
-| <a name="input_vnet"></a> [vnet](#input\_vnet) | n/a | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
 
 ## Outputs
 
@@ -134,8 +136,8 @@ No modules.
 | <a name="output_hostname"></a> [hostname](#output\_hostname) | Redis hostname for TLS client connections. |
 | <a name="output_port"></a> [port](#output\_port) | Non-SSL port of the Redis cache. |
 | <a name="output_primary_access_key"></a> [primary\_access\_key](#output\_primary\_access\_key) | Primary access key for the Redis cache. |
-| <a name="output_private_endpoint_id"></a> [private\_endpoint\_id](#output\_private\_endpoint\_id) | Resource ID of the private endpoint for the Redis cache. |
-| <a name="output_private_endpoint_private_ip"></a> [private\_endpoint\_private\_ip](#output\_private\_endpoint\_private\_ip) | Private IP address of the private endpoint. |
+| <a name="output_private_endpoint_ids"></a> [private\_endpoint\_ids](#output\_private\_endpoint\_ids) | Map of private endpoint resource IDs, keyed by the private\_endpoints map key. Empty when no private endpoints were requested. |
+| <a name="output_private_endpoint_private_ips"></a> [private\_endpoint\_private\_ips](#output\_private\_endpoint\_private\_ips) | Map of private IP addresses assigned to each private endpoint NIC, keyed by the private\_endpoints map key. Empty when no private endpoints were requested. |
 | <a name="output_redis_connection"></a> [redis\_connection](#output\_redis\_connection) | Connection information for Redis. |
 | <a name="output_redis_id"></a> [redis\_id](#output\_redis\_id) | Resource ID of the Azure Cache for Redis instance. |
 | <a name="output_secondary_access_key"></a> [secondary\_access\_key](#output\_secondary\_access\_key) | Secondary access key for the Redis cache. |

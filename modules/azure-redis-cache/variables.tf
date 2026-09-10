@@ -12,29 +12,6 @@ variable "tags" {
   default = {}
 }
 
-variable "vnet" {
-  type = object({
-    name                = optional(string)
-    resource_group_name = optional(string)
-    tags                = optional(map(string))
-  })
-  default = {}
-}
-
-variable "subnet_name" {
-  type = string
-}
-
-variable "dns_private_zone_name" {
-  type = string
-}
-
-variable "dns_private_zone_resource_group" {
-  type        = string
-  default     = null
-  description = "Override resource group for Private DNS Zone lookup. When null, falls back to vnet.resource_group_name."
-}
-
 variable "redis" {
   type = object({
     name                          = string
@@ -71,13 +48,36 @@ variable "redis" {
   })
 }
 
-variable "private_endpoint" {
-  type = object({
+variable "private_endpoints" {
+  description = "Map of private endpoints to create for the Redis cache, keyed by an arbitrary name. Empty map (default) skips private endpoint creation."
+  type = map(object({
     name                          = string
     dns_zone_group_name           = optional(string, "default")
     custom_network_interface_name = string
     private_service_connection = optional(object({
       is_manual_connection = bool
     }), { is_manual_connection = false })
-  })
+
+    # Subnet where the private endpoint NIC will be placed.
+    subnet_name = string
+    vnet = optional(object({
+      name                = optional(string)
+      resource_group_name = optional(string)
+      tags                = optional(map(string))
+    }), {})
+
+    # Pass an already-resolved Private DNS Zone ID (e.g. from another subscription, via a claims ref).
+    # When omitted, the zone is looked up in this subscription by dns_private_zone_name.
+    private_dns_zone_id             = optional(string)
+    dns_private_zone_name           = optional(string)
+    dns_private_zone_resource_group = optional(string)
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for k, v in var.private_endpoints : (v.private_dns_zone_id != null) != (v.dns_private_zone_name != null && v.dns_private_zone_name != "")
+    ])
+    error_message = "Each private endpoint must set exactly one of private_dns_zone_id or dns_private_zone_name."
+  }
 }
