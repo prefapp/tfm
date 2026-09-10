@@ -5,6 +5,8 @@ module "aks" {
 
   location                                             = var.location
 
+  enable_rbac = true
+
   default_agent_pool                                   = local.default_agent_pool
 
   api_server_access_profile = var.api_server_authorized_ip_ranges == null ? null : {
