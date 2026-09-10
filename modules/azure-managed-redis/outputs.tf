@@ -30,14 +30,14 @@ output "secondary_access_key" {
   sensitive   = true
 }
 
-output "private_endpoint_id" {
-  description = "Resource ID of the private endpoint. Null when no private endpoint was requested."
-  value       = var.private_endpoint != null ? azurerm_private_endpoint.this[0].id : null
+output "private_endpoint_ids" {
+  description = "Map of private endpoint resource IDs, keyed by the private_endpoints map key. Empty when no private endpoints were requested."
+  value       = { for k, v in azurerm_private_endpoint.this : k => v.id }
 }
 
-output "private_endpoint_private_ip" {
-  description = "Private IP address assigned to the private endpoint NIC. Null when no private endpoint was requested."
-  value       = var.private_endpoint != null ? azurerm_private_endpoint.this[0].private_service_connection[0].private_ip_address : null
+output "private_endpoint_private_ips" {
+  description = "Map of private IP addresses assigned to each private endpoint NIC, keyed by the private_endpoints map key. Empty when no private endpoints were requested."
+  value       = { for k, v in azurerm_private_endpoint.this : k => v.private_service_connection[0].private_ip_address }
 }
 
 output "access_policy_assignment_ids" {

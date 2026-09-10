@@ -20,14 +20,6 @@ module "managed_redis" {
   source = "../.."
 
   resource_group = "example-rg"
-  subnet_name    = "example-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "example-vnet"
-    resource_group_name = "example-network-rg"
-  }
 
   tags_from_rg = false
   tags = {
@@ -50,11 +42,21 @@ module "managed_redis" {
     }
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis-basic"
-    custom_network_interface_name = "pe-managed-redis-basic-nic"
-    private_service_connection = {
-      is_manual_connection = false
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis-basic"
+      custom_network_interface_name = "pe-managed-redis-basic-nic"
+      private_service_connection = {
+        is_manual_connection = false
+      }
+
+      subnet_name = "example-subnet"
+      vnet = {
+        name                = "example-vnet"
+        resource_group_name = "example-network-rg"
+      }
+
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
     }
   }
 }

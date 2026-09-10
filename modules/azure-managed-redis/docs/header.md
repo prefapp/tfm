@@ -12,7 +12,7 @@ Target use cases span from lightweight development clusters (`Balanced_B0`) up t
 
 - **SKU flexibility**: supports all tier families — `Balanced`, `ComputeOptimized`, `MemoryOptimized`, and `FlashOptimized` — in all documented sizes.
 - **High availability**: zone-redundant HA enabled by default (`high_availability_enabled = true`); can be disabled for dev/test at create time.
-- **Private connectivity**: optional private endpoint with `redisEnterprise` subresource, DNS zone group, and custom NIC name. Public network access is `Disabled` by default.
+- **Private connectivity**: zero, one or several private endpoints, each with `redisEnterprise` subresource, DNS zone group, and custom NIC name, keyed by an arbitrary map key (`private_endpoints`). Public network access is `Disabled` by default.
 - **Managed identity**: supports `SystemAssigned`, `UserAssigned`, or both; required for CMK scenarios.
 - **Customer-Managed Key (CMK)**: encrypt cluster data at rest with a Key Vault key via a `UserAssigned` identity.
 - **Database configuration**: full control over `clustering_policy`, `eviction_policy`, `client_protocol`, and access key authentication.
@@ -31,14 +31,6 @@ module "managed_redis" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-managed-redis?ref=<version>"
 
   resource_group = "example-rg"
-  subnet_name    = "example-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "example-vnet"
-    resource_group_name = "example-network-rg"
-  }
 
   managed_redis = {
     name     = "managed-redis-example"
@@ -46,9 +38,22 @@ module "managed_redis" {
     sku_name = "Balanced_B1"
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis"
-    custom_network_interface_name = "pe-managed-redis-nic"
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis"
+      custom_network_interface_name = "pe-managed-redis-nic"
+
+      subnet_name = "example-subnet"
+      vnet = {
+        name                = "example-vnet"
+        resource_group_name = "example-network-rg"
+      }
+
+      # Either resolve the zone in this subscription...
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
+      # ...or pass an already-resolved id from another subscription instead:
+      # private_dns_zone_id = "/subscriptions/<other-sub>/resourceGroups/.../providers/Microsoft.Network/privateDnsZones/privatelink.redisenterprise.cache.azure.net"
+    }
   }
 }
 ```
@@ -60,14 +65,6 @@ module "managed_redis" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-managed-redis?ref=<version>"
 
   resource_group = "prod-rg"
-  subnet_name    = "data-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "prod-vnet"
-    resource_group_name = "prod-network-rg"
-  }
 
   tags_from_rg = true
   tags = {
@@ -106,11 +103,21 @@ module "managed_redis" {
     }
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis-prod"
-    custom_network_interface_name = "pe-managed-redis-prod-nic"
-    private_service_connection = {
-      is_manual_connection = false
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis-prod"
+      custom_network_interface_name = "pe-managed-redis-prod-nic"
+      private_service_connection = {
+        is_manual_connection = false
+      }
+
+      subnet_name = "data-subnet"
+      vnet = {
+        name                = "prod-vnet"
+        resource_group_name = "prod-network-rg"
+      }
+
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
     }
   }
 

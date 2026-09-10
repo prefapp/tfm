@@ -85,14 +85,6 @@ module "managed_redis" {
   source = "../.."
 
   resource_group = data.azurerm_resource_group.rg.name
-  subnet_name    = "data-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "prod-vnet"
-    resource_group_name = "prod-network-rg"
-  }
 
   tags_from_rg = true
   tags = {
@@ -138,12 +130,22 @@ module "managed_redis" {
     }
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis-prod"
-    dns_zone_group_name           = "default"
-    custom_network_interface_name = "pe-managed-redis-prod-nic"
-    private_service_connection = {
-      is_manual_connection = false
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis-prod"
+      dns_zone_group_name           = "default"
+      custom_network_interface_name = "pe-managed-redis-prod-nic"
+      private_service_connection = {
+        is_manual_connection = false
+      }
+
+      subnet_name = "data-subnet"
+      vnet = {
+        name                = "prod-vnet"
+        resource_group_name = "prod-network-rg"
+      }
+
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
     }
   }
 
@@ -171,5 +173,5 @@ output "default_database_port" {
 }
 
 output "private_endpoint_ip" {
-  value = module.managed_redis.private_endpoint_private_ip
+  value = module.managed_redis.private_endpoint_private_ips["default"]
 }
