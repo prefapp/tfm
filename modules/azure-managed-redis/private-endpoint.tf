@@ -1,4 +1,8 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
+moved {
+  from = azurerm_private_endpoint.this[0]
+  to   = azurerm_private_endpoint.this["default"]
+}
 resource "azurerm_private_endpoint" "this" {
   for_each = var.private_endpoints
 
