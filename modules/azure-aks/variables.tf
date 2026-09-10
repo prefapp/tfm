@@ -107,7 +107,7 @@ variable "aks_sku_tier" {
 }
 
 variable "aks_sku_name" {
-  description = "The SKU name that should be used for this Kubernetes Cluster. Possible values are Autmatic and Base "
+  description = "The SKU name that should be used for this Kubernetes Cluster. Possible values are Automatic and Base "
 }
 
 variable "key_vault_secrets_provider_enabled" {
