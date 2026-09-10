@@ -5,8 +5,8 @@ locals {
   # Per-endpoint vnet resolution: explicit name/resource_group_name wins, otherwise resolved from tags.
   vnet_resolved = {
     for k, v in var.private_endpoints : k => {
-      name                = try(coalesce(v.vnet.name, data.azurerm_resources.vnet_from_tags[k].resources[0].name), null)
-      resource_group_name = try(coalesce(v.vnet.resource_group_name, data.azurerm_resources.vnet_from_tags[k].resources[0].resource_group_name), null)
+      name                = try(coalesce(data.azurerm_resources.vnet_from_name[k].resources[0].name, data.azurerm_resources.vnet_from_tags[k].resources[0].name, v.vnet.name), null)
+      resource_group_name = try(coalesce(data.azurerm_resources.vnet_from_name[k].resources[0].resource_group_name, data.azurerm_resources.vnet_from_tags[k].resources[0].resource_group_name, v.vnet.resource_group_name), null)
     }
   }
 
@@ -23,6 +23,13 @@ data "azurerm_resource_group" "resource_group" {
 }
 
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources
+data "azurerm_resources" "vnet_from_name" {
+  for_each          = { for k, v in var.private_endpoints : k => v if v.vnet.name != null && v.vnet.name != "" && v.vnet.resource_group_name != null && v.vnet.resource_group_name != "" }
+  type              = "Microsoft.Network/virtualNetworks"
+  name              = each.value.vnet.name
+  resource_group_name = each.value.vnet.resource_group_name
+}
+
 data "azurerm_resources" "vnet_from_tags" {
   for_each      = { for k, v in var.private_endpoints : k => v if length(coalesce(v.vnet.tags, {})) > 0 }
   type          = "Microsoft.Network/virtualNetworks"
