@@ -2,7 +2,7 @@ locals {
   auto_scaler_profile = var.auto_scaler_profile_enabled ? {
     expander                         = var.auto_scaler_profile_expander
     max_graceful_termination_sec     = var.auto_scaler_profile_max_graceful_termination_sec
-    max_node_provisio_time           = var.auto_scaler_profile_max_node_provisioning_time
+    max_node_provision_time          = var.auto_scaler_profile_max_node_provisioning_time
     ok_total_unready_count           = var.auto_scaler_profile_max_unready_nodes
     max_total_unready_percentage     = var.auto_scaler_profile_max_unready_percentage
     new_pod_scale_up_delay           = var.auto_scaler_profile_new_pod_scale_up_delay
