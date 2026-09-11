@@ -1,10 +1,13 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/1.43.0/docs/resources/private_endpoint
 moved {
+<<<<<<< HEAD
   from = azurerm_private_endpoint.private_endpoint
   to   = azurerm_private_endpoint.this["default"]
 }
 
 moved {
+=======
+>>>>>>> 3ac3798 (fix(azure-redis-cache): remove ambiguous state migration)
   from = azurerm_private_endpoint.this
   to   = azurerm_private_endpoint.this["default"]
 }
