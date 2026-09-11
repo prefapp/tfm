@@ -1,15 +1,5 @@
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint
 moved {
-  from = azurerm_private_endpoint.private_endpoint
-  to   = azurerm_private_endpoint.this["default"]
-}
-
-moved {
-  from = azurerm_private_endpoint.this
-  to   = azurerm_private_endpoint.this["default"]
-}
-
-moved {
   from = azurerm_private_endpoint.this[0]
   to   = azurerm_private_endpoint.this["default"]
 }
