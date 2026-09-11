@@ -12,7 +12,7 @@ locals {
 
   # Private DNS zone id per endpoint: explicit private_dns_zone_id wins, otherwise resolved via data source.
   private_dns_zone_ids = {
-    for k, v in var.private_endpoints : k => coalesce(v.private_dns_zone_id, try(data.azurerm_private_dns_zone.dns_private_zone[k].id, null))
+    for k, v in var.private_endpoints : k => coalesce(trimspace(coalesce(v.private_dns_zone_id, "")), try(data.azurerm_private_dns_zone.dns_private_zone[k].id, null))
   }
 }
 
@@ -23,10 +23,10 @@ data "azurerm_resource_group" "resource_group" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources
 data "azurerm_resources" "vnet_from_name" {
-  for_each          = { for k, v in var.private_endpoints : k => v if v.vnet.name != null && v.vnet.name != "" && v.vnet.resource_group_name != null && v.vnet.resource_group_name != "" }
-  type              = "Microsoft.Network/virtualNetworks"
-  name              = each.value.vnet.name
-  resource_group_name = each.value.vnet.resource_group_name
+  for_each            = { for k, v in var.private_endpoints : k => v if trimspace(coalesce(v.vnet.name, "")) != "" && trimspace(coalesce(v.vnet.resource_group_name, "")) != "" }
+  type                = "Microsoft.Network/virtualNetworks"
+  name                = trimspace(each.value.vnet.name)
+  resource_group_name = trimspace(each.value.vnet.resource_group_name)
 }
 
 data "azurerm_resources" "vnet_from_tags" {
@@ -46,7 +46,7 @@ data "azurerm_subnet" "subnet" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
 # Only queried in-subscription when private_dns_zone_id was not provided directly.
 data "azurerm_private_dns_zone" "dns_private_zone" {
-  for_each            = { for k, v in var.private_endpoints : k => v if v.private_dns_zone_id == null }
-  name                = each.value.dns_private_zone_name
-  resource_group_name = coalesce(each.value.dns_private_zone_resource_group, local.vnet_resolved[each.key].resource_group_name)
+  for_each            = { for k, v in var.private_endpoints : k => v if trimspace(coalesce(v.private_dns_zone_id, "")) == "" }
+  name                = trimspace(each.value.dns_private_zone_name)
+  resource_group_name = coalesce(trimspace(coalesce(each.value.dns_private_zone_resource_group, "")), local.vnet_resolved[each.key].resource_group_name)
 }

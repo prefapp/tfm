@@ -162,21 +162,22 @@ module "managed_redis" {
 6. **Redis modules**: changing `module.name` or `module.args` forces **database recreation** and data loss.
 7. **CMK**: `customer_managed_key` requires a `UserAssigned` identity with `WrapKey` and `UnwrapKey` permissions on the Key Vault key. The Key Vault must have `purge_protection_enabled = true`.
 8. **Access key auth**: `primary_access_key` and `secondary_access_key` outputs are only populated when `access_keys_authentication_enabled = true`. Use Entra ID authentication (the default) where possible.
-9. **Private DNS zone**: the DNS zone is resolved with `resource_group_name = coalesce(var.dns_private_zone_resource_group, var.vnet.resource_group_name, local.vnet_resource_group_from_data)`. By default the VNet’s resource group is used, but you can set `dns_private_zone_resource_group` to point to a different RG (e.g. when the private DNS zone is consolidated in a central subscription).
-10. **SKU downgrades**: scaling down to a lower SKU tier may be restricted by Azure and could force resource replacement. Refer to the [Azure scaling documentation](https://learn.microsoft.com/azure/redis/how-to-scale).
+9. **Private DNS zone**: each entry in `private_endpoints` resolves its DNS zone with `resource_group_name = coalesce(private_endpoints.<key>.dns_private_zone_resource_group, private_endpoints.<key>.vnet.resource_group_name, <resolved vnet resource group>)`. By default the endpoint VNet’s resource group is used, but you can set `dns_private_zone_resource_group` to point to a different RG (e.g. when the private DNS zone is consolidated in a central subscription).
+10. **Legacy private endpoint migration**: migrating from the old single `private_endpoint` input to `private_endpoints` requires the first apply after upgrade to keep a `private_endpoints.default` entry present so Terraform can move state to the new keyed instance. If you intend to remove the private endpoint, first apply with `default` populated, then remove it in a second apply.
+11. **SKU downgrades**: scaling down to a lower SKU tier may be restricted by Azure and could force resource replacement. Refer to the [Azure scaling documentation](https://learn.microsoft.com/azure/redis/how-to-scale).
 
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.70.0, < 5.0.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.81.0 |
+| ---- | ------- |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.70.0, < 5.0.0 |
 
 ## Modules
 
@@ -185,19 +186,20 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_managed_redis.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_redis) | resource |
 | [azurerm_managed_redis_access_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_redis_access_policy_assignment) | resource |
 | [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) | resource |
 | [azurerm_private_dns_zone.dns_private_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | data source |
 | [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_resources.vnet_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
 | [azurerm_resources.vnet_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
 | [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_policy_assignments"></a> [access\_policy\_assignments](#input\_access\_policy\_assignments) | List of Azure AD principal object IDs to assign built-in access policies on the default database. | <pre>list(object({<br/>    object_id = string # Object ID of the Azure AD user, group, service principal, or managed identity<br/>  }))</pre> | `[]` | no |
 | <a name="input_managed_redis"></a> [managed\_redis](#input\_managed\_redis) | Configuration for the Azure Managed Redis instance. | <pre>object({<br/>    name     = string<br/>    location = string<br/>    # SKU defines capacity tier and size.<br/>    # Balanced: Balanced_B0..B1000 | ComputeOptimized: ComputeOptimized_X3..X700<br/>    # MemoryOptimized: MemoryOptimized_M10..M700 | FlashOptimized: FlashOptimized_A250..A4500<br/>    sku_name = string<br/><br/>    # Whether to enable zone-redundant high availability. Defaults to true.<br/>    # Changing this forces recreation.<br/>    high_availability_enabled = optional(bool, true)<br/><br/>    # Public network access for the cluster endpoint. Possible values: Enabled, Disabled.<br/>    public_network_access = optional(string, "Disabled")<br/><br/>    # Managed identity configuration. Enables SystemAssigned, UserAssigned, or both.<br/>    identity = optional(object({<br/>      type         = string           # SystemAssigned | UserAssigned<br/>      identity_ids = optional(list(string)) # Required when type includes UserAssigned<br/>    }))<br/><br/>    # Customer-managed key encryption. Requires a UserAssigned identity with Key Vault access.<br/>    customer_managed_key = optional(object({<br/>      key_vault_key_id          = string # Full versioned or versionless Key Vault key URL<br/>      user_assigned_identity_id = string # ID of the UAI that has WrapKey/UnwrapKey on the key<br/>    }))<br/><br/>    # Configuration for the implicit default database. Required when creating a new instance.<br/>    default_database = optional(object({<br/>      # Whether access key authentication is enabled. Defaults to false (Entra ID only).<br/>      access_keys_authentication_enabled = optional(bool, false)<br/><br/>      # Redis client protocol. Encrypted (TLS) or Plaintext. Defaults to Encrypted.<br/>      client_protocol = optional(string, "Encrypted")<br/><br/>      # Cluster topology policy. Changing forces database recreation and data loss.<br/>      # EnterpriseCluster | OSSCluster | NoCluster. Defaults to OSSCluster.<br/>      clustering_policy = optional(string, "OSSCluster")<br/><br/>      # Eviction policy for keys when memory pressure occurs.<br/>      # AllKeysLFU | AllKeysLRU | AllKeysRandom | VolatileLRU | VolatileLFU<br/>      # VolatileTTL | VolatileRandom | NoEviction. Defaults to VolatileLRU.<br/>      eviction_policy = optional(string, "VolatileLRU")<br/><br/>      # Geo-replication group name. Conflicts with persistence. Changing forces recreation.<br/>      geo_replication_group_name = optional(string)<br/><br/>      # Append-Only File (AOF) backup frequency. Only valid value is "1s".<br/>      # Conflicts with persistence_redis_database_backup_frequency and geo_replication_group_name.<br/>      persistence_append_only_file_backup_frequency = optional(string)<br/><br/>      # Redis Database (RDB) snapshot frequency. Possible values: 1h, 6h, 12h.<br/>      # Conflicts with persistence_append_only_file_backup_frequency and geo_replication_group_name.<br/>      persistence_redis_database_backup_frequency = optional(string)<br/><br/>      # Redis modules to load. Changing name or args forces database recreation and data loss.<br/>      # Only RediSearch and RedisJSON are allowed with geo-replication.<br/>      modules = optional(list(object({<br/>        name = string           # RedisBloom | RedisTimeSeries | RediSearch | RedisJSON<br/>        args = optional(string) # Module-specific configuration string, e.g. "ERROR_RATE 0.01"<br/>      })), [])<br/>    }), {})<br/>  })</pre> | n/a | yes |
 | <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints) | Map of private endpoints to create for the Managed Redis instance, keyed by an arbitrary name. Empty map (default) skips private endpoint creation. | <pre>map(object({<br/>    name                = string<br/>    dns_zone_group_name = optional(string, "default")<br/>    # Name for the network interface card (NIC) created for the private endpoint.<br/>    custom_network_interface_name = string<br/>    private_service_connection = optional(object({<br/>      is_manual_connection = bool<br/>    }), { is_manual_connection = false })<br/><br/>    # Subnet where the private endpoint NIC will be placed.<br/>    subnet_name = string<br/>    vnet = optional(object({<br/>      name                = optional(string)<br/>      resource_group_name = optional(string)<br/>      tags                = optional(map(string))<br/>    }), {})<br/><br/>    # Pass an already-resolved Private DNS Zone ID (e.g. from another subscription, via a claims ref).<br/>    # When omitted, the zone is looked up in this subscription by dns_private_zone_name.<br/>    private_dns_zone_id             = optional(string)<br/>    dns_private_zone_name           = optional(string)<br/>    dns_private_zone_resource_group = optional(string)<br/>  }))</pre> | `{}` | no |
@@ -208,7 +210,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_access_policy_assignment_ids"></a> [access\_policy\_assignment\_ids](#output\_access\_policy\_assignment\_ids) | Map of access policy assignment IDs keyed by the index of the input list. |
 | <a name="output_default_database_id"></a> [default\_database\_id](#output\_default\_database\_id) | Resource ID of the default Managed Redis database. |
 | <a name="output_default_database_port"></a> [default\_database\_port](#output\_default\_database\_port) | TCP port of the default Managed Redis database endpoint. |

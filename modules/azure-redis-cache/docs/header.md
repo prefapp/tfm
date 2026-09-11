@@ -22,6 +22,7 @@ The module includes **`moved`** blocks for state migration from older resource a
 4. Creating a Redis instance often takes **on the order of ~25 minutes**.
 5. **`private_endpoints.<key>.private_service_connection`** may be omitted; it defaults to **`{ is_manual_connection = false }`**. Set the block explicitly when you need a manual connection.
 6. Each endpoint must set exactly one of **`private_dns_zone_id`** or **`dns_private_zone_name`**. When **`dns_private_zone_name`** is used, it is resolved with **`resource_group_name = coalesce(private_endpoints.<key>.dns_private_zone_resource_group, private_endpoints.<key>.vnet.resource_group_name, <resolved vnet resource group>)`**. When **`private_dns_zone_id`** is used instead, it is passed through as-is, allowing the zone to live in a different subscription (e.g. a value fetched in claims through a `ref`).
+7. Migrating from the old single `private_endpoint` input to `private_endpoints` requires the first apply after upgrade to keep a `private_endpoints.default` entry present so Terraform can move state to the new keyed instance. If you intend to remove the private endpoint, first apply with `default` populated, then remove it in a second apply.
 
 ## Prerequisites
 

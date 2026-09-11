@@ -63,8 +63,8 @@ resource "azurerm_key_vault" "redis_kv" {
   }
 
   access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_user_assigned_identity.redis_mi.principal_id
+    tenant_id       = data.azurerm_client_config.current.tenant_id
+    object_id       = azurerm_user_assigned_identity.redis_mi.principal_id
     key_permissions = ["Get", "WrapKey", "UnwrapKey"]
   }
 }
