@@ -93,7 +93,7 @@ variable "gh_delivery_gh_role_enable" {
 }
 
 variable "gh_delivery_gh_repositories" {
-  description = "A list of GitHub repositories to grant access to the S3 delivery and CloudFront resources."
+  description = "A list of GitHub repositories to grant access to the S3 delivery and CloudFront resources. Each entry is used in the OIDC trust policy as `repo:<entry>:*`. Repositories created after 2026-07-15 (or opted in) use GitHub's immutable subject claim, so they must be given as `<org>@<org_id>/<repo>@<repo_id>` (e.g. `my-org@123456/my-repo@456789`); legacy repositories keep the `<org>/<repo>` form. See https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims"
   type        = list(string)
   default     = []
 }
