@@ -76,7 +76,7 @@ variable "private_endpoints" {
 
   validation {
     condition = alltrue([
-      for k, v in var.private_endpoints : (trimspace(coalesce(v.private_dns_zone_id, "")) != "") != (trimspace(coalesce(v.dns_private_zone_name, "")) != "")
+      for k, v in var.private_endpoints : (try(trimspace(v.private_dns_zone_id), "") != "") != (try(trimspace(v.dns_private_zone_name), "") != "")
     ])
     error_message = "Each private endpoint must set exactly one of private_dns_zone_id or dns_private_zone_name."
   }
@@ -85,8 +85,8 @@ variable "private_endpoints" {
     condition = alltrue([
       for k, v in var.private_endpoints : (
         (
-          trimspace(coalesce(v.vnet.name, "")) != "" &&
-          trimspace(coalesce(v.vnet.resource_group_name, "")) != ""
+          try(trimspace(v.vnet.name), "") != "" &&
+          try(trimspace(v.vnet.resource_group_name), "") != ""
         ) ||
         length(coalesce(v.vnet.tags, {})) > 0
       )
