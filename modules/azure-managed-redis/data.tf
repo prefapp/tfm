@@ -46,7 +46,7 @@ data "azurerm_subnet" "subnet" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone
 # Only queried in-subscription when private_dns_zone_id was not provided directly.
 data "azurerm_private_dns_zone" "dns_private_zone" {
-  for_each            = { for k, v in var.private_endpoints : k => v if try(trimspace(v.private_dns_zone_id), "") == "" }
+  for_each            = { for k, v in var.private_endpoints : k => v if try(trimspace(v.dns_private_zone_name), "") != "" }
   name                = trimspace(each.value.dns_private_zone_name)
   resource_group_name = try(trimspace(each.value.dns_private_zone_resource_group), "") != "" ? trimspace(each.value.dns_private_zone_resource_group) : local.vnet_resolved[each.key].resource_group_name
 }

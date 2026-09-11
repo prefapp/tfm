@@ -127,6 +127,7 @@ variable "private_endpoints" {
     dns_private_zone_resource_group = optional(string)
   }))
   default = {}
+  nullable = false
 
   validation {
     condition = alltrue([

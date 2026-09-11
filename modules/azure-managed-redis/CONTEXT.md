@@ -10,7 +10,7 @@ other contexts.
 ## Language
 
 **private endpoint**:
-One entry in `private_endpoints`, a map of private-link NICs each placed in its own `subnet_name`. Its DNS zone is registered either by resolving `dns_private_zone_name` in the current subscription (typically `privatelink.redisenterprise.cache.azure.net`), or by passing an already-resolved `private_dns_zone_id` directly, which is how a zone from another subscription (e.g. one fetched in claims via a `ref`) is wired in. Leave `private_endpoints` empty to expose the instance publicly instead.
+One entry in `private_endpoints`, a map of private-link NICs each placed in its own `subnet_name`. Its DNS zone is registered either by resolving `dns_private_zone_name` in the current subscription (typically `privatelink.redisenterprise.cache.azure.net`), or by passing an already-resolved `private_dns_zone_id` directly, which is how a zone from another subscription (e.g. one fetched in claims via a `ref`) is wired in. Leaving `private_endpoints` empty only skips private endpoint creation; public exposure is controlled independently by `managed_redis.public_network_access`.
 
 **access policy assignment**:
 A directory principal object ID granted a built-in access policy on the default database. This is the data-plane grant; RBAC on the resource is separate.
