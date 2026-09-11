@@ -12,7 +12,7 @@ Target use cases span from lightweight development clusters (`Balanced_B0`) up t
 
 - **SKU flexibility**: supports all tier families — `Balanced`, `ComputeOptimized`, `MemoryOptimized`, and `FlashOptimized` — in all documented sizes.
 - **High availability**: zone-redundant HA enabled by default (`high_availability_enabled = true`); can be disabled for dev/test at create time.
-- **Private connectivity**: optional private endpoint with `redisEnterprise` subresource, DNS zone group, and custom NIC name. Public network access is `Disabled` by default.
+- **Private connectivity**: zero, one or several private endpoints, each with `redisEnterprise` subresource, DNS zone group, and custom NIC name, keyed by an arbitrary map key (`private_endpoints`). Public network access is `Disabled` by default.
 - **Managed identity**: supports `SystemAssigned`, `UserAssigned`, or both; required for CMK scenarios.
 - **Customer-Managed Key (CMK)**: encrypt cluster data at rest with a Key Vault key via a `UserAssigned` identity.
 - **Database configuration**: full control over `clustering_policy`, `eviction_policy`, `client_protocol`, and access key authentication.
@@ -31,14 +31,6 @@ module "managed_redis" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-managed-redis?ref=<version>"
 
   resource_group = "example-rg"
-  subnet_name    = "example-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "example-vnet"
-    resource_group_name = "example-network-rg"
-  }
 
   managed_redis = {
     name     = "managed-redis-example"
@@ -46,9 +38,22 @@ module "managed_redis" {
     sku_name = "Balanced_B1"
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis"
-    custom_network_interface_name = "pe-managed-redis-nic"
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis"
+      custom_network_interface_name = "pe-managed-redis-nic"
+
+      subnet_name = "example-subnet"
+      vnet = {
+        name                = "example-vnet"
+        resource_group_name = "example-network-rg"
+      }
+
+      # Either resolve the zone in this subscription...
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
+      # ...or pass an already-resolved id from another subscription instead:
+      # private_dns_zone_id = "/subscriptions/<other-sub>/resourceGroups/.../providers/Microsoft.Network/privateDnsZones/privatelink.redisenterprise.cache.azure.net"
+    }
   }
 }
 ```
@@ -60,14 +65,6 @@ module "managed_redis" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-managed-redis?ref=<version>"
 
   resource_group = "prod-rg"
-  subnet_name    = "data-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "prod-vnet"
-    resource_group_name = "prod-network-rg"
-  }
 
   tags_from_rg = true
   tags = {
@@ -106,11 +103,21 @@ module "managed_redis" {
     }
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis-prod"
-    custom_network_interface_name = "pe-managed-redis-prod-nic"
-    private_service_connection = {
-      is_manual_connection = false
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis-prod"
+      custom_network_interface_name = "pe-managed-redis-prod-nic"
+      private_service_connection = {
+        is_manual_connection = false
+      }
+
+      subnet_name = "data-subnet"
+      vnet = {
+        name                = "prod-vnet"
+        resource_group_name = "prod-network-rg"
+      }
+
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
     }
   }
 
@@ -154,5 +161,6 @@ module "managed_redis" {
 6. **Redis modules**: changing `module.name` or `module.args` forces **database recreation** and data loss.
 7. **CMK**: `customer_managed_key` requires a `UserAssigned` identity with `WrapKey` and `UnwrapKey` permissions on the Key Vault key. The Key Vault must have `purge_protection_enabled = true`.
 8. **Access key auth**: `primary_access_key` and `secondary_access_key` outputs are only populated when `access_keys_authentication_enabled = true`. Use Entra ID authentication (the default) where possible.
-9. **Private DNS zone**: the DNS zone is resolved with `resource_group_name = coalesce(var.dns_private_zone_resource_group, var.vnet.resource_group_name, local.vnet_resource_group_from_data)`. By default the VNet’s resource group is used, but you can set `dns_private_zone_resource_group` to point to a different RG (e.g. when the private DNS zone is consolidated in a central subscription).
-10. **SKU downgrades**: scaling down to a lower SKU tier may be restricted by Azure and could force resource replacement. Refer to the [Azure scaling documentation](https://learn.microsoft.com/azure/redis/how-to-scale).
+9. **Private DNS zone**: each endpoint must set exactly one of **`private_dns_zone_id`** or **`dns_private_zone_name`**. When **`dns_private_zone_name`** is used, it is resolved with **`resource_group_name = coalesce(private_endpoints.<key>.dns_private_zone_resource_group, private_endpoints.<key>.vnet.resource_group_name, <resolved vnet resource group>)`**. When **`private_dns_zone_id`** is used instead, it is passed through as-is, allowing the zone to live in a different subscription (e.g. a value fetched in claims through a `ref`).
+10. **Legacy private endpoint migration**: migrating from the old single `private_endpoint` input to `private_endpoints` requires the first apply after upgrade to keep a `private_endpoints.default` entry present so Terraform can move state to the new keyed instance. If you intend to remove the private endpoint, first apply with `default` populated, then remove it in a second apply.
+11. **SKU downgrades**: scaling down to a lower SKU tier may be restricted by Azure and could force resource replacement. Refer to the [Azure scaling documentation](https://learn.microsoft.com/azure/redis/how-to-scale).

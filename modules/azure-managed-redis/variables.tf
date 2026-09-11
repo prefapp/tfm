@@ -15,34 +15,6 @@ variable "tags" {
   description = "Additional tags to assign to all resources created by this module."
 }
 
-variable "vnet" {
-  type = object({
-    name                = optional(string)
-    resource_group_name = optional(string)
-    tags                = optional(map(string))
-  })
-  default     = {}
-  description = "Virtual Network details used for resolving the subnet when creating a private endpoint. Lookup can be by name + resource_group_name or by tags."
-}
-
-variable "subnet_name" {
-  type        = string
-  default     = null
-  description = "Name of the subnet where the private endpoint NIC will be placed. Required when var.private_endpoint is set."
-}
-
-variable "dns_private_zone_name" {
-  type        = string
-  default     = null
-  description = "Name of the Private DNS Zone for the private endpoint (e.g. privatelink.redisenterprise.cache.azure.net). Required when var.private_endpoint is set."
-}
-
-variable "dns_private_zone_resource_group" {
-  type        = string
-  default     = null
-  description = "Override resource group for Private DNS Zone lookup. When null, falls back to vnet.resource_group_name."
-}
-
 variable "managed_redis" {
   description = "Configuration for the Azure Managed Redis instance."
   type = object({
@@ -62,7 +34,7 @@ variable "managed_redis" {
 
     # Managed identity configuration. Enables SystemAssigned, UserAssigned, or both.
     identity = optional(object({
-      type         = string           # SystemAssigned | UserAssigned
+      type         = string                 # SystemAssigned | UserAssigned
       identity_ids = optional(list(string)) # Required when type includes UserAssigned
     }))
 
@@ -129,9 +101,9 @@ variable "managed_redis" {
   }
 }
 
-variable "private_endpoint" {
-  description = "Private endpoint configuration. Set to null to skip private endpoint creation."
-  type = object({
+variable "private_endpoints" {
+  description = "Map of private endpoints to create for the Managed Redis instance, keyed by an arbitrary name. Empty map (default) skips private endpoint creation."
+  type = map(object({
     name                = string
     dns_zone_group_name = optional(string, "default")
     # Name for the network interface card (NIC) created for the private endpoint.
@@ -139,8 +111,43 @@ variable "private_endpoint" {
     private_service_connection = optional(object({
       is_manual_connection = bool
     }), { is_manual_connection = false })
-  })
-  default = null
+
+    # Subnet where the private endpoint NIC will be placed.
+    subnet_name = string
+    vnet = optional(object({
+      name                = optional(string)
+      resource_group_name = optional(string)
+      tags                = optional(map(string))
+    }), {})
+
+    # Pass an already-resolved Private DNS Zone ID (e.g. from another subscription, via a claims ref).
+    # When omitted, the zone is looked up in this subscription by dns_private_zone_name.
+    private_dns_zone_id             = optional(string)
+    dns_private_zone_name           = optional(string)
+    dns_private_zone_resource_group = optional(string)
+  }))
+  default = {}
+  nullable = false
+
+  validation {
+    condition = alltrue([
+      for k, v in var.private_endpoints : (try(trimspace(v.private_dns_zone_id), "") != "") != (try(trimspace(v.dns_private_zone_name), "") != "")
+    ])
+    error_message = "Each private endpoint must set exactly one of private_dns_zone_id or dns_private_zone_name."
+  }
+
+  validation {
+    condition = alltrue([
+      for k, v in var.private_endpoints : (
+        (
+          try(trimspace(v.vnet.name), "") != "" &&
+          try(trimspace(v.vnet.resource_group_name), "") != ""
+        ) ||
+        length(coalesce(v.vnet.tags, {})) > 0
+      )
+    ])
+    error_message = "Each private endpoint must set either vnet.name and vnet.resource_group_name, or vnet.tags, so the subnet can be resolved."
+  }
 }
 
 variable "access_policy_assignments" {

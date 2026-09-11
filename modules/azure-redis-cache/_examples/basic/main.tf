@@ -19,14 +19,6 @@ module "redis_cache" {
   source = "../.."
 
   resource_group = "example-rg"
-  subnet_name    = "example-subnet"
-
-  dns_private_zone_name = "privatelink.redis.cache.windows.net"
-
-  vnet = {
-    name                = "example-vnet"
-    resource_group_name = "example-network-rg"
-  }
 
   tags_from_rg = false
   tags = {
@@ -45,11 +37,21 @@ module "redis_cache" {
     redis_version                 = 6
   }
 
-  private_endpoint = {
-    name                          = "pe-redis-example"
-    custom_network_interface_name = "pe-redis-example-nic"
-    private_service_connection = {
-      is_manual_connection = false
+  private_endpoints = {
+    default = {
+      name                          = "pe-redis-example"
+      custom_network_interface_name = "pe-redis-example-nic"
+      private_service_connection = {
+        is_manual_connection = false
+      }
+
+      subnet_name = "example-subnet"
+      vnet = {
+        name                = "example-vnet"
+        resource_group_name = "example-network-rg"
+      }
+
+      dns_private_zone_name = "privatelink.redis.cache.windows.net"
     }
   }
 }

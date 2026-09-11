@@ -13,7 +13,7 @@ Target use cases span from lightweight development clusters (`Balanced_B0`) up t
 
 - **SKU flexibility**: supports all tier families — `Balanced`, `ComputeOptimized`, `MemoryOptimized`, and `FlashOptimized` — in all documented sizes.
 - **High availability**: zone-redundant HA enabled by default (`high_availability_enabled = true`); can be disabled for dev/test at create time.
-- **Private connectivity**: optional private endpoint with `redisEnterprise` subresource, DNS zone group, and custom NIC name. Public network access is `Disabled` by default.
+- **Private connectivity**: zero, one or several private endpoints, each with `redisEnterprise` subresource, DNS zone group, and custom NIC name, keyed by an arbitrary map key (`private_endpoints`). Public network access is `Disabled` by default.
 - **Managed identity**: supports `SystemAssigned`, `UserAssigned`, or both; required for CMK scenarios.
 - **Customer-Managed Key (CMK)**: encrypt cluster data at rest with a Key Vault key via a `UserAssigned` identity.
 - **Database configuration**: full control over `clustering_policy`, `eviction_policy`, `client_protocol`, and access key authentication.
@@ -32,14 +32,6 @@ module "managed_redis" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-managed-redis?ref=<version>"
 
   resource_group = "example-rg"
-  subnet_name    = "example-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "example-vnet"
-    resource_group_name = "example-network-rg"
-  }
 
   managed_redis = {
     name     = "managed-redis-example"
@@ -47,9 +39,22 @@ module "managed_redis" {
     sku_name = "Balanced_B1"
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis"
-    custom_network_interface_name = "pe-managed-redis-nic"
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis"
+      custom_network_interface_name = "pe-managed-redis-nic"
+
+      subnet_name = "example-subnet"
+      vnet = {
+        name                = "example-vnet"
+        resource_group_name = "example-network-rg"
+      }
+
+      # Either resolve the zone in this subscription...
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
+      # ...or pass an already-resolved id from another subscription instead:
+      # private_dns_zone_id = "/subscriptions/<other-sub>/resourceGroups/.../providers/Microsoft.Network/privateDnsZones/privatelink.redisenterprise.cache.azure.net"
+    }
   }
 }
 ```
@@ -61,14 +66,6 @@ module "managed_redis" {
   source = "git::https://github.com/prefapp/tfm.git//modules/azure-managed-redis?ref=<version>"
 
   resource_group = "prod-rg"
-  subnet_name    = "data-subnet"
-
-  dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
-
-  vnet = {
-    name                = "prod-vnet"
-    resource_group_name = "prod-network-rg"
-  }
 
   tags_from_rg = true
   tags = {
@@ -107,11 +104,21 @@ module "managed_redis" {
     }
   }
 
-  private_endpoint = {
-    name                          = "pe-managed-redis-prod"
-    custom_network_interface_name = "pe-managed-redis-prod-nic"
-    private_service_connection = {
-      is_manual_connection = false
+  private_endpoints = {
+    default = {
+      name                          = "pe-managed-redis-prod"
+      custom_network_interface_name = "pe-managed-redis-prod-nic"
+      private_service_connection = {
+        is_manual_connection = false
+      }
+
+      subnet_name = "data-subnet"
+      vnet = {
+        name                = "prod-vnet"
+        resource_group_name = "prod-network-rg"
+      }
+
+      dns_private_zone_name = "privatelink.redisenterprise.cache.azure.net"
     }
   }
 
@@ -155,20 +162,21 @@ module "managed_redis" {
 6. **Redis modules**: changing `module.name` or `module.args` forces **database recreation** and data loss.
 7. **CMK**: `customer_managed_key` requires a `UserAssigned` identity with `WrapKey` and `UnwrapKey` permissions on the Key Vault key. The Key Vault must have `purge_protection_enabled = true`.
 8. **Access key auth**: `primary_access_key` and `secondary_access_key` outputs are only populated when `access_keys_authentication_enabled = true`. Use Entra ID authentication (the default) where possible.
-9. **Private DNS zone**: the DNS zone is resolved with `resource_group_name = coalesce(var.dns_private_zone_resource_group, var.vnet.resource_group_name, local.vnet_resource_group_from_data)`. By default the VNet’s resource group is used, but you can set `dns_private_zone_resource_group` to point to a different RG (e.g. when the private DNS zone is consolidated in a central subscription).
-10. **SKU downgrades**: scaling down to a lower SKU tier may be restricted by Azure and could force resource replacement. Refer to the [Azure scaling documentation](https://learn.microsoft.com/azure/redis/how-to-scale).
+9. **Private DNS zone**: each endpoint must set exactly one of **`private_dns_zone_id`** or **`dns_private_zone_name`**. When **`dns_private_zone_name`** is used, it is resolved with **`resource_group_name = coalesce(private_endpoints.<key>.dns_private_zone_resource_group, private_endpoints.<key>.vnet.resource_group_name, <resolved vnet resource group>)`**. When **`private_dns_zone_id`** is used instead, it is passed through as-is, allowing the zone to live in a different subscription (e.g. a value fetched in claims through a `ref`).
+10. **Legacy private endpoint migration**: migrating from the old single `private_endpoint` input to `private_endpoints` requires the first apply after upgrade to keep a `private_endpoints.default` entry present so Terraform can move state to the new keyed instance. If you intend to remove the private endpoint, first apply with `default` populated, then remove it in a second apply.
+11. **SKU downgrades**: scaling down to a lower SKU tier may be restricted by Azure and could force resource replacement. Refer to the [Azure scaling documentation](https://learn.microsoft.com/azure/redis/how-to-scale).
 
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 4.70.0, < 5.0.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.70.0, < 5.0.0 |
 
 ## Modules
@@ -178,42 +186,39 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_managed_redis.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_redis) | resource |
 | [azurerm_managed_redis_access_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_redis_access_policy_assignment) | resource |
 | [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) | resource |
 | [azurerm_private_dns_zone.dns_private_zone](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | data source |
 | [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
+| [azurerm_resources.vnet_from_name](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
 | [azurerm_resources.vnet_from_tags](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resources) | data source |
 | [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_policy_assignments"></a> [access\_policy\_assignments](#input\_access\_policy\_assignments) | List of Azure AD principal object IDs to assign built-in access policies on the default database. | <pre>list(object({<br/>    object_id = string # Object ID of the Azure AD user, group, service principal, or managed identity<br/>  }))</pre> | `[]` | no |
-| <a name="input_dns_private_zone_name"></a> [dns\_private\_zone\_name](#input\_dns\_private\_zone\_name) | Name of the Private DNS Zone for the private endpoint (e.g. privatelink.redisenterprise.cache.azure.net). Required when var.private\_endpoint is set. | `string` | `null` | no |
-| <a name="input_dns_private_zone_resource_group"></a> [dns\_private\_zone\_resource\_group](#input\_dns\_private\_zone\_resource\_group) | Override resource group for Private DNS Zone lookup. When null, falls back to vnet.resource\_group\_name. | `string` | `null` | no |
-| <a name="input_managed_redis"></a> [managed\_redis](#input\_managed\_redis) | Configuration for the Azure Managed Redis instance. | <pre>object({<br/>    name     = string<br/>    location = string<br/>    # SKU defines capacity tier and size.<br/>    # Balanced: Balanced_B0..B1000 | ComputeOptimized: ComputeOptimized_X3..X700<br/>    # MemoryOptimized: MemoryOptimized_M10..M700 | FlashOptimized: FlashOptimized_A250..A4500<br/>    sku_name = string<br/><br/>    # Whether to enable zone-redundant high availability. Defaults to true.<br/>    # Changing this forces recreation.<br/>    high_availability_enabled = optional(bool, true)<br/><br/>    # Public network access for the cluster endpoint. Possible values: Enabled, Disabled.<br/>    public_network_access = optional(string, "Disabled")<br/><br/>    # Managed identity configuration. Enables SystemAssigned, UserAssigned, or both.<br/>    identity = optional(object({<br/>      type         = string           # SystemAssigned | UserAssigned<br/>      identity_ids = optional(list(string)) # Required when type includes UserAssigned<br/>    }))<br/><br/>    # Customer-managed key encryption. Requires a UserAssigned identity with Key Vault access.<br/>    customer_managed_key = optional(object({<br/>      key_vault_key_id          = string # Full versioned or versionless Key Vault key URL<br/>      user_assigned_identity_id = string # ID of the UAI that has WrapKey/UnwrapKey on the key<br/>    }))<br/><br/>    # Configuration for the implicit default database. Required when creating a new instance.<br/>    default_database = optional(object({<br/>      # Whether access key authentication is enabled. Defaults to false (Entra ID only).<br/>      access_keys_authentication_enabled = optional(bool, false)<br/><br/>      # Redis client protocol. Encrypted (TLS) or Plaintext. Defaults to Encrypted.<br/>      client_protocol = optional(string, "Encrypted")<br/><br/>      # Cluster topology policy. Changing forces database recreation and data loss.<br/>      # EnterpriseCluster | OSSCluster | NoCluster. Defaults to OSSCluster.<br/>      clustering_policy = optional(string, "OSSCluster")<br/><br/>      # Eviction policy for keys when memory pressure occurs.<br/>      # AllKeysLFU | AllKeysLRU | AllKeysRandom | VolatileLRU | VolatileLFU<br/>      # VolatileTTL | VolatileRandom | NoEviction. Defaults to VolatileLRU.<br/>      eviction_policy = optional(string, "VolatileLRU")<br/><br/>      # Geo-replication group name. Conflicts with persistence. Changing forces recreation.<br/>      geo_replication_group_name = optional(string)<br/><br/>      # Append-Only File (AOF) backup frequency. Only valid value is "1s".<br/>      # Conflicts with persistence_redis_database_backup_frequency and geo_replication_group_name.<br/>      persistence_append_only_file_backup_frequency = optional(string)<br/><br/>      # Redis Database (RDB) snapshot frequency. Possible values: 1h, 6h, 12h.<br/>      # Conflicts with persistence_append_only_file_backup_frequency and geo_replication_group_name.<br/>      persistence_redis_database_backup_frequency = optional(string)<br/><br/>      # Redis modules to load. Changing name or args forces database recreation and data loss.<br/>      # Only RediSearch and RedisJSON are allowed with geo-replication.<br/>      modules = optional(list(object({<br/>        name = string           # RedisBloom | RedisTimeSeries | RediSearch | RedisJSON<br/>        args = optional(string) # Module-specific configuration string, e.g. "ERROR_RATE 0.01"<br/>      })), [])<br/>    }), {})<br/>  })</pre> | n/a | yes |
-| <a name="input_private_endpoint"></a> [private\_endpoint](#input\_private\_endpoint) | Private endpoint configuration. Set to null to skip private endpoint creation. | <pre>object({<br/>    name                = string<br/>    dns_zone_group_name = optional(string, "default")<br/>    # Name for the network interface card (NIC) created for the private endpoint.<br/>    custom_network_interface_name = string<br/>    private_service_connection = optional(object({<br/>      is_manual_connection = bool<br/>    }), { is_manual_connection = false })<br/>  })</pre> | `null` | no |
+| <a name="input_managed_redis"></a> [managed\_redis](#input\_managed\_redis) | Configuration for the Azure Managed Redis instance. | <pre>object({<br/>    name     = string<br/>    location = string<br/>    # SKU defines capacity tier and size.<br/>    # Balanced: Balanced_B0..B1000 | ComputeOptimized: ComputeOptimized_X3..X700<br/>    # MemoryOptimized: MemoryOptimized_M10..M700 | FlashOptimized: FlashOptimized_A250..A4500<br/>    sku_name = string<br/><br/>    # Whether to enable zone-redundant high availability. Defaults to true.<br/>    # Changing this forces recreation.<br/>    high_availability_enabled = optional(bool, true)<br/><br/>    # Public network access for the cluster endpoint. Possible values: Enabled, Disabled.<br/>    public_network_access = optional(string, "Disabled")<br/><br/>    # Managed identity configuration. Enables SystemAssigned, UserAssigned, or both.<br/>    identity = optional(object({<br/>      type         = string                 # SystemAssigned | UserAssigned<br/>      identity_ids = optional(list(string)) # Required when type includes UserAssigned<br/>    }))<br/><br/>    # Customer-managed key encryption. Requires a UserAssigned identity with Key Vault access.<br/>    customer_managed_key = optional(object({<br/>      key_vault_key_id          = string # Full versioned or versionless Key Vault key URL<br/>      user_assigned_identity_id = string # ID of the UAI that has WrapKey/UnwrapKey on the key<br/>    }))<br/><br/>    # Configuration for the implicit default database. Required when creating a new instance.<br/>    default_database = optional(object({<br/>      # Whether access key authentication is enabled. Defaults to false (Entra ID only).<br/>      access_keys_authentication_enabled = optional(bool, false)<br/><br/>      # Redis client protocol. Encrypted (TLS) or Plaintext. Defaults to Encrypted.<br/>      client_protocol = optional(string, "Encrypted")<br/><br/>      # Cluster topology policy. Changing forces database recreation and data loss.<br/>      # EnterpriseCluster | OSSCluster | NoCluster. Defaults to OSSCluster.<br/>      clustering_policy = optional(string, "OSSCluster")<br/><br/>      # Eviction policy for keys when memory pressure occurs.<br/>      # AllKeysLFU | AllKeysLRU | AllKeysRandom | VolatileLRU | VolatileLFU<br/>      # VolatileTTL | VolatileRandom | NoEviction. Defaults to VolatileLRU.<br/>      eviction_policy = optional(string, "VolatileLRU")<br/><br/>      # Geo-replication group name. Conflicts with persistence. Changing forces recreation.<br/>      geo_replication_group_name = optional(string)<br/><br/>      # Append-Only File (AOF) backup frequency. Only valid value is "1s".<br/>      # Conflicts with persistence_redis_database_backup_frequency and geo_replication_group_name.<br/>      persistence_append_only_file_backup_frequency = optional(string)<br/><br/>      # Redis Database (RDB) snapshot frequency. Possible values: 1h, 6h, 12h.<br/>      # Conflicts with persistence_append_only_file_backup_frequency and geo_replication_group_name.<br/>      persistence_redis_database_backup_frequency = optional(string)<br/><br/>      # Redis modules to load. Changing name or args forces database recreation and data loss.<br/>      # Only RediSearch and RedisJSON are allowed with geo-replication.<br/>      modules = optional(list(object({<br/>        name = string           # RedisBloom | RedisTimeSeries | RediSearch | RedisJSON<br/>        args = optional(string) # Module-specific configuration string, e.g. "ERROR_RATE 0.01"<br/>      })), [])<br/>    }), {})<br/>  })</pre> | n/a | yes |
+| <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints) | Map of private endpoints to create for the Managed Redis instance, keyed by an arbitrary name. Empty map (default) skips private endpoint creation. | <pre>map(object({<br/>    name                = string<br/>    dns_zone_group_name = optional(string, "default")<br/>    # Name for the network interface card (NIC) created for the private endpoint.<br/>    custom_network_interface_name = string<br/>    private_service_connection = optional(object({<br/>      is_manual_connection = bool<br/>    }), { is_manual_connection = false })<br/><br/>    # Subnet where the private endpoint NIC will be placed.<br/>    subnet_name = string<br/>    vnet = optional(object({<br/>      name                = optional(string)<br/>      resource_group_name = optional(string)<br/>      tags                = optional(map(string))<br/>    }), {})<br/><br/>    # Pass an already-resolved Private DNS Zone ID (e.g. from another subscription, via a claims ref).<br/>    # When omitted, the zone is looked up in this subscription by dns_private_zone_name.<br/>    private_dns_zone_id             = optional(string)<br/>    dns_private_zone_name           = optional(string)<br/>    dns_private_zone_resource_group = optional(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | Name of the existing Azure Resource Group where the Managed Redis instance and private endpoint will be deployed. | `string` | n/a | yes |
-| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of the subnet where the private endpoint NIC will be placed. Required when var.private\_endpoint is set. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags to assign to all resources created by this module. | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | When true, tags from the resource group are merged with var.tags and applied to all resources in this module. | `bool` | `false` | no |
-| <a name="input_vnet"></a> [vnet](#input\_vnet) | Virtual Network details used for resolving the subnet when creating a private endpoint. Lookup can be by name + resource\_group\_name or by tags. | <pre>object({<br/>    name                = optional(string)<br/>    resource_group_name = optional(string)<br/>    tags                = optional(map(string))<br/>  })</pre> | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_access_policy_assignment_ids"></a> [access\_policy\_assignment\_ids](#output\_access\_policy\_assignment\_ids) | Map of access policy assignment IDs keyed by the index of the input list. |
 | <a name="output_default_database_id"></a> [default\_database\_id](#output\_default\_database\_id) | Resource ID of the default Managed Redis database. |
 | <a name="output_default_database_port"></a> [default\_database\_port](#output\_default\_database\_port) | TCP port of the default Managed Redis database endpoint. |
 | <a name="output_hostname"></a> [hostname](#output\_hostname) | DNS hostname of the Managed Redis cluster endpoint. |
 | <a name="output_managed_redis_id"></a> [managed\_redis\_id](#output\_managed\_redis\_id) | Resource ID of the Azure Managed Redis instance. |
 | <a name="output_primary_access_key"></a> [primary\_access\_key](#output\_primary\_access\_key) | Primary access key for the Managed Redis default database. Only populated when access\_keys\_authentication\_enabled = true. |
-| <a name="output_private_endpoint_id"></a> [private\_endpoint\_id](#output\_private\_endpoint\_id) | Resource ID of the private endpoint. Null when no private endpoint was requested. |
-| <a name="output_private_endpoint_private_ip"></a> [private\_endpoint\_private\_ip](#output\_private\_endpoint\_private\_ip) | Private IP address assigned to the private endpoint NIC. Null when no private endpoint was requested. |
+| <a name="output_private_endpoint_ids"></a> [private\_endpoint\_ids](#output\_private\_endpoint\_ids) | Map of private endpoint resource IDs, keyed by the private\_endpoints map key. Empty when no private endpoints were requested. |
+| <a name="output_private_endpoint_private_ips"></a> [private\_endpoint\_private\_ips](#output\_private\_endpoint\_private\_ips) | Map of private IP addresses assigned to each private endpoint NIC, keyed by the private\_endpoints map key. Empty when no private endpoints were requested. |
 | <a name="output_secondary_access_key"></a> [secondary\_access\_key](#output\_secondary\_access\_key) | Secondary access key for the Managed Redis default database. Only populated when access\_keys\_authentication\_enabled = true. |
 
 ## Examples
