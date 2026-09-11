@@ -8,6 +8,11 @@ moved {
   from = azurerm_private_endpoint.this
   to   = azurerm_private_endpoint.this["default"]
 }
+
+moved {
+  from = azurerm_private_endpoint.this[0]
+  to   = azurerm_private_endpoint.this["default"]
+}
 resource "azurerm_private_endpoint" "this" {
   for_each = var.private_endpoints
 
