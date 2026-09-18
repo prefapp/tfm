@@ -4,7 +4,7 @@ locals {
     vm_size = var.default_node_pool.vm_size
     count_of = var.default_node_pool.count_of
     enable_auto_scaling = false
-    max_pods = var.aks_default_node_pool.max_pods
+    max_pods = var.default_node_pool.max_pods
     os_disk_size_gb = var.default_node_pool.os_disk_size_gb
     node_labels = var.default_node_pool.node_labels
     orchestrator_version = var.aks_kubernetes_version
