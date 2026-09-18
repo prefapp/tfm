@@ -78,5 +78,6 @@ module "aks" {
     name = var.aks_sku_name
   }
 
+
   tags                                                 = local.tags
 }

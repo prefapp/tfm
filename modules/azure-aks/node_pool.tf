@@ -1,18 +1,18 @@
 locals {
   default_agent_pool = {
-    name = var.aks_agents_pool_name
-    vm_size = var.aks_agents_size
-    node_count = var.aks_agents_count
+    name = var.default_node_pool.name
+    vm_size = var.default_node_pool.vm_size
+    count_of = var.default_node_pool.count_of
     enable_auto_scaling = false
-    max_pods = var.aks_agents_max_pods
-    os_disk_size_gb = var.aks_os_disk_size_gb
-    node_labels = var.aks_default_pool_custom_labels
+    max_pods = var.aks_default_node_pool.max_pods
+    os_disk_size_gb = var.default_node_pool.os_disk_size_gb
+    node_labels = var.default_node_pool.node_labels
     orchestrator_version = var.aks_kubernetes_version
     vnet_subnet_id = data.azurerm_subnet.aks_subnet.id
-    temporary_name_for_rotation = var.temporary_name_for_rotation
     upgrade_settings = {
-      drain_timeout_in_minutes = var.aks_agents_pool_drain_timeout_in_minutes
-      max_surge = var.aks_agents_pool_max_surge
+      drain_timeout_in_minutes = var.default_node_pool.upgrade_settings.drain_timeout_in_minutes
+      node_soak_duration_in_minutes = var.default_node_pool.upgrade_settings.node_soak_duration_in_minutes
+      max_surge = var.default_node_pool.upgrade_settings.max_surge
     }
   }
 
