@@ -21,7 +21,7 @@ locals {
       name = pool.pool_name
       vm_size = pool.vm_size
       enable_auto_scaling = pool.enable_auto_scaling
-      node_count = pool.enable_auto_scaling ? null : pool.node_count
+      count_of = pool.enable_auto_scaling ? null : pool.node_count
       min_count = pool.min_count
       max_count = pool.max_count
       max_pods = pool.max_pod_per_node
