@@ -123,7 +123,6 @@ variable "auto_scaler_profile" {
   description = "Configuration for the AKS cluster autoscaler profile"
 
   type = object({
-    enabled                              = optional(bool, false)
     balance_similar_node_groups          = optional(string, "false")
     daemonset_eviction_for_empty_nodes   = optional(bool, false)
     daemonset_eviction_for_occupied_nodes = optional(bool, true)
