@@ -13,7 +13,7 @@ module "aks" {
   authorized_ip_ranges = var.api_server_authorized_ip_ranges
   }
 
-  auto_scaler_profile                                  = local.auto_scaler_profile
+  autoScalerProfile                                     = local.auto_scaler_profile
 
   addon_profile_key_vault_secrets_provider = var.key_vault_secrets_provider_enabled ? {
     enabled = true
