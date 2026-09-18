@@ -1,5 +1,5 @@
 locals {
-  auto_scaler_profile = var.auto_scaler_profile == null ? null : {
+  autoScalerProfile = var.auto_scaler_profile == null ? null : {
     balance-similar-node-groups           = var.auto_scaler_profile.balance_similar_node_groups
     daemonset-eviction-for-empty-nodes    = var.auto_scaler_profile.daemonset_eviction_for_empty_nodes
     daemonset-eviction-for-occupied-nodes = var.auto_scaler_profile.daemonset_eviction_for_occupied_nodes
