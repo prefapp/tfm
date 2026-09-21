@@ -55,6 +55,10 @@ variable "aks_network_plugin" {
   description = "The network plugin to use for networking in the AKS cluster"
 }
 
+variable "aks_network_dataplane" {
+  description = "The network dataplane to use for the AKS cluster"
+}
+
 variable "aks_network_policy" {
   description = "The network policy to use for networking in the AKS cluster"
 }

@@ -57,8 +57,9 @@ module "aks" {
   }
 
   network_profile = {
-    network_plugin   = var.aks_network_plugin
-    network_policy   = var.aks_network_policy
+    network_plugin     = var.aks_network_plugin
+    network_policy     = var.aks_network_policy
+    network_dataplane  = var.aks_network_dataplane
 
     load_balancer_sku = var.load_balancer_sku
 
