@@ -132,8 +132,6 @@ variable "storage_profile" {
       enabled = optional(bool, true)
     }))
   })
-
-  default = null
 }
 
 # Auto Scaler Profile
