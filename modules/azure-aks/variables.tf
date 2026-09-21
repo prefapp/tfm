@@ -118,6 +118,24 @@ variable "workload_identity_enabled" {
   description = "Whether to enable Workload Identity for the AKS cluster"
 }
 
+variable "storage_profile" {
+  description = "Storage profile for the AKS cluster"
+
+  type = object({
+    disk_csi_driver = optional(object({
+      enabled = optional(bool, true)
+    }))
+    file_csi_driver = optional(object({
+      enabled = optional(bool, true)
+    }))
+    snapshot_controller = optional(object({
+      enabled = optional(bool, true)
+    }))
+  })
+
+  default = null
+}
+
 # Auto Scaler Profile
 variable "auto_scaler_profile" {
   description = "Configuration for the AKS cluster autoscaler profile"

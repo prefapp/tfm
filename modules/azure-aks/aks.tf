@@ -15,6 +15,8 @@ module "aks" {
 
   auto_scaler_profile                                  = local.auto_scaler_profile
 
+  storage_profile                                      = var.storage_profile
+
   addon_profile_key_vault_secrets_provider = var.key_vault_secrets_provider_enabled ? {
     enabled = true
 
