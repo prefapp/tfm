@@ -17,6 +17,8 @@ module "aks" {
 
   storage_profile                                      = var.storage_profile
 
+  support_plan                                         = var.support_plan
+
   addon_profile_key_vault_secrets_provider = var.key_vault_secrets_provider_enabled ? {
     enabled = true
 

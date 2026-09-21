@@ -145,6 +145,12 @@ variable "storage_profile" {
   }
 }
 
+variable "support_plan" {
+  description = "Support plan for the AKS cluster"
+  type        = string
+  default     = "KubernetesOfficial"
+}
+
 # Auto Scaler Profile
 variable "auto_scaler_profile" {
   description = "Configuration for the AKS cluster autoscaler profile"
