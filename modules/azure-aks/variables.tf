@@ -132,6 +132,17 @@ variable "storage_profile" {
       enabled = optional(bool, true)
     }))
   })
+  default = {
+    disk_csi_driver = {
+      enabled = true
+    }
+    file_csi_driver = {
+      enabled = true
+    }
+    snapshot_controller = {
+      enabled = true
+    }
+  }
 }
 
 # Auto Scaler Profile
