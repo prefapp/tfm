@@ -259,3 +259,15 @@ variable "create_role_assignment_public_ip" {
   type        = bool
   default     = false
 }
+
+# AKS upgrade setings
+variable "aks_upgrade_settings" {
+  description = "Upgrade settings for the AKS cluster."
+  type = object({
+    override_settings = optional(object({
+      force_upgrade = optional(bool)
+      until         = optional(string)
+    }))
+  })
+  default = null
+}
