@@ -21,3 +21,16 @@ data "azurerm_resource_group" "this" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config
 data "azurerm_client_config" "current" {
 }
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/kubernetes_cluster
+data "azurerm_kubernetes_cluster" "existing" {
+  name                = "${var.aks_prefix}-aks"
+  resource_group_name = var.resource_group_name
+}
+
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/user_assigned_identity
+data "azurerm_user_assigned_identity" "kubelet" {
+  name                = var.kubelet_identity_name
+  resource_group_name = data.azurerm_kubernetes_cluster.existing.node_resource_group
+}

@@ -90,6 +90,21 @@ module "aks" {
     name = var.aks_sku_name
   }
 
+  managed_identities = {
+    system_assigned = true
+
+    user_assigned_resource_ids = [
+      data.azurerm_user_assigned_identity.kubelet.id
+    ]
+  }
+
+  identity_profile = {
+    kubeletidentity = {
+      resource_id = data.azurerm_user_assigned_identity.kubelet.id
+    }
+  }
+
+  kubelet_identity_name = "${var.aks_prefix}-aks-agentpool"
 
   tags                                                 = local.tags
 }
