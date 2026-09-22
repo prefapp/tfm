@@ -75,9 +75,9 @@ module "aks" {
     } : null
   }
 
-  upgradeSettings = var.aks_upgrade_settings == null ? null : {
-    overrideSettings = var.aks_upgrade_settings.override_settings == null ? null : {
-      forceUpgrade = var.aks_upgrade_settings.override_settings.force_upgrade
+  upgrade_settings = var.aks_upgrade_settings == null ? null : {
+    override_settings = var.aks_upgrade_settings.override_settings == null ? null : {
+      force_upgrade = var.aks_upgrade_settings.override_settings.force_upgrade
       until        = var.aks_upgrade_settings.override_settings.until
     }
   }
@@ -103,8 +103,6 @@ module "aks" {
       resource_id = data.azurerm_user_assigned_identity.kubelet.id
     }
   }
-
-  kubelet_identity_name = "${var.aks_prefix}-aks-agentpool"
 
   tags                                                 = local.tags
 }
