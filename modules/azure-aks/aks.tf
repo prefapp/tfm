@@ -76,9 +76,9 @@ module "aks" {
   }
 
   upgradeSettings = var.aks_upgrade_settings == null ? null : {
-  overrideSettings = var.aks_upgrade_settings.override_settings == null ? null : {
-    forceUpgrade = var.aks_upgrade_settings.override_settings.force_upgrade
-    until        = var.aks_upgrade_settings.override_settings.until
+    overrideSettings = var.aks_upgrade_settings.override_settings == null ? null : {
+      forceUpgrade = var.aks_upgrade_settings.override_settings.force_upgrade
+      until        = var.aks_upgrade_settings.override_settings.until
     }
   }
 
