@@ -31,12 +31,12 @@ output "cluster_issuer" {
 
 # The kubelet identity client ID of the AKS cluster.
 output "kubelet_identity_client_id" {
-  value = module.aks.kubelet_identity[0].client_id
+  value = try(module.aks.kubelet_identity[0].client_id, null)
 }
 
 # The kubelet identity object ID of the AKS cluster.
 output "kubelet_identity_object_id" {
-  value = module.aks.kubelet_identity[0].object_id
+  value = try(module.aks.kubelet_identity[0].object_id, null)
 }
 
 # The network profile of the AKS cluster. See README for structure.
