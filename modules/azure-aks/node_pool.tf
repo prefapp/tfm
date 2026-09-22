@@ -27,6 +27,7 @@ locals {
       max_pods = pool.max_pod_per_node
       mode = pool.mode
       os_disk_type = pool.os_disk_type
+      os_disk_size_gb = pool.os_disk_size_gb
       node_labels = pool.custom_labels
       orchestrator_version = (
         pool.orchestrator_version != "" ? pool.orchestrator_version : var.aks_orchestrator_version
