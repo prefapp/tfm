@@ -98,11 +98,5 @@ module "aks" {
     ]
   }
 
-  identity_profile = {
-    kubeletidentity = {
-      resource_id = data.azurerm_user_assigned_identity.kubelet.id
-    }
-  }
-
   tags                                                 = local.tags
 }

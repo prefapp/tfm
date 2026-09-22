@@ -3,10 +3,6 @@ variable "location" {
   description = "The Azure location where all resources should be created"
 }
 
-variable "kubelet_identity_name" {
-  description = "Name of the existing kubelet User Assigned Identity."
-}
-
 variable "resource_group_name" {
   description = "The name of the resource group in which to create the resources"
 }
