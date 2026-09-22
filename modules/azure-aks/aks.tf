@@ -90,13 +90,5 @@ module "aks" {
     name = var.aks_sku_name
   }
 
-  managed_identities = {
-    system_assigned = true
-
-    user_assigned_resource_ids = [
-      data.azurerm_user_assigned_identity.kubelet.id
-    ]
-  }
-
   tags                                                 = local.tags
 }
