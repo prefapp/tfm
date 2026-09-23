@@ -3,6 +3,13 @@ module "aks" {
   # https://registry.terraform.io/modules/Azure/avm-res-containerservice-managedcluster/azurerm/latest
   source = "github.com/Azure/terraform-azurerm-avm-res-containerservice-managedcluster?ref=v0.8.3"
 
+  # Pin a stable API version: the module's default (2026-03-01) rejects the
+  # "upgradeStrategy" field it still sends for the default agent pool, causing
+  # a 400 UnmarshalError on create/update.
+  resource_types = {
+    containerservice_managed_clusters = "Microsoft.ContainerService/managedClusters@${var.aks_api_version}"
+  }
+
   location                                             = var.location
 
   enable_rbac = true
