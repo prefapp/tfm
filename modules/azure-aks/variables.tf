@@ -261,11 +261,13 @@ variable "create_role_assignment_public_ip" {
 }
 
 # AKS managed cluster API version override (workaround for AVM module v0.8.3
-# default "2026-03-01" rejecting the "upgradeStrategy" field with UnmarshalError)
+# default "2026-03-01" rejecting fields like "upgradeStrategy"/"sshAccess" that
+# only exist in newer/preview API versions). Match the same generation the
+# module already uses for the agent pools sub-resource so both stay in sync.
 variable "aks_api_version" {
   description = "API version used for the Microsoft.ContainerService/managedClusters resource"
   type        = string
-  default     = "2025-05-01"
+  default     = "2026-01-02-preview"
 }
 
 # AKS upgrade setings
