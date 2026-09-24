@@ -60,7 +60,7 @@ auto_scaler_profile:
   max_graceful_termination_sec: "1800"
   max_node_provision_time: "15m"
   ok_total_unready_count: 2
-  max__total_unready_percentage: 10
+  max_total_unready_percentage: 10
   new_pod_scale_up_delay: "10s"
   scale_down_delay_after_add: "15m"
   scale_down_delay_after_delete: "10s"
