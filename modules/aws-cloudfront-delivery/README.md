@@ -119,7 +119,7 @@ module "cloudfront" {
 | <a name="input_cdn_comment"></a> [cdn\_comment](#input\_cdn\_comment) | A comment to describe the CloudFront distribution. | `string` | `"CloudFront Distribution for S3 Delivery"` | no |
 | <a name="input_custom_response_script"></a> [custom\_response\_script](#input\_custom\_response\_script) | Content of a custom CloudFront Function script for custom responses. | `string` | `null` | no |
 | <a name="input_custom_response_script_path"></a> [custom\_response\_script\_path](#input\_custom\_response\_script\_path) | Path to a custom CloudFront Function script for custom responses. | `string` | `null` | no |
-| <a name="input_gh_delivery_gh_repositories"></a> [gh\_delivery\_gh\_repositories](#input\_gh\_delivery\_gh\_repositories) | A list of GitHub repositories to grant access to the S3 delivery and CloudFront resources. | `list(string)` | `[]` | no |
+| <a name="input_gh_delivery_gh_repositories"></a> [gh\_delivery\_gh\_repositories](#input\_gh\_delivery\_gh\_repositories) | A list of GitHub repositories to grant access to the S3 delivery and CloudFront resources. Each entry is used in the OIDC trust policy as `repo:<entry>:*`. Repositories created after 2026-07-15 (or opted in) use GitHub's immutable subject claim, so they must be given as `<org>@<org_id>/<repo>@<repo_id>` (e.g. `my-org@123456/my-repo@456789`); legacy repositories keep the `<org>/<repo>` form. See https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims | `list(string)` | `[]` | no |
 | <a name="input_gh_delivery_gh_role_enable"></a> [gh\_delivery\_gh\_role\_enable](#input\_gh\_delivery\_gh\_role\_enable) | Whether to enable the GitHub Actions role for S3 delivery and CloudFront. | `bool` | `false` | no |
 | <a name="input_http_version"></a> [http\_version](#input\_http\_version) | The HTTP version to use for requests to your distribution. | `string` | `"http2and3"` | no |
 | <a name="input_is_ipv6_enabled"></a> [is\_ipv6\_enabled](#input\_is\_ipv6\_enabled) | Whether the CloudFront distribution is enabled for IPv6. | `bool` | `true` | no |
@@ -151,6 +151,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/basic) - Basic Cloudfront with s3
 - [With acm domain](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/withacm) - Basic cloudfront with route53 and ACM certificates
+- [Multi-tenant by subdomain](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/multitenant-subdomain-script) - Several tenants in one bucket, routed by subdomain with a custom CloudFront Function and a GitHub Actions delivery role (immutable subject claim)
 
 ## Resources
 

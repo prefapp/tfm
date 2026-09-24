@@ -2,13 +2,6 @@
 # --- Standard-style (non-Premium family) ---
 standard_example:
   resource_group: "example-rg"
-  vnet:
-    tags:
-      env: "shared"
-    # name: "example-vnet-name"
-    # resource_group_name: "example-network-rg"
-  subnet_name: "example-subnet"
-  dns_private_zone_name: "privatelink.redis.cache.windows.net"
   redis:
     location: "westeurope"
     name: "redis-test"
@@ -19,21 +12,25 @@ standard_example:
     public_network_access_enabled: false
     minimum_tls_version: "1.2"
     redis_version: 6
-  private_endpoint:
-    name: "pe-example-redis"
-    custom_network_interface_name: "pe-example-redis-nic"
-    private_service_connection:
-      is_manual_connection: false
+  private_endpoints:
+    default:
+      name: "pe-example-redis"
+      custom_network_interface_name: "pe-example-redis-nic"
+      private_service_connection:
+        is_manual_connection: false
+      vnet:
+        tags:
+          env: "shared"
+        # name: "example-vnet-name"
+        # resource_group_name: "example-network-rg"
+      subnet_name: "example-subnet"
+      dns_private_zone_name: "privatelink.redis.cache.windows.net"
+      # dns_private_zone_id: "/subscriptions/<other-sub>/resourceGroups/.../providers/Microsoft.Network/privateDnsZones/privatelink.redis.cache.windows.net"
 
 # --- Premium-style (family P) ---
 # In the current module, redis_configuration is effectively required for Premium (dynamic block always dereferences redis_configuration.*).
 premium_example:
   resource_group: "example-rg"
-  vnet:
-    tags:
-      env: "shared"
-  subnet_name: "example-subnet"
-  dns_private_zone_name: "privatelink.redis.cache.windows.net"
   redis:
     location: "westeurope"
     name: "redis-test"
@@ -59,8 +56,14 @@ premium_example:
       maxfragmentationmemory_reserved: 200
       rdb_backup_enabled: false
       storage_account_subscription_id: "00000000-0000-0000-0000-000000000000"
-  private_endpoint:
-    name: "pe-example-redis"
-    custom_network_interface_name: "pe-example-redis-nic"
-    private_service_connection:
-      is_manual_connection: false
+  private_endpoints:
+    default:
+      name: "pe-example-redis"
+      custom_network_interface_name: "pe-example-redis-nic"
+      private_service_connection:
+        is_manual_connection: false
+      vnet:
+        tags:
+          env: "shared"
+      subnet_name: "example-subnet"
+      dns_private_zone_name: "privatelink.redis.cache.windows.net"

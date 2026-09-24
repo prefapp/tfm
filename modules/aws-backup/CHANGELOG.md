@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/prefapp/tfm/compare/aws-backup-v0.3.0...aws-backup-v0.3.1) (2026-09-09)
+
+
+### Bug Fixes
+
+* **aws-backup:** expand support for AWS resources in lambda replication ([#1429](https://github.com/prefapp/tfm/issues/1429)) ([9f5f479](https://github.com/prefapp/tfm/commit/9f5f4795d115490dd3e7b12634889bc0de95e563))
+
 ## [0.3.0](https://github.com/prefapp/tfm/compare/aws-backup-v0.2.0...aws-backup-v0.3.0) (2026-07-21)
 
 
