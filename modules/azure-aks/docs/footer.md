@@ -65,8 +65,8 @@ auto_scaler_profile:
   scale_down_delay_after_add: "15m"
   scale_down_delay_after_delete: "10s"
   scale_down_delay_after_failure: "3m"
-  scale_down_unneeded: "5m"
-  scale_down_unready: "15m"
+  scale_down_unneeded_time: "5m"
+  scale_down_unready_time: "15m"
   scale_down_utilization_threshold: "0.7"
   scan_interval: "10s"
   skip_nodes_with_local_storage: false
