@@ -10,21 +10,21 @@ module "aks" {
     containerservice_managed_clusters = "Microsoft.ContainerService/managedClusters@${var.aks_api_version}"
   }
 
-  location                                             = var.location
+  location = var.location
 
   enable_rbac = true
 
-  default_agent_pool                                   = local.default_agent_pool
+  default_agent_pool = local.default_agent_pool
 
   api_server_access_profile = var.api_server_authorized_ip_ranges == null ? null : {
-  authorized_ip_ranges = var.api_server_authorized_ip_ranges
+    authorized_ip_ranges = var.api_server_authorized_ip_ranges
   }
 
-  auto_scaler_profile                                  = local.auto_scaler_profile
+  auto_scaler_profile = local.auto_scaler_profile
 
-  storage_profile                                      = var.storage_profile
+  storage_profile = var.storage_profile
 
-  support_plan                                         = var.support_plan
+  support_plan = var.support_plan
 
   addon_profile_key_vault_secrets_provider = var.key_vault_secrets_provider_enabled ? {
     enabled = true
@@ -35,14 +35,14 @@ module "aks" {
     }
   } : null
 
-  kubernetes_version                                   = var.aks_kubernetes_version
+  kubernetes_version = var.aks_kubernetes_version
 
   auto_upgrade_profile = {
     node_os_upgrade_channel = var.auto_upgrade_profile.node_os_upgrade_channel
     upgrade_channel         = var.auto_upgrade_profile.upgrade_channel
   }
 
-  agent_pools                                          = local.agent_pools
+  agent_pools = local.agent_pools
 
   oidc_issuer_profile = {
     enabled = var.oidc_issuer_enabled
@@ -64,9 +64,9 @@ module "aks" {
   }
 
   network_profile = {
-    network_plugin     = var.aks_network_plugin
-    network_policy     = var.aks_network_policy
-    network_dataplane  = var.aks_network_dataplane
+    network_plugin    = var.aks_network_plugin
+    network_policy    = var.aks_network_policy
+    network_dataplane = var.aks_network_dataplane
 
     load_balancer_sku = var.load_balancer_sku
 
@@ -75,7 +75,7 @@ module "aks" {
     load_balancer_profile = (
       var.net_profile_outbound_type == "loadBalancer" &&
       var.load_balancer_profile_enabled
-    ) ? {
+      ) ? {
       outbound_ip_address_ids = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
         data.azurerm_public_ip.aks_public_ip[0].id
       ] : null
@@ -85,17 +85,17 @@ module "aks" {
   upgrade_settings = var.aks_upgrade_settings == null ? null : {
     override_settings = var.aks_upgrade_settings.override_settings == null ? null : {
       force_upgrade = var.aks_upgrade_settings.override_settings.force_upgrade
-      until        = var.aks_upgrade_settings.override_settings.until
+      until         = var.aks_upgrade_settings.override_settings.until
     }
   }
 
 
-  parent_id                                            = data.azurerm_resource_group.this.id
+  parent_id = data.azurerm_resource_group.this.id
 
   sku = {
     tier = var.aks_sku_tier
     name = var.aks_sku_name
   }
 
-  tags                                                 = local.tags
+  tags = local.tags
 }

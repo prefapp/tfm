@@ -96,12 +96,12 @@ variable "load_balancer_sku" {
 }
 
 variable "auto_upgrade_profile" {
-  description  = "Auto upgrade profile for a managed cluster"
+  description = "Auto upgrade profile for a managed cluster"
   type = object({
     node_os_upgrade_channel = optional(string, "NodeImage")
     upgrade_channel         = optional(string, "none")
   })
-  default     = null
+  default = null
 }
 
 variable "oidc_issuer_enabled" {
@@ -160,17 +160,17 @@ variable "auto_scaler_profile" {
   description = "Configuration for the AKS cluster autoscaler profile"
 
   type = object({
-    balance_similar_node_groups          = optional(string, "false")
-    daemonset_eviction_for_empty_nodes   = optional(bool, false)
+    balance_similar_node_groups           = optional(string, "false")
+    daemonset_eviction_for_empty_nodes    = optional(bool, false)
     daemonset_eviction_for_occupied_nodes = optional(bool, true)
-    expander                             = optional(string, "random")
-    ignore_daemonsets_utilization        = optional(bool, false)
-    max_empty_bulk_delete                = optional(string, "10")
-    max_graceful_termination_sec         = optional(string, "600")
-    max_node_provision_time              = optional(string, "15")
-    max_total_unready_percentage         = optional(string, "0")
-    new_pod_scale_up_delay               = optional(string, "0")
-    ok_total_unready_count               = optional(string, "0")
+    expander                              = optional(string, "random")
+    ignore_daemonsets_utilization         = optional(bool, false)
+    max_empty_bulk_delete                 = optional(string, "10")
+    max_graceful_termination_sec          = optional(string, "600")
+    max_node_provision_time               = optional(string, "15")
+    max_total_unready_percentage          = optional(string, "0")
+    new_pod_scale_up_delay                = optional(string, "0")
+    ok_total_unready_count                = optional(string, "0")
     scale_down_delay_after_add            = optional(string, "10")
     scale_down_delay_after_delete         = optional(string, "10")
     scale_down_delay_after_failure        = optional(string, "3")
@@ -201,13 +201,13 @@ variable "default_node_pool" {
   description = "Configuration for the default AKS node pool"
 
   type = object({
-    name                         = string
-    vm_size                      = string
-    count_of                     = number
-    max_pods                     = number
-    os_disk_size_gb              = number
-    node_labels                  = optional(map(string), {})
-    enable_auto_scaling          = optional(bool, false)
+    name                = string
+    vm_size             = string
+    count_of            = number
+    max_pods            = number
+    os_disk_size_gb     = number
+    node_labels         = optional(map(string), {})
+    enable_auto_scaling = optional(bool, false)
 
     upgrade_settings = optional(object({
       drain_timeout_in_minutes      = optional(number, 30)
