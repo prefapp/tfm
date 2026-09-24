@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.4...azure-aks-v3.0.0) (2026-09-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **azure-aks:** migrate Azure/terraform-azure-aks to Azure/terraform-azurerm-avm-res-containerservice-managedcluster ([#1353](https://github.com/prefapp/tfm/issues/1353))
+
+### Features
+
+* **azure-aks:** migrate Azure/terraform-azure-aks to Azure/terraform-azurerm-avm-res-containerservice-managedcluster ([#1353](https://github.com/prefapp/tfm/issues/1353)) ([33433bb](https://github.com/prefapp/tfm/commit/33433bb01c9c739cd0e4e38fdeb9a221a4945193))
+
 ## [2.0.4](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.3...azure-aks-v2.0.4) (2026-08-20)
 
 
