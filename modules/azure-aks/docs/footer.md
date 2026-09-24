@@ -19,43 +19,58 @@ tags_from_rg: false
 tags:
 	application: "common"
 	env: "predev"
-aks_agents_count: "2"
-aks_agents_max_pods: "110"
-aks_agents_pool_max_surge: "10%"
-aks_agents_pool_name: "myng"
-aks_agents_size: "Standard_D8as_v5"
-aks_node_os_channel_upgrade: "None"
 aks_kubernetes_version: "1.28.10"
 aks_network_plugin: "azure"
 aks_network_policy: "azure"
+aks_network_dataplane: "azure"
 aks_orchestrator_version: "1.28.10"
-aks_os_disk_size_gb: "256"
 aks_prefix: "predev"
+aks_sku_name: "Base"
 aks_sku_tier: "Free"
 key_vault_secrets_provider_enabled: true
 secret_rotation_enabled: true
 secret_rotation_interval: 30s
-aks_default_pool_custom_labels:
-	nodepool-group: "myng"
-auto_scaler_profile_enabled: true
-auto_scaler_profile_expander: "least-waste"
-auto_scaler_profile_max_graceful_termination_sec: "1800"
-auto_scaler_profile_max_node_provisioning_time: "15m"
-auto_scaler_profile_max_unready_nodes: 2
-auto_scaler_profile_max_unready_percentage: 10
-auto_scaler_profile_new_pod_scale_up_delay: "10s"
-auto_scaler_profile_scale_down_delay_after_add: "15m"
-auto_scaler_profile_scale_down_delay_after_delete: "10s"
-auto_scaler_profile_scale_down_delay_after_failure: "3m"
-auto_scaler_profile_scale_down_unneeded: "5m"
-auto_scaler_profile_scale_down_unready: "15m"
-auto_scaler_profile_scale_down_utilization_threshold: "0.7"
-auto_scaler_profile_scan_interval: "10s"
-auto_scaler_profile_skip_nodes_with_local_storage: false
-auto_scaler_profile_skip_nodes_with_system_pods: false
-upgrade_override:
-	force_upgrade_enabled: true
-	effective_until: "2026-09-18T14:30:00Z"
+auto_upgrade_profile:
+  node_os_upgrade_channel: "None"
+  upgrade_channel: "none"
+upgrade_settings:
+  override_settings:
+	  force_upgrade: true
+	  until: "2026-09-18T14:30:00Z"
+default_node_pool:
+  name: "myng"
+  vm_size: "Standard_D8as_v5"
+  count_of: "2"
+  enable_auto_scaling: false
+  max_pods: 110
+  os_disk_size_gb: 256
+  node_labels:
+    nodepool-group: "myng"
+  upgrade_settings:
+    drain_timeout_in_minutes: 30
+    node_soak_duration_in_minutes: 0
+    max_surge: "10%"
+auto_scaler_profile:
+  balance_similar_node_groups: false
+  daemonset_eviction_for_empty_nodes: false
+  daemonset_eviction_for_occupied_nodes: true
+  ignore_daemonsets_utilization: false
+  max_empty_bulk_delete: 10
+  expander: "least-waste"
+  max_graceful_termination_sec: "1800"
+  max_node_provision_time: "15m"
+  ok_total_unready_count: 2
+  max_total_unready_percentage: 10
+  new_pod_scale_up_delay: "10s"
+  scale_down_delay_after_add: "15m"
+  scale_down_delay_after_delete: "10s"
+  scale_down_delay_after_failure: "3m"
+  scale_down_unneeded_time: "5m"
+  scale_down_unready_time: "15m"
+  scale_down_utilization_threshold: "0.7"
+  scan_interval: "10s"
+  skip_nodes_with_local_storage: false
+  skip_nodes_with_system_pods: false
 extra_node_pools :
 	- name: "foo"
 		pool_name: "captpre"
