@@ -31,7 +31,6 @@ module "azure_aks" {
 		}
 	}
   tags                    = { environment = "dev" }
-}
   default_node_pool {
     name = "default"
     vm_size = "Standard_D8as_v5"
