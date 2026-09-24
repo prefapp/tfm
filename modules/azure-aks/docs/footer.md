@@ -71,7 +71,6 @@ auto_scaler_profile:
   scan_interval: "10s"
   skip_nodes_with_local_storage: false
   skip_nodes_with_system_pods: false
-
 extra_node_pools :
 	- name: "foo"
 		pool_name: "captpre"
