@@ -34,7 +34,7 @@ To get started, add the module to your Terraform configuration and provide the r
 - ACR(s) (optional)
 - If you set a Public IP, you need to create a public IP resource
 
-For more details, see the [Terraform AKS module documentation](https://registry.terraform.io/modules/Azure/aks/azurerm/latest).
+For more details, see the [Terraform AKS module documentation](https://registry.terraform.io/modules/Azure/avm-res-containerservice-managedcluster/azurerm/latest).
 
 > **Note:**
 > The following values are not configurable:
@@ -59,24 +59,44 @@ module "azure_aks" {
 	subnet_name             = "example-subnet"
 	aks_prefix              = "example"
 	aks_kubernetes_version  = "1.28.3"
-	aks_agents_count        = 2
-	aks_agents_size         = "Standard_DS2_v2"
-	aks_agents_pool_name    = "default"
-	aks_agents_max_pods     = 30
-	aks_agents_pool_max_surge = "33%"
 	aks_sku_tier            = "Free"
+	aks_sku_name			      = "Base"
 	aks_network_plugin      = "azure"
 	aks_network_policy      = "azure"
+	aks_network_dataplane	= "azure"
 	aks_orchestrator_version = "1.28.3"
-	aks_os_disk_size_gb     = 30
 	oidc_issuer_enabled     = true
 	workload_identity_enabled = true
 	key_vault_secrets_provider_enabled = true
 	secret_rotation_enabled = false
 	public_ip_name          = "example-public-ip"
-	upgrade_override:
-        force_upgrade_enabled = false
-        effective_until     = "2026-09-18T14:30:00Z"
+  auto_upgrade_profile {
+    node_os_upgrade_channel = "None"
+    upgrade_channel         = "none"
+  }
+	upgrade_settings {
+		override_settings {
+      force_upgrade = false
+      until		      = "2026-09-18T14:30:00Z"
+		}
+	}
 	tags                    = { environment = "dev" }
+
+  default_node_pool {
+    name = "default"
+    vm_size = "Standard_D8as_v5"
+    count_of = 1
+    enable_auto_scaling = false
+    max_pods = 30
+    os_disk_size_gb = 128
+    node_labels {
+      pool = "default"
+    }
+    upgrade_settings {
+      drain_timeout_in_minutes = 30
+      node_soak_duration_in_minutes = 0
+      max_surge = "10%"
+    }
+  }
 }
 ```

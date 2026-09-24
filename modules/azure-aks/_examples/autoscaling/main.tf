@@ -20,6 +20,16 @@ module "azure_aks" {
   secret_rotation_enabled = false
   secret_rotation_interval = null
   public_ip_name          = "autoscale-public-ip"
+  auto_upgrade_profile {
+    node_os_upgrade_channel = "None"
+    upgrade_channel         = "none"
+  }
+	upgrade_settings {
+		override_settings {
+      force_upgrade = false
+      until		      = "2026-09-18T14:30:00Z"
+		}
+	}
   tags                    = { environment = "autoscale" }
 
   default_node_pool {
@@ -40,11 +50,11 @@ module "azure_aks" {
   }
 
   auto_scaler_profile {
-    balance_similar_node_groups: false
-    daemonset_eviction_for_empty_nodes: false
-    daemonset_eviction_for_occupied_nodes: true
-    ignore_daemonsets_utilization: false
-    max_empty_bulk_delete: 10
+    balance_similar_node_groups = false
+    daemonset_eviction_for_empty_nodes = false
+    daemonset_eviction_for_occupied_nodes = true
+    ignore_daemonsets_utilization = false
+    max_empty_bulk_delete = 10
     expander = "random"
     max_graceful_termination_sec = 600
     max_node_provision_time = "15"
