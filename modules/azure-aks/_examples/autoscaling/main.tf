@@ -1,20 +1,16 @@
 module "azure_aks" {
   source = "../../"
 
-  resource_group_name      = "example-rg"
+  resource_group_name     = "example-rg"
   location                = "westeurope"
   aks_prefix              = "autoscale"
   aks_kubernetes_version  = "1.28.3"
-  aks_agents_count        = 1
-  aks_agents_size         = "Standard_DS2_v2"
-  aks_agents_pool_name    = "default"
-  aks_agents_max_pods     = 30
-  aks_agents_pool_max_surge = "33%"
-  aks_sku_tier              = "Free"
+  aks_sku_tier            = "Free"
+  aks_sku_name            = "Base"
   aks_network_plugin      = "azure"
   aks_network_policy      = "azure"
+  aks_network_dataplane   = "azure"
   aks_orchestrator_version = "1.28.3"
-  aks_os_disk_size_gb     = 30
   vnet_name               = "example-vnet"
   vnet_resource_group_name = "example-rg"
   subnet_name             = "example-subnet"
@@ -26,20 +22,43 @@ module "azure_aks" {
   public_ip_name          = "autoscale-public-ip"
   tags                    = { environment = "autoscale" }
 
-  auto_scaler_profile_enabled = true
-  auto_scaler_profile_expander = "random"
-  auto_scaler_profile_max_graceful_termination_sec = 600
-  auto_scaler_profile_max_node_provisioning_time = "15"
-  auto_scaler_profile_max_unready_nodes = 1
-  auto_scaler_profile_max_unready_percentage = 45
-  auto_scaler_profile_new_pod_scale_up_delay = "0"
-  auto_scaler_profile_scale_down_delay_after_add = "10"
-  auto_scaler_profile_scale_down_delay_after_delete = "10"
-  auto_scaler_profile_scale_down_delay_after_failure = "3"
-  auto_scaler_profile_scale_down_unneeded = "10"
-  auto_scaler_profile_scale_down_unready = "10"
-  auto_scaler_profile_scale_down_utilization_threshold = 0.5
-  auto_scaler_profile_scan_interval = "10"
-  auto_scaler_profile_skip_nodes_with_local_storage = false
-  auto_scaler_profile_skip_nodes_with_system_pods = false
+  default_node_pool {
+    name = "default"
+    vm_size = "Standard_D8as_v5"
+    count_of = 1
+    enable_auto_scaling = false
+    max_pods = 30
+    os_disk_size_gb = 128
+    node_labels {
+      pool = "default"
+    }
+    upgrade_settings {
+      drain_timeout_in_minutes = 30
+      node_soak_duration_in_minutes = 0
+      max_surge = "10%"
+    }
+  }
+
+  auto_scaler_profile {
+    balance_similar_node_groups: false
+    daemonset_eviction_for_empty_nodes: false
+    daemonset_eviction_for_occupied_nodes: true
+    ignore_daemonsets_utilization: false
+    max_empty_bulk_delete: 10
+    expander = "random"
+    max_graceful_termination_sec = 600
+    max_node_provision_time = "15"
+    ok_total_unready_count = 1
+    max_total_unready_percentage = 45
+    new_pod_scale_up_delay = "0"
+    scale_down_delay_after_add = "10"
+    scale_down_delay_after_delete = "10"
+    scale_down_delay_after_failure = "3"
+    scale_down_unneeded_time = "10"
+    scale_down_unready_time = "10"
+    scale_down_utilization_threshold = 0.5
+    scan_interval = "10"
+    skip_nodes_with_local_storage = false
+    skip_nodes_with_system_pods = false
+  }
 }
