@@ -24,24 +24,24 @@ module "azure_aks" {
     node_os_upgrade_channel = "None"
     upgrade_channel         = "none"
   }
-	upgrade_settings {
-		override_settings {
+	upgrade_settings = {
+		override_settings = {
       force_upgrade = false
       until		      = "2026-09-18T14:30:00Z"
 		}
 	}
   tags                    = { environment = "dev" }
-  default_node_pool {
+  default_node_pool = {
     name = "default"
     vm_size = "Standard_D8as_v5"
     count_of = 1
     enable_auto_scaling = false
     max_pods = 30
     os_disk_size_gb = 128
-    node_labels {
+    node_labels = {
       pool = "default"
     }
-    upgrade_settings {
+    upgrade_settings = {
       drain_timeout_in_minutes = 30
       node_soak_duration_in_minutes = 0
       max_surge = "10%"

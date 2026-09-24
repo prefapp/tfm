@@ -71,12 +71,12 @@ module "azure_aks" {
   key_vault_secrets_provider_enabled = true
   secret_rotation_enabled            = false
   public_ip_name = "example-public-ip"
-  auto_upgrade_profile {
+  auto_upgrade_profile = {
     node_os_upgrade_channel = "None"
     upgrade_channel         = "none"
   }
-  upgrade_settings {
-    override_settings {
+  upgrade_settings = {
+    override_settings = {
       force_upgrade = false
       until         = "2026-09-18T14:30:00Z"
     }
@@ -85,17 +85,17 @@ module "azure_aks" {
     environment = "dev"
   }
 
-  default_node_pool {
+  default_node_pool = {
     name                = "default"
     vm_size             = "Standard_D8as_v5"
     count_of            = 1
     enable_auto_scaling = false
     max_pods            = 30
     os_disk_size_gb     = 128
-    node_labels {
+    node_labels = {
       pool = "default"
     }
-    upgrade_settings {
+    upgrade_settings = {
       drain_timeout_in_minutes      = 30
       node_soak_duration_in_minutes = 0
       max_surge                     = "10%"
@@ -255,13 +255,13 @@ auto_scaler_profile:
   max_graceful_termination_sec: "1800"
   max_node_provision_time: "15m"
   ok_total_unready_count: 2
-  max__total_unready_percentage: 10
+  max_total_unready_percentage: 10
   new_pod_scale_up_delay: "10s"
   scale_down_delay_after_add: "15m"
   scale_down_delay_after_delete: "10s"
   scale_down_delay_after_failure: "3m"
-  scale_down_unneeded: "5m"
-  scale_down_unready: "15m"
+  scale_down_unneeded_time: "5m"
+  scale_down_unready_time: "15m"
   scale_down_utilization_threshold: "0.7"
   scan_interval: "10s"
   skip_nodes_with_local_storage: false
