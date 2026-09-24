@@ -7,7 +7,7 @@ module "azure_aks" {
   aks_kubernetes_version  = "1.28.3"
   aks_sku_tier            = "Free"
   aks_sku_name            = "Base"
-  aks_network_dataplane   = "azure
+  aks_network_dataplane   = "azure"
   aks_network_plugin      = "azure"
   aks_network_policy      = "azure"
   aks_orchestrator_version = "1.28.3"
