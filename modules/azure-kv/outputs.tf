@@ -1,3 +1,4 @@
 output "id" {
-  value = azurerm_key_vault.this.id
+  description = "The Azure resource ID of the Key Vault."
+  value       = azurerm_key_vault.this.id
 }
