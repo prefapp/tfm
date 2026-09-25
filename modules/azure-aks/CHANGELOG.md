@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.0...azure-aks-v3.0.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* fix some doc and vars on az-aks module ([#1437](https://github.com/prefapp/tfm/issues/1437)) ([8f4d121](https://github.com/prefapp/tfm/commit/8f4d121c09ecc9f0868219d8d0b64ece72a823fa))
+
 ## [3.0.0](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.4...azure-aks-v3.0.0) (2026-09-24)
 
 
