@@ -14,12 +14,10 @@ variable "locks_table_name" {
   default     = null
 }
 
-data "aws_region" "current" {}
-
 variable "aws_region" {
   description = "AWS Region"
   type        = string
-  default     = data.aws_region.current.name
+  default     = null
 }
 
 variable "tags" {
