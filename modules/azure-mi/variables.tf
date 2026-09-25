@@ -39,11 +39,11 @@ variable "rbac" {
 variable "access_policies" {
   description = "List of access policies for the Key Vault"
   type = list(object({
-    key_vault_id = string
-    key_permissions = optional(list(string), [])
-    secret_permissions = optional(list(string), [])
+    key_vault_id            = string
+    key_permissions         = optional(list(string), [])
+    secret_permissions      = optional(list(string), [])
     certificate_permissions = optional(list(string), [])
-    storage_permissions = optional(list(string), [])
+    storage_permissions     = optional(list(string), [])
   }))
   default = []
 }
