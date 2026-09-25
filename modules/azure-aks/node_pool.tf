@@ -9,7 +9,7 @@ locals {
     node_labels          = var.default_node_pool.node_labels
     orchestrator_version = var.aks_orchestrator_version
     vnet_subnet_id       = data.azurerm_subnet.aks_subnet.id
-    upgrade_settings = {
+    upgrade_settings = var.default_node_pool.upgrade_settings == null ? null : {
       drain_timeout_in_minutes      = var.default_node_pool.upgrade_settings.drain_timeout_in_minutes
       node_soak_duration_in_minutes = var.default_node_pool.upgrade_settings.node_soak_duration_in_minutes
       max_surge                     = var.default_node_pool.upgrade_settings.max_surge

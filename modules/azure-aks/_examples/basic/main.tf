@@ -20,16 +20,17 @@ module "azure_aks" {
   secret_rotation_enabled = false
   secret_rotation_interval = null
   public_ip_name          = "example-public-ip"
-  auto_upgrade_profile {
+  auto_upgrade_profile = {
     node_os_upgrade_channel = "None"
     upgrade_channel         = "none"
   }
-	upgrade_settings = {
+  aks_upgrade_settings = {
 		override_settings = {
       force_upgrade = false
       until		      = "2026-09-18T14:30:00Z"
 		}
 	}
+  auto_scaler_profile       = null
   tags                    = { environment = "dev" }
   default_node_pool = {
     name = "default"

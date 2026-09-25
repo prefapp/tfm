@@ -9,7 +9,7 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [Autoscaling](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/autoscaling) – AKS with autoscaler profile enabled
 
 
-### Example .tfvars
+### Example values (YAML)
 
 ```yaml
 # Example variables for AKS module
@@ -33,7 +33,7 @@ secret_rotation_interval: 30s
 auto_upgrade_profile:
   node_os_upgrade_channel: "None"
   upgrade_channel: "none"
-upgrade_settings:
+aks_upgrade_settings:
   override_settings:
 	  force_upgrade: true
 	  until: "2026-09-18T14:30:00Z"
@@ -96,7 +96,6 @@ subnet_name: "internal"
 vnet_name: "spoke-common-predev-vnet"
 vnet_resource_group_name: "my-rg"
 public_ip_name: "my-output-aks-public-ip"
-aks_network_profile: "foo"
 acr_map:
 	acrxxx: "/xxx/xxx/xxx"
 	acryyy: "/yyy/yyy/yyy"
