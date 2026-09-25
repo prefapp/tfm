@@ -75,7 +75,7 @@ module "azure_aks" {
     node_os_upgrade_channel = "None"
     upgrade_channel         = "none"
   }
-  upgrade_settings = {
+  aks_upgrade_settings = {
     override_settings = {
       force_upgrade = false
       until         = "2026-09-18T14:30:00Z"
@@ -116,6 +116,7 @@ module "azure_aks" {
 
 | Name | Version |
 | ---- | ------- |
+| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | ~> 2.0, < 3.0.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0, < 5.0.0 |
 
 ## Modules
@@ -153,9 +154,9 @@ module "azure_aks" {
 | <a name="input_aks_upgrade_settings"></a> [aks\_upgrade\_settings](#input\_aks\_upgrade\_settings) | Upgrade settings for the AKS cluster. | <pre>object({<br/>    override_settings = optional(object({<br/>      force_upgrade = optional(bool)<br/>      until         = optional(string)<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_api_server_authorized_ip_ranges"></a> [api\_server\_authorized\_ip\_ranges](#input\_api\_server\_authorized\_ip\_ranges) | The IP ranges authorized to access the AKS API server | `list(string)` | `null` | no |
 | <a name="input_auto_scaler_profile"></a> [auto\_scaler\_profile](#input\_auto\_scaler\_profile) | Configuration for the AKS cluster autoscaler profile | <pre>object({<br/>    balance_similar_node_groups           = optional(string, "false")<br/>    daemonset_eviction_for_empty_nodes    = optional(bool, false)<br/>    daemonset_eviction_for_occupied_nodes = optional(bool, true)<br/>    expander                              = optional(string, "random")<br/>    ignore_daemonsets_utilization         = optional(bool, false)<br/>    max_empty_bulk_delete                 = optional(string, "10")<br/>    max_graceful_termination_sec          = optional(string, "600")<br/>    max_node_provision_time               = optional(string, "15")<br/>    max_total_unready_percentage          = optional(string, "0")<br/>    new_pod_scale_up_delay                = optional(string, "0")<br/>    ok_total_unready_count                = optional(string, "0")<br/>    scale_down_delay_after_add            = optional(string, "10")<br/>    scale_down_delay_after_delete         = optional(string, "10")<br/>    scale_down_delay_after_failure        = optional(string, "3")<br/>    scale_down_unneeded_time              = optional(string, "0")<br/>    scale_down_unready_time               = optional(string, "0")<br/>    scale_down_utilization_threshold      = optional(string, "0.5")<br/>    scan_interval                         = optional(string, "10")<br/>    skip_nodes_with_local_storage         = optional(string, "false")<br/>    skip_nodes_with_system_pods           = optional(string, "false")<br/>  })</pre> | `null` | no |
-| <a name="input_auto_upgrade_profile"></a> [auto\_upgrade\_profile](#input\_auto\_upgrade\_profile) | Auto upgrade profile for a managed cluster | <pre>object({<br/>    node_os_upgrade_channel = optional(string, "NodeImage")<br/>    upgrade_channel         = optional(string, "none")<br/>  })</pre> | `null` | no |
+| <a name="input_auto_upgrade_profile"></a> [auto\_upgrade\_profile](#input\_auto\_upgrade\_profile) | Auto upgrade profile for a managed cluster | <pre>object({<br/>    node_os_upgrade_channel = optional(string, "NodeImage")<br/>    upgrade_channel         = optional(string, "none")<br/>  })</pre> | `{}` | no |
 | <a name="input_create_role_assignment_public_ip"></a> [create\_role\_assignment\_public\_ip](#input\_create\_role\_assignment\_public\_ip) | Boolean value to create a role assignment for the public IP | `bool` | `false` | no |
-| <a name="input_default_node_pool"></a> [default\_node\_pool](#input\_default\_node\_pool) | Configuration for the default AKS node pool | <pre>object({<br/>    name                = string<br/>    vm_size             = string<br/>    count_of            = number<br/>    max_pods            = number<br/>    os_disk_size_gb     = number<br/>    node_labels         = optional(map(string), {})<br/>    enable_auto_scaling = optional(bool, false)<br/><br/>    upgrade_settings = optional(object({<br/>      drain_timeout_in_minutes      = optional(number, 30)<br/>      node_soak_duration_in_minutes = optional(number, 0)<br/>      max_surge                     = string<br/>    }))<br/>  })</pre> | `null` | no |
+| <a name="input_default_node_pool"></a> [default\_node\_pool](#input\_default\_node\_pool) | Configuration for the default AKS node pool | <pre>object({<br/>    name                = string<br/>    vm_size             = string<br/>    count_of            = number<br/>    max_pods            = number<br/>    os_disk_size_gb     = number<br/>    node_labels         = optional(map(string), {})<br/>    enable_auto_scaling = optional(bool, false)<br/><br/>    upgrade_settings = optional(object({<br/>      drain_timeout_in_minutes      = optional(number, 30)<br/>      node_soak_duration_in_minutes = optional(number, 0)<br/>      max_surge                     = string<br/>    }))<br/>  })</pre> | n/a | yes |
 | <a name="input_extra_node_pools"></a> [extra\_node\_pools](#input\_extra\_node\_pools) | A list of extra node pools to create | <pre>list(object({<br/>    name                  = string<br/>    pool_name             = string<br/>    vm_size               = string<br/>    count_of              = optional(number, 1)<br/>    create_before_destroy = optional(bool, true)<br/>    enable_auto_scaling   = optional(bool, false)<br/>    min_count             = optional(number, null)<br/>    max_count             = optional(number, null)<br/>    max_pod_per_node      = optional(number, 110)<br/>    os_disk_type          = optional(string, "Ephemeral")<br/>    os_disk_size_gb       = optional(number)<br/>    mode                  = optional(string, "User")<br/>    custom_labels         = map(string)<br/>    orchestrator_version  = optional(string, "")<br/>    upgrade_settings = optional(object({<br/>      drain_timeout_in_minutes      = number<br/>      node_soak_duration_in_minutes = number<br/>      max_surge                     = string<br/>    }))<br/>  }))</pre> | `[]` | no |
 | <a name="input_key_vault_secrets_provider_enabled"></a> [key\_vault\_secrets\_provider\_enabled](#input\_key\_vault\_secrets\_provider\_enabled) | Boolean value to activate the csi-secrets-store-driver | `any` | n/a | yes |
 | <a name="input_load_balancer_profile_enabled"></a> [load\_balancer\_profile\_enabled](#input\_load\_balancer\_profile\_enabled) | Value to enable or not the load balancer profile | `bool` | `true` | no |
@@ -204,99 +205,64 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 - [Extra node pools](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/extra\_node\_pools) – AKS with additional node pools
 - [Autoscaling](https://github.com/prefapp/tfm/tree/main/modules/azure-aks/_examples/autoscaling) – AKS with autoscaler profile enabled
 
-### Example .tfvars
+### Example `terraform.tfvars`
 
-```yaml
+```hcl
 # Example variables for AKS module
-location: "westeurope"
-resource_group_name: "my-rg"
-tags_from_rg: false
-tags:
-	application: "common"
-	env: "predev"
-aks_kubernetes_version: "1.28.10"
-aks_network_plugin: "azure"
-aks_network_policy: "azure"
-aks_network_dataplane: "azure"
-aks_orchestrator_version: "1.28.10"
-aks_prefix: "predev"
-aks_sku_name: "Base"
-aks_sku_tier: "Free"
-key_vault_secrets_provider_enabled: true
-secret_rotation_enabled: true
-secret_rotation_interval: 30s
-auto_upgrade_profile:
-  node_os_upgrade_channel: "None"
-  upgrade_channel: "none"
-upgrade_settings:
-  override_settings:
-	  force_upgrade: true
-	  until: "2026-09-18T14:30:00Z"
-default_node_pool:
-  name: "myng"
-  vm_size: "Standard_D8as_v5"
-  count_of: "2"
-  enable_auto_scaling: false
-  max_pods: 110
-  os_disk_size_gb: 256
-  node_labels:
-    nodepool-group: "myng"
-  upgrade_settings:
-    drain_timeout_in_minutes: 30
-    node_soak_duration_in_minutes: 0
-    max_surge: "10%"
-auto_scaler_profile:
-  balance_similar_node_groups: false
-  daemonset_eviction_for_empty_nodes: false
-  daemonset_eviction_for_occupied_nodes: true
-  ignore_daemonsets_utilization: false
-  max_empty_bulk_delete: 10
-  expander: "least-waste"
-  max_graceful_termination_sec: "1800"
-  max_node_provision_time: "15m"
-  ok_total_unready_count: 2
-  max_total_unready_percentage: 10
-  new_pod_scale_up_delay: "10s"
-  scale_down_delay_after_add: "15m"
-  scale_down_delay_after_delete: "10s"
-  scale_down_delay_after_failure: "3m"
-  scale_down_unneeded_time: "5m"
-  scale_down_unready_time: "15m"
-  scale_down_utilization_threshold: "0.7"
-  scan_interval: "10s"
-  skip_nodes_with_local_storage: false
-  skip_nodes_with_system_pods: false
-extra_node_pools :
-	- name: "foo"
-		pool_name: "captpre"
-		vm_size: "Standard_F8s_v2"
-		enable_auto_scaling: true
-		max_count: 5
-		min_count: 2
-		max_pod_per_node: 30
-		os_disk_type: "Managed"
-		custom_labels:
-			nodepool-group: "foo"
-	- name: "bar"
-		pool_name: "genhpa"
-		vm_size: "Standard_D4as_v5"
-		enable_auto_scaling: true
-		min_count: 2
-		max_count: 20
-		max_pod_per_node: 110
-		os_disk_type: "Managed"
-		custom_labels:
-			nodepool-group: "bar"
-subnet_name: "internal"
-vnet_name: "spoke-common-predev-vnet"
-vnet_resource_group_name: "my-rg"
-public_ip_name: "my-output-aks-public-ip"
-aks_network_profile: "foo"
-acr_map:
-	acrxxx: "/xxx/xxx/xxx"
-	acryyy: "/yyy/yyy/yyy"
-oidc_issuer_enabled: "true"
-workload_identity_enabled: "true"
+location = "westeurope"
+resource_group_name = "my-rg"
+tags_from_rg = false
+tags = {
+  application = "common"
+  env         = "predev"
+}
+aks_kubernetes_version = "1.28.10"
+aks_network_plugin = "azure"
+aks_network_policy = "azure"
+aks_network_dataplane = "azure"
+aks_orchestrator_version = "1.28.10"
+aks_prefix = "predev"
+aks_sku_name = "Base"
+aks_sku_tier = "Free"
+key_vault_secrets_provider_enabled = true
+secret_rotation_enabled = true
+secret_rotation_interval = "30s"
+auto_upgrade_profile = {
+  node_os_upgrade_channel = "None"
+  upgrade_channel         = "none"
+}
+aks_upgrade_settings = {
+  override_settings = {
+    force_upgrade = true
+    until         = "2026-09-18T14:30:00Z"
+  }
+}
+default_node_pool = {
+  name                = "myng"
+  vm_size             = "Standard_D8as_v5"
+  count_of            = 2
+  enable_auto_scaling = false
+  max_pods            = 110
+  os_disk_size_gb     = 256
+  node_labels = {
+    nodepool-group = "myng"
+  }
+  upgrade_settings = {
+    drain_timeout_in_minutes      = 30
+    node_soak_duration_in_minutes = 0
+    max_surge                     = "10%"
+  }
+}
+subnet_name = "internal"
+vnet_name = "spoke-common-predev-vnet"
+vnet_resource_group_name = "my-rg"
+public_ip_name = "my-output-aks-public-ip"
+acr_map = {
+  acrxxx = "/xxx/xxx/xxx"
+  acryyy = "/yyy/yyy/yyy"
+}
+oidc_issuer_enabled = true
+workload_identity_enabled = true
 ```
 
 ## Remote resources

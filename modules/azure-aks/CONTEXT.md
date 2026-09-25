@@ -1,6 +1,6 @@
 # azure-aks
 
-Owns an AKS cluster by wrapping the upstream `Azure/terraform-azurerm-aks` module, plus the role assignments that let it pull from container registries.
+Owns an AKS cluster by wrapping the upstream `Azure/terraform-azurerm-avm-res-containerservice-managedcluster` module, plus the role assignments required for networking and pulling from container registries.
 
 Terms below are specific to this module. Cross-cutting vocabulary (Firestartr, ghaps,
 `config`, CR, module contract, state boundary, composite module) lives in the root
@@ -10,7 +10,7 @@ other contexts.
 ## Language
 
 **upstream module**:
-This module delegates the cluster itself to `github.com/Azure/terraform-azurerm-aks` pinned at a `ref`. Its own resources are only the surrounding role assignments, so cluster behaviour follows that pinned version, not this repository.
+This module delegates the cluster itself to `github.com/Azure/terraform-azurerm-avm-res-containerservice-managedcluster` pinned at a `ref`. Its own resources are the surrounding data lookups and role assignments, so cluster behaviour follows that pinned version, not this repository.
 _Avoid_: child module
 
 **agent pool**:

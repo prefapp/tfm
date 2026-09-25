@@ -101,7 +101,7 @@ variable "auto_upgrade_profile" {
     node_os_upgrade_channel = optional(string, "NodeImage")
     upgrade_channel         = optional(string, "none")
   })
-  default = null
+  default = {}
 }
 
 variable "oidc_issuer_enabled" {
@@ -115,6 +115,8 @@ variable "secret_rotation_enabled" {
 
 variable "secret_rotation_interval" {
   description = "String value to activate the secrets rotation interval csi-secrets-store-driver"
+  type        = string
+  default     = null
 }
 
 
@@ -182,7 +184,6 @@ variable "auto_scaler_profile" {
     skip_nodes_with_system_pods           = optional(string, "false")
   })
 
-  default = null
 }
 
 variable "net_profile_outbound_type" {
@@ -215,8 +216,6 @@ variable "default_node_pool" {
       max_surge                     = string
     }))
   })
-
-  default = null
 }
 
 # Extra node pools variables
