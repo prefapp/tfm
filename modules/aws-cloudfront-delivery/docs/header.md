@@ -45,6 +45,53 @@ module "cloudfront" {
 ```
 
 
+## Extra Origins and Cache Behaviors
+
+By default every request (`*`) is served from the delivery bucket. Use `extra_origins` to add custom origins (API Gateway, ALB, any HTTP endpoint) and `ordered_cache_behaviors` to route path patterns to them. Behaviors are evaluated in list order before the default behavior, so put the most specific patterns first.
+
+Each behavior is fully defined by the caller: `target_origin_id` must be `s3_delivery` or a key of `extra_origins`, and exactly one of `cache_policy_name` or `cache_policy_id` is required. Origin request and response headers policies are optional.
+
+```hcl
+module "cloudfront" {
+  # ...other options...
+  extra_origins = {
+    contact_api = {
+      domain_name          = "abc123def4.execute-api.eu-west-1.amazonaws.com"
+      origin_path          = "/prod"
+      custom_origin_config = {}
+    }
+  }
+
+  ordered_cache_behaviors = [{
+    path_pattern               = "/api/contact"
+    target_origin_id           = "contact_api"
+    allowed_methods            = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cache_policy_name          = "Managed-CachingDisabled"
+    origin_request_policy_name = "Managed-AllViewerExceptHostHeader"
+  }]
+}
+```
+
+For API Gateway origins, use `Managed-AllViewerExceptHostHeader` (or a policy that does not forward `Host`): API Gateway rejects requests whose `Host` header is the CloudFront domain. CloudFront forwards the full viewer path, prefixed by `origin_path`.
+
+
+## Custom Error Pages
+
+Use `custom_error_responses` to replace origin errors with your own pages. `response_page_path` is requested through the matching cache behavior (usually the delivery bucket) and must be set together with `response_code`. `error_caching_min_ttl` controls how long CloudFront caches the error before asking the origin again.
+
+```hcl
+module "cloudfront" {
+  # ...other options...
+  custom_error_responses = [
+    { error_code = 404, response_code = 404, response_page_path = "/errors/404.html" },
+    { error_code = 503, response_code = 503, response_page_path = "/errors/503.html", error_caching_min_ttl = 10 },
+  ]
+}
+```
+
+Error responses apply to the whole distribution, not per behavior: a 404 or 403 returned by an extra origin (for example an API) is also replaced by the error page. With a private S3 origin, missing objects return 403, not 404.
+
+
 ## Basic Usage
 
 ### Minimal usage

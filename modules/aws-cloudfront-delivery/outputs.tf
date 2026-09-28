@@ -45,5 +45,5 @@ output "cloudfront_origin_access_controls" {
 
 output "cloudfront_origin_access_controls_ids" {
   description = "The IDs of the CloudFront Origin Access Controls created"
-  value       = module.cloudfront-delivery.cloudfront_origin_access_controls_ids
+  value       = [for oac in module.cloudfront-delivery.cloudfront_origin_access_controls : oac.id]
 }
