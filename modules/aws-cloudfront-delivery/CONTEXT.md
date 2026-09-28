@@ -24,3 +24,12 @@ A CloudFront Function attached to the distribution, supplied either inline (`cus
 
 **delivery role**:
 The optional GitHub Actions OIDC role (`gh_delivery_gh_role_enable`) allowed to publish into the delivery bucket. `gh_delivery_gh_repositories` is the list of repositories that may assume it.
+
+**extra origin**:
+A caller-defined custom origin (`extra_origins`), such as an API Gateway endpoint, added next to the delivery bucket. Its map key is its origin ID; `s3_delivery` is reserved for the delivery bucket.
+
+**ordered cache behavior**:
+A caller-defined path-pattern rule (`ordered_cache_behaviors`) that routes matching requests to the delivery bucket or an extra origin, with its own cache and request policies. Evaluated in list order before the default `*` behavior.
+
+**custom error response**:
+A distribution-wide rule (`custom_error_responses`) that replaces an origin error code with a page from the distribution and/or a different status code. It is not scoped to a cache behavior.

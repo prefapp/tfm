@@ -1,6 +1,6 @@
 module "cloudfront-delivery" {
   source  = "terraform-aws-modules/cloudfront/aws"
-  version = "5.0.1"
+  version = "6.7.1"
 
   enabled          = true
   aliases          = var.cdn_aliases
@@ -10,7 +10,6 @@ module "cloudfront-delivery" {
   price_class      = var.price_class
   retain_on_delete = var.retain_on_delete
 
-  create_origin_access_control = true
   origin_access_control = {
     s3_oac = {
       name             = local.resolved_oac_name
@@ -21,23 +20,20 @@ module "cloudfront-delivery" {
     }
   }
 
-  origin = {
+  origin = merge({
     s3_delivery = {
-      domain_name           = module.s3-bucket-delivery.s3_bucket_bucket_regional_domain_name
-      origin_id             = "s3_delivery"
-      origin_access_control = "s3_oac"
+      domain_name               = module.s3-bucket-delivery.s3_bucket_bucket_regional_domain_name
+      origin_id                 = "s3_delivery"
+      origin_access_control_key = "s3_oac"
     }
-  }
+  }, var.extra_origins)
 
   default_cache_behavior = {
-    path_pattern           = "*"
     target_origin_id       = "s3_delivery"
     viewer_protocol_policy = "redirect-to-https"
 
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods  = ["GET", "HEAD"]
-
-    use_forwarded_values = false
 
     cache_policy_name            = "Managed-CachingOptimized"
     origin_request_policy_name   = "Managed-UserAgentRefererHeaders"
@@ -45,9 +41,12 @@ module "cloudfront-delivery" {
 
     function_association = local.function_association
 
-    compress     = true
-    query_string = true
+    compress = true
   }
+
+  ordered_cache_behavior = var.ordered_cache_behaviors
+
+  custom_error_response = var.custom_error_responses
 
   viewer_certificate = length(module.acm) > 0 ? {
     acm_certificate_arn      = module.acm[0].acm_certificate_arn
@@ -57,16 +56,6 @@ module "cloudfront-delivery" {
     cloudfront_default_certificate = true
     minimum_protocol_version       = "TLSv1"
   }
-}
-
-locals {
-  function_association = merge(
-    length(aws_cloudfront_function.custom_response) > 0 ? {
-      "viewer-request" = {
-        function_arn = aws_cloudfront_function.custom_response[0].arn
-      }
-    } : {},
-  )
 }
 
 resource "aws_cloudfront_function" "custom_response" {
