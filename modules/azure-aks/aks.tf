@@ -79,7 +79,7 @@ module "aks" {
         outbound_ips = {
           public_ips = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
             {
-              data.azurerm_public_ip.aks_public_ip[0].id
+              id = data.azurerm_public_ip.aks_public_ip[0].id
             }
           ] : null
         }
