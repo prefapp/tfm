@@ -76,11 +76,15 @@ module "aks" {
       var.net_profile_outbound_type == "loadBalancer" &&
       var.load_balancer_profile_enabled
       ) ? {
-      outbound_ips.public_ips[0].id = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
-        data.azurerm_public_ip.aks_public_ip[0].id
-      ] : null
-    } : null
-  }
+        outbound_ips = {
+          public_ips = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
+            {
+              id = data.azurerm_public_ip.aks_public_ip[0].id
+            }
+          ] : null
+        }
+      } : null
+    }
 
   upgrade_settings = var.aks_upgrade_settings == null ? null : {
     override_settings = var.aks_upgrade_settings.override_settings == null ? null : {
