@@ -89,6 +89,18 @@ variable "load_balancer_profile_enabled" {
   default     = true
 }
 
+variable "load_balancer_backend_pool_type" {
+  description = "Backend pool type for the AKS load balancer profile"
+  type        = string
+  default     = "nodeIPConfiguration"
+}
+
+variable "load_balancer_idle_timeout_in_minutes" {
+  description = "Idle timeout in minutes for the AKS load balancer profile"
+  type        = number
+  default     = 30
+}
+
 variable "load_balancer_sku" {
   description = "Load balancer sku (basic or standard)"
   type        = string

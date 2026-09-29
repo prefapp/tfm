@@ -76,6 +76,8 @@ module "aks" {
       var.net_profile_outbound_type == "loadBalancer" &&
       var.load_balancer_profile_enabled
       ) ? {
+        backend_pool_type       = var.load_balancer_backend_pool_type
+        idle_timeout_in_minutes = var.load_balancer_idle_timeout_in_minutes
         outbound_ips = {
           public_ips = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
             {
