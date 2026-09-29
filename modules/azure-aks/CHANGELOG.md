@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.1...azure-aks-v3.0.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* fix kubelet identity outputs ([#1441](https://github.com/prefapp/tfm/issues/1441)) ([f08b07b](https://github.com/prefapp/tfm/commit/f08b07b147c34be8d8583324b8535a175939cfda))
+
 ## [3.0.1](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.0...azure-aks-v3.0.1) (2026-09-25)
 
 
