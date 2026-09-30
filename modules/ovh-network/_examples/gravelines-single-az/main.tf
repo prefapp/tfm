@@ -12,13 +12,14 @@ module "ovh_network" {
   gateway_model     = "<available-gateway-model>"
 }
 
-# Feed these outputs into the corresponding inputs of an ovh-mks caller.
+# ovh-mks discovers this network by network_name and subnet_cidr; these IDs are
+# available for other consumers that accept resource IDs directly.
 output "network_openstack_id" {
-  description = "Regional network ID to configure on the MKS cluster."
+  description = "Regional OpenStack network ID for ID-based consumers."
   value       = module.ovh_network.network_openstack_id
 }
 
 output "subnet_id" {
-  description = "Subnet ID to configure on the MKS cluster."
+  description = "Subnet ID for ID-based consumers."
   value       = module.ovh_network.subnet_id
 }
