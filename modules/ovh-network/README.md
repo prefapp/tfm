@@ -75,6 +75,7 @@ After applying the network configuration, use `network_openstack_id` and `subnet
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.5.0 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
 
 ## Providers
