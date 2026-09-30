@@ -21,7 +21,6 @@ variable "kube_id" {
 variable "cluster_name" {
   description = "Nombre del clúster, usado en solicitudes de certificado y kubeconfigs."
   type        = string
-  default     = null
   nullable    = false
 
   validation {
