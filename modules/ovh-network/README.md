@@ -13,7 +13,7 @@
 
 This Terraform module creates an OVHcloud Public Cloud private network, a DHCP-enabled subnet, and a Public Cloud gateway in one selected region. It can be used as a reusable network foundation for workloads that need private connectivity and outbound access through an OVHcloud gateway.
 
-The module can also prepare the network infrastructure consumed by an OVHcloud Managed Kubernetes Service (MKS) cluster. The network and subnet are managed independently from the cluster; their regional OpenStack network ID and subnet ID are available as outputs for the MKS module. The network itself is regional and does not configure or select availability zones.
+The module can also create network infrastructure for an OVHcloud Managed Kubernetes Service (MKS) cluster. The network and subnet are managed independently from the cluster, and their IDs are exposed as outputs for consumers that accept IDs directly. The `ovh-mks` module instead discovers an existing network by exact name and its subnet by CIDR in the selected project and region; pass the same `network_name` and CIDR to that module. The network itself is regional and does not configure or select availability zones.
 
 The Public Cloud project can be selected by `project_name` or by `project_id` (which also accepts the OVHcloud `service_name` and takes precedence when set).
 
@@ -69,7 +69,7 @@ module "ovh_network" {
 }
 ```
 
-After applying the network configuration, use `network_openstack_id` and `subnet_id` as the network and subnet inputs for the MKS cluster. Complete standalone examples are linked below.
+After applying the network configuration, configure the `ovh-mks` module with the same network name as `network_name` and the same subnet CIDR as `subnet_cidr`. The `network_openstack_id` and `subnet_id` outputs are available to other consumers that accept resource IDs directly. Complete standalone examples are linked below.
 
 ## Requirements
 
@@ -82,7 +82,7 @@ After applying the network configuration, use `network_openstack_id` and `subnet
 
 | Name | Version |
 |------|---------|
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | >= 2.20.0, < 3.0.0 |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.21.0 |
 
 ## Modules
 
@@ -101,26 +101,26 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_gateway_model"></a> [gateway\_model](#input\_gateway\_model) | Tamaño del gateway Public Cloud. | `string` | n/a | yes |
-| <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Nombre del gateway de la red privada. | `string` | n/a | yes |
-| <a name="input_network_cidr"></a> [network\_cidr](#input\_network\_cidr) | CIDR privado de la subred. | `string` | n/a | yes |
-| <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Nombre de la red privada que usará Kubernetes. | `string` | n/a | yes |
-| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | ID opcional del proyecto Public Cloud (project\_id o service\_name); tiene prioridad sobre project\_name. | `string` | `null` | no |
-| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Nombre opcional del proyecto Public Cloud; se compara con project\_name y description de OVHcloud. | `string` | `null` | no |
-| <a name="input_region"></a> [region](#input\_region) | Región OVHcloud en la que crear la red, por ejemplo EU-WEST-PAR o GRA11. | `string` | n/a | yes |
-| <a name="input_subnet_pool_end"></a> [subnet\_pool\_end](#input\_subnet\_pool\_end) | Última dirección del pool DHCP. | `string` | n/a | yes |
-| <a name="input_subnet_pool_start"></a> [subnet\_pool\_start](#input\_subnet\_pool\_start) | Primera dirección del pool DHCP. | `string` | n/a | yes |
-| <a name="input_vlan_id"></a> [vlan\_id](#input\_vlan\_id) | VLAN de la red privada. | `number` | n/a | yes |
+| <a name="input_gateway_model"></a> [gateway\_model](#input\_gateway\_model) | Public Cloud gateway model. | `string` | n/a | yes |
+| <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Name of the private network gateway. | `string` | n/a | yes |
+| <a name="input_network_cidr"></a> [network\_cidr](#input\_network\_cidr) | Private subnet CIDR. | `string` | n/a | yes |
+| <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Name of the private network Kubernetes will use. | `string` | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID (project\_id or service\_name); takes precedence over project\_name. | `string` | `null` | no |
+| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against OVHcloud project\_name and description. | `string` | `null` | no |
+| <a name="input_region"></a> [region](#input\_region) | OVHcloud region in which to create the network, for example EU-WEST-PAR or GRA11. | `string` | n/a | yes |
+| <a name="input_subnet_pool_end"></a> [subnet\_pool\_end](#input\_subnet\_pool\_end) | Last address in the DHCP pool. | `string` | n/a | yes |
+| <a name="input_subnet_pool_start"></a> [subnet\_pool\_start](#input\_subnet\_pool\_start) | First address in the DHCP pool. | `string` | n/a | yes |
+| <a name="input_vlan_id"></a> [vlan\_id](#input\_vlan\_id) | VLAN ID for the private network. | `number` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_gateway_id"></a> [gateway\_id](#output\_gateway\_id) | ID del gateway asociado a la red privada. |
-| <a name="output_network_id"></a> [network\_id](#output\_network\_id) | ID OVHcloud (pn-...) de la red privada. |
-| <a name="output_network_openstack_id"></a> [network\_openstack\_id](#output\_network\_openstack\_id) | ID regional OpenStack de la red, requerido por el clúster MKS. |
-| <a name="output_service_name"></a> [service\_name](#output\_service\_name) | service\_name OVHcloud del proyecto Public Cloud resuelto. |
-| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | ID OVHcloud de la subred DHCP, requerido como nodes\_subnet\_id por MKS. |
+| <a name="output_gateway_id"></a> [gateway\_id](#output\_gateway\_id) | ID of the gateway attached to the private network. |
+| <a name="output_network_id"></a> [network\_id](#output\_network\_id) | OVHcloud ID (pn-...) of the private network. |
+| <a name="output_network_openstack_id"></a> [network\_openstack\_id](#output\_network\_openstack\_id) | Regional OpenStack network ID for consumers that accept resource IDs directly; ovh-mks discovers the network by name. |
+| <a name="output_service_name"></a> [service\_name](#output\_service\_name) | OVHcloud service\_name of the resolved Public Cloud project. |
+| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | OVHcloud ID of the DHCP subnet for consumers that require resource IDs directly; ovh-mks discovers the subnet by CIDR. |
 
 ## Examples
 

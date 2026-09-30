@@ -9,12 +9,12 @@ resource "ovh_cloud_project_network_private" "kubernetes" {
   lifecycle {
     precondition {
       condition     = var.project_name != null || var.project_id != null
-      error_message = "Debes definir project_id o project_name para seleccionar el proyecto Public Cloud."
+      error_message = "Set project_id or project_name to select the Public Cloud project."
     }
 
     precondition {
       condition     = local.service_name != null
-      error_message = "No se encontró un único proyecto OVHcloud. Comprueba project_id o project_name; si ambos están definidos, project_id tiene prioridad."
+      error_message = "Could not find exactly one OVHcloud project. Check project_id or project_name; if both are set, project_id takes precedence."
     }
   }
 }

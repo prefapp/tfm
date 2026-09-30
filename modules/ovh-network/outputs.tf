@@ -1,24 +1,24 @@
 output "network_id" {
-  description = "ID OVHcloud (pn-...) de la red privada."
+  description = "OVHcloud ID (pn-...) of the private network."
   value       = ovh_cloud_project_network_private.kubernetes.id
 }
 
 output "network_openstack_id" {
-  description = "ID regional OpenStack de la red, requerido por el clúster MKS."
+  description = "Regional OpenStack network ID for consumers that accept resource IDs directly; ovh-mks discovers the network by name."
   value       = one(ovh_cloud_project_network_private.kubernetes.regions_attributes[*].openstackid)
 }
 
 output "subnet_id" {
-  description = "ID OVHcloud de la subred DHCP, requerido como nodes_subnet_id por MKS."
+  description = "OVHcloud ID of the DHCP subnet for consumers that require resource IDs directly; ovh-mks discovers the subnet by CIDR."
   value       = ovh_cloud_project_network_private_subnet.kubernetes.id
 }
 
 output "gateway_id" {
-  description = "ID del gateway asociado a la red privada."
+  description = "ID of the gateway attached to the private network."
   value       = ovh_cloud_project_gateway.kubernetes.id
 }
 
 output "service_name" {
-  description = "service_name OVHcloud del proyecto Public Cloud resuelto."
+  description = "OVHcloud service_name of the resolved Public Cloud project."
   value       = local.service_name
 }

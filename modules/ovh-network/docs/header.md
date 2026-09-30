@@ -12,7 +12,7 @@
 
 This Terraform module creates an OVHcloud Public Cloud private network, a DHCP-enabled subnet, and a Public Cloud gateway in one selected region. It can be used as a reusable network foundation for workloads that need private connectivity and outbound access through an OVHcloud gateway.
 
-The module can also prepare the network infrastructure consumed by an OVHcloud Managed Kubernetes Service (MKS) cluster. The network and subnet are managed independently from the cluster; their regional OpenStack network ID and subnet ID are available as outputs for the MKS module. The network itself is regional and does not configure or select availability zones.
+The module can also create network infrastructure for an OVHcloud Managed Kubernetes Service (MKS) cluster. The network and subnet are managed independently from the cluster, and their IDs are exposed as outputs for consumers that accept IDs directly. The `ovh-mks` module instead discovers an existing network by exact name and its subnet by CIDR in the selected project and region; pass the same `network_name` and CIDR to that module. The network itself is regional and does not configure or select availability zones.
 
 The Public Cloud project can be selected by `project_name` or by `project_id` (which also accepts the OVHcloud `service_name` and takes precedence when set).
 
@@ -68,4 +68,4 @@ module "ovh_network" {
 }
 ```
 
-After applying the network configuration, use `network_openstack_id` and `subnet_id` as the network and subnet inputs for the MKS cluster. Complete standalone examples are linked below.
+After applying the network configuration, configure the `ovh-mks` module with the same network name as `network_name` and the same subnet CIDR as `subnet_cidr`. The `network_openstack_id` and `subnet_id` outputs are available to other consumers that accept resource IDs directly. Complete standalone examples are linked below.
