@@ -8,11 +8,6 @@ variable "project_name" {
   description = "Nombre opcional del proyecto Public Cloud; se compara con project_name y description de OVHcloud."
   type        = string
   default     = null
-
-  validation {
-    condition     = var.project_name != null || var.project_id != null
-    error_message = "Debes definir project_id o project_name para seleccionar el proyecto Public Cloud."
-  }
 }
 
 variable "network_name" {
