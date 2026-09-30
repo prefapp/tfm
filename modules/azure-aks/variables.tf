@@ -258,6 +258,11 @@ variable "extra_node_pools" {
   default = []
 }
 
+variable "node_resource_group" {
+  description = "Resource group where AKS nodes and associated resources are deployed."
+  type        = string
+}
+
 # API server authorized IP ranges
 variable "api_server_authorized_ip_ranges" {
   description = "The IP ranges authorized to access the AKS API server"
