@@ -139,9 +139,10 @@ is its own context.
 - **`mongodb-atlas-azure-privatelink` → the Azure modules**: the only module spanning
   two provider planes, requiring both `mongodbatlas` and `azurerm`. The Azure vnet it
   attaches to is referenced by ID, never managed here.
-- **`ovh-network` → `ovh-mks`**: the network module manages the private network and
-  subnet whose identifiers are consumed by the MKS cluster module; the cluster module
-  does not own those network resources.
+- **`ovh-network` → `ovh-mks`**: the network module creates the private network and
+  subnet; the MKS module independently discovers those existing resources by network
+  name and subnet CIDR in the selected project and region. The MKS module does not own
+  the network resources or consume the network module's IDs as inputs.
 - **`ovh-mks-access` → `ovh-mks`**: the access module configures Kubernetes identities,
   credentials and RBAC for clients of an existing MKS cluster.
 - **`aws-terraform-backend` → every context**: it provisions the S3 bucket and
