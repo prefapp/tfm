@@ -207,6 +207,15 @@
         },
         "modules/github-org-variables-section": {
             "package-name": "github-org-variables-section"
+        },
+        "modules/ovh-network": {
+            "package-name": "ovh-network"
+        },
+        "modules/ovh-mks": {
+            "package-name": "ovh-mks"
+        },
+        "modules/ovh-mks-access": {
+            "package-name": "ovh-mks-access"
         }
     }
 }
