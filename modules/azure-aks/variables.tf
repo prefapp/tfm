@@ -271,6 +271,7 @@ variable "node_resource_group" {
   description = "Resource group where AKS nodes and associated resources are deployed. Changing this value replaces the AKS cluster."
   type    = string
   default = null
+}
 
 # API server authorized IP ranges
 variable "api_server_authorized_ip_ranges" {
