@@ -219,7 +219,7 @@ variable "default_node_pool" {
     count_of            = number
     max_pods            = number
     os_disk_size_gb     = number
-    node_labels         = optional(map(string), {})
+    node_labels         = optional(map(string), null)
     enable_auto_scaling = optional(bool, false)
 
     upgrade_settings = optional(object({
@@ -228,6 +228,7 @@ variable "default_node_pool" {
       max_surge                     = string
     }))
   })
+  default = null
 }
 
 # Extra node pools variables
