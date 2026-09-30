@@ -63,7 +63,6 @@ variable "identities" {
       length(identity.auth_methods) > 0 &&
       alltrue([for method in identity.auth_methods : contains(["certificate", "token"], method)]) &&
       (!contains(identity.auth_methods, "certificate") || (identity.expiration_seconds >= 600 && identity.expiration_seconds <= 31536000)) &&
-      (!var.publish_to_okms || alltrue([for method in identity.auth_methods : contains(keys(identity.secret_paths), method) && trimspace(lookup(identity.secret_paths, method, "")) != ""])) &&
       alltrue([for method, path in identity.secret_paths : contains(["certificate", "token"], method) && trimspace(path) != ""]) &&
       alltrue([for method in keys(identity.secret_paths) : contains(identity.auth_methods, method)]) &&
       identity.credential_generation >= 0 &&
