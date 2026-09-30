@@ -31,7 +31,7 @@ variable "update_policy" {
       "MINIMAL_DOWNTIME",
       "NEVER_UPDATE",
     ], var.update_policy)
-    error_message = "update_policy debe ser ALWAYS_UPDATE, MINIMAL_DOWNTIME o NEVER_UPDATE."
+    error_message = "update_policy must be ALWAYS_UPDATE, MINIMAL_DOWNTIME, or NEVER_UPDATE."
   }
 }
 
@@ -56,13 +56,30 @@ variable "node_flavor" {
 }
 
 variable "node_pools" {
-  description = "Cluster node pools; an empty availability_zones list leaves zone placement unspecified."
+  description = "Cluster node pools with non-negative integer capacities where min_nodes <= desired_nodes <= max_nodes; an empty availability_zones list leaves zone placement unspecified."
   type = map(object({
     desired_nodes      = number
     min_nodes          = number
     max_nodes          = number
     availability_zones = list(string)
   }))
+
+  validation {
+    condition = alltrue([
+      for pool in values(var.node_pools) : try(
+        pool.min_nodes >= 0 &&
+        pool.desired_nodes >= 0 &&
+        pool.max_nodes >= 0 &&
+        floor(pool.min_nodes) == pool.min_nodes &&
+        floor(pool.desired_nodes) == pool.desired_nodes &&
+        floor(pool.max_nodes) == pool.max_nodes &&
+        pool.min_nodes <= pool.desired_nodes &&
+        pool.desired_nodes <= pool.max_nodes,
+        false
+      )
+    ])
+    error_message = "Each node pool must have non-negative integer capacities that satisfy min_nodes <= desired_nodes <= max_nodes."
+  }
 }
 
 variable "autoscale" {

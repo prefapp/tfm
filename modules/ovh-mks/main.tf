@@ -11,27 +11,27 @@ resource "ovh_cloud_project_kube" "production" {
   lifecycle {
     precondition {
       condition     = var.project_name != null || var.project_id != null
-      error_message = "Debes definir project_id o project_name para seleccionar el proyecto Public Cloud."
+      error_message = "Set project_id or project_name to select the Public Cloud project."
     }
 
     precondition {
       condition     = local.service_name != null
-      error_message = "No se encontró un único proyecto OVHcloud. Comprueba project_id o project_name; si ambos están definidos, project_id tiene prioridad."
+      error_message = "Could not find exactly one OVHcloud project. Check project_id or project_name; if both are set, project_id takes precedence."
     }
 
     precondition {
       condition     = length(local.selected_networks) == 1
-      error_message = "No se encontró exactamente una red privada con network_name en el proyecto Public Cloud seleccionado. Comprueba que el módulo 02-network ya se haya aplicado."
+      error_message = "Could not find exactly one private network named by network_name in the selected Public Cloud project. Check that the ovh-network module has been applied."
     }
 
     precondition {
       condition     = length(local.network_openstack_ids) == 1
-      error_message = "La red privada no tiene un único openstack_id para la región del clúster. Comprueba que la red esté desplegada en esa región."
+      error_message = "The private network does not have exactly one openstack_id for the cluster region. Check that the network is deployed in that region."
     }
 
     precondition {
       condition     = length(local.selected_subnets) == 1
-      error_message = "No se encontró exactamente una subred con subnet_cidr en la red y región seleccionadas. Comprueba el CIDR y que el módulo 02-network ya se haya aplicado."
+      error_message = "Could not find exactly one subnet matching subnet_cidr in the selected network and region. Check the CIDR and that the ovh-network module has been applied."
     }
   }
 }
@@ -53,7 +53,7 @@ resource "ovh_cloud_project_kube_nodepool" "production" {
   lifecycle {
     precondition {
       condition     = can(regex("^[a-z0-9-]+$", "${var.cluster_name}-${each.key}"))
-      error_message = "El nombre del node pool '${var.cluster_name}-${each.key}' solo puede contener letras minúsculas, números y guiones (-), según los requisitos de OVHcloud."
+      error_message = "The node pool name '${var.cluster_name}-${each.key}' may contain only lowercase letters, numbers, and hyphens (-), as required by OVHcloud."
     }
   }
 }
