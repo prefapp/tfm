@@ -262,7 +262,7 @@ resource "ovh_okms_secret" "credential" {
 resource "local_sensitive_file" "kubeconfig" {
   for_each = var.export_local_kubeconfigs ? local.identity_methods : {}
 
-  filename        = "${path.module}/.local-credentials-${replace(each.key, "/", "-")}.yaml"
+  filename        = "${path.root}/.local-credentials-${replace(each.key, "/", "-")}.yaml"
   file_permission = "0600"
   content         = local.credential_kubeconfigs[each.key]
 
