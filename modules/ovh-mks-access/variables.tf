@@ -50,26 +50,7 @@ variable "identities" {
 
   nullable = false
 
-  default = {
-    argocd = {
-      role         = "readwrite"
-      scope        = "cluster"
-      auth_methods = ["certificate", "token"]
-      secret_paths = { certificate = "mks/prefapp-pro/argocd/certificate", token = "mks/prefapp-pro/argocd/token" }
-    }
-    developers-readonly = {
-      role         = "readonly"
-      scope        = "cluster"
-      auth_methods = ["certificate"]
-      secret_paths = { certificate = "mks/prefapp-pro/developers-readonly/certificate" }
-    }
-    developers-readwrite = {
-      role         = "readwrite"
-      scope        = "cluster"
-      auth_methods = ["certificate"]
-      secret_paths = { certificate = "mks/prefapp-pro/developers-readwrite/certificate" }
-    }
-  }
+  default = {}
 
   validation {
     condition = alltrue([
