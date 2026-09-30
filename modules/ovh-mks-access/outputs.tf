@@ -1,5 +1,5 @@
 output "access_matrix" {
-  description = "Identidades, métodos de autenticación, rol, alcance y destinos configurados."
+  description = "Configured identities, authentication methods, roles, scopes, and destinations."
   value = {
     for name, identity in var.identities : name => {
       role                      = identity.role
@@ -17,7 +17,7 @@ output "access_matrix" {
 }
 
 output "okms_secret_paths" {
-  description = "Rutas de OVH Secret Manager configuradas para cada credencial publicada."
+  description = "OVH Secret Manager paths configured for each published credential."
   value = {
     for key, access in local.identity_methods : key => lookup(access.identity.secret_paths, access.method, "")
     if var.publish_to_okms
@@ -25,6 +25,6 @@ output "okms_secret_paths" {
 }
 
 output "service_name" {
-  description = "Identificador OVHcloud del proyecto encontrado por project_description."
+  description = "OVHcloud service_name of the project matched by project_description."
   value       = local.service_name
 }

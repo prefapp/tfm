@@ -1,41 +1,41 @@
 variable "project_description" {
-  description = "Descripción del proyecto OVHcloud Public Cloud que contiene el clúster MKS, por ejemplo prefapp."
+  description = "Description of the OVHcloud Public Cloud project containing the MKS cluster, for example prefapp."
   type        = string
 
   validation {
     condition     = trimspace(var.project_description) != ""
-    error_message = "project_description es obligatorio y no puede estar vacío."
+    error_message = "project_description is required and must not be empty."
   }
 }
 
 variable "kube_id" {
-  description = "Identificador del clúster OVHcloud Managed Kubernetes Service."
+  description = "OVHcloud Managed Kubernetes Service cluster ID."
   type        = string
 
   validation {
     condition     = trimspace(var.kube_id) != ""
-    error_message = "kube_id es obligatorio y no puede estar vacío."
+    error_message = "kube_id is required and must not be empty."
   }
 }
 
 variable "cluster_name" {
-  description = "Nombre del clúster, usado en solicitudes de certificado y kubeconfigs."
+  description = "Cluster name used in certificate requests and kubeconfigs."
   type        = string
   nullable    = false
 
   validation {
     condition     = length(var.cluster_name) <= 40 && can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", var.cluster_name))
-    error_message = "cluster_name debe ser un nombre DNS de hasta 40 caracteres en minúsculas, números y guiones."
+    error_message = "cluster_name must be a DNS name of up to 40 characters using lowercase letters, numbers, and hyphens."
   }
 }
 
 variable "identities" {
   description = <<-EOT
-    Matriz de identidades de acceso. Las claves son el CN del certificado y el nombre
-    de la ServiceAccount. auth_methods admite certificate, token o ambos. Cada método
-    habilitado debe tener secret_paths.<método> cuando publish_to_okms está activo.
-    role admite readonly (ClusterRole view) o readwrite (ClusterRole edit).
-    scope admite cluster (todos los namespaces) o namespaces (lista explícita).
+    Access identity map. Keys are the certificate CN and ServiceAccount name.
+    auth_methods accepts certificate, token, or both. Each enabled method must have
+    a secret_paths.<method> entry when publish_to_okms is enabled.
+    role accepts readonly (ClusterRole view) or readwrite (ClusterRole edit).
+    scope accepts cluster (all namespaces) or namespaces (an explicit list).
   EOT
   type = map(object({
     role                      = string
@@ -70,28 +70,28 @@ variable "identities" {
       length(identity.service_account_namespace) <= 63 &&
       can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", identity.service_account_namespace))
     ])
-    error_message = "Cada identidad requiere nombre DNS válido, role readonly/readwrite, scope válido, al menos un método certificate/token, namespace de ServiceAccount válido, generación entera no negativa y rutas no vacías para métodos habilitados. La vigencia de certificados debe ser de 600 a 31536000 segundos (máximo un año en OVH MKS)."
+    error_message = "Each identity must have a valid DNS name, role readonly/readwrite, valid scope, at least one certificate/token method, a valid ServiceAccount namespace, a non-negative integer generation, and non-empty paths for enabled methods. Certificate validity must be between 600 and 31536000 seconds (up to one year on OVH MKS)."
   }
 }
 
 variable "okms_id" {
-  description = "Identificador del servicio OVHcloud Secret Manager (OKMS) donde se publicarán los kubeconfigs."
+  description = "OVHcloud Secret Manager (OKMS) service ID where kubeconfigs will be published."
   type        = string
 
   validation {
     condition     = trimspace(var.okms_id) != ""
-    error_message = "okms_id es obligatorio y no puede estar vacío."
+    error_message = "okms_id is required and must not be empty."
   }
 }
 
 variable "publish_to_okms" {
-  description = "Publica cada kubeconfig habilitado como una nueva versión JSON en la ruta OKMS indicada por identidad y método."
+  description = "Publish each enabled kubeconfig as a new JSON version at the OKMS path specified for its identity and method."
   type        = bool
   default     = true
 }
 
 variable "export_local_kubeconfigs" {
-  description = "Escribe localmente los kubeconfigs habilitados con permisos 0600, además de publicarlos en OKMS si corresponde."
+  description = "Write enabled kubeconfigs locally with 0600 permissions, in addition to publishing them to OKMS when applicable."
   type        = bool
   default     = false
 }

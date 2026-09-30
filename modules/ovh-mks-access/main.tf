@@ -219,11 +219,11 @@ resource "terraform_data" "configuration" {
   lifecycle {
     precondition {
       condition     = !var.publish_to_okms || length(local.missing_secret_paths) == 0
-      error_message = "Cada método habilitado requiere una ruta secret_paths.<método> cuando publish_to_okms es true. Métodos sin ruta: ${join(", ", local.missing_secret_paths)}."
+      error_message = "Each enabled method requires a secret_paths.<method> entry when publish_to_okms is true. Methods missing a path: ${join(", ", local.missing_secret_paths)}."
     }
     precondition {
       condition     = length(local.configured_secret_destinations) == length(distinct(local.configured_secret_destinations))
-      error_message = "Cada identidad/método debe publicar en una ruta OKMS distinta; no se pueden reutilizar paths."
+      error_message = "Each identity/method pair must publish to a distinct OKMS path; paths cannot be reused."
     }
   }
 }
@@ -263,7 +263,7 @@ resource "local_sensitive_file" "kubeconfig" {
         trimspace(data.kubernetes_secret_v1.token[each.value.identity_name].data["token"]) != "",
         false
       ) : true
-      error_message = "La credencial ${each.key} aún no está disponible en Kubernetes."
+      error_message = "Credential ${each.key} is not yet available in Kubernetes."
     }
   }
 }
