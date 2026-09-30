@@ -92,7 +92,12 @@ variable "load_balancer_profile_enabled" {
 variable "load_balancer_backend_pool_type" {
   description = "Backend pool type for the AKS load balancer profile"
   type        = string
-  default     = "nodeIPConfiguration"
+  default     = "NodeIPConfiguration"
+
+  validation {
+    condition     = contains(["NodeIPConfiguration", "NodeIP"], var.load_balancer_backend_pool_type)
+    error_message = "load_balancer_backend_pool_type must be either NodeIPConfiguration or NodeIP."
+  }
 }
 
 variable "load_balancer_idle_timeout_in_minutes" {
