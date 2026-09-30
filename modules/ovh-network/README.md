@@ -128,6 +128,20 @@ The examples are self-contained Terraform callers for this module. They use illu
 - [Gravelines single-AZ MKS network](https://github.com/prefapp/tfm/tree/main/modules/ovh-network/_examples/gravelines-single-az) — creates regional networking for a downstream MKS cluster with node pools in one availability zone. AZ placement is configured by MKS, not by this module.
 - [Paris three-AZ MKS network](https://github.com/prefapp/tfm/tree/main/modules/ovh-network/_examples/paris-three-az) — creates regional networking for a downstream MKS cluster with node pools across three availability zones. AZ placement is configured by MKS, not by this module.
 
+## Import and Lifecycle
+
+This module is intended to create new networking resources for an OVHcloud project. Import is not part of the normal setup flow. If adopting existing resources becomes necessary, use these resource addresses (assuming the caller names the module `ovh_network`; substitute the actual module block name) and import ID formats from OVH provider 2.21.0:
+
+| Resource | Terraform address | Import ID |
+|----------|-------------------|-----------|
+| Private network | `module.ovh_network.ovh_cloud_project_network_private.kubernetes` | `<service_name>/<network_id>` (network ID has the `pn-...` format) |
+| DHCP subnet | `module.ovh_network.ovh_cloud_project_network_private_subnet.kubernetes` | `<service_name>/<network_id>/<subnet_id>` |
+| Public Cloud gateway | `module.ovh_network.ovh_cloud_project_gateway.kubernetes` | `<service_name>/<region>/<gateway_id>` |
+
+After importing a gateway, the provider does not restore its `network_id` and `subnet_id` attributes into state. Configure those values and add `lifecycle { ignore_changes = [network_id, subnet_id] }` to the gateway resource to avoid an unintended recreation.
+
+Destroying this module deletes the gateway, DHCP subnet, and private network in dependency order. The MKS module manages clusters separately, so Terraform cannot automatically account for clusters that still use this network. Detach or migrate those clusters and workloads before destroying the network; removing their network connectivity can disrupt cluster operation. Review the plan before applying destructive changes.
+
 ## Resources
 
 - **OVHcloud Public Cloud**: [Product information](https://www.ovhcloud.com/en/public-cloud/)
