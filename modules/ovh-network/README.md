@@ -23,7 +23,7 @@ The Public Cloud project can be selected by `project_name` or by `project_id` (w
 - **DHCP subnet**: Creates a subnet with a configurable CIDR and DHCP address-pool range.
 - **Public Cloud gateway**: Creates a gateway attached to the new network and subnet using the requested gateway model.
 - **Flexible project selection**: Resolves the Public Cloud project by name or by project ID/service name.
-- **MKS-ready outputs**: Exposes the regional network ID and subnet ID required when configuring an MKS cluster.
+- **Reusable network outputs**: Exposes the regional network ID and subnet ID for consumers that accept resource IDs directly; `ovh-mks` discovers them by name and CIDR.
 
 ## Basic Usage
 
