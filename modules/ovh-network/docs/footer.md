@@ -15,7 +15,7 @@ This module is intended to create new networking resources for an OVHcloud proje
 | DHCP subnet | `module.ovh_network.ovh_cloud_project_network_private_subnet.kubernetes` | `<service_name>/<network_id>/<subnet_id>` |
 | Public Cloud gateway | `module.ovh_network.ovh_cloud_project_gateway.kubernetes` | `<service_name>/<region>/<gateway_id>` |
 
-After importing a gateway, the provider does not restore its `network_id` and `subnet_id` attributes into state. Configure those values and add `lifecycle { ignore_changes = [network_id, subnet_id] }` to the gateway resource to avoid an unintended recreation.
+The OVH provider 2.21.0 does not restore a gateway's `network_id` and `subnet_id` attributes into state when it is imported. The next plan may therefore propose replacing the gateway. Because the gateway resource is encapsulated in this module, callers cannot add a lifecycle rule to suppress that change. Review the plan carefully and do not apply a replacement unless it is intended. This module is designed to create new networking resources; it is not currently a safe adoption path for an existing gateway.
 
 Destroying this module deletes the gateway, DHCP subnet, and private network in dependency order. The MKS module manages clusters separately, so Terraform cannot automatically account for clusters that still use this network. Detach or migrate those clusters and workloads before destroying the network; removing their network connectivity can disrupt cluster operation. Review the plan before applying destructive changes.
 
