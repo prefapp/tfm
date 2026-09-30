@@ -135,7 +135,7 @@ No modules.
 | <a name="input_autoscale"></a> [autoscale](#input\_autoscale) | Enable autoscaling for each node pool. | `bool` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the Managed Kubernetes cluster. | `string` | n/a | yes |
 | <a name="input_cluster_plan"></a> [cluster\_plan](#input\_cluster\_plan) | MKS cluster plan, such as free or standard. | `string` | n/a | yes |
-| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Managed Kubernetes cluster version. | `string` | `"null"` | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Managed Kubernetes cluster version. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network to attach to the cluster. | `string` | n/a | yes |
 | <a name="input_node_flavor"></a> [node\_flavor](#input\_node\_flavor) | Worker node flavor available in the selected region. | `string` | n/a | yes |
 | <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Cluster node pools; an empty availability\_zones list leaves zone placement unspecified. | <pre>map(object({<br/>    desired_nodes      = number<br/>    min_nodes          = number<br/>    max_nodes          = number<br/>    availability_zones = list(string)<br/>  }))</pre> | n/a | yes |

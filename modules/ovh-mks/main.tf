@@ -10,6 +10,11 @@ resource "ovh_cloud_project_kube" "production" {
 
   lifecycle {
     precondition {
+      condition     = var.project_name != null || var.project_id != null
+      error_message = "Debes definir project_id o project_name para seleccionar el proyecto Public Cloud."
+    }
+
+    precondition {
       condition     = local.service_name != null
       error_message = "No se encontró un único proyecto OVHcloud. Comprueba project_id o project_name; si ambos están definidos, project_id tiene prioridad."
     }

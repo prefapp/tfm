@@ -8,11 +8,6 @@ variable "project_name" {
   description = "Optional Public Cloud project name; matched against OVHcloud project_name and description."
   type        = string
   default     = null
-
-  validation {
-    condition     = var.project_name != null || var.project_id != null
-    error_message = "Debes definir project_id o project_name para seleccionar el proyecto Public Cloud."
-  }
 }
 
 variable "cluster_name" {
