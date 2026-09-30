@@ -263,7 +263,7 @@ variable "extra_node_pools" {
 }
 
 variable "node_resource_group" {
-  description = "Resource group where AKS nodes and associated resources are deployed."
+  description = "Resource group where AKS nodes and associated resources are deployed. Changing this value replaces the AKS cluster."
   type    = string
   default = null
 
