@@ -105,13 +105,14 @@ The `kubeconfig` output contains credentials and is marked sensitive. Protect Te
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.5.0 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | >= 2.20.0, < 3.0.0 |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.21.0 |
 
 ## Modules
 
