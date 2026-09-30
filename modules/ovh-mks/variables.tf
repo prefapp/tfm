@@ -84,5 +84,4 @@ variable "cluster_version" {
   description = "Managed Kubernetes cluster version."
   type        = string
   nullable    = false
-  default     = "null"
 }
