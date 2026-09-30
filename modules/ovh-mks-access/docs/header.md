@@ -76,8 +76,8 @@ Use distinct immutable OKMS paths for every identity/method pair. Increment an i
 Set the `project_description`, `kube_id`, desired `identities` and each active method's `secret_paths` in `terraform.tfvars`. The project description must resolve to exactly one OVHcloud Public Cloud project. Keep `okms_id` in a protected local var-file, as it is required input but not stored in the versioned configuration. `publish_to_okms` is enabled by default; local files are opt-in with `export_local_kubeconfigs = true`. Run a plan and inspect RBAC removals and OKMS path changes before applying:
 
 ```sh
-./accounts/terrafire.sh -p firestartr-pro pro 04-kubernetes-access -- -var-file=/path/to/protected-okms.tfvars
-./accounts/terrafire.sh -a firestartr-pro pro 04-kubernetes-access -- -var-file=/path/to/protected-okms.tfvars
+terraform -chdir=_examples/<example> init
+terraform -chdir=_examples/<example> plan -var-file=/path/to/protected.tfvars
 ```
 
 To rotate credentials for one identity, increment its `credential_generation` and apply. This replaces its enabled certificate key/CSR and/or token Secret. The generated kubeconfig for each method is published to its configured OKMS path as `{"kubeconfig":"<complete YAML kubeconfig>"}`; consumers retrieve the `kubeconfig` property. Terraform state and saved plan files contain sensitive credential material and must be protected.
