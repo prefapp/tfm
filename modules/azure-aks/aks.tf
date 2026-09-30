@@ -20,8 +20,6 @@ module "aks" {
     authorized_ip_ranges = var.api_server_authorized_ip_ranges
   }
 
-  node_resource_group = var.node_resource_group
-
   auto_scaler_profile = local.auto_scaler_profile
 
   storage_profile = var.storage_profile
