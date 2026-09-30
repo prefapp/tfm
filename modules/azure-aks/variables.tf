@@ -104,6 +104,11 @@ variable "load_balancer_idle_timeout_in_minutes" {
   description = "Idle timeout in minutes for the AKS load balancer profile"
   type        = number
   default     = 30
+
+  validation {
+    condition     = var.load_balancer_idle_timeout_in_minutes >= 4 && var.load_balancer_idle_timeout_in_minutes <= 120
+    error_message = "load_balancer_idle_timeout_in_minutes must be between 4 and 120."
+  }
 }
 
 variable "load_balancer_sku" {
