@@ -161,6 +161,9 @@ module "azure_aks" {
 | <a name="input_key_vault_secrets_provider_enabled"></a> [key\_vault\_secrets\_provider\_enabled](#input\_key\_vault\_secrets\_provider\_enabled) | Boolean value to activate the csi-secrets-store-driver | `any` | n/a | yes |
 | <a name="input_load_balancer_profile_enabled"></a> [load\_balancer\_profile\_enabled](#input\_load\_balancer\_profile\_enabled) | Value to enable or not the load balancer profile | `bool` | `true` | no |
 | <a name="input_load_balancer_sku"></a> [load\_balancer\_sku](#input\_load\_balancer\_sku) | Load balancer sku (basic or standard) | `string` | `"standard"` | no |
+| <a name="input_load_balancer_backend_pool_type"></a> [load\_balancer\_backend\_pool\_type](#input\_load\_balancer\_backend\_pool\_type) | Backend pool type for the AKS load balancer profile | `string` | `"NodeIPConfiguration"` | no |
+| <a name="input_load_balancer_idle_timeout_in_minutes"></a> [load\_balancer\_idle\_timeout\_in\_minutes](#input\_load\_balancer\_idle_timeout\_in\_minutes) | Idle timeout in minutes for the AKS load balancer profile | `number` | `30` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the resources | `any` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The Azure location where all resources should be created | `any` | n/a | yes |
 | <a name="input_net_profile_outbound_type"></a> [net\_profile\_outbound\_type](#input\_net\_profile\_outbound\_type) | The outbound (egress) routing method which should be used for this Kubernetes Cluster | `string` | `"loadBalancer"` | no |
 | <a name="input_oidc_issuer_enabled"></a> [oidc\_issuer\_enabled](#input\_oidc\_issuer\_enabled) | Whether to enable OIDC Issuer for the AKS cluster | `bool` | n/a | yes |
