@@ -77,8 +77,8 @@ Use distinct immutable OKMS paths for every identity/method pair. Increment an i
 Set the `project_description`, `kube_id`, desired `identities` and each active method's `secret_paths` in `terraform.tfvars`. The project description must resolve to exactly one OVHcloud Public Cloud project. Keep `okms_id` in a protected local var-file, as it is required input but not stored in the versioned configuration. `publish_to_okms` is enabled by default; local files are opt-in with `export_local_kubeconfigs = true`. Run a plan and inspect RBAC removals and OKMS path changes before applying:
 
 ```sh
-./accounts/terrafire.sh -p firestartr-pro pro 04-kubernetes-access -- -var-file=/path/to/protected-okms.tfvars
-./accounts/terrafire.sh -a firestartr-pro pro 04-kubernetes-access -- -var-file=/path/to/protected-okms.tfvars
+terraform -chdir=_examples/<example> init
+terraform -chdir=_examples/<example> plan -var-file=/path/to/protected.tfvars
 ```
 
 To rotate credentials for one identity, increment its `credential_generation` and apply. This replaces its enabled certificate key/CSR and/or token Secret. The generated kubeconfig for each method is published to its configured OKMS path as `{"kubeconfig":"<complete YAML kubeconfig>"}`; consumers retrieve the `kubeconfig` property. Terraform state and saved plan files contain sensitive credential material and must be protected.
@@ -87,18 +87,20 @@ To rotate credentials for one identity, increment its `credential_generation` an
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.35 |
+| <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.5 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
-| <a name="provider_local"></a> [local](#provider\_local) | n/a |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.35 |
+| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.5 |
 | <a name="provider_ovh"></a> [ovh](#provider\_ovh) | >= 2.20.0, < 3.0.0 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
-| <a name="provider_time"></a> [time](#provider\_time) | n/a |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
 
 ## Modules
 
@@ -117,7 +119,6 @@ No modules.
 | [ovh_okms_secret.credential](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
 | [terraform_data.configuration](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.credential_generation](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [time_sleep.token_propagation](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [tls_cert_request.client](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) | resource |
 | [tls_private_key.client](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [kubernetes_secret_v1.token](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/secret_v1) | data source |
@@ -130,7 +131,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Nombre del clúster, usado en solicitudes de certificado y kubeconfigs. | `string` | n/a | yes |
 | <a name="input_export_local_kubeconfigs"></a> [export\_local\_kubeconfigs](#input\_export\_local\_kubeconfigs) | Escribe localmente los kubeconfigs habilitados con permisos 0600, además de publicarlos en OKMS si corresponde. | `bool` | `false` | no |
-| <a name="input_identities"></a> [identities](#input\_identities) | Matriz de identidades de acceso. Las claves son el CN del certificado y el nombre<br/>de la ServiceAccount. auth\_methods admite certificate, token o ambos. Cada método<br/>habilitado debe tener secret\_paths.<método> cuando publish\_to\_okms está activo.<br/>role admite readonly (ClusterRole view) o readwrite (ClusterRole edit).<br/>scope admite cluster (todos los namespaces) o namespaces (lista explícita). | <pre>map(object({<br/>    role                      = string<br/>    scope                     = string<br/>    auth_methods              = optional(set(string), ["certificate"])<br/>    namespaces                = optional(set(string), [])<br/>    service_account_namespace = optional(string, "kube-system")<br/>    secret_paths              = optional(map(string), {})<br/>    expiration_seconds        = optional(number, 7776000)<br/>    credential_generation     = optional(number, 0)<br/>  }))</pre> | <pre>{<br/>  "argocd": {<br/>    "auth_methods": [<br/>      "certificate",<br/>      "token"<br/>    ],<br/>    "role": "readwrite",<br/>    "scope": "cluster",<br/>    "secret_paths": {<br/>      "certificate": "mks/prefapp-pro/argocd/certificate",<br/>      "token": "mks/prefapp-pro/argocd/token"<br/>    }<br/>  },<br/>  "developers-readonly": {<br/>    "auth_methods": [<br/>      "certificate"<br/>    ],<br/>    "role": "readonly",<br/>    "scope": "cluster",<br/>    "secret_paths": {<br/>      "certificate": "mks/prefapp-pro/developers-readonly/certificate"<br/>    }<br/>  },<br/>  "developers-readwrite": {<br/>    "auth_methods": [<br/>      "certificate"<br/>    ],<br/>    "role": "readwrite",<br/>    "scope": "cluster",<br/>    "secret_paths": {<br/>      "certificate": "mks/prefapp-pro/developers-readwrite/certificate"<br/>    }<br/>  }<br/>}</pre> | no |
+| <a name="input_identities"></a> [identities](#input\_identities) | Matriz de identidades de acceso. Las claves son el CN del certificado y el nombre<br/>de la ServiceAccount. auth\_methods admite certificate, token o ambos. Cada método<br/>habilitado debe tener secret\_paths.<método> cuando publish\_to\_okms está activo.<br/>role admite readonly (ClusterRole view) o readwrite (ClusterRole edit).<br/>scope admite cluster (todos los namespaces) o namespaces (lista explícita). | <pre>map(object({<br/>    role                      = string<br/>    scope                     = string<br/>    auth_methods              = optional(set(string), ["certificate"])<br/>    namespaces                = optional(set(string), [])<br/>    service_account_namespace = optional(string, "kube-system")<br/>    secret_paths              = optional(map(string), {})<br/>    expiration_seconds        = optional(number, 7776000)<br/>    credential_generation     = optional(number, 0)<br/>  }))</pre> | `{}` | no |
 | <a name="input_kube_id"></a> [kube\_id](#input\_kube\_id) | Identificador del clúster OVHcloud Managed Kubernetes Service. | `string` | n/a | yes |
 | <a name="input_okms_id"></a> [okms\_id](#input\_okms\_id) | Identificador del servicio OVHcloud Secret Manager (OKMS) donde se publicarán los kubeconfigs. | `string` | n/a | yes |
 | <a name="input_project_description"></a> [project\_description](#input\_project\_description) | Descripción del proyecto OVHcloud Public Cloud que contiene el clúster MKS, por ejemplo prefapp. | `string` | n/a | yes |
@@ -165,9 +166,9 @@ The Kubernetes principal returned in the OVHcloud MKS kubeconfig needs permissio
 
 See the self-contained caller configurations in the module's `_examples/` folder:
 
-- [Certificate](https://github.com/firestartr-pro/infra-ovh/tree/main/accounts/firestartr-pro/pro/04-kubernetes-access/_examples/certificate) — certificate-only identity and kubeconfig publication.
-- [Token](https://github.com/firestartr-pro/infra-ovh/tree/main/accounts/firestartr-pro/pro/04-kubernetes-access/_examples/token) — ServiceAccount token identity and namespace-scoped RBAC.
-- [Both methods](https://github.com/firestartr-pro/infra-ovh/tree/main/accounts/firestartr-pro/pro/04-kubernetes-access/_examples/both-methods) — one identity with certificate and token credentials.
+- [Certificate](https://github.com/prefapp/tfm/tree/main/modules/ovh-mks-access/_examples/certificate) — certificate-only identity and kubeconfig publication.
+- [Token](https://github.com/prefapp/tfm/tree/main/modules/ovh-mks-access/_examples/token) — ServiceAccount token identity and namespace-scoped RBAC.
+- [Both methods](https://github.com/prefapp/tfm/tree/main/modules/ovh-mks-access/_examples/both-methods) — one identity with certificate and token credentials.
 
 ## Resources
 
