@@ -85,7 +85,9 @@ To rotate credentials for one identity, increment its `credential_generation` an
 
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
 
 ## Providers
 
@@ -93,7 +95,7 @@ No requirements.
 |------|---------|
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
 | <a name="provider_local"></a> [local](#provider\_local) | n/a |
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | n/a |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | >= 2.20.0, < 3.0.0 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 | <a name="provider_time"></a> [time](#provider\_time) | n/a |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
@@ -112,15 +114,15 @@ No modules.
 | [kubernetes_secret_v1.token](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 | [kubernetes_service_account_v1.identity](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account_v1) | resource |
 | [local_sensitive_file.kubeconfig](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file) | resource |
-| [ovh_okms_secret.credential](https://registry.terraform.io/providers/hashicorp/ovh/latest/docs/resources/okms_secret) | resource |
+| [ovh_okms_secret.credential](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
 | [terraform_data.configuration](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.credential_generation](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [time_sleep.token_propagation](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [tls_cert_request.client](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) | resource |
 | [tls_private_key.client](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [kubernetes_secret_v1.token](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/secret_v1) | data source |
-| [ovh_cloud_project_kube.my_kube_cluster](https://registry.terraform.io/providers/hashicorp/ovh/latest/docs/data-sources/cloud_project_kube) | data source |
-| [ovh_cloud_projects.projects](https://registry.terraform.io/providers/hashicorp/ovh/latest/docs/data-sources/cloud_projects) | data source |
+| [ovh_cloud_project_kube.my_kube_cluster](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_kube) | data source |
+| [ovh_cloud_projects.projects](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_projects) | data source |
 
 ## Inputs
 
