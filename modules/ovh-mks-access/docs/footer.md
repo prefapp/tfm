@@ -19,9 +19,9 @@ The Kubernetes principal returned in the OVHcloud MKS kubeconfig needs permissio
 
 See the self-contained caller configurations in the module's `_examples/` folder:
 
-- [Certificate](https://github.com/firestartr-pro/infra-ovh/tree/main/accounts/firestartr-pro/pro/04-kubernetes-access/_examples/certificate) — certificate-only identity and kubeconfig publication.
-- [Token](https://github.com/firestartr-pro/infra-ovh/tree/main/accounts/firestartr-pro/pro/04-kubernetes-access/_examples/token) — ServiceAccount token identity and namespace-scoped RBAC.
-- [Both methods](https://github.com/firestartr-pro/infra-ovh/tree/main/accounts/firestartr-pro/pro/04-kubernetes-access/_examples/both-methods) — one identity with certificate and token credentials.
+- [Certificate](https://github.com/prefapp/tfm/tree/main/modules/ovh-mks-access/_examples/certificate) — certificate-only identity and kubeconfig publication.
+- [Token](https://github.com/prefapp/tfm/tree/main/modules/ovh-mks-access/_examples/token) — ServiceAccount token identity and namespace-scoped RBAC.
+- [Both methods](https://github.com/prefapp/tfm/tree/main/modules/ovh-mks-access/_examples/both-methods) — one identity with certificate and token credentials.
 
 ## Resources
 
