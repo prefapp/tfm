@@ -87,6 +87,7 @@ To rotate credentials for one identity, increment its `credential_generation` an
 
 | Name | Version |
 |------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.5.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.35 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.5 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
@@ -96,11 +97,11 @@ To rotate credentials for one identity, increment its `credential_generation` an
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.35 |
-| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.5 |
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | >= 2.20.0, < 3.0.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.38.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.9.1 |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.21.0 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.4.1 |
 
 ## Modules
 
