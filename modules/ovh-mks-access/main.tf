@@ -42,21 +42,13 @@ resource "kubernetes_secret_v1" "token" {
     }
   }
 
-  type = "kubernetes.io/service-account-token"
-
+  type                           = "kubernetes.io/service-account-token"
+  wait_for_service_account_token = true
   lifecycle {
     replace_triggered_by = [terraform_data.credential_generation[each.key]]
   }
 }
 
-resource "time_sleep" "token_propagation" {
-  for_each = local.token_identities
-
-  create_duration = "30s"
-  triggers = {
-    secret_uid = kubernetes_secret_v1.token[each.key].metadata[0].uid
-  }
-}
 
 data "kubernetes_secret_v1" "token" {
   for_each = local.token_identities
@@ -66,7 +58,6 @@ data "kubernetes_secret_v1" "token" {
     namespace = kubernetes_secret_v1.token[each.key].metadata[0].namespace
   }
 
-  depends_on = [time_sleep.token_propagation]
 }
 
 resource "tls_private_key" "client" {
