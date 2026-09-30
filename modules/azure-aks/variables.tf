@@ -233,7 +233,6 @@ variable "default_node_pool" {
       max_surge                     = string
     }))
   })
-  default = null
 }
 
 # Extra node pools variables
