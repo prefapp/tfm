@@ -139,6 +139,9 @@
         "modules/azure-event-hub": {
             "package-name": "azure-event-hub"
         },
+        "modules/azure-cognitive-account": {
+            "package-name": "azure-cognitive-account"
+        },
         "modules/aws-cloudfront-delivery": {
             "package-name": "aws-cloudfront-delivery"
         },
