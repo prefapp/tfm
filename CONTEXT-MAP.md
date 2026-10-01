@@ -107,6 +107,12 @@ is its own context.
 - [mongodb-atlas-cluster](./modules/mongodb-atlas-cluster/CONTEXT.md) — Atlas cluster
 - [mongodb-atlas-azure-privatelink](./modules/mongodb-atlas-azure-privatelink/CONTEXT.md) — Private Link between an Atlas project and an Azure vnet
 
+### OVHcloud
+
+- [ovh-mks](./modules/ovh-mks/CONTEXT.md) — Managed Kubernetes cluster and node pools using an existing private network
+- [ovh-mks-access](./modules/ovh-mks-access/CONTEXT.md) — Kubernetes identities, credentials and RBAC access for an MKS cluster
+- [ovh-network](./modules/ovh-network/CONTEXT.md) — Public Cloud private network, DHCP subnet and gateway
+
 ### CloudAMQP
 
 - [cloudamqp-cluster](./modules/cloudamqp-cluster/CONTEXT.md) — CloudAMQP instance
@@ -133,6 +139,12 @@ is its own context.
 - **`mongodb-atlas-azure-privatelink` → the Azure modules**: the only module spanning
   two provider planes, requiring both `mongodbatlas` and `azurerm`. The Azure vnet it
   attaches to is referenced by ID, never managed here.
+- **`ovh-network` → `ovh-mks`**: the network module creates the private network and
+  subnet; the MKS module independently discovers those existing resources by network
+  name and subnet CIDR in the selected project and region. The MKS module does not own
+  the network resources or consume the network module's IDs as inputs.
+- **`ovh-mks-access` → `ovh-mks`**: the access module configures Kubernetes identities,
+  credentials and RBAC for clients of an existing MKS cluster.
 - **`aws-terraform-backend` → every context**: it provisions the S3 bucket and
   DynamoDB table that materialise the *state boundary* term for consumers.
 - **`dummy` → nothing**: it deliberately touches no provider. It exists to exercise
