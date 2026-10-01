@@ -89,6 +89,28 @@ variable "load_balancer_profile_enabled" {
   default     = true
 }
 
+variable "load_balancer_backend_pool_type" {
+  description = "Backend pool type for the AKS load balancer profile"
+  type        = string
+  default     = "NodeIPConfiguration"
+
+  validation {
+    condition     = contains(["NodeIPConfiguration", "NodeIP"], var.load_balancer_backend_pool_type)
+    error_message = "load_balancer_backend_pool_type must be either NodeIPConfiguration or NodeIP."
+  }
+}
+
+variable "load_balancer_idle_timeout_in_minutes" {
+  description = "Idle timeout in minutes for the AKS load balancer profile"
+  type        = number
+  default     = 30
+
+  validation {
+    condition     = var.load_balancer_idle_timeout_in_minutes >= 4 && var.load_balancer_idle_timeout_in_minutes <= 120
+    error_message = "load_balancer_idle_timeout_in_minutes must be between 4 and 120."
+  }
+}
+
 variable "load_balancer_sku" {
   description = "Load balancer sku (basic or standard)"
   type        = string
@@ -207,7 +229,7 @@ variable "default_node_pool" {
     count_of            = number
     max_pods            = number
     os_disk_size_gb     = number
-    node_labels         = optional(map(string), {})
+    node_labels         = optional(map(string), null)
     enable_auto_scaling = optional(bool, false)
 
     upgrade_settings = optional(object({
@@ -243,6 +265,12 @@ variable "extra_node_pools" {
     }))
   }))
   default = []
+}
+
+variable "node_resource_group" {
+  description = "Resource group where AKS nodes and associated resources are deployed. Changing this value replaces the AKS cluster."
+  type        = string
+  default = null
 }
 
 # API server authorized IP ranges
