@@ -13,6 +13,23 @@ resource "azurerm_cognitive_account" "this" {
   project_management_enabled         = var.project_management_enabled
   tags                               = local.tags
 
+  lifecycle {
+    precondition {
+      condition     = !var.project_management_enabled || var.kind == "AIServices"
+      error_message = "project_management_enabled can only be true when kind is AIServices."
+    }
+
+    precondition {
+      condition     = var.dynamic_throttling_enabled == null || !contains(["OpenAI", "AIServices"], var.kind)
+      error_message = "dynamic_throttling_enabled must be null when kind is OpenAI or AIServices."
+    }
+
+    precondition {
+      condition     = var.network_acls.bypass != "AzureServices" || contains(["OpenAI", "AIServices", "TextAnalytics"], var.kind)
+      error_message = "network_acls.bypass can be AzureServices only when kind is OpenAI, AIServices, or TextAnalytics."
+    }
+  }
+
   network_acls {
     bypass         = var.network_acls.bypass
     default_action = var.network_acls.default_action
