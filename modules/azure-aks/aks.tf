@@ -20,6 +20,8 @@ module "aks" {
     authorized_ip_ranges = var.api_server_authorized_ip_ranges
   }
 
+  node_resource_group = var.node_resource_group
+
   auto_scaler_profile = local.auto_scaler_profile
 
   storage_profile = var.storage_profile
@@ -76,11 +78,17 @@ module "aks" {
       var.net_profile_outbound_type == "loadBalancer" &&
       var.load_balancer_profile_enabled
       ) ? {
-      outbound_ip_address_ids = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
-        data.azurerm_public_ip.aks_public_ip[0].id
-      ] : null
-    } : null
-  }
+        backend_pool_type       = var.load_balancer_backend_pool_type
+        idle_timeout_in_minutes = var.load_balancer_idle_timeout_in_minutes
+        outbound_ips = {
+          public_ips = length(data.azurerm_public_ip.aks_public_ip) > 0 ? [
+            {
+              id = data.azurerm_public_ip.aks_public_ip[0].id
+            }
+          ] : null
+        }
+      } : null
+    }
 
   upgrade_settings = var.aks_upgrade_settings == null ? null : {
     override_settings = var.aks_upgrade_settings.override_settings == null ? null : {

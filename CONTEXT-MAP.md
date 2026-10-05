@@ -56,6 +56,7 @@ is its own context.
 - [azure-app-gateway](./modules/azure-app-gateway/CONTEXT.md) — Application Gateway
 - [azure-application](./modules/azure-application/CONTEXT.md) — Entra ID application registration and service principal
 - [azure-backup-vault](./modules/azure-backup-vault/CONTEXT.md) — Backup vault and policies
+- [azure-cognitive-account](./modules/azure-cognitive-account/CONTEXT.md) — Azure Cognitive Services accounts, including Azure OpenAI
 - [azure-customrole](./modules/azure-customrole/CONTEXT.md) — Custom RBAC role definitions
 - [azure-disks](./modules/azure-disks/CONTEXT.md) — Managed disks
 - [azure-disks-backup](./modules/azure-disks-backup/CONTEXT.md) — Backup instances for managed disks

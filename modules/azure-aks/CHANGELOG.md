@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.3](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.2...azure-aks-v3.0.3) (2026-10-01)
+
+
+### Bug Fixes
+
+* Rename outbound ip value in loadBalancer Profile and add node_resource_group as configurable variable ([#1443](https://github.com/prefapp/tfm/issues/1443)) ([6e74edc](https://github.com/prefapp/tfm/commit/6e74edcccda51e4ff99f202d5e60386200f5056e))
+
 ## [3.0.2](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.1...azure-aks-v3.0.2) (2026-09-29)
 
 
