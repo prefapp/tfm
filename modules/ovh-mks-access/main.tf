@@ -120,7 +120,7 @@ resource "kubernetes_cluster_role_binding_v1" "cluster" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = each.value.role == "readonly" ? "view" : "edit"
+    name      = each.value.role == "readonly" ? "view" : each.value.role == "readwrite" ? "edit" : "cluster-admin"
   }
 
   dynamic "subject" {
@@ -153,7 +153,7 @@ resource "kubernetes_role_binding_v1" "namespace" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = each.value.role == "readonly" ? "view" : "edit"
+    name      = each.value.role == "readonly" ? "view" : each.value.role == "readwrite" ? "edit" : "cluster-admin"
   }
 
   dynamic "subject" {

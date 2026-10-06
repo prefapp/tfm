@@ -34,7 +34,7 @@ variable "identities" {
     Access identity map. Keys are the certificate CN and ServiceAccount name.
     auth_methods accepts certificate, token, or both. Each enabled method must have
     a secret_paths.<method> entry when publish_to_okms is enabled.
-    role accepts readonly (ClusterRole view) or readwrite (ClusterRole edit).
+    role accepts readonly (ClusterRole view), readwrite (ClusterRole edit), or cluster-admin (ClusterRole cluster-admin).
     scope accepts cluster (all namespaces) or namespaces (an explicit list).
   EOT
   type = map(object({
@@ -57,7 +57,7 @@ variable "identities" {
       for name, identity in var.identities :
       length(name) <= 63 &&
       can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", name)) &&
-      contains(["readonly", "readwrite"], identity.role) &&
+      contains(["readonly", "readwrite", "cluster-admin"], identity.role) &&
       contains(["cluster", "namespaces"], identity.scope) &&
       (identity.scope == "cluster" ? length(identity.namespaces) == 0 : length(identity.namespaces) > 0) &&
       length(identity.auth_methods) > 0 &&
@@ -70,7 +70,7 @@ variable "identities" {
       length(identity.service_account_namespace) <= 63 &&
       can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", identity.service_account_namespace))
     ])
-    error_message = "Each identity must have a valid DNS name, role readonly/readwrite, valid scope, at least one certificate/token method, a valid ServiceAccount namespace, a non-negative integer generation, and non-empty paths for enabled methods. Certificate validity must be between 600 and 31536000 seconds (up to one year on OVH MKS)."
+    error_message = "Each identity must have a valid DNS name, role readonly/readwrite/cluster-admin, valid scope, at least one certificate/token method, a valid ServiceAccount namespace, a non-negative integer generation, and non-empty paths for enabled methods. Certificate validity must be between 600 and 31536000 seconds (up to one year on OVH MKS)."
   }
 }
 

@@ -9,7 +9,7 @@ Credentials can be published as complete kubeconfigs to OVHcloud Secret Manager 
 ## Key Features
 
 - **Authentication choices**: Enable `certificate`, `token`, or both for each identity.
-- **Shared RBAC policy**: Apply `readonly` (`view`) or `readwrite` (`edit`) to certificate users and ServiceAccounts with the same identity name.
+- **Shared RBAC policy**: Apply `readonly` (`view`), `readwrite` (`edit`), or `cluster-admin` to certificate users and ServiceAccounts with the same identity name.
 - **Scoped permissions**: Bind access cluster-wide or only in explicitly listed namespaces.
 - **OVHcloud Secret Manager**: Publish one complete kubeconfig per identity and method to a distinct configured secret path.
 - **Optional local export**: Write kubeconfig files with `0600` permissions for testing or manual distribution.
@@ -19,7 +19,7 @@ Credentials can be published as complete kubeconfigs to OVHcloud Secret Manager 
 
 Configure this root's `terraform.tfvars` with the OVHcloud Public Cloud project `project_description` (for example, `prefapp`), MKS cluster `kube_id`, credential destinations, and identity matrix. Terraform finds the unique matching project by its description, uses its `service_name` to retrieve the cluster kubeconfig through the native `ovh_cloud_project_kube` data source, and exposes that identifier as the `service_name` output. No local administrator kubeconfig file is needed. Supply the required OKMS ID with a protected var-file because the repository wrapper selects `terraform.tfvars` automatically. OVH provider credentials must be available through the standard OVH provider environment/CLI configuration.
 
-The target namespaces in `namespaces` and each configured ServiceAccount namespace must already exist. The OVH identity must be authorized to retrieve the MKS kubeconfig and administer the target cluster (RBAC, ServiceAccounts, Secrets, and client-certificate CSRs for the `kubernetes.io/kube-apiserver-client` signer), as well as create and version secrets in the configured OKMS.
+The target namespaces in `namespaces` and each configured ServiceAccount namespace must already exist. The OVH identity must be authorized to retrieve the MKS kubeconfig and administer the target cluster (RBAC, ServiceAccounts, Secrets, and client-certificate CSRs for the `kubernetes.io/kube-apiserver-client` signer), as well as create and version secrets in the configured OKMS. With `scope = "cluster"`, the `cluster-admin` role grants full cluster-wide administrator permissions; with `scope = "namespaces"`, its permissions are limited by RoleBindings to the listed namespaces.
 
 ### Certificate identity
 
