@@ -120,3 +120,37 @@ module "cloudfront" {
   route53_zone_name = "domain.com"
 
 }
+```
+
+### Usage with a manually validated certificate (external DNS)
+
+Without `route53_zone_name`, set `acm_manual_validation = true` to request the certificate and create its validation CNAMEs yourself. `terraform apply` waits until the certificate is `ISSUED` (up to `acm_validation_timeout`, 75m by default), so CloudFront never receives an unvalidated certificate. Terraform does not print outputs until the apply ends, so read the records while it waits from the ACM console or `aws acm describe-certificate --region us-east-1`. Afterwards they are also exposed in the `acm_certificate_validation_records` output. Keep the records: ACM needs them to renew the certificate.
+
+``` hcl
+module "cloudfront" {
+  source = "github.com/prefapp/tfm/modules/aws-cloudfront-delivery?ref=aws-cloudfront-delivery-vx.y.z"
+
+  name_prefix            = "bucket-prefix-name"
+  cdn_aliases            = ["cdn.domain.com"]
+  acm_manual_validation  = true
+  acm_validation_timeout = "2h"
+}
+```
+
+If the wait times out, create the records and run `terraform apply` again: the certificate is kept and the wait resumes.
+
+### Usage with an existing certificate
+
+Set `acm_certificate_arn` to reuse a certificate that already exists. It must be in `us-east-1` and cover every alias. It takes precedence over requesting one: combined with `route53_zone_name`, only the alias records are created in the zone.
+
+``` hcl
+module "cloudfront" {
+  source = "github.com/prefapp/tfm/modules/aws-cloudfront-delivery?ref=aws-cloudfront-delivery-vx.y.z"
+
+  name_prefix         = "bucket-prefix-name"
+  cdn_aliases         = ["cdn.domain.com"]
+  acm_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000000"
+}
+```
+
+Switching an existing deployment from a requested certificate to `acm_certificate_arn` destroys the requested certificate after CloudFront moves to the new one.

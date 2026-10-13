@@ -28,6 +28,47 @@ variable "route53_zone_name" {
   default     = null
 }
 
+variable "acm_certificate_arn" {
+  description = "(Optional) ARN of an existing ACM certificate to attach to the distribution. It must be in `us-east-1` and cover every entry of `cdn_aliases`. When set, the module does not request a certificate, even if `route53_zone_name` is set (alias records are still created in that zone)."
+  type        = string
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.acm_certificate_arn == null || can(regex("^arn:aws[a-z-]*:acm:us-east-1:[0-9]{12}:certificate/.+$", var.acm_certificate_arn))
+    error_message = "acm_certificate_arn must be an ACM certificate ARN in us-east-1 (required by CloudFront)."
+  }
+
+  validation {
+    condition     = var.acm_certificate_arn == null || !var.acm_manual_validation
+    error_message = "acm_certificate_arn and acm_manual_validation are mutually exclusive."
+  }
+}
+
+variable "acm_manual_validation" {
+  description = "Request an ACM certificate for `cdn_aliases` without a Route 53 zone. The DNS validation CNAME records must be created by the caller in their DNS provider; `terraform apply` waits until the certificate is `ISSUED` (see `acm_validation_timeout`) before attaching it to the distribution. Requires `route53_zone_name` to be null."
+  type        = bool
+  nullable    = false
+  default     = false
+
+  validation {
+    condition     = !var.acm_manual_validation || (var.route53_zone_name == null && length(var.cdn_aliases) > 0)
+    error_message = "acm_manual_validation requires route53_zone_name to be null and at least one entry in cdn_aliases."
+  }
+}
+
+variable "acm_validation_timeout" {
+  description = "(Optional) Maximum time to wait for the requested ACM certificate to be validated, as a duration such as `45m` or `2h`. Defaults to the AWS provider timeout (75m) when null. Mostly useful with `acm_manual_validation`."
+  type        = string
+  nullable    = true
+  default     = null
+
+  validation {
+    condition     = var.acm_validation_timeout == null || can(regex("^([0-9]+(h|m|s))+$", var.acm_validation_timeout))
+    error_message = "acm_validation_timeout must be a duration such as 30m, 2h or 1h30m."
+  }
+}
+
 variable "cdn_aliases" {
   description = "A list of CNAMEs (alternate domain names) to associate with the CloudFront distribution."
   type        = list(string)
