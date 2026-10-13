@@ -1,10 +1,13 @@
 
 resource "aws_s3_bucket_replication_configuration" "origin_to_destination" {
-  count      = var.s3_replication_destination != null ? 1 : 0
-  depends_on = [aws_s3_bucket_versioning.this]
-  region     = var.region
-  role       = aws_iam_role.replication[0].arn
-  bucket     = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
+  count = var.s3_replication_destination != null ? 1 : 0
+  depends_on = [
+    aws_s3_bucket_versioning.this,
+    aws_iam_role_policy_attachment.replication,
+  ]
+  region = var.region
+  role   = aws_iam_role.replication[0].arn
+  bucket = var.create_bucket ? aws_s3_bucket.this[0].id : data.aws_s3_bucket.this[0].id
 
   rule {
     id = "origin-to-destination"
