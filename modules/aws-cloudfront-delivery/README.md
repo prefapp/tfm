@@ -117,6 +117,39 @@ module "cloudfront" {
 }
 ```
 
+### Usage with a manually validated certificate (external DNS)
+
+Without `route53_zone_name`, set `acm_manual_validation = true` to request the certificate and create its validation CNAMEs yourself. `terraform apply` waits until the certificate is `ISSUED` (up to `acm_validation_timeout`, 75m by default), so CloudFront never receives an unvalidated certificate. Terraform does not print outputs until the apply ends, so read the records while it waits from the ACM console or `aws acm describe-certificate --region us-east-1`. Afterwards they are also exposed in the `acm_certificate_validation_records` output. Keep the records: ACM needs them to renew the certificate.
+
+``` hcl
+module "cloudfront" {
+  source = "github.com/prefapp/tfm/modules/aws-cloudfront-delivery?ref=aws-cloudfront-delivery-vx.y.z"
+
+  name_prefix            = "bucket-prefix-name"
+  cdn_aliases            = ["cdn.domain.com"]
+  acm_manual_validation  = true
+  acm_validation_timeout = "2h"
+}
+```
+
+If the wait times out, create the records and run `terraform apply` again: the certificate is kept and the wait resumes.
+
+### Usage with an existing certificate
+
+Set `acm_certificate_arn` to reuse a certificate that already exists. It must be in `us-east-1` and cover every alias. It takes precedence over requesting one: combined with `route53_zone_name`, only the alias records are created in the zone.
+
+``` hcl
+module "cloudfront" {
+  source = "github.com/prefapp/tfm/modules/aws-cloudfront-delivery?ref=aws-cloudfront-delivery-vx.y.z"
+
+  name_prefix         = "bucket-prefix-name"
+  cdn_aliases         = ["cdn.domain.com"]
+  acm_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000000"
+}
+```
+
+Switching an existing deployment from a requested certificate to `acm_certificate_arn` destroys the requested certificate after CloudFront moves to the new one.
+
 ## Requirements
 
 | Name | Version |
@@ -159,6 +192,9 @@ module "cloudfront" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_acm_certificate_arn"></a> [acm\_certificate\_arn](#input\_acm\_certificate\_arn) | (Optional) ARN of an existing ACM certificate to attach to the distribution. It must be in `us-east-1` and cover every entry of `cdn_aliases`. When set, the module does not request a certificate, even if `route53_zone_name` is set (alias records are still created in that zone). | `string` | `null` | no |
+| <a name="input_acm_manual_validation"></a> [acm\_manual\_validation](#input\_acm\_manual\_validation) | Request an ACM certificate for `cdn_aliases` without a Route 53 zone. The DNS validation CNAME records must be created by the caller in their DNS provider; `terraform apply` waits until the certificate is `ISSUED` (see `acm_validation_timeout`) before attaching it to the distribution. Requires `route53_zone_name` to be null. | `bool` | `false` | no |
+| <a name="input_acm_validation_timeout"></a> [acm\_validation\_timeout](#input\_acm\_validation\_timeout) | (Optional) Maximum time to wait for the requested ACM certificate to be validated, as a duration such as `45m` or `2h`. Defaults to the AWS provider timeout (75m) when null. Mostly useful with `acm_manual_validation`. | `string` | `null` | no |
 | <a name="input_bucket_versioning_enabled"></a> [bucket\_versioning\_enabled](#input\_bucket\_versioning\_enabled) | Whether to enable versioning on the S3 bucket used for CloudFront delivery. | `bool` | `true` | no |
 | <a name="input_cdn_aliases"></a> [cdn\_aliases](#input\_cdn\_aliases) | A list of CNAMEs (alternate domain names) to associate with the CloudFront distribution. | `list(string)` | `[]` | no |
 | <a name="input_cdn_comment"></a> [cdn\_comment](#input\_cdn\_comment) | A comment to describe the CloudFront distribution. | `string` | `"CloudFront Distribution for S3 Delivery"` | no |
@@ -182,6 +218,8 @@ module "cloudfront" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_acm_certificate_arn"></a> [acm\_certificate\_arn](#output\_acm\_certificate\_arn) | The ARN of the ACM certificate attached to the distribution (requested or existing), or null when the default CloudFront certificate is used |
+| <a name="output_acm_certificate_validation_records"></a> [acm\_certificate\_validation\_records](#output\_acm\_certificate\_validation\_records) | DNS validation records (CNAME) of the requested ACM certificate. With `acm_manual_validation` they must exist in the caller's DNS provider for the certificate to be issued and renewed |
 | <a name="output_cloudfront_distribution_arn"></a> [cloudfront\_distribution\_arn](#output\_cloudfront\_distribution\_arn) | The ARN of the CloudFront distribution |
 | <a name="output_cloudfront_distribution_domain_name"></a> [cloudfront\_distribution\_domain\_name](#output\_cloudfront\_distribution\_domain\_name) | The domain name of the CloudFront distribution |
 | <a name="output_cloudfront_distribution_id"></a> [cloudfront\_distribution\_id](#output\_cloudfront\_distribution\_id) | The ID of the CloudFront distribution |
@@ -199,6 +237,8 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/basic) - Basic Cloudfront with s3
 - [With acm domain](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/withacm) - Basic cloudfront with route53 and ACM certificates
+- [ACM with manual validation](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/acm-manual-validation) - Certificate requested without a Route 53 zone; validation CNAMEs created by the user in an external DNS provider
+- [Existing ACM certificate](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/existing-acm) - Reuse an existing `us-east-1` certificate with `acm_certificate_arn`
 - [Multi-tenant by subdomain](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/multitenant-subdomain-script) - Several tenants in one bucket, routed by subdomain with a custom CloudFront Function and a GitHub Actions delivery role (immutable subject claim)
 - [Extra origins and behaviors](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/extra-origins-behaviors) - SPA from S3 plus two extra origins (an API Gateway at `/api/contact` and a backend at `/backend/*`) with `extra_origins` and `ordered_cache_behaviors`
 - [Error pages](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/error-pages) - Custom error pages served from the delivery bucket with `custom_error_responses`

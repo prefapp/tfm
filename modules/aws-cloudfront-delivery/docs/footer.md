@@ -5,6 +5,8 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - [Basic](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/basic) - Basic Cloudfront with s3
 - [With acm domain](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/withacm) - Basic cloudfront with route53 and ACM certificates
+- [ACM with manual validation](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/acm-manual-validation) - Certificate requested without a Route 53 zone; validation CNAMEs created by the user in an external DNS provider
+- [Existing ACM certificate](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/existing-acm) - Reuse an existing `us-east-1` certificate with `acm_certificate_arn`
 - [Multi-tenant by subdomain](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/multitenant-subdomain-script) - Several tenants in one bucket, routed by subdomain with a custom CloudFront Function and a GitHub Actions delivery role (immutable subject claim)
 - [Extra origins and behaviors](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/extra-origins-behaviors) - SPA from S3 plus two extra origins (an API Gateway at `/api/contact` and a backend at `/backend/*`) with `extra_origins` and `ordered_cache_behaviors`
 - [Error pages](https://github.com/prefapp/tfm/tree/main/modules/aws-cloudfront-delivery/_examples/error-pages) - Custom error pages served from the delivery bucket with `custom_error_responses`

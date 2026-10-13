@@ -17,7 +17,11 @@ Origin Access Control — the CloudFront identity that is allowed to read the de
 _Avoid_: OAI, origin identity
 
 **alias**:
-An alternate domain name on the distribution. Each alias gets a Route 53 record in `route53_zone_name` and is covered by the ACM certificate the module requests.
+An alternate domain name on the distribution. Each alias gets a Route 53 record in `route53_zone_name` (when set) and must be covered by the distribution's ACM certificate.
+
+**certificate source**:
+Where the distribution's ACM certificate comes from: **requested and validated in Route 53** (`route53_zone_name`), **requested and validated manually** (`acm_manual_validation`, the caller creates the CNAMEs in an external DNS and apply waits until `ISSUED`), or **existing** (`acm_certificate_arn`, takes precedence). With none of them the default `*.cloudfront.net` certificate is used.
+_Avoid_: imported certificate (ACM import is a different operation)
 
 **custom response function**:
 A CloudFront Function attached to the distribution, supplied either inline (`custom_response_script`) or by path (`custom_response_script_path`). Typically used to rewrite SPA routes.

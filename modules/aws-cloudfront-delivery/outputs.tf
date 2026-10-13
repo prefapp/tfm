@@ -47,3 +47,18 @@ output "cloudfront_origin_access_controls_ids" {
   description = "The IDs of the CloudFront Origin Access Controls created"
   value       = [for oac in module.cloudfront-delivery.cloudfront_origin_access_controls : oac.id]
 }
+
+output "acm_certificate_arn" {
+  description = "The ARN of the ACM certificate attached to the distribution (requested or existing), or null when the default CloudFront certificate is used"
+  value       = local.acm_certificate_arn
+}
+
+output "acm_certificate_validation_records" {
+  description = "DNS validation records (CNAME) of the requested ACM certificate. With `acm_manual_validation` they must exist in the caller's DNS provider for the certificate to be issued and renewed"
+  value = [for o in try(module.acm[0].acm_certificate_domain_validation_options, []) : {
+    domain_name = o.domain_name
+    name        = o.resource_record_name
+    type        = o.resource_record_type
+    value       = o.resource_record_value
+  }]
+}

@@ -48,8 +48,8 @@ module "cloudfront-delivery" {
 
   custom_error_response = var.custom_error_responses
 
-  viewer_certificate = length(module.acm) > 0 ? {
-    acm_certificate_arn      = module.acm[0].acm_certificate_arn
+  viewer_certificate = local.acm_certificate_arn != null ? {
+    acm_certificate_arn      = local.acm_certificate_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
     } : {
