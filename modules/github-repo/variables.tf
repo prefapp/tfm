@@ -55,8 +55,10 @@ variable "config" {
     # GitHub Pages configuration (handled via github_repository_pages resource; input remains for backward compatibility)
     pages = optional(object({
       # buildType: "legacy" (default) or "workflow". Previously set in the deprecated pages block of github_repository; now used in github_repository_pages.
-      buildType = optional(string, "legacy")
-      cname     = optional(string, null)
+      buildType      = optional(string, "legacy")
+      cname          = optional(string, null)
+      public         = optional(bool, null)
+      https_enforced = optional(bool, null)
       source = optional(object({
         branch = string
         path   = optional(string, "/")
@@ -129,6 +131,14 @@ variable "config" {
   validation {
     condition     = var.config.pages == null ? true : contains(["legacy", "workflow"], var.config.pages.buildType)
     error_message = "pages.buildType must be 'legacy' or 'workflow'."
+  }
+
+  validation {
+    condition = var.config.pages == null ? true : (
+      try(var.config.pages.https_enforced, false) != true ||
+      try(length(trimspace(var.config.pages.cname)), 0) > 0
+    )
+    error_message = "pages.https_enforced requires pages.cname to be a non-empty string."
   }
 
   validation {
