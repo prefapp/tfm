@@ -1,8 +1,8 @@
 # DATA SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/data-sources/client_config
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/client_config
 data "azurerm_client_config" "current" {}
 
-## https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/data-sources/resource_group
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/data-sources/resource_group
 data "azurerm_resource_group" "this" {
   name = var.resource_group
 }
@@ -57,7 +57,7 @@ locals {
 
 
 # RESOURCES SECTION
-## https://registry.terraform.io/providers/hashicorp/azurerm/3.113.0/docs/resources/key_vault
+## https://registry.terraform.io/providers/hashicorp/azurerm/4.21.0/docs/resources/key_vault
 resource "azurerm_key_vault" "this" {
   name                        = var.name
   location                    = data.azurerm_resource_group.this.location
