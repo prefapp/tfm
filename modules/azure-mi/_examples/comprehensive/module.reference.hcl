@@ -1,0 +1,55 @@
+# Reference-only: replace scopes, vault IDs, and GitHub coordinates with real values.
+
+module "managed_identity" {
+  source = "../.."
+
+  name           = "uami-myapp-ref"
+  resource_group = "my-resource-group"
+  location       = "westeurope"
+
+  tags_from_rg = true
+  tags         = {}
+
+  rbac = [
+    {
+      name  = "rg-reader"
+      scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-resource-group"
+      roles = ["Reader"]
+    },
+  ]
+
+  audience = ["api://AzureADTokenExchange"]
+
+  federated_credentials = [
+    {
+      name         = "github-main"
+      type         = "github"
+      organization = "my-org"
+      repository   = "my-repo"
+      entity       = "ref:refs/heads/main"
+    },
+    {
+      name                 = "k8s-workload"
+      type                 = "kubernetes"
+      issuer               = "https://oidc.prod1.azure.com/00000000-0000-0000-0000-000000000000/00000000-0000-0000-0000-000000000000/v2.0"
+      namespace            = "default"
+      service_account_name = "my-sa"
+    },
+    {
+      name    = "custom-oidc"
+      type    = "other"
+      issuer  = "https://example.com"
+      subject = "my-subject"
+    },
+  ]
+
+  access_policies = [
+    {
+      key_vault_id            = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-rg/providers/Microsoft.KeyVault/vaults/my-vault"
+      key_permissions         = ["Get", "List"]
+      secret_permissions      = ["Get", "List"]
+      certificate_permissions = []
+      storage_permissions     = []
+    },
+  ]
+}
