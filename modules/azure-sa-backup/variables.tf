@@ -1,12 +1,12 @@
 # VARIABLES SECTION
 ## General
 variable "backup_resource_group_name" {
-  description = "The name for the resource group for the backups"
+  description = "Name of the existing resource group where backup vaults and policies are created (also used for the data source and optional tag merge)."
   type        = string
 }
 
 variable "storage_account_id" {
-  description = "The ID of the storage account"
+  description = "Full Azure resource ID of the storage account to protect (file shares and/or blob backup)."
   type        = string
 }
 
@@ -70,6 +70,10 @@ variable "backup_share" {
     }))
   })
   default = null
+  validation {
+    condition     = var.backup_share == null || length(var.backup_share.source_file_share_name) == 1
+    error_message = "When backup_share is set, exactly one value must be provided in backup_share.source_file_share_name."
+  }
 }
 
 ## Backup blobs variables
@@ -113,6 +117,7 @@ variable "backup_blob" {
 }
 
 variable "lifecycle_policy_rule" {
+  description = "DEPRECATED: Currently not used by any resource. Setting this variable has no effect."
   type = list(object({
     name    = string
     enabled = bool
