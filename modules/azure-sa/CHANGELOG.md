@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.4...azure-sa-v0.4.0) (2026-10-14)
+
+
+### Features
+
+* Add immutability policy on azure-sa module ([#1453](https://github.com/prefapp/tfm/issues/1453)) ([53a52dd](https://github.com/prefapp/tfm/commit/53a52dde9023057d506933978f694d1855b73e76))
+
 ## [0.3.4](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.3...azure-sa-v0.3.4) (2026-08-20)
 
 
