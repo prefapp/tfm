@@ -34,8 +34,8 @@ resource "azurerm_storage_account" "this" {
   dynamic "blob_properties" {
     for_each = var.storage_account.blob_properties != null ? [var.storage_account.blob_properties] : []
     content {
-      versioning_enabled  = lookup(blob_properties.value, "versioning_enabled", null)
-      change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
+      versioning_enabled       = lookup(blob_properties.value, "versioning_enabled", null)
+      change_feed_enabled      = lookup(blob_properties.value, "change_feed_enabled", null)
       last_access_time_enabled = lookup(blob_properties.value, "last_access_time_enabled", null)
       dynamic "delete_retention_policy" {
         for_each = blob_properties.value.delete_retention_policy != null ? [blob_properties.value.delete_retention_policy] : []
@@ -75,6 +75,14 @@ resource "azurerm_storage_account" "this" {
       identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
+  dynamic "immutability_policy" {
+    for_each = var.storage_account.immutability_policy != null ? [var.storage_account.immutability_policy] : []
+    content {
+      state                         = immutability_policy.value.state
+      period_since_creation_in_days = immutability_policy.value.period_since_creation_in_days
+      allow_protected_append_writes = immutability_policy.value.allow_protected_append_writes
+    }
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules
@@ -104,15 +112,28 @@ resource "azurerm_storage_container" "this" {
   metadata                          = each.value.metadata
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container_immutability_policy
+resource "azurerm_storage_container_immutability_policy" "this" {
+  for_each = var.containers != null ? {
+    for container in var.containers : container.name => container
+    if container.immutability_policy != null
+  } : {}
+  storage_container_resource_manager_id = azurerm_storage_container.this[each.key].resource_manager_id
+  immutability_period_in_days           = each.value.immutability_policy.immutability_period_in_days
+  locked                                = each.value.immutability_policy.locked
+  protected_append_writes_enabled       = each.value.immutability_policy.protected_append_writes_enabled
+  protected_append_writes_all_enabled   = each.value.immutability_policy.protected_append_writes_all_enabled
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share
 resource "azurerm_storage_share" "this" {
-  for_each             = var.shares != null ? { for share in var.shares : share.name => share } : {}
-  name                 = each.value.name
-  storage_account_id   = azurerm_storage_account.this.id
-  access_tier          = each.value.access_tier
-  enabled_protocol     = each.value.enabled_protocol
-  quota                = each.value.quota
-  metadata             = each.value.metadata
+  for_each           = var.shares != null ? { for share in var.shares : share.name => share } : {}
+  name               = each.value.name
+  storage_account_id = azurerm_storage_account.this.id
+  access_tier        = each.value.access_tier
+  enabled_protocol   = each.value.enabled_protocol
+  quota              = each.value.quota
+  metadata           = each.value.metadata
   dynamic "acl" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
@@ -164,7 +185,7 @@ resource "azurerm_advanced_threat_protection" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
-  count = var.lifecycle_policy_rules == null ? 0 : 1
+  count              = var.lifecycle_policy_rules == null ? 0 : 1
   storage_account_id = azurerm_storage_account.this.id
 
   dynamic "rule" {
