@@ -51,6 +51,14 @@ containers:
     container_access_type: "private"
   - name: "test2"
     container_access_type: "private"
+  # WORM: time-based retention policy scoped to this container only.
+  # locked: true is irreversible and blocks deletion of the container and the account.
+  - name: "worm"
+    container_access_type: "private"
+    immutability_policy:
+      immutability_period_in_days: 365
+      locked: false
+      protected_append_writes_enabled: true
 
 queues:
   - name: "test"

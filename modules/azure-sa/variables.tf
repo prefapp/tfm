@@ -56,8 +56,8 @@ variable "storage_account" {
       identity_ids = optional(list(string), [])
     }))
     blob_properties = optional(object({
-      versioning_enabled  = optional(bool)
-      change_feed_enabled = optional(bool)
+      versioning_enabled       = optional(bool)
+      change_feed_enabled      = optional(bool)
       last_access_time_enabled = optional(bool)
       delete_retention_policy = optional(object({
         days = optional(number)
@@ -73,6 +73,13 @@ variable "storage_account" {
       retention_policy = optional(object({
         days = optional(number)
       }))
+    }))
+    # Account-level WORM. Azure only accepts it at creation time, so setting or
+    # removing it on an existing account recreates the storage account.
+    immutability_policy = optional(object({
+      state                         = string
+      period_since_creation_in_days = number
+      allow_protected_append_writes = bool
     }))
   })
 
@@ -153,6 +160,18 @@ variable "storage_account" {
     )
     error_message = "share_properties.retention_policy.days must be between 1 and 365."
   }
+
+  # Validation block for `immutability_policy`
+  validation {
+    condition = (
+      var.storage_account.immutability_policy == null ? true : (
+        contains(["Disabled", "Unlocked", "Locked"], var.storage_account.immutability_policy.state) &&
+        var.storage_account.immutability_policy.period_since_creation_in_days >= 1 &&
+        var.storage_account.immutability_policy.period_since_creation_in_days <= 146000
+      )
+    )
+    error_message = "immutability_policy.state must be one of: Disabled, Unlocked or Locked, and immutability_policy.period_since_creation_in_days must be between 1 and 146000."
+  }
 }
 
 
@@ -179,8 +198,30 @@ variable "containers" {
     default_encryption_scope          = optional(string)
     encryption_scope_override_enabled = optional(bool)
     metadata                          = optional(map(string))
+    # Container-level WORM (time-based retention policy).
+    immutability_policy = optional(object({
+      immutability_period_in_days         = number
+      locked                              = optional(bool, false)
+      protected_append_writes_enabled     = optional(bool, false)
+      protected_append_writes_all_enabled = optional(bool, false)
+    }))
   }))
   default = null
+
+  # Validation block for container `immutability_policy`
+  validation {
+    condition = var.containers == null ? true : alltrue([
+      for container in var.containers : (
+        container.immutability_policy == null ? true : (
+          container.immutability_policy.immutability_period_in_days >= 1 &&
+          container.immutability_policy.immutability_period_in_days <= 146000 &&
+          !(coalesce(container.immutability_policy.protected_append_writes_enabled, false) &&
+          coalesce(container.immutability_policy.protected_append_writes_all_enabled, false))
+        )
+      )
+    ])
+    error_message = "containers[*].immutability_policy.immutability_period_in_days must be between 1 and 146000, and protected_append_writes_enabled and protected_append_writes_all_enabled are mutually exclusive."
+  }
 }
 
 ## Storage share variables
