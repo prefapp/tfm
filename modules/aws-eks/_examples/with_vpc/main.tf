@@ -63,5 +63,5 @@ module "eks" {
     Environment = "dev"
     Project     = "my-project"
   }
-}
 
+}

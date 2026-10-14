@@ -12,6 +12,7 @@ Below is a description of the main features and components of the module:
 - **EKS Configuration**: Allows the creation of an EKS cluster with custom options such as the _Kubernetes_ version, API access, and efficient node management.
 - **Node Group Management**: Facilitates the creation and management of node groups with various configurations, such as instance types, desired, minimum, and maximum capacity, and tags.
 - **IAM Authentication and Authorization**: Offers flexibility in managing IAM users and roles for authentication in the EKS cluster, allowing the addition of additional IAM users and roles.
+- **Firestartr Integrations**: Optionally discovers tagged customer Backstage and ArgoCD IAM roles and grants read-only or cluster-admin Kubernetes access through EKS access entries.
 - **Addon Configuration**: Includes options to enable essential addons such as \_CoreDNS\_, \_kube-proxy\_, and \_VPC CNI\_, as well as the ability to add custom addons.
 - **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like \_ALB Ingress Controller\_, \_CloudWatch\_, \_EFS CSI Driver\_, and \_ExternalDNS\_.
 
@@ -24,6 +25,13 @@ Below is a description of the main features and components of the module:
   - **EFS (Elastic File System)**: Supports EFS CSI driver for persistent, scalable file storage in Kubernetes pods.
   - **External DNS**: Allows ExternalDNS to manage DNS records in Route53 automatically from Kubernetes resources.
   - **Parameter Store**: Grants access to AWS Systems Manager Parameter Store for secure configuration and secrets management in workloads.
+
+Backstage and ArgoCD access entries are opt-in and disabled by default. Enabling the Backstage entry associates cluster-scoped `AmazonEKSViewPolicy`, which permits reading resources and pod logs but not Kubernetes Secrets. Enabling the ArgoCD entry associates cluster-scoped `AmazonEKSClusterAdminPolicy`, including RBAC administration. The module discovers roles by their exact names and validates the `FirestartrIntegration`, `ManagedBy`, and `ProvisionedBy` tags before granting access. It requires exactly one matching role for each enabled option; the reserved generated access-entry keys cannot also be declared in `access_entries`.
+
+```hcl
+enable_backstage_reader_access_entry = true
+enable_argocd_admin_access_entry     = false
+```
 
 ## Basic Usage
 
@@ -134,7 +142,8 @@ The module is organized with the following directory and file structure:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.33 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.68.0 |
+| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
 
@@ -166,7 +175,13 @@ The module is organized with the following directory and file structure:
 | [aws_iam_role_policy_attachment.iam_role_fluentd_CloudWatchAgentServerPolicy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam_role_parameter_store_all_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.iam_role_scm_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [terraform_data.argocd_admin_role_validation](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.backstage_reader_role_validation](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_iam_role.argocd_admin_candidates](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
+| [aws_iam_role.backstage_reader_candidates](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
+| [aws_iam_roles.argocd_admin_candidates](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_roles) | data source |
+| [aws_iam_roles.backstage_reader_candidates](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_roles) | data source |
 | [aws_subnets.filtered](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.by_tags](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
@@ -199,6 +214,8 @@ The module is organized with the following directory and file structure:
 | <a name="input_create_external_dns_iam"></a> [create\_external\_dns\_iam](#input\_create\_external\_dns\_iam) | Create IAM resources for external-dns | `bool` | `false` | no |
 | <a name="input_create_kms_key"></a> [create\_kms\_key](#input\_create\_kms\_key) | Create KMS key for cluster | `bool` | `true` | no |
 | <a name="input_create_parameter_store_iam"></a> [create\_parameter\_store\_iam](#input\_create\_parameter\_store\_iam) | Create IAM resources for parameter-store | `bool` | `false` | no |
+| <a name="input_enable_argocd_admin_access_entry"></a> [enable\_argocd\_admin\_access\_entry](#input\_enable\_argocd\_admin\_access\_entry) | Create an EKS access entry and cluster-admin access policy for the FirestartrArgoCDAdmin IAM role tagged FirestartrIntegration=argocd-admin, ManagedBy=Prefapp, and ProvisionedBy=CloudFormation | `bool` | `false` | no |
+| <a name="input_enable_backstage_reader_access_entry"></a> [enable\_backstage\_reader\_access\_entry](#input\_enable\_backstage\_reader\_access\_entry) | Create an EKS access entry and cluster-wide read-only access policy for the FirestartrBackstageReader IAM role tagged FirestartrIntegration=backstage-reader, ManagedBy=Prefapp, and ProvisionedBy=CloudFormation | `bool` | `false` | no |
 | <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Enable IRSA | `bool` | `true` | no |
 | <a name="input_enable_karpenter"></a> [enable\_karpenter](#input\_enable\_karpenter) | Enable Karpenter provisioning | `bool` | `false` | no |
 | <a name="input_enabled_log_types"></a> [enabled\_log\_types](#input\_enabled\_log\_types) | A list of the desired control plane logs to enable. For more information, see Amazon EKS Control Plane Logging documentation (https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) | `list(string)` | <pre>[<br/>  "audit",<br/>  "api",<br/>  "authenticator"<br/>]</pre> | no |

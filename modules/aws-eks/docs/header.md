@@ -11,6 +11,7 @@ Below is a description of the main features and components of the module:
 - **EKS Configuration**: Allows the creation of an EKS cluster with custom options such as the _Kubernetes_ version, API access, and efficient node management.
 - **Node Group Management**: Facilitates the creation and management of node groups with various configurations, such as instance types, desired, minimum, and maximum capacity, and tags.
 - **IAM Authentication and Authorization**: Offers flexibility in managing IAM users and roles for authentication in the EKS cluster, allowing the addition of additional IAM users and roles.
+- **Firestartr Integrations**: Optionally discovers tagged customer Backstage and ArgoCD IAM roles and grants read-only or cluster-admin Kubernetes access through EKS access entries.
 - **Addon Configuration**: Includes options to enable essential addons such as _CoreDNS_, _kube-proxy_, and _VPC CNI_, as well as the ability to add custom addons.
 - **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like _ALB Ingress Controller_, _CloudWatch_, _EFS CSI Driver_, and _ExternalDNS_.
 
@@ -23,6 +24,13 @@ Below is a description of the main features and components of the module:
   - **EFS (Elastic File System)**: Supports EFS CSI driver for persistent, scalable file storage in Kubernetes pods.
   - **External DNS**: Allows ExternalDNS to manage DNS records in Route53 automatically from Kubernetes resources.
   - **Parameter Store**: Grants access to AWS Systems Manager Parameter Store for secure configuration and secrets management in workloads.
+
+Backstage and ArgoCD access entries are opt-in and disabled by default. Enabling the Backstage entry associates cluster-scoped `AmazonEKSViewPolicy`, which permits reading resources and pod logs but not Kubernetes Secrets. Enabling the ArgoCD entry associates cluster-scoped `AmazonEKSClusterAdminPolicy`, including RBAC administration. The module discovers roles by their exact names and validates the `FirestartrIntegration`, `ManagedBy`, and `ProvisionedBy` tags before granting access. It requires exactly one matching role for each enabled option; the reserved generated access-entry keys cannot also be declared in `access_entries`.
+
+```hcl
+enable_backstage_reader_access_entry = true
+enable_argocd_admin_access_entry     = false
+```
 
 ## Basic Usage
 

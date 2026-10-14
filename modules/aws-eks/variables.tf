@@ -225,6 +225,18 @@ variable "access_entries" {
   default     = {}
 }
 
+variable "enable_backstage_reader_access_entry" {
+  description = "Create an EKS access entry and cluster-wide read-only access policy for the FirestartrBackstageReader IAM role tagged FirestartrIntegration=backstage-reader, ManagedBy=Prefapp, and ProvisionedBy=CloudFormation"
+  type        = bool
+  default     = false
+}
+
+variable "enable_argocd_admin_access_entry" {
+  description = "Create an EKS access entry and cluster-admin access policy for the FirestartrArgoCDAdmin IAM role tagged FirestartrIntegration=argocd-admin, ManagedBy=Prefapp, and ProvisionedBy=CloudFormation"
+  type        = bool
+  default     = false
+}
+
 variable "enable_karpenter" {
   description = "Enable Karpenter provisioning"
   type        = bool
