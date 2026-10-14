@@ -40,6 +40,15 @@ resource "azurerm_linux_virtual_machine" "this" {
     }
   }
 
+  dynamic "plan" {
+    for_each = var.vm.plan != null ? [var.vm.plan] : []
+    content {
+      name      = plan.value.name
+      product   = plan.value.product
+      publisher = plan.value.publisher
+    }
+  }
+
   os_disk {
     name                     = var.vm.os_disk.name
     caching                  = var.vm.os_disk.caching

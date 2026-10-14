@@ -48,6 +48,12 @@ variable "vm" {
       version   = string
     }))
 
+    plan = optional(object({
+      name      = string
+      product   = string
+      publisher = string
+    }))
+
     os_disk = object({
       name                     = optional(string)
       caching                  = string
