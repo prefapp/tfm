@@ -84,7 +84,7 @@ locals {
         principal_arn = terraform_data.backstage_reader_role_validation[0].output.role_arn
         policy_associations = {
           AmazonEKSViewPolicy = {
-            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+            policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
             access_scope = {
               type = "cluster"
             }
@@ -97,7 +97,7 @@ locals {
         principal_arn = terraform_data.argocd_admin_role_validation[0].output.role_arn
         policy_associations = {
           AmazonEKSClusterAdminPolicy = {
-            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+            policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
             access_scope = {
               type = "cluster"
             }

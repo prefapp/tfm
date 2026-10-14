@@ -6,6 +6,8 @@
 */
 data "aws_caller_identity" "current" {}
 
+data "aws_partition" "current" {}
+
 data "aws_iam_roles" "backstage_reader_candidates" {
   count      = var.enable_backstage_reader_access_entry ? 1 : 0
   name_regex = "^FirestartrBackstageReader$"
