@@ -40,6 +40,11 @@ module "linux_vm" {
       sku       = "server"
       version   = "latest"
     }
+    plan = {
+      name      = "marketplace-plan"
+      product   = "marketplace-product"
+      publisher = "marketplace-publisher"
+    }
     os_disk = {
       caching              = "ReadWrite"
       disk_size_gb         = 64
