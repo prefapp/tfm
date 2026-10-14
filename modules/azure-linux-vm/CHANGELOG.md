@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/prefapp/tfm/compare/azure-linux-vm-v0.1.3...azure-linux-vm-v0.1.4) (2026-10-14)
+
+
+### Bug Fixes
+
+* Add plan dinamic block on azure-linux-vm module ([#1450](https://github.com/prefapp/tfm/issues/1450)) ([e273ec0](https://github.com/prefapp/tfm/commit/e273ec0f7e4db0d1d30ce77937046864c7e3f47e))
+
 ## [0.1.3](https://github.com/prefapp/tfm/compare/azure-linux-vm-v0.1.2...azure-linux-vm-v0.1.3) (2026-08-20)
 
 
