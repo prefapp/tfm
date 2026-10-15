@@ -11,7 +11,7 @@ Below is a description of the main features and components of the module:
 - **EKS Configuration**: Allows the creation of an EKS cluster with custom options such as the _Kubernetes_ version, API access, and efficient node management.
 - **Node Group Management**: Facilitates the creation and management of node groups with various configurations, such as instance types, desired, minimum, and maximum capacity, and tags.
 - **IAM Authentication and Authorization**: Offers flexibility in managing IAM users and roles for authentication in the EKS cluster, allowing the addition of additional IAM users and roles.
-- **Firestartr Integrations**: Optionally discovers tagged customer Backstage and ArgoCD IAM roles and grants read-only or cluster-admin Kubernetes access through EKS access entries.
+- **Backstage and ArgoCD Integrations**: Optionally discovers customer IAM roles and grants read-only or cluster-admin Kubernetes access through EKS access entries. The default role names and tags are intended for integration with [Firestartr](https://docs.firestartr.dev/docs/), and can be overridden for other role conventions.
 - **Addon Configuration**: Includes options to enable essential addons such as _CoreDNS_, _kube-proxy_, and _VPC CNI_, as well as the ability to add custom addons.
 - **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like _ALB Ingress Controller_, _CloudWatch_, _EFS CSI Driver_, and _ExternalDNS_.
 
@@ -25,11 +25,25 @@ Below is a description of the main features and components of the module:
   - **External DNS**: Allows ExternalDNS to manage DNS records in Route53 automatically from Kubernetes resources.
   - **Parameter Store**: Grants access to AWS Systems Manager Parameter Store for secure configuration and secrets management in workloads.
 
-Backstage and ArgoCD access entries are opt-in and disabled by default. Enabling the Backstage entry associates cluster-scoped `AmazonEKSViewPolicy`, which permits reading resources and pod logs but not Kubernetes Secrets. Enabling the ArgoCD entry associates cluster-scoped `AmazonEKSClusterAdminPolicy`, including RBAC administration. The module discovers roles by their exact names and validates the `FirestartrIntegration`, `ManagedBy`, and `ProvisionedBy` tags before granting access. It requires exactly one matching role for each enabled option; the reserved generated access-entry keys cannot also be declared in `access_entries`. Existing resources can be imported at `module.<call-name>.module.eks.aws_eks_access_entry.this["firestartr_backstage_reader"]` or `module.<call-name>.module.eks.aws_eks_access_entry.this["firestartr_argocd_admin"]` using `<cluster-name>:<role-arn>`, and at `module.<call-name>.module.eks.aws_eks_access_policy_association.this["firestartr_backstage_reader_AmazonEKSViewPolicy"]` or `module.<call-name>.module.eks.aws_eks_access_policy_association.this["firestartr_argocd_admin_AmazonEKSClusterAdminPolicy"]` using `<cluster-name>#<role-arn>#<policy-arn>`. Replace `<call-name>` with the name assigned to this module in the caller's Terraform configuration. Disabling an option destroys its EKS access-policy association and access entry but does not delete the discovered IAM role.
+Backstage and ArgoCD access entries are opt-in and disabled by default. Enabling the Backstage entry associates cluster-scoped `AmazonEKSViewPolicy`, which permits reading resources and pod logs but not Kubernetes Secrets. Enabling the ArgoCD entry associates cluster-scoped `AmazonEKSClusterAdminPolicy`, including RBAC administration. For each integration, configure the exact IAM role name and a non-empty map of required role tags; all configured tags must match before access is granted. The defaults (`FirestartrBackstageReader` / `FirestartrArgoCDAdmin` and their `FirestartrIntegration`, `ManagedBy`, and `ProvisionedBy` tags) are intended for integration with [Firestartr](https://docs.firestartr.dev/docs/). The module requires exactly one role with the configured name and tags for each enabled option; the reserved generated access-entry keys cannot also be declared in `access_entries`. Existing resources can be imported at `module.<call-name>.module.eks.aws_eks_access_entry.this["firestartr_backstage_reader"]` or `module.<call-name>.module.eks.aws_eks_access_entry.this["firestartr_argocd_admin"]` using `<cluster-name>:<role-arn>`, and at `module.<call-name>.module.eks.aws_eks_access_policy_association.this["firestartr_backstage_reader_AmazonEKSViewPolicy"]` or `module.<call-name>.module.eks.aws_eks_access_policy_association.this["firestartr_argocd_admin_AmazonEKSClusterAdminPolicy"]` using `<cluster-name>#<role-arn>#<policy-arn>`. Replace `<call-name>` with the name assigned to this module in the caller's Terraform configuration. Disabling an option destroys its EKS access-policy association and access entry but does not delete the discovered IAM role.
 
 ```hcl
 enable_backstage_reader_access_entry = true
 enable_argocd_admin_access_entry     = false
+
+# Defaults target the Firestartr IAM roles and tags. Override both values to
+# discover a role provisioned with a different naming/tagging convention.
+backstage_reader_role_name = "PlatformBackstageReader"
+backstage_reader_role_tags = {
+  Integration = "backstage-reader"
+  ManagedBy   = "PlatformTeam"
+}
+
+argocd_admin_role_name = "PlatformArgoCDAdmin"
+argocd_admin_role_tags = {
+  Integration = "argocd-admin"
+  ManagedBy   = "PlatformTeam"
+}
 ```
 
 ## Basic Usage

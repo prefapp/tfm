@@ -10,7 +10,7 @@ data "aws_partition" "current" {}
 
 data "aws_iam_roles" "backstage_reader_candidates" {
   count      = var.enable_backstage_reader_access_entry ? 1 : 0
-  name_regex = "^FirestartrBackstageReader$"
+  name_regex = local.backstage_reader_role_name_regex
 }
 
 data "aws_iam_role" "backstage_reader_candidates" {
@@ -20,7 +20,7 @@ data "aws_iam_role" "backstage_reader_candidates" {
 
 data "aws_iam_roles" "argocd_admin_candidates" {
   count      = var.enable_argocd_admin_access_entry ? 1 : 0
-  name_regex = "^FirestartrArgoCDAdmin$"
+  name_regex = local.argocd_admin_role_name_regex
 }
 
 data "aws_iam_role" "argocd_admin_candidates" {

@@ -58,6 +58,9 @@ locals {
     }
   ] : []
 
+  backstage_reader_role_name_regex = "^${replace(replace(var.backstage_reader_role_name, ".", "\\."), "+", "\\+")}$"
+  argocd_admin_role_name_regex     = "^${replace(replace(var.argocd_admin_role_name, ".", "\\."), "+", "\\+")}$"
+
   #######################################
   # Final Subnet Selection (Dynamic Logic)
   #######################################
@@ -66,16 +69,12 @@ locals {
 
   backstage_reader_role_arns = var.enable_backstage_reader_access_entry ? [
     for role in data.aws_iam_role.backstage_reader_candidates : role.arn
-    if lookup(role.tags, "FirestartrIntegration", "") == "backstage-reader" &&
-    lookup(role.tags, "ManagedBy", "") == "Prefapp" &&
-    lookup(role.tags, "ProvisionedBy", "") == "CloudFormation"
+    if alltrue([for key, value in var.backstage_reader_role_tags : lookup(role.tags, key, null) == value])
   ] : []
 
   argocd_admin_role_arns = var.enable_argocd_admin_access_entry ? [
     for role in data.aws_iam_role.argocd_admin_candidates : role.arn
-    if lookup(role.tags, "FirestartrIntegration", "") == "argocd-admin" &&
-    lookup(role.tags, "ManagedBy", "") == "Prefapp" &&
-    lookup(role.tags, "ProvisionedBy", "") == "CloudFormation"
+    if alltrue([for key, value in var.argocd_admin_role_tags : lookup(role.tags, key, null) == value])
   ] : []
 
   integration_access_entries = merge(

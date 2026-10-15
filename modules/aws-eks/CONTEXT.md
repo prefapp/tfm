@@ -27,7 +27,7 @@ A managed EKS Kubernetes permission set attached to an access entry and scoped t
 _Avoid_: IAM policy
 
 **Firestartr integration role**:
-A customer-account IAM role provisioned for a Firestartr integration. The Backstage reader and ArgoCD admin access-entry options discover these roles by name and require matching ownership and integration tags.
+A customer-account IAM role used by a Backstage or ArgoCD integration. The module discovers the role by a configurable name and requires all configured tags to match; Firestartr role names and tags are the defaults for the planned Firestartr integration.
 
 **cluster addon**:
 An AWS-managed add-on declared in `cluster_addons` (CoreDNS, kube-proxy, VPC CNI, EBS CSI…). Managed by the cluster, not installed as a Helm release.

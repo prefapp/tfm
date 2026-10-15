@@ -8,7 +8,7 @@ resource "terraform_data" "backstage_reader_role_validation" {
   lifecycle {
     precondition {
       condition     = length(local.backstage_reader_role_arns) == 1
-      error_message = "Backstage access is enabled, but exactly one IAM role named FirestartrBackstageReader with the expected FirestartrIntegration, ManagedBy, and ProvisionedBy tags must exist in this AWS account."
+      error_message = "Backstage access is enabled, but exactly one IAM role named ${var.backstage_reader_role_name} with all configured backstage_reader_role_tags must exist in this AWS account."
     }
 
     precondition {
@@ -29,7 +29,7 @@ resource "terraform_data" "argocd_admin_role_validation" {
   lifecycle {
     precondition {
       condition     = length(local.argocd_admin_role_arns) == 1
-      error_message = "ArgoCD access is enabled, but exactly one IAM role named FirestartrArgoCDAdmin with the expected FirestartrIntegration, ManagedBy, and ProvisionedBy tags must exist in this AWS account."
+      error_message = "ArgoCD access is enabled, but exactly one IAM role named ${var.argocd_admin_role_name} with all configured argocd_admin_role_tags must exist in this AWS account."
     }
 
     precondition {
