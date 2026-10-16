@@ -21,6 +21,9 @@ module "eks" {
   cluster_version = "1.33"
   vpc_id          = "vpc-0123456789abcdef0" # Replace with the target VPC ID.
 
+  # Replace with subnets in the target VPC spanning at least two availability zones.
+  subnet_ids = ["subnet-0123456789abcdef0", "subnet-0fedcba9876543210"]
+
   node_groups                          = {}
   node_security_group_additional_rules = []
 
