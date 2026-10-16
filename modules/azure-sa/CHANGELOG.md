@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.1](https://github.com/prefapp/tfm/compare/azure-sa-v0.4.0...azure-sa-v0.4.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* Fix policy actions on azure-sa module ([#1455](https://github.com/prefapp/tfm/issues/1455)) ([785d552](https://github.com/prefapp/tfm/commit/785d5523f33a6d9c6576080432b462f96c96f824))
+
+## [0.4.0](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.4...azure-sa-v0.4.0) (2026-10-14)
+
+
+### Features
+
+* Add immutability policy on azure-sa module ([#1453](https://github.com/prefapp/tfm/issues/1453)) ([53a52dd](https://github.com/prefapp/tfm/commit/53a52dde9023057d506933978f694d1855b73e76))
+
 ## [0.3.4](https://github.com/prefapp/tfm/compare/azure-sa-v0.3.3...azure-sa-v0.3.4) (2026-08-20)
 
 
