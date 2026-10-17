@@ -68,5 +68,8 @@
     "modules/azure-managed-redis": "2.0.0",
     "modules/github-org-settings": "0.1.0",
     "modules/github-org-variables-section": "0.1.0",
+    "modules/ovh-network": "0.1.0",
+    "modules/ovh-mks": "0.1.0",
+    "modules/ovh-mks-access": "0.1.0",
     "modules/azure-cognitive-account": "0.1.0"
 }
