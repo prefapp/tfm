@@ -13,6 +13,7 @@ Below is a description of the main features and components of the module:
 - **Node Group Management**: Facilitates the creation and management of node groups with various configurations, such as instance types, desired, minimum, and maximum capacity, and tags.
 - **IAM Authentication and Authorization**: Offers flexibility in managing IAM users and roles for authentication in the EKS cluster, allowing the addition of additional IAM users and roles.
 - **Addon Configuration**: Includes options to enable essential addons such as \_CoreDNS\_, \_kube-proxy\_, and \_VPC CNI\_, as well as the ability to add custom addons.
+- **Addon Ordering**: Configures `vpc-cni` and `eks-pod-identity-agent` to be created before node groups by default; values in `cluster_addons` can override this setting.
 - **Additional Security**: Allows the addition of extra security rules to control traffic, as well as the creation of specific IAM roles for services like \_ALB Ingress Controller\_, \_CloudWatch\_, \_EFS CSI Driver\_, and \_ExternalDNS\_.
 
 ## Key Features
@@ -134,7 +135,7 @@ The module is organized with the following directory and file structure:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.33 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.69.1 |
 
 ## Modules
 
