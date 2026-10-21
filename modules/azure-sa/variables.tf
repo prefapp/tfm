@@ -326,17 +326,18 @@ variable "lifecycle_policy_rules" {
 }
 
 variable "object_replication" {
- object({
+  description = "Optional object replication policy from this account to a separately managed destination account."
+  default     = null
+
+  type = optional(object({
     destination_storage_account_id = string
     rules = list(object({
-      source_container_name       = string
-      destination_container_name  = string
-      copy_blobs_created_after    = optional(string, "OnlyNewObjects")
+      source_container_name        = string
+      destination_container_name   = string
+      copy_blobs_created_after     = optional(string, "OnlyNewObjects")
       filter_out_blobs_with_prefix = optional(list(string))
     }))
-  })
-  default = null  description = "Optional object replication policy from this account to a separately managed destination account."
-  type =
+  }))
 
   validation {
     condition = var.object_replication == null ? true : (
