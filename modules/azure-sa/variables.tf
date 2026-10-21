@@ -329,7 +329,7 @@ variable "object_replication" {
   description = "Optional object replication policy from this account to a separately managed destination account."
   default     = null
 
-  type = optional(object({
+  type = object({
     destination_storage_account_id = string
     rules = list(object({
       source_container_name        = string
@@ -337,7 +337,7 @@ variable "object_replication" {
       copy_blobs_created_after     = optional(string, "OnlyNewObjects")
       filter_out_blobs_with_prefix = optional(list(string))
     }))
-  }))
+  })
 
   validation {
     condition = var.object_replication == null ? true : (
