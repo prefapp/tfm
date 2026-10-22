@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/prefapp/tfm/compare/azure-sa-v0.4.1...azure-sa-v0.5.0) (2026-10-22)
+
+
+### Features
+
+* Add object replication on azure-sa module ([#1457](https://github.com/prefapp/tfm/issues/1457)) ([fff48f3](https://github.com/prefapp/tfm/commit/fff48f32f80f582e7ef54611a2e362178ea027e4))
+
 ## [0.4.1](https://github.com/prefapp/tfm/compare/azure-sa-v0.4.0...azure-sa-v0.4.1) (2026-10-15)
 
 
