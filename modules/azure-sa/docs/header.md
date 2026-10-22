@@ -13,6 +13,7 @@ The module does **not** create the resource group or virtual networks; it looks 
 - **Data plane resources**: Optional containers, shares, queues, and tables via `for_each` maps.
 - **Outputs**: Storage account `id`, `name`, `primary_blob_endpoint`, and maps of child resource IDs (`container_ids`, `share_ids`, `queue_ids`, `table_ids`).
 - **Lifecycle**: Optional `azurerm_storage_management_policy` when `lifecycle_policy_rules` is set.
+- **Object replication**: Optional replication of block blobs to a separately managed account in this or another region.
 - **WORM / immutable blob storage**: Optional account-level `immutability_policy` and per-container time-based retention policies (`azurerm_storage_container_immutability_policy`).
 - **Tags**: `tags` map; with `tags_from_rg = true` (default is `false`), resource group tags are merged with `tags`.
 
@@ -55,6 +56,28 @@ module "storage" {
 ```
 
 Use `default_action = "Deny"` only together with subnet/IP/private link rules that match your connectivity model.
+
+## Object replication
+
+Configure `object_replication` on the source account with the destination account ID and one or more container pairs. The destination account and its containers must already exist and be managed separately. Both accounts need blob versioning; the source also needs change feed. Object replication supports block blobs only and doesn't support hierarchical namespace-enabled accounts.
+
+```hcl
+object_replication = {
+  destination_storage_account_id = "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Storage/storageAccounts/<destination-account>"
+  rules = [
+    {
+      source_container_name        = "data"
+      destination_container_name   = "data"
+      copy_blobs_created_after     = "Everything"
+      filter_out_blobs_with_prefix = ["temporary/"]
+    }
+  ]
+}
+```
+
+`copy_blobs_created_after` defaults to `OnlyNewObjects`. Set it to `Everything` to include existing blobs, or provide an RFC3339 timestamp for a custom copy boundary. Replication is asynchronous. While a policy is active, writes to the destination container are blocked. Removing the Terraform resource removes the policy from both accounts but does not delete the accounts or containers. Import uses the composite source/destination policy ID documented for `azurerm_storage_object_replication`.
+
+Azure may fail to replicate updates or deletes when the destination container has an immutability policy. Validate this combination against the workload before enabling WORM on the destination. Archived blobs cannot be replicated.
 
 ## WORM (immutable blob storage)
 
