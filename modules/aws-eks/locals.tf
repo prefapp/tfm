@@ -58,9 +58,53 @@ locals {
     }
   ] : []
 
+  backstage_reader_role_name_regex = "^${replace(replace(var.backstage_reader_role_name, ".", "\\."), "+", "\\+")}$"
+  argocd_admin_role_name_regex     = "^${replace(replace(var.argocd_admin_role_name, ".", "\\."), "+", "\\+")}$"
+
   #######################################
   # Final Subnet Selection (Dynamic Logic)
   #######################################
   # Decide which subnet IDs to use (filtered or manually provided)
   selected_subnet_ids = var.subnet_tags != null && length(data.aws_subnets.filtered.ids) > 0 ? data.aws_subnets.filtered.ids : var.subnet_ids
+
+  backstage_reader_role_arns = var.enable_backstage_reader_access_entry ? [
+    for role in data.aws_iam_role.backstage_reader_candidates : role.arn
+    if alltrue([for key, value in var.backstage_reader_role_tags : value != null && lookup(role.tags, key, null) == value])
+  ] : []
+
+  argocd_admin_role_arns = var.enable_argocd_admin_access_entry ? [
+    for role in data.aws_iam_role.argocd_admin_candidates : role.arn
+    if alltrue([for key, value in var.argocd_admin_role_tags : value != null && lookup(role.tags, key, null) == value])
+  ] : []
+
+  integration_access_entries = merge(
+    var.enable_backstage_reader_access_entry ? {
+      firestartr_backstage_reader = {
+        principal_arn = terraform_data.backstage_reader_role_validation[0].output.role_arn
+        policy_associations = {
+          AmazonEKSViewPolicy = {
+            policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+            access_scope = {
+              type = "cluster"
+            }
+          }
+        }
+      }
+    } : {},
+    var.enable_argocd_admin_access_entry ? {
+      firestartr_argocd_admin = {
+        principal_arn = terraform_data.argocd_admin_role_validation[0].output.role_arn
+        policy_associations = {
+          AmazonEKSClusterAdminPolicy = {
+            policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+            access_scope = {
+              type = "cluster"
+            }
+          }
+        }
+      }
+    } : {}
+  )
+
+  effective_access_entries = merge(var.access_entries, local.integration_access_entries)
 }

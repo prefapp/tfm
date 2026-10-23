@@ -3,8 +3,10 @@
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples):
 
 - [karpenter](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/karpenter) - Configuration with karpenter module.
+- [with_firestartr_role_discovery](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with_firestartr_role_discovery) - Enable Backstage and ArgoCD access by discovering IAM roles with the default Firestartr names and tags.
+- [with_custom_role_discovery](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with_custom_role_discovery) - Enable Backstage and ArgoCD access by discovering existing IAM roles with custom names and tags, without Firestartr conventions.
 - [with_import](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with_import) - Import existing eks.
-- [with_vpc](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with_vpc) - We generate an EKS specifying the VPC name, not its tags.
+- [with_vpc](https://github.com/prefapp/tfm/tree/main/modules/aws-eks/_examples/with_vpc) - Generate EKS in an existing VPC and configure optional custom Backstage and ArgoCD IAM-role discovery.
 
 ## Remote resources
 
