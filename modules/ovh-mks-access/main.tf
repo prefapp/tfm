@@ -222,7 +222,7 @@ resource "terraform_data" "configuration" {
       error_message = "Each enabled method requires a secret_paths.<method> entry when publish_to_okms is true. Methods missing a path: ${join(", ", local.missing_secret_paths)}."
     }
     precondition {
-      condition     = length(local.configured_secret_destinations) == length(distinct(local.configured_secret_destinations))
+      condition     = !var.publish_to_okms || length(local.configured_secret_destinations) == length(distinct(local.configured_secret_destinations))
       error_message = "Each identity/method pair must publish to a distinct OKMS path; paths cannot be reused."
     }
   }
