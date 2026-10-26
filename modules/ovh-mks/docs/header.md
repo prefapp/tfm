@@ -98,4 +98,6 @@ The free plan applies to the managed control plane. This example requests no wor
 
 The private network and subnet must already exist in the selected Public Cloud project and region. They can be created separately with the [`ovh-network` module](https://github.com/prefapp/tfm/tree/main/modules/ovh-network).
 
+For a Standard cluster deployed across multiple availability zones, OVHcloud requires a Public Cloud gateway attached to the private network. This module does not create or manage the gateway, so provision and attach it before creating the cluster (for example, with `ovh-network`). The module discovers the network and subnet but does not validate that a gateway is attached.
+
 The `kubeconfig` output contains credentials and is marked sensitive. Protect Terraform state and plan files, and do not commit or distribute the kubeconfig as plain text.
