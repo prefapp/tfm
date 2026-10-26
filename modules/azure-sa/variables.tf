@@ -42,6 +42,7 @@ variable "storage_account" {
     account_tier                     = string
     account_replication_type         = string
     account_kind                     = optional(string, "StorageV2")
+    is_hns_enabled                   = optional(bool, false)
     access_tier                      = optional(string, "Hot")
     cross_tenant_replication_enabled = optional(bool, false)
     edge_zone                        = optional(string)
@@ -322,4 +323,36 @@ variable "lifecycle_policy_rules" {
     })
   }))
   default = null
+}
+
+variable "object_replication" {
+  description = "Optional object replication policy from this account to a separately managed destination account."
+  default     = null
+
+  type = object({
+    destination_storage_account_id = string
+    rules = list(object({
+      source_container_name        = string
+      destination_container_name   = string
+      copy_blobs_created_after     = optional(string, "OnlyNewObjects")
+      filter_out_blobs_with_prefix = optional(list(string))
+    }))
+  })
+
+  validation {
+    condition = var.object_replication == null ? true : (
+      trimspace(var.object_replication.destination_storage_account_id) != "" &&
+      length(var.object_replication.rules) > 0 &&
+      length(distinct([for rule in var.object_replication.rules : rule.source_container_name])) == length(var.object_replication.rules) &&
+      length(distinct([for rule in var.object_replication.rules : rule.destination_container_name])) == length(var.object_replication.rules) &&
+      alltrue([
+        for rule in var.object_replication.rules : (
+          trimspace(rule.source_container_name) != "" &&
+          trimspace(rule.destination_container_name) != "" &&
+          (rule.filter_out_blobs_with_prefix == null || length(rule.filter_out_blobs_with_prefix) <= 5)
+        )
+      ])
+    )
+    error_message = "object_replication requires a destination account ID and at least one rule; each source and destination container may appear only once, and each rule supports at most five excluded prefixes."
+  }
 }

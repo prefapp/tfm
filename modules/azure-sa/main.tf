@@ -23,6 +23,7 @@ resource "azurerm_storage_account" "this" {
   account_tier                     = var.storage_account.account_tier
   account_replication_type         = var.storage_account.account_replication_type
   account_kind                     = var.storage_account.account_kind
+  is_hns_enabled                   = var.storage_account.is_hns_enabled
   access_tier                      = var.storage_account.access_tier
   cross_tenant_replication_enabled = var.storage_account.cross_tenant_replication_enabled
   edge_zone                        = var.storage_account.edge_zone
@@ -110,6 +111,52 @@ resource "azurerm_storage_container" "this" {
   default_encryption_scope          = each.value.default_encryption_scope
   encryption_scope_override_enabled = each.value.encryption_scope_override_enabled
   metadata                          = each.value.metadata
+}
+
+resource "azurerm_storage_object_replication" "this" {
+  count = var.object_replication == null ? 0 : 1
+
+  source_storage_account_id      = azurerm_storage_account.this.id
+  destination_storage_account_id = var.object_replication.destination_storage_account_id
+
+  dynamic "rules" {
+    for_each = var.object_replication.rules
+    content {
+      source_container_name        = rules.value.source_container_name
+      destination_container_name   = rules.value.destination_container_name
+      copy_blobs_created_after     = rules.value.copy_blobs_created_after
+      filter_out_blobs_with_prefix = rules.value.filter_out_blobs_with_prefix
+    }
+  }
+
+  depends_on = [azurerm_storage_container.this]
+
+  lifecycle {
+    precondition {
+      condition = var.storage_account.blob_properties == null ? false : (
+        var.storage_account.blob_properties.versioning_enabled == true &&
+        var.storage_account.blob_properties.change_feed_enabled == true
+      )
+      error_message = "Object replication requires blob versioning and change feed enabled on the source storage account."
+    }
+
+    precondition {
+      condition     = contains(["StorageV2", "BlockBlobStorage"], var.storage_account.account_kind) && !var.storage_account.is_hns_enabled
+      error_message = "Object replication requires a general-purpose v2 or premium block blob account without hierarchical namespace."
+    }
+
+    precondition {
+      condition = alltrue([
+        for rule in var.object_replication.rules : contains(keys(azurerm_storage_container.this), rule.source_container_name)
+      ])
+      error_message = "Every object_replication rule source_container_name must refer to a container managed by this module."
+    }
+
+    precondition {
+      condition     = lower(var.object_replication.destination_storage_account_id) != lower(azurerm_storage_account.this.id)
+      error_message = "The object replication destination must be a different storage account from the source."
+    }
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container_immutability_policy

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.6](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.5...aws-eks-v1.5.6) (2026-10-21)
+
+
+### Bug Fixes
+
+* **aws-eks:** add before-compute as true in addon default value ([#1458](https://github.com/prefapp/tfm/issues/1458)) ([4e5c2bf](https://github.com/prefapp/tfm/commit/4e5c2bf3cff685e1f851b948d347da925c16c695))
+
 ## [1.5.5](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.4...aws-eks-v1.5.5) (2026-07-20)
 
 

@@ -38,6 +38,16 @@ storage_account:
     restore_policy:
       days: 10
 
+object_replication:
+  destination_storage_account_id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_dr/providers/Microsoft.Storage/storageAccounts/mystorageacctdr"
+  rules:
+    - source_container_name: "test"
+      destination_container_name: "test"
+      # Use Everything to include existing blobs as well as new blobs.
+      copy_blobs_created_after: "Everything"
+      filter_out_blobs_with_prefix:
+        - "temporary/"
+
 network_rules:
   default_action: "Deny"
   bypass: "AzureServices"
