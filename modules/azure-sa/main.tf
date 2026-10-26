@@ -23,6 +23,7 @@ resource "azurerm_storage_account" "this" {
   account_tier                     = var.storage_account.account_tier
   account_replication_type         = var.storage_account.account_replication_type
   account_kind                     = var.storage_account.account_kind
+  is_hns_enabled                   = var.storage_account.is_hns_enabled
   access_tier                      = var.storage_account.access_tier
   cross_tenant_replication_enabled = var.storage_account.cross_tenant_replication_enabled
   edge_zone                        = var.storage_account.edge_zone
@@ -34,8 +35,8 @@ resource "azurerm_storage_account" "this" {
   dynamic "blob_properties" {
     for_each = var.storage_account.blob_properties != null ? [var.storage_account.blob_properties] : []
     content {
-      versioning_enabled  = lookup(blob_properties.value, "versioning_enabled", null)
-      change_feed_enabled = lookup(blob_properties.value, "change_feed_enabled", null)
+      versioning_enabled       = lookup(blob_properties.value, "versioning_enabled", null)
+      change_feed_enabled      = lookup(blob_properties.value, "change_feed_enabled", null)
       last_access_time_enabled = lookup(blob_properties.value, "last_access_time_enabled", null)
       dynamic "delete_retention_policy" {
         for_each = blob_properties.value.delete_retention_policy != null ? [blob_properties.value.delete_retention_policy] : []
@@ -75,6 +76,14 @@ resource "azurerm_storage_account" "this" {
       identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
+  dynamic "immutability_policy" {
+    for_each = var.storage_account.immutability_policy != null ? [var.storage_account.immutability_policy] : []
+    content {
+      state                         = immutability_policy.value.state
+      period_since_creation_in_days = immutability_policy.value.period_since_creation_in_days
+      allow_protected_append_writes = immutability_policy.value.allow_protected_append_writes
+    }
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules
@@ -104,15 +113,74 @@ resource "azurerm_storage_container" "this" {
   metadata                          = each.value.metadata
 }
 
+resource "azurerm_storage_object_replication" "this" {
+  count = var.object_replication == null ? 0 : 1
+
+  source_storage_account_id      = azurerm_storage_account.this.id
+  destination_storage_account_id = var.object_replication.destination_storage_account_id
+
+  dynamic "rules" {
+    for_each = var.object_replication.rules
+    content {
+      source_container_name        = rules.value.source_container_name
+      destination_container_name   = rules.value.destination_container_name
+      copy_blobs_created_after     = rules.value.copy_blobs_created_after
+      filter_out_blobs_with_prefix = rules.value.filter_out_blobs_with_prefix
+    }
+  }
+
+  depends_on = [azurerm_storage_container.this]
+
+  lifecycle {
+    precondition {
+      condition = var.storage_account.blob_properties == null ? false : (
+        var.storage_account.blob_properties.versioning_enabled == true &&
+        var.storage_account.blob_properties.change_feed_enabled == true
+      )
+      error_message = "Object replication requires blob versioning and change feed enabled on the source storage account."
+    }
+
+    precondition {
+      condition     = contains(["StorageV2", "BlockBlobStorage"], var.storage_account.account_kind) && !var.storage_account.is_hns_enabled
+      error_message = "Object replication requires a general-purpose v2 or premium block blob account without hierarchical namespace."
+    }
+
+    precondition {
+      condition = alltrue([
+        for rule in var.object_replication.rules : contains(keys(azurerm_storage_container.this), rule.source_container_name)
+      ])
+      error_message = "Every object_replication rule source_container_name must refer to a container managed by this module."
+    }
+
+    precondition {
+      condition     = lower(var.object_replication.destination_storage_account_id) != lower(azurerm_storage_account.this.id)
+      error_message = "The object replication destination must be a different storage account from the source."
+    }
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container_immutability_policy
+resource "azurerm_storage_container_immutability_policy" "this" {
+  for_each = var.containers != null ? {
+    for container in var.containers : container.name => container
+    if container.immutability_policy != null
+  } : {}
+  storage_container_resource_manager_id = azurerm_storage_container.this[each.key].resource_manager_id
+  immutability_period_in_days           = each.value.immutability_policy.immutability_period_in_days
+  locked                                = each.value.immutability_policy.locked
+  protected_append_writes_enabled       = each.value.immutability_policy.protected_append_writes_enabled
+  protected_append_writes_all_enabled   = each.value.immutability_policy.protected_append_writes_all_enabled
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share
 resource "azurerm_storage_share" "this" {
-  for_each             = var.shares != null ? { for share in var.shares : share.name => share } : {}
-  name                 = each.value.name
-  storage_account_id   = azurerm_storage_account.this.id
-  access_tier          = each.value.access_tier
-  enabled_protocol     = each.value.enabled_protocol
-  quota                = each.value.quota
-  metadata             = each.value.metadata
+  for_each           = var.shares != null ? { for share in var.shares : share.name => share } : {}
+  name               = each.value.name
+  storage_account_id = azurerm_storage_account.this.id
+  access_tier        = each.value.access_tier
+  enabled_protocol   = each.value.enabled_protocol
+  quota              = each.value.quota
+  metadata           = each.value.metadata
   dynamic "acl" {
     for_each = each.value.acl != null ? each.value.acl : []
     content {
@@ -164,7 +232,7 @@ resource "azurerm_advanced_threat_protection" "this" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_management_policy
 resource "azurerm_storage_management_policy" "this" {
-  count = var.lifecycle_policy_rules == null ? 0 : 1
+  count              = var.lifecycle_policy_rules == null ? 0 : 1
   storage_account_id = azurerm_storage_account.this.id
 
   dynamic "rule" {

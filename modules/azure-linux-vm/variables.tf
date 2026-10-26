@@ -48,6 +48,16 @@ variable "vm" {
       version   = string
     }))
 
+    boot_diagnostics = optional(object({
+      storage_account_uri = optional(string)
+    }))
+
+    plan = optional(object({
+      name      = string
+      product   = string
+      publisher = string
+    }))
+
     os_disk = object({
       name                     = optional(string)
       caching                  = string

@@ -16,7 +16,13 @@ The account firewall: default action, allowed subnets and IP ranges. `allowed_su
 One of the four kinds of storage the module can create — `containers` (blob), `shares` (file), `queues`, `tables`. An account may hold any mix.
 
 **management policy**:
-The lifecycle rules that move or expire blobs by age. It is account-wide, not per container.
+The lifecycle rules that move or expire blobs by age. It is account-wide, not per container. It is not WORM.
+
+**object replication**:
+Asynchronous copying of block blobs from a source account to a destination account, using rules that pair source and destination containers. The source needs change feed and versioning; both accounts need versioning.
+
+**immutability policy**:
+The WORM (write once, read many) time-based retention. Two scopes: account-wide (`storage_account.immutability_policy`, only settable at account creation) and per container (`containers[*].immutability_policy`, addable at any time). Once `locked`, it cannot be removed and it blocks deletion of the container and the account.
 
 **advanced threat protection**:
 The `azurerm_advanced_threat_protection` toggle. It is billed per account and is off unless configured.
