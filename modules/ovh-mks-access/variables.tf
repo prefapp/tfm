@@ -60,6 +60,11 @@ variable "identities" {
       contains(["readonly", "readwrite", "cluster-admin"], identity.role) &&
       contains(["cluster", "namespaces"], identity.scope) &&
       (identity.scope == "cluster" ? length(identity.namespaces) == 0 : length(identity.namespaces) > 0) &&
+      alltrue([
+        for namespace in identity.namespaces :
+        length(namespace) <= 63 &&
+        can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", namespace))
+      ]) &&
       length(identity.auth_methods) > 0 &&
       alltrue([for method in identity.auth_methods : contains(["certificate", "token"], method)]) &&
       (!contains(identity.auth_methods, "certificate") || (identity.expiration_seconds >= 600 && identity.expiration_seconds <= 31536000)) &&
@@ -70,7 +75,7 @@ variable "identities" {
       length(identity.service_account_namespace) <= 63 &&
       can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", identity.service_account_namespace))
     ])
-    error_message = "Each identity must have a valid DNS name, role readonly/readwrite/cluster-admin, valid scope, at least one certificate/token method, a valid ServiceAccount namespace, a non-negative integer generation, and non-empty paths for enabled methods. Certificate validity must be between 600 and 31536000 seconds (up to one year on OVH MKS)."
+    error_message = "Each identity must have a valid DNS name, role readonly/readwrite/cluster-admin, valid scope and target namespace names, at least one certificate/token method, a valid ServiceAccount namespace, a non-negative integer generation, and non-empty paths for enabled methods. Certificate validity must be between 600 and 31536000 seconds (up to one year on OVH MKS)."
   }
 }
 
