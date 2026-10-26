@@ -80,6 +80,13 @@ variable "node_pools" {
     ])
     error_message = "Each node pool must have non-negative integer capacities that satisfy min_nodes <= desired_nodes <= max_nodes."
   }
+
+  validation {
+    condition = alltrue([
+      for pool in values(var.node_pools) : length(pool.availability_zones) <= 1
+    ])
+    error_message = "Each node pool may specify at most one availability zone."
+  }
 }
 
 variable "autoscale" {
