@@ -80,7 +80,7 @@ locals {
   integration_access_entries = merge(
     var.enable_backstage_reader_access_entry ? {
       firestartr_backstage_reader = {
-        principal_arn = terraform_data.backstage_reader_role_validation[0].output.role_arn
+        principal_arn = terraform_data.backstage_reader_role_validation[0].input.role_arn
         policy_associations = {
           AmazonEKSViewPolicy = {
             policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
@@ -93,7 +93,7 @@ locals {
     } : {},
     var.enable_argocd_admin_access_entry ? {
       firestartr_argocd_admin = {
-        principal_arn = terraform_data.argocd_admin_role_validation[0].output.role_arn
+        principal_arn = terraform_data.argocd_admin_role_validation[0].input.role_arn
         policy_associations = {
           AmazonEKSClusterAdminPolicy = {
             policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
