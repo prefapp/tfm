@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/prefapp/tfm/compare/aws-backup-v0.3.1...aws-backup-v0.3.2) (2026-10-29)
+
+
+### Bug Fixes
+
+* **aws-backup:** add delegated administrator and MPA settings with default values ([#1461](https://github.com/prefapp/tfm/issues/1461)) ([3da4918](https://github.com/prefapp/tfm/commit/3da4918aa14834f4b4cbb9a7af8fd6704b5db4e6))
+
 ## [0.3.1](https://github.com/prefapp/tfm/compare/aws-backup-v0.3.0...aws-backup-v0.3.1) (2026-09-09)
 
 
