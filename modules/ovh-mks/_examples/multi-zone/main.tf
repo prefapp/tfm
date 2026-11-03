@@ -16,19 +16,19 @@ module "ovh_mks" {
   anti_affinity = true
 
   node_pools = {
-    zone_a = {
+    zone-a = {
       desired_nodes      = 1
       min_nodes          = 1
       max_nodes          = 3
       availability_zones = ["eu-west-par-a"]
     }
-    zone_b = {
+    zone-b = {
       desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 3
       availability_zones = ["eu-west-par-b"]
     }
-    zone_c = {
+    zone-c = {
       desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 3
