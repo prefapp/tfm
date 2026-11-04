@@ -22,6 +22,13 @@ One of the opt-in role sets (`create_alb_ingress_iam`, `create_external_dns_iam`
 An entry in `access_entries` granting a principal access to the cluster API. This is the EKS access-entry API, not the legacy `aws-auth` ConfigMap.
 _Avoid_: aws-auth mapping
 
+**access policy association**:
+A managed EKS Kubernetes permission set attached to an access entry and scoped to the cluster or selected namespaces. It grants Kubernetes permissions, not AWS API permissions.
+_Avoid_: IAM policy
+
+**Firestartr integration role**:
+A customer-account IAM role used by a Backstage or ArgoCD integration. The module discovers the role by a configurable name and requires all configured tags to match; Firestartr role names and tags are the defaults for the planned Firestartr integration.
+
 **cluster addon**:
 An AWS-managed add-on declared in `cluster_addons` (CoreDNS, kube-proxy, VPC CNI, EBS CSI…). Managed by the cluster, not installed as a Helm release.
 
