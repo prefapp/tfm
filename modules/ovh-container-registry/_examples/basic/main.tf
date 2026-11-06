@@ -2,7 +2,7 @@
 # The ovh provider is configured by the caller (environment variables or a
 # provider block), not by this module.
 module "ovh_container_registry" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/ovh-container-registry?ref=ovh-container-registry-vx.y.z"
+  source = "../.."
 
   project_name = "example-project"
   name         = "example-registry"

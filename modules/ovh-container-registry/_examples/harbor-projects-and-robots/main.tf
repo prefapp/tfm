@@ -26,7 +26,7 @@ variable "admin_secret_path" {
 }
 
 module "harbor" {
-  source = "git::https://github.com/prefapp/tfm.git//modules/ovh-container-registry/modules/harbor?ref=ovh-container-registry-vx.y.z"
+  source = "../../modules/harbor"
 
   kms_id            = var.kms_id
   registry_name     = var.registry_name
