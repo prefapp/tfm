@@ -219,6 +219,9 @@
         },
         "modules/ovh-mks-access": {
             "package-name": "ovh-mks-access"
+        },
+        "modules/ovh-container-registry": {
+            "package-name": "ovh-container-registry"
         }
     }
 }

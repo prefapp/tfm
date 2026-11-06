@@ -1,0 +1,3 @@
+# Local Harbor admin without OVHcloud IAM
+
+Harbor projects and robots are managed with a local Harbor admin user, created with `ovh_cloud_project_containerregistry_user` and stored in OKMS. OVHcloud IAM is not enabled on the registry, and the module has no flag to enable it. Enabling IAM on a Managed Private Registry deletes every local Harbor user, including that admin, so nothing would be left to authenticate the `harbor` provider. Using a robot account as the provider identity instead was rejected because Harbor robots cannot create or manage other robots, which is the submodule's main job. The trade-off is that registry access is governed by Harbor users and robots, not by OVHcloud IAM policies.
