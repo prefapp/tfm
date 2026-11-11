@@ -6,13 +6,16 @@ This module provisions one OVHcloud Public Cloud Databases for PostgreSQL cluste
 
 It also manages declared databases, PostgreSQL users and PgBouncer connection pools. User passwords and pool connection URIs are written as JSON secrets to an existing OVHcloud KMS (OKMS). Sensitive values remain in Terraform state, so the state backend must be encrypted and access-restricted. No password or credential-bearing URI is exposed as a module output.
 
-OVHcloud currently supports PostgreSQL 15, 16, 17 and 18. The module checks versions, plans and flavors against the Public Cloud Database capabilities data source, and resolves the requested network and subnet by name and CIDR. That capabilities endpoint does not include region-specific flavor availability or disk-size bounds; OVHcloud validates those at apply. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
+OVHcloud currently supports PostgreSQL 15, 16, 17 and 18. The module checks versions, plans and flavors against the Public Cloud Database capabilities data source, and resolves the requested network and subnet by name and CIDR. That capabilities endpoint does not include region-specific flavor availability or disk-size bounds; the availability preflight checks those against published offers, and OVHcloud validates them definitively at apply. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
+
+During `plan`, the module also queries OVHcloud's published database availability catalogue and fails unless an offer matches the requested PostgreSQL version, plan, region, flavor, private network, node count and disk size. This is a point-in-time offer check, not a capacity reservation or a guarantee that a later apply will succeed. It uses a Python 3 standard-library helper through the `hashicorp/external` provider; runners must install Python 3, Terraform/OpenTofu and the external provider, and permit HTTPS access to the matching OVH API and authentication endpoints. Authentication compatibility with this exact OVH operation has not been verified live; source research and mock-based tests do not establish that each method is accepted by the endpoint.
 
 ## Key Features
 
 - **Private by default**: discovers one existing private network and subnet; defaults IP restrictions to the subnet CIDR.
 - **Plan-sized clusters**: generates one node for `discovery`, two for `production`, and three for `advanced`.
 - **Capabilities checks**: checks PostgreSQL version, plan and flavor against OVHcloud's published project capabilities.
+- **Offer preflight**: checks the full requested configuration against OVHcloud's published offers during plan and fails closed on API or response errors.
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
 - **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.

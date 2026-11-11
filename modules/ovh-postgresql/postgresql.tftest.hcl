@@ -1,5 +1,36 @@
 mock_provider "ovh" {}
 
+mock_provider "external" {
+  mock_data "external" {
+    defaults = {
+      result = { compatible = "false" }
+    }
+  }
+}
+
+run "external_result_is_available_during_plan" {
+  command = plan
+  variables {
+    project_id     = "project-id"
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 20
+    databases      = {}
+    users          = {}
+    kms_id         = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+  assert {
+    condition     = data.external.database_offer.result.compatible == "false"
+    error_message = "The external data source must return the mocked boolean result."
+  }
+}
+
 run "reject_invalid_cidr" {
   command = plan
   variables {

@@ -61,6 +61,11 @@ resource "ovh_cloud_project_database" "postgresql" {
     }
 
     precondition {
+      condition     = data.external.database_offer.result.compatible == "true"
+      error_message = "OVHcloud has no published PostgreSQL offer compatible with the requested engine, version, plan, region, flavor, private network, node count and disk size."
+    }
+
+    precondition {
       condition     = length(var.backup_regions) == 0 || contains(var.backup_regions, var.region)
       error_message = "When backup_regions is set, it must include the database region."
     }
@@ -99,6 +104,22 @@ resource "ovh_cloud_project_database" "postgresql" {
       ])
       error_message = "A required extension is not in the OVHcloud-supported catalogue or is not supported for the selected PostgreSQL version. Check the linked OVHcloud extension documentation."
     }
+  }
+}
+
+data "external" "database_offer" {
+  program = ["python3", "${path.module}/scripts/check_database_offer.py"]
+
+  query = {
+    service_name = local.service_name == null ? "" : local.service_name
+    engine       = "postgresql"
+    version      = var.engine_version
+    plan         = var.plan
+    region       = var.region
+    flavor       = var.flavor
+    network      = "private"
+    nodes        = tostring(local.node_count)
+    disk_size    = tostring(var.disk_size)
   }
 }
 

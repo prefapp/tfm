@@ -7,13 +7,16 @@ This module provisions one OVHcloud Public Cloud Databases for PostgreSQL cluste
 
 It also manages declared databases, PostgreSQL users and PgBouncer connection pools. User passwords and pool connection URIs are written as JSON secrets to an existing OVHcloud KMS (OKMS). Sensitive values remain in Terraform state, so the state backend must be encrypted and access-restricted. No password or credential-bearing URI is exposed as a module output.
 
-OVHcloud currently supports PostgreSQL 15, 16, 17 and 18. The module checks versions, plans and flavors against the Public Cloud Database capabilities data source, and resolves the requested network and subnet by name and CIDR. That capabilities endpoint does not include region-specific flavor availability or disk-size bounds; OVHcloud validates those at apply. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
+OVHcloud currently supports PostgreSQL 15, 16, 17 and 18. The module checks versions, plans and flavors against the Public Cloud Database capabilities data source, and resolves the requested network and subnet by name and CIDR. That capabilities endpoint does not include region-specific flavor availability or disk-size bounds; the availability preflight checks those against published offers, and OVHcloud validates them definitively at apply. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
+
+During `plan`, the module also queries OVHcloud's published database availability catalogue and fails unless an offer matches the requested PostgreSQL version, plan, region, flavor, private network, node count and disk size. This is a point-in-time offer check, not a capacity reservation or a guarantee that a later apply will succeed. It uses a Python 3 standard-library helper through the `hashicorp/external` provider; runners must install Python 3, Terraform/OpenTofu and the external provider, and permit HTTPS access to the matching OVH API and authentication endpoints. Authentication compatibility with this exact OVH operation has not been verified live; source research and mock-based tests do not establish that each method is accepted by the endpoint.
 
 ## Key Features
 
 - **Private by default**: discovers one existing private network and subnet; defaults IP restrictions to the subnet CIDR.
 - **Plan-sized clusters**: generates one node for `discovery`, two for `production`, and three for `advanced`.
 - **Capabilities checks**: checks PostgreSQL version, plan and flavor against OVHcloud's published project capabilities.
+- **Offer preflight**: checks the full requested configuration against OVHcloud's published offers during plan and fails closed on API or response errors.
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
 - **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.
@@ -89,12 +92,14 @@ With transaction pooling, review application use of prepared statements, tempora
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | ~> 2.4 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.24.0, < 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
+| <a name="provider_external"></a> [external](#provider\_external) | 2.4.2 |
 | <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.24.0 |
 
 ## Modules
@@ -111,6 +116,7 @@ No modules.
 | [ovh_cloud_project_database_postgresql_user.user](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database_postgresql_user) | resource |
 | [ovh_okms_secret.pool](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
 | [ovh_okms_secret.user](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
+| [external_external.database_offer](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 | [ovh_cloud_project_database_capabilities.capabilities](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_capabilities) | data source |
 | [ovh_cloud_project_database_certificates.certificates](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_certificates) | data source |
 | [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_private_subnets) | data source |
@@ -177,6 +183,14 @@ Each user secret is JSON with `host`, `port`, `username`, `password` and `databa
 
 New PostgreSQL users have no privileges on database objects by default. Manage required database/schema/table grants with SQL migrations; the OVHcloud API only manages the `replication` role.
 
+## Availability Preflight and Runner Authentication
+
+The offer preflight calls `GET /cloud/project/{serviceName}/database/availability` during every plan and requires the IAM action `publicCloudProject:apiovh:database/availability/get`. It accepts OVH API regions `ovh-eu`, `ovh-us` and `ovh-ca`; set `OVH_ENDPOINT` to the same region used by the `ovh` provider. Configure both the provider and helper to use the same identity from environment variables: either `OVH_APPLICATION_KEY`, `OVH_APPLICATION_SECRET` and `OVH_CONSUMER_KEY`; `OVH_CLIENT_ID` and `OVH_CLIENT_SECRET`; or `OVH_ACCESS_TOKEN`. Configure exactly one method. Do not configure OVH credentials in HCL, profiles or `ovh.conf` for this flow: the helper only reads the environment and cannot detect whether the provider loaded a different identity from those sources. Although these methods are supported generically by OVH's provider/API clients, their compatibility with this exact availability operation is not confirmed by OVH documentation; mock tests do not verify live authorization.
+
+Keep the runner environment minimal and short-lived. Disable shell tracing and avoid `TF_LOG` or diagnostics that might expose process environment or provider configuration. Credentials are not passed as Terraform query values, arguments or output, and are not intentionally written to state or files; the helper returns only a non-sensitive boolean. The `external` provider passes the Terraform process environment to the helper, so the runner must protect its environment and logs. The check is read-only and has no persistent cache.
+
+The preflight fails the plan on authentication, permission, timeout, network, HTTP, parsing, incomplete offer data or a non-compatible result. Storage minimum, maximum and step must all be present, positive, and explicitly in GB. Lifecycle `STABLE`, `BETA` and `DEPRECATED` are accepted; all other or unknown statuses are rejected. Published offers can change after planning, and OVHcloud remains authoritative at apply.
+
 ## Backup, SLA and Pool Guidance
 
 OVHcloud automatically backs up databases and supports point-in-time recovery within the plan's retention window. Current PostgreSQL plan documentation lists:
@@ -213,6 +227,9 @@ Destroying the module deletes the managed cluster and all data in it, its declar
 - **OVHcloud PostgreSQL capabilities**: [Versions, plans, networking, roles, backups and retention](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-capabilities/)
 - **OVHcloud PostgreSQL extensions**: [Supported extension catalogue](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-extensions/)
 - **OVHcloud PostgreSQL pools**: [Modes and client limitations](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-pool/)
+- **OVHcloud API authentication**: [Classic API signatures](https://docs.ovhcloud.com/en/guides/manage-and-operate/api/first-steps/) and [service-account OAuth2](https://docs.ovhcloud.com/en/guides/account-and-service-management/account-information/authenticate-api-with-service-account/)
+- **Availability API**: [Official OVHcloud OpenAPI](https://api.ovh.com/1.0/cloud.json), `GET /cloud/project/{serviceName}/database/availability`
+- **Terraform external provider**: [External data source protocol](https://registry.terraform.io/providers/hashicorp/external/2.4.2/docs/data-sources/external)
 - **OVHcloud Terraform provider v2.24.0**: [`ovh_cloud_project_database`](https://registry.terraform.io/providers/ovh/ovh/2.24.0/docs/resources/cloud_project_database), [`ovh_cloud_project_database_database`](https://registry.terraform.io/providers/ovh/ovh/2.24.0/docs/resources/cloud_project_database\_database), [`ovh_cloud_project_database_postgresql_user`](https://registry.terraform.io/providers/ovh/ovh/2.24.0/docs/resources/cloud_project_database\_postgresql\_user), [`ovh_cloud_project_database_postgresql_connection_pool`](https://registry.terraform.io/providers/ovh/ovh/2.24.0/docs/resources/cloud_project_database\_postgresql\_connection\_pool), [`ovh_okms_secret`](https://registry.terraform.io/providers/ovh/ovh/2.24.0/docs/resources/okms_secret)
 
 ## Support
