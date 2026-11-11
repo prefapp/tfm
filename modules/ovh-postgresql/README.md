@@ -32,10 +32,10 @@ module "postgresql" {
   network_name = "predev-private"
   subnet_cidr  = "10.20.0.0/16"
 
-  postgresql_version = "18"
-  plan               = "discovery"
-  flavor             = "b3-4"
-  disk_size          = 20
+  engine_version = "18"
+  plan           = "discovery"
+  flavor         = "b3-4"
+  disk_size      = 20
 
   databases = { authz = "authz" }
   users = {
@@ -58,10 +58,10 @@ module "postgresql" {
   network_name = "applications-private"
   subnet_cidr  = "10.30.0.0/16"
 
-  postgresql_version = "17"
-  plan               = "production"
-  flavor             = "b3-8"
-  disk_size          = 50
+  engine_version = "17"
+  plan           = "production"
+  flavor         = "b3-8"
+  disk_size      = 50
 
   databases = { app = "application" }
   users = {
@@ -130,6 +130,7 @@ No modules.
 | <a name="input_databases"></a> [databases](#input\_databases) | Databases to create, keyed by stable Terraform identifier and mapped to their OVHcloud names. | `map(string)` | n/a | yes |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Protect the database service from deletion. Disable only for discovery environments. | `bool` | `true` | no |
 | <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Database disk size in GB. Must be a positive integer; OVHcloud validates supported limits for the selected flavor. | `number` | n/a | yes |
+| <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Required PostgreSQL engine major version, such as 18. | `string` | n/a | yes |
 | <a name="input_flavor"></a> [flavor](#input\_flavor) | Database node flavor available to the selected Public Cloud project. | `string` | n/a | yes |
 | <a name="input_ip_restrictions"></a> [ip\_restrictions](#input\_ip\_restrictions) | Optional CIDR allow-list. When empty, only subnet\_cidr is allowed. | <pre>list(object({<br/>    ip          = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
 | <a name="input_kms_id"></a> [kms\_id](#input\_kms\_id) | ID of the existing OVHcloud KMS (OKMS) where database credentials are stored. | `string` | n/a | yes |
@@ -137,7 +138,6 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | Database service description and prefix for generated OKMS secret paths. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network to attach to the cluster. | `string` | n/a | yes |
 | <a name="input_plan"></a> [plan](#input\_plan) | OVHcloud database plan. discovery has one node, production two, and advanced three. | `string` | n/a | yes |
-| <a name="input_postgresql_version"></a> [postgresql\_version](#input\_postgresql\_version) | Required PostgreSQL major version, such as 18. | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID or service\_name; takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against project\_name and description. | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | OVHcloud region for the cluster and all its nodes. | `string` | n/a | yes |

@@ -2,7 +2,7 @@ resource "ovh_cloud_project_database" "postgresql" {
   service_name           = local.service_name
   description            = var.name
   engine                 = "postgresql"
-  version                = var.postgresql_version
+  version                = var.engine_version
   plan                   = var.plan
   flavor                 = var.flavor
   disk_size              = var.disk_size
@@ -46,7 +46,7 @@ resource "ovh_cloud_project_database" "postgresql" {
     }
 
     precondition {
-      condition     = local.capabilities_engine != null && contains(local.capabilities_engine.versions, var.postgresql_version)
+      condition     = local.capabilities_engine != null && contains(local.capabilities_engine.versions, var.engine_version)
       error_message = "The requested PostgreSQL version is not available in this Public Cloud project according to OVHcloud database capabilities."
     }
 

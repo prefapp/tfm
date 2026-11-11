@@ -7,10 +7,10 @@ module "postgresql" {
   network_name = "predev-private"
   subnet_cidr  = "10.20.0.0/16"
 
-  postgresql_version = "18"
-  plan               = "discovery"
-  flavor             = "b3-4"
-  disk_size          = 20
+  engine_version = "18"
+  plan           = "discovery"
+  flavor         = "b3-4"
+  disk_size      = 20
 
   databases = {
     authz = "authz"

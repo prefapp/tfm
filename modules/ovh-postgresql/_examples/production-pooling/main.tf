@@ -7,10 +7,10 @@ module "postgresql" {
   network_name = "applications-private"
   subnet_cidr  = "10.30.0.0/16"
 
-  postgresql_version = "17"
-  plan               = "production"
-  flavor             = "b3-8"
-  disk_size          = 50
+  engine_version = "17"
+  plan           = "production"
+  flavor         = "b3-8"
+  disk_size      = 50
 
   databases = {
     app = "application"

@@ -73,12 +73,12 @@ locals {
   ]
 
   extension_version_constraints = {
-    bool_plperl   = contains(["15", "16", "17", "18"], var.postgresql_version)
-    hll           = contains(["15", "16", "17", "18"], var.postgresql_version)
-    pg_similarity = contains(["15", "16", "17", "18"], var.postgresql_version)
-    pgvector      = contains(["15", "16", "17", "18"], var.postgresql_version)
-    pgvectorscale = contains(["16", "17"], var.postgresql_version)
-    timescaledb   = var.postgresql_version != "18"
+    bool_plperl   = contains(["15", "16", "17", "18"], var.engine_version)
+    hll           = contains(["15", "16", "17", "18"], var.engine_version)
+    pg_similarity = contains(["15", "16", "17", "18"], var.engine_version)
+    pgvector      = contains(["15", "16", "17", "18"], var.engine_version)
+    pgvectorscale = contains(["16", "17"], var.engine_version)
+    timescaledb   = var.engine_version != "18"
   }
 }
 

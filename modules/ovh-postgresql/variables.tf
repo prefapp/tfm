@@ -50,8 +50,8 @@ variable "subnet_cidr" {
   }
 }
 
-variable "postgresql_version" {
-  description = "Required PostgreSQL major version, such as 18."
+variable "engine_version" {
+  description = "Required PostgreSQL engine major version, such as 18."
   type        = string
   nullable    = false
 }
