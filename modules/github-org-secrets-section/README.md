@@ -134,9 +134,9 @@ No modules.
 | Name | Description |
 | ---- | ----------- |
 | <a name="output_actions_secret_names"></a> [actions\_secret\_names](#output\_actions\_secret\_names) | List of created Actions secret names |
-| <a name="output_all_secret_names"></a> [all\_secret\_names](#output\_all\_secret\_names) | Combined list of all secret names |
 | <a name="output_codespaces_secret_names"></a> [codespaces\_secret\_names](#output\_codespaces\_secret\_names) | List of created Codespaces secret names |
 | <a name="output_dependabot_secret_names"></a> [dependabot\_secret\_names](#output\_dependabot\_secret\_names) | List of created Dependabot secret names |
+| <a name="output_managed_secrets"></a> [managed\_secrets](#output\_managed\_secrets) | Combined list of all managed secret names |
 | <a name="output_organization"></a> [organization](#output\_organization) | The organization these secrets belong to |
 
 ## Examples

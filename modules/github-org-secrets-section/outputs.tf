@@ -18,8 +18,8 @@ output "dependabot_secret_names" {
   value       = keys(github_dependabot_organization_secret.this)
 }
 
-output "all_secret_names" {
-  description = "Combined list of all secret names"
+output "managed_secrets" {
+  description = "Combined list of all managed secret names"
   value = concat(
     keys(github_actions_organization_secret.this),
     keys(github_codespaces_organization_secret.this),
