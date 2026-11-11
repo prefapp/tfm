@@ -222,6 +222,9 @@
         },
         "modules/ovh-container-registry": {
             "package-name": "ovh-container-registry"
+        },
+        "modules/ovh-postgresql": {
+            "package-name": "ovh-postgresql"
         }
     }
 }
