@@ -8,11 +8,9 @@ For detailed examples, refer to the [module examples](https://github.com/prefapp
 
 - **github_actions_organization_public_key**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/actions_organization_public_key)
 - **github_actions_organization_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_organization_secret)
-- **github_actions_organization_secret_repositories**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_organization_secret_repositories)
 - **github_codespaces_organization_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/codespaces_organization_secret)
 - **github_dependabot_organization_public_key**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/dependabot_organization_public_key)
 - **github_dependabot_organization_secret**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/dependabot_organization_secret)
-- **github_dependabot_organization_secret_repositories**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/dependabot_organization_secret_repositories)
 - **GitHub Terraform Provider**: [Official Documentation](https://registry.terraform.io/providers/integrations/github/latest/docs)
 
 ## Import Behavior
@@ -24,14 +22,10 @@ Import addresses and IDs:
 - Actions: `github_actions_organization_secret.this["SECRET_NAME"]` with ID `SECRET_NAME`.
 - Codespaces: `github_codespaces_organization_secret.this["SECRET_NAME"]` with ID `SECRET_NAME`.
 - Dependabot: `github_dependabot_organization_secret.this["SECRET_NAME"]` with ID `SECRET_NAME`.
-- Actions repos binding: `github_actions_organization_secret_repositories.this["SECRET_NAME"]` with ID `SECRET_NAME`.
-- Dependabot repos binding: `github_dependabot_organization_secret_repositories.this["SECRET_NAME"]` with ID `SECRET_NAME`.
 
 ## Delete Behavior
 
-`terraform destroy` deletes the managed GitHub organization secrets from Actions, Codespaces, and Dependabot, and removes the selected repository bindings. This affects only the secret entries represented by `config`; deleting an imported secret permanently removes that GitHub secret value unless another system recreates it.
-
-Deleting a secret also deletes its associated repository bindings (if any). The selected repository access is revoked when the binding resource is destroyed.
+`terraform destroy` deletes the managed GitHub organization secrets from Actions, Codespaces, and Dependabot. Selected repository access is part of each secret and is removed with it. This affects only the secret entries represented by `config`; deleting an imported secret permanently removes that GitHub secret value unless another system recreates it.
 
 ## Support
 

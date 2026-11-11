@@ -69,3 +69,8 @@ output "table_ids" {
   description = "Map from each table name to the table resource ID."
   value       = { for k, v in azurerm_storage_table.this : k => v.id }
 }
+
+output "object_replication_id" {
+  description = "Combined source and destination object replication policy ID, or null when object replication is not configured."
+  value       = var.object_replication == null ? null : azurerm_storage_object_replication.this[0].id
+}

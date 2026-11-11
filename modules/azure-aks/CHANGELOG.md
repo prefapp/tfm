@@ -1,5 +1,51 @@
 # Changelog
 
+## [3.0.3](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.2...azure-aks-v3.0.3) (2026-10-01)
+
+
+### Bug Fixes
+
+* Rename outbound ip value in loadBalancer Profile and add node_resource_group as configurable variable ([#1443](https://github.com/prefapp/tfm/issues/1443)) ([6e74edc](https://github.com/prefapp/tfm/commit/6e74edcccda51e4ff99f202d5e60386200f5056e))
+
+## [3.0.2](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.1...azure-aks-v3.0.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* fix kubelet identity outputs ([#1441](https://github.com/prefapp/tfm/issues/1441)) ([f08b07b](https://github.com/prefapp/tfm/commit/f08b07b147c34be8d8583324b8535a175939cfda))
+
+## [3.0.1](https://github.com/prefapp/tfm/compare/azure-aks-v3.0.0...azure-aks-v3.0.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* fix some doc and vars on az-aks module ([#1437](https://github.com/prefapp/tfm/issues/1437)) ([8f4d121](https://github.com/prefapp/tfm/commit/8f4d121c09ecc9f0868219d8d0b64ece72a823fa))
+
+## [3.0.0](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.4...azure-aks-v3.0.0) (2026-09-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **azure-aks:** migrate Azure/terraform-azure-aks to Azure/terraform-azurerm-avm-res-containerservice-managedcluster ([#1353](https://github.com/prefapp/tfm/issues/1353))
+
+### Features
+
+* **azure-aks:** migrate Azure/terraform-azure-aks to Azure/terraform-azurerm-avm-res-containerservice-managedcluster ([#1353](https://github.com/prefapp/tfm/issues/1353)) ([33433bb](https://github.com/prefapp/tfm/commit/33433bb01c9c739cd0e4e38fdeb9a221a4945193))
+
+## [2.0.4](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.3...azure-aks-v2.0.4) (2026-08-20)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1387](https://github.com/prefapp/tfm/issues/1387)) ([cd611c6](https://github.com/prefapp/tfm/commit/cd611c6ab179f1d01e44a555871b997c7f8bd94d))
+
+## [2.0.3](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.2...azure-aks-v2.0.3) (2026-08-19)
+
+
+### Bug Fixes
+
+* add constraint version for azurerm 5.0 ([#1368](https://github.com/prefapp/tfm/issues/1368)) ([2b30f9b](https://github.com/prefapp/tfm/commit/2b30f9bed63b94aedf8f3af9736bf72bfd83073f))
+
 ## [2.0.2](https://github.com/prefapp/tfm/compare/azure-aks-v2.0.1...azure-aks-v2.0.2) (2026-05-25)
 
 

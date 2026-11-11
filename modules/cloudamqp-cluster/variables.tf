@@ -356,8 +356,9 @@ variable "cloudamqp_vpc_connect" {
   description = "CloudAMQP vpc_connect configurations"
   type = object({
     instance_id            = optional(number)
-    approved_subscriptions = optional(list(string))
+    approved_subscriptions = optional(list(string), [])
     sleep                  = optional(number)
     timeout                = optional(number)
   })
+  default = null
 }

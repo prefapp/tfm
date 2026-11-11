@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/prefapp/tfm/compare/cloudamqp-vpc-v1.1.1...cloudamqp-vpc-v1.2.0) (2026-08-21)
+
+
+### Bug Fixes
+
+* **cloudamqp-vpc:** restore optional vpc connect ([#1415](https://github.com/prefapp/tfm/issues/1415)) ([0e14f8c](https://github.com/prefapp/tfm/commit/0e14f8c463ad7f686ee5e4e2989eb83feb0af6e9))
+
 ## [1.1.1](https://github.com/prefapp/tfm/compare/cloudamqp-vpc-v1.1.0...cloudamqp-vpc-v1.1.1) (2025-04-24)
 
 

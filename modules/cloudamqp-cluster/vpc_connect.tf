@@ -1,7 +1,15 @@
 #https://registry.terraform.io/providers/cloudamqp/cloudamqp/1.32.2/docs/resources/vpc_connect
 resource "cloudamqp_vpc_connect" "this" {
+  count = var.cloudamqp_vpc_connect == null ? 0 : 1
+
   instance_id            = cloudamqp_instance.this.id
   region                 = var.cloudamqp_instance.region
-  approved_subscriptions = var.cloudamqp_vpc_connect.approved_subscriptions
-  timeout                = var.cloudamqp_vpc_connect.timeout
+  approved_subscriptions = try(var.cloudamqp_vpc_connect.approved_subscriptions, [])
+  sleep                  = try(var.cloudamqp_vpc_connect.sleep, null)
+  timeout                = try(var.cloudamqp_vpc_connect.timeout, null)
+}
+
+moved {
+  from = cloudamqp_vpc_connect.this
+  to   = cloudamqp_vpc_connect.this[0]
 }

@@ -39,12 +39,12 @@ output "secondary_access_key" {
   sensitive   = true
 }
 
-output "private_endpoint_id" {
-  description = "Resource ID of the private endpoint for the Redis cache."
-  value       = azurerm_private_endpoint.this.id
+output "private_endpoint_ids" {
+  description = "Map of private endpoint resource IDs, keyed by the private_endpoints map key. Empty when no private endpoints were requested."
+  value       = { for k, v in azurerm_private_endpoint.this : k => v.id }
 }
 
-output "private_endpoint_private_ip" {
-  description = "Private IP address of the private endpoint."
-  value       = azurerm_private_endpoint.this.private_service_connection[0].private_ip_address
+output "private_endpoint_private_ips" {
+  description = "Map of private IP addresses assigned to each private endpoint NIC, keyed by the private_endpoints map key. Empty when no private endpoints were requested."
+  value       = { for k, v in azurerm_private_endpoint.this : k => v.private_service_connection[0].private_ip_address }
 }

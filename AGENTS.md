@@ -8,6 +8,7 @@ Before any code or documentation change, read:
 
 - `CONSTITUTION.md`
 - `CONTRIBUTING.md`
+- `CONTEXT-MAP.md`, the root `CONTEXT.md` shared kernel, and the target module's `modules/<module>/CONTEXT.md`
 - `RULES.md` when the module is or may be a GitHub module compatible with GitHub Automated Provisioning Systems such as `ghaps`
 - Existing files in the target module, especially `variables.tf`, `main.tf`, `outputs.tf`, `versions.tf`, `docs/header.md`, `docs/footer.md`, `_examples/`, and `README.md`
 
@@ -51,10 +52,18 @@ When proposing or implementing a module change, include:
 
 There is no per-change spec/plan/tasks process. Instead:
 
-1. Keep the root `CONTEXT.md` glossary current when you introduce or sharpen a domain term.
-2. Before changing an area, read the relevant ADRs — the module's `modules/<module>/docs/adr/` plus any repo-wide ones in the root `docs/adr/` — and respect them. The root `ADR-INDEX.md` catalogues them all.
-3. Record a new ADR **only** when the decision is hard to reverse, surprising without context, and the result of a real trade-off. Routine field additions and forced provider deprecations need no ADR. Place it in the module's `docs/adr/` (or root `docs/adr/` if repo-wide) and add its entry to `ADR-INDEX.md`.
-4. If a change contradicts an existing ADR, update or supersede that ADR in the same PR, and keep its `ADR-INDEX.md` entry in sync.
+1. This repository is **multi-context**: one context per module. [`CONTEXT-MAP.md`](./CONTEXT-MAP.md) lists them all and records how they relate.
+2. Read the vocabulary before you write: the shared kernel in the root [`CONTEXT.md`](./CONTEXT.md), plus the module's own `modules/<module>/CONTEXT.md`. Keep them current when you introduce or sharpen a domain term — cross-cutting terms go in the kernel, module-specific terms in the module glossary, never both.
+3. Before changing an area, read the relevant ADRs and respect them: the module's `modules/<module>/docs/adr/` plus any repo-wide ones in the root [`docs/adr/`](./docs/adr/). Each of those directories has a `README.md` index. There is no repository-wide ADR index.
+4. Record a new ADR **only** when the decision is hard to reverse, surprising without context, and the result of a real trade-off. Routine field additions and forced provider deprecations need no ADR. Place it at the narrowest scope that fully contains the decision — the module's `docs/adr/`, or the root `docs/adr/` if repo-wide.
+5. Name ADRs `NNNN-slug.md`, numbered per directory starting at `0001`, and add the entry to that directory's `README.md` in the same change. Create the module's `docs/adr/` directory and its `README.md` lazily, with its first ADR.
+6. If a change contradicts an existing ADR, update or supersede that ADR in the same PR.
+7. When you add a module, create its `CONTEXT.md` stub and its line in `CONTEXT-MAP.md` in the same PR. When you remove one, remove both.
+
+Two things to keep in mind:
+
+- **This repository is public.** Never link design-memory documents to private or internal repositories, and never disclose internal-only details in them. See `CONSTITUTION.md` §9.4.
+- Adding `modules/<module>/docs/adr/` and `modules/<module>/CONTEXT.md` is safe for docs tooling: `.terraform-docs.yml` reads only `docs/header.md` and `docs/footer.md`, and the docs promotion workflow copies only `README.md`.
 
 See `CONSTITUTION.md` §9 for the governing rule.
 

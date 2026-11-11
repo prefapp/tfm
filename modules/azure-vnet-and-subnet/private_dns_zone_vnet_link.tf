@@ -4,16 +4,16 @@ locals {
     for zone in var.private_dns_zones : (
       length(coalesce(zone.virtual_network_links, [])) > 0 ? [
         for vnet_link in zone.virtual_network_links : {
-          dns_zone_name         = zone.name
-          name                  = vnet_link.name
-          virtual_network_id    = vnet_link.virtual_network_id
-          registration_enabled  = zone.auto_registration_enabled
+          dns_zone_name        = zone.name
+          name                 = vnet_link.name
+          virtual_network_id   = vnet_link.virtual_network_id
+          registration_enabled = coalesce(vnet_link.registration_enabled, zone.auto_registration_enabled)
         }
-      ] : [{
-        dns_zone_name         = zone.name
-        name                  = coalesce(zone.link_name, zone.name)
-        virtual_network_id    = azurerm_virtual_network.this.id
-        registration_enabled  = zone.auto_registration_enabled
+        ] : [{
+          dns_zone_name        = zone.name
+          name                 = coalesce(zone.link_name, zone.name)
+          virtual_network_id   = azurerm_virtual_network.this.id
+          registration_enabled = zone.auto_registration_enabled
       }]
     )
   ])
@@ -34,4 +34,6 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
   virtual_network_id    = each.value.virtual_network_id
   registration_enabled  = each.value.registration_enabled
   tags                  = var.tags_from_rg ? merge(data.azurerm_resource_group.resource_group.tags, var.tags) : var.tags
+
+  depends_on = [azurerm_private_dns_zone.this]
 }

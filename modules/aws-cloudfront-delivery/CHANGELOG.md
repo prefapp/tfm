@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.1](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v1.0.0...aws-cloudfront-delivery-v1.0.1) (2026-10-13)
+
+
+### Bug Fixes
+
+* add support custom ACM cert ([#1448](https://github.com/prefapp/tfm/issues/1448)) ([a90d728](https://github.com/prefapp/tfm/commit/a90d728780a5049e3faf302f68ea4c26f904bb10))
+
+## [1.0.0](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.6...aws-cloudfront-delivery-v1.0.0) (2026-09-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **aws-cloudfront-delivery:** upgrade and support of extra behavior and custom reponse errors ([#1439](https://github.com/prefapp/tfm/issues/1439))
+
+### Features
+
+* **aws-cloudfront-delivery:** upgrade and support of extra behavior and custom reponse errors ([#1439](https://github.com/prefapp/tfm/issues/1439)) ([da3d566](https://github.com/prefapp/tfm/commit/da3d5666a3ca81c26d05896e2860ea4309cd44c4))
+
 ## [0.2.6](https://github.com/prefapp/tfm/compare/aws-cloudfront-delivery-v0.2.5...aws-cloudfront-delivery-v0.2.6) (2026-02-26)
 
 

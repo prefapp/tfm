@@ -26,11 +26,24 @@ variable "private_dns_zones" {
     name                      = string
     link_name                 = optional(string)
     auto_registration_enabled = optional(bool, false)
-    virtual_network_links     = optional(list(object({
+    virtual_network_links = optional(list(object({
       name                 = string
       virtual_network_id   = string
       virtual_network_name = optional(string)
+      registration_enabled = optional(bool)
     })))
+  }))
+  default = []
+}
+
+variable "existing_private_dns_zone_links" {
+  description = "Virtual network links to create for existing private DNS zones. The module reads the zone but does not create it or any other links. resource_group_name defaults to the module resource group."
+  type = list(object({
+    private_dns_zone_name = string
+    name                  = string
+    virtual_network_id    = string
+    resource_group_name   = optional(string)
+    registration_enabled  = optional(bool, false)
   }))
   default = []
 }
@@ -43,9 +56,9 @@ variable "resource_group_name" {
 variable "peerings" {
   description = "List of virtual network peerings to create from this VNet (local side)."
   type = list(object({
-    peering_name                 = string
-    vnet_name                    = string
-    remote_virtual_network_id    = string
+    peering_name              = string
+    vnet_name                 = string
+    remote_virtual_network_id = string
 
     allow_forwarded_traffic      = optional(bool, false)
     allow_gateway_transit        = optional(bool, false)

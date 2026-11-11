@@ -10,14 +10,14 @@ The module reads an existing resource group (data source), creates the VNet and 
 Below is a summary of the main capabilities:
 
 - **Virtual network and subnets**: One VNet with a map of subnets; supports service endpoints, private endpoint / private link policies, and delegations.
-- **Private DNS zones**: Optional zones with default linkage to the module VNet, or explicit `virtual_network_links` to attach additional VNets per zone.
+- **Private DNS zones**: Optional zones with default linkage to the module VNet, explicit `virtual_network_links` to attach additional VNets per zone, and links to existing zones without taking ownership of those zones.
 - **VNet peering**: Optional peerings using `azurerm_virtual_network_peering`; peering uses the module-level `resource_group_name` and each entry’s `vnet_name` for the local VNet side.
 - **Tags**: `tags` is applied to resources that support tagging (for example the VNet, private DNS zones, and their VNet links). With the default `tags_from_rg = true`, resource group tags are merged with the provided `tags` for those resources; set `tags_from_rg = false` to skip that merge.
 
 ## Key Features
 
 - **Structured network input**: `virtual_network` groups name, region, address space, and a map of subnets in one object.
-- **Private DNS**: Create zones in the same resource group and manage virtual network links, including extra spokes via `virtual_network_links`.
+- **Private DNS**: Create zones in the same resource group and manage virtual network links, including extra spokes via `virtual_network_links`. Each managed link can override the zone `auto_registration_enabled` setting with `registration_enabled`. Use `existing_private_dns_zone_links` to link an existing zone without creating the zone or its existing links; each link controls `registration_enabled` independently.
 - **Peering options**: Configure forwarded traffic, gateway transit, remote gateways, and VNet access per peering.
 - **Operational clarity**: Outputs expose VNet `id` and `name`, subnet IDs (keys `vnet_name.subnet_key`), private DNS zone and VNet link IDs as **maps** (stable keys), and peering IDs keyed by peering name.
 
@@ -26,7 +26,7 @@ Below is a summary of the main capabilities:
 ### Module usage
 
 - **Prerequisites**: An Azure resource group must exist. Configure the AzureRM provider in your root module (subscription, features, and authentication as required).
-- **Configure variables**: Set `resource_group_name` and the `virtual_network` object (including `subnets`). Use `private_dns_zones` and `peerings` when needed; both default to empty lists.
+- **Configure variables**: Set `resource_group_name` and the `virtual_network` object (including `subnets`). Use `private_dns_zones`, `existing_private_dns_zone_links`, and `peerings` when needed; all default to empty lists.
 - **Tags**: Set `tags` as needed. Merging with resource group tags is the default (`tags_from_rg` defaults to `true`); set `tags_from_rg = false` if you want only `tags` and no inheritance from the resource group.
 - **Apply**: Run `terraform init` and `terraform apply` to create or update resources.
 
@@ -107,12 +107,23 @@ module "azure_vnet_and_subnet" {
         {
           name               = "saas-spoke-common-predev-vnet-link"
           virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myResourceGroupName/providers/Microsoft.Network/virtualNetworks/myVnetName"
+          registration_enabled = true
         },
         {
           name               = "corpme-spoke-common-predev-vnet-link"
           virtual_network_id = "/subscriptions/mySubscriptionId/resourceGroups/myOtherResourceGroupName/providers/Microsoft.Network/virtualNetworks/myOtherVnetName"
+          registration_enabled = false
         }
       ]
+    }
+  ]
+
+  existing_private_dns_zone_links = [
+    {
+      private_dns_zone_name = "privatelink.file.core.windows.net"
+      name                  = "central-hub-vnet"
+      virtual_network_id    = "/subscriptions/mySubscriptionId/resourceGroups/central-management/providers/Microsoft.Network/virtualNetworks/central-hub-vnet"
+      registration_enabled  = false
     }
   ]
 
@@ -171,6 +182,7 @@ The module is organized as follows:
 ├── CHANGELOG.md
 ├── main.tf
 ├── outputs.tf
+├── existing_private_dns_zone_vnet_link.tf
 ├── private_dns_zone.tf
 ├── private_dns_zone_vnet_link.tf
 ├── subnet.tf
@@ -189,6 +201,7 @@ The module is organized as follows:
 - **`subnet.tf`**: Subnets derived from `virtual_network.subnets`.
 - **`private_dns_zone.tf`**: Private DNS zones.
 - **`private_dns_zone_vnet_link.tf`**: Virtual network links for private DNS zones.
+- **`existing_private_dns_zone_vnet_link.tf`**: Virtual network links for existing private DNS zones.
 - **`vnet-peering.tf`**: Virtual network peerings.
 - **`variables.tf`**: Input variables.
 - **`outputs.tf`**: Exported values (VNet, subnets, DNS, peerings).
@@ -216,18 +229,21 @@ No modules.
 | Name | Type |
 |------|------|
 | [azurerm_private_dns_zone.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
+| [azurerm_private_dns_zone_virtual_network_link.existing](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_subnet.subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_virtual_network.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
 | [azurerm_virtual_network_peering.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
+| [azurerm_private_dns_zone.existing](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/private_dns_zone) | data source |
 | [azurerm_resource_group.resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_existing_private_dns_zone_links"></a> [existing\_private\_dns\_zone\_links](#input\_existing\_private\_dns\_zone\_links) | Virtual network links to create for existing private DNS zones. The module reads the zone but does not create it or any other links. resource\_group\_name defaults to the module resource group. | <pre>list(object({<br/>    private_dns_zone_name = string<br/>    name                  = string<br/>    virtual_network_id    = string<br/>    resource_group_name   = optional(string)<br/>    registration_enabled  = optional(bool, false)<br/>  }))</pre> | `[]` | no |
 | <a name="input_peerings"></a> [peerings](#input\_peerings) | List of virtual network peerings to create from this VNet (local side). | <pre>list(object({<br/>    peering_name                 = string<br/>    vnet_name                    = string<br/>    remote_virtual_network_id    = string<br/><br/>    allow_forwarded_traffic      = optional(bool, false)<br/>    allow_gateway_transit        = optional(bool, false)<br/>    allow_virtual_network_access = optional(bool, true)<br/>    use_remote_gateways          = optional(bool, false)<br/>  }))</pre> | `[]` | no |
-| <a name="input_private_dns_zones"></a> [private\_dns\_zones](#input\_private\_dns\_zones) | List of private DNS zones to create.<br/><br/>Each zone can optionally define virtual\_network\_links (list of objects) to link the DNS zone to multiple VNets.<br/>If virtual\_network\_links is omitted, a default link to the main VNet is created.<br/><br/>Example:<br/>private\_dns\_zones = [<br/>  {<br/>    name = "example.com"<br/>    auto\_registration\_enabled = false<br/>    virtual\_network\_links = [<br/>      {<br/>        name = "vnet-link-1"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet1"<br/>      },<br/>      {<br/>        name = "vnet-link-2"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet2"<br/>      }<br/>    ]<br/>  },<br/>  {<br/>    name = "other.com"<br/>    auto\_registration\_enabled = true<br/>    # No virtual\_network\_links: will link to main VNet<br/>  }<br/>] | <pre>list(object({<br/>    name                      = string<br/>    link_name                 = optional(string)<br/>    auto_registration_enabled = optional(bool, false)<br/>    virtual_network_links     = optional(list(object({<br/>      name                 = string<br/>      virtual_network_id   = string<br/>      virtual_network_name = optional(string)<br/>    })))<br/>  }))</pre> | `[]` | no |
+| <a name="input_private_dns_zones"></a> [private\_dns\_zones](#input\_private\_dns\_zones) | List of private DNS zones to create.<br/><br/>Each zone can optionally define virtual\_network\_links (list of objects) to link the DNS zone to multiple VNets.<br/>If virtual\_network\_links is omitted, a default link to the main VNet is created.<br/><br/>Example:<br/>private\_dns\_zones = [<br/>  {<br/>    name = "example.com"<br/>    auto\_registration\_enabled = false<br/>    virtual\_network\_links = [<br/>      {<br/>        name = "vnet-link-1"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet1"<br/>      },<br/>      {<br/>        name = "vnet-link-2"<br/>        virtual\_network\_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet2"<br/>      }<br/>    ]<br/>  },<br/>  {<br/>    name = "other.com"<br/>    auto\_registration\_enabled = true<br/>    # No virtual\_network\_links: will link to main VNet<br/>  }<br/>] | <pre>list(object({<br/>    name                      = string<br/>    link_name                 = optional(string)<br/>    auto_registration_enabled = optional(bool, false)<br/>    virtual_network_links     = optional(list(object({<br/>      name                 = string<br/>      virtual_network_id   = string<br/>      virtual_network_name = optional(string)<br/>      registration_enabled = optional(bool)<br/>    })))<br/>  }))</pre> | `[]` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group in which to create the virtual network | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | The tags to associate with your resources | `map(string)` | `{}` | no |
 | <a name="input_tags_from_rg"></a> [tags\_from\_rg](#input\_tags\_from\_rg) | Use the tags from the resource group | `bool` | `true` | no |
@@ -237,6 +253,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_existing_private_dns_zone_virtual_network_link_ids"></a> [existing\_private\_dns\_zone\_virtual\_network\_link\_ids](#output\_existing\_private\_dns\_zone\_virtual\_network\_link\_ids) | Map from existing private DNS zone link keys to private DNS zone virtual network link resource IDs. |
 | <a name="output_private_dns_zone_ids"></a> [private\_dns\_zone\_ids](#output\_private\_dns\_zone\_ids) | Map from private DNS zone name (for\_each key) to private DNS zone resource ID. |
 | <a name="output_private_dns_zone_virtual_network_link_ids"></a> [private\_dns\_zone\_virtual\_network\_link\_ids](#output\_private\_dns\_zone\_virtual\_network\_link\_ids) | Map from VNet link for\_each keys (zone name when linking this VNet, or `<zone_name>-<link_name>` for other VNets) to private DNS zone virtual network link resource ID. |
 | <a name="output_private_dns_zones"></a> [private\_dns\_zones](#output\_private\_dns\_zones) | Private DNS zones keyed by name. |

@@ -8,11 +8,13 @@ resource "aws_cloudwatch_event_rule" "rds_backup_job_completed" {
 
   event_pattern = jsonencode({
     "source" : ["aws.backup"],
-    "detail-type" : ["Recovery Point State Change"],
+    "detail-type" : ["Copy Job State Change"],
     "detail" : {
-      #   "resourceType" : ["RDS"],
-      "backupVaultName" : [for vault in var.aws_backup_vault : vault.vault_name if vault.vault_name != null],
-      "status" : ["COMPLETED"],
+      "state" : ["COMPLETED"],
+      "destinationBackupVaultArn" : [for vault in values(aws_backup_vault.this) : vault.arn if vault.arn != null],
+      "createdBy" : {
+        "backupPlanArn" : [for plan in values(aws_backup_plan.this) : plan.arn if plan.arn != null]
+      }
     }
   })
 
@@ -33,5 +35,3 @@ resource "aws_lambda_permission" "allow_eventbridge" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.rds_backup_job_completed[0].arn
 }
-
-

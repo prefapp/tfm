@@ -1,3 +1,10 @@
+data "aws_route53_zone" "selected" {
+  count = var.route53_zone_name != null ? 1 : 0
+
+  name         = var.route53_zone_name
+  private_zone = false
+}
+
 resource "aws_route53_record" "cdn_aliases" {
   for_each = var.route53_zone_name != null ? toset(var.cdn_aliases) : toset([])
 

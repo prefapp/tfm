@@ -7,6 +7,7 @@ locals {
   base_addons = {
     vpc-cni = {
       enabled                     = true
+      before_compute              = true
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "OVERWRITE"
       most_recent                 = "false"
@@ -40,6 +41,7 @@ locals {
     },
     eks-pod-identity-agent = {
       enabled                     = true
+      before_compute              = true
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "OVERWRITE"
       most_recent                 = "false"

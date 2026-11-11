@@ -38,6 +38,16 @@ storage_account:
     restore_policy:
       days: 10
 
+object_replication:
+  destination_storage_account_id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg_dr/providers/Microsoft.Storage/storageAccounts/mystorageacctdr"
+  rules:
+    - source_container_name: "test"
+      destination_container_name: "test"
+      # Use Everything to include existing blobs as well as new blobs.
+      copy_blobs_created_after: "Everything"
+      filter_out_blobs_with_prefix:
+        - "temporary/"
+
 network_rules:
   default_action: "Deny"
   bypass: "AzureServices"
@@ -51,6 +61,14 @@ containers:
     container_access_type: "private"
   - name: "test2"
     container_access_type: "private"
+  # WORM: time-based retention policy scoped to this container only.
+  # locked: true is irreversible and blocks deletion of the container and the account.
+  - name: "worm"
+    container_access_type: "private"
+    immutability_policy:
+      immutability_period_in_days: 365
+      locked: false
+      protected_append_writes_enabled: true
 
 queues:
   - name: "test"
