@@ -41,7 +41,7 @@ variable "config" {
   })
 
   validation {
-    condition     = can(regex("^[a-zA-Z0-9-]+$", trimspace(var.config.org)))
+    condition     = can(regex("^[a-zA-Z0-9-]+$", var.config.org))
     error_message = "config.org must be a non-empty string containing only letters, digits, and hyphens."
   }
 
