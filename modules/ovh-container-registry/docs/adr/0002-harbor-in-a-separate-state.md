@@ -1,0 +1,5 @@
+# Harbor content in a separate state, via a submodule with its own provider
+
+The registry (root module) and its Harbor projects and robots (`modules/harbor`) are applied in two Terraform states, registry first. The `goharbor/harbor` provider fails to configure when its `url` is unknown at plan time, so a single state that creates the registry and configures Harbor cannot be planned on first creation; working around it needs a bootstrap flag and two applies. A single module with a "mode" input was rejected for the same reason and because it hides two lifecycles behind one interface.
+
+The submodule declares its own `provider "harbor"` block, configured from the admin secret read from OKMS. Harbor is a service provider whose credentials come from the infrastructure itself, not a platform provider supplied by the caller (as `ovh` is). The cost is that the submodule is a legacy module: no `count`, `for_each` or `depends_on` on its `module` block, and the block cannot be removed before its resources are destroyed. It also fixes the destroy order: the `harbor` state must be destroyed before the registry, or the provider cannot authenticate.

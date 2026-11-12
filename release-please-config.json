@@ -202,6 +202,9 @@
         "modules/github-org-settings": {
             "package-name": "github-org-settings"
         },
+        "modules/github-org-secrets-section": {
+            "package-name": "github-org-secrets-section"
+        },
         "modules/azure-alerts": {
             "package-name": "azure-alerts"
         },
@@ -210,6 +213,18 @@
         },
         "modules/github-org-variables-section": {
             "package-name": "github-org-variables-section"
+        },
+        "modules/ovh-network": {
+            "package-name": "ovh-network"
+        },
+        "modules/ovh-mks": {
+            "package-name": "ovh-mks"
+        },
+        "modules/ovh-mks-access": {
+            "package-name": "ovh-mks-access"
+        },
+        "modules/ovh-container-registry": {
+            "package-name": "ovh-container-registry"
         }
     }
 }
