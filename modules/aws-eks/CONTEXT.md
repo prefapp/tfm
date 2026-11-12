@@ -26,6 +26,9 @@ _Avoid_: aws-auth mapping
 A managed EKS Kubernetes permission set attached to an access entry and scoped to the cluster or selected namespaces. It grants Kubernetes permissions, not AWS API permissions.
 _Avoid_: IAM policy
 
+**Kubernetes access group**:
+A group name carried by an EKS access entry and matched by Kubernetes RBAC subjects. The group itself grants no permission until a RoleBinding or ClusterRoleBinding references it.
+
 **Firestartr integration role**:
 A customer-account IAM role used by a Backstage or ArgoCD integration. The module discovers the role by a configurable name and requires all configured tags to match; Firestartr role names and tags are the defaults for the planned Firestartr integration.
 

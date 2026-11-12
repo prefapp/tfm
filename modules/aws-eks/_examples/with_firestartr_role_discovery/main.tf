@@ -40,6 +40,8 @@ module "eks" {
     ManagedBy             = "Prefapp"
     ProvisionedBy         = "CloudFormation"
   }
+  # Adds this Kubernetes group to the Access Entry. A matching RBAC binding
+  # for metrics.k8s.io must be managed separately in the cluster.
 
   enable_argocd_admin_access_entry = true
   argocd_admin_role_name           = "FirestartrArgoCDAdmin"
