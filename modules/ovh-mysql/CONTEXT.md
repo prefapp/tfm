@@ -1,6 +1,6 @@
 # ovh-mysql
 
-Owns an OVHcloud managed MySQL service, its private-network attachment and its databases. User provisioning and application credentials are intentionally outside this context.
+Owns an OVHcloud managed MySQL service, its private-network attachment, databases, the OVH-managed `avnadmin` account and that account's credentials in OKMS. Least-privilege application users remain outside this context.
 
 Terms below are specific to this module. Cross-cutting vocabulary (Firestartr, ghaps,
 `config`, CR, module contract, state boundary, composite module) lives in the root
@@ -23,6 +23,12 @@ A CIDR allow-list controlling which client addresses can connect to the MySQL se
 
 **API-created database user**:
 A database identity created through OVHcloud Console or API, with administrator-equivalent privileges; it is not suitable as an application account.
+
+**avnadmin account**:
+The OVHcloud-managed administrative MySQL account. The provider maps the `avnadmin` user resource to this existing account and can reset its password.
+
+**administrator credential secret**:
+The OKMS secret at the configured path containing a JSON object with the `avnadmin` username and generated password.
 
 **SQL-managed application user**:
 A MySQL identity created through SQL and granted only the privileges required by its application. It is not visible or manageable through the OVHcloud API.

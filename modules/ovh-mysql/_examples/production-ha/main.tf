@@ -2,6 +2,7 @@ module "ovh_mysql" {
   source = "../../"
 
   project_name   = "example-project"
+  okms_id        = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name           = "example-mysql-production"
   region         = "GRA"
   engine_version = "8.4"
@@ -34,4 +35,9 @@ output "mysql_endpoint" {
     host = module.ovh_mysql.mysql_host
     port = module.ovh_mysql.mysql_port
   }
+}
+
+output "admin_secret_path" {
+  description = "OKMS path storing administrator credentials."
+  value       = module.ovh_mysql.admin_secret_path
 }

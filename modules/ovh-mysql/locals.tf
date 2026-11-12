@@ -9,7 +9,8 @@ locals {
       ) : false
     )
   ]
-  service_name = try(one(local.selected_projects).service_name, null)
+  service_name      = try(one(local.selected_projects).service_name, null)
+  admin_secret_path = var.admin_secret_path != null ? var.admin_secret_path : "mysql/${var.name}/avnadmin"
 
   selected_networks = try([
     for network in data.ovh_cloud_project_network_privates.networks[0].networks : network

@@ -94,6 +94,36 @@ resource "ovh_cloud_project_database_database" "databases" {
   name         = each.value
 }
 
+resource "ovh_cloud_project_database_user" "admin" {
+  service_name   = local.service_name
+  engine         = "mysql"
+  cluster_id     = ovh_cloud_project_database.mysql.id
+  name           = "avnadmin"
+  password_reset = var.admin_password_reset
+}
+
+resource "ovh_okms_secret" "admin" {
+  okms_id = data.ovh_okms_resource.kms.id
+  path    = local.admin_secret_path
+
+  metadata = {
+    max_versions             = 10
+    deactivate_version_after = "0s"
+    custom_metadata = {
+      managed_by = "ovh-mysql"
+      service    = var.name
+      username   = "avnadmin"
+    }
+  }
+
+  version = {
+    data = jsonencode({
+      username = ovh_cloud_project_database_user.admin.name
+      password = ovh_cloud_project_database_user.admin.password
+    })
+  }
+}
+
 check "deletion_protection_recommendation" {
   assert {
     condition     = var.deletion_protection || var.plan == "discovery"

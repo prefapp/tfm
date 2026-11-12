@@ -18,6 +18,16 @@ output "mysql_status" {
   value       = ovh_cloud_project_database.mysql.status
 }
 
+output "admin_username" {
+  description = "OVHcloud MySQL administrator username."
+  value       = ovh_cloud_project_database_user.admin.name
+}
+
+output "admin_secret_path" {
+  description = "OKMS path storing the JSON MySQL administrator credentials."
+  value       = ovh_okms_secret.admin.path
+}
+
 output "mysql_host" {
   description = "MySQL endpoint hostname for TLS connections."
   value       = try(one(local.mysql_endpoints).domain, null)

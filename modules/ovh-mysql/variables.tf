@@ -10,6 +10,33 @@ variable "project_name" {
   default     = null
 }
 
+variable "okms_id" {
+  description = "ID of the OVHcloud KMS (OKMS) where the MySQL administrator credentials are stored."
+  type        = string
+
+  validation {
+    condition     = length(trimspace(var.okms_id)) > 0
+    error_message = "okms_id must not be empty."
+  }
+}
+
+variable "admin_secret_path" {
+  description = "Optional OKMS path for the JSON document containing the MySQL administrator username and password. Defaults to mysql/<name>/avnadmin."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.admin_secret_path == null || length(trimspace(var.admin_secret_path)) > 0
+    error_message = "admin_secret_path must not be empty when set."
+  }
+}
+
+variable "admin_password_reset" {
+  description = "Reset trigger for the OVHcloud avnadmin password. Defaults to an initial reset; change this value to rotate the password and publish a new OKMS secret version."
+  type        = string
+  default     = "initial"
+}
+
 variable "name" {
   description = "Description assigned to the managed MySQL service."
   type        = string

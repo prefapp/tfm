@@ -29,6 +29,7 @@ run "reject_invalid_plan" {
 
   variables {
     project_id     = "project-id"
+    okms_id        = "kms-id"
     name           = "test-mysql"
     region         = "GRA"
     engine_version = "8.4"
@@ -47,6 +48,7 @@ run "reject_invalid_backup_time" {
 
   variables {
     project_id          = "project-id"
+    okms_id             = "kms-id"
     name                = "test-mysql"
     region              = "GRA"
     engine_version      = "8.4"
@@ -67,6 +69,7 @@ run "reject_duplicate_database_names" {
 
   variables {
     project_id          = "project-id"
+    okms_id             = "kms-id"
     name                = "test-mysql"
     region              = "GRA"
     engine_version      = "8.4"
@@ -87,6 +90,7 @@ run "reject_public_cidr_without_opt_in" {
 
   variables {
     project_id          = "project-id"
+    okms_id             = "kms-id"
     name                = "test-mysql"
     region              = "GRA"
     engine_version      = "8.4"
@@ -110,6 +114,7 @@ run "reject_invalid_cidr" {
 
   variables {
     project_id          = "project-id"
+    okms_id             = "kms-id"
     name                = "test-mysql"
     region              = "GRA"
     engine_version      = "8.4"
@@ -133,6 +138,7 @@ run "reject_invalid_backup_region_count" {
 
   variables {
     project_id          = "project-id"
+    okms_id             = "kms-id"
     name                = "test-mysql"
     region              = "GRA"
     engine_version      = "8.4"
@@ -143,4 +149,24 @@ run "reject_invalid_backup_region_count" {
   }
 
   expect_failures = [var.backup_regions, data.ovh_cloud_project_database_capabilities.capabilities]
+}
+
+run "reject_empty_admin_secret_path" {
+  command = plan
+  providers = {
+    ovh = ovh.mock
+  }
+
+  variables {
+    project_id        = "project-id"
+    okms_id           = "kms-id"
+    name              = "test-mysql"
+    region            = "GRA"
+    engine_version    = "8.4"
+    plan              = "discovery"
+    flavor            = "b3-4"
+    admin_secret_path = " "
+  }
+
+  expect_failures = [var.admin_secret_path, data.ovh_cloud_project_database_capabilities.capabilities]
 }

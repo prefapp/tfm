@@ -3,7 +3,7 @@
 
 ## Overview
 
-This module provisions an OVHcloud Public Cloud Databases for MySQL service and its logical databases in an existing Public Cloud project. It selects the project by `project_id` or `project_name`, checks the requested MySQL version and flavor against live project capabilities, and derives the number of nodes from the selected plan.
+This module provisions an OVHcloud Public Cloud Databases for MySQL service, its logical databases, and the service's OVH-managed `avnadmin` account in an existing Public Cloud project. The generated administrator credentials are stored in an OVHcloud Key Management Service (OKMS) secret. It selects the project by `project_id` or `project_name`, checks the requested MySQL version and flavor against live project capabilities, and derives the number of nodes from the selected plan.
 
 By default, every node attaches to an existing private network and subnet discovered by exact network name and subnet CIDR. The module also restricts incoming connections to that subnet unless explicit CIDR restrictions are supplied. Region and flavor-specific disk capacity are finally validated by OVHcloud because the provider capabilities data source does not expose a live region matrix or authoritative disk-size range.
 
@@ -14,6 +14,7 @@ By default, every node attaches to an existing private network and subnet discov
 - **Existing private network**: Discovers and attaches the regional network ID and subnet ID without managing the network itself.
 - **Private-by-default access**: Defaults the MySQL IP allow-list to the selected subnet; public-wide CIDRs require explicit opt-in.
 - **Logical databases**: Creates a set of named databases in the managed service.
+- **Administrator credential storage**: Resets the existing OVH-managed `avnadmin` password and publishes username/password JSON to OKMS.
 
 ## Basic Usage
 
@@ -26,6 +27,7 @@ module "ovh_mysql" {
   source = "git::https://github.com/prefapp/tfm.git//modules/ovh-mysql?ref=ovh-mysql-vx.y.z"
 
   project_name = "example-project"
+  okms_id      = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name         = "example-mysql"
   region       = "GRA"
   engine_version = "8.4"
@@ -45,6 +47,7 @@ module "ovh_mysql_production" {
   source = "git::https://github.com/prefapp/tfm.git//modules/ovh-mysql?ref=ovh-mysql-vx.y.z"
 
   project_name = "example-project"
+  okms_id      = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name         = "example-mysql-production"
   region       = "GRA"
   engine_version = "8.4"
@@ -62,7 +65,7 @@ module "ovh_mysql_production" {
 }
 ```
 
-The module intentionally does not create database users or application credentials. OVHcloud API-created users have administrator-equivalent privileges; use SQL-managed accounts with least privilege through a separately designed workflow. MySQL connections accept TLS and the module exposes the project's CA; configure clients to require TLS and verify the server identity. Protect Terraform state and plan files because provider-managed values may be recorded there.
+The module manages only the OVH-provided `avnadmin` account; it does not create application users. `avnadmin` has administrator-equivalent privileges and must not be used by applications; create SQL-managed accounts with least privilege through a separate workflow. The `okms_id` input is required and `admin_secret_path` optionally overrides the default path `mysql/<name>/avnadmin`. The default `admin_password_reset = "initial"` resets the OVH-managed password when the account is first managed. Change that value to request later rotations and publish a new OKMS version. MySQL connections accept TLS and the module exposes the project's CA; configure clients to require TLS and verify the server identity. Both Terraform state and plan files can contain the password, so protect them with encryption and access controls.
 
 ## Requirements
 
@@ -87,16 +90,21 @@ No modules.
 |------|------|
 | [ovh_cloud_project_database.mysql](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database) | resource |
 | [ovh_cloud_project_database_database.databases](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database_database) | resource |
+| [ovh_cloud_project_database_user.admin](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database_user) | resource |
+| [ovh_okms_secret.admin](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
 | [ovh_cloud_project_database_capabilities.capabilities](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_capabilities) | data source |
 | [ovh_cloud_project_database_certificates.ca](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_certificates) | data source |
 | [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_private_subnets) | data source |
 | [ovh_cloud_project_network_privates.networks](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_privates) | data source |
 | [ovh_cloud_projects.projects](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_projects) | data source |
+| [ovh_okms_resource.kms](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/okms_resource) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_admin_password_reset"></a> [admin\_password\_reset](#input\_admin\_password\_reset) | Reset trigger for the OVHcloud avnadmin password. Defaults to an initial reset; change this value to rotate the password and publish a new OKMS secret version. | `string` | `"initial"` | no |
+| <a name="input_admin_secret_path"></a> [admin\_secret\_path](#input\_admin\_secret\_path) | Optional OKMS path for the JSON document containing the MySQL administrator username and password. Defaults to mysql/<name>/avnadmin. | `string` | `null` | no |
 | <a name="input_advanced_configuration"></a> [advanced\_configuration](#input\_advanced\_configuration) | Optional MySQL advanced configuration settings supported by OVHcloud. | `map(string)` | `{}` | no |
 | <a name="input_allow_public_access"></a> [allow\_public\_access](#input\_allow\_public\_access) | Explicitly allow 0.0.0.0/0 or ::/0 in ip\_restrictions. Avoid this outside temporary testing. | `bool` | `false` | no |
 | <a name="input_backup_regions"></a> [backup\_regions](#input\_backup\_regions) | Optional backup destination regions, with at most two regions and including the MySQL node region. OVHcloud validates availability of each backup region. | `set(string)` | `null` | no |
@@ -110,6 +118,7 @@ No modules.
 | <a name="input_maintenance_time"></a> [maintenance\_time](#input\_maintenance\_time) | Optional daily maintenance start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Description assigned to the managed MySQL service. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network. Required when use\_private\_network is true. | `string` | `null` | no |
+| <a name="input_okms_id"></a> [okms\_id](#input\_okms\_id) | ID of the OVHcloud KMS (OKMS) where the MySQL administrator credentials are stored. | `string` | n/a | yes |
 | <a name="input_plan"></a> [plan](#input\_plan) | MySQL plan: discovery (1 node), production (2 nodes), or advanced (3 nodes). | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID or service\_name; takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against OVHcloud project\_name and description. | `string` | `null` | no |
@@ -121,6 +130,8 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_admin_secret_path"></a> [admin\_secret\_path](#output\_admin\_secret\_path) | OKMS path storing the JSON MySQL administrator credentials. |
+| <a name="output_admin_username"></a> [admin\_username](#output\_admin\_username) | OVHcloud MySQL administrator username. |
 | <a name="output_database_names"></a> [database\_names](#output\_database\_names) | Names of MySQL databases managed by this module. |
 | <a name="output_mysql_ca"></a> [mysql\_ca](#output\_mysql\_ca) | Service CA certificate required for TLS connections. |
 | <a name="output_mysql_description"></a> [mysql\_description](#output\_mysql\_description) | Description assigned to the managed MySQL service. |
@@ -139,6 +150,8 @@ The module manages these Terraform resources (addresses assume the caller names 
 
 - MySQL service: `module.ovh_mysql.ovh_cloud_project_database.mysql`
 - Databases: `module.ovh_mysql.ovh_cloud_project_database_database.databases["<database-name>"]`
+- OVH-managed administrator: `module.ovh_mysql.ovh_cloud_project_database_user.admin`
+- OKMS administrator secret: `module.ovh_mysql.ovh_okms_secret.admin`
 
 Import an existing MySQL service with `<service_name>/mysql/<cluster_id>`:
 
@@ -152,6 +165,14 @@ Import each database with `<service_name>/mysql/<cluster_id>/<database_id>`:
 terraform import 'module.ovh_mysql.ovh_cloud_project_database_database.databases["<database-name>"]' '<service_name>/mysql/<cluster_id>/<database_id>'
 ```
 
+Import the OVH-managed administrator user with `<service_name>/mysql/<cluster_id>/<user_id>`:
+
+```sh
+terraform import 'module.ovh_mysql.ovh_cloud_project_database_user.admin' '<service_name>/mysql/<cluster_id>/<user_id>'
+```
+
+The OVH provider does not document import for `ovh_okms_secret`; create the managed secret through this module or manage/import it outside this module before adoption.
+
 Destroying the module deletes all managed databases and the MySQL service, including any data and backups retained by OVHcloud. It does not delete the Public Cloud project, private network, subnet or gateway. With `deletion_protection = true`, OVHcloud rejects deletion; set it to `false`, apply that change, and only then run destroy.
 
 Changing the service region forces replacement and can destroy all database data. Changing the network attachment triggers a service rebuild and clears IP restrictions while the network changes; review connectivity and restore the intended allow-list after the update. Flavor changes are applied as node upgrades. OVHcloud validates the requested region and the flavor-specific `disk_size` limits against its service availability when applying, because the provider's project capabilities data source does not expose a region matrix or a documented maximum disk-size range.
@@ -160,7 +181,11 @@ OVHcloud currently documents automatic daily backup retention of 2 days for `dis
 
 Automated plan-mode tests use Terraform provider mocking, which requires Terraform 1.7 or later.
 
-The service module does not manage user accounts or passwords. OVHcloud API-created users receive administrator-equivalent privileges and must not be used as application identities. Database users with least privilege require SQL management outside this module.
+The module maps `avnadmin` to OVHcloud's pre-existing administrator and resets its password during initial management. Removing the Terraform user resource does not delete that account or revoke its password. Removing `ovh_okms_secret.admin` deletes the credential secret from OKMS; retain or migrate the secret before destroying the module if consumers still need the credentials. The MySQL service's `deletion_protection` does not protect the separate OKMS secret.
+
+The default `admin_password_reset = "initial"` ensures the existing administrator's password is reset when the resource is first managed. Changing `admin_password_reset` later requests another reset and publishes a new OKMS secret version. The password is not exported as a Terraform output. However, the OVH user resource password and OKMS `version.data` are stored in Terraform state; encrypt the state and restrict access to state and plan files. OKMS retains prior versions according to its secret metadata.
+
+The administrator is for operations and must not be used as an application identity. OVHcloud API-created users receive administrator-equivalent privileges; least-privilege application users require SQL management outside this module.
 
 MySQL's OVHcloud connection URI uses TLS, but the server also accepts unencrypted connections. Require TLS in every client; use the exposed project CA for server verification, and configure SQL-managed application accounts to require SSL where appropriate. The CA is shared by Public Cloud Databases services in the project.
 

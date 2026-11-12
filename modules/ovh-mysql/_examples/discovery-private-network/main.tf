@@ -2,6 +2,7 @@ module "ovh_mysql" {
   source = "../../"
 
   project_name   = "example-project"
+  okms_id        = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name           = "example-mysql-discovery"
   region         = "GRA"
   engine_version = "8.4"
@@ -24,6 +25,11 @@ output "mysql_host" {
 output "mysql_ca" {
   description = "CA certificate to verify the MySQL TLS connection."
   value       = module.ovh_mysql.mysql_ca
+}
+
+output "admin_secret_path" {
+  description = "OKMS path storing administrator credentials."
+  value       = module.ovh_mysql.admin_secret_path
 }
 
 output "database_names" {
