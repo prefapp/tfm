@@ -80,11 +80,10 @@ locals {
   integration_access_entries = merge(
     var.enable_backstage_reader_access_entry ? {
       firestartr_backstage_reader = {
-        principal_arn     = terraform_data.backstage_reader_role_validation[0].input.role_arn
-        kubernetes_groups = ["backstage-metrics-reader"]
+        principal_arn = terraform_data.backstage_reader_role_validation[0].input.role_arn
         policy_associations = {
-          AmazonEKSViewPolicy = {
-            policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+          AmazonEKSAdminViewPolicy = {
+            policy_arn = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
             access_scope = {
               type = "cluster"
             }
