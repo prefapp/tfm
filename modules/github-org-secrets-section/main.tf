@@ -5,10 +5,6 @@ data "github_actions_organization_public_key" "this" {
   count = length(var.config.actions) > 0 ? 1 : 0
 }
 
-data "github_codespaces_organization_public_key" "this" {
-  count = length(var.config.codespaces) > 0 ? 1 : 0
-}
-
 data "github_dependabot_organization_public_key" "this" {
   count = length(var.config.dependabot) > 0 ? 1 : 0
 }
@@ -76,15 +72,22 @@ resource "github_actions_organization_secret" "this" {
   key_id          = one(data.github_actions_organization_public_key.this[*].key_id)
   value_encrypted = each.value.value
 
-  selected_repository_ids = each.value.visibility == "selected" ? [
-    for repo in each.value.selected_repositories :
-    data.github_repository.selected[repo].repo_id
-  ] : null
-
   lifecycle {
     replace_triggered_by = [terraform_data.actions_trigger[each.key]]
     ignore_changes       = [key_id, value_encrypted]
   }
+}
+
+resource "github_actions_organization_secret_repositories" "this" {
+  for_each = {
+    for name, secret in var.config.actions : name => secret if secret.visibility == "selected"
+  }
+
+  secret_name = github_actions_organization_secret.this[each.key].secret_name
+  selected_repository_ids = [
+    for repo in each.value.selected_repositories :
+    data.github_repository.selected[repo].repo_id
+  ]
 }
 
 # ─────────────────────────────────────────────────────────────
@@ -119,13 +122,20 @@ resource "github_dependabot_organization_secret" "this" {
   key_id          = one(data.github_dependabot_organization_public_key.this[*].key_id)
   value_encrypted = each.value.value
 
-  selected_repository_ids = each.value.visibility == "selected" ? [
-    for repo in each.value.selected_repositories :
-    data.github_repository.selected[repo].repo_id
-  ] : null
-
   lifecycle {
     replace_triggered_by = [terraform_data.dependabot_trigger[each.key]]
     ignore_changes       = [key_id, value_encrypted]
   }
+}
+
+resource "github_dependabot_organization_secret_repositories" "this" {
+  for_each = {
+    for name, secret in var.config.dependabot : name => secret if secret.visibility == "selected"
+  }
+
+  secret_name = github_dependabot_organization_secret.this[each.key].secret_name
+  selected_repository_ids = [
+    for repo in each.value.selected_repositories :
+    data.github_repository.selected[repo].repo_id
+  ]
 }
