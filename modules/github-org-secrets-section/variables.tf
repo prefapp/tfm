@@ -118,7 +118,7 @@ variable "config" {
   validation {
     condition = alltrue([
       for secret in values(var.config.actions) :
-      alltrue([
+      secret.visibility != "selected" || alltrue([
         for repo in secret.selected_repositories : can(regex("^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$", repo))
       ])
     ])
@@ -128,7 +128,7 @@ variable "config" {
   validation {
     condition = alltrue([
       for secret in values(var.config.codespaces) :
-      alltrue([
+      secret.visibility != "selected" || alltrue([
         for repo in secret.selected_repositories : can(regex("^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$", repo))
       ])
     ])
@@ -138,7 +138,7 @@ variable "config" {
   validation {
     condition = alltrue([
       for secret in values(var.config.dependabot) :
-      alltrue([
+      secret.visibility != "selected" || alltrue([
         for repo in secret.selected_repositories : can(regex("^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$", repo))
       ])
     ])

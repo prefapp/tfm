@@ -88,6 +88,10 @@ resource "github_actions_organization_secret_repositories" "this" {
     for repo in each.value.selected_repositories :
     data.github_repository.selected[repo].repo_id
   ]
+
+  lifecycle {
+    replace_triggered_by = [github_actions_organization_secret.this[each.key]]
+  }
 }
 
 # ─────────────────────────────────────────────────────────────
@@ -138,4 +142,8 @@ resource "github_dependabot_organization_secret_repositories" "this" {
     for repo in each.value.selected_repositories :
     data.github_repository.selected[repo].repo_id
   ]
+
+  lifecycle {
+    replace_triggered_by = [github_dependabot_organization_secret.this[each.key]]
+  }
 }
