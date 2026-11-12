@@ -1,6 +1,5 @@
 mock_provider "ovh" {
-  alias           = "mock"
-  override_during = plan
+  alias = "mock"
 
   mock_data "ovh_cloud_project_database_capabilities" {
     defaults = {
