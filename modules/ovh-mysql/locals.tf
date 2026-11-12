@@ -11,6 +11,7 @@ locals {
   ]
   service_name      = try(one(local.selected_projects).service_name, null)
   admin_secret_path = var.admin_secret_path != null ? var.admin_secret_path : "mysql/${var.name}/avnadmin"
+  network_region    = var.network_region != null ? var.network_region : var.region
 
   selected_networks = try([
     for network in data.ovh_cloud_project_network_privates.networks[0].networks : network
@@ -18,14 +19,14 @@ locals {
   ], [])
   network_openstack_ids = try([
     for network_region in one(local.selected_networks).regions : network_region.openstack_id
-    if network_region.region == var.region
+    if network_region.region == local.network_region
   ], [])
 
   selected_subnets = try([
     for subnet in data.ovh_cloud_project_network_private_subnets.subnets[0].subnets : subnet
     if subnet.cidr == var.subnet_cidr && contains(
       [for pool in subnet.ip_pools : pool.region],
-      var.region
+      local.network_region
     )
   ], [])
 

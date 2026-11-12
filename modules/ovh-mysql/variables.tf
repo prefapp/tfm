@@ -48,12 +48,23 @@ variable "name" {
 }
 
 variable "region" {
-  description = "OVHcloud region where all MySQL nodes are deployed. OVHcloud validates regional availability when creating the service."
+  description = "OVHcloud MySQL region where all service nodes are deployed."
   type        = string
 
   validation {
     condition     = length(trimspace(var.region)) > 0
     error_message = "region must not be empty."
+  }
+}
+
+variable "network_region" {
+  description = "Optional OVHcloud region identifier used to discover the private network and subnet. Defaults to region; set it when network IDs use a different regional identifier, such as GRA11 for a MySQL region GRA."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.network_region == null || length(trimspace(var.network_region)) > 0
+    error_message = "network_region must not be empty when set."
   }
 }
 

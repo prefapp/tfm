@@ -4,7 +4,7 @@
 
 This module provisions an OVHcloud Public Cloud Databases for MySQL service, its logical databases, and the service's OVH-managed `avnadmin` account in an existing Public Cloud project. The generated administrator credentials are stored in an OVHcloud Key Management Service (OKMS) secret. It selects the project by `project_id` or `project_name`, checks the requested MySQL version and flavor against live project capabilities, and derives the number of nodes from the selected plan.
 
-By default, every node attaches to an existing private network and subnet discovered by exact network name and subnet CIDR. The module also restricts incoming connections to that subnet unless explicit CIDR restrictions are supplied. Region and flavor-specific disk capacity are finally validated by OVHcloud because the provider capabilities data source does not expose a live region matrix or authoritative disk-size range.
+By default, every node attaches to an existing private network and subnet discovered by exact network name and subnet CIDR. The MySQL service region and private-network region are separate inputs: for example, OVH may use `GRA` for managed databases and `GRA11` for the network's regional OpenStack identifiers. The module also restricts incoming connections to that subnet unless explicit CIDR restrictions are supplied. Flavor availability and disk capacity are finally validated by OVHcloud when creating the service.
 
 ## Key Features
 
@@ -28,14 +28,15 @@ module "ovh_mysql" {
   project_name = "example-project"
   okms_id      = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name         = "example-mysql"
-  region       = "GRA"
+  region         = "GRA"
+  network_region = "GRA11"
   engine_version = "8.4"
-  plan         = "discovery"
-  flavor       = "b3-4"
+  plan           = "discovery"
+  flavor         = "b3-4"
 
-  network_name = "example-private-network"
-  subnet_cidr  = "10.40.0.0/16"
-  databases    = ["application"]
+  network_name   = "example-private-network"
+  subnet_cidr    = "10.40.0.0/16"
+  databases      = ["application"]
 }
 ```
 
@@ -48,13 +49,14 @@ module "ovh_mysql_production" {
   project_name = "example-project"
   okms_id      = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name         = "example-mysql-production"
-  region       = "GRA"
+  region         = "GRA"
+  network_region = "GRA11"
   engine_version = "8.4"
-  plan         = "production"
-  flavor       = "b3-8"
+  plan           = "production"
+  flavor         = "b3-8"
 
-  network_name  = "example-private-network"
-  subnet_cidr   = "10.40.0.0/16"
+  network_name   = "example-private-network"
+  subnet_cidr    = "10.40.0.0/16"
   backup_regions = ["GRA", "SBG"]
   databases      = ["application", "audit"]
 

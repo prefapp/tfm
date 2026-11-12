@@ -5,6 +5,7 @@ module "ovh_mysql" {
   okms_id        = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name           = "example-mysql-discovery"
   region         = "GRA"
+  network_region = "GRA11"
   engine_version = "8.4"
   plan           = "discovery"
   flavor         = "b3-4"

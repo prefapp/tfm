@@ -170,3 +170,23 @@ run "reject_empty_admin_secret_path" {
 
   expect_failures = [var.admin_secret_path, data.ovh_cloud_project_database_capabilities.capabilities]
 }
+
+run "reject_empty_network_region" {
+  command = plan
+  providers = {
+    ovh = ovh.mock
+  }
+
+  variables {
+    project_id     = "project-id"
+    okms_id        = "kms-id"
+    name           = "test-mysql"
+    region         = "GRA"
+    network_region = " "
+    engine_version = "8.4"
+    plan           = "discovery"
+    flavor         = "b3-4"
+  }
+
+  expect_failures = [var.network_region, data.ovh_cloud_project_database_capabilities.capabilities]
+}

@@ -5,7 +5,7 @@
 
 This module provisions an OVHcloud Public Cloud Databases for MySQL service, its logical databases, and the service's OVH-managed `avnadmin` account in an existing Public Cloud project. The generated administrator credentials are stored in an OVHcloud Key Management Service (OKMS) secret. It selects the project by `project_id` or `project_name`, checks the requested MySQL version and flavor against live project capabilities, and derives the number of nodes from the selected plan.
 
-By default, every node attaches to an existing private network and subnet discovered by exact network name and subnet CIDR. The module also restricts incoming connections to that subnet unless explicit CIDR restrictions are supplied. Region and flavor-specific disk capacity are finally validated by OVHcloud because the provider capabilities data source does not expose a live region matrix or authoritative disk-size range.
+By default, every node attaches to an existing private network and subnet discovered by exact network name and subnet CIDR. The MySQL service region and private-network region are separate inputs: for example, OVH may use `GRA` for managed databases and `GRA11` for the network's regional OpenStack identifiers. The module also restricts incoming connections to that subnet unless explicit CIDR restrictions are supplied. Flavor availability and disk capacity are finally validated by OVHcloud when creating the service.
 
 ## Key Features
 
@@ -29,14 +29,15 @@ module "ovh_mysql" {
   project_name = "example-project"
   okms_id      = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name         = "example-mysql"
-  region       = "GRA"
+  region         = "GRA"
+  network_region = "GRA11"
   engine_version = "8.4"
-  plan         = "discovery"
-  flavor       = "b3-4"
+  plan           = "discovery"
+  flavor         = "b3-4"
 
-  network_name = "example-private-network"
-  subnet_cidr  = "10.40.0.0/16"
-  databases    = ["application"]
+  network_name   = "example-private-network"
+  subnet_cidr    = "10.40.0.0/16"
+  databases      = ["application"]
 }
 ```
 
@@ -49,13 +50,14 @@ module "ovh_mysql_production" {
   project_name = "example-project"
   okms_id      = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   name         = "example-mysql-production"
-  region       = "GRA"
+  region         = "GRA"
+  network_region = "GRA11"
   engine_version = "8.4"
-  plan         = "production"
-  flavor       = "b3-8"
+  plan           = "production"
+  flavor         = "b3-8"
 
-  network_name  = "example-private-network"
-  subnet_cidr   = "10.40.0.0/16"
+  network_name   = "example-private-network"
+  subnet_cidr    = "10.40.0.0/16"
   backup_regions = ["GRA", "SBG"]
   databases      = ["application", "audit"]
 
@@ -118,11 +120,12 @@ No modules.
 | <a name="input_maintenance_time"></a> [maintenance\_time](#input\_maintenance\_time) | Optional daily maintenance start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Description assigned to the managed MySQL service. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network. Required when use\_private\_network is true. | `string` | `null` | no |
+| <a name="input_network_region"></a> [network\_region](#input\_network\_region) | Optional OVHcloud region identifier used to discover the private network and subnet. Defaults to region; set it when network IDs use a different regional identifier, such as GRA11 for a MySQL region GRA. | `string` | `null` | no |
 | <a name="input_okms_id"></a> [okms\_id](#input\_okms\_id) | ID of the OVHcloud KMS (OKMS) where the MySQL administrator credentials are stored. | `string` | n/a | yes |
 | <a name="input_plan"></a> [plan](#input\_plan) | MySQL plan: discovery (1 node), production (2 nodes), or advanced (3 nodes). | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID or service\_name; takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against OVHcloud project\_name and description. | `string` | `null` | no |
-| <a name="input_region"></a> [region](#input\_region) | OVHcloud region where all MySQL nodes are deployed. OVHcloud validates regional availability when creating the service. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | OVHcloud MySQL region where all service nodes are deployed. | `string` | n/a | yes |
 | <a name="input_subnet_cidr"></a> [subnet\_cidr](#input\_subnet\_cidr) | CIDR of the existing subnet to attach and, by default, allow through the MySQL IP restriction list. Required when use\_private\_network is true. | `string` | `null` | no |
 | <a name="input_use_private_network"></a> [use\_private\_network](#input\_use\_private\_network) | Attach every MySQL node to an existing private network and subnet. Set false explicitly for a service without private-network attachment. | `bool` | `true` | no |
 
@@ -175,7 +178,7 @@ The OVH provider does not document import for `ovh_okms_secret`; create the mana
 
 Destroying the module deletes all managed databases and the MySQL service, including any data and backups retained by OVHcloud. It does not delete the Public Cloud project, private network, subnet or gateway. With `deletion_protection = true`, OVHcloud rejects deletion; set it to `false`, apply that change, and only then run destroy.
 
-Changing the service region forces replacement and can destroy all database data. Changing the network attachment triggers a service rebuild and clears IP restrictions while the network changes; review connectivity and restore the intended allow-list after the update. Flavor changes are applied as node upgrades. OVHcloud validates the requested region and the flavor-specific `disk_size` limits against its service availability when applying, because the provider's project capabilities data source does not expose a region matrix or a documented maximum disk-size range.
+Changing the MySQL service `region` forces replacement and can destroy all database data. `network_region` is used only to discover the private network's regional OpenStack ID and subnet; it defaults to `region` but can differ when OVH uses distinct identifiers such as MySQL `GRA` and network `GRA11`. Changing the network attachment triggers a service rebuild and clears IP restrictions while the network changes; review connectivity and restore the intended allow-list after the update. Flavor changes are applied as node upgrades. OVHcloud validates flavor availability and flavor-specific `disk_size` limits against its service availability when applying.
 
 OVHcloud currently documents automatic daily backup retention of 2 days for `discovery`, 14 days for `production`, and 30 days for `advanced`. MySQL backups use point-in-time recovery (PITR), with recovery points within the selected plan's retention period; OVHcloud currently documents continuous backups and an RPO of a few minutes. The plan also determines the service SLA; consult the current [MySQL capabilities and limitations](https://docs.ovhcloud.com/en/guides/public-cloud/databases/mysql-capabilities/) and [automated backups guide](https://docs.ovhcloud.com/en/guides/public-cloud/databases/backups/) before choosing a plan.
 
@@ -196,7 +199,7 @@ MySQL's OVHcloud connection URI uses TLS, but the server also accepts unencrypte
 
 ## Resources
 
-- **OVHcloud MySQL capabilities**: [Plans, versions, flavors, storage and supported regions](https://docs.ovhcloud.com/en/guides/public-cloud/databases/mysql-capabilities/)
+- **OVHcloud MySQL capabilities**: [Plans, versions, flavors, storage and supported regions](https://docs.ovhcloud.com/en/guides/public-cloud/databases/mysql-capabilities.md); [project database availability API](https://docs.ovhcloud.com/en/guides/public-cloud/databases/getting-started.md)
 - **OVHcloud MySQL connections and users**: [Network access and user privileges](https://docs.ovhcloud.com/en/guides/public-cloud/databases/mysql-prepare-for-incoming-connections/)
 - **OVHcloud deletion protection**: [Managed database deletion protection](https://docs.ovhcloud.com/en/guides/public-cloud/databases/databases-deletion-protection/)
 - **OVHcloud Terraform provider**: [`ovh_cloud_project_database`](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database), [`ovh_cloud_project_database_database`](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database\_database), [`ovh_cloud_project_database_capabilities`](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_capabilities), and [`ovh_cloud_project_database_certificates`](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_certificates)

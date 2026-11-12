@@ -18,6 +18,9 @@ A logical MySQL database created inside the managed service.
 **private-network attachment**:
 The connection of each MySQL node to an existing Public Cloud private network and subnet.
 
+**network region**:
+The OVHcloud regional identifier used to discover a private network's regional OpenStack ID and subnet; it may differ from the managed database service's region identifier.
+
 **IP restriction**:
 A CIDR allow-list controlling which client addresses can connect to the MySQL service.
 

@@ -70,12 +70,12 @@ resource "ovh_cloud_project_database" "mysql" {
 
     precondition {
       condition     = !var.use_private_network || length(local.network_openstack_ids) == 1
-      error_message = "The selected private network has no unique regional OpenStack ID for region."
+      error_message = "The selected private network has no unique regional OpenStack ID for network_region."
     }
 
     precondition {
       condition     = !var.use_private_network || length(local.selected_subnets) == 1
-      error_message = "Could not find exactly one subnet matching subnet_cidr in the selected network and region."
+      error_message = "Could not find exactly one subnet matching subnet_cidr in the selected network and network_region."
     }
 
     precondition {
