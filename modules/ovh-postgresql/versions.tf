@@ -5,10 +5,6 @@ terraform {
       source  = "ovh/ovh"
       version = ">= 2.24.0, < 3.0.0"
     }
-    external = {
-      source  = "hashicorp/external"
-      version = "~> 2.4"
-    }
   }
 }
 

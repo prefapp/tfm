@@ -1,4 +1,6 @@
 locals {
+  postgresql_catalog = jsondecode(file("${path.module}/data/postgresql-offers.json"))
+
   selected_projects = [
     for project in data.ovh_cloud_projects.projects.projects : project
     if var.project_id != null ? (
@@ -24,12 +26,18 @@ locals {
     if subnet.cidr == var.subnet_cidr && contains([for pool in subnet.ip_pools : pool.region], var.region)
   ], [])
 
-  database_node_counts = {
-    discovery  = 1
-    production = 2
-    advanced   = 3
-  }
-  node_count = local.database_node_counts[var.plan]
+  selected_offer = try(local.postgresql_catalog.plans[var.plan].flavors[lower(var.flavor)], null)
+  node_count     = try(local.postgresql_catalog.plans[var.plan].nodes, 0)
+  valid_offer = try(
+    contains(local.postgresql_catalog.versions, var.engine_version) &&
+    contains(local.postgresql_catalog.regions, var.region) &&
+    local.postgresql_catalog.network == "private" &&
+    local.selected_offer != null &&
+    var.disk_size >= local.selected_offer.disk_min &&
+    var.disk_size <= local.selected_offer.disk_max &&
+    (var.disk_size - local.selected_offer.disk_min) % local.selected_offer.disk_step == 0,
+    false
+  )
 
   ip_restrictions = length(var.ip_restrictions) > 0 ? var.ip_restrictions : [{
     ip          = var.subnet_cidr
@@ -61,17 +69,6 @@ locals {
     "tsm_system_rows", "tsm_system_time", "unit", "unaccent", "uuid-ossp"
   ])
 
-  capabilities_engine = try(one([
-    for engine in data.ovh_cloud_project_database_capabilities.capabilities.engines : engine
-    if engine.name == "postgresql"
-  ]), null)
-  capabilities_plans = [
-    for plan in data.ovh_cloud_project_database_capabilities.capabilities.plans : plan.name
-  ]
-  capabilities_flavors = [
-    for flavor in data.ovh_cloud_project_database_capabilities.capabilities.flavors : flavor.name
-  ]
-
   extension_version_constraints = {
     bool_plperl   = contains(["15", "16", "17", "18"], var.engine_version)
     hll           = contains(["15", "16", "17", "18"], var.engine_version)
@@ -93,8 +90,4 @@ data "ovh_cloud_project_network_private_subnets" "subnets" {
   count        = length(local.selected_networks) == 1 ? 1 : 0
   service_name = local.service_name == null ? "" : local.service_name
   network_id   = try(one(local.selected_networks).id, "")
-}
-
-data "ovh_cloud_project_database_capabilities" "capabilities" {
-  service_name = local.service_name == null ? "" : local.service_name
 }

@@ -1,3 +1,3 @@
 # Architecture Decision Records
 
-- [0001: Plan-Time Offer Preflight](0001-plan-time-offer-preflight.md) — use a Python standard-library helper and `hashicorp/external` because the OVH provider has no availability data source.
+- [0001: Maintained Static Option Lists](0001-maintained-static-option-lists.md) — validate service offers and disk limits from a module-owned OVHcloud snapshot during plan.

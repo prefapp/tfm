@@ -31,8 +31,13 @@ variable "name" {
 }
 
 variable "region" {
-  description = "OVHcloud region for the cluster and all its nodes."
+  description = "OVHcloud region for the cluster and all its nodes. Must be in the maintained PostgreSQL offer catalogue."
   type        = string
+
+  validation {
+    condition     = contains(jsondecode(file("${path.module}/data/postgresql-offers.json")).regions, var.region)
+    error_message = "region must be listed in the maintained OVHcloud PostgreSQL offer catalogue."
+  }
 }
 
 variable "network_name" {
@@ -51,9 +56,14 @@ variable "subnet_cidr" {
 }
 
 variable "engine_version" {
-  description = "Required PostgreSQL engine major version, such as 18."
+  description = "Required PostgreSQL engine major version. Must appear in the maintained OVHcloud offer catalogue."
   type        = string
   nullable    = false
+
+  validation {
+    condition     = contains(jsondecode(file("${path.module}/data/postgresql-offers.json")).versions, var.engine_version)
+    error_message = "engine_version must be listed in the maintained OVHcloud PostgreSQL offer catalogue."
+  }
 }
 
 variable "plan" {
@@ -61,23 +71,28 @@ variable "plan" {
   type        = string
 
   validation {
-    condition     = contains(["discovery", "production", "advanced"], var.plan)
-    error_message = "plan must be discovery, production or advanced."
+    condition     = contains(keys(jsondecode(file("${path.module}/data/postgresql-offers.json")).plans), var.plan)
+    error_message = "plan must be listed in the maintained OVHcloud PostgreSQL offer catalogue."
   }
 }
 
 variable "flavor" {
-  description = "Database node flavor available to the selected Public Cloud project."
+  description = "Database node flavor available for the selected plan, region and PostgreSQL version in the maintained OVHcloud offer catalogue."
   type        = string
+
+  validation {
+    condition     = contains(keys(try(jsondecode(file("${path.module}/data/postgresql-offers.json")).plans[var.plan].flavors, {})), lower(var.flavor))
+    error_message = "flavor must be offered for the selected plan in the maintained OVHcloud PostgreSQL catalogue."
+  }
 }
 
 variable "disk_size" {
-  description = "Database disk size in GB. Must be a positive integer; OVHcloud validates supported limits for the selected flavor."
+  description = "Database disk size in GB. Must meet the maintained OVHcloud offer's minimum, maximum and increment for the selected plan and flavor."
   type        = number
 
   validation {
     condition     = var.disk_size > 0 && floor(var.disk_size) == var.disk_size
-    error_message = "disk_size must be a positive integer."
+    error_message = "disk_size must be a positive integer; it must also fit the selected offer's range and increment."
   }
 }
 

@@ -24,5 +24,5 @@ An OKMS JSON secret containing the direct endpoint, database, username and gener
 **pool connection secret**:
 An OKMS JSON secret containing the pool connection URI. The URI is sensitive and is never exposed as a module output.
 
-**compatible offer**:
-An OVHcloud database configuration published as available when Terraform plans and matching the requested engine, version, plan, region, flavor, private network, node count and disk constraints. It does not reserve capacity or guarantee a later apply.
+**maintained offer catalogue**:
+A module-owned snapshot of stable PostgreSQL private-network offers, used to validate version, plan, region, flavor and disk range/increment together during plan; it may become stale as OVHcloud changes availability.

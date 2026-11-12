@@ -10,7 +10,7 @@ module "postgresql" {
   engine_version = "17"
   plan           = "production"
   flavor         = "b3-8"
-  disk_size      = 50
+  disk_size      = 160
 
   databases = {
     app = "application"

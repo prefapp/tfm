@@ -10,7 +10,7 @@ module "postgresql" {
   engine_version = "18"
   plan           = "discovery"
   flavor         = "b3-4"
-  disk_size      = 20
+  disk_size      = 80
 
   databases = {
     authz = "authz"

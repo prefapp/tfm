@@ -46,23 +46,8 @@ resource "ovh_cloud_project_database" "postgresql" {
     }
 
     precondition {
-      condition     = local.capabilities_engine != null && contains(local.capabilities_engine.versions, var.engine_version)
-      error_message = "The requested PostgreSQL version is not available in this Public Cloud project according to OVHcloud database capabilities."
-    }
-
-    precondition {
-      condition     = contains(local.capabilities_plans, var.plan)
-      error_message = "The requested database plan is not available according to OVHcloud database capabilities."
-    }
-
-    precondition {
-      condition     = contains(local.capabilities_flavors, var.flavor)
-      error_message = "The requested database flavor is not available according to OVHcloud database capabilities."
-    }
-
-    precondition {
-      condition     = data.external.database_offer.result.compatible == "true"
-      error_message = "OVHcloud has no published PostgreSQL offer compatible with the requested engine, version, plan, region, flavor, private network, node count and disk size."
+      condition     = local.valid_offer
+      error_message = "The selected PostgreSQL version, plan, region, flavor and disk size are not a stable private OVHcloud offer in the maintained catalogue."
     }
 
     precondition {
@@ -104,22 +89,6 @@ resource "ovh_cloud_project_database" "postgresql" {
       ])
       error_message = "A required extension is not in the OVHcloud-supported catalogue or is not supported for the selected PostgreSQL version. Check the linked OVHcloud extension documentation."
     }
-  }
-}
-
-data "external" "database_offer" {
-  program = ["python3", "${path.module}/scripts/check_database_offer.py"]
-
-  query = {
-    service_name = local.service_name == null ? "" : local.service_name
-    engine       = "postgresql"
-    version      = var.engine_version
-    plan         = var.plan
-    region       = var.region
-    flavor       = var.flavor
-    network      = "private"
-    nodes        = tostring(local.node_count)
-    disk_size    = tostring(var.disk_size)
   }
 }
 

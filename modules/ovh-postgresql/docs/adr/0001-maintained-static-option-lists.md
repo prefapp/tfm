@@ -1,0 +1,3 @@
+# Maintained Static Option Lists
+
+The module validates the PostgreSQL version, plan, region, flavor and disk range/increment against a maintained snapshot in `data/postgresql-offers.json`, sourced from OVHcloud's authenticated availability catalogue. The module is limited to stable private-network offers and resolves the caller's existing network and subnet separately. This avoids a runtime API helper and its Python, provider and authentication requirements. The trade-off is that the snapshot is point-in-time and project-scoped; OVHcloud remains authoritative if offers change after refresh. Refresh and review the full offer snapshot when availability changes.
