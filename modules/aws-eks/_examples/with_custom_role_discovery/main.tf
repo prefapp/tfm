@@ -25,7 +25,7 @@ module "eks" {
   subnet_ids = ["subnet-0123456789abcdef0", "subnet-0fedcba9876543210"]
 
   node_groups                          = {}
-  node_security_group_additional_rules = []
+  node_security_group_additional_rules = {}
 
   tags = {
     Environment = "example"
