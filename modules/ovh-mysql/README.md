@@ -74,13 +74,13 @@ The module manages only the OVH-provided `avnadmin` account; it does not create 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
-| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.24.0, < 3.0.0 |
+| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | = 2.23.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.24.0 |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.23.0 |
 
 ## Modules
 
@@ -90,16 +90,16 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [ovh_cloud_project_database.mysql](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database) | resource |
-| [ovh_cloud_project_database_database.databases](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database_database) | resource |
-| [ovh_cloud_project_database_user.admin](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database_user) | resource |
-| [ovh_okms_secret.admin](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
-| [ovh_cloud_project_database_capabilities.capabilities](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_capabilities) | data source |
-| [ovh_cloud_project_database_certificates.ca](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_certificates) | data source |
-| [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_private_subnets) | data source |
-| [ovh_cloud_project_network_privates.networks](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_privates) | data source |
-| [ovh_cloud_projects.projects](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_projects) | data source |
-| [ovh_okms_resource.kms](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/okms_resource) | data source |
+| [ovh_cloud_project_database.mysql](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/resources/cloud_project_database) | resource |
+| [ovh_cloud_project_database_database.databases](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/resources/cloud_project_database_database) | resource |
+| [ovh_cloud_project_database_user.admin](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/resources/cloud_project_database_user) | resource |
+| [ovh_okms_secret.admin](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/resources/okms_secret) | resource |
+| [ovh_cloud_project_database_capabilities.capabilities](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/data-sources/cloud_project_database_capabilities) | data source |
+| [ovh_cloud_project_database_certificates.ca](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/data-sources/cloud_project_database_certificates) | data source |
+| [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/data-sources/cloud_project_network_private_subnets) | data source |
+| [ovh_cloud_project_network_privates.networks](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/data-sources/cloud_project_network_privates) | data source |
+| [ovh_cloud_projects.projects](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/data-sources/cloud_projects) | data source |
+| [ovh_okms_resource.kms](https://registry.terraform.io/providers/ovh/ovh/2.23.0/docs/data-sources/okms_resource) | data source |
 
 ## Inputs
 
