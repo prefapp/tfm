@@ -96,6 +96,7 @@ is its own context.
 - [github-org-ruleset](./modules/github-org-ruleset/CONTEXT.md) — A single organisation ruleset
 - [github-org-rulesets](./modules/github-org-rulesets/CONTEXT.md) — Several organisation rulesets (composite module)
 - [github-org-settings](./modules/github-org-settings/CONTEXT.md) — Organisation-level settings
+- [github-org-secrets-section](./modules/github-org-secrets-section/CONTEXT.md) — A section of organisation Actions/Codespaces/Dependabot secrets
 - [github-org-variables-section](./modules/github-org-variables-section/CONTEXT.md) — A section of organisation Actions variables
 - [github-org-webhook](./modules/github-org-webhook/CONTEXT.md) — Organisation webhooks
 - [github-repo](./modules/github-repo/CONTEXT.md) — A repository, its default branch and labels
