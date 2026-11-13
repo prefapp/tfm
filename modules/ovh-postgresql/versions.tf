@@ -2,8 +2,10 @@ terraform {
   required_version = ">= 1.5.0"
   required_providers {
     ovh = {
-      source  = "ovh/ovh"
-      version = ">= 2.24.0, < 3.0.0"
+      source = "ovh/ovh"
+      # Avoid the built-in avnadmin adoption panic regressed in v2.23.0.
+      # Widen this range after the v2.25.0 fix is published in the Registry.
+      version = ">= 2.22.0, < 2.23.0"
     }
   }
 }
