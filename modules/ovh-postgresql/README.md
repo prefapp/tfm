@@ -27,11 +27,14 @@ The caller configures the `ovh` provider. Use the `discovery-private-network` ex
 module "postgresql" {
   source = "git::https://github.com/prefapp/tfm.git//modules/ovh-postgresql?ref=ovh-postgresql-vx.y.z"
 
-  project_name = "example-project"
-  name         = "authz"
-  region       = "GRA"
-  network_name = "predev-private"
-  subnet_cidr  = "10.20.0.0/16"
+  project_name   = "example-project"
+  name           = "authz"
+  region         = "GRA"
+  network_name   = "predev-private"
+  subnet_cidr    = "10.20.0.0/16"
+
+  # Set only when the network API uses a different OpenStack region name.
+  # network_region = "GRA11"
 
   engine_version = "18"
   plan           = "discovery"
