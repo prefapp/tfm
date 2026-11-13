@@ -44,6 +44,29 @@ run "accept_published_regional_alias" {
   }
 }
 
+run "resolve_network_in_distinct_openstack_region" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_region = "GRA11"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    databases      = {}
+    users          = {}
+    kms_id         = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+  assert {
+    condition     = local.network_region == "GRA11" && local.valid_offer
+    error_message = "Network lookup may use its OpenStack region while the database offer uses its Managed Database region."
+  }
+}
+
 run "reject_invalid_cidr" {
   command = plan
   variables {

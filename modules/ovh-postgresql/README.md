@@ -27,11 +27,14 @@ The caller configures the `ovh` provider. Use the `discovery-private-network` ex
 module "postgresql" {
   source = "git::https://github.com/prefapp/tfm.git//modules/ovh-postgresql?ref=ovh-postgresql-vx.y.z"
 
-  project_name = "example-project"
-  name         = "authz"
-  region       = "GRA"
-  network_name = "predev-private"
-  subnet_cidr  = "10.20.0.0/16"
+  project_name   = "example-project"
+  name           = "authz"
+  region         = "GRA"
+  network_name   = "predev-private"
+  subnet_cidr    = "10.20.0.0/16"
+
+  # Set only when the network API uses a different OpenStack region name.
+  # network_region = "GRA11"
 
   engine_version = "18"
   plan           = "discovery"
@@ -137,6 +140,7 @@ No modules.
 | <a name="input_maintenance_time"></a> [maintenance\_time](#input\_maintenance\_time) | Daily maintenance start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Database service description and prefix for generated OKMS secret paths. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network to attach to the cluster. | `string` | n/a | yes |
+| <a name="input_network_region"></a> [network\_region](#input\_network\_region) | Optional OpenStack region identifier for the existing private network and subnet; defaults to region when both APIs use the same region name. | `string` | `null` | no |
 | <a name="input_plan"></a> [plan](#input\_plan) | OVHcloud database plan. discovery has one node, production two, and advanced three. | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID or service\_name; takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against project\_name and description. | `string` | `null` | no |

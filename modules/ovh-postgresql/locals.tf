@@ -1,5 +1,6 @@
 locals {
   postgresql_catalog = jsondecode(file("${path.module}/data/postgresql-offers.json"))
+  network_region     = coalesce(var.network_region, var.region)
 
   selected_projects = [
     for project in data.ovh_cloud_projects.projects.projects : project
@@ -19,11 +20,11 @@ locals {
   ], [])
   network_openstack_ids = try([
     for network_region in one(local.selected_networks).regions : network_region.openstack_id
-    if network_region.region == var.region
+    if network_region.region == local.network_region
   ], [])
   selected_subnets = try([
     for subnet in data.ovh_cloud_project_network_private_subnets.subnets[0].subnets : subnet
-    if subnet.cidr == var.subnet_cidr && contains([for pool in subnet.ip_pools : pool.region], var.region)
+    if subnet.cidr == var.subnet_cidr && contains([for pool in subnet.ip_pools : pool.region], local.network_region)
   ], [])
 
   selected_offer = try(local.postgresql_catalog.plans[var.plan].flavors[lower(var.flavor)], null)

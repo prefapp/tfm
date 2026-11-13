@@ -12,6 +12,9 @@ other contexts.
 **managed cluster**:
 An OVHcloud-managed PostgreSQL service, configured in one region and attached to one project.
 
+**network region**:
+The OpenStack region identifier of the existing private network and subnet; OVHcloud may label it differently from the Managed Database service region.
+
 **connection pool**:
 A managed PgBouncer endpoint for one declared database, with a selected pooling mode and optional user restriction.
 

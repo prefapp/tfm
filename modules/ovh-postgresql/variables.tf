@@ -40,6 +40,17 @@ variable "region" {
   }
 }
 
+variable "network_region" {
+  description = "Optional OpenStack region identifier for the existing private network and subnet; defaults to region when both APIs use the same region name."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.network_region == null || length(trimspace(var.network_region)) > 0
+    error_message = "network_region must be null or a non-empty string."
+  }
+}
+
 variable "network_name" {
   description = "Exact name of the existing private network to attach to the cluster."
   type        = string
