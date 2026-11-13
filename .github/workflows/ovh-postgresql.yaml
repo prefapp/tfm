@@ -1,0 +1,78 @@
+name: OVH PostgreSQL
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ovh-postgresql.yaml"
+      - "modules/ovh-postgresql/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ovh-postgresql.yaml"
+      - "modules/ovh-postgresql/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: ${{ matrix.cli.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cli:
+          - name: Terraform 1.9.x (minimum)
+            command: terraform
+            version: 1.9.8
+            test: false
+          - name: Terraform
+            command: terraform
+            version: 1.12.2
+            test: false
+          - name: OpenTofu
+            command: tofu
+            version: 1.13.9
+            test: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        if: matrix.cli.command == 'terraform'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ matrix.cli.version }}
+
+      - name: Setup OpenTofu
+        if: matrix.cli.command == 'tofu'
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: ${{ matrix.cli.version }}
+
+      - name: Format module
+        working-directory: modules/ovh-postgresql
+        run: ${{ matrix.cli.command }} fmt -check -recursive
+
+      - name: Initialize and validate module
+        working-directory: modules/ovh-postgresql
+        run: |
+          ${{ matrix.cli.command }} init -backend=false
+          ${{ matrix.cli.command }} validate
+
+      - name: Test module
+        if: matrix.cli.test
+        working-directory: modules/ovh-postgresql
+        run: |
+          ${{ matrix.cli.command }} test
+
+      - name: Validate examples
+        run: |
+          for example in \
+            modules/ovh-postgresql/_examples/discovery-private-network \
+            modules/ovh-postgresql/_examples/production-pooling; do
+            ${{ matrix.cli.command }} -chdir="$example" init -backend=false
+            ${{ matrix.cli.command }} -chdir="$example" validate
+          done

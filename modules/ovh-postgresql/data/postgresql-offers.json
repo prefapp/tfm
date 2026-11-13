@@ -1,0 +1,60 @@
+{
+  "source": {
+    "offers": "GET /cloud/project/{serviceName}/database/availability",
+    "versions": "ovhcloud cloud managed-database engine list"
+  },
+  "scope": "project-scoped snapshot; not universal",
+  "retrieved_on": "2026-11-12",
+  "engine": "postgresql",
+  "lifecycle": "STABLE",
+  "network": "private",
+  "default_version": "18",
+  "versions": ["15", "16", "17", "18"],
+  "regions": [
+    "AP-SOUTH-MUM",
+    "BHS",
+    "DE",
+    "EU-SOUTH-MIL",
+    "EU-WEST-PAR",
+    "GRA",
+    "RBX",
+    "SBG",
+    "SGP",
+    "SYD",
+    "UK",
+    "WAW"
+  ],
+  "plans": {
+    "discovery": {
+      "nodes": 1,
+      "flavors": {
+        "b3-4": {"disk_min": 80, "disk_max": 400, "disk_step": 10},
+        "b3-8": {"disk_min": 160, "disk_max": 800, "disk_step": 10},
+        "b3-16": {"disk_min": 320, "disk_max": 1600, "disk_step": 10},
+        "b3-32": {"disk_min": 640, "disk_max": 3200, "disk_step": 10}
+      }
+    },
+    "production": {
+      "nodes": 2,
+      "flavors": {
+        "b3-8": {"disk_min": 160, "disk_max": 800, "disk_step": 10},
+        "b3-16": {"disk_min": 320, "disk_max": 1600, "disk_step": 10},
+        "b3-32": {"disk_min": 640, "disk_max": 3200, "disk_step": 10},
+        "b3-64": {"disk_min": 1280, "disk_max": 6400, "disk_step": 10},
+        "b3-128": {"disk_min": 2560, "disk_max": 12800, "disk_step": 10},
+        "b3-256": {"disk_min": 5120, "disk_max": 25600, "disk_step": 10}
+      }
+    },
+    "advanced": {
+      "nodes": 3,
+      "flavors": {
+        "b3-8": {"disk_min": 160, "disk_max": 800, "disk_step": 10},
+        "b3-16": {"disk_min": 320, "disk_max": 1600, "disk_step": 10},
+        "b3-32": {"disk_min": 640, "disk_max": 3200, "disk_step": 10},
+        "b3-64": {"disk_min": 1280, "disk_max": 6400, "disk_step": 10},
+        "b3-128": {"disk_min": 2560, "disk_max": 12800, "disk_step": 10},
+        "b3-256": {"disk_min": 5120, "disk_max": 25600, "disk_step": 10}
+      }
+    }
+  }
+}

@@ -73,5 +73,6 @@
     "modules/ovh-mks-access": "0.2.0",
     "modules/azure-cognitive-account": "0.1.0",
     "modules/ovh-container-registry": "0.1.0",
-    "modules/github-org-secrets-section": "0.2.0"
+    "modules/github-org-secrets-section": "0.2.0",
+    "modules/ovh-postgresql": "0.1.0"
 }
