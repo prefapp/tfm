@@ -3,10 +3,10 @@
 This module does not run SQL. Apply required extensions separately in each target database:
 
 ```sql
-CREATE EXTENSION IF NOT EXISTS "pgvector";
+CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-The provider has no managed PostgreSQL extension resource and OVHcloud's capabilities data source does not return extensions. The module therefore checks extension names against the [OVHcloud extension catalogue](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-extensions/) and enforces documented constraints for TimescaleDB (not available on PostgreSQL 18) and pgvectorscale (documented for PostgreSQL 16 and 17). Confirm other extension/version combinations with OVHcloud before deployment. `CREATE EXTENSION` permissions and required activation order are the caller's responsibility.
+The provider has no managed PostgreSQL extension resource and OVHcloud's capabilities data source does not return extensions. The module therefore checks extension names against the [OVHcloud extension catalogue](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-extensions/) and enforces documented constraints for TimescaleDB (not available on PostgreSQL 18) and pgvectorscale (documented for PostgreSQL 16 and 17). For pgvector, the module catalogue label is `pgvector`, while its SQL extension name is `vector`. Confirm other extension/version combinations with OVHcloud before deployment. `CREATE EXTENSION` permissions and required activation order are the caller's responsibility.
 
 ## Secrets and External Secrets Operator
 
@@ -16,9 +16,9 @@ New PostgreSQL users have no privileges on database objects by default. Manage r
 
 ## Maintained Offer Catalogue
 
-`data/postgresql-offers.json` contains the maintained snapshot of stable PostgreSQL private-network offers. It records versions, regions, supported plan/flavor combinations, plan node counts and per-offer disk minimum, maximum and increment. It was captured from an authenticated OVHcloud availability query for one Public Cloud project on the recorded date. Update it from a fresh availability query and review the diff when OVHcloud offers change; the snapshot is not a live availability guarantee for every project. In the captured data, each listed version and region is available across all listed plan/flavor offers.
+`data/postgresql-offers.json` contains a maintained snapshot derived from stable PostgreSQL private-network offers captured from one Public Cloud project on the recorded date. The module uses it as separate allowlists for engine versions and regions, plus plan-specific flavor and disk minimum, maximum and increment values. It does not record or validate whether a particular version, plan, region and flavor combination is offered together, nor whether an offer is currently available to the caller's project. The module consumer is responsible for choosing a valid combination; OVHcloud remains authoritative and may reject it during apply. Refresh the snapshot from a new availability query and review the diff when offers change.
 
-The catalogue represents private networking because the module always attaches to an existing private network and subnet. Database node count is derived from the selected plan. The network name and subnet CIDR are resolved from the caller's project and are not part of OVHcloud's offer catalogue. OVHcloud remains authoritative and may reject a configuration if its offers change after the snapshot.
+The catalogue represents private networking because the module always attaches to an existing private network and subnet. Database node count is derived from the selected plan. The network name and subnet CIDR are resolved from the caller's project and are not part of OVHcloud's offer catalogue.
 
 ## Backup, SLA and Pool Guidance
 
@@ -44,7 +44,7 @@ Resource addresses assume the caller names the module `postgresql`:
 - Pool: `module.postgresql.ovh_cloud_project_database_postgresql_connection_pool.pool["<key>"]`, import ID `<service_name>/<cluster_id>/<pool_id>`.
 - OKMS secret: OVH provider v2.22.0 does not implement import for `ovh_okms_secret`; existing secrets at generated paths cannot be adopted with `terraform import`.
 
-Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. Disable deletion protection before intentional destroy; use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. The maintained offer catalogue validates the requested database configuration during plan; OVHcloud remains authoritative during apply.
+Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. Disable deletion protection before intentional destroy; use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. Plan validates catalogue membership and plan-specific flavor/disk limits, not cross-dimension offer compatibility or live availability; OVHcloud remains authoritative during apply.
 
 ## Examples
 

@@ -4,7 +4,7 @@ variable "project_id" {
   default     = null
 
   validation {
-    condition     = var.project_id == null || length(trimspace(var.project_id)) > 0
+    condition     = var.project_id == null ? true : length(trimspace(var.project_id)) > 0
     error_message = "project_id must be null or a non-empty string."
   }
 }
@@ -15,8 +15,8 @@ variable "project_name" {
   default     = null
 
   validation {
-    condition     = var.project_name == null || length(trimspace(var.project_name)) > 0
-    error_message = "project_name must be null or a non-empty string."
+    condition     = var.project_id != null ? true : (var.project_name == null ? false : length(trimspace(var.project_name)) > 0)
+    error_message = "Set a non-empty project_name or project_id to select the Public Cloud project."
   }
 }
 
@@ -46,7 +46,7 @@ variable "network_region" {
   default     = null
 
   validation {
-    condition     = var.network_region == null || length(trimspace(var.network_region)) > 0
+    condition     = var.network_region == null ? true : length(trimspace(var.network_region)) > 0
     error_message = "network_region must be null or a non-empty string."
   }
 }
@@ -88,7 +88,7 @@ variable "plan" {
 }
 
 variable "flavor" {
-  description = "Database node flavor available for the selected plan, region and PostgreSQL version in the maintained OVHcloud offer catalogue."
+  description = "Database node flavor listed for the selected plan in the maintained OVHcloud catalogue."
   type        = string
 
   validation {
@@ -98,7 +98,7 @@ variable "flavor" {
 }
 
 variable "disk_size" {
-  description = "Database disk size in GB. Must meet the maintained OVHcloud offer's minimum, maximum and increment for the selected plan and flavor."
+  description = "Database disk size in GB. Must meet the maintained catalogue's minimum, maximum and increment for the selected plan and flavor."
   type        = number
 
   validation {
@@ -116,8 +116,12 @@ variable "ip_restrictions" {
   default = []
 
   validation {
-    condition     = alltrue([for restriction in var.ip_restrictions : can(cidrhost(restriction.ip, 0))])
-    error_message = "Every ip_restrictions ip must be a valid CIDR."
+    condition = alltrue([
+      for restriction in var.ip_restrictions : can(cidrhost(restriction.ip, 0)) && (
+        var.allow_all_ips ? true : try(tonumber(split("/", restriction.ip)[1]) != 0, true)
+      )
+    ])
+    error_message = "Every ip_restrictions ip must be a valid CIDR; zero-prefix CIDRs require allow_all_ips = true."
   }
 }
 
@@ -139,7 +143,7 @@ variable "backup_time" {
   default     = null
 
   validation {
-    condition = var.backup_time == null || (
+    condition = var.backup_time == null ? true : (
       can(regex("^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$", var.backup_time)) &&
       tonumber(substr(var.backup_time, 0, 2)) < 24
     )
@@ -153,7 +157,7 @@ variable "maintenance_time" {
   default     = null
 
   validation {
-    condition = var.maintenance_time == null || (
+    condition = var.maintenance_time == null ? true : (
       can(regex("^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$", var.maintenance_time)) &&
       tonumber(substr(var.maintenance_time, 0, 2)) < 24
     )
@@ -205,7 +209,7 @@ variable "users" {
       for user in values(var.users) :
       length(trimspace(user.name)) > 0 &&
       length(trimspace(user.database)) > 0 &&
-      (user.secret_path == null || length(trimspace(user.secret_path)) > 0) &&
+      (user.secret_path == null ? true : length(trimspace(user.secret_path)) > 0) &&
       alltrue([for role in user.roles : contains(["replication"], role)])
     ]) && length([for user in values(var.users) : user.name]) == length(distinct([for user in values(var.users) : user.name]))
     error_message = "Users need unique non-empty names and database references; supported explicit role is replication."
@@ -231,8 +235,8 @@ variable "connection_pools" {
       length(trimspace(pool.database)) > 0 &&
       contains(["session", "transaction", "statement"], pool.mode) &&
       pool.size > 0 && floor(pool.size) == pool.size &&
-      (pool.user == null || length(trimspace(pool.user)) > 0) &&
-      (pool.secret_path == null || length(trimspace(pool.secret_path)) > 0)
+      (pool.user == null ? true : length(trimspace(pool.user)) > 0) &&
+      (pool.secret_path == null ? true : length(trimspace(pool.secret_path)) > 0)
     ]) && length([for pool in values(var.connection_pools) : pool.name]) == length(distinct([for pool in values(var.connection_pools) : pool.name]))
     error_message = "Pools need unique non-empty names, a supported mode, and a positive integer size."
   }

@@ -31,11 +31,6 @@ resource "ovh_cloud_project_database" "postgresql" {
 
   lifecycle {
     precondition {
-      condition     = var.project_id != null || var.project_name != null
-      error_message = "Set project_id or project_name to select the Public Cloud project."
-    }
-
-    precondition {
       condition     = local.service_name != null
       error_message = "Could not find exactly one OVHcloud project. Check project_id or project_name; project_id takes precedence."
     }
@@ -56,13 +51,6 @@ resource "ovh_cloud_project_database" "postgresql" {
     }
 
     precondition {
-      condition = var.allow_all_ips || alltrue([
-        for restriction in local.ip_restrictions : !contains(["0.0.0.0/0", "::/0"], restriction.ip)
-      ])
-      error_message = "0.0.0.0/0 and ::/0 require allow_all_ips = true."
-    }
-
-    precondition {
       condition     = length(distinct(concat(values(local.user_secret_paths), values(local.pool_secret_paths)))) == length(var.users) + length(var.connection_pools)
       error_message = "Every direct and pool OKMS secret path must be unique."
     }
@@ -77,7 +65,7 @@ resource "ovh_cloud_project_database" "postgresql" {
     precondition {
       condition = alltrue([
         for pool in values(var.connection_pools) :
-        contains(keys(var.databases), pool.database) && (pool.user == null || contains(keys(var.users), pool.user))
+        contains(keys(var.databases), pool.database) && (pool.user == null ? true : contains(keys(var.users), pool.user))
       ])
       error_message = "Every pool must reference a declared database and, when set, a declared user."
     }

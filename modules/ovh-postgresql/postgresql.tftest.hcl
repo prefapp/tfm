@@ -1,4 +1,60 @@
-mock_provider "ovh" {}
+variables {
+  project_name = "test-project"
+}
+
+mock_provider "ovh" {
+  mock_data "ovh_cloud_project_network_privates" {
+    defaults = {
+      networks = [{
+        id      = "network-id"
+        name    = "private"
+        status  = "ACTIVE"
+        type    = "private"
+        vlan_id = 1
+        regions = [
+          { openstack_id = "openstack-network-gra", region = "GRA", status = "ACTIVE" },
+          { openstack_id = "openstack-network-gra11", region = "GRA11", status = "ACTIVE" },
+        ]
+      }]
+    }
+  }
+
+  mock_data "ovh_cloud_project_network_private_subnets" {
+    defaults = {
+      subnets = [{
+        id           = "subnet-id"
+        cidr         = "10.20.0.0/16"
+        dhcp_enabled = true
+        gateway_ip   = "10.20.0.1"
+        ip_pools = [
+          { dhcp = true, end = "10.20.0.254", network = "10.20.0.0/16", region = "GRA", start = "10.20.0.10" },
+          { dhcp = true, end = "10.20.0.254", network = "10.20.0.0/16", region = "GRA11", start = "10.20.0.10" },
+        ]
+      }]
+    }
+  }
+
+  mock_data "ovh_cloud_project_database_certificates" {
+    defaults = { ca = "test-ca" }
+  }
+
+  mock_resource "ovh_cloud_project_database" {
+    defaults = {
+      id     = "cluster-id"
+      status = "READY"
+      endpoints = [{
+        component = "postgresql"
+        domain    = "db.example.com"
+        path      = ""
+        port      = 20184
+        scheme    = "postgresql"
+        ssl       = true
+        ssl_mode  = "required"
+        uri       = "postgresql://db.example.com:20184"
+      }]
+    }
+  }
+}
 
 run "accept_listed_options" {
   command = plan
@@ -390,6 +446,49 @@ run "reject_backup_regions_without_database_region" {
   expect_failures = [ovh_cloud_project_database.postgresql]
 }
 
+run "reject_equivalent_ipv6_global_ip_restriction_without_opt_in" {
+  command = plan
+  variables {
+    name            = "test"
+    region          = "GRA"
+    network_name    = "private"
+    subnet_cidr     = "10.20.0.0/16"
+    engine_version  = "18"
+    plan            = "discovery"
+    flavor          = "b3-4"
+    disk_size       = 80
+    ip_restrictions = [{ ip = "0:0:0:0:0:0:0:0/0" }]
+    databases       = {}
+    users           = {}
+    kms_id          = "okms-123"
+  }
+  expect_failures = [var.ip_restrictions]
+}
+
+run "allow_global_ip_restriction_with_opt_in" {
+  command = plan
+  variables {
+    name            = "test"
+    region          = "GRA"
+    network_name    = "private"
+    subnet_cidr     = "10.20.0.0/16"
+    engine_version  = "18"
+    plan            = "discovery"
+    flavor          = "b3-4"
+    disk_size       = 80
+    allow_all_ips   = true
+    ip_restrictions = [{ ip = "0:0:0:0:0:0:0:0/0" }]
+    databases       = {}
+    users           = {}
+    kms_id          = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+  assert {
+    condition     = var.allow_all_ips && local.ip_restrictions[0].ip == "0:0:0:0:0:0:0:0/0"
+    error_message = "Explicit all-address opt-in should retain the equivalent zero-prefix CIDR."
+  }
+}
+
 run "reject_global_ip_restriction_without_opt_in" {
   command = plan
   variables {
@@ -408,7 +507,7 @@ run "reject_global_ip_restriction_without_opt_in" {
     users     = {}
     kms_id    = "okms-123"
   }
-  expect_failures = [ovh_cloud_project_database.postgresql]
+  expect_failures = [var.ip_restrictions]
 }
 
 run "reject_duplicate_user_and_pool_secret_paths" {
@@ -533,6 +632,7 @@ run "reject_extension_unsupported_for_engine_version" {
 run "reject_missing_project_selector" {
   command = plan
   variables {
+    project_name   = null
     name           = "test"
     region         = "GRA"
     network_name   = "private"
@@ -545,7 +645,7 @@ run "reject_missing_project_selector" {
     users          = {}
     kms_id         = "okms-123"
   }
-  expect_failures = [ovh_cloud_project_database.postgresql]
+  expect_failures = [var.project_name]
 }
 
 run "reject_disabling_deletion_protection_outside_discovery" {

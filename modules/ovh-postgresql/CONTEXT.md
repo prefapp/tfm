@@ -28,4 +28,4 @@ An OKMS JSON secret containing the direct endpoint, database, username and gener
 An OKMS JSON secret containing the pool connection URI. The URI is sensitive and is never exposed as a module output.
 
 **maintained offer catalogue**:
-A module-owned snapshot of stable PostgreSQL private-network offers, used to validate version, plan, region, flavor and disk range/increment together during plan; it may become stale as OVHcloud changes availability.
+A module-owned snapshot of stable PostgreSQL private-network offers, used during plan to validate version and region allowlists plus plan-specific flavor and disk limits; it does not establish that the selected dimensions are jointly available or currently offered to the caller's project.

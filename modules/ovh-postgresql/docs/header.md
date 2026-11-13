@@ -6,14 +6,14 @@ This module provisions one OVHcloud Public Cloud Databases for PostgreSQL cluste
 
 It also manages declared databases, PostgreSQL users and PgBouncer connection pools. User passwords and pool connection URIs are written as JSON secrets to an existing OVHcloud KMS (OKMS). Sensitive values remain in Terraform state, so the state backend must be encrypted and access-restricted. No password or credential-bearing URI is exposed as a module output.
 
-The module validates the selected PostgreSQL version, plan, region, flavor and disk size against a maintained static snapshot of OVHcloud's stable private-network offers in `data/postgresql-offers.json`. The snapshot comes from an authenticated Public Cloud availability query and is scoped to the project used for that query; refresh and review it deliberately. OVHcloud remains authoritative if offers change after the snapshot is updated. The module resolves the private network and subnet separately from the caller's existing infrastructure. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
+The module validates PostgreSQL versions and regions against separate allowlists in a maintained static snapshot, and validates plans, flavors and disk limits using the plan-specific entries in `data/postgresql-offers.json`. These checks do not verify that the selected version, plan, region and flavor are offered together, or that the offer is currently available to the caller's project. The module consumer is responsible for selecting a valid combination; OVHcloud remains authoritative and may reject it during apply. The snapshot comes from an authenticated Public Cloud availability query for one project; refresh and review it deliberately. The module resolves the private network and subnet separately from the caller's existing infrastructure. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
 
 ## Key Features
 
 - **Private by default**: discovers one existing private network and subnet; defaults IP restrictions to the subnet CIDR.
 - **Plan-sized clusters**: generates one node for `discovery`, two for `production`, and three for `advanced`.
-- **Maintained offer catalogue**: checks version, plan, region, flavor and disk size against stable private-network offers.
-- **Disk range and increment**: enforces the selected offer's minimum, maximum and storage increment before apply.
+- **Maintained option catalogue**: checks version, region, plan, flavor and disk size against separate allowlists and plan-specific limits; it does not validate combinations or live availability.
+- **Disk range and increment**: enforces the catalogue minimum, maximum and storage increment for the selected plan and flavor before apply.
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
 - **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.
@@ -26,11 +26,14 @@ The caller configures the `ovh` provider. Use the `discovery-private-network` ex
 module "postgresql" {
   source = "git::https://github.com/prefapp/tfm.git//modules/ovh-postgresql?ref=ovh-postgresql-vx.y.z"
 
-  project_name = "example-project"
-  name         = "authz"
-  region       = "GRA"
-  network_name = "predev-private"
-  subnet_cidr  = "10.20.0.0/16"
+  project_name   = "example-project"
+  name           = "authz"
+  region         = "GRA"
+  network_name   = "predev-private"
+  subnet_cidr    = "10.20.0.0/16"
+
+  # Set only when the network API uses a different OpenStack region name.
+  # network_region = "GRA11"
 
   engine_version = "18"
   plan           = "discovery"

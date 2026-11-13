@@ -7,14 +7,14 @@ This module provisions one OVHcloud Public Cloud Databases for PostgreSQL cluste
 
 It also manages declared databases, PostgreSQL users and PgBouncer connection pools. User passwords and pool connection URIs are written as JSON secrets to an existing OVHcloud KMS (OKMS). Sensitive values remain in Terraform state, so the state backend must be encrypted and access-restricted. No password or credential-bearing URI is exposed as a module output.
 
-The module validates the selected PostgreSQL version, plan, region, flavor and disk size against a maintained static snapshot of OVHcloud's stable private-network offers in `data/postgresql-offers.json`. The snapshot comes from an authenticated Public Cloud availability query and is scoped to the project used for that query; refresh and review it deliberately. OVHcloud remains authoritative if offers change after the snapshot is updated. The module resolves the private network and subnet separately from the caller's existing infrastructure. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
+The module validates PostgreSQL versions and regions against separate allowlists in a maintained static snapshot, and validates plans, flavors and disk limits using the plan-specific entries in `data/postgresql-offers.json`. These checks do not verify that the selected version, plan, region and flavor are offered together, or that the offer is currently available to the caller's project. The module consumer is responsible for selecting a valid combination; OVHcloud remains authoritative and may reject it during apply. The snapshot comes from an authenticated Public Cloud availability query for one project; refresh and review it deliberately. The module resolves the private network and subnet separately from the caller's existing infrastructure. The provider does not expose a PostgreSQL extension resource or an extension-by-version capabilities data source: required extensions are checked against the documented OVHcloud catalogue and known version constraints, but must be activated separately with `CREATE EXTENSION` by a database migration or operator.
 
 ## Key Features
 
 - **Private by default**: discovers one existing private network and subnet; defaults IP restrictions to the subnet CIDR.
 - **Plan-sized clusters**: generates one node for `discovery`, two for `production`, and three for `advanced`.
-- **Maintained offer catalogue**: checks version, plan, region, flavor and disk size against stable private-network offers.
-- **Disk range and increment**: enforces the selected offer's minimum, maximum and storage increment before apply.
+- **Maintained option catalogue**: checks version, region, plan, flavor and disk size against separate allowlists and plan-specific limits; it does not validate combinations or live availability.
+- **Disk range and increment**: enforces the catalogue minimum, maximum and storage increment for the selected plan and flavor before apply.
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
 - **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.
@@ -89,7 +89,7 @@ With transaction pooling, review application use of prepared statements, tempora
 
 | Name | Version |
 | ---- | ------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.22.0, < 2.23.0 |
 
 ## Providers
@@ -129,9 +129,9 @@ No modules.
 | <a name="input_connection_pools"></a> [connection\_pools](#input\_connection\_pools) | PgBouncer pools keyed by stable Terraform identifier. | <pre>map(object({<br/>    name        = string<br/>    database    = string<br/>    mode        = string<br/>    size        = number<br/>    user        = optional(string)<br/>    secret_path = optional(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_databases"></a> [databases](#input\_databases) | Databases to create, keyed by stable Terraform identifier and mapped to their OVHcloud names. | `map(string)` | n/a | yes |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Protect the database service from deletion. Disable only for discovery environments. | `bool` | `true` | no |
-| <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Database disk size in GB. Must meet the maintained OVHcloud offer's minimum, maximum and increment for the selected plan and flavor. | `number` | n/a | yes |
+| <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Database disk size in GB. Must meet the maintained catalogue's minimum, maximum and increment for the selected plan and flavor. | `number` | n/a | yes |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Required PostgreSQL engine major version. Must appear in the maintained OVHcloud offer catalogue. | `string` | n/a | yes |
-| <a name="input_flavor"></a> [flavor](#input\_flavor) | Database node flavor available for the selected plan, region and PostgreSQL version in the maintained OVHcloud offer catalogue. | `string` | n/a | yes |
+| <a name="input_flavor"></a> [flavor](#input\_flavor) | Database node flavor listed for the selected plan in the maintained OVHcloud catalogue. | `string` | n/a | yes |
 | <a name="input_ip_restrictions"></a> [ip\_restrictions](#input\_ip\_restrictions) | Optional CIDR allow-list. When empty, only subnet\_cidr is allowed. | <pre>list(object({<br/>    ip          = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
 | <a name="input_kms_id"></a> [kms\_id](#input\_kms\_id) | ID of the existing OVHcloud KMS (OKMS) where database credentials are stored. | `string` | n/a | yes |
 | <a name="input_maintenance_time"></a> [maintenance\_time](#input\_maintenance\_time) | Daily maintenance start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
@@ -167,10 +167,10 @@ No modules.
 This module does not run SQL. Apply required extensions separately in each target database:
 
 ```sql
-CREATE EXTENSION IF NOT EXISTS "pgvector";
+CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-The provider has no managed PostgreSQL extension resource and OVHcloud's capabilities data source does not return extensions. The module therefore checks extension names against the [OVHcloud extension catalogue](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-extensions/) and enforces documented constraints for TimescaleDB (not available on PostgreSQL 18) and pgvectorscale (documented for PostgreSQL 16 and 17). Confirm other extension/version combinations with OVHcloud before deployment. `CREATE EXTENSION` permissions and required activation order are the caller's responsibility.
+The provider has no managed PostgreSQL extension resource and OVHcloud's capabilities data source does not return extensions. The module therefore checks extension names against the [OVHcloud extension catalogue](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-extensions/) and enforces documented constraints for TimescaleDB (not available on PostgreSQL 18) and pgvectorscale (documented for PostgreSQL 16 and 17). For pgvector, the module catalogue label is `pgvector`, while its SQL extension name is `vector`. Confirm other extension/version combinations with OVHcloud before deployment. `CREATE EXTENSION` permissions and required activation order are the caller's responsibility.
 
 ## Secrets and External Secrets Operator
 
@@ -180,9 +180,9 @@ New PostgreSQL users have no privileges on database objects by default. Manage r
 
 ## Maintained Offer Catalogue
 
-`data/postgresql-offers.json` contains the maintained snapshot of stable PostgreSQL private-network offers. It records versions, regions, supported plan/flavor combinations, plan node counts and per-offer disk minimum, maximum and increment. It was captured from an authenticated OVHcloud availability query for one Public Cloud project on the recorded date. Update it from a fresh availability query and review the diff when OVHcloud offers change; the snapshot is not a live availability guarantee for every project. In the captured data, each listed version and region is available across all listed plan/flavor offers.
+`data/postgresql-offers.json` contains a maintained snapshot derived from stable PostgreSQL private-network offers captured from one Public Cloud project on the recorded date. The module uses it as separate allowlists for engine versions and regions, plus plan-specific flavor and disk minimum, maximum and increment values. It does not record or validate whether a particular version, plan, region and flavor combination is offered together, nor whether an offer is currently available to the caller's project. The module consumer is responsible for choosing a valid combination; OVHcloud remains authoritative and may reject it during apply. Refresh the snapshot from a new availability query and review the diff when offers change.
 
-The catalogue represents private networking because the module always attaches to an existing private network and subnet. Database node count is derived from the selected plan. The network name and subnet CIDR are resolved from the caller's project and are not part of OVHcloud's offer catalogue. OVHcloud remains authoritative and may reject a configuration if its offers change after the snapshot.
+The catalogue represents private networking because the module always attaches to an existing private network and subnet. Database node count is derived from the selected plan. The network name and subnet CIDR are resolved from the caller's project and are not part of OVHcloud's offer catalogue.
 
 ## Backup, SLA and Pool Guidance
 
@@ -208,7 +208,7 @@ Resource addresses assume the caller names the module `postgresql`:
 - Pool: `module.postgresql.ovh_cloud_project_database_postgresql_connection_pool.pool["<key>"]`, import ID `<service_name>/<cluster_id>/<pool_id>`.
 - OKMS secret: OVH provider v2.22.0 does not implement import for `ovh_okms_secret`; existing secrets at generated paths cannot be adopted with `terraform import`.
 
-Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. Disable deletion protection before intentional destroy; use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. The maintained offer catalogue validates the requested database configuration during plan; OVHcloud remains authoritative during apply.
+Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. Disable deletion protection before intentional destroy; use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. Plan validates catalogue membership and plan-specific flavor/disk limits, not cross-dimension offer compatibility or live availability; OVHcloud remains authoritative during apply.
 
 ## Examples
 
