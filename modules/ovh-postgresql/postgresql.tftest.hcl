@@ -347,3 +347,202 @@ run "reject_duplicate_database_names" {
   }
   expect_failures = [var.databases]
 }
+
+run "reject_backup_regions_without_database_region" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    backup_regions = ["SBG"]
+    databases      = {}
+    users          = {}
+    kms_id         = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_global_ip_restriction_without_opt_in" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    ip_restrictions = [
+      { ip = "0.0.0.0/0" }
+    ]
+    databases = {}
+    users     = {}
+    kms_id    = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_duplicate_user_and_pool_secret_paths" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    databases      = { app = "app" }
+    users          = { app = { name = "app", database = "app", secret_path = "shared" } }
+    connection_pools = {
+      app = { name = "app", database = "app", user = "app", mode = "session", size = 1, secret_path = "shared" }
+    }
+    kms_id = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_user_referencing_undeclared_database" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    databases      = { app = "app" }
+    users          = { app = { name = "app", database = "missing" } }
+    kms_id         = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_pool_referencing_undeclared_database" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    databases      = { app = "app" }
+    users          = {}
+    connection_pools = {
+      app = { name = "app", database = "missing", mode = "session", size = 1 }
+    }
+    kms_id = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_pool_referencing_undeclared_user" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    databases      = { app = "app" }
+    users          = {}
+    connection_pools = {
+      app = { name = "app", database = "app", user = "missing", mode = "session", size = 1 }
+    }
+    kms_id = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_unsupported_extension" {
+  command = plan
+  variables {
+    name                = "test"
+    region              = "GRA"
+    network_name        = "private"
+    subnet_cidr         = "10.20.0.0/16"
+    engine_version      = "18"
+    plan                = "discovery"
+    flavor              = "b3-4"
+    disk_size           = 80
+    databases           = {}
+    users               = {}
+    required_extensions = ["not_an_extension"]
+    kms_id              = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_extension_unsupported_for_engine_version" {
+  command = plan
+  variables {
+    name                = "test"
+    region              = "GRA"
+    network_name        = "private"
+    subnet_cidr         = "10.20.0.0/16"
+    engine_version      = "18"
+    plan                = "discovery"
+    flavor              = "b3-4"
+    disk_size           = 80
+    databases           = {}
+    users               = {}
+    required_extensions = ["timescaledb"]
+    kms_id              = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_missing_project_selector" {
+  command = plan
+  variables {
+    name           = "test"
+    region         = "GRA"
+    network_name   = "private"
+    subnet_cidr    = "10.20.0.0/16"
+    engine_version = "18"
+    plan           = "discovery"
+    flavor         = "b3-4"
+    disk_size      = 80
+    databases      = {}
+    users          = {}
+    kms_id         = "okms-123"
+  }
+  expect_failures = [ovh_cloud_project_database.postgresql]
+}
+
+run "reject_disabling_deletion_protection_outside_discovery" {
+  command = plan
+  variables {
+    name                = "test"
+    region              = "GRA"
+    network_name        = "private"
+    subnet_cidr         = "10.20.0.0/16"
+    engine_version      = "18"
+    plan                = "production"
+    flavor              = "b3-8"
+    disk_size           = 160
+    deletion_protection = false
+    databases           = {}
+    users               = {}
+    kms_id              = "okms-123"
+  }
+  expect_failures = [
+    ovh_cloud_project_database.postgresql,
+    check.deletion_protection,
+  ]
+}
