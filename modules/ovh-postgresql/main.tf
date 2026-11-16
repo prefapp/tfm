@@ -109,7 +109,7 @@ resource "ovh_okms_secret" "user" {
     max_versions             = 10
     deactivate_version_after = "0s"
     custom_metadata = merge(var.secret_custom_metadata, {
-      database = var.databases[each.value.database]
+      database = ovh_cloud_project_database_database.database[each.value.database].name
       username = each.value.name
       service  = var.name
       type     = "postgresql-direct"
