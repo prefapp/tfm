@@ -48,6 +48,8 @@ Destroying the module deletes the managed cluster and all data in it, its declar
 
 Changing a pool's optional user restriction recreates that pool because OVHcloud provider v2.22.0 cannot reliably clear its computed `user_id` through an update. This also causes existing pools to be recreated once when adopting this lifecycle rule; schedule the rollout for the possible connection interruption.
 
+Changing `password_reset` for a user restricted to a pool also recreates that pool so its connection URI and OKMS secret are refreshed with the rotated credentials. This interrupts pool connections during the apply. Provider v2.22.0 also cannot revoke the `replication` role by updating `roles` to an empty list. To revoke it without dropping the user or affecting its grants and owned objects, set `roles = []` and run `ALTER ROLE "user_name" NOREPLICATION;` through an approved database-administration procedure; the provider cannot perform this transition itself.
+
 ## Examples
 
 - [discovery-private-network](https://github.com/prefapp/tfm/tree/main/modules/ovh-postgresql/_examples/discovery-private-network) — one private node, one database and one user.

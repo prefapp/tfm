@@ -115,6 +115,10 @@ run "accept_listed_options" {
     condition     = ovh_cloud_project_database.postgresql.nodes[0].network_id == "openstack-network-gra" && ovh_cloud_project_database.postgresql.nodes[0].subnet_id == "subnet-id"
     error_message = "The node should use the OpenStack network ID and subnet ID resolved in the database region."
   }
+  assert {
+    condition     = length(ovh_cloud_project_database.postgresql.backup_regions) == 0
+    error_message = "An empty backup_regions input should leave the provider's default unchanged."
+  }
 }
 
 run "resolve_project_by_id" {
@@ -143,8 +147,8 @@ run "accept_users_pools_and_secrets" {
     error_message = "Direct and pool secrets should be planned under their default paths."
   }
   assert {
-    condition     = terraform_data.pool_user["app"].triggers_replace == "app"
-    error_message = "The pool replacement trigger should track its configured user."
+    condition     = terraform_data.pool_user["app"].triggers_replace.user == "app" && terraform_data.pool_user["app"].triggers_replace.password_reset == null
+    error_message = "The pool replacement trigger should track its configured user and password-reset generation."
   }
 }
 
@@ -157,8 +161,25 @@ run "accept_pool_without_user_restriction" {
     }
   }
   assert {
-    condition     = terraform_data.pool_user["app"].triggers_replace == null
-    error_message = "The pool replacement trigger should track an unrestricted user setting."
+    condition     = terraform_data.pool_user["app"].triggers_replace.user == null && terraform_data.pool_user["app"].triggers_replace.password_reset == null
+    error_message = "The pool replacement trigger should track an unrestricted user setting without a password reset."
+  }
+}
+
+run "track_pool_user_password_reset" {
+  command = plan
+  variables {
+    databases = { app = "app" }
+    users = {
+      app = { name = "app", database = "app", password_reset = "rotation-2" }
+    }
+    connection_pools = {
+      app = { name = "app", database = "app", user = "app", mode = "transaction", size = 5 }
+    }
+  }
+  assert {
+    condition     = terraform_data.pool_user["app"].triggers_replace.password_reset == "rotation-2"
+    error_message = "A restricted pool replacement trigger should track its user's password-reset generation."
   }
 }
 

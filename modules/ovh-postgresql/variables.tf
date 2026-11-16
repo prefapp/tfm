@@ -166,7 +166,7 @@ variable "maintenance_time" {
 }
 
 variable "backup_regions" {
-  description = "One or two backup regions; one must be the database region."
+  description = "Optional backup regions; when empty, OVHcloud's default is left unchanged. When set, one or two regions are allowed and one must be the database region."
   type        = list(string)
   default     = []
 

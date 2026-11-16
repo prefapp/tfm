@@ -9,7 +9,7 @@ resource "ovh_cloud_project_database" "postgresql" {
   deletion_protection    = var.deletion_protection
   advanced_configuration = var.advanced_configuration
   backup_time            = var.backup_time
-  backup_regions         = var.backup_regions
+  backup_regions         = length(var.backup_regions) == 0 ? null : var.backup_regions
   maintenance_time       = var.maintenance_time
 
   dynamic "nodes" {
@@ -153,7 +153,10 @@ resource "ovh_cloud_project_database_postgresql_connection_pool" "pool" {
 resource "terraform_data" "pool_user" {
   for_each = var.connection_pools
 
-  triggers_replace = each.value.user
+  triggers_replace = {
+    user           = each.value.user
+    password_reset = try(var.users[each.value.user].password_reset, null)
+  }
 }
 
 resource "ovh_okms_secret" "pool" {

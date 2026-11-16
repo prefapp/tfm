@@ -129,7 +129,7 @@ No modules.
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_advanced_configuration"></a> [advanced\_configuration](#input\_advanced\_configuration) | PostgreSQL advanced configuration key/value pairs supported by OVHcloud. | `map(string)` | `{}` | no |
 | <a name="input_allow_all_ips"></a> [allow\_all\_ips](#input\_allow\_all\_ips) | Explicit opt-in required before allowing 0.0.0.0/0 or ::/0 in ip\_restrictions. | `bool` | `false` | no |
-| <a name="input_backup_regions"></a> [backup\_regions](#input\_backup\_regions) | One or two backup regions; one must be the database region. | `list(string)` | `[]` | no |
+| <a name="input_backup_regions"></a> [backup\_regions](#input\_backup\_regions) | Optional backup regions; when empty, OVHcloud's default is left unchanged. When set, one or two regions are allowed and one must be the database region. | `list(string)` | `[]` | no |
 | <a name="input_backup_time"></a> [backup\_time](#input\_backup\_time) | Daily backup start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_connection_pools"></a> [connection\_pools](#input\_connection\_pools) | PgBouncer pools keyed by stable Terraform identifier. | <pre>map(object({<br/>    name        = string<br/>    database    = string<br/>    mode        = string<br/>    size        = number<br/>    user        = optional(string)<br/>    secret_path = optional(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_databases"></a> [databases](#input\_databases) | Databases to create, keyed by stable Terraform identifier and mapped to their OVHcloud names. | `map(string)` | n/a | yes |
@@ -216,6 +216,8 @@ Resource addresses assume the caller names the module `postgresql`:
 Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. Disable deletion protection before intentional destroy; use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. Plan validates catalogue membership and plan-specific flavor/disk limits, not cross-dimension offer compatibility or live availability; OVHcloud remains authoritative during apply.
 
 Changing a pool's optional user restriction recreates that pool because OVHcloud provider v2.22.0 cannot reliably clear its computed `user_id` through an update. This also causes existing pools to be recreated once when adopting this lifecycle rule; schedule the rollout for the possible connection interruption.
+
+Changing `password_reset` for a user restricted to a pool also recreates that pool so its connection URI and OKMS secret are refreshed with the rotated credentials. This interrupts pool connections during the apply. Provider v2.22.0 also cannot revoke the `replication` role by updating `roles` to an empty list. To revoke it without dropping the user or affecting its grants and owned objects, set `roles = []` and run `ALTER ROLE "user_name" NOREPLICATION;` through an approved database-administration procedure; the provider cannot perform this transition itself.
 
 ## Examples
 
