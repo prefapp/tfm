@@ -142,6 +142,24 @@ run "accept_users_pools_and_secrets" {
     condition     = ovh_okms_secret.user["app"].path == "test/app" && ovh_okms_secret.pool["app"].path == "test/pools/app"
     error_message = "Direct and pool secrets should be planned under their default paths."
   }
+  assert {
+    condition     = terraform_data.pool_user["app"].triggers_replace == "app"
+    error_message = "The pool replacement trigger should track its configured user."
+  }
+}
+
+run "accept_pool_without_user_restriction" {
+  command = plan
+  variables {
+    databases = { app = "app" }
+    connection_pools = {
+      app = { name = "app", database = "app", user = null, mode = "transaction", size = 5 }
+    }
+  }
+  assert {
+    condition     = terraform_data.pool_user["app"].triggers_replace == null
+    error_message = "The pool replacement trigger should track an unrestricted user setting."
+  }
 }
 
 run "accept_published_regional_alias" {

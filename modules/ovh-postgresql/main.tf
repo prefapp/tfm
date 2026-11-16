@@ -144,6 +144,16 @@ resource "ovh_cloud_project_database_postgresql_connection_pool" "pool" {
   mode         = each.value.mode
   size         = each.value.size
   user_id      = each.value.user == null ? null : ovh_cloud_project_database_postgresql_user.user[each.value.user].id
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.pool_user[each.key]]
+  }
+}
+
+resource "terraform_data" "pool_user" {
+  for_each = var.connection_pools
+
+  triggers_replace = each.value.user
 }
 
 resource "ovh_okms_secret" "pool" {
