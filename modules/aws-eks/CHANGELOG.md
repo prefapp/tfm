@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.6...aws-eks-v1.6.0) (2026-11-12)
+
+
+### Features
+
+* add option for setup argocd and backstage firestartr roles ([#1452](https://github.com/prefapp/tfm/issues/1452)) ([a71f767](https://github.com/prefapp/tfm/commit/a71f76740db3f8a26605fad1c0da9a2b4b117190))
+
 ## [1.5.6](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.5...aws-eks-v1.5.6) (2026-10-21)
 
 

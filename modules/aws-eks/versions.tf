@@ -2,10 +2,9 @@
   This Terraform script is used to specify the required versions for Terraform
   and the providers used in the project.
 
-  The AWS provider is required to interact with AWS resources, the Kubernetes
-  provider is used to manage Kubernetes resources, the Time provider is used for
-  time-based resources, and the TLS provider is used for resources related to
-  TLS certificates.
+  The AWS provider is required to interact with AWS resources, the Time provider
+  is used for time-based resources, and the TLS provider is used for resources
+  related to TLS certificates.
 */
 
 terraform {
@@ -17,11 +16,6 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 6.33"
-    }
-
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.35"
     }
 
     time = {

@@ -6,6 +6,28 @@
 */
 data "aws_caller_identity" "current" {}
 
+data "aws_partition" "current" {}
+
+data "aws_iam_roles" "backstage_reader_candidates" {
+  count      = var.enable_backstage_reader_access_entry ? 1 : 0
+  name_regex = local.backstage_reader_role_name_regex
+}
+
+data "aws_iam_role" "backstage_reader_candidates" {
+  for_each = var.enable_backstage_reader_access_entry ? toset(data.aws_iam_roles.backstage_reader_candidates[0].names) : toset([])
+  name     = each.value
+}
+
+data "aws_iam_roles" "argocd_admin_candidates" {
+  count      = var.enable_argocd_admin_access_entry ? 1 : 0
+  name_regex = local.argocd_admin_role_name_regex
+}
+
+data "aws_iam_role" "argocd_admin_candidates" {
+  for_each = var.enable_argocd_admin_access_entry ? toset(data.aws_iam_roles.argocd_admin_candidates[0].names) : toset([])
+  name     = each.value
+}
+
 #######################################
 # VPC Lookup
 #######################################

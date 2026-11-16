@@ -225,6 +225,70 @@ variable "access_entries" {
   default     = {}
 }
 
+variable "enable_backstage_reader_access_entry" {
+  description = "Create an EKS access entry and cluster-wide read-only access policy for the configured Backstage IAM role"
+  type        = bool
+  default     = false
+}
+
+variable "backstage_reader_role_name" {
+  description = "IAM role name to discover for Backstage access. Defaults to the Firestartr integration role name."
+  type        = string
+  default     = "FirestartrBackstageReader"
+
+  validation {
+    condition     = trimspace(var.backstage_reader_role_name) != ""
+    error_message = "backstage_reader_role_name must not be empty."
+  }
+}
+
+variable "backstage_reader_role_tags" {
+  description = "Tags that the Backstage IAM role must have to be granted EKS access. Defaults to the Firestartr integration tags."
+  type        = map(string)
+  default = {
+    FirestartrIntegration = "backstage-reader"
+    ManagedBy             = "Prefapp"
+    ProvisionedBy         = "CloudFormation"
+  }
+
+  validation {
+    condition     = length(var.backstage_reader_role_tags) > 0
+    error_message = "backstage_reader_role_tags must contain at least one tag to verify the IAM role before granting access."
+  }
+}
+
+variable "enable_argocd_admin_access_entry" {
+  description = "Create an EKS access entry and cluster-admin access policy for the configured ArgoCD IAM role"
+  type        = bool
+  default     = false
+}
+
+variable "argocd_admin_role_name" {
+  description = "IAM role name to discover for ArgoCD access. Defaults to the Firestartr integration role name."
+  type        = string
+  default     = "FirestartrArgoCDAdmin"
+
+  validation {
+    condition     = trimspace(var.argocd_admin_role_name) != ""
+    error_message = "argocd_admin_role_name must not be empty."
+  }
+}
+
+variable "argocd_admin_role_tags" {
+  description = "Tags that the ArgoCD IAM role must have to be granted EKS access. Defaults to the Firestartr integration tags."
+  type        = map(string)
+  default = {
+    FirestartrIntegration = "argocd-admin"
+    ManagedBy             = "Prefapp"
+    ProvisionedBy         = "CloudFormation"
+  }
+
+  validation {
+    condition     = length(var.argocd_admin_role_tags) > 0
+    error_message = "argocd_admin_role_tags must contain at least one tag to verify the IAM role before granting access."
+  }
+}
+
 variable "enable_karpenter" {
   description = "Enable Karpenter provisioning"
   type        = bool

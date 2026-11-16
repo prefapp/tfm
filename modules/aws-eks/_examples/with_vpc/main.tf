@@ -63,5 +63,22 @@ module "eks" {
     Environment = "dev"
     Project     = "my-project"
   }
-}
 
+  # Optional Backstage / ArgoCD access. Defaults discover Firestartr roles
+  # with their FirestartrIntegration, ManagedBy, and ProvisionedBy tags.
+  # Override the names and non-empty tag maps for another integration setup.
+  enable_backstage_reader_access_entry = false
+  backstage_reader_role_name           = "PlatformBackstageReader"
+  backstage_reader_role_tags = {
+    Integration = "backstage-reader"
+    ManagedBy   = "PlatformTeam"
+  }
+
+  enable_argocd_admin_access_entry = false
+  argocd_admin_role_name           = "PlatformArgoCDAdmin"
+  argocd_admin_role_tags = {
+    Integration = "argocd-admin"
+    ManagedBy   = "PlatformTeam"
+  }
+
+}
