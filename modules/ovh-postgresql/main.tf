@@ -116,6 +116,13 @@ resource "ovh_okms_secret" "user" {
     })
   }
 
+  lifecycle {
+    precondition {
+      condition     = try(length(trimspace(ovh_cloud_project_database_postgresql_user.user[each.key].password)) > 0, false)
+      error_message = "OVHcloud did not return a password for this user. Set or change password_reset to generate credentials before storing the OKMS secret."
+    }
+  }
+
   version = {
     data = jsonencode({
       host     = local.direct_endpoint.domain
