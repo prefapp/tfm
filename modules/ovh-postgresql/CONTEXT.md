@@ -19,7 +19,7 @@ The OpenStack region identifier of the existing private network and subnet; OVHc
 A managed PgBouncer endpoint for one declared database, with a selected pooling mode and optional user restriction.
 
 **required extension**:
-An extension name checked against the OVHcloud-supported catalogue and documented PostgreSQL version constraints. The module does not execute `CREATE EXTENSION`.
+An extension name listed in OVHcloud's catalogue. Being listed does not imply availability across all PostgreSQL versions, plans or regions; the module checks only explicit documented version constraints and does not execute `CREATE EXTENSION`.
 
 **direct connection secret**:
 An OKMS JSON secret containing the direct endpoint, database, username and generated password for one declared user.

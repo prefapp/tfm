@@ -6,7 +6,7 @@ This module does not run SQL. Apply required extensions separately in each targe
 CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-The provider has no managed PostgreSQL extension resource and OVHcloud's capabilities data source does not return extensions. The module therefore checks extension names against the [OVHcloud extension catalogue](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-extensions/) and enforces documented constraints for TimescaleDB (not available on PostgreSQL 18) and pgvectorscale (documented for PostgreSQL 16 and 17). For pgvector, the module catalogue label is `pgvector`, while its SQL extension name is `vector`. Confirm other extension/version combinations with OVHcloud before deployment. `CREATE EXTENSION` permissions and required activation order are the caller's responsibility.
+The provider has no managed PostgreSQL extension resource and OVHcloud's capabilities data source does not return extensions. The module therefore checks extension names against the [OVHcloud extension catalogue](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-extensions.md) and enforces its explicit constraints for TimescaleDB and pgvectorscale. The catalogue lists TimescaleDB and says **"Not yet available on PG18"**. It does not publish a TimescaleDB compatibility matrix by plan or region, nor specify a TimescaleDB extension version or edition. OVHcloud's [general PostgreSQL capabilities](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-capabilities.md) say the database service is available in all Public Cloud 1-AZ and 3-AZ regions and describe the Discovery, Production and Advanced plans, but do not establish TimescaleDB availability for every plan/region combination. Accordingly, the module rejects TimescaleDB on PostgreSQL 18 only; passing that check is not confirmation that the extension is available for a particular offer. Confirm the intended combination with OVHcloud before deployment. The same catalogue documents pgvectorscale for PostgreSQL 16 and 17. For pgvector, the module catalogue label is `pgvector`, while its SQL extension name is `vector`. `CREATE EXTENSION` permissions and required activation order are the caller's responsibility.
 
 ## Secrets and External Secrets Operator
 
@@ -45,6 +45,14 @@ Resource addresses assume the caller names the module `postgresql`:
 - User: `module.postgresql.ovh_cloud_project_database_postgresql_user.user["<key>"]`, import ID `<service_name>/<cluster_id>/<user_id>`.
 - Pool: `module.postgresql.ovh_cloud_project_database_postgresql_connection_pool.pool["<key>"]`, import ID `<service_name>/<cluster_id>/<pool_id>`.
 - OKMS secret: OVH provider v2.22.0 does not implement import for `ovh_okms_secret`; existing secrets at generated paths cannot be adopted with `terraform import`.
+
+For example, with the module call named `postgresql`, import the cluster with:
+
+```shell
+terraform import 'module.postgresql.ovh_cloud_project_database.postgresql' '<service_name>/postgresql/<cluster_id>'
+```
+
+The provider's v2.22.0 import formats are documented for [clusters](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database), [databases](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database_database), [PostgreSQL users](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database_postgresql_user) and [connection pools](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database_postgresql_connection_pool). The module is constrained to provider v2.22.x; use each resource's corresponding address and ID format above. The ID components are the Public Cloud project service name, cluster ID, and child resource ID as applicable.
 
 Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. Disable deletion protection before intentional destroy; use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. Plan validates catalogue membership and plan-specific flavor/disk limits, not cross-dimension offer compatibility or live availability; OVHcloud remains authoritative during apply.
 
