@@ -26,15 +26,15 @@ jobs:
           - name: Terraform 1.9.x (minimum)
             command: terraform
             version: 1.9.8
-            test: false
+            test_file: postgresql.tftest.hcl
           - name: Terraform
             command: terraform
             version: 1.12.2
-            test: false
+            test_file: postgresql.tftest.hcl
           - name: OpenTofu
             command: tofu
             version: 1.13.9
-            test: true
+            test_file: postgresql.tofutest.hcl
 
     steps:
       - name: Checkout
@@ -63,10 +63,8 @@ jobs:
           ${{ matrix.cli.command }} validate
 
       - name: Test module
-        if: matrix.cli.test
         working-directory: modules/ovh-postgresql
-        run: |
-          ${{ matrix.cli.command }} test
+        run: ${{ matrix.cli.command }} test -filter=${{ matrix.cli.test_file }}
 
       - name: Validate examples
         run: |

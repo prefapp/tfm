@@ -1,6 +1,4 @@
-# OpenTofu-only suite: Terraform cannot mock the OVH provider's set-nested
-# data source attributes (`projects`, `networks`, `subnets`), so it would never
-# resolve the project, network or subnet. Terraform ignores `.tofutest.hcl`.
+# Provider mocks exercise the module without cloud credentials or API access.
 
 # A valid baseline: every run plans successfully unless it overrides one input.
 variables {
