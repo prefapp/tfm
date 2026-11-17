@@ -17,6 +17,7 @@ The module validates PostgreSQL versions and regions against separate allowlists
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
 - **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.
+- **Common service outputs**: exposes the service ID, description, status, direct endpoint, CA, service name and database names following the `ovh-mysql` output pattern.
 
 ## Basic Usage
 
@@ -45,7 +46,7 @@ module "postgresql" {
     authz = { name = "authz", database = "authz" }
   }
 
-  kms_id = "<okms-id>"
+  okms_id = "<okms-id>"
 }
 ```
 
@@ -81,8 +82,10 @@ module "postgresql" {
   }
 
   required_extensions = ["pgvector"]
-  kms_id              = "<okms-id>"
+  okms_id             = "<okms-id>"
 }
 ```
 
 With transaction pooling, review application use of prepared statements, temporary tables, session-level settings and advisory locks. Use session mode when the application depends on session state.
+
+`disk_size` is required for PostgreSQL and must fit the selected plan and flavor limits in the maintained offer catalogue. The module outputs `postgresql_id`, `postgresql_description`, `postgresql_status`, `postgresql_host`, `postgresql_port`, and `postgresql_ca`, matching the MySQL module's service output pattern. PostgreSQL-specific outputs expose endpoint TLS details and separate direct-user and pool secret paths.

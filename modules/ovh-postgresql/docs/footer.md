@@ -12,6 +12,8 @@ The provider has no managed PostgreSQL extension resource and OVHcloud's capabil
 
 Each user secret is JSON with `host`, `port`, `username`, `password` and `database`. Each pool secret is JSON with `uri`. The module outputs only secret paths; configure External Secrets Operator to read the relevant OKMS paths and map JSON properties to Kubernetes Secret keys. Passwords and pool URIs remain sensitive in Terraform state despite not being outputs.
 
+The common service outputs follow the `ovh-mysql` naming pattern: `service_name`, `postgresql_id`, `postgresql_description`, `postgresql_status`, `postgresql_host`, `postgresql_port`, `postgresql_ca`, and `database_names`. PostgreSQL-specific outputs include `postgresql_endpoints`, `database_ids`, `user_secret_paths`, `pool_secret_paths`, and non-sensitive `pool_endpoints`. No output contains a password or credential-bearing URI. `disk_size` is required for this module and is validated against the maintained plan/flavor catalogue.
+
 New PostgreSQL users have no privileges on database objects by default. Manage required database/schema/table grants with SQL migrations; the OVHcloud API only manages the `replication` role.
 
 ## Maintained Offer Catalogue

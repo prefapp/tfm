@@ -23,11 +23,18 @@ module "postgresql" {
     }
   }
 
-  kms_id = "<okms-id>"
+  okms_id = "<okms-id>"
 }
 
-output "cluster_id" {
-  value = module.postgresql.cluster_id
+output "postgresql_id" {
+  value = module.postgresql.postgresql_id
+}
+
+output "postgresql_endpoint" {
+  value = {
+    host = module.postgresql.postgresql_host
+    port = module.postgresql.postgresql_port
+  }
 }
 
 output "authz_secret_path" {

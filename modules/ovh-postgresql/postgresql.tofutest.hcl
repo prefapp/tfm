@@ -15,7 +15,7 @@ variables {
   disk_size      = 80
   databases      = {}
   users          = {}
-  kms_id         = "okms-123"
+  okms_id        = "okms-123"
 }
 
 mock_provider "ovh" {
@@ -119,6 +119,14 @@ run "accept_listed_options" {
     condition     = length(ovh_cloud_project_database.postgresql.backup_regions) == 0
     error_message = "An empty backup_regions input should leave the provider's default unchanged."
   }
+  assert {
+    condition     = output.postgresql_host == "db.example.com" && output.postgresql_port == 20184
+    error_message = "The common PostgreSQL endpoint outputs should expose connection details without a credential URI."
+  }
+  assert {
+    condition     = output.database_names == {}
+    error_message = "The common database_names output should be an empty map when no databases are declared."
+  }
 }
 
 run "resolve_project_by_id" {
@@ -145,6 +153,10 @@ run "accept_users_pools_and_secrets" {
   assert {
     condition     = ovh_okms_secret.user["app"].path == "test/app" && ovh_okms_secret.pool["app"].path == "test/pools/app"
     error_message = "Direct and pool secrets should be planned under their default paths."
+  }
+  assert {
+    condition     = output.database_names == { app = "app" }
+    error_message = "The common database_names output should map each configured key to its PostgreSQL database name."
   }
   assert {
     condition     = terraform_data.pool_user["app"].triggers_replace.user == "app" && terraform_data.pool_user["app"].triggers_replace.password_reset == null
@@ -208,11 +220,11 @@ run "resolve_network_in_distinct_openstack_region" {
 run "allow_global_ip_restriction_with_opt_in" {
   command = plan
   variables {
-    allow_all_ips   = true
-    ip_restrictions = [{ ip = "0:0:0:0:0:0:0:0/0" }]
+    allow_public_access = true
+    ip_restrictions     = [{ ip = "0:0:0:0:0:0:0:0/0" }]
   }
   assert {
-    condition     = var.allow_all_ips && local.ip_restrictions[0].ip == "0:0:0:0:0:0:0:0/0"
+    condition     = var.allow_public_access && local.ip_restrictions[0].ip == "0:0:0:0:0:0:0:0/0"
     error_message = "Explicit all-address opt-in should retain the equivalent zero-prefix CIDR."
   }
 }

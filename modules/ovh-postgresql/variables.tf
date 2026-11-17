@@ -98,7 +98,7 @@ variable "flavor" {
 }
 
 variable "disk_size" {
-  description = "Database disk size in GB. Must meet the maintained catalogue's minimum, maximum and increment for the selected plan and flavor."
+  description = "Required database disk size in GB. Must meet the maintained catalogue's minimum, maximum and increment for the selected plan and flavor."
   type        = number
 
   validation {
@@ -118,14 +118,14 @@ variable "ip_restrictions" {
   validation {
     condition = alltrue([
       for restriction in var.ip_restrictions : can(cidrhost(restriction.ip, 0)) && (
-        var.allow_all_ips ? true : try(tonumber(split("/", restriction.ip)[1]) != 0, true)
+        var.allow_public_access ? true : try(tonumber(split("/", restriction.ip)[1]) != 0, true)
       )
     ])
-    error_message = "Every ip_restrictions ip must be a valid CIDR; zero-prefix CIDRs require allow_all_ips = true."
+    error_message = "Every ip_restrictions ip must be a valid CIDR; zero-prefix CIDRs require allow_public_access = true."
   }
 }
 
-variable "allow_all_ips" {
+variable "allow_public_access" {
   description = "Explicit opt-in required before allowing 0.0.0.0/0 or ::/0 in ip_restrictions."
   type        = bool
   default     = false
@@ -253,7 +253,7 @@ variable "required_extensions" {
   }
 }
 
-variable "kms_id" {
+variable "okms_id" {
   description = "ID of the existing OVHcloud KMS (OKMS) where database credentials are stored."
   type        = string
 }

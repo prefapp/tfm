@@ -18,6 +18,7 @@ The module validates PostgreSQL versions and regions against separate allowlists
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
 - **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.
+- **Common service outputs**: exposes the service ID, description, status, direct endpoint, CA, service name and database names following the `ovh-mysql` output pattern.
 
 ## Basic Usage
 
@@ -46,7 +47,7 @@ module "postgresql" {
     authz = { name = "authz", database = "authz" }
   }
 
-  kms_id = "<okms-id>"
+  okms_id = "<okms-id>"
 }
 ```
 
@@ -82,11 +83,13 @@ module "postgresql" {
   }
 
   required_extensions = ["pgvector"]
-  kms_id              = "<okms-id>"
+  okms_id             = "<okms-id>"
 }
 ```
 
 With transaction pooling, review application use of prepared statements, temporary tables, session-level settings and advisory locks. Use session mode when the application depends on session state.
+
+`disk_size` is required for PostgreSQL and must fit the selected plan and flavor limits in the maintained offer catalogue. The module outputs `postgresql_id`, `postgresql_description`, `postgresql_status`, `postgresql_host`, `postgresql_port`, and `postgresql_ca`, matching the MySQL module's service output pattern. PostgreSQL-specific outputs expose endpoint TLS details and separate direct-user and pool secret paths.
 
 ## Requirements
 
@@ -128,21 +131,21 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_advanced_configuration"></a> [advanced\_configuration](#input\_advanced\_configuration) | PostgreSQL advanced configuration key/value pairs supported by OVHcloud. | `map(string)` | `{}` | no |
-| <a name="input_allow_all_ips"></a> [allow\_all\_ips](#input\_allow\_all\_ips) | Explicit opt-in required before allowing 0.0.0.0/0 or ::/0 in ip\_restrictions. | `bool` | `false` | no |
+| <a name="input_allow_public_access"></a> [allow\_public\_access](#input\_allow\_public\_access) | Explicit opt-in required before allowing 0.0.0.0/0 or ::/0 in ip\_restrictions. | `bool` | `false` | no |
 | <a name="input_backup_regions"></a> [backup\_regions](#input\_backup\_regions) | Optional backup regions; when empty, OVHcloud's default is left unchanged. When set, one or two regions are allowed and one must be the database region. | `list(string)` | `[]` | no |
 | <a name="input_backup_time"></a> [backup\_time](#input\_backup\_time) | Daily backup start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_connection_pools"></a> [connection\_pools](#input\_connection\_pools) | PgBouncer pools keyed by stable Terraform identifier. | <pre>map(object({<br/>    name        = string<br/>    database    = string<br/>    mode        = string<br/>    size        = number<br/>    user        = optional(string)<br/>    secret_path = optional(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_databases"></a> [databases](#input\_databases) | Databases to create, keyed by stable Terraform identifier and mapped to their OVHcloud names. | `map(string)` | n/a | yes |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Protect the database service from deletion. Disable only for discovery environments. | `bool` | `true` | no |
-| <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Database disk size in GB. Must meet the maintained catalogue's minimum, maximum and increment for the selected plan and flavor. | `number` | n/a | yes |
+| <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Required database disk size in GB. Must meet the maintained catalogue's minimum, maximum and increment for the selected plan and flavor. | `number` | n/a | yes |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Required PostgreSQL engine major version. Must appear in the maintained OVHcloud offer catalogue. | `string` | n/a | yes |
 | <a name="input_flavor"></a> [flavor](#input\_flavor) | Database node flavor listed for the selected plan in the maintained OVHcloud catalogue. | `string` | n/a | yes |
 | <a name="input_ip_restrictions"></a> [ip\_restrictions](#input\_ip\_restrictions) | Optional CIDR allow-list. When empty, only subnet\_cidr is allowed. | <pre>list(object({<br/>    ip          = string<br/>    description = optional(string, "")<br/>  }))</pre> | `[]` | no |
-| <a name="input_kms_id"></a> [kms\_id](#input\_kms\_id) | ID of the existing OVHcloud KMS (OKMS) where database credentials are stored. | `string` | n/a | yes |
 | <a name="input_maintenance_time"></a> [maintenance\_time](#input\_maintenance\_time) | Daily maintenance start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Database service description and prefix for generated OKMS secret paths. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network to attach to the cluster. | `string` | n/a | yes |
 | <a name="input_network_region"></a> [network\_region](#input\_network\_region) | Optional OpenStack region identifier for the existing private network and subnet; defaults to region when both APIs use the same region name. | `string` | `null` | no |
+| <a name="input_okms_id"></a> [okms\_id](#input\_okms\_id) | ID of the existing OVHcloud KMS (OKMS) where database credentials are stored. | `string` | n/a | yes |
 | <a name="input_plan"></a> [plan](#input\_plan) | OVHcloud database plan. discovery has one node, production two, and advanced three. | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID or service\_name; takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against project\_name and description. | `string` | `null` | no |
@@ -156,16 +159,19 @@ No modules.
 
 | Name | Description |
 | ---- | ----------- |
-| <a name="output_ca_certificate"></a> [ca\_certificate](#output\_ca\_certificate) | Certificate authority certificate for verified TLS connections. |
-| <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | ID of the managed PostgreSQL cluster. |
 | <a name="output_database_ids"></a> [database\_ids](#output\_database\_ids) | OVHcloud database IDs by configured database key. |
-| <a name="output_endpoints"></a> [endpoints](#output\_endpoints) | PostgreSQL service endpoint domains, ports and TLS modes; connection URIs are omitted. |
-| <a name="output_kms_id"></a> [kms\_id](#output\_kms\_id) | ID of the OKMS holding database credentials. |
+| <a name="output_database_names"></a> [database\_names](#output\_database\_names) | Names of PostgreSQL databases managed by this module, keyed by configuration key. |
 | <a name="output_pool_endpoints"></a> [pool\_endpoints](#output\_pool\_endpoints) | Non-sensitive connection pool details by pool key. URIs are deliberately omitted. |
-| <a name="output_pool_secret_paths"></a> [pool\_secret\_paths](#output\_pool\_secret\_paths) | OKMS paths containing pooled connection URIs by pool key. |
+| <a name="output_pool_secret_paths"></a> [pool\_secret\_paths](#output\_pool\_secret\_paths) | OKMS paths containing pooled connection URIs by configured pool key. |
+| <a name="output_postgresql_ca"></a> [postgresql\_ca](#output\_postgresql\_ca) | Certificate authority certificate for verified TLS connections. |
+| <a name="output_postgresql_description"></a> [postgresql\_description](#output\_postgresql\_description) | Description assigned to the managed PostgreSQL service. |
+| <a name="output_postgresql_endpoints"></a> [postgresql\_endpoints](#output\_postgresql\_endpoints) | PostgreSQL service endpoint domains, ports and TLS modes; connection URIs are omitted. |
+| <a name="output_postgresql_host"></a> [postgresql\_host](#output\_postgresql\_host) | PostgreSQL direct endpoint hostname. |
+| <a name="output_postgresql_id"></a> [postgresql\_id](#output\_postgresql\_id) | ID of the managed PostgreSQL cluster. |
+| <a name="output_postgresql_port"></a> [postgresql\_port](#output\_postgresql\_port) | PostgreSQL direct endpoint port. |
+| <a name="output_postgresql_status"></a> [postgresql\_status](#output\_postgresql\_status) | Current OVHcloud service status. |
 | <a name="output_service_name"></a> [service\_name](#output\_service\_name) | OVHcloud Public Cloud project service name. |
-| <a name="output_status"></a> [status](#output\_status) | Current OVHcloud service status. |
-| <a name="output_user_secret_paths"></a> [user\_secret\_paths](#output\_user\_secret\_paths) | OKMS paths containing direct-connection credentials by user key. |
+| <a name="output_user_secret_paths"></a> [user\_secret\_paths](#output\_user\_secret\_paths) | OKMS paths containing direct-connection credentials by configured user key. |
 
 ## Extensions
 
@@ -180,6 +186,8 @@ The provider has no managed PostgreSQL extension resource and OVHcloud's capabil
 ## Secrets and External Secrets Operator
 
 Each user secret is JSON with `host`, `port`, `username`, `password` and `database`. Each pool secret is JSON with `uri`. The module outputs only secret paths; configure External Secrets Operator to read the relevant OKMS paths and map JSON properties to Kubernetes Secret keys. Passwords and pool URIs remain sensitive in Terraform state despite not being outputs.
+
+The common service outputs follow the `ovh-mysql` naming pattern: `service_name`, `postgresql_id`, `postgresql_description`, `postgresql_status`, `postgresql_host`, `postgresql_port`, `postgresql_ca`, and `database_names`. PostgreSQL-specific outputs include `postgresql_endpoints`, `database_ids`, `user_secret_paths`, `pool_secret_paths`, and non-sensitive `pool_endpoints`. No output contains a password or credential-bearing URI. `disk_size` is required for this module and is validated against the maintained plan/flavor catalogue.
 
 New PostgreSQL users have no privileges on database objects by default. Manage required database/schema/table grants with SQL migrations; the OVHcloud API only manages the `replication` role.
 

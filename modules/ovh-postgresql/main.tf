@@ -190,7 +190,7 @@ data "ovh_cloud_project_database_certificates" "certificates" {
 }
 
 data "ovh_okms_resource" "kms" {
-  id = var.kms_id
+  id = var.okms_id
 }
 
 check "deletion_protection" {

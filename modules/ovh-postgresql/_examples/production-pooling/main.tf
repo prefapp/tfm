@@ -34,7 +34,7 @@ module "postgresql" {
   }
 
   required_extensions = ["pgvector"]
-  kms_id              = "<okms-id>"
+  okms_id             = "<okms-id>"
 }
 
 output "pool_secret_path" {

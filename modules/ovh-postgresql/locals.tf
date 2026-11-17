@@ -50,6 +50,16 @@ locals {
     if endpoint.component == "postgresql"
   ])
 
+  postgresql_endpoints = [
+    for endpoint in ovh_cloud_project_database.postgresql.endpoints : {
+      component = endpoint.component
+      domain    = endpoint.domain
+      port      = endpoint.port
+      ssl       = endpoint.ssl
+      ssl_mode  = endpoint.ssl_mode
+    }
+  ]
+
   user_secret_paths = {
     for key, user in var.users : key => coalesce(user.secret_path, "${var.name}/${user.name}")
   }
