@@ -12,9 +12,12 @@ module "ovh_mks" {
   subnet_cidr  = "10.41.0.0/16"
 
   # Standard plan only. The subnet must announce your router as its gateway.
-  # The module disables node floating IPs whenever public networking is disabled.
+  # This module leaves node-pool floating IP attachment unset.
   disable_public_networking = true
   use_user_gateway          = true
+
+  # Incompatible with disable_public_networking = true; leave unset in this example.
+  # Set attach_floating_ips = true only for a compatible Standard cluster.
 
   node_flavor   = "<available-flavor>"
   autoscale     = true

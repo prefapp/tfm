@@ -62,6 +62,12 @@ variable "use_user_gateway" {
   default     = false
 }
 
+variable "attach_floating_ips" {
+  description = "Attach OVHcloud Floating IPs to nodes in each node pool. Unsupported when disable_public_networking = true."
+  type        = bool
+  default     = false
+}
+
 variable "node_flavor" {
   description = "Worker node flavor available in the selected region."
   type        = string

@@ -51,6 +51,11 @@ resource "ovh_cloud_project_kube" "production" {
       condition     = !var.use_user_gateway || (var.disable_public_networking && lower(var.cluster_plan) == "standard")
       error_message = "use_user_gateway requires a Standard cluster with disable_public_networking = true."
     }
+
+    precondition {
+      condition     = !var.attach_floating_ips || !var.disable_public_networking
+      error_message = "attach_floating_ips cannot be enabled when disable_public_networking = true; OVHcloud does not support Floating IPs on nodes of private-only clusters."
+    }
   }
 }
 
@@ -69,9 +74,9 @@ resource "ovh_cloud_project_kube_nodepool" "production" {
   availability_zones = length(each.value.availability_zones) > 0 ? each.value.availability_zones : null
 
   dynamic "attach_floating_ips" {
-    for_each = var.disable_public_networking ? [] : [false]
+    for_each = var.attach_floating_ips ? [true] : []
     content {
-      enabled = attach_floating_ips.value
+      enabled = true
     }
   }
 
