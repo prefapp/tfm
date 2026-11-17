@@ -33,7 +33,7 @@ Changing the MySQL service `region` forces replacement and can destroy all datab
 
 OVHcloud currently documents automatic daily backup retention of 2 days for `discovery`, 14 days for `production`, and 30 days for `advanced`. MySQL backups use point-in-time recovery (PITR), with recovery points within the selected plan's retention period; OVHcloud currently documents continuous backups and an RPO of a few minutes. The plan also determines the service SLA; consult the current [MySQL capabilities and limitations](https://docs.ovhcloud.com/en/guides/public-cloud/databases/mysql-capabilities/) and [automated backups guide](https://docs.ovhcloud.com/en/guides/public-cloud/databases/backups/) before choosing a plan.
 
-Automated plan-mode tests use Terraform provider mocking, which requires Terraform 1.7 or later.
+Automated plan-mode tests use Terraform provider mocking. The module requires Terraform 1.9 or later because its input validation checks relationships between variables.
 
 The module maps `avnadmin` to OVHcloud's pre-existing administrator and resets its password during initial management. Removing the Terraform user resource does not delete that account or revoke its password. Removing `ovh_okms_secret.admin` deletes the credential secret from OKMS; retain or migrate the secret before destroying the module if consumers still need the credentials. The MySQL service's `deletion_protection` does not protect the separate OKMS secret.
 
@@ -42,6 +42,8 @@ The default `admin_password_reset = "initial"` ensures the existing administrato
 The administrator is for operations and must not be used as an application identity. OVHcloud API-created users receive administrator-equivalent privileges; least-privilege application users require SQL management outside this module.
 
 MySQL's OVHcloud connection URI uses TLS, but the server also accepts unencrypted connections. Require TLS in every client; use the exposed project CA for server verification, and configure SQL-managed application accounts to require SSL where appropriate. The CA is shared by Public Cloud Databases services in the project.
+
+The module requires at least one effective IP restriction. An empty `ip_restrictions` list is rejected because OVH provider v2.22.0 may omit empty restrictions from update requests, leaving previously configured CIDRs in place. When private networking is disabled, configure explicit allowed CIDRs.
 
 ## Examples
 

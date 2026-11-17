@@ -12,7 +12,7 @@ By default, every node attaches to an existing private network and subnet discov
 - **Managed MySQL service**: Creates MySQL with a selected version, plan, flavor, disk size and advanced configuration.
 - **Plan-derived topology**: Creates one node for `discovery`, two for `production`, or three for `advanced`.
 - **Existing private network**: Discovers and attaches the regional network ID and subnet ID without managing the network itself.
-- **Private-by-default access**: Defaults the MySQL IP allow-list to the selected subnet; public-wide CIDRs require explicit opt-in.
+- **Private-by-default access**: Defaults the MySQL IP allow-list to the selected subnet; public-wide CIDRs require explicit opt-in. Empty allow-lists are rejected to avoid preserving stale access rules.
 - **Logical databases**: Creates a set of named databases in the managed service.
 - **Administrator credential storage**: Resets the existing OVH-managed `avnadmin` password and publishes username/password JSON to OKMS.
 
@@ -73,7 +73,7 @@ The module manages only the OVH-provided `avnadmin` account; it does not create 
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | = 2.22.0 |
 
 ## Providers
@@ -108,7 +108,7 @@ No modules.
 | <a name="input_admin_password_reset"></a> [admin\_password\_reset](#input\_admin\_password\_reset) | Reset trigger for the OVHcloud avnadmin password. Defaults to an initial reset; change this value to rotate the password and publish a new OKMS secret version. | `string` | `"initial"` | no |
 | <a name="input_admin_secret_path"></a> [admin\_secret\_path](#input\_admin\_secret\_path) | Optional OKMS path for the JSON document containing the MySQL administrator username and password. Defaults to mysql/<name>/avnadmin. | `string` | `null` | no |
 | <a name="input_advanced_configuration"></a> [advanced\_configuration](#input\_advanced\_configuration) | Optional MySQL advanced configuration settings supported by OVHcloud. | `map(string)` | `{}` | no |
-| <a name="input_allow_public_access"></a> [allow\_public\_access](#input\_allow\_public\_access) | Explicitly allow 0.0.0.0/0 or ::/0 in ip\_restrictions. Avoid this outside temporary testing. | `bool` | `false` | no |
+| <a name="input_allow_public_access"></a> [allow\_public\_access](#input\_allow\_public\_access) | Explicitly allow unrestricted IPv4 or IPv6 CIDRs with a /0 prefix in ip\_restrictions. Avoid this outside temporary testing. | `bool` | `false` | no |
 | <a name="input_backup_regions"></a> [backup\_regions](#input\_backup\_regions) | Optional backup destination regions, with at most two regions and including the MySQL node region. OVHcloud validates availability of each backup region. | `set(string)` | `null` | no |
 | <a name="input_backup_time"></a> [backup\_time](#input\_backup\_time) | Optional daily backup start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_databases"></a> [databases](#input\_databases) | List of MySQL database names to create in the service; names must be unique. | `list(string)` | `[]` | no |
@@ -116,7 +116,7 @@ No modules.
 | <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Optional database disk size in GB. OVHcloud validates its supported range for the selected MySQL flavor. | `number` | `null` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | MySQL engine version; must be present in the selected project's live capabilities. | `string` | n/a | yes |
 | <a name="input_flavor"></a> [flavor](#input\_flavor) | MySQL node flavor; must be present in the selected project's live capabilities. | `string` | n/a | yes |
-| <a name="input_ip_restrictions"></a> [ip\_restrictions](#input\_ip\_restrictions) | Allowed source CIDRs. null defaults to the private subnet CIDR (or no allowed IPs without private networking); an empty list denies all incoming IP connections. | <pre>list(object({<br/>    ip          = string<br/>    description = optional(string, "")<br/>  }))</pre> | `null` | no |
+| <a name="input_ip_restrictions"></a> [ip\_restrictions](#input\_ip\_restrictions) | Non-empty list of allowed source CIDRs. null defaults to the private subnet CIDR; set explicit CIDRs when private networking is disabled. Empty lists are rejected because the OVH provider may omit them and preserve prior access rules. | <pre>list(object({<br/>    ip          = string<br/>    description = optional(string, "")<br/>  }))</pre> | `null` | no |
 | <a name="input_maintenance_time"></a> [maintenance\_time](#input\_maintenance\_time) | Optional daily maintenance start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Description assigned to the managed MySQL service. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network. Required when use\_private\_network is true. | `string` | `null` | no |
@@ -182,7 +182,7 @@ Changing the MySQL service `region` forces replacement and can destroy all datab
 
 OVHcloud currently documents automatic daily backup retention of 2 days for `discovery`, 14 days for `production`, and 30 days for `advanced`. MySQL backups use point-in-time recovery (PITR), with recovery points within the selected plan's retention period; OVHcloud currently documents continuous backups and an RPO of a few minutes. The plan also determines the service SLA; consult the current [MySQL capabilities and limitations](https://docs.ovhcloud.com/en/guides/public-cloud/databases/mysql-capabilities/) and [automated backups guide](https://docs.ovhcloud.com/en/guides/public-cloud/databases/backups/) before choosing a plan.
 
-Automated plan-mode tests use Terraform provider mocking, which requires Terraform 1.7 or later.
+Automated plan-mode tests use Terraform provider mocking. The module requires Terraform 1.9 or later because its input validation checks relationships between variables.
 
 The module maps `avnadmin` to OVHcloud's pre-existing administrator and resets its password during initial management. Removing the Terraform user resource does not delete that account or revoke its password. Removing `ovh_okms_secret.admin` deletes the credential secret from OKMS; retain or migrate the secret before destroying the module if consumers still need the credentials. The MySQL service's `deletion_protection` does not protect the separate OKMS secret.
 
@@ -191,6 +191,8 @@ The default `admin_password_reset = "initial"` ensures the existing administrato
 The administrator is for operations and must not be used as an application identity. OVHcloud API-created users receive administrator-equivalent privileges; least-privilege application users require SQL management outside this module.
 
 MySQL's OVHcloud connection URI uses TLS, but the server also accepts unencrypted connections. Require TLS in every client; use the exposed project CA for server verification, and configure SQL-managed application accounts to require SSL where appropriate. The CA is shared by Public Cloud Databases services in the project.
+
+The module requires at least one effective IP restriction. An empty `ip_restrictions` list is rejected because OVH provider v2.22.0 may omit empty restrictions from update requests, leaving previously configured CIDRs in place. When private networking is disabled, configure explicit allowed CIDRs.
 
 ## Examples
 

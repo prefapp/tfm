@@ -26,7 +26,7 @@ variable "admin_secret_path" {
   default     = null
 
   validation {
-    condition     = var.admin_secret_path == null || length(trimspace(var.admin_secret_path)) > 0
+    condition     = var.admin_secret_path == null ? true : length(trimspace(var.admin_secret_path)) > 0
     error_message = "admin_secret_path must not be empty when set."
   }
 }
@@ -63,7 +63,7 @@ variable "network_region" {
   default     = null
 
   validation {
-    condition     = var.network_region == null || length(trimspace(var.network_region)) > 0
+    condition     = var.network_region == null ? true : length(trimspace(var.network_region)) > 0
     error_message = "network_region must not be empty when set."
   }
 }
@@ -104,7 +104,7 @@ variable "disk_size" {
   default     = null
 
   validation {
-    condition     = var.disk_size == null || (var.disk_size >= 0 && floor(var.disk_size) == var.disk_size)
+    condition     = var.disk_size == null ? true : (var.disk_size >= 0 && floor(var.disk_size) == var.disk_size)
     error_message = "disk_size must be a non-negative integer when set. OVHcloud validates flavor-specific limits."
   }
 }
@@ -127,13 +127,13 @@ variable "subnet_cidr" {
   default     = null
 
   validation {
-    condition     = var.subnet_cidr == null || can(cidrhost(var.subnet_cidr, 0))
+    condition     = var.subnet_cidr == null ? true : can(cidrhost(var.subnet_cidr, 0))
     error_message = "subnet_cidr must be a valid CIDR when set."
   }
 }
 
 variable "ip_restrictions" {
-  description = "Allowed source CIDRs. null defaults to the private subnet CIDR (or no allowed IPs without private networking); an empty list denies all incoming IP connections."
+  description = "Non-empty list of allowed source CIDRs. null defaults to the private subnet CIDR; set explicit CIDRs when private networking is disabled. Empty lists are rejected because the OVH provider may omit them and preserve prior access rules."
   type = list(object({
     ip          = string
     description = optional(string, "")
@@ -141,22 +141,24 @@ variable "ip_restrictions" {
   default = null
 
   validation {
-    condition = var.ip_restrictions == null || alltrue([
+    condition = var.ip_restrictions == null ? true : alltrue([
       for restriction in var.ip_restrictions : can(cidrhost(restriction.ip, 0))
     ])
     error_message = "Every ip_restrictions ip must be a valid CIDR."
   }
 
   validation {
-    condition = var.ip_restrictions == null || alltrue([
-      for restriction in var.ip_restrictions : restriction.ip != "0.0.0.0/0" && restriction.ip != "::/0"
-    ]) || var.allow_public_access
-    error_message = "The unrestricted IPv4 or IPv6 CIDR is rejected unless allow_public_access is true."
+    condition = var.ip_restrictions == null ? (var.use_private_network && var.subnet_cidr != null) : (
+      length(var.ip_restrictions) > 0 && (var.allow_public_access || alltrue([
+        for restriction in var.ip_restrictions : try(tonumber(split("/", restriction.ip)[1]) != 0, false)
+      ]))
+    )
+    error_message = "ip_restrictions must be non-empty unless private networking supplies the default subnet CIDR; unrestricted IPv4 or IPv6 CIDRs (/0) require allow_public_access = true."
   }
 }
 
 variable "allow_public_access" {
-  description = "Explicitly allow 0.0.0.0/0 or ::/0 in ip_restrictions. Avoid this outside temporary testing."
+  description = "Explicitly allow unrestricted IPv4 or IPv6 CIDRs with a /0 prefix in ip_restrictions. Avoid this outside temporary testing."
   type        = bool
   default     = false
 }
@@ -191,7 +193,7 @@ variable "backup_time" {
   default     = null
 
   validation {
-    condition     = var.backup_time == null || can(regex("^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", var.backup_time))
+    condition     = var.backup_time == null ? true : can(regex("^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", var.backup_time))
     error_message = "backup_time must use 24-hour UTC hh:mm:ss format."
   }
 }
@@ -202,7 +204,7 @@ variable "maintenance_time" {
   default     = null
 
   validation {
-    condition     = var.maintenance_time == null || can(regex("^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", var.maintenance_time))
+    condition     = var.maintenance_time == null ? true : can(regex("^([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", var.maintenance_time))
     error_message = "maintenance_time must use 24-hour UTC hh:mm:ss format."
   }
 }
@@ -213,7 +215,7 @@ variable "backup_regions" {
   default     = null
 
   validation {
-    condition     = var.backup_regions == null || length(var.backup_regions) <= 2
+    condition     = var.backup_regions == null ? true : length(var.backup_regions) <= 2
     error_message = "backup_regions may contain at most two distinct regions."
   }
 }

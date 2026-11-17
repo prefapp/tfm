@@ -28,13 +28,15 @@ run "reject_invalid_plan" {
   }
 
   variables {
-    project_id     = "project-id"
-    okms_id        = "kms-id"
-    name           = "test-mysql"
-    region         = "GRA"
-    engine_version = "8.4"
-    plan           = "tiny"
-    flavor         = "b3-4"
+    project_id          = "project-id"
+    okms_id             = "kms-id"
+    name                = "test-mysql"
+    region              = "GRA"
+    engine_version      = "8.4"
+    plan                = "tiny"
+    flavor              = "b3-4"
+    use_private_network = false
+    ip_restrictions     = [{ ip = "192.0.2.1/32", description = "Test client" }]
   }
 
   expect_failures = [var.plan, data.ovh_cloud_project_database_capabilities.capabilities]
@@ -55,6 +57,7 @@ run "reject_invalid_backup_time" {
     plan                = "discovery"
     flavor              = "b3-4"
     use_private_network = false
+    ip_restrictions     = [{ ip = "192.0.2.1/32", description = "Test client" }]
     backup_time         = "25:00:00"
   }
 
@@ -76,6 +79,7 @@ run "reject_duplicate_database_names" {
     plan                = "discovery"
     flavor              = "b3-4"
     use_private_network = false
+    ip_restrictions     = [{ ip = "192.0.2.1/32", description = "Test client" }]
     databases           = ["app", "app"]
   }
 
@@ -101,6 +105,71 @@ run "reject_public_cidr_without_opt_in" {
       ip          = "0.0.0.0/0"
       description = "Public access"
     }]
+  }
+
+  expect_failures = [var.ip_restrictions, data.ovh_cloud_project_database_capabilities.capabilities]
+}
+
+run "reject_equivalent_unrestricted_ipv6_cidr_without_opt_in" {
+  command = plan
+  providers = {
+    ovh = ovh.mock
+  }
+
+  variables {
+    project_id          = "project-id"
+    okms_id             = "kms-id"
+    name                = "test-mysql"
+    region              = "GRA"
+    engine_version      = "8.4"
+    plan                = "discovery"
+    flavor              = "b3-4"
+    use_private_network = false
+    ip_restrictions = [{
+      ip          = "0:0:0:0:0:0:0:0/0"
+      description = "Unrestricted IPv6"
+    }]
+  }
+
+  expect_failures = [var.ip_restrictions, data.ovh_cloud_project_database_capabilities.capabilities]
+}
+
+run "reject_empty_ip_restrictions" {
+  command = plan
+  providers = {
+    ovh = ovh.mock
+  }
+
+  variables {
+    project_id          = "project-id"
+    okms_id             = "kms-id"
+    name                = "test-mysql"
+    region              = "GRA"
+    engine_version      = "8.4"
+    plan                = "discovery"
+    flavor              = "b3-4"
+    use_private_network = false
+    ip_restrictions     = []
+  }
+
+  expect_failures = [var.ip_restrictions, data.ovh_cloud_project_database_capabilities.capabilities]
+}
+
+run "reject_missing_ip_restrictions_without_private_network" {
+  command = plan
+  providers = {
+    ovh = ovh.mock
+  }
+
+  variables {
+    project_id          = "project-id"
+    okms_id             = "kms-id"
+    name                = "test-mysql"
+    region              = "GRA"
+    engine_version      = "8.4"
+    plan                = "discovery"
+    flavor              = "b3-4"
+    use_private_network = false
   }
 
   expect_failures = [var.ip_restrictions, data.ovh_cloud_project_database_capabilities.capabilities]
@@ -145,6 +214,7 @@ run "reject_invalid_backup_region_count" {
     plan                = "discovery"
     flavor              = "b3-4"
     use_private_network = false
+    ip_restrictions     = [{ ip = "192.0.2.1/32", description = "Test client" }]
     backup_regions      = ["GRA", "SBG", "BHS"]
   }
 
@@ -158,14 +228,16 @@ run "reject_empty_admin_secret_path" {
   }
 
   variables {
-    project_id        = "project-id"
-    okms_id           = "kms-id"
-    name              = "test-mysql"
-    region            = "GRA"
-    engine_version    = "8.4"
-    plan              = "discovery"
-    flavor            = "b3-4"
-    admin_secret_path = " "
+    project_id          = "project-id"
+    okms_id             = "kms-id"
+    name                = "test-mysql"
+    region              = "GRA"
+    engine_version      = "8.4"
+    plan                = "discovery"
+    flavor              = "b3-4"
+    use_private_network = false
+    ip_restrictions     = [{ ip = "192.0.2.1/32", description = "Test client" }]
+    admin_secret_path   = " "
   }
 
   expect_failures = [var.admin_secret_path, data.ovh_cloud_project_database_capabilities.capabilities]
@@ -178,14 +250,16 @@ run "reject_empty_network_region" {
   }
 
   variables {
-    project_id     = "project-id"
-    okms_id        = "kms-id"
-    name           = "test-mysql"
-    region         = "GRA"
-    network_region = " "
-    engine_version = "8.4"
-    plan           = "discovery"
-    flavor         = "b3-4"
+    project_id          = "project-id"
+    okms_id             = "kms-id"
+    name                = "test-mysql"
+    region              = "GRA"
+    network_region      = " "
+    engine_version      = "8.4"
+    plan                = "discovery"
+    flavor              = "b3-4"
+    use_private_network = false
+    ip_restrictions     = [{ ip = "192.0.2.1/32", description = "Test client" }]
   }
 
   expect_failures = [var.network_region, data.ovh_cloud_project_database_capabilities.capabilities]

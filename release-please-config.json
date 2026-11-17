@@ -225,6 +225,9 @@
         },
         "modules/ovh-container-registry": {
             "package-name": "ovh-container-registry"
+        },
+        "modules/ovh-mysql": {
+            "package-name": "ovh-mysql"
         }
     }
 }

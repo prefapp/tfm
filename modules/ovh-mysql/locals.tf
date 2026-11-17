@@ -79,7 +79,7 @@ data "ovh_cloud_project_database_capabilities" "capabilities" {
 
   lifecycle {
     precondition {
-      condition     = var.project_name != null || var.project_id != null
+      condition     = var.project_name != null ? true : var.project_id != null
       error_message = "Set project_id or project_name to select the Public Cloud project."
     }
 

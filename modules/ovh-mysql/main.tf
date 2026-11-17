@@ -79,8 +79,13 @@ resource "ovh_cloud_project_database" "mysql" {
     }
 
     precondition {
-      condition     = var.backup_regions == null || contains(var.backup_regions, var.region)
+      condition     = var.backup_regions == null ? true : contains(var.backup_regions, var.region)
       error_message = "backup_regions must include the MySQL node region."
+    }
+
+    precondition {
+      condition     = length(local.effective_ip_restrictions) > 0
+      error_message = "At least one IP restriction is required. The OVH provider may omit an empty list and preserve prior access rules; set explicit CIDRs when private networking is disabled."
     }
   }
 }

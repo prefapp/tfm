@@ -11,7 +11,7 @@ By default, every node attaches to an existing private network and subnet discov
 - **Managed MySQL service**: Creates MySQL with a selected version, plan, flavor, disk size and advanced configuration.
 - **Plan-derived topology**: Creates one node for `discovery`, two for `production`, or three for `advanced`.
 - **Existing private network**: Discovers and attaches the regional network ID and subnet ID without managing the network itself.
-- **Private-by-default access**: Defaults the MySQL IP allow-list to the selected subnet; public-wide CIDRs require explicit opt-in.
+- **Private-by-default access**: Defaults the MySQL IP allow-list to the selected subnet; public-wide CIDRs require explicit opt-in. Empty allow-lists are rejected to avoid preserving stale access rules.
 - **Logical databases**: Creates a set of named databases in the managed service.
 - **Administrator credential storage**: Resets the existing OVH-managed `avnadmin` password and publishes username/password JSON to OKMS.
 
