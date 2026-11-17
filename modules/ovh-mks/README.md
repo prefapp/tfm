@@ -19,6 +19,7 @@ Use it for a free control-plane cluster, a single-region cluster with one pool, 
 
 - **Managed cluster**: Provisions an OVHcloud MKS cluster with a selected region, plan, Kubernetes version, and update policy.
 - **Existing-network discovery**: Selects the private network by exact name and subnet by CIDR in the cluster region.
+- **Private-only node networking**: Standard clusters can disable public exposure and optionally route node traffic through the gateway announced by the nodes subnet.
 - **Flexible node pools**: Creates one or more named pools with independent capacity limits and optional zone placement.
 - **Autoscaling and placement**: Configures pool autoscaling and anti-affinity consistently across the pools.
 - **Sensitive kubeconfig**: Exposes the cluster kubeconfig only as a sensitive Terraform output.
@@ -99,6 +100,8 @@ The free plan applies to the managed control plane. This example requests no wor
 
 The private network and subnet must already exist in the selected Public Cloud project and region. They can be created separately with the [`ovh-network` module](https://github.com/prefapp/tfm/tree/main/modules/ovh-network).
 
+For a Standard cluster, set `disable_public_networking = true` to prevent public exposure of nodes and workloads. The module also disables node-pool floating IP attachment in this mode. To use the gateway announced by the nodes subnet, also set `use_user_gateway = true`; the subnet must have a valid gateway configured and managed gateway requirements do not apply. These options require OVH provider version 2.23.0 or later, are not supported on the Free plan, and must be configured when creating the cluster. The Kubernetes API endpoint remains publicly reachable subject to its IP restrictions.
+
 For a Standard cluster deployed across multiple availability zones, OVHcloud requires a Public Cloud gateway attached to the private network. This module does not create or manage the gateway, so provision and attach it before creating the cluster (for example, with `ovh-network`). The module discovers the network and subnet but does not validate that a gateway is attached.
 
 The `kubeconfig` output contains credentials and is marked sensitive. Protect Terraform state and plan files, and do not commit or distribute the kubeconfig as plain text.
@@ -108,13 +111,13 @@ The `kubeconfig` output contains credentials and is marked sensitive. Protect Te
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.5.0 |
-| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
+| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.23.0, < 3.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | >= 2.20.0, < 3.0.0 |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.25.0 |
 
 ## Modules
 
@@ -139,6 +142,7 @@ No modules.
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the Managed Kubernetes cluster. | `string` | n/a | yes |
 | <a name="input_cluster_plan"></a> [cluster\_plan](#input\_cluster\_plan) | MKS cluster plan, such as free or standard. | `string` | n/a | yes |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Managed Kubernetes cluster version. | `string` | n/a | yes |
+| <a name="input_disable_public_networking"></a> [disable\_public\_networking](#input\_disable\_public\_networking) | Disable public exposure of nodes and workloads. Only supported for Standard clusters and must be set at cluster creation. | `bool` | `false` | no |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network to attach to the cluster. | `string` | n/a | yes |
 | <a name="input_node_flavor"></a> [node\_flavor](#input\_node\_flavor) | Worker node flavor available in the selected region. | `string` | n/a | yes |
 | <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Cluster node pools with non-negative integer capacities where min\_nodes <= desired\_nodes <= max\_nodes; an empty availability\_zones list leaves zone placement unspecified. | <pre>map(object({<br/>    desired_nodes      = number<br/>    min_nodes          = number<br/>    max_nodes          = number<br/>    availability_zones = list(string)<br/>  }))</pre> | n/a | yes |
@@ -147,6 +151,7 @@ No modules.
 | <a name="input_region"></a> [region](#input\_region) | OVHcloud region for the cluster. | `string` | n/a | yes |
 | <a name="input_subnet_cidr"></a> [subnet\_cidr](#input\_subnet\_cidr) | CIDR of the existing subnet Kubernetes will use, for example 10.20.0.0/16. | `string` | n/a | yes |
 | <a name="input_update_policy"></a> [update\_policy](#input\_update\_policy) | Managed Kubernetes cluster update policy. | `string` | `"MINIMAL_DOWNTIME"` | no |
+| <a name="input_use_user_gateway"></a> [use\_user\_gateway](#input\_use\_user\_gateway) | Route node traffic through the gateway announced by the nodes subnet. Requires disable\_public\_networking = true and a Standard cluster. | `bool` | `false` | no |
 
 ## Outputs
 
@@ -183,7 +188,7 @@ To import a node pool, use its `service_name`, cluster ID, and pool ID. Repeat f
 terraform import 'module.ovh_mks.ovh_cloud_project_kube_nodepool.production["<pool-key>"]' '<service_name>/<cluster_id>/<pool_id>'
 ```
 
-Destroying the module deletes its managed node pools and MKS cluster; it does not delete the separately managed private network, subnet, or gateway. Changing the selected network/subnet or cluster region can require cluster reset or replacement and may destroy cluster data. OVHcloud currently does not implement in-place migration between the `free` and `standard` plans, so do not assume changing `cluster_plan` will upgrade an existing cluster.
+Destroying the module deletes its managed node pools and MKS cluster; it does not delete the separately managed private network, subnet, or gateway. Changing the selected network/subnet, cluster region, `disable_public_networking`, or `use_user_gateway` can replace/reset the cluster and delete its data. OVHcloud currently does not implement in-place migration between the `free` and `standard` plans, so do not assume changing `cluster_plan` will upgrade an existing cluster.
 
 Before destructive changes, migrate workloads and back up any data that must be retained, including persistent-volume data according to its storage lifecycle. Review the Terraform plan carefully before applying cluster, pool, or network changes.
 

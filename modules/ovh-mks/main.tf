@@ -1,12 +1,20 @@
 resource "ovh_cloud_project_kube" "production" {
-  service_name       = local.service_name
-  name               = var.cluster_name
-  region             = var.region
-  plan               = var.cluster_plan
-  version            = var.cluster_version
-  update_policy      = var.update_policy
-  private_network_id = try(one(local.network_openstack_ids), "")
-  nodes_subnet_id    = try(one(local.selected_subnets).id, "")
+  service_name              = local.service_name
+  name                      = var.cluster_name
+  region                    = var.region
+  plan                      = var.cluster_plan
+  version                   = var.cluster_version
+  update_policy             = var.update_policy
+  disable_public_networking = var.disable_public_networking
+  private_network_id        = try(one(local.network_openstack_ids), "")
+  nodes_subnet_id           = try(one(local.selected_subnets).id, "")
+
+  dynamic "private_network_configuration" {
+    for_each = var.use_user_gateway ? [true] : []
+    content {
+      use_user_gateway = true
+    }
+  }
 
   lifecycle {
     precondition {
@@ -33,6 +41,16 @@ resource "ovh_cloud_project_kube" "production" {
       condition     = length(local.selected_subnets) == 1
       error_message = "Could not find exactly one subnet matching subnet_cidr in the selected network and region. Check the CIDR and that the ovh-network module has been applied."
     }
+
+    precondition {
+      condition     = !var.disable_public_networking || lower(var.cluster_plan) == "standard"
+      error_message = "disable_public_networking is supported only for Standard MKS clusters."
+    }
+
+    precondition {
+      condition     = !var.use_user_gateway || (var.disable_public_networking && lower(var.cluster_plan) == "standard")
+      error_message = "use_user_gateway requires a Standard cluster with disable_public_networking = true."
+    }
   }
 }
 
@@ -49,6 +67,13 @@ resource "ovh_cloud_project_kube_nodepool" "production" {
   autoscale          = var.autoscale
   anti_affinity      = var.anti_affinity
   availability_zones = length(each.value.availability_zones) > 0 ? each.value.availability_zones : null
+
+  dynamic "attach_floating_ips" {
+    for_each = var.disable_public_networking ? [] : [false]
+    content {
+      enabled = attach_floating_ips.value
+    }
+  }
 
   lifecycle {
     precondition {
