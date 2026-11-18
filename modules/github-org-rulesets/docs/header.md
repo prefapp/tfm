@@ -18,7 +18,7 @@ To manage a **single ruleset**, use the [`github-org-ruleset`](../github-org-rul
 - **Multi-ruleset composition**: Manage multiple rulesets from a single module call using a `config` map
 - **All bypass actor types**: Supports `Integration`, `OrganizationAdmin`, `Team`, `RepositoryRole`, and `DeployKey`
 - **Bypass actors by slug or role**: Reference teams and GitHub Apps by slug, and repository roles as `maintain`, `write` or `admin`; the module resolves them to numeric IDs inside Terraform
-- **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern, protected status, or custom/system property
+- **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern or custom/system property
 - **Full rules coverage**: All boolean rules, `pull_request` (including `required_reviewers`), `required_status_checks`, all five pattern rules, `copilot_code_review`, and all four push-only rules
 - **All dynamic blocks**: Every optional block is conditional, so unused rules add zero noise to the Terraform plan
 
@@ -77,8 +77,9 @@ This is a provider-level nil pointer dereference in `validateRulesForPushTarget`
 Each ruleset must target repositories by **exactly one** of `repository_name` or
 `repository_property`; otherwise the module rejects the whole `config` map. Branch
 and tag rulesets also target refs with `ref_name`, while push rulesets must not set
-it. Use `repository_name` to select by name pattern or protected status, and
-`repository_property` to select by a custom or system property.
+it. Use `repository_name` to select by name pattern, and `repository_property` to
+select by a custom or system property. `repository_name.protected = true` prevents
+renaming the matched repositories; it does not filter for already-protected ones.
 
 ```json
 "conditions": {

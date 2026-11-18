@@ -10,14 +10,16 @@ locals {
 
   # Only bypass actors referenced by slug need a lookup. actor_id is still
   # accepted verbatim for GitHub API exports; validation rejects setting both.
+  # Key off actor_slug, not actor_id: actor_id can be unknown at plan time and
+  # would otherwise make this set indeterminate.
   team_bypass_slugs = toset([
     for a in local.bypass_actors : a.actor_slug
-    if a.actor_type == "Team" && a.actor_id == null && a.actor_slug != null
+    if a.actor_type == "Team" && a.actor_slug != null
   ])
 
   app_bypass_slugs = toset([
     for a in local.bypass_actors : a.actor_slug
-    if a.actor_type == "Integration" && a.actor_id == null && a.actor_slug != null
+    if a.actor_type == "Integration" && a.actor_slug != null
   ])
 
   # GitHub's fixed repository role IDs, so callers can say "maintain" instead of 2.
@@ -49,11 +51,13 @@ resource "github_organization_ruleset" "this" {
       actor_type  = bypass_actors.value.actor_type
       bypass_mode = bypass_actors.value.bypass_mode
       actor_id = (
-        bypass_actors.value.actor_id != null ? bypass_actors.value.actor_id :
-        bypass_actors.value.actor_type == "Team" ? tonumber(data.github_team.bypass_actor[bypass_actors.value.actor_slug].id) :
-        bypass_actors.value.actor_type == "Integration" ? tonumber(data.github_app.bypass_actor[bypass_actors.value.actor_slug].id) :
-        bypass_actors.value.actor_type == "RepositoryRole" ? local.repository_role_ids[bypass_actors.value.actor_role] :
-        null
+        bypass_actors.value.actor_slug != null ? (
+          bypass_actors.value.actor_type == "Team"
+          ? tonumber(data.github_team.bypass_actor[bypass_actors.value.actor_slug].id)
+          : tonumber(data.github_app.bypass_actor[bypass_actors.value.actor_slug].id)
+        ) :
+        bypass_actors.value.actor_role != null ? local.repository_role_ids[bypass_actors.value.actor_role] :
+        bypass_actors.value.actor_id
       )
     }
   }

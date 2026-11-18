@@ -17,7 +17,7 @@ To manage **multiple rulesets** from a single module call, use the companion [`g
 - **GitHub API export compatible**: Drop in a ruleset exported from `gh api` or the GitHub web UI without any manual reformatting
 - **All bypass actor types**: Supports `Integration`, `OrganizationAdmin`, `Team`, `RepositoryRole`, and `DeployKey`
 - **Bypass actors by slug or role**: Reference teams and GitHub Apps by slug, and repository roles as `maintain`, `write` or `admin`; the module resolves them to numeric IDs inside Terraform
-- **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern, protected status, or custom/system property
+- **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern or custom/system property
 - **Full rules coverage**: All boolean rules, `pull_request` (including `required_reviewers`), `required_status_checks`, all five pattern rules, `copilot_code_review`, and all four push-only rules
 - **All dynamic blocks**: Every optional block is conditional, so unused rules add zero noise to the Terraform plan
 
@@ -91,7 +91,8 @@ not set it.
 ```
 
 `repository_name.include` accepts `~ALL` and name patterns. Set
-`repository_name.protected = true` to target only protected repositories.
+`repository_name.protected = true` to prevent renaming the matched repositories; it
+does not filter for already-protected repositories.
 
 ### Target by repository property
 
