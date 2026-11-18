@@ -24,7 +24,12 @@ resource "ovh_cloud_project_kube" "production" {
 
     precondition {
       condition     = local.service_name != null
-      error_message = "Could not find exactly one OVHcloud project. Check project_id or project_name; if both are set, project_id takes precedence."
+      error_message = "Could not find exactly one active OVHcloud project. Check project_id or project_name; if both are set, project_id takes precedence."
+    }
+
+    precondition {
+      condition     = length(try([for region in data.ovh_cloud_project_regions.regions[0].names : region if region == var.region], [])) == 1
+      error_message = "The selected OVHcloud project does not have the requested region. Check region and project_id or project_name."
     }
 
     precondition {

@@ -10,7 +10,7 @@
 
 ## Overview
 
-This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing Public Cloud project. It discovers the project, private network, and subnet from the supplied project selector, network name, subnet CIDR, and cluster region; the network and subnet are not created by this module.
+This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing active Public Cloud project. It discovers the project from the supplied project selector, verifies that the project includes the requested cluster region, and discovers the private network and subnet within that region; the network and subnet are not created by this module.
 
 Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support desired/minimum/maximum capacity, autoscaling, anti-affinity, and availability-zone placement.
 

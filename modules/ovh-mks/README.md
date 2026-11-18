@@ -11,7 +11,7 @@
 
 ## Overview
 
-This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing Public Cloud project. It discovers the project, private network, and subnet from the supplied project selector, network name, subnet CIDR, and cluster region; the network and subnet are not created by this module.
+This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing active Public Cloud project. It discovers the project from the supplied project selector, verifies that the project includes the requested cluster region, and discovers the private network and subnet within that region; the network and subnet are not created by this module.
 
 Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support desired/minimum/maximum capacity, autoscaling, anti-affinity, and availability-zone placement.
 
@@ -133,6 +133,7 @@ No modules.
 | [ovh_cloud_project_kube_nodepool.production](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_kube_nodepool) | resource |
 | [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_private_subnets) | data source |
 | [ovh_cloud_project_network_privates.networks](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_privates) | data source |
+| [ovh_cloud_project_regions.regions](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_regions) | data source |
 | [ovh_cloud_projects.projects](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_projects) | data source |
 
 ## Inputs

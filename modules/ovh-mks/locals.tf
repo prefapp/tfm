@@ -1,13 +1,13 @@
 locals {
   selected_projects = [
     for project in data.ovh_cloud_projects.projects.projects : project
-    if var.project_id != null ? (
+    if upper(project.status) == "OK" && (var.project_id != null ? (
       project.project_id == var.project_id || project.service_name == var.project_id
       ) : (
       var.project_name != null ? (
         lower(project.project_name) == lower(var.project_name) || lower(project.description) == lower(var.project_name)
       ) : false
-    )
+    ))
   ]
   service_name = try(one(local.selected_projects).service_name, null)
 
@@ -32,6 +32,11 @@ locals {
 data "ovh_cloud_projects" "projects" {}
 
 data "ovh_cloud_project_network_privates" "networks" {
+  count        = local.service_name == null ? 0 : 1
+  service_name = local.service_name == null ? "" : local.service_name
+}
+
+data "ovh_cloud_project_regions" "regions" {
   count        = local.service_name == null ? 0 : 1
   service_name = local.service_name == null ? "" : local.service_name
 }
