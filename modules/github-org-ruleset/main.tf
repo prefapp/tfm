@@ -5,6 +5,37 @@ locals {
   rules_by_type = {
     for r in coalesce(var.config.rules, []) : r.type => r.parameters
   }
+
+  bypass_actors = coalesce(var.config.bypass_actors, [])
+
+  # Only bypass actors referenced by slug need a lookup. actor_id is still
+  # accepted verbatim for GitHub API exports; validation rejects setting both.
+  team_bypass_slugs = toset([
+    for a in local.bypass_actors : a.actor_slug
+    if a.actor_type == "Team" && a.actor_id == null && a.actor_slug != null
+  ])
+
+  app_bypass_slugs = toset([
+    for a in local.bypass_actors : a.actor_slug
+    if a.actor_type == "Integration" && a.actor_id == null && a.actor_slug != null
+  ])
+
+  # GitHub's fixed repository role IDs, so callers can say "maintain" instead of 2.
+  repository_role_ids = {
+    maintain = 2
+    write    = 4
+    admin    = 5
+  }
+}
+
+data "github_team" "bypass_actor" {
+  for_each = local.team_bypass_slugs
+  slug     = each.value
+}
+
+data "github_app" "bypass_actor" {
+  for_each = local.app_bypass_slugs
+  slug     = each.value
 }
 
 resource "github_organization_ruleset" "this" {
@@ -13,16 +44,23 @@ resource "github_organization_ruleset" "this" {
   enforcement = var.config.enforcement
 
   dynamic "bypass_actors" {
-    for_each = coalesce(var.config.bypass_actors, [])
+    for_each = local.bypass_actors
     content {
-      actor_id    = bypass_actors.value.actor_id
       actor_type  = bypass_actors.value.actor_type
       bypass_mode = bypass_actors.value.bypass_mode
+      actor_id = (
+        bypass_actors.value.actor_id != null ? bypass_actors.value.actor_id :
+        bypass_actors.value.actor_type == "Team" ? tonumber(data.github_team.bypass_actor[bypass_actors.value.actor_slug].id) :
+        bypass_actors.value.actor_type == "Integration" ? tonumber(data.github_app.bypass_actor[bypass_actors.value.actor_slug].id) :
+        bypass_actors.value.actor_type == "RepositoryRole" ? local.repository_role_ids[bypass_actors.value.actor_role] :
+        null
+      )
     }
   }
 
   dynamic "conditions" {
-    for_each = var.config.conditions != null ? [var.config.conditions] : []
+    # Validation guarantees conditions is non-null.
+    for_each = [var.config.conditions]
     content {
       # ref_name is only valid for branch and tag targets — not for push.
       dynamic "ref_name" {
@@ -45,6 +83,16 @@ resource "github_organization_ruleset" "this" {
           include   = repository_name.value.include
           exclude   = repository_name.value.exclude
           protected = repository_name.value.protected
+        }
+      }
+
+      # The provider declares include/exclude with ConfigModeAttr, so they must be
+      # set as list attributes, not as nested blocks.
+      dynamic "repository_property" {
+        for_each = conditions.value.repository_property != null ? [conditions.value.repository_property] : []
+        content {
+          include = repository_property.value.include
+          exclude = repository_property.value.exclude
         }
       }
     }

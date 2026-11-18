@@ -4,9 +4,11 @@
 
 This module creates and manages **multiple GitHub Organization Rulesets** by calling the [`github-org-ruleset`](../github-org-ruleset) module with `for_each`. It accepts a map of ruleset definitions, creating one ruleset per map entry.
 
-Organization Rulesets are a modern GitHub feature that supersedes branch protection rules, offering finer-grained control over branch and tag governance across all repositories in an organization. They support targeting by ref name patterns or repository name patterns, defining bypass actors, and enforcing a comprehensive set of rules including pull request requirements, status checks, commit message patterns, and more.
+Organization Rulesets are a modern GitHub feature that supersedes branch protection rules, offering finer-grained control over branch and tag governance across all repositories in an organization. They support targeting by ref name patterns, repository name patterns, or repository custom properties; defining bypass actors; and enforcing a comprehensive set of rules including pull request requirements, status checks, commit message patterns, and more.
 
 This module is designed to be driven by JSON configuration. It natively accepts the **GitHub API export format**, so you can use a ruleset exported directly from the GitHub API or the GitHub CLI as input — export-only fields such as `id`, `source_type`, and `source` are silently ignored.
+
+Requires `integrations/github` **v6.12 or later**. `repository_property` targeting is not supported by earlier 6.x releases.
 
 To manage a **single ruleset**, use the [`github-org-ruleset`](../github-org-ruleset) module directly.
 
@@ -15,7 +17,8 @@ To manage a **single ruleset**, use the [`github-org-ruleset`](../github-org-rul
 - **GitHub API export compatible**: Drop in a ruleset exported from `gh api` or the GitHub web UI without any manual reformatting
 - **Multi-ruleset composition**: Manage multiple rulesets from a single module call using a `config` map
 - **All bypass actor types**: Supports `Integration`, `OrganizationAdmin`, `Team`, `RepositoryRole`, and `DeployKey`
-- **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern or protected status
+- **Bypass actors by slug or role**: Reference teams and GitHub Apps by slug, and repository roles as `maintain`, `write` or `admin`; the module resolves them to numeric IDs inside Terraform
+- **Flexible conditions**: Target branches/tags by ref name pattern (`~DEFAULT_BRANCH`, `~ALL`, custom patterns) and repositories by name pattern, protected status, or custom/system property
 - **Full rules coverage**: All boolean rules, `pull_request` (including `required_reviewers`), `required_status_checks`, all five pattern rules, `copilot_code_review`, and all four push-only rules
 - **All dynamic blocks**: Every optional block is conditional, so unused rules add zero noise to the Terraform plan
 
@@ -69,6 +72,41 @@ github.com/integrations/terraform-provider-github/v6/github.validateRules(...)
 
 This is a provider-level nil pointer dereference in `validateRulesForPushTarget`. The module guards against this at the input validation layer — attempting to apply a `push` ruleset with no push-specific rules will produce a clear Terraform validation error rather than a provider panic.
 
+## Conditions
+
+Each ruleset must target repositories by **exactly one** of `repository_name` or
+`repository_property`; otherwise the module rejects the whole `config` map. Branch
+and tag rulesets also target refs with `ref_name`, while push rulesets must not set
+it. Use `repository_name` to select by name pattern or protected status, and
+`repository_property` to select by a custom or system property.
+
+```json
+"conditions": {
+  "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] },
+  "repository_property": {
+    "include": [
+      { "name": "environment", "property_values": ["production"], "source": "custom" }
+    ],
+    "exclude": []
+  }
+}
+```
+
+`include` requires every listed property to match; `exclude` stops the ruleset from
+applying when any listed property matches. `source` is `custom` (the default) or
+`system`. See the [`github-org-ruleset`](../github-org-ruleset) docs for the full
+conditions reference.
+
+## Bypass actors
+
+Each bypass actor sets exactly one of `actor_id` (numeric, forwarded verbatim),
+`actor_slug` (team or GitHub App slug, resolved inside Terraform during plan), or
+`actor_role` (`maintain`, `write` or `admin`, resolved to GitHub's `RepositoryRole`
+IDs for `actor_type = "RepositoryRole"`). `actor_slug` is only valid for `Team` and
+`Integration`; `OrganizationAdmin` and `DeployKey` take no ID. Slug lookups read the
+GitHub API at plan time, so the provider must be able to see the referenced team or
+app.
+
 ## Rules format
 
 Rules follow the GitHub API array format — a list of objects with a `type` field and an optional `parameters` field:
@@ -109,6 +147,8 @@ The module also validates that:
 - Each rule type appears at most once per ruleset.
 - Every entry in `required_reviewers` must include a `reviewer` block — omitting it produces a clear error instead of silently dropping the entry.
 - Pattern rule types (`commit_message_pattern`, `commit_author_email_pattern`, `committer_email_pattern`, `branch_name_pattern`, `tag_name_pattern`) require `operator` (one of: `starts_with`, `ends_with`, `contains`, `regex`) and `pattern` to be non-null in `parameters`.
+- Repositories are targeted by exactly one of `repository_name` or `repository_property`, and each `repository_property` entry uses `source` `custom` or `system`.
+- Each bypass actor sets at most one of `actor_id`, `actor_slug` or `actor_role`, uses `actor_slug` only for teams and integrations, and uses `actor_role` only for `RepositoryRole`.
 
 ## Basic Usage
 
@@ -128,6 +168,10 @@ module "org_rulesets" {
         ref_name = {
           include = ["~DEFAULT_BRANCH"]
           exclude = []
+        }
+        repository_name = {
+          include = ["~ALL"]
+          exclude = ["legacy-*"]
         }
       }
 
@@ -173,7 +217,8 @@ module "org_rulesets" {
       "target": "branch",
       "enforcement": "active",
       "conditions": {
-        "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] }
+        "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] },
+        "repository_name": { "include": ["~ALL"], "exclude": ["legacy-*"] }
       },
       "rules": [
         { "type": "deletion" },
@@ -183,3 +228,29 @@ module "org_rulesets" {
   }
 }
 ```
+
+## Import and delete behavior
+
+Each map entry calls the child `github-org-ruleset` module, so its Terraform address
+is `module.ruleset["<key>"].github_organization_ruleset.this`. Find the ID of an
+existing ruleset with the GitHub CLI or API:
+
+```console
+gh api "orgs/<org>/rulesets" --jq '.[] | {id, name}'
+```
+
+Then import it by its numeric GitHub ruleset ID:
+
+```console
+terraform import 'module.ruleset["default-branch-protection"].github_organization_ruleset.this' 12345
+```
+
+Import is optional for new rulesets but required to adopt one that already exists;
+without it, Terraform creates a second ruleset with the same name and both apply.
+The imported map entry must match the existing ruleset, or the next plan will change
+it.
+
+Deleting an entry deletes that ruleset in GitHub. Every repository it covered loses
+that protection immediately, so the blast radius is wider than removing one
+repository's branch protection. During migration, create the ruleset first, confirm
+it targets the intended repositories, and remove the old protection only afterwards.

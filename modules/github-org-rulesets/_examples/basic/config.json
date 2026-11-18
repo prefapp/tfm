@@ -15,6 +15,10 @@
         "ref_name": {
           "include": ["~DEFAULT_BRANCH"],
           "exclude": []
+        },
+        "repository_name": {
+          "include": ["~ALL"],
+          "exclude": ["legacy-*"]
         }
       },
       "rules": [

@@ -20,8 +20,14 @@
         "include": ["~DEFAULT_BRANCH"],
         "exclude": []
       },
-      "repository_name": {
-        "include": ["app-*"],
+      "repository_property": {
+        "include": [
+          {
+            "name": "environment",
+            "property_values": ["production"],
+            "source": "custom"
+          }
+        ],
         "exclude": []
       }
     },
