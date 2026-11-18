@@ -13,7 +13,9 @@ locals {
 
   selected_networks = try([
     for network in data.ovh_cloud_project_network_privates.networks[0].networks : network
-    if network.name == var.network_name
+    if network.name == var.network_name && anytrue([
+      for network_region in network.regions : network_region.region == var.region
+    ])
   ], [])
   network_openstack_ids = try([
     for network_region in one(local.selected_networks).regions : network_region.openstack_id
