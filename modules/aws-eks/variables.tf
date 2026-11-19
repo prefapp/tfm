@@ -313,6 +313,24 @@ variable "karpenter_controller_enable_inline_policy" {
   default     = false
 }
 
+variable "karpenter_node_iam_role_additional_policies" {
+  description = "Additional IAM policies to attach to the Karpenter node IAM role, as a map of name => policy ARN. AmazonSSMManagedInstanceCore is always attached; its key `AmazonSSMManagedInstanceCore` is reserved. Only used when `enable_karpenter = true`."
+  type        = map(string)
+  default     = {}
+
+  validation {
+    condition = alltrue([
+      for arn in values(var.karpenter_node_iam_role_additional_policies) : can(regex("^arn:[^:]+:iam::[^:]*:policy/.+$", arn))
+    ])
+    error_message = "Every value in karpenter_node_iam_role_additional_policies must be an IAM policy ARN (arn:<partition>:iam::<account|aws>:policy/<name>)."
+  }
+
+  validation {
+    condition     = !contains(keys(var.karpenter_node_iam_role_additional_policies), "AmazonSSMManagedInstanceCore")
+    error_message = "The key AmazonSSMManagedInstanceCore is reserved by the module, which always attaches that policy to the Karpenter node IAM role. Use a different key."
+  }
+}
+
 variable "create_cloudwatch_log_group" {
   description = "Create CloudWatch log group for the EKS cluster"
   type        = bool

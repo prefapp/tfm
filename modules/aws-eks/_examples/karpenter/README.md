@@ -65,6 +65,7 @@ kubectl apply -f ec2nodeclass-on-demand-default.yaml
   - `subnetSelectorTerms` / `securityGroupSelectorTerms`: tags (or IDs) for your subnets/SG.
   - `amiSelectorTerms` or a specific `ami`.
   - `role`: IAM role for Karpenter nodes.
+  - `metadataOptions.httpPutResponseHopLimit`: keep it at `1` (the Karpenter v1 default) for workload nodes. With `2`, any pod can read the node role credentials from IMDS. The Karpenter controller uses Pod Identity, which does not need IMDS.
 
 3) Apply NodePools
 ```bash
