@@ -19,13 +19,9 @@ module "karpenter" {
 
   # Since the node group role will already have an access entry
   create_access_entry = true
-  # The node role stays minimal: EC2 lifecycle permissions belong to the controller role.
-  node_iam_role_additional_policies = merge(
-    {
-      AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    },
-    var.karpenter_node_iam_role_additional_policies
-  )
+  # The node role stays minimal: EC2 lifecycle permissions belong to the controller role,
+  # and any extra policy (e.g. AmazonSSMManagedInstanceCore) is opt-in.
+  node_iam_role_additional_policies = var.karpenter_node_iam_role_additional_policies
 
   queue_name = format("karpenter-%s", var.cluster_name)
   tags       = var.tags
