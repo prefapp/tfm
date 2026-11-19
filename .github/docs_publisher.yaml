@@ -38,4 +38,9 @@
 #   collect:
 #     - from: docs/**
 #       to: .
-[]
+- area: tfm
+  mode: release
+  packages: modules
+  tagNames: release-please-config.json
+  collect:
+    - { from: README.md, to: README.md }
