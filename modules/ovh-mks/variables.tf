@@ -50,6 +50,24 @@ variable "subnet_cidr" {
   type        = string
 }
 
+variable "disable_public_networking" {
+  description = "Disable public exposure of nodes and workloads. Only supported for Standard clusters and must be set at cluster creation."
+  type        = bool
+  default     = false
+}
+
+variable "use_user_gateway" {
+  description = "Route node traffic through the gateway announced by the nodes subnet. Requires disable_public_networking = true and a Standard cluster."
+  type        = bool
+  default     = false
+}
+
+variable "attach_floating_ips" {
+  description = "Attach OVHcloud Floating IPs to nodes in each node pool. Unsupported when disable_public_networking = true."
+  type        = bool
+  default     = false
+}
+
 variable "node_flavor" {
   description = "Worker node flavor available in the selected region."
   type        = string

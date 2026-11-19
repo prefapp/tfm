@@ -10,7 +10,7 @@
 
 ## Overview
 
-This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing Public Cloud project. It discovers the project, private network, and subnet from the supplied project selector, network name, subnet CIDR, and cluster region; the network and subnet are not created by this module.
+This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing active Public Cloud project. It discovers the project from the supplied project selector, verifies that the project includes the requested cluster region, and discovers the private network and subnet within that region; the network and subnet are not created by this module.
 
 Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support desired/minimum/maximum capacity, autoscaling, anti-affinity, and availability-zone placement.
 
@@ -18,6 +18,7 @@ Use it for a free control-plane cluster, a single-region cluster with one pool, 
 
 - **Managed cluster**: Provisions an OVHcloud MKS cluster with a selected region, plan, Kubernetes version, and update policy.
 - **Existing-network discovery**: Selects the private network by exact name and subnet by CIDR in the cluster region.
+- **Private-only node networking**: Standard clusters can disable public exposure and optionally route node traffic through the gateway announced by the nodes subnet.
 - **Flexible node pools**: Creates one or more named pools with independent capacity limits and optional zone placement.
 - **Autoscaling and placement**: Configures pool autoscaling and anti-affinity consistently across the pools.
 - **Sensitive kubeconfig**: Exposes the cluster kubeconfig only as a sensitive Terraform output.
@@ -97,6 +98,10 @@ module "ovh_mks_free" {
 The free plan applies to the managed control plane. This example requests no worker nodes; creating or scaling worker nodes, and using other billable Public Cloud resources, may incur charges. See [`_examples/`](https://github.com/prefapp/tfm/tree/main/modules/ovh-mks/_examples) for complete examples, including a single pool without a fixed availability zone.
 
 The private network and subnet must already exist in the selected Public Cloud project and region. They can be created separately with the [`ovh-network` module](https://github.com/prefapp/tfm/tree/main/modules/ovh-network).
+
+For a Standard cluster, set `disable_public_networking = true` to prevent public exposure of nodes and workloads. To use the gateway announced by the nodes subnet, also set `use_user_gateway = true`; the subnet must have a valid gateway configured and managed gateway requirements do not apply. These options require OVH provider version 2.23.0 or later, are not supported on the Free plan, and must be configured when creating the cluster. The Kubernetes API endpoint remains publicly reachable subject to its IP restrictions.
+
+Set `attach_floating_ips = true` to attach Floating IPs to nodes in all node pools; it is disabled by default and the provider block is omitted unless enabled. OVHcloud supports node Floating IPs only for compatible Standard clusters and rejects them when `disable_public_networking = true`; the module validates this incompatible combination before apply. Floating IPs may incur charges and are available only in supported regions.
 
 For a Standard cluster deployed across multiple availability zones, OVHcloud requires a Public Cloud gateway attached to the private network. This module does not create or manage the gateway, so provision and attach it before creating the cluster (for example, with `ovh-network`). The module discovers the network and subnet but does not validate that a gateway is attached.
 

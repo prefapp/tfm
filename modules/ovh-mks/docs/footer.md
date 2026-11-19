@@ -19,7 +19,7 @@ To import a node pool, use its `service_name`, cluster ID, and pool ID. Repeat f
 terraform import 'module.ovh_mks.ovh_cloud_project_kube_nodepool.production["<pool-key>"]' '<service_name>/<cluster_id>/<pool_id>'
 ```
 
-Destroying the module deletes its managed node pools and MKS cluster; it does not delete the separately managed private network, subnet, or gateway. Changing the selected network/subnet or cluster region can require cluster reset or replacement and may destroy cluster data. OVHcloud currently does not implement in-place migration between the `free` and `standard` plans, so do not assume changing `cluster_plan` will upgrade an existing cluster.
+Destroying the module deletes its managed node pools and MKS cluster; it does not delete the separately managed private network, subnet, or gateway. Changing the selected network/subnet, cluster region, `disable_public_networking`, or `use_user_gateway` can replace/reset the cluster and delete its data. OVHcloud currently does not implement in-place migration between the `free` and `standard` plans, so do not assume changing `cluster_plan` will upgrade an existing cluster.
 
 Before destructive changes, migrate workloads and back up any data that must be retained, including persistent-volume data according to its storage lifecycle. Review the Terraform plan carefully before applying cluster, pool, or network changes.
 
