@@ -14,6 +14,11 @@ spec:
         Name: "kubernetes-my-org-dev-node"
   amiSelectorTerms:
   - name: "amazon-eks-node-al2023-x86_64-standard-1.33-*"
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 1
+    httpTokens: required
   tags:
     Project: "kubernetes-cluster"
     Cluster: "kubernetes-my-org-dev"
