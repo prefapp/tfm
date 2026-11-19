@@ -63,7 +63,7 @@ karpenter_node_iam_role_additional_policies = {
 }
 ```
 
-To attach more than one policy, add one entry per policy. Each key must be unique, and keep it stable: the submodule uses it to name the policy attachment, so renaming a key detaches and reattaches that policy. Values can be customer managed or AWS managed policy ARNs:
+To attach more than one policy, add one entry per policy. Each key must be unique (`AmazonSSMManagedInstanceCore` is reserved by the module), and keep it stable: the submodule uses it to name the policy attachment, so renaming a key detaches and reattaches that policy. Values can be customer managed or AWS managed policy ARNs:
 
 ```hcl
 karpenter_node_iam_role_additional_policies = {
@@ -270,7 +270,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_karpenter_controller_enable_inline_policy"></a> [karpenter\_controller\_enable\_inline\_policy](#input\_karpenter\_controller\_enable\_inline\_policy) | Determines whether the controller policy is created as a standard IAM policy or inline IAM policy. This can be enabled when the error `LimitExceeded: Cannot exceed quota for PolicySize: 6144` is received since standard IAM policies have a limit of 6,144 characters versus an inline role policy's limit of 10,240 ([Reference](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-quotas.html)) | `bool` | `false` | no |
 | <a name="input_karpenter_namespace_name"></a> [karpenter\_namespace\_name](#input\_karpenter\_namespace\_name) | Set the name of K8s namespace where is deployed the karpenter controller | `string` | `"karpenter"` | no |
-| <a name="input_karpenter_node_iam_role_additional_policies"></a> [karpenter\_node\_iam\_role\_additional\_policies](#input\_karpenter\_node\_iam\_role\_additional\_policies) | Additional IAM policies to attach to the Karpenter node IAM role, as a map of name => policy ARN. AmazonSSMManagedInstanceCore is always attached. Only used when `enable_karpenter = true`. | `map(string)` | `{}` | no |
+| <a name="input_karpenter_node_iam_role_additional_policies"></a> [karpenter\_node\_iam\_role\_additional\_policies](#input\_karpenter\_node\_iam\_role\_additional\_policies) | Additional IAM policies to attach to the Karpenter node IAM role, as a map of name => policy ARN. AmazonSSMManagedInstanceCore is always attached; its key `AmazonSSMManagedInstanceCore` is reserved. Only used when `enable_karpenter = true`. | `map(string)` | `{}` | no |
 | <a name="input_karpenter_service_account_name"></a> [karpenter\_service\_account\_name](#input\_karpenter\_service\_account\_name) | Set the name of K8s service account karpenter controller | `string` | `"karpenter-sa"` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | `{}` | no |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | `any` | n/a | yes |

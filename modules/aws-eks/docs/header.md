@@ -62,7 +62,7 @@ karpenter_node_iam_role_additional_policies = {
 }
 ```
 
-To attach more than one policy, add one entry per policy. Each key must be unique, and keep it stable: the submodule uses it to name the policy attachment, so renaming a key detaches and reattaches that policy. Values can be customer managed or AWS managed policy ARNs:
+To attach more than one policy, add one entry per policy. Each key must be unique (`AmazonSSMManagedInstanceCore` is reserved by the module), and keep it stable: the submodule uses it to name the policy attachment, so renaming a key detaches and reattaches that policy. Values can be customer managed or AWS managed policy ARNs:
 
 ```hcl
 karpenter_node_iam_role_additional_policies = {
