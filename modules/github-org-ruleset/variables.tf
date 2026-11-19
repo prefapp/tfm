@@ -1,5 +1,5 @@
 variable "config" {
-  description = "GitHub organization ruleset configuration. Accepts the GitHub API export format directly for top-level export fields (id, source_type, source), which are ignored by the module. Within rules[*].parameters, only the explicitly modeled fields are accepted."
+  description = "GitHub organization ruleset configuration. Accepts the GitHub API export format directly for top-level export fields (id, source_type, source), which are ignored by the module. Within rules[*].parameters, only the explicitly modeled fields are accepted. Bypass actors may also be referenced by slug (actor_slug) or repository role (actor_role), which the module resolves to the numeric actor_id inside Terraform."
   type = object({
     name        = string
     target      = string # "branch" | "tag" | "push"
@@ -11,9 +11,11 @@ variable "config" {
     source      = optional(string)
 
     bypass_actors = optional(list(object({
-      actor_id    = optional(number)
-      actor_type  = string # "Integration" | "OrganizationAdmin" | "Team" | "RepositoryRole" | "DeployKey"
-      bypass_mode = string # "always" | "pull_request"
+      actor_id    = optional(number) # actor_id, actor_slug and actor_role are mutually exclusive (validated below)
+      actor_slug  = optional(string) # Team or Integration slug, resolved to actor_id by the module
+      actor_role  = optional(string) # "maintain" | "write" | "admin"; RepositoryRole only
+      actor_type  = string           # "Integration" | "OrganizationAdmin" | "Team" | "RepositoryRole" | "DeployKey"
+      bypass_mode = string           # "always" | "pull_request"
     })), [])
 
     conditions = optional(object({
@@ -25,6 +27,18 @@ variable "config" {
         include   = optional(list(string), [])
         exclude   = optional(list(string), [])
         protected = optional(bool, false)
+      }))
+      repository_property = optional(object({
+        include = optional(list(object({
+          name            = string
+          property_values = list(string)
+          source          = optional(string, "custom") # "custom" | "system"
+        })), [])
+        exclude = optional(list(object({
+          name            = string
+          property_values = list(string)
+          source          = optional(string, "custom") # "custom" | "system"
+        })), [])
       }))
     }))
 
@@ -92,6 +106,24 @@ variable "config" {
   }
 
   validation {
+    condition = var.config.conditions == null ? false : (
+      (var.config.conditions.repository_name != null ? 1 : 0) +
+      (var.config.conditions.repository_property != null ? 1 : 0)
+    ) == 1
+    error_message = "config.conditions must target repositories by exactly one of repository_name or repository_property. The provider rejects rulesets that set both, neither, or omit conditions entirely."
+  }
+
+  validation {
+    condition = var.config.conditions == null ? true : var.config.conditions.repository_property == null ? true : alltrue([
+      for p in concat(
+        coalesce(var.config.conditions.repository_property.include, []),
+        coalesce(var.config.conditions.repository_property.exclude, [])
+      ) : contains(["custom", "system"], p.source)
+    ])
+    error_message = "Each repository_property entry source must be one of: 'custom', 'system'."
+  }
+
+  validation {
     condition = alltrue([
       for a in coalesce(var.config.bypass_actors, []) : contains(["Integration", "OrganizationAdmin", "Team", "RepositoryRole", "DeployKey"], a.actor_type)
     ])
@@ -103,6 +135,42 @@ variable "config" {
       for a in coalesce(var.config.bypass_actors, []) : contains(["always", "pull_request"], a.bypass_mode)
     ])
     error_message = "Each bypass_actor bypass_mode must be one of: 'always', 'pull_request'."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in coalesce(var.config.bypass_actors, []) :
+      length([for ref in [a.actor_id, a.actor_slug, a.actor_role] : ref if ref != null]) <= 1
+    ])
+    error_message = "Each bypass_actor must set at most one of actor_id, actor_slug, or actor_role."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in coalesce(var.config.bypass_actors, []) :
+      contains(["Team", "Integration", "RepositoryRole"], a.actor_type)
+      ? (a.actor_id != null || a.actor_slug != null || a.actor_role != null)
+      : true
+    ])
+    error_message = "Team, Integration, and RepositoryRole bypass actors require one of actor_id, actor_slug, or actor_role."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in coalesce(var.config.bypass_actors, []) :
+      a.actor_slug == null ? true : contains(["Team", "Integration"], a.actor_type)
+    ])
+    error_message = "actor_slug is only valid for actor_type 'Team' or 'Integration'. Use actor_role for 'RepositoryRole' and actor_id for other types."
+  }
+
+  validation {
+    condition = alltrue([
+      for a in coalesce(var.config.bypass_actors, []) :
+      a.actor_role == null ? true : (
+        a.actor_type == "RepositoryRole" && contains(["maintain", "write", "admin"], a.actor_role)
+      )
+    ])
+    error_message = "actor_role is only valid for actor_type 'RepositoryRole' and must be one of: 'maintain', 'write', 'admin'."
   }
 
   validation {
