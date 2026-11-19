@@ -14,6 +14,7 @@ By default, every node attaches to an existing private network and subnet discov
 - **Private-by-default access**: Defaults the MySQL IP allow-list to the selected subnet; public-wide CIDRs require explicit opt-in. Empty allow-lists are rejected to avoid preserving stale access rules.
 - **Logical databases**: Creates a set of named databases in the managed service.
 - **Administrator credential storage**: Resets the existing OVH-managed `avnadmin` password and publishes username/password JSON to OKMS.
+- **Destroy guards**: Uses `terraform_data` and runner-side `local-exec` to block deletion of the service, managed databases and administrator secret while `deletion_protection` is enabled.
 
 ## Basic Usage
 

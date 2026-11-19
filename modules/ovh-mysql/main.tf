@@ -99,6 +99,25 @@ resource "ovh_cloud_project_database_database" "databases" {
   name         = each.value
 }
 
+resource "terraform_data" "database_deletion_guard" {
+  for_each = ovh_cloud_project_database_database.databases
+
+  input = {
+    deletion_protection = var.deletion_protection
+    database_id         = each.value.id
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOT
+      if [ "${self.input.deletion_protection}" = "true" ]; then
+        printf '%s\n' 'Refusing to delete a MySQL database because deletion_protection is enabled.' >&2
+        exit 1
+      fi
+    EOT
+  }
+}
+
 resource "ovh_cloud_project_database_user" "admin" {
   service_name   = local.service_name
   engine         = "mysql"
@@ -126,6 +145,40 @@ resource "ovh_okms_secret" "admin" {
       username = ovh_cloud_project_database_user.admin.name
       password = ovh_cloud_project_database_user.admin.password
     })
+  }
+}
+
+resource "terraform_data" "mysql_deletion_guard" {
+  input = {
+    deletion_protection = var.deletion_protection
+    mysql_id            = ovh_cloud_project_database.mysql.id
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOT
+      if [ "${self.input.deletion_protection}" = "true" ]; then
+        printf '%s\n' 'Refusing to delete the MySQL service because deletion_protection is enabled.' >&2
+        exit 1
+      fi
+    EOT
+  }
+}
+
+resource "terraform_data" "admin_secret_deletion_guard" {
+  input = {
+    deletion_protection = var.deletion_protection
+    secret_path         = ovh_okms_secret.admin.path
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOT
+      if [ "${self.input.deletion_protection}" = "true" ]; then
+        printf '%s\n' 'Refusing to delete the MySQL administrator secret because deletion_protection is enabled.' >&2
+        exit 1
+      fi
+    EOT
   }
 }
 

@@ -221,7 +221,7 @@ variable "backup_regions" {
 }
 
 variable "deletion_protection" {
-  description = "Enable OVHcloud deletion protection. Disable and apply it before destroying the service."
+  description = "Enable OVHcloud deletion protection and Terraform destroy guards for the service, databases, and administrator secret. Disable and apply it before destroying these resources."
   type        = bool
   default     = true
 }

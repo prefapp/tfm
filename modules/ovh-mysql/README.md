@@ -15,6 +15,7 @@ By default, every node attaches to an existing private network and subnet discov
 - **Private-by-default access**: Defaults the MySQL IP allow-list to the selected subnet; public-wide CIDRs require explicit opt-in. Empty allow-lists are rejected to avoid preserving stale access rules.
 - **Logical databases**: Creates a set of named databases in the managed service.
 - **Administrator credential storage**: Resets the existing OVH-managed `avnadmin` password and publishes username/password JSON to OKMS.
+- **Destroy guards**: Uses `terraform_data` and runner-side `local-exec` to block deletion of the service, managed databases and administrator secret while `deletion_protection` is enabled.
 
 ## Basic Usage
 
@@ -74,13 +75,14 @@ The module manages only the OVH-provided `avnadmin` account; it does not create 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | = 2.22.0 |
+| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | = 2.25.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.22.0 |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.25.0 |
+| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
 
@@ -90,16 +92,19 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [ovh_cloud_project_database.mysql](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database) | resource |
-| [ovh_cloud_project_database_database.databases](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database_database) | resource |
-| [ovh_cloud_project_database_user.admin](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database_user) | resource |
-| [ovh_okms_secret.admin](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/okms_secret) | resource |
-| [ovh_cloud_project_database_capabilities.capabilities](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/data-sources/cloud_project_database_capabilities) | data source |
-| [ovh_cloud_project_database_certificates.ca](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/data-sources/cloud_project_database_certificates) | data source |
-| [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/data-sources/cloud_project_network_private_subnets) | data source |
-| [ovh_cloud_project_network_privates.networks](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/data-sources/cloud_project_network_privates) | data source |
-| [ovh_cloud_projects.projects](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/data-sources/cloud_projects) | data source |
-| [ovh_okms_resource.kms](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/data-sources/okms_resource) | data source |
+| [ovh_cloud_project_database.mysql](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database) | resource |
+| [ovh_cloud_project_database_database.databases](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database_database) | resource |
+| [ovh_cloud_project_database_user.admin](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database_user) | resource |
+| [ovh_okms_secret.admin](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/okms_secret) | resource |
+| [terraform_data.admin_secret_deletion_guard](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.database_deletion_guard](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.mysql_deletion_guard](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [ovh_cloud_project_database_capabilities.capabilities](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/data-sources/cloud_project_database_capabilities) | data source |
+| [ovh_cloud_project_database_certificates.ca](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/data-sources/cloud_project_database_certificates) | data source |
+| [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/data-sources/cloud_project_network_private_subnets) | data source |
+| [ovh_cloud_project_network_privates.networks](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/data-sources/cloud_project_network_privates) | data source |
+| [ovh_cloud_projects.projects](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/data-sources/cloud_projects) | data source |
+| [ovh_okms_resource.kms](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/data-sources/okms_resource) | data source |
 
 ## Inputs
 
@@ -112,7 +117,7 @@ No modules.
 | <a name="input_backup_regions"></a> [backup\_regions](#input\_backup\_regions) | Optional backup destination regions, with at most two regions and including the MySQL node region. OVHcloud validates availability of each backup region. | `set(string)` | `null` | no |
 | <a name="input_backup_time"></a> [backup\_time](#input\_backup\_time) | Optional daily backup start time in UTC, formatted as hh:mm:ss. | `string` | `null` | no |
 | <a name="input_databases"></a> [databases](#input\_databases) | List of MySQL database names to create in the service; names must be unique. | `list(string)` | `[]` | no |
-| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Enable OVHcloud deletion protection. Disable and apply it before destroying the service. | `bool` | `true` | no |
+| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | Enable OVHcloud deletion protection and Terraform destroy guards for the service, databases, and administrator secret. Disable and apply it before destroying these resources. | `bool` | `true` | no |
 | <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Optional database disk size in GB. OVHcloud validates its supported range for the selected MySQL flavor. | `number` | `null` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | MySQL engine version; must be present in the selected project's live capabilities. | `string` | n/a | yes |
 | <a name="input_flavor"></a> [flavor](#input\_flavor) | MySQL node flavor; must be present in the selected project's live capabilities. | `string` | n/a | yes |
@@ -176,7 +181,7 @@ terraform import 'module.ovh_mysql.ovh_cloud_project_database_user.admin' '<serv
 
 The OVH provider does not document import for `ovh_okms_secret`; create the managed secret through this module or manage/import it outside this module before adoption.
 
-Destroying the module deletes all managed databases and the MySQL service, including any data and backups retained by OVHcloud. It does not delete the Public Cloud project, private network, subnet or gateway. With `deletion_protection = true`, OVHcloud rejects deletion; set it to `false`, apply that change, and only then run destroy.
+Destroying the module deletes all managed databases and the MySQL service, including any data and backups retained by OVHcloud. It does not delete the Public Cloud project, private network, subnet or gateway. With `deletion_protection = true`, the module's `terraform_data` destroy guards run `local-exec` and fail before Terraform deletes each guarded database, service, or administrator secret. OVHcloud's native deletion protection also rejects service deletion. To permit deletion, set `deletion_protection = false` and apply that change first; then run destroy. The destroy provisioners require a POSIX-compatible shell on the Terraform runner, and Firestartr support must be verified in the target workspace. A failed provisioner blocks its dependent resource, but Terraform may still delete independent resources in parallel, so this is not an all-or-nothing transaction. Keep the module configuration and guard resources present until destroy is complete.
 
 Changing the MySQL service `region` forces replacement and can destroy all database data. `network_region` is used only to discover the private network's regional OpenStack ID and subnet; it defaults to `region` but can differ when OVH uses distinct identifiers such as MySQL `GRA` and network `GRA11`. Changing the network attachment triggers a service rebuild and clears IP restrictions while the network changes; review connectivity and restore the intended allow-list after the update. Flavor changes are applied as node upgrades. OVHcloud validates flavor availability and flavor-specific `disk_size` limits against its service availability when applying.
 
@@ -184,7 +189,7 @@ OVHcloud currently documents automatic daily backup retention of 2 days for `dis
 
 Automated plan-mode tests use Terraform provider mocking. The module requires Terraform 1.9 or later because its input validation checks relationships between variables.
 
-The module maps `avnadmin` to OVHcloud's pre-existing administrator and resets its password during initial management. Removing the Terraform user resource does not delete that account or revoke its password. Removing `ovh_okms_secret.admin` deletes the credential secret from OKMS; retain or migrate the secret before destroying the module if consumers still need the credentials. The MySQL service's `deletion_protection` does not protect the separate OKMS secret.
+The module maps `avnadmin` to OVHcloud's pre-existing administrator and resets its password during initial management. Removing the Terraform user resource does not delete that account or revoke its password. Removing `ovh_okms_secret.admin` deletes the credential secret from OKMS; retain or migrate the secret before destroying the module if consumers still need the credentials. The module's destroy guard protects the secret using the same `deletion_protection` setting as the MySQL service.
 
 The default `admin_password_reset = "initial"` ensures the existing administrator's password is reset when the resource is first managed. Changing `admin_password_reset` later requests another reset and publishes a new OKMS secret version. The password is not exported as a Terraform output. However, the OVH user resource password and OKMS `version.data` are stored in Terraform state; encrypt the state and restrict access to state and plan files. OKMS retains prior versions according to its secret metadata.
 
@@ -192,7 +197,7 @@ The administrator is for operations and must not be used as an application ident
 
 MySQL's OVHcloud connection URI uses TLS, but the server also accepts unencrypted connections. Require TLS in every client; use the exposed project CA for server verification, and configure SQL-managed application accounts to require SSL where appropriate. The CA is shared by Public Cloud Databases services in the project.
 
-The module requires at least one effective IP restriction. An empty `ip_restrictions` list is rejected because OVH provider v2.22.0 may omit empty restrictions from update requests, leaving previously configured CIDRs in place. When private networking is disabled, configure explicit allowed CIDRs.
+The module requires at least one effective IP restriction. An empty `ip_restrictions` list is rejected because OVH provider v2.25.0 omits empty restrictions from update requests, leaving previously configured CIDRs in place. When private networking is disabled, configure explicit allowed CIDRs.
 
 ## Examples
 

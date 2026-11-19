@@ -33,5 +33,8 @@ The OVHcloud-managed administrative MySQL account. The provider maps the `avnadm
 **administrator credential secret**:
 The OKMS secret at the configured path containing a JSON object with the `avnadmin` username and generated password.
 
+**destroy guard**:
+A `terraform_data` resource whose destroy-time provisioner blocks deletion of a managed MySQL resource while `deletion_protection` is enabled.
+
 **SQL-managed application user**:
 A MySQL identity created through SQL and granted only the privileges required by its application. It is not visible or manageable through the OVHcloud API.
