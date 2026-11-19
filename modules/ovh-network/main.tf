@@ -28,6 +28,27 @@ resource "ovh_cloud_project_network_private_subnet" "kubernetes" {
   end          = var.subnet_pool_end
   dhcp         = true
   no_gateway   = false
+
+  lifecycle {
+    precondition {
+      condition = try(
+        cidrhost(var.network_cidr, 0) <= var.subnet_pool_start &&
+        var.subnet_pool_start <= cidrhost(var.network_cidr, -1) &&
+        cidrhost(var.network_cidr, 0) <= var.subnet_pool_end &&
+        var.subnet_pool_end <= cidrhost(var.network_cidr, -1),
+        false
+      )
+      error_message = "subnet_pool_start and subnet_pool_end must both be valid IP addresses inside network_cidr."
+    }
+
+    precondition {
+      condition = try(
+        cidrhost("${var.subnet_pool_start}/32", 0) <= cidrhost("${var.subnet_pool_end}/32", 0),
+        false
+      )
+      error_message = "subnet_pool_start must be less than or equal to subnet_pool_end."
+    }
+  }
 }
 
 resource "ovh_cloud_project_gateway" "kubernetes" {
