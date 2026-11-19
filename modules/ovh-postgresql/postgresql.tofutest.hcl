@@ -292,7 +292,7 @@ run "reject_missing_user_password" {
     users     = { app = { name = "app", database = "app" } }
   }
   override_resource {
-    target = ovh_cloud_project_database_postgresql_user.user["app"]
+    target = ovh_cloud_project_database_postgresql_user.user
     values = { id = "user-id", password = "" }
   }
   expect_failures = [ovh_okms_secret.user["app"]]
