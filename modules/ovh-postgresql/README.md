@@ -17,7 +17,7 @@ The module validates PostgreSQL versions and regions against separate allowlists
 - **Disk range and increment**: enforces the catalogue minimum, maximum and storage increment for the selected plan and flavor before apply.
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
-- **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.
+- **Lifecycle safety**: deletion protection defaults to enabled; destroy-time guards protect managed databases, users, pools and OKMS secrets.
 - **Common service outputs**: exposes the service ID, description, status, direct endpoint, CA, service name and database names following the `ovh-mysql` output pattern.
 
 ## Basic Usage
@@ -119,6 +119,8 @@ No modules.
 | [ovh_cloud_project_database_postgresql_user.user](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_database_postgresql_user) | resource |
 | [ovh_okms_secret.pool](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
 | [ovh_okms_secret.user](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/okms_secret) | resource |
+| [terraform_data.deletion_guard](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.deletion_guard_barrier](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.pool_user](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [ovh_cloud_project_database_certificates.certificates](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_database_certificates) | data source |
 | [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_private_subnets) | data source |
@@ -229,7 +231,7 @@ terraform import 'module.postgresql.ovh_cloud_project_database.postgresql' '<ser
 
 The provider's v2.22.0 import formats are documented for [clusters](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database), [databases](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_database), [PostgreSQL users](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_postgresql\_user) and [connection pools](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_postgresql\_connection\_pool). The module is constrained to provider v2.22.x; use each resource's corresponding address and ID format above. The ID components are the Public Cloud project service name, cluster ID, and child resource ID as applicable.
 
-Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. Disable deletion protection before intentional destroy; use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. Plan validates catalogue membership and plan-specific flavor/disk limits, not cross-dimension offer compatibility or live availability; OVHcloud remains authoritative during apply.
+Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. OVHcloud deletion protection protects the cluster; Terraform destroy-time guards also protect each managed database, user, pool and OKMS secret, with a barrier preventing parallel child deletion during a full destroy. For an intentional destroy or removal of one of these resources, set `deletion_protection = false` and apply before destroying or changing the configuration. Keep the module configuration present during destroy so Terraform can run its guards. Use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. Plan validates catalogue membership and plan-specific flavor/disk limits, not cross-dimension offer compatibility or live availability; OVHcloud remains authoritative during apply.
 
 Changing a pool's optional user restriction recreates that pool because OVHcloud provider v2.22.0 cannot reliably clear its computed `user_id` through an update. This also causes existing pools to be recreated once when adopting this lifecycle rule; schedule the rollout for the possible connection interruption.
 

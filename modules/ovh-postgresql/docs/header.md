@@ -16,7 +16,7 @@ The module validates PostgreSQL versions and regions against separate allowlists
 - **Disk range and increment**: enforces the catalogue minimum, maximum and storage increment for the selected plan and flavor before apply.
 - **Database identities**: provisions databases, users with the supported `replication` role, and managed PgBouncer pools.
 - **Credentials in OKMS**: writes direct connection JSON and pool URIs to distinct secret paths; outputs paths, never credentials.
-- **Lifecycle safety**: deletion protection defaults to enabled; disabling it outside `discovery` emits a plan warning.
+- **Lifecycle safety**: deletion protection defaults to enabled; destroy-time guards protect managed databases, users, pools and OKMS secrets.
 - **Common service outputs**: exposes the service ID, description, status, direct endpoint, CA, service name and database names following the `ovh-mysql` output pattern.
 
 ## Basic Usage

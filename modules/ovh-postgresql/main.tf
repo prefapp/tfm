@@ -199,3 +199,46 @@ check "deletion_protection" {
     error_message = "Disabling deletion_protection outside the discovery plan risks deleting database data."
   }
 }
+
+resource "terraform_data" "deletion_guard" {
+  for_each = merge(
+    { for key, database in ovh_cloud_project_database_database.database : "database/${key}" => database.id },
+    { for key, user in ovh_cloud_project_database_postgresql_user.user : "user/${key}" => user.id },
+    { for key, secret in ovh_okms_secret.user : "user-secret/${key}" => secret.path },
+    { for key, pool in ovh_cloud_project_database_postgresql_connection_pool.pool : "pool/${key}" => pool.id },
+    { for key, secret in ovh_okms_secret.pool : "pool-secret/${key}" => secret.path }
+  )
+
+  triggers_replace = each.value
+  input = {
+    deletion_protection = var.deletion_protection
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+    command     = <<-EOT
+      if [ "${self.input.deletion_protection}" = "true" ]; then
+        printf '%s\n' "Deletion protection is enabled; apply with deletion_protection = false before deleting managed PostgreSQL resources." >&2
+        exit 1
+      fi
+    EOT
+  }
+}
+
+resource "terraform_data" "deletion_guard_barrier" {
+  input = var.deletion_protection
+
+  depends_on = [terraform_data.deletion_guard]
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+    command     = <<-EOT
+      if [ "${self.input}" = "true" ]; then
+        printf '%s\n' "Deletion protection is enabled; apply with deletion_protection = false before destroying this module." >&2
+        exit 1
+      fi
+    EOT
+  }
+}

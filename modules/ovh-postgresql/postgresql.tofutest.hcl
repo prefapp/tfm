@@ -160,6 +160,28 @@ run "accept_users_pools_and_secrets" {
     condition     = terraform_data.pool_user["app"].triggers_replace.user == "app" && terraform_data.pool_user["app"].triggers_replace.password_reset == null
     error_message = "The pool replacement trigger should track its configured user and password-reset generation."
   }
+  assert {
+    condition = toset(keys(terraform_data.deletion_guard)) == toset([
+      "database/app",
+      "user/app",
+      "user-secret/app",
+      "pool/app",
+      "pool-secret/app",
+    ]) && terraform_data.deletion_guard_barrier.input
+    error_message = "Every managed child and OKMS secret should have a deletion guard, and the full-destroy barrier should retain protection."
+  }
+}
+
+run "exercise_deletion_guards_on_allowed_destroy" {
+  command = apply
+  variables {
+    deletion_protection = false
+    databases           = { app = "app" }
+  }
+  assert {
+    condition     = terraform_data.deletion_guard["database/app"].input.deletion_protection == false && terraform_data.deletion_guard_barrier.input == false
+    error_message = "The database deletion guard should retain the applied protection setting for destroy."
+  }
 }
 
 run "accept_pool_without_user_restriction" {

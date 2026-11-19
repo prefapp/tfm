@@ -1,0 +1,5 @@
+# Guard Managed Resource Deletion
+
+OVHcloud's native `deletion_protection` protects only the managed PostgreSQL cluster. The module also owns databases, PostgreSQL users, PgBouncer pools and OKMS secrets, whose deletion can otherwise proceed before OVHcloud rejects cluster deletion. A `terraform_data` destroy-time guard follows each managed child's ID (or secret path) and stores the applied protection setting. This blocks an individual child removal without consulting current variables. A second barrier depends on every child guard, so during a complete destroy it runs first and prevents the independent child guards from running in parallel if protection is enabled.
+
+The trade-off is reliance on Terraform's local shell provisioner and a multi-step intentional deletion: set `deletion_protection = false`, apply, then destroy or remove the child configuration. The module configuration must remain present while Terraform destroys these resources; removing the module block also removes its destroy-time provisioners. The OVHcloud cluster retains its native deletion protection.
