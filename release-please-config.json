@@ -228,6 +228,9 @@
         },
         "modules/ovh-mysql": {
             "package-name": "ovh-mysql"
+        },
+        "modules/ovh-postgresql": {
+            "package-name": "ovh-postgresql"
         }
     }
 }
