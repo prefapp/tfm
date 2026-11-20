@@ -153,6 +153,15 @@ run "accept_users_pools_and_secrets" {
     error_message = "Direct and pool secrets should be planned under their default paths."
   }
   assert {
+    condition = (
+      terraform_data.deletion_guard["user-secret/app"].triggers_replace == "test/app" &&
+      terraform_data.deletion_guard["pool-secret/app"].triggers_replace == "test/pools/app" &&
+      terraform_data.secret_okms_deletion_guard["user-secret/app"].triggers_replace == jsonencode({ okms_id = var.okms_id, path = "test/app" }) &&
+      terraform_data.secret_okms_deletion_guard["pool-secret/app"].triggers_replace == jsonencode({ okms_id = var.okms_id, path = "test/pools/app" })
+    )
+    error_message = "Secret deletion guards should track both the OKMS ID and secret path."
+  }
+  assert {
     condition     = output.database_names == { app = "app" }
     error_message = "The common database_names output should map each configured key to its PostgreSQL database name."
   }

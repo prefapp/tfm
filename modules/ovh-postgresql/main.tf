@@ -226,10 +226,33 @@ resource "terraform_data" "deletion_guard" {
   }
 }
 
+resource "terraform_data" "secret_okms_deletion_guard" {
+  for_each = merge(
+    { for key, secret in ovh_okms_secret.user : "user-secret/${key}" => jsonencode({ okms_id = var.okms_id, path = secret.path }) },
+    { for key, secret in ovh_okms_secret.pool : "pool-secret/${key}" => jsonencode({ okms_id = var.okms_id, path = secret.path }) }
+  )
+
+  triggers_replace = each.value
+  input = {
+    deletion_protection = var.deletion_protection
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["sh", "-c"]
+    command     = <<-EOT
+      if [ "${self.input.deletion_protection}" = "true" ]; then
+        printf '%s\n' "Deletion protection is enabled; apply with deletion_protection = false before changing the OKMS for managed secrets." >&2
+        exit 1
+      fi
+    EOT
+  }
+}
+
 resource "terraform_data" "deletion_guard_barrier" {
   input = var.deletion_protection
 
-  depends_on = [terraform_data.deletion_guard]
+  depends_on = [terraform_data.deletion_guard, terraform_data.secret_okms_deletion_guard]
 
   provisioner "local-exec" {
     when        = destroy
