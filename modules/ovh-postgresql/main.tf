@@ -217,12 +217,7 @@ resource "terraform_data" "deletion_guard" {
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
-    command     = <<-EOT
-      if [ "${self.input.deletion_protection}" = "true" ]; then
-        printf '%s\n' "Deletion protection is enabled; apply with deletion_protection = false before deleting managed PostgreSQL resources." >&2
-        exit 1
-      fi
-    EOT
+    command     = "sh '${path.module}/scripts/deletion-guard.sh' '${self.input.deletion_protection}' 'Deletion protection is enabled; apply with deletion_protection = false before deleting managed PostgreSQL resources.'"
   }
 }
 
@@ -240,12 +235,7 @@ resource "terraform_data" "secret_okms_deletion_guard" {
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
-    command     = <<-EOT
-      if [ "${self.input.deletion_protection}" = "true" ]; then
-        printf '%s\n' "Deletion protection is enabled; apply with deletion_protection = false before changing the OKMS for managed secrets." >&2
-        exit 1
-      fi
-    EOT
+    command     = "sh '${path.module}/scripts/deletion-guard.sh' '${self.input.deletion_protection}' 'Deletion protection is enabled; apply with deletion_protection = false before changing the OKMS for managed secrets.'"
   }
 }
 
@@ -257,11 +247,6 @@ resource "terraform_data" "deletion_guard_barrier" {
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["sh", "-c"]
-    command     = <<-EOT
-      if [ "${self.input}" = "true" ]; then
-        printf '%s\n' "Deletion protection is enabled; apply with deletion_protection = false before destroying this module." >&2
-        exit 1
-      fi
-    EOT
+    command     = "sh '${path.module}/scripts/deletion-guard.sh' '${self.input}' 'Deletion protection is enabled; apply with deletion_protection = false before destroying this module.'"
   }
 }
