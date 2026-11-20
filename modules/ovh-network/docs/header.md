@@ -4,6 +4,7 @@
 > - **Free plan:** `10.2.0.0/16`, `10.3.0.0/16`, and `172.17.0.0/16`.
 > - **Standard plan:** `10.240.0.0/13` and `10.3.0.0/16`.
 >
+> The module rejects any `network_cidr` that overlaps these ranges, including broader supernets such as `10.0.0.0/14`, for every plan to prevent later conflicts if the network is reused by a cluster on another plan.
 > Standard plan pod and service ranges can be customized when creating or resetting a cluster. Changing them on a running cluster requires a reset and can cause data loss. See [OVHcloud MKS known limits](https://docs.ovhcloud.com/en/guides/public-cloud/containers-orchestration/managed-kubernetes/known-limits/).
 
 # **OVHcloud Private Network Terraform Module**
@@ -44,7 +45,7 @@ module "ovh_network" {
   network_cidr      = "10.41.0.0/16"
   subnet_pool_start = "10.41.0.10"
   subnet_pool_end   = "10.41.255.254"
-  gateway_model     = "<available-gateway-model>"
+  gateway_model     = "s"
 }
 ```
 
@@ -64,8 +65,12 @@ module "ovh_network" {
   network_cidr      = "10.40.0.0/16"
   subnet_pool_start = "10.40.0.10"
   subnet_pool_end   = "10.40.255.254"
-  gateway_model     = "<available-gateway-model>"
+  gateway_model     = "s"
 }
 ```
 
-After applying the network configuration, configure the `ovh-mks` module with the same network name as `network_name` and the same subnet CIDR as `subnet_cidr`. The `network_openstack_id` and `subnet_id` outputs are available to other consumers that accept resource IDs directly. Complete standalone examples are linked below.
+After applying the network configuration, configure the `ovh-mks` module with the same network name as `network_name` and the same subnet CIDR as `network_cidr`. The `network_openstack_id` and `subnet_id` outputs are available to other consumers that accept resource IDs directly. Complete standalone examples are linked below.
+
+The DHCP pool's `subnet_pool_start` and `subnet_pool_end` must be valid IPv4 addresses inside `network_cidr`, and the start must not exceed the end. Changing either pool boundary forces the OVH provider to recreate the subnet; plan such a change as a network migration, especially when MKS clusters or other workloads are attached.
+
+The `vlan_id` must be an integer from 0 to 4000. VLAN 0 is used by other OVHcloud products. OVHcloud supports gateway models `s`, `m`, `l`, `xl`, and `2xl`; model availability can vary by region.
