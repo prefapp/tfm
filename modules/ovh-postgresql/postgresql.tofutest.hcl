@@ -166,8 +166,8 @@ run "accept_users_pools_and_secrets" {
     error_message = "The common database_names output should map each configured key to its PostgreSQL database name."
   }
   assert {
-    condition     = terraform_data.pool_user["app"].triggers_replace.user == "app" && terraform_data.pool_user["app"].triggers_replace.password_reset == null
-    error_message = "The pool replacement trigger should track its configured user and password-reset generation."
+    condition     = terraform_data.pool_user["app"].triggers_replace.user == "app" && terraform_data.pool_user["app"].triggers_replace.user_id == "user-id" && terraform_data.pool_user["app"].triggers_replace.password_reset == null
+    error_message = "The pool replacement trigger should track its configured user ID and password-reset generation."
   }
   assert {
     condition = toset(keys(terraform_data.deletion_guard)) == toset([
@@ -202,8 +202,27 @@ run "accept_pool_without_user_restriction" {
     }
   }
   assert {
-    condition     = terraform_data.pool_user["app"].triggers_replace.user == null && terraform_data.pool_user["app"].triggers_replace.password_reset == null
+    condition     = terraform_data.pool_user["app"].triggers_replace.user == null && terraform_data.pool_user["app"].triggers_replace.user_id == null && terraform_data.pool_user["app"].triggers_replace.password_reset == null
     error_message = "The pool replacement trigger should track an unrestricted user setting without a password reset."
+  }
+}
+
+run "track_pool_user_replacement" {
+  command = plan
+  variables {
+    databases = { app = "app" }
+    users     = { app = { name = "app", database = "app" } }
+    connection_pools = {
+      app = { name = "app", database = "app", user = "app", mode = "transaction", size = 5 }
+    }
+  }
+  override_resource {
+    target = ovh_cloud_project_database_postgresql_user.user
+    values = { id = "replacement-user-id" }
+  }
+  assert {
+    condition     = terraform_data.pool_user["app"].triggers_replace.user_id == "replacement-user-id"
+    error_message = "Replacing a managed PostgreSQL user should change the pool replacement trigger."
   }
 }
 

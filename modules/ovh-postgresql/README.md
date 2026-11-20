@@ -188,7 +188,7 @@ The provider has no managed PostgreSQL extension resource and OVHcloud's capabil
 
 ## Secrets and External Secrets Operator
 
-Each user secret is JSON with `host`, `port`, `username`, `password` and `database`. Each pool secret is JSON with `uri`. The module outputs only secret paths; configure External Secrets Operator to read the relevant OKMS paths and map JSON properties to Kubernetes Secret keys. Passwords and pool URIs remain sensitive in Terraform state despite not being outputs.
+Each user secret is JSON with `host`, `port`, `username`, `password` and `database`. Each pool secret is JSON with `uri`. The module outputs only secret paths; configure External Secrets Operator to read the relevant OKMS paths and map JSON properties to Kubernetes Secret keys. Passwords and pool URIs remain in Terraform state despite not being outputs. OVH provider v2.25.0 does not mark the computed pool URI as sensitive, so Terraform plan output and saved plan files may contain it; provider debug logging can include the full pool response. Do not expose plan output, saved plan files or `TF_LOG=DEBUG` logs to broad audiences, and restrict access to Terraform state and CI logs. This provider limitation cannot be fixed by the module without changing the provider.
 
 The common service outputs follow the `ovh-mysql` naming pattern: `service_name`, `postgresql_id`, `postgresql_description`, `postgresql_status`, `postgresql_host`, `postgresql_port`, `postgresql_ca`, and `database_names`. PostgreSQL-specific outputs include `postgresql_endpoints`, `database_ids`, `user_secret_paths`, `pool_secret_paths`, and non-sensitive `pool_endpoints`. No output contains a password or credential-bearing URI. `disk_size` is required for this module and is validated against the maintained plan/flavor catalogue.
 
@@ -236,7 +236,7 @@ Destroying the module deletes the managed cluster and all data in it, its declar
 
 Changing a pool's optional user restriction recreates that pool because OVHcloud provider v2.25.0 models `user_id` as Optional+Computed and omits empty IDs from update requests. This also causes existing pools to be recreated once when adopting this lifecycle rule; schedule the rollout for the possible connection interruption.
 
-Changing `password_reset` for a user restricted to a pool also recreates that pool so its connection URI and OKMS secret are refreshed with the rotated credentials. This interrupts pool connections during the apply. Provider v2.25.0 still cannot revoke the `replication` role by updating `roles` to an empty list because its update payload omits empty roles. To revoke it without dropping the user or affecting its grants and owned objects, set `roles = []` and run `ALTER ROLE "user_name" NOREPLICATION;` through an approved database-administration procedure; the provider cannot perform this transition itself.
+Changing `password_reset` or replacing a user restricted to a pool also recreates that pool so its connection URI and OKMS secret are refreshed with the current credentials. This interrupts pool connections during the apply. Provider v2.25.0 still cannot revoke the `replication` role by updating `roles` to an empty list because its update payload omits empty roles. To revoke it without dropping the user or affecting its grants and owned objects, set `roles = []` and run `ALTER ROLE "user_name" NOREPLICATION;` through an approved database-administration procedure; the provider cannot perform this transition itself.
 
 ## Examples
 

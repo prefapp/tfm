@@ -155,6 +155,7 @@ resource "terraform_data" "pool_user" {
 
   triggers_replace = {
     user           = each.value.user
+    user_id        = each.value.user == null ? null : try(ovh_cloud_project_database_postgresql_user.user[each.value.user].id, null)
     password_reset = try(var.users[each.value.user].password_reset, null)
   }
 }
