@@ -127,6 +127,17 @@ run "accept_listed_options" {
   }
 }
 
+run "normalize_flavor_for_provider" {
+  command = plan
+  variables {
+    flavor = "B3-4"
+  }
+  assert {
+    condition     = ovh_cloud_project_database.postgresql.flavor == "b3-4"
+    error_message = "The provider should receive the normalized catalogue flavor."
+  }
+}
+
 run "resolve_project_by_id" {
   command = plan
   variables {
@@ -142,7 +153,7 @@ run "resolve_project_by_id" {
 run "accept_users_pools_and_secrets" {
   command = plan
   variables {
-    databases = { app = "app" }
+    databases = { app = "application" }
     users     = { app = { name = "app", database = "app" } }
     connection_pools = {
       app = { name = "app", database = "app", user = "app", mode = "transaction", size = 5 }
@@ -154,6 +165,13 @@ run "accept_users_pools_and_secrets" {
   }
   assert {
     condition = (
+      ovh_okms_secret.user["app"].metadata.custom_metadata.database == "application" &&
+      ovh_okms_secret.pool["app"].metadata.custom_metadata.database == "application"
+    )
+    error_message = "Direct and pool secret metadata should record the configured PostgreSQL database name, not its Terraform key."
+  }
+  assert {
+    condition = (
       terraform_data.deletion_guard["user-secret/app"].triggers_replace == "test/app" &&
       terraform_data.deletion_guard["pool-secret/app"].triggers_replace == "test/pools/app" &&
       terraform_data.secret_okms_deletion_guard["user-secret/app"].triggers_replace == jsonencode({ okms_id = var.okms_id, path = "test/app" }) &&
@@ -162,7 +180,7 @@ run "accept_users_pools_and_secrets" {
     error_message = "Secret deletion guards should track both the OKMS ID and secret path."
   }
   assert {
-    condition     = output.database_names == { app = "app" }
+    condition     = output.database_names == { app = "application" }
     error_message = "The common database_names output should map each configured key to its PostgreSQL database name."
   }
   assert {

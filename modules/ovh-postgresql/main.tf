@@ -4,7 +4,7 @@ resource "ovh_cloud_project_database" "postgresql" {
   engine                 = "postgresql"
   version                = var.engine_version
   plan                   = var.plan
-  flavor                 = var.flavor
+  flavor                 = lower(var.flavor)
   disk_size              = var.disk_size
   deletion_protection    = var.deletion_protection
   advanced_configuration = var.advanced_configuration
@@ -170,7 +170,7 @@ resource "ovh_okms_secret" "pool" {
     max_versions             = 10
     deactivate_version_after = "0s"
     custom_metadata = merge(var.secret_custom_metadata, {
-      database = each.value.database
+      database = var.databases[each.value.database]
       service  = var.name
       pool     = each.value.name
       type     = "postgresql-pool"
