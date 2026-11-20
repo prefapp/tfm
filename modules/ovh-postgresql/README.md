@@ -96,13 +96,13 @@ With transaction pooling, review application use of prepared statements, tempora
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.22.0, < 2.23.0 |
+| <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | ~> 2.25 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.22.0 |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.25.0 |
 | <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
@@ -222,7 +222,7 @@ Resource addresses assume the caller names the module `postgresql`:
 - Database: `module.postgresql.ovh_cloud_project_database_database.database["<key>"]`, import ID `<service_name>/postgresql/<cluster_id>/<database_id>`.
 - User: `module.postgresql.ovh_cloud_project_database_postgresql_user.user["<key>"]`, import ID `<service_name>/<cluster_id>/<user_id>`.
 - Pool: `module.postgresql.ovh_cloud_project_database_postgresql_connection_pool.pool["<key>"]`, import ID `<service_name>/<cluster_id>/<pool_id>`.
-- OKMS secret: OVH provider v2.22.0 does not implement import for `ovh_okms_secret`; existing secrets at generated paths cannot be adopted with `terraform import`.
+- OKMS secret: OVH provider v2.25.0 does not implement import for `ovh_okms_secret`; existing secrets at generated paths cannot be adopted with `terraform import`.
 
 For example, with the module call named `postgresql`, import the cluster with:
 
@@ -230,13 +230,13 @@ For example, with the module call named `postgresql`, import the cluster with:
 terraform import 'module.postgresql.ovh_cloud_project_database.postgresql' '<service_name>/postgresql/<cluster_id>'
 ```
 
-The provider's v2.22.0 import formats are documented for [clusters](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database), [databases](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_database), [PostgreSQL users](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_postgresql\_user) and [connection pools](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_postgresql\_connection\_pool). The module is constrained to provider v2.22.x; use each resource's corresponding address and ID format above. The ID components are the Public Cloud project service name, cluster ID, and child resource ID as applicable.
+The provider's import formats are documented for [clusters](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database), [databases](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database\_database), [PostgreSQL users](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database\_postgresql\_user) and [connection pools](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database\_postgresql\_connection\_pool). The module uses provider v2.25.x; use each resource's corresponding address and ID format above. The ID components are the Public Cloud project service name, cluster ID, and child resource ID as applicable.
 
 Destroying the module deletes the managed cluster and all data in it, its declared databases/users/pools, and the OKMS secrets at the configured paths. It does not delete the Public Cloud project, private network, subnet or OKMS. OVHcloud deletion protection protects the cluster; Terraform destroy-time guards also protect each managed database, user, pool and OKMS secret, with a barrier preventing parallel child deletion during a full destroy. For an intentional destroy or removal of one of these resources, set `deletion_protection = false` and apply before destroying or changing the configuration. Keep the module configuration present during destroy so Terraform can run its guards. Use backups and verify retention first. Changing network/subnet triggers a service rebuild and may temporarily interrupt connectivity. Changing the region recreates the cluster. Changing a database or user key changes its Terraform address and can cause replacement unless state is migrated. Plan validates catalogue membership and plan-specific flavor/disk limits, not cross-dimension offer compatibility or live availability; OVHcloud remains authoritative during apply.
 
-Changing a pool's optional user restriction recreates that pool because OVHcloud provider v2.22.0 cannot reliably clear its computed `user_id` through an update. This also causes existing pools to be recreated once when adopting this lifecycle rule; schedule the rollout for the possible connection interruption.
+Changing a pool's optional user restriction recreates that pool because OVHcloud provider v2.25.0 models `user_id` as Optional+Computed and omits empty IDs from update requests. This also causes existing pools to be recreated once when adopting this lifecycle rule; schedule the rollout for the possible connection interruption.
 
-Changing `password_reset` for a user restricted to a pool also recreates that pool so its connection URI and OKMS secret are refreshed with the rotated credentials. This interrupts pool connections during the apply. Provider v2.22.0 also cannot revoke the `replication` role by updating `roles` to an empty list. To revoke it without dropping the user or affecting its grants and owned objects, set `roles = []` and run `ALTER ROLE "user_name" NOREPLICATION;` through an approved database-administration procedure; the provider cannot perform this transition itself.
+Changing `password_reset` for a user restricted to a pool also recreates that pool so its connection URI and OKMS secret are refreshed with the rotated credentials. This interrupts pool connections during the apply. Provider v2.25.0 still cannot revoke the `replication` role by updating `roles` to an empty list because its update payload omits empty roles. To revoke it without dropping the user or affecting its grants and owned objects, set `roles = []` and run `ALTER ROLE "user_name" NOREPLICATION;` through an approved database-administration procedure; the provider cannot perform this transition itself.
 
 ## Examples
 
@@ -250,9 +250,9 @@ Changing `password_reset` for a user restricted to a pool also recreates that po
 - **OVHcloud PostgreSQL pools**: [Modes and client limitations](https://docs.ovhcloud.com/en/guides/public-cloud/databases/postgresql-pool/)
 - **OVHcloud API authentication**: [Classic API signatures](https://docs.ovhcloud.com/en/guides/manage-and-operate/api/first-steps/) and [service-account OAuth2](https://docs.ovhcloud.com/en/guides/account-and-service-management/account-information/authenticate-api-with-service-account/)
 - **OVHcloud Public Cloud pricing**: [Database flavor and storage offers](https://www.ovhcloud.com/en-gb/public-cloud/prices/#postgresql)
-- **OVHcloud Terraform provider v2.22.0**: [`ovh_cloud_project_database`](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database), [`ovh_cloud_project_database_database`](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_database), [`ovh_cloud_project_database_postgresql_user`](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_postgresql\_user), [`ovh_cloud_project_database_postgresql_connection_pool`](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/cloud_project_database\_postgresql\_connection\_pool), [`ovh_okms_secret`](https://registry.terraform.io/providers/ovh/ovh/2.22.0/docs/resources/okms_secret)
+- **OVHcloud Terraform provider v2.25.0**: [`ovh_cloud_project_database`](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database), [`ovh_cloud_project_database_database`](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database\_database), [`ovh_cloud_project_database_postgresql_user`](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database\_postgresql\_user), [`ovh_cloud_project_database_postgresql_connection_pool`](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/cloud_project_database\_postgresql\_connection\_pool), [`ovh_okms_secret`](https://registry.terraform.io/providers/ovh/ovh/2.25.0/docs/resources/okms_secret)
 
-The provider constraint is temporarily limited to v2.22.x to avoid a built-in `avnadmin` user adoption panic introduced in v2.23.0. Widen it after the fixed v2.25.0 is published in the Terraform Registry.
+The module uses OVH provider v2.25.x, which fixes the built-in `avnadmin` user adoption panic introduced in v2.23.0.
 
 ## Support
 
