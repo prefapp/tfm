@@ -1,6 +1,6 @@
 ## Examples
 
-The examples are self-contained Terraform callers for this module. They use illustrative values only; replace the project, VLAN, CIDR, and gateway model with values available in your OVHcloud account.
+The examples are self-contained Terraform callers for this module. They use illustrative values only; replace the project, VLAN, and CIDR with values available in your OVHcloud account.
 
 - [Gravelines single-AZ MKS network](https://github.com/prefapp/tfm/tree/main/modules/ovh-network/_examples/gravelines-single-az) — creates regional networking for a downstream MKS cluster with node pools in one availability zone. AZ placement is configured by MKS, not by this module.
 - [Paris three-AZ MKS network](https://github.com/prefapp/tfm/tree/main/modules/ovh-network/_examples/paris-three-az) — creates regional networking for a downstream MKS cluster with node pools across three availability zones. AZ placement is configured by MKS, not by this module.

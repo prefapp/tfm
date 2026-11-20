@@ -5,6 +5,7 @@
 > - **Free plan:** `10.2.0.0/16`, `10.3.0.0/16`, and `172.17.0.0/16`.
 > - **Standard plan:** `10.240.0.0/13` and `10.3.0.0/16`.
 >
+> The module rejects any `network_cidr` that overlaps these ranges, including broader supernets such as `10.0.0.0/14`, for every plan to prevent later conflicts if the network is reused by a cluster on another plan.
 > Standard plan pod and service ranges can be customized when creating or resetting a cluster. Changing them on a running cluster requires a reset and can cause data loss. See [OVHcloud MKS known limits](https://docs.ovhcloud.com/en/guides/public-cloud/containers-orchestration/managed-kubernetes/known-limits/).
 
 # **OVHcloud Private Network Terraform Module**
@@ -45,7 +46,7 @@ module "ovh_network" {
   network_cidr      = "10.41.0.0/16"
   subnet_pool_start = "10.41.0.10"
   subnet_pool_end   = "10.41.255.254"
-  gateway_model     = "<available-gateway-model>"
+  gateway_model     = "s"
 }
 ```
 
@@ -65,24 +66,28 @@ module "ovh_network" {
   network_cidr      = "10.40.0.0/16"
   subnet_pool_start = "10.40.0.10"
   subnet_pool_end   = "10.40.255.254"
-  gateway_model     = "<available-gateway-model>"
+  gateway_model     = "s"
 }
 ```
 
-After applying the network configuration, configure the `ovh-mks` module with the same network name as `network_name` and the same subnet CIDR as `subnet_cidr`. The `network_openstack_id` and `subnet_id` outputs are available to other consumers that accept resource IDs directly. Complete standalone examples are linked below.
+After applying the network configuration, configure the `ovh-mks` module with the same network name as `network_name` and the same subnet CIDR as `network_cidr`. The `network_openstack_id` and `subnet_id` outputs are available to other consumers that accept resource IDs directly. Complete standalone examples are linked below.
+
+The DHCP pool's `subnet_pool_start` and `subnet_pool_end` must be valid IPv4 addresses inside `network_cidr`, and the start must not exceed the end. Changing either pool boundary forces the OVH provider to recreate the subnet; plan such a change as a network migration, especially when MKS clusters or other workloads are attached.
+
+The `vlan_id` must be an integer from 0 to 4000. VLAN 0 is used by other OVHcloud products. OVHcloud supports gateway models `s`, `m`, `l`, `xl`, and `2xl`; model availability can vary by region.
 
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.5.0 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.21.0 |
+| ---- | ------- |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.25.0 |
 
 ## Modules
 
@@ -91,7 +96,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ovh_cloud_project_gateway.kubernetes](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_gateway) | resource |
 | [ovh_cloud_project_network_private.kubernetes](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_network_private) | resource |
 | [ovh_cloud_project_network_private_subnet.kubernetes](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_network_private_subnet) | resource |
@@ -100,10 +105,10 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_gateway_model"></a> [gateway\_model](#input\_gateway\_model) | Public Cloud gateway model. | `string` | n/a | yes |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_gateway_model"></a> [gateway\_model](#input\_gateway\_model) | Public Cloud gateway model: s, m, l, xl, or 2xl. Availability may vary by region. | `string` | n/a | yes |
 | <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Name of the private network gateway. | `string` | n/a | yes |
-| <a name="input_network_cidr"></a> [network\_cidr](#input\_network\_cidr) | Private subnet CIDR. | `string` | n/a | yes |
+| <a name="input_network_cidr"></a> [network\_cidr](#input\_network\_cidr) | Private subnet CIDR. It must be a valid IPv4 CIDR and must not overlap the OVHcloud MKS reserved ranges. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Name of the private network Kubernetes will use. | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID (project\_id or service\_name); takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against OVHcloud project\_name and description. | `string` | `null` | no |
@@ -115,7 +120,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_gateway_id"></a> [gateway\_id](#output\_gateway\_id) | ID of the gateway attached to the private network. |
 | <a name="output_network_id"></a> [network\_id](#output\_network\_id) | OVHcloud ID (pn-...) of the private network. |
 | <a name="output_network_openstack_id"></a> [network\_openstack\_id](#output\_network\_openstack\_id) | Regional OpenStack network ID for consumers that accept resource IDs directly; ovh-mks discovers the network by name. |
@@ -124,7 +129,7 @@ No modules.
 
 ## Examples
 
-The examples are self-contained Terraform callers for this module. They use illustrative values only; replace the project, VLAN, CIDR, and gateway model with values available in your OVHcloud account.
+The examples are self-contained Terraform callers for this module. They use illustrative values only; replace the project, VLAN, and CIDR with values available in your OVHcloud account.
 
 - [Gravelines single-AZ MKS network](https://github.com/prefapp/tfm/tree/main/modules/ovh-network/_examples/gravelines-single-az) — creates regional networking for a downstream MKS cluster with node pools in one availability zone. AZ placement is configured by MKS, not by this module.
 - [Paris three-AZ MKS network](https://github.com/prefapp/tfm/tree/main/modules/ovh-network/_examples/paris-three-az) — creates regional networking for a downstream MKS cluster with node pools across three availability zones. AZ placement is configured by MKS, not by this module.

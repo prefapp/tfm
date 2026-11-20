@@ -9,7 +9,7 @@ module "ovh_network" {
   network_cidr      = "10.40.0.0/16"
   subnet_pool_start = "10.40.0.10"
   subnet_pool_end   = "10.40.255.254"
-  gateway_model     = "<available-gateway-model>"
+  gateway_model     = "s"
 }
 
 # ovh-mks discovers this network by network_name and subnet_cidr; these IDs are
