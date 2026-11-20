@@ -47,6 +47,40 @@ argocd_admin_role_tags = {
 }
 ```
 
+### Karpenter IAM
+
+When `enable_karpenter = true`, the module uses the `terraform-aws-modules/eks/aws//modules/karpenter` submodule to create two IAM roles:
+
+- **Controller role**: delivered to the Karpenter controller through EKS Pod Identity. It holds the EC2 permissions that Karpenter needs to launch, tag and terminate instances (`ec2:RunInstances`, `ec2:CreateFleet`, `ec2:TerminateInstances`, `ec2:DeleteLaunchTemplate`...), scoped by cluster and node pool tags.
+- **Node role**: used by the instances that Karpenter launches. It only needs to join the cluster and pull images, so it only gets the submodule defaults (`AmazonEKSWorkerNodePolicy`, `AmazonEC2ContainerRegistryPullOnly`, `AmazonEKS_CNI_Policy`).
+
+Keep the node role minimal: every pod that can reach the instance metadata service (IMDS) can use its credentials. To attach extra policies to the node role, create them outside the module and pass their ARNs in `karpenter_node_iam_role_additional_policies`.
+
+The most common case is AWS Systems Manager (Session Manager, Run Command, Patch Manager) on the nodes. It needs `AmazonSSMManagedInstanceCore`, which the module no longer attaches by default:
+
+```hcl
+karpenter_node_iam_role_additional_policies = {
+  AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+```
+
+Only attach it if you use Systems Manager on the nodes: it also grants `ssm:GetParameter` and `ssm:GetParameters` on every Parameter Store parameter in the account, so any pod that can reach IMDS could read them. Workloads that need parameters (for example External Secrets) should use their own IAM role through IRSA or Pod Identity instead.
+
+To attach more than one policy, add one entry per policy. Each key must be unique, and keep it stable: the submodule uses it to name the policy attachment, so renaming a key detaches and reattaches that policy. Values can be customer managed or AWS managed policy ARNs:
+
+```hcl
+karpenter_node_iam_role_additional_policies = {
+  AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  MyNodeExtraPolicy            = aws_iam_policy.my_karpenter_node_extra.arn
+  CloudWatchAgentServer        = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+```
+
+> [!NOTE]
+> Earlier versions attached an `Ec2ExtraPolicy` to the node role with `ec2:RunInstances`, `ec2:DeleteLaunchTemplate` and `ec2:TerminateInstances`. It was removed because those are controller permissions. If you still need them on the node role, create the policy yourself and pass it under the `Ec2ExtraPolicy` key.
+>
+> `AmazonSSMManagedInstanceCore` is no longer attached by default either. To keep Session Manager access on Karpenter nodes, add it under the `AmazonSSMManagedInstanceCore` key as shown above; with the same key, Terraform keeps the existing attachment instead of recreating it.
+
 ## Basic Usage
 
 ### Module Usage

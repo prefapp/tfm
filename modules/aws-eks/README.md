@@ -48,6 +48,40 @@ argocd_admin_role_tags = {
 }
 ```
 
+### Karpenter IAM
+
+When `enable_karpenter = true`, the module uses the `terraform-aws-modules/eks/aws//modules/karpenter` submodule to create two IAM roles:
+
+- **Controller role**: delivered to the Karpenter controller through EKS Pod Identity. It holds the EC2 permissions that Karpenter needs to launch, tag and terminate instances (`ec2:RunInstances`, `ec2:CreateFleet`, `ec2:TerminateInstances`, `ec2:DeleteLaunchTemplate`...), scoped by cluster and node pool tags.
+- **Node role**: used by the instances that Karpenter launches. It only needs to join the cluster and pull images, so it only gets the submodule defaults (`AmazonEKSWorkerNodePolicy`, `AmazonEC2ContainerRegistryPullOnly`, `AmazonEKS_CNI_Policy`).
+
+Keep the node role minimal: every pod that can reach the instance metadata service (IMDS) can use its credentials. To attach extra policies to the node role, create them outside the module and pass their ARNs in `karpenter_node_iam_role_additional_policies`.
+
+The most common case is AWS Systems Manager (Session Manager, Run Command, Patch Manager) on the nodes. It needs `AmazonSSMManagedInstanceCore`, which the module no longer attaches by default:
+
+```hcl
+karpenter_node_iam_role_additional_policies = {
+  AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+```
+
+Only attach it if you use Systems Manager on the nodes: it also grants `ssm:GetParameter` and `ssm:GetParameters` on every Parameter Store parameter in the account, so any pod that can reach IMDS could read them. Workloads that need parameters (for example External Secrets) should use their own IAM role through IRSA or Pod Identity instead.
+
+To attach more than one policy, add one entry per policy. Each key must be unique, and keep it stable: the submodule uses it to name the policy attachment, so renaming a key detaches and reattaches that policy. Values can be customer managed or AWS managed policy ARNs:
+
+```hcl
+karpenter_node_iam_role_additional_policies = {
+  AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  MyNodeExtraPolicy            = aws_iam_policy.my_karpenter_node_extra.arn
+  CloudWatchAgentServer        = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+```
+
+> [!NOTE]
+> Earlier versions attached an `Ec2ExtraPolicy` to the node role with `ec2:RunInstances`, `ec2:DeleteLaunchTemplate` and `ec2:TerminateInstances`. It was removed because those are controller permissions. If you still need them on the node role, create the policy yourself and pass it under the `Ec2ExtraPolicy` key.
+>
+> `AmazonSSMManagedInstanceCore` is no longer attached by default either. To keep Session Manager access on Karpenter nodes, add it under the `AmazonSSMManagedInstanceCore` key as shown above; with the same key, Terraform keeps the existing attachment instead of recreating it.
+
 ## Basic Usage
 
 ### Module Usage
@@ -173,7 +207,6 @@ The module is organized with the following directory and file structure:
 | [aws_iam_policy.external_dns_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_EFS_CSI_DriverRole](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy.iam_policy_extra_karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.iam_policy_parameter_store](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_policy.policy_additional_cloudwatch](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.ebs_driver_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -243,6 +276,7 @@ The module is organized with the following directory and file structure:
 | <a name="input_fargate_profiles"></a> [fargate\_profiles](#input\_fargate\_profiles) | Define dynamically the different fargate profiles | <pre>list(object({<br/>    name = string<br/>    selectors = list(object({<br/>      namespace = string<br/>      labels    = map(string)<br/>    }))<br/>    tags = map(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_karpenter_controller_enable_inline_policy"></a> [karpenter\_controller\_enable\_inline\_policy](#input\_karpenter\_controller\_enable\_inline\_policy) | Determines whether the controller policy is created as a standard IAM policy or inline IAM policy. This can be enabled when the error `LimitExceeded: Cannot exceed quota for PolicySize: 6144` is received since standard IAM policies have a limit of 6,144 characters versus an inline role policy's limit of 10,240 ([Reference](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-quotas.html)) | `bool` | `false` | no |
 | <a name="input_karpenter_namespace_name"></a> [karpenter\_namespace\_name](#input\_karpenter\_namespace\_name) | Set the name of K8s namespace where is deployed the karpenter controller | `string` | `"karpenter"` | no |
+| <a name="input_karpenter_node_iam_role_additional_policies"></a> [karpenter\_node\_iam\_role\_additional\_policies](#input\_karpenter\_node\_iam\_role\_additional\_policies) | Additional IAM policies to attach to the Karpenter node IAM role, as a map of name => policy ARN. No policy beyond the submodule defaults is attached unless listed here (e.g. AmazonSSMManagedInstanceCore for Session Manager). Only used when `enable_karpenter = true`. | `map(string)` | `{}` | no |
 | <a name="input_karpenter_service_account_name"></a> [karpenter\_service\_account\_name](#input\_karpenter\_service\_account\_name) | Set the name of K8s service account karpenter controller | `string` | `"karpenter-sa"` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | Define dynamically the different k8s node groups | `any` | `{}` | no |
 | <a name="input_node_security_group_additional_rules"></a> [node\_security\_group\_additional\_rules](#input\_node\_security\_group\_additional\_rules) | Additional rules to add to the node security group | `any` | n/a | yes |
