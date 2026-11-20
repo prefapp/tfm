@@ -4,7 +4,7 @@
 > - **Free plan:** `10.2.0.0/16`, `10.3.0.0/16`, and `172.17.0.0/16`.
 > - **Standard plan:** `10.240.0.0/13` and `10.3.0.0/16`.
 >
-> The module rejects all four ranges for every plan to prevent later conflicts if the network is reused by a cluster on another plan.
+> The module rejects any `network_cidr` that overlaps these ranges, including broader supernets such as `10.0.0.0/14`, for every plan to prevent later conflicts if the network is reused by a cluster on another plan.
 > Standard plan pod and service ranges can be customized when creating or resetting a cluster. Changing them on a running cluster requires a reset and can cause data loss. See [OVHcloud MKS known limits](https://docs.ovhcloud.com/en/guides/public-cloud/containers-orchestration/managed-kubernetes/known-limits/).
 
 # **OVHcloud Private Network Terraform Module**

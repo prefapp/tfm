@@ -4,7 +4,7 @@ variable "project_id" {
   default     = null
 
   validation {
-    condition     = var.project_id == null || length(trimspace(var.project_id)) > 0
+    condition     = var.project_id == null ? true : length(trimspace(var.project_id)) > 0
     error_message = "project_id must be null or a non-empty string."
   }
 }
@@ -15,7 +15,7 @@ variable "project_name" {
   default     = null
 
   validation {
-    condition     = var.project_name == null || length(trimspace(var.project_name)) > 0
+    condition     = var.project_name == null ? true : length(trimspace(var.project_name)) > 0
     error_message = "project_name must be null or a non-empty string."
   }
 }
@@ -61,38 +61,12 @@ variable "vlan_id" {
 }
 
 variable "network_cidr" {
-  description = "Private subnet CIDR."
+  description = "Private subnet CIDR. It must be a valid IPv4 CIDR and must not overlap the OVHcloud MKS reserved ranges."
   type        = string
 
   validation {
-    condition = can(cidrnetmask(var.network_cidr)) && !anytrue([
-      for prefix in [
-        "10.2.",
-        "10.3.",
-        "10.240.",
-        "10.241.",
-        "10.242.",
-        "10.243.",
-        "10.244.",
-        "10.245.",
-        "10.246.",
-        "10.247.",
-        "172.17.",
-      ] : startswith(var.network_cidr, prefix)
-      ]) && !anytrue([
-      for prohibited in [
-        "10.0.0.0/8",
-        "10.240.0.0/13",
-        "10.240.0.0/12",
-        "10.224.0.0/11",
-        "10.192.0.0/10",
-        "10.128.0.0/9",
-        "10.2.0.0/16",
-        "10.3.0.0/16",
-        "172.17.0.0/16",
-      ] : var.network_cidr == prohibited
-    ])
-    error_message = "network_cidr must be a valid IPv4 CIDR and must not start with a reserved prefix or exactly match a prohibited CIDR."
+    condition     = can(cidrnetmask(var.network_cidr))
+    error_message = "network_cidr must be a valid IPv4 CIDR."
   }
 }
 
@@ -121,7 +95,7 @@ variable "gateway_model" {
   type        = string
 
   validation {
-    condition     = contains(["s", "m", "l", "xl", "2xl"], lower(var.gateway_model))
+    condition     = contains(["s", "m", "l", "xl", "2xl"], var.gateway_model)
     error_message = "gateway_model must be one of: s, m, l, xl, or 2xl."
   }
 }
