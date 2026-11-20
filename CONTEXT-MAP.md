@@ -114,6 +114,7 @@ is its own context.
 - [ovh-container-registry](./modules/ovh-container-registry/CONTEXT.md) — Managed Private Registry (Harbor), its admin credentials in KMS, and a `harbor` submodule for projects and robots
 - [ovh-mks](./modules/ovh-mks/CONTEXT.md) — Managed Kubernetes cluster and node pools using an existing private network
 - [ovh-mks-access](./modules/ovh-mks-access/CONTEXT.md) — Kubernetes identities, credentials and RBAC access for an MKS cluster
+- [ovh-mysql](./modules/ovh-mysql/CONTEXT.md) — Managed MySQL service, private-network attachment and databases
 - [ovh-network](./modules/ovh-network/CONTEXT.md) — Public Cloud private network, DHCP subnet and gateway
 
 ### CloudAMQP
