@@ -1,12 +1,20 @@
 resource "ovh_cloud_project_kube" "production" {
-  service_name       = local.service_name
-  name               = var.cluster_name
-  region             = var.region
-  plan               = var.cluster_plan
-  version            = var.cluster_version
-  update_policy      = var.update_policy
-  private_network_id = try(one(local.network_openstack_ids), "")
-  nodes_subnet_id    = try(one(local.selected_subnets).id, "")
+  service_name              = local.service_name
+  name                      = var.cluster_name
+  region                    = var.region
+  plan                      = var.cluster_plan
+  version                   = var.cluster_version
+  update_policy             = var.update_policy
+  disable_public_networking = var.disable_public_networking
+  private_network_id        = try(one(local.network_openstack_ids), "")
+  nodes_subnet_id           = try(one(local.selected_subnets).id, "")
+
+  dynamic "private_network_configuration" {
+    for_each = var.use_user_gateway ? [true] : []
+    content {
+      use_user_gateway = true
+    }
+  }
 
   lifecycle {
     precondition {
@@ -16,7 +24,12 @@ resource "ovh_cloud_project_kube" "production" {
 
     precondition {
       condition     = local.service_name != null
-      error_message = "Could not find exactly one OVHcloud project. Check project_id or project_name; if both are set, project_id takes precedence."
+      error_message = "Could not find exactly one active OVHcloud project. Check project_id or project_name; if both are set, project_id takes precedence."
+    }
+
+    precondition {
+      condition     = length(try([for region in data.ovh_cloud_project_regions.regions[0].names : region if region == var.region], [])) == 1
+      error_message = "The selected OVHcloud project does not have the requested region. Check region and project_id or project_name."
     }
 
     precondition {
@@ -32,6 +45,21 @@ resource "ovh_cloud_project_kube" "production" {
     precondition {
       condition     = length(local.selected_subnets) == 1
       error_message = "Could not find exactly one subnet matching subnet_cidr in the selected network and region. Check the CIDR and that the ovh-network module has been applied."
+    }
+
+    precondition {
+      condition     = !var.disable_public_networking || lower(var.cluster_plan) == "standard"
+      error_message = "disable_public_networking is supported only for Standard MKS clusters."
+    }
+
+    precondition {
+      condition     = !var.use_user_gateway || (var.disable_public_networking && lower(var.cluster_plan) == "standard")
+      error_message = "use_user_gateway requires a Standard cluster with disable_public_networking = true."
+    }
+
+    precondition {
+      condition     = !var.attach_floating_ips || !var.disable_public_networking
+      error_message = "attach_floating_ips cannot be enabled when disable_public_networking = true; OVHcloud does not support Floating IPs on nodes of private-only clusters."
     }
   }
 }
@@ -49,6 +77,13 @@ resource "ovh_cloud_project_kube_nodepool" "production" {
   autoscale          = var.autoscale
   anti_affinity      = var.anti_affinity
   availability_zones = length(each.value.availability_zones) > 0 ? each.value.availability_zones : null
+
+  dynamic "attach_floating_ips" {
+    for_each = var.attach_floating_ips ? [true] : []
+    content {
+      enabled = true
+    }
+  }
 
   lifecycle {
     precondition {
