@@ -16,6 +16,11 @@ resource "ovh_cloud_project_network_private" "kubernetes" {
       condition     = local.service_name != null
       error_message = "Could not find exactly one OVHcloud project. Check project_id or project_name; if both are set, project_id takes precedence."
     }
+
+    precondition {
+      condition     = length(local.overlapping_reserved_cidrs) == 0
+      error_message = "network_cidr must not overlap the OVHcloud MKS reserved ranges 10.2.0.0/16, 10.3.0.0/16, 172.17.0.0/16, and 10.240.0.0/13."
+    }
   }
 }
 
@@ -28,6 +33,24 @@ resource "ovh_cloud_project_network_private_subnet" "kubernetes" {
   end          = var.subnet_pool_end
   dhcp         = true
   no_gateway   = false
+
+  lifecycle {
+    precondition {
+      condition = try(
+        local.network_first_host_int <= local.subnet_pool_start_int &&
+        local.subnet_pool_start_int <= local.network_last_host_int &&
+        local.network_first_host_int <= local.subnet_pool_end_int &&
+        local.subnet_pool_end_int <= local.network_last_host_int,
+        false
+      )
+      error_message = "subnet_pool_start and subnet_pool_end must both be valid IP addresses inside network_cidr."
+    }
+
+    precondition {
+      condition     = try(local.subnet_pool_start_int <= local.subnet_pool_end_int, false)
+      error_message = "subnet_pool_start must be less than or equal to subnet_pool_end."
+    }
+  }
 }
 
 resource "ovh_cloud_project_gateway" "kubernetes" {

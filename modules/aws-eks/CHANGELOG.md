@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.7.1](https://github.com/prefapp/tfm/compare/aws-eks-v1.7.0...aws-eks-v1.7.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **aws-eks:** stop attaching AmazonSSMManagedInstanceCore to the Karpenter node role ([#1481](https://github.com/prefapp/tfm/issues/1481)) ([c04d6fd](https://github.com/prefapp/tfm/commit/c04d6fdbdcdab166d66a80cb020a3b3e0e059283))
+
+## [1.7.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.6.0...aws-eks-v1.7.0) (2026-11-19)
+
+
+### Features
+
+* **aws-eks:** make Karpenter node role extra policies configurable ([#1479](https://github.com/prefapp/tfm/issues/1479)) ([bf17fb6](https://github.com/prefapp/tfm/commit/bf17fb66746c0d509e11b82de06983a4daba3f1b))
+
 ## [1.6.0](https://github.com/prefapp/tfm/compare/aws-eks-v1.5.6...aws-eks-v1.6.0) (2026-11-12)
 
 

@@ -114,7 +114,9 @@ is its own context.
 - [ovh-container-registry](./modules/ovh-container-registry/CONTEXT.md) — Managed Private Registry (Harbor), its admin credentials in KMS, and a `harbor` submodule for projects and robots
 - [ovh-mks](./modules/ovh-mks/CONTEXT.md) — Managed Kubernetes cluster and node pools using an existing private network
 - [ovh-mks-access](./modules/ovh-mks-access/CONTEXT.md) — Kubernetes identities, credentials and RBAC access for an MKS cluster
+- [ovh-mysql](./modules/ovh-mysql/CONTEXT.md) — Managed MySQL service, private-network attachment and databases
 - [ovh-network](./modules/ovh-network/CONTEXT.md) — Public Cloud private network, DHCP subnet and gateway
+- [ovh-postgresql](./modules/ovh-postgresql/CONTEXT.md) — Managed PostgreSQL cluster, databases, users, connection pools and OKMS credentials
 
 ### CloudAMQP
 
@@ -148,6 +150,8 @@ is its own context.
   the network resources or consume the network module's IDs as inputs.
 - **`ovh-mks-access` → `ovh-mks`**: the access module configures Kubernetes identities,
   credentials and RBAC for clients of an existing MKS cluster.
+- **`ovh-postgresql` → `ovh-network`**: the database module discovers and attaches to an
+  existing private network and subnet; it does not own those network resources.
 - **`ovh-container-registry` → `ovh-container-registry/modules/harbor`**: the root module
   creates the registry and writes the Harbor admin credentials to KMS; the `harbor`
   submodule, applied in a separate state, reads those credentials to configure its own
