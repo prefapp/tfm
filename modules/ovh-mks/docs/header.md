@@ -12,7 +12,7 @@
 
 This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing Public Cloud project. It discovers the project, private network, and subnet from the supplied project selector, network name, subnet CIDR, and cluster region; the network and subnet are not created by this module.
 
-Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support desired/minimum/maximum capacity, autoscaling, anti-affinity, and availability-zone placement.
+Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support desired/minimum/maximum capacity, autoscaling, anti-affinity, availability-zone placement, Kubernetes node labels and annotations, taints, and the unschedulable setting.
 
 ## Key Features
 
@@ -20,6 +20,7 @@ Use it for a free control-plane cluster, a single-region cluster with one pool, 
 - **Existing-network discovery**: Selects the private network by exact name and subnet by CIDR in the cluster region.
 - **Flexible node pools**: Creates one or more named pools with independent capacity limits and optional zone placement.
 - **Autoscaling and placement**: Configures pool autoscaling and anti-affinity consistently across the pools.
+- **Kubernetes node customization**: Optionally applies labels, annotations, taints, and the unschedulable setting to nodes in each pool.
 - **Sensitive kubeconfig**: Exposes the cluster kubeconfig only as a sensitive Terraform output.
 
 ## Basic Usage
@@ -49,6 +50,7 @@ module "ovh_mks" {
       min_nodes          = 1
       max_nodes          = 3
       availability_zones = ["eu-west-par-a"]
+      labels             = { workload = "general" }
     }
     zone-b = {
       desired_nodes      = 0
@@ -65,6 +67,8 @@ module "ovh_mks" {
   }
 }
 ```
+
+To reserve a pool for selected workloads, configure a taint and optionally a node label on that pool. Workloads must tolerate the taint; use a node selector or node affinity for the label when they must run only on that pool. Taints alone do not attract workloads or provide exclusive node placement.
 
 ### Free control plane without worker nodes
 

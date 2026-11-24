@@ -21,6 +21,7 @@ module "ovh_mks" {
       min_nodes          = 2
       max_nodes          = 5
       availability_zones = [] # Leave placement to OVHcloud.
+      labels             = { workload = "general" }
     }
   }
 }

@@ -56,12 +56,20 @@ variable "node_flavor" {
 }
 
 variable "node_pools" {
-  description = "Cluster node pools with non-negative integer capacities where min_nodes <= desired_nodes <= max_nodes; an empty availability_zones list leaves zone placement unspecified."
+  description = "Cluster node pools with non-negative integer capacities where min_nodes <= desired_nodes <= max_nodes; an empty availability_zones list leaves zone placement unspecified. Optional template metadata and taints customize the Kubernetes nodes created in each pool."
   type = map(object({
     desired_nodes      = number
     min_nodes          = number
     max_nodes          = number
     availability_zones = list(string)
+    labels             = optional(map(string), {})
+    annotations        = optional(map(string), {})
+    taints = optional(list(object({
+      key    = string
+      value  = optional(string, "")
+      effect = string
+    })), [])
+    unschedulable = optional(bool, false)
   }))
 
   validation {
@@ -86,6 +94,15 @@ variable "node_pools" {
       for pool in values(var.node_pools) : length(pool.availability_zones) <= 1
     ])
     error_message = "Each node pool may specify at most one availability zone."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for pool in values(var.node_pools) : [
+        for taint in pool.taints : contains(["NoSchedule", "PreferNoSchedule", "NoExecute"], taint.effect)
+      ]
+    ]))
+    error_message = "Each node pool taint effect must be NoSchedule, PreferNoSchedule, or NoExecute."
   }
 }
 
