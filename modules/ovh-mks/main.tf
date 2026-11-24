@@ -50,6 +50,14 @@ resource "ovh_cloud_project_kube_nodepool" "production" {
   anti_affinity      = var.anti_affinity
   availability_zones = length(each.value.availability_zones) > 0 ? each.value.availability_zones : null
 
+  dynamic "attach_floating_ips" {
+    for_each = each.value.attach_floating_ips == null ? [] : [each.value.attach_floating_ips]
+
+    content {
+      enabled = attach_floating_ips.value.enabled
+    }
+  }
+
   dynamic "template" {
     for_each = length(each.value.labels) > 0 || length(each.value.annotations) > 0 || length(each.value.taints) > 0 || each.value.unschedulable ? [each.value] : []
 

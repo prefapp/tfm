@@ -17,10 +17,11 @@ module "ovh_mks" {
 
   node_pools = {
     main = {
-      min_nodes          = 2
-      max_nodes          = 5
-      availability_zones = [] # Leave placement to OVHcloud.
-      labels             = { workload = "general" }
+      min_nodes           = 2
+      max_nodes           = 5
+      availability_zones  = [] # Leave placement to OVHcloud.
+      labels              = { workload = "general" }
+      attach_floating_ips = { enabled = false }
     }
   }
 }

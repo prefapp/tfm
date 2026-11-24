@@ -70,6 +70,9 @@ variable "node_pools" {
       effect = string
     })), [])
     unschedulable = optional(bool, false)
+    attach_floating_ips = optional(object({
+      enabled = optional(bool)
+    }))
   }))
 
   validation {

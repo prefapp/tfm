@@ -13,7 +13,7 @@
 
 This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing Public Cloud project. It discovers the project, private network, and subnet from the supplied project selector, network name, subnet CIDR, and cluster region; the network and subnet are not created by this module.
 
-Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support optional desired capacity, minimum/maximum capacity, autoscaling, anti-affinity, availability-zone placement, Kubernetes node labels and annotations, taints, and the unschedulable setting.
+Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support optional desired capacity and Floating IP attachment, minimum/maximum capacity, autoscaling, anti-affinity, availability-zone placement, Kubernetes node labels and annotations, taints, and the unschedulable setting.
 
 ## Key Features
 
@@ -51,6 +51,7 @@ module "ovh_mks" {
       max_nodes          = 3
       availability_zones = ["eu-west-par-a"]
       labels             = { workload = "general" }
+      attach_floating_ips = { enabled = false }
     }
     zone-b = {
       min_nodes          = 0
@@ -141,7 +142,7 @@ No modules.
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Managed Kubernetes cluster version. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network to attach to the cluster. | `string` | n/a | yes |
 | <a name="input_node_flavor"></a> [node\_flavor](#input\_node\_flavor) | Worker node flavor available in the selected region. | `string` | n/a | yes |
-| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Cluster node pools with non-negative integer capacities where min\_nodes <= desired\_nodes <= max\_nodes when desired\_nodes is set; an empty availability\_zones list leaves zone placement unspecified. Optional template metadata and taints customize the Kubernetes nodes created in each pool. | <pre>map(object({<br/>    desired_nodes      = optional(number)<br/>    min_nodes          = number<br/>    max_nodes          = number<br/>    availability_zones = list(string)<br/>    labels             = optional(map(string), {})<br/>    annotations        = optional(map(string), {})<br/>    taints = optional(list(object({<br/>      key    = string<br/>      value  = optional(string, "")<br/>      effect = string<br/>    })), [])<br/>    unschedulable = optional(bool, false)<br/>  }))</pre> | n/a | yes |
+| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Cluster node pools with non-negative integer capacities where min\_nodes <= desired\_nodes <= max\_nodes when desired\_nodes is set; an empty availability\_zones list leaves zone placement unspecified. Optional template metadata and taints customize the Kubernetes nodes created in each pool. | <pre>map(object({<br/>    desired_nodes      = optional(number)<br/>    min_nodes          = number<br/>    max_nodes          = number<br/>    availability_zones = list(string)<br/>    labels             = optional(map(string), {})<br/>    annotations        = optional(map(string), {})<br/>    taints = optional(list(object({<br/>      key    = string<br/>      value  = optional(string, "")<br/>      effect = string<br/>    })), [])<br/>    unschedulable = optional(bool, false)<br/>    attach_floating_ips = optional(object({<br/>      enabled = optional(bool)<br/>    }))<br/>  }))</pre> | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID or service\_name; takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against OVHcloud project\_name and description. | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | OVHcloud region for the cluster. | `string` | n/a | yes |
