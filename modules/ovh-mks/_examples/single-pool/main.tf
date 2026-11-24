@@ -17,7 +17,6 @@ module "ovh_mks" {
 
   node_pools = {
     main = {
-      desired_nodes      = 2
       min_nodes          = 2
       max_nodes          = 5
       availability_zones = [] # Leave placement to OVHcloud.

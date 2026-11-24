@@ -43,7 +43,7 @@ resource "ovh_cloud_project_kube_nodepool" "production" {
   kube_id            = ovh_cloud_project_kube.production.id
   name               = "${var.cluster_name}-${each.key}"
   flavor_name        = var.node_flavor
-  desired_nodes      = each.value.desired_nodes
+  desired_nodes      = each.value.desired_nodes == null ? null : each.value.desired_nodes
   min_nodes          = each.value.min_nodes
   max_nodes          = each.value.max_nodes
   autoscale          = var.autoscale

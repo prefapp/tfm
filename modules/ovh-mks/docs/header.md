@@ -12,7 +12,7 @@
 
 This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing Public Cloud project. It discovers the project, private network, and subnet from the supplied project selector, network name, subnet CIDR, and cluster region; the network and subnet are not created by this module.
 
-Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support desired/minimum/maximum capacity, autoscaling, anti-affinity, availability-zone placement, Kubernetes node labels and annotations, taints, and the unschedulable setting.
+Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support optional desired capacity, minimum/maximum capacity, autoscaling, anti-affinity, availability-zone placement, Kubernetes node labels and annotations, taints, and the unschedulable setting.
 
 ## Key Features
 
@@ -46,20 +46,17 @@ module "ovh_mks" {
   anti_affinity = true
   node_pools = {
     zone-a = {
-      desired_nodes      = 1
       min_nodes          = 1
       max_nodes          = 3
       availability_zones = ["eu-west-par-a"]
       labels             = { workload = "general" }
     }
     zone-b = {
-      desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 3
       availability_zones = ["eu-west-par-b"]
     }
     zone-c = {
-      desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 3
       availability_zones = ["eu-west-par-c"]
@@ -89,7 +86,6 @@ module "ovh_mks_free" {
   anti_affinity = false
   node_pools = {
     empty = {
-      desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 0
       availability_zones = []
