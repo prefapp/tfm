@@ -15,6 +15,10 @@
         "ref_name": {
           "include": ["~DEFAULT_BRANCH"],
           "exclude": []
+        },
+        "repository_name": {
+          "include": ["~ALL"],
+          "exclude": []
         }
       },
       "rules": [
@@ -52,7 +56,7 @@
           "bypass_mode": "pull_request"
         },
         {
-          "actor_id": 5,
+          "actor_role": "admin",
           "actor_type": "RepositoryRole",
           "bypass_mode": "always"
         }
@@ -62,8 +66,13 @@
           "include": ["~DEFAULT_BRANCH"],
           "exclude": []
         },
-        "repository_name": {
-          "include": ["prod-*", "production-*"],
+        "repository_property": {
+          "include": [
+            {
+              "name": "environment",
+              "property_values": ["production"]
+            }
+          ],
           "exclude": []
         }
       },
@@ -128,6 +137,36 @@
           "parameters": {
             "review_on_push": true,
             "review_draft_pull_requests": false
+          }
+        }
+      ]
+    },
+    "push-file-guard": {
+      "name": "push-file-guard",
+      "target": "push",
+      "enforcement": "active",
+      "conditions": {
+        "repository_property": {
+          "include": [
+            {
+              "name": "compliance",
+              "property_values": ["pci"]
+            }
+          ],
+          "exclude": []
+        }
+      },
+      "rules": [
+        {
+          "type": "file_extension_restriction",
+          "parameters": {
+            "restricted_file_extensions": [".pem", ".key"]
+          }
+        },
+        {
+          "type": "max_file_size",
+          "parameters": {
+            "max_file_size": 50
           }
         }
       ]

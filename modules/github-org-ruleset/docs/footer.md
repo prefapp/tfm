@@ -2,8 +2,10 @@
 
 For detailed examples, refer to the [module examples](https://github.com/prefapp/tfm/tree/main/modules/github-org-ruleset/_examples):
 
-- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-org-ruleset/_examples/basic) - Default branch protection with CI status check and bypass actor (`config.json`)
-- [advanced](https://github.com/prefapp/tfm/tree/main/modules/github-org-ruleset/_examples/advanced) - Full GitHub API export format with required_reviewers, copilot_code_review, and extra fields that are silently ignored (`config.json`)
+- [basic](https://github.com/prefapp/tfm/tree/main/modules/github-org-ruleset/_examples/basic) - Org-wide default branch protection targeting repositories by name, with a CI status check and a numeric bypass actor (`config.json`)
+- [advanced](https://github.com/prefapp/tfm/tree/main/modules/github-org-ruleset/_examples/advanced) - Full GitHub API export format targeting repositories by custom property, with required_reviewers, copilot_code_review, and extra fields that are silently ignored (`config.json`)
+- [bypass-actors](https://github.com/prefapp/tfm/tree/main/modules/github-org-ruleset/_examples/bypass-actors) - Bypass actors referenced by team slug, app slug, and repository role instead of numeric IDs (`config.json`)
+- [push-ruleset](https://github.com/prefapp/tfm/tree/main/modules/github-org-ruleset/_examples/push-ruleset) - Push ruleset targeting repositories by custom property, with file extension and file size rules (`config.json`)
 
 ## Resources
 
