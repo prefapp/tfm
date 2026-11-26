@@ -1,0 +1,32 @@
+{
+  "config": {
+    "name": "push-file-guard",
+    "target": "push",
+    "enforcement": "active",
+    "conditions": {
+      "repository_property": {
+        "include": [
+          {
+            "name": "compliance",
+            "property_values": ["pci"]
+          }
+        ],
+        "exclude": []
+      }
+    },
+    "rules": [
+      {
+        "type": "file_extension_restriction",
+        "parameters": {
+          "restricted_file_extensions": [".pem", ".key"]
+        }
+      },
+      {
+        "type": "max_file_size",
+        "parameters": {
+          "max_file_size": 50
+        }
+      }
+    ]
+  }
+}
