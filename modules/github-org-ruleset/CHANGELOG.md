@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/prefapp/tfm/compare/github-org-ruleset-v0.1.1...github-org-ruleset-v0.2.0) (2026-11-26)
+
+
+### Features
+
+* **github-org-ruleset:** support repository_property and bypass actor slugs ([#1476](https://github.com/prefapp/tfm/issues/1476)) ([1cb769c](https://github.com/prefapp/tfm/commit/1cb769c76cae7be4cc73d4bcd2c61a9fd05ae737))
+
 ## [0.1.1](https://github.com/prefapp/tfm/compare/github-org-ruleset-v0.1.0...github-org-ruleset-v0.1.1) (2026-04-16)
 
 
