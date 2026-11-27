@@ -13,7 +13,7 @@
 
 This module provisions an OVHcloud Managed Kubernetes Service (MKS) cluster and its node pools in an existing Public Cloud project. It discovers the project, private network, and subnet from the supplied project selector, network name, subnet CIDR, and cluster region; the network and subnet are not created by this module.
 
-Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support desired/minimum/maximum capacity, autoscaling, anti-affinity, and availability-zone placement.
+Use it for a free control-plane cluster, a single-region cluster with one pool, or a standard multi-zone cluster with separate pools per availability zone. The cluster's Kubernetes version and update policy are configurable, and node pools support optional desired capacity, minimum/maximum capacity, autoscaling, anti-affinity, availability-zone placement, Kubernetes node labels and annotations, taints, and the unschedulable setting.
 
 ## Key Features
 
@@ -21,6 +21,7 @@ Use it for a free control-plane cluster, a single-region cluster with one pool, 
 - **Existing-network discovery**: Selects the private network by exact name and subnet by CIDR in the cluster region.
 - **Flexible node pools**: Creates one or more named pools with independent capacity limits and optional zone placement.
 - **Autoscaling and placement**: Configures pool autoscaling and anti-affinity consistently across the pools.
+- **Kubernetes node customization**: Optionally applies labels, annotations, taints, and the unschedulable setting to nodes in each pool.
 - **Sensitive kubeconfig**: Exposes the cluster kubeconfig only as a sensitive Terraform output.
 
 ## Basic Usage
@@ -46,19 +47,17 @@ module "ovh_mks" {
   anti_affinity = true
   node_pools = {
     zone-a = {
-      desired_nodes      = 1
       min_nodes          = 1
       max_nodes          = 3
       availability_zones = ["eu-west-par-a"]
+      labels             = { workload = "general" }
     }
     zone-b = {
-      desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 3
       availability_zones = ["eu-west-par-b"]
     }
     zone-c = {
-      desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 3
       availability_zones = ["eu-west-par-c"]
@@ -66,6 +65,8 @@ module "ovh_mks" {
   }
 }
 ```
+
+To reserve a pool for selected workloads, configure a taint and optionally a node label on that pool. Workloads must tolerate the taint; use a node selector or node affinity for the label when they must run only on that pool. Taints alone do not attract workloads or provide exclusive node placement.
 
 ### Free control plane without worker nodes
 
@@ -86,7 +87,6 @@ module "ovh_mks_free" {
   anti_affinity = false
   node_pools = {
     empty = {
-      desired_nodes      = 0
       min_nodes          = 0
       max_nodes          = 0
       availability_zones = []
@@ -106,15 +106,15 @@ The `kubeconfig` output contains credentials and is marked sensitive. Protect Te
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.5.0 |
 | <a name="requirement_ovh"></a> [ovh](#requirement\_ovh) | >= 2.20.0, < 3.0.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | >= 2.20.0, < 3.0.0 |
+| ---- | ------- |
+| <a name="provider_ovh"></a> [ovh](#provider\_ovh) | 2.25.0 |
 
 ## Modules
 
@@ -123,7 +123,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ovh_cloud_project_kube.production](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_kube) | resource |
 | [ovh_cloud_project_kube_nodepool.production](https://registry.terraform.io/providers/ovh/ovh/latest/docs/resources/cloud_project_kube_nodepool) | resource |
 | [ovh_cloud_project_network_private_subnets.subnets](https://registry.terraform.io/providers/ovh/ovh/latest/docs/data-sources/cloud_project_network_private_subnets) | data source |
@@ -133,7 +133,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_anti_affinity"></a> [anti\_affinity](#input\_anti\_affinity) | Enable anti-affinity for instances in each node pool. | `bool` | n/a | yes |
 | <a name="input_autoscale"></a> [autoscale](#input\_autoscale) | Enable autoscaling for each node pool. | `bool` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the Managed Kubernetes cluster. | `string` | n/a | yes |
@@ -141,7 +141,7 @@ No modules.
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Managed Kubernetes cluster version. | `string` | n/a | yes |
 | <a name="input_network_name"></a> [network\_name](#input\_network\_name) | Exact name of the existing private network to attach to the cluster. | `string` | n/a | yes |
 | <a name="input_node_flavor"></a> [node\_flavor](#input\_node\_flavor) | Worker node flavor available in the selected region. | `string` | n/a | yes |
-| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Cluster node pools with non-negative integer capacities where min\_nodes <= desired\_nodes <= max\_nodes; an empty availability\_zones list leaves zone placement unspecified. | <pre>map(object({<br/>    desired_nodes      = number<br/>    min_nodes          = number<br/>    max_nodes          = number<br/>    availability_zones = list(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Cluster node pools with non-negative integer capacities where min\_nodes <= max\_nodes and, when desired\_nodes is set, min\_nodes <= desired\_nodes <= max\_nodes; an empty availability\_zones list leaves zone placement unspecified. Optional template metadata and taints customize the Kubernetes nodes created in each pool. | <pre>map(object({<br/>    desired_nodes      = optional(number)<br/>    min_nodes          = number<br/>    max_nodes          = number<br/>    availability_zones = list(string)<br/>    labels             = optional(map(string), {})<br/>    annotations        = optional(map(string), {})<br/>    taints = optional(list(object({<br/>      key    = string<br/>      value  = optional(string, "")<br/>      effect = string<br/>    })), [])<br/>    unschedulable = optional(bool, false)<br/>  }))</pre> | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Optional Public Cloud project ID or service\_name; takes precedence over project\_name. | `string` | `null` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Optional Public Cloud project name; matched against OVHcloud project\_name and description. | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | OVHcloud region for the cluster. | `string` | n/a | yes |
@@ -151,7 +151,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | Managed Kubernetes cluster ID. |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Managed Kubernetes cluster name. |
 | <a name="output_cluster_status"></a> [cluster\_status](#output\_cluster\_status) | Status reported by OVHcloud; expected to be READY after creation. |
@@ -184,6 +184,8 @@ terraform import 'module.ovh_mks.ovh_cloud_project_kube_nodepool.production["<po
 ```
 
 Destroying the module deletes its managed node pools and MKS cluster; it does not delete the separately managed private network, subnet, or gateway. Changing the selected network/subnet or cluster region can require cluster reset or replacement and may destroy cluster data. OVHcloud currently does not implement in-place migration between the `free` and `standard` plans, so do not assume changing `cluster_plan` will upgrade an existing cluster.
+
+Node pool `labels`, `annotations`, `taints`, and `unschedulable` are configured through the OVHcloud node-pool template. Taints support the Kubernetes effects `NoSchedule`, `PreferNoSchedule`, and `NoExecute`; every taint requires a `key` and `effect`, while `value` is optional. Configure workload tolerations separately in the workload charts or manifests. If a node-pool template field changes, inspect the provider and OVHcloud plan carefully before applying, especially for node pools hosting stateful workloads.
 
 Before destructive changes, migrate workloads and back up any data that must be retained, including persistent-volume data according to its storage lifecycle. Review the Terraform plan carefully before applying cluster, pool, or network changes.
 

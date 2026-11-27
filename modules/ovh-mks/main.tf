@@ -43,12 +43,29 @@ resource "ovh_cloud_project_kube_nodepool" "production" {
   kube_id            = ovh_cloud_project_kube.production.id
   name               = "${var.cluster_name}-${each.key}"
   flavor_name        = var.node_flavor
-  desired_nodes      = each.value.desired_nodes
+  desired_nodes      = each.value.desired_nodes == null ? null : each.value.desired_nodes
   min_nodes          = each.value.min_nodes
   max_nodes          = each.value.max_nodes
   autoscale          = var.autoscale
   anti_affinity      = var.anti_affinity
   availability_zones = length(each.value.availability_zones) > 0 ? each.value.availability_zones : null
+
+  dynamic "template" {
+    for_each = length(each.value.labels) > 0 || length(each.value.annotations) > 0 || length(each.value.taints) > 0 || each.value.unschedulable ? [each.value] : []
+
+    content {
+      metadata {
+        annotations = template.value.annotations
+        finalizers  = []
+        labels      = template.value.labels
+      }
+
+      spec {
+        unschedulable = template.value.unschedulable
+        taints        = template.value.taints
+      }
+    }
+  }
 
   lifecycle {
     precondition {
