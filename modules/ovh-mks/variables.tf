@@ -56,7 +56,7 @@ variable "node_flavor" {
 }
 
 variable "node_pools" {
-  description = "Cluster node pools with non-negative integer capacities where min_nodes <= desired_nodes <= max_nodes when desired_nodes is set; an empty availability_zones list leaves zone placement unspecified. Optional template metadata and taints customize the Kubernetes nodes created in each pool."
+  description = "Cluster node pools with non-negative integer capacities where min_nodes <= max_nodes and, when desired_nodes is set, min_nodes <= desired_nodes <= max_nodes; an empty availability_zones list leaves zone placement unspecified. Optional template metadata and taints customize the Kubernetes nodes created in each pool."
   type = map(object({
     desired_nodes      = optional(number)
     min_nodes          = number
@@ -70,19 +70,22 @@ variable "node_pools" {
       effect = string
     })), [])
     unschedulable = optional(bool, false)
-    attach_floating_ips = optional(object({
-      enabled = optional(bool)
-    }))
   }))
 
   validation {
     condition = alltrue([
       for pool in values(var.node_pools) : try(
         pool.min_nodes >= 0 &&
+        floor(pool.min_nodes) == pool.min_nodes &&
         pool.max_nodes >= 0 &&
-        (pool.desired_nodes == null || (pool.desired_nodes >= 0 && floor(pool.desired_nodes) == pool.desired_nodes)) &&
         floor(pool.max_nodes) == pool.max_nodes &&
-        (pool.desired_nodes == null || (pool.min_nodes <= pool.desired_nodes && pool.desired_nodes <= pool.max_nodes)),
+        pool.min_nodes <= pool.max_nodes &&
+        (pool.desired_nodes == null ? true : (
+          pool.desired_nodes >= 0 &&
+          floor(pool.desired_nodes) == pool.desired_nodes &&
+          pool.min_nodes <= pool.desired_nodes &&
+          pool.desired_nodes <= pool.max_nodes
+        )),
         false
       )
     ])
